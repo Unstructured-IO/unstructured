@@ -1,6 +1,16 @@
 [
   {
     "type": "UncategorizedText",
+    "element_id": "5d5ae4682bf03035ba590610ca47335d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "WORLD ASSOCIATION"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "d72f07e2c764ae90417305db928ebce1",
     "metadata": {
       "data_source": {},
@@ -121,6 +131,16 @@
   },
   {
     "type": "NarrativeText",
+    "element_id": "3cf0a9c5ad0cacc724f90abbe99664d9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "In reality, radiation is a natural part of life; indeed, we are all exposed to radiation every day, on average receiving 2-3 millisieverts (mSv) per year. Most of this radiation is naturally occurring, with radon gas from the ground being the main source of exposure. The nuclear industry is responsible for a very small part of radiation exposure to the public, as seen in Figure 2. To put this into perspective, eating 10 bananas or two Brazil nuts results in the same radiation dose as living nearby a nuclear power plant for a year. Humans are also naturally radioactive, and the radiation dose from sleeping next to someone else each night for a year is ten times higher than the exposure from living nearby a nuclear power plant for the same time span."
+  },
+  {
+    "type": "NarrativeText",
     "element_id": "ce5bcf6b4fe24d62bd24d156d5bc965e",
     "metadata": {
       "data_source": {},
@@ -151,13 +171,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "f4ccd05b3271c386ee55d9876c745001",
+    "element_id": "54183f4323f377b737433a1e98229ead",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "30"
+    "text": "17"
   },
   {
     "type": "UncategorizedText",
@@ -171,13 +191,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "54183f4323f377b737433a1e98229ead",
+    "element_id": "f4ccd05b3271c386ee55d9876c745001",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "17"
+    "text": "30"
   },
   {
     "type": "UncategorizedText",
@@ -208,16 +228,6 @@
       "page_number": 4
     },
     "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4355a46b19d348dc2f57c046f8ef63d4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "1"
   },
   {
     "type": "UncategorizedText",
@@ -238,6 +248,16 @@
       "page_number": 4
     },
     "text": "3"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4355a46b19d348dc2f57c046f8ef63d4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "1"
   },
   {
     "type": "UncategorizedText",
@@ -268,6 +288,16 @@
       "page_number": 4
     },
     "text": "Electric power (non-nuclear)"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "86c586f8129cc34e163eedd76b538fe8",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Vaccinations"
   },
   {
     "type": "UncategorizedText",
@@ -311,16 +341,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "86c586f8129cc34e163eedd76b538fe8",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Vaccinations"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "e61e853dddb79bd1b290a42c8bfa2c43",
     "metadata": {
       "data_source": {},
@@ -351,6 +371,26 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "fe6688066e4058f4d28c3956c1545589",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "fe6688066e4058f4d28c3956c1545589",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "4deedd21c16662f9a68c10e5f0dc0c3b",
     "metadata": {
       "data_source": {},
@@ -358,36 +398,6 @@
       "page_number": 4
     },
     "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "fe6688066e4058f4d28c3956c1545589",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "fe6688066e4058f4d28c3956c1545589",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "53c234e5e8472b6ac51c1ae1cab3fe06",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "2"
   },
   {
     "type": "UncategorizedText",
@@ -430,14 +440,14 @@
     "text": "7"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "3cf0a9c5ad0cacc724f90abbe99664d9",
+    "type": "UncategorizedText",
+    "element_id": "53c234e5e8472b6ac51c1ae1cab3fe06",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "In reality, radiation is a natural part of life; indeed, we are all exposed to radiation every day, on average receiving 2-3 millisieverts (mSv) per year. Most of this radiation is naturally occurring, with radon gas from the ground being the main source of exposure. The nuclear industry is responsible for a very small part of radiation exposure to the public, as seen in Figure 2. To put this into perspective, eating 10 bananas or two Brazil nuts results in the same radiation dose as living nearby a nuclear power plant for a year. Humans are also naturally radioactive, and the radiation dose from sleeping next to someone else each night for a year is ten times higher than the exposure from living nearby a nuclear power plant for the same time span."
+    "text": "2"
   },
   {
     "type": "NarrativeText",
@@ -471,6 +481,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "fd4bd13eed12d06bdaeb4ed41fbc3900",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "Natural"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "e1cccd4114d41b7b658b1261e800a2da",
     "metadata": {
       "data_source": {},
@@ -481,16 +501,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "e209bc5e73dbdae2a845e0431c84967e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "Artificial"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "6749cb436f7f9264a3340a066b7758fc",
     "metadata": {
       "data_source": {},
@@ -498,6 +508,16 @@
       "page_number": 5
     },
     "text": " 48% Radon  14% Buildings & soil  12% Food & water  10% Cosmic  4% Thoron"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "e209bc5e73dbdae2a845e0431c84967e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "Artificial"
   },
   {
     "type": "UncategorizedText",
@@ -601,6 +621,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "14321f6061d8f50898383dade4ec7241",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "S15"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "a2bbdb2de53523b8099b37013f251546",
     "metadata": {
       "data_source": {},
@@ -671,6 +701,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "9a271f2a916b0b6ee6cecb2426f0b320",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "0"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "8048d1e7e392843de42064d4c1ae5988",
     "metadata": {
       "data_source": {},
@@ -681,23 +721,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "df5b47311873a4388b15a71ae9846e61",
+    "element_id": "02a238b618a70acd5d23e30a37662ca6",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "2.8"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "9a271f2a916b0b6ee6cecb2426f0b320",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "0"
+    "text": "|| es"
   },
   {
     "type": "UncategorizedText",
@@ -741,13 +771,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "7bf1f073715e4adc8472523b0d32043f",
+    "element_id": "df5b47311873a4388b15a71ae9846e61",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "0.07"
+    "text": "2.8"
   },
   {
     "type": "UncategorizedText",
@@ -761,13 +791,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "95d020e1024da4b79092a4cd784eb0e7",
+    "element_id": "7bf1f073715e4adc8472523b0d32043f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "0.04"
+    "text": "0.07"
   },
   {
     "type": "UncategorizedText",
@@ -781,13 +811,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "ad1d34e4d341cc6a4c4afadc494bd5c4",
+    "element_id": "95d020e1024da4b79092a4cd784eb0e7",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "0.02"
+    "text": "0.04"
   },
   {
     "type": "UncategorizedText",
@@ -801,13 +831,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "a37f9fe7bd3fa9d73c6b5c339b56943e",
+    "element_id": "ad1d34e4d341cc6a4c4afadc494bd5c4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "0.01"
+    "text": "0.02"
   },
   {
     "type": "UncategorizedText",
@@ -818,6 +848,16 @@
       "page_number": 5
     },
     "text": "N uclear"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "a37f9fe7bd3fa9d73c6b5c339b56943e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "0.01"
   },
   {
     "type": "UncategorizedText",
@@ -941,13 +981,13 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "00548dbd288df8370c39789adb302f50",
+    "element_id": "ba80f89ec0449fefee24b33fbb7e29b6",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "Contemporary debates around nuclear energy often reflect the precautionary principle, a problematic concept applied across a range of regulatory and policy issues. A ‘strong’ interpretation of the precautionary principle, or a ‘as low as possible’ approach to risk, dictates that regulation is required whenever there is a potential adverse health risk, even if the evidence is not certain and regardless of the cost of regulation."
+    "text": "However, the regulatory process and the policy debate around nuclear more broadly has long departed from the ALARA principle, no longer weighing cost versus benefits, or considering the overall advantages of nuclear energy, but rather looking at radiation in isolation. This has resulted in a subtle shift towards an ‘as low as possible’ mentality. Attempting to reduce radiation far below de facto safe levels has resulted in an escalation of costs and loss of public confidence, and in some cases has deprived communities of the many benefits nuclear energy provides. In practical terms, this has led to the continued use of more harmful energy sources, such as fossil fuels."
   },
   {
     "type": "NarrativeText",
@@ -961,13 +1001,13 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ba80f89ec0449fefee24b33fbb7e29b6",
+    "element_id": "00548dbd288df8370c39789adb302f50",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "However, the regulatory process and the policy debate around nuclear more broadly has long departed from the ALARA principle, no longer weighing cost versus benefits, or considering the overall advantages of nuclear energy, but rather looking at radiation in isolation. This has resulted in a subtle shift towards an ‘as low as possible’ mentality. Attempting to reduce radiation far below de facto safe levels has resulted in an escalation of costs and loss of public confidence, and in some cases has deprived communities of the many benefits nuclear energy provides. In practical terms, this has led to the continued use of more harmful energy sources, such as fossil fuels."
+    "text": "Contemporary debates around nuclear energy often reflect the precautionary principle, a problematic concept applied across a range of regulatory and policy issues. A ‘strong’ interpretation of the precautionary principle, or a ‘as low as possible’ approach to risk, dictates that regulation is required whenever there is a potential adverse health risk, even if the evidence is not certain and regardless of the cost of regulation."
   },
   {
     "type": "NarrativeText",
@@ -978,6 +1018,16 @@
       "page_number": 7
     },
     "text": "If the potential of nuclear energy is to be fully realized, public health and safety approaches must be recalibrated to consider a wider range of factors when considering radiation, adopting an “all-hazards” approach. Such an approach must ensure that risks are placed within a proper perspective and context, rather than looking at them in isolation. We therefore must not look at the costs – be they economic, environmental, or public health – associated with an individual power plant in isolation, but rather the costs associated with it (and its alternatives) at a societal level (Figure 4). This would entail looking at the potential risks arising from the use of nuclear power and comparing these with the risks associated with not adopting nuclear power."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "921f9c7e9e48ae6e68c4a600c65cc6d9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "ae) flea"
   },
   {
     "type": "UncategorizedText",
@@ -1101,16 +1151,6 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "d754d8d468346f652657279272a11897",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "Clearly, we have reached a point where we must establish a new conversation about the relative risks of using nuclear, especially when risks created by other energy sources are considered. We cannot address many of the global challenges we face without a significant increase in the use of nuclear energy. The detrimental effects of decades of looking at nuclear risks in isolation highlights just how crucial it is that regulators and policymakers change the way they view nuclear energy, and transition towards an all-hazards approach, ensuring that actions taken to mitigate risks do not result in creating more severe risks."
-  },
-  {
-    "type": "NarrativeText",
     "element_id": "0714f9ff88637006bdb76908c7c936bf",
     "metadata": {
       "data_source": {},
@@ -1128,6 +1168,16 @@
       "page_number": 9
     },
     "text": "Therefore, World Nuclear Association calls upon policymakers and regulators to adopt an all-hazards approach, where different risks associated with energy producing technologies are placed in perspective and the appropriate context, and examined in line with the latest scientific evidence. Policymakers and regulators must ensure that their decisions regarding radiation protection do not create greater risks elsewhere. This include the recalibration of existing regulations regarding nuclear power and radiation, weighing the cost of regulatory measures against the societal benefits provided by nuclear energy."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "d754d8d468346f652657279272a11897",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "Clearly, we have reached a point where we must establish a new conversation about the relative risks of using nuclear, especially when risks created by other energy sources are considered. We cannot address many of the global challenges we face without a significant increase in the use of nuclear energy. The detrimental effects of decades of looking at nuclear risks in isolation highlights just how crucial it is that regulators and policymakers change the way they view nuclear energy, and transition towards an all-hazards approach, ensuring that actions taken to mitigate risks do not result in creating more severe risks."
   },
   {
     "type": "FigureCaption",
@@ -1171,173 +1221,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "c06ac75f019ceac1ff2baecfc090fd3e",
+    "element_id": "40bf1390db138ee3d2e9fe0a804aba7a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "World Health Organization (2020). Road traffic injuries. Available at: https://www.who.int/news-room/fact-sheets/ detail/road-traffic-injuries"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "3835a774ed6bc25ea5d9285964eafab5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "ii"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "199440a0821e16b612f4697aa2306cb2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "BBC (2020). Plane crash fatalities fell more than 50% in 2019. Available at: https://www.bbc.co.uk/news/ business-50953712"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "933bb5199e0009b0cf5982dc70990cd5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "iii"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "18b2cdcbf43cbcab942c6ffa69abdc51",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "Slovic, P., 2010. The Psychology of risk. Saúde e Sociedade, 19(4), pp. 731-747."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c3eba57eb044498e085ee68272270bbb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "iv United Nations Scientific Committee on the Effects of Radiation (2016). Report of the United Nations Scientific"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "05c20e21a39fa28bae9b00ea9006f587",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "Committee on the Effects of Atomic Radiation. Accessed from: https://www.unscear.org/docs/publications/2016/ UNSCEAR_2016_GA-Report-CORR.pdf"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "24264aa519b9e325bd189fe67fa3ff8d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "v"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "81be06e67a1b533cb1278b15860c51db",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "International Energy Agency (2020). Global share of total energy supply by source, 2018. Key World Energy Statistics 2020. Available at: https://www.iea.org/data-and-statistics/charts/global-share-of-total-energy-supply-by- source-2018"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c659791e303eb22c5c5d56ecc0b87608",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "vi"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "69bd2cd5a46ac8850a9e3ea2df80de60",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "Vohra, K., Vodonos, A., Schwartz, J., Marais, E., Sulprizio, M., & Mickley, L. (2021). Global mortality from outdoor fine particle pollution generated by fossil fuel combustion: Results from GEOS-Chem. Environmental Research, 195, p. 1-8"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "52e3a3042d860ebd51bd30e03a3d370f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "vii World Health Organization. (2016). Updated tables 2016 for ‘Preventing disease through health environments: a"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6d22db6c4525ddda0474a31ce3ed67b8",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "global assessment of the burden of disease from environmental risks’. Available at: https://www.who.int/data/gho/ data/themes/public-health-and-environment [Accessed on 8 April 2021]"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b187d8373b3bbccc14961aea391887c6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "viii National Cancer Institute (2020). Cancer statistics. Available at: https://www.cancer.gov/about-cancer/"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "e140259209e77d2f8c213fffa67e8a30",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "understanding/statistics"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "004bd6855483673c349aba9a4e2d3a73",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "ix Cancer Research UK (n.d.). Cancer risk statistics. Available at: https://www.cancerresearchuk.org/health-"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "dd72b61820fe1a241b5a4b8e91370a77",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "professional/cancer-statistics/risk"
+    "text": "xi World Health Organization (2018). Climate change and health. Available at: https://www.who.int/news-room/fact-"
   },
   {
     "type": "UncategorizedText",
@@ -1351,33 +1241,33 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "9205539115ff601cff51c3bb98a21400",
+    "element_id": "004bd6855483673c349aba9a4e2d3a73",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "the-full-costs-of-electricity-provision?details=true"
+    "text": "ix Cancer Research UK (n.d.). Cancer risk statistics. Available at: https://www.cancerresearchuk.org/health-"
   },
   {
     "type": "UncategorizedText",
-    "element_id": "40bf1390db138ee3d2e9fe0a804aba7a",
+    "element_id": "b187d8373b3bbccc14961aea391887c6",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "xi World Health Organization (2018). Climate change and health. Available at: https://www.who.int/news-room/fact-"
+    "text": "viii National Cancer Institute (2020). Cancer statistics. Available at: https://www.cancer.gov/about-cancer/"
   },
   {
     "type": "UncategorizedText",
-    "element_id": "05612b96094a7aa4d2aaff0c45388352",
+    "element_id": "52e3a3042d860ebd51bd30e03a3d370f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "sheets/detail/climate-change-and-health"
+    "text": "vii World Health Organization. (2016). Updated tables 2016 for ‘Preventing disease through health environments: a"
   },
   {
     "type": "UncategorizedText",
@@ -1391,6 +1281,56 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "24264aa519b9e325bd189fe67fa3ff8d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "v"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c659791e303eb22c5c5d56ecc0b87608",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "vi"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c3eba57eb044498e085ee68272270bbb",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "iv United Nations Scientific Committee on the Effects of Radiation (2016). Report of the United Nations Scientific"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "933bb5199e0009b0cf5982dc70990cd5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "iii"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "3835a774ed6bc25ea5d9285964eafab5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "ii"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "10407d498f2636f50597e71d97cc001a",
     "metadata": {
       "data_source": {},
@@ -1398,6 +1338,116 @@
       "page_number": 10
     },
     "text": "Photo credits: Front cover & pages 1, 4, 6 left, 7 bottom: Adobe Stock; page 6 right: Getty Images; page 7 top: Uniper."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "81be06e67a1b533cb1278b15860c51db",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "International Energy Agency (2020). Global share of total energy supply by source, 2018. Key World Energy Statistics 2020. Available at: https://www.iea.org/data-and-statistics/charts/global-share-of-total-energy-supply-by- source-2018"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "69bd2cd5a46ac8850a9e3ea2df80de60",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "Vohra, K., Vodonos, A., Schwartz, J., Marais, E., Sulprizio, M., & Mickley, L. (2021). Global mortality from outdoor fine particle pollution generated by fossil fuel combustion: Results from GEOS-Chem. Environmental Research, 195, p. 1-8"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "18b2cdcbf43cbcab942c6ffa69abdc51",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "Slovic, P., 2010. The Psychology of risk. Saúde e Sociedade, 19(4), pp. 731-747."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "6d22db6c4525ddda0474a31ce3ed67b8",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "global assessment of the burden of disease from environmental risks’. Available at: https://www.who.int/data/gho/ data/themes/public-health-and-environment [Accessed on 8 April 2021]"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "199440a0821e16b612f4697aa2306cb2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "BBC (2020). Plane crash fatalities fell more than 50% in 2019. Available at: https://www.bbc.co.uk/news/ business-50953712"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "e140259209e77d2f8c213fffa67e8a30",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "understanding/statistics"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "dd72b61820fe1a241b5a4b8e91370a77",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "professional/cancer-statistics/risk"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "9205539115ff601cff51c3bb98a21400",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "the-full-costs-of-electricity-provision?details=true"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c06ac75f019ceac1ff2baecfc090fd3e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "World Health Organization (2020). Road traffic injuries. Available at: https://www.who.int/news-room/fact-sheets/ detail/road-traffic-injuries"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "05612b96094a7aa4d2aaff0c45388352",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "sheets/detail/climate-change-and-health"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "05c20e21a39fa28bae9b00ea9006f587",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "Committee on the Effects of Atomic Radiation. Accessed from: https://www.unscear.org/docs/publications/2016/ UNSCEAR_2016_GA-Report-CORR.pdf"
   },
   {
     "type": "UncategorizedText",
@@ -1421,6 +1471,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "fc5faebaec5a1349ce932f1863bdd842",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "Recalibrating risk © 2021 World Nuclear Association. Registered in England and Wales, company number 01215741"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "821daa4396c0087d9d5ee9240bc5c85c",
     "metadata": {
       "data_source": {},
@@ -1438,15 +1498,5 @@
       "page_number": 12
     },
     "text": "World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "fc5faebaec5a1349ce932f1863bdd842",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 12
-    },
-    "text": "Recalibrating risk © 2021 World Nuclear Association. Registered in England and Wales, company number 01215741"
   }
 ]

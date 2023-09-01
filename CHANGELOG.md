@@ -1,12 +1,17 @@
-## 0.10.11-dev0
+## 0.10.11
 
 ### Enhancements
+
+* Bump unstructured-inference
+  * Combine entire-page OCR output with layout-detected elements, to ensure full coverage of the page (0.5.19)
 
 ### Features
 
 * Add in ingest cli s3 writer
 
 ### Fixes
+
+* Fix a bug where `xy-cut` sorting attemps to sort elements without valid coordinates; now xy cut sorting only works when **all** elements have valid coordinates
 
 ## 0.10.10
 
@@ -44,7 +49,6 @@
 * Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
 * Re-enable test-ingest-confluence-diff for ingest tests
 * Fix syntax for ingest test check number of files
-* Fix a bug where `xy-cut` sorting attemps to sort elements without valid coordinates; now xy cut sorting only works when **all** elements have valid coordinates
 
 ## 0.10.8
 
