@@ -4,6 +4,8 @@
 
 ### Features
 
+- Adds a naive hierarchy for elements via a `parent_id` on the element's metadata
+
 ### Fixes
 
 * Update version-sync to prevent duplicate release versions
