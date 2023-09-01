@@ -11,7 +11,6 @@ def ingest():
 # Dynamically update shared options for supported subcommands
 subcommands = [
     cli_cmds.box,
-    cli_cmds.s3,
     cli_cmds.gcs,
     cli_cmds.delta_table,
     cli_cmds.dropbox,
@@ -42,7 +41,11 @@ for subcommand in subcommands:
 def get_cmd() -> click.Command:
     cmd = ingest
     # Add all subcommands
+    for src_subcommand in cli_cmds.src:
+        # add destination subcommands
+        for dest_subcommand in cli_cmds.dest:
+            src_subcommand.add_command(dest_subcommand)
+        cmd.add_command(src_subcommand)
     for subcommand in subcommands:
-        # add_shared_options(cmd)
         cmd.add_command(subcommand())
     return cmd

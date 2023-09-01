@@ -11,6 +11,26 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "e6b2c238768a8e830492f4de667314bb",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "ELSEVIER"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9234133787d0a6b3976b16569c0b5cf3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "journal homepage: www.elsevier.com/locate/dib"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "869adddb184177031536477262e0dde0",
     "metadata": {
       "data_source": {},
@@ -28,16 +48,6 @@
       "page_number": 1
     },
     "text": "Data in Brief"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "9234133787d0a6b3976b16569c0b5cf3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "journal homepage: www.elsevier.com/locate/dib"
   },
   {
     "type": "UncategorizedText",
@@ -58,6 +68,16 @@
       "page_number": 1
     },
     "text": "Data on environmental sustainable corrosion inhibitor for stainless steel in aggressive environment"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c21a7f75a507e8d1d940e30b66575616",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "(Jee"
   },
   {
     "type": "NarrativeText",
@@ -151,6 +171,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "b877cc5d670d770084dcc0bb41ac73a0",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Subject area More specific subject area Type of data"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "f6e511a70687b4a8980471d7ad4e43ef",
     "metadata": {
       "data_source": {},
@@ -158,6 +188,16 @@
       "page_number": 1
     },
     "text": "Materials engineering"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "a2c3879ecb580742973c6a914fb905bb",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Surface science and engineering"
   },
   {
     "type": "UncategorizedText",
@@ -401,6 +441,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "cdf5b8d4e74aae9ab4984aae0466aa75",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "(mg)"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "f4ccd05b3271c386ee55d9876c745001",
     "metadata": {
       "data_source": {},
@@ -421,16 +471,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "f82cec9d27e0eb21af4287cfc3f10c63",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "10g 8g 6g 4g 2g Control"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "917df3320d778ddbaa5c5c7742bc4046",
     "metadata": {
       "data_source": {},
@@ -438,6 +478,16 @@
       "page_number": 2
     },
     "text": "10"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f82cec9d27e0eb21af4287cfc3f10c63",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "10g 8g 6g 4g 2g Control"
   },
   {
     "type": "UncategorizedText",
@@ -530,14 +580,24 @@
     "text": "453"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "884784765bb9a529058c24f63946a7e2",
+    "type": "NarrativeText",
+    "element_id": "e5d46bc8ceb17f88e1cff33ecac97067",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "2.7"
+    "text": "Fig. 2. Corrosion rate versus exposure time for stainless steel immersed in 0.5 M H2SO4 solution in the absence and presence of ES."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d14506655223461adf0b7bb605d29ca9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "%"
   },
   {
     "type": "UncategorizedText",
@@ -548,6 +608,16 @@
       "page_number": 3
     },
     "text": ") r a e y / m m"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ac96469638e152a73cadbf62d44e2f39",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "("
   },
   {
     "type": "UncategorizedText",
@@ -571,6 +641,76 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "50c393f158c3de2db92fa9661bfb00ed",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "i"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "fafba0527c3953c4b6e0e5b5739ba836",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": ")"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "bec5fc8721d3102a76fbe552feadf43c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "E n o i t i b h n I"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "50c393f158c3de2db92fa9661bfb00ed",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "i"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "679d2bdce77a98d4cf4ad39b5c449e37",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "y c n e c i f f"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d1eb13b2e82a23a0d7b8618874dec2c8",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "(mm/year) 100 4 80 4 Efficiency (%) 1 _—__. —o— SS v- —a— 74 —~X_ Senn, —y— ~~. —6~ —__, ~ —o- ol, T T T T T T T 1"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "884784765bb9a529058c24f63946a7e2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "2.7"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "d2e181481b9515797bc42f282b122d25",
     "metadata": {
       "data_source": {},
@@ -591,13 +731,113 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "f82cec9d27e0eb21af4287cfc3f10c63",
+    "element_id": "eea8254c7500ba3de996aa8ad6af3991",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "10g 8g 6g 4g 2g Control"
+    "text": "100"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "917df3320d778ddbaa5c5c7742bc4046",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "10"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "5378796307535df3ec8d8b15a2e2dc56",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "20"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f4ccd05b3271c386ee55d9876c745001",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "30"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "673650f936cb3b0a2f93ce09d81be107",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "40"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "7ea9844ae84eccbf55e8330640865e36",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "50"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "6442bc26a7c562f5afe6467dab36365c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "70"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "95cf32708a31caa478a0e9141103ac56",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "60"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "95aebc97bc646c67fdcd923a5965b001",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "80"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4393447bd3c1d55ea7f97417ecb1b36a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "90"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "9a271f2a916b0b6ee6cecb2426f0b320",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "0"
   },
   {
     "type": "UncategorizedText",
@@ -641,6 +881,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "15024228096f537a105444cae5c26bbc",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Exposure time"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "97b912eb4a61df5f806ca6239dde3e1a",
     "metadata": {
       "data_source": {},
@@ -681,173 +931,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "15024228096f537a105444cae5c26bbc",
+    "element_id": "f82cec9d27e0eb21af4287cfc3f10c63",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "Exposure time"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "e5d46bc8ceb17f88e1cff33ecac97067",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Fig. 2. Corrosion rate versus exposure time for stainless steel immersed in 0.5 M H2SO4 solution in the absence and presence of ES."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "eea8254c7500ba3de996aa8ad6af3991",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "100"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4393447bd3c1d55ea7f97417ecb1b36a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "90"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "fafba0527c3953c4b6e0e5b5739ba836",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": ")"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d14506655223461adf0b7bb605d29ca9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "%"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ac96469638e152a73cadbf62d44e2f39",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "("
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "679d2bdce77a98d4cf4ad39b5c449e37",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "y c n e c i f f"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "50c393f158c3de2db92fa9661bfb00ed",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "i"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "bec5fc8721d3102a76fbe552feadf43c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "E n o i t i b h n I"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "50c393f158c3de2db92fa9661bfb00ed",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "i"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "95aebc97bc646c67fdcd923a5965b001",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "80"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6442bc26a7c562f5afe6467dab36365c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "70"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "95cf32708a31caa478a0e9141103ac56",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "60"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "7ea9844ae84eccbf55e8330640865e36",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "50"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "673650f936cb3b0a2f93ce09d81be107",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "40"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "f4ccd05b3271c386ee55d9876c745001",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "30"
+    "text": "10g 8g 6g 4g 2g Control"
   },
   {
     "type": "UncategorizedText",
@@ -858,36 +948,6 @@
       "page_number": 3
     },
     "text": "2g 4g 6g 8g 10g"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "5378796307535df3ec8d8b15a2e2dc56",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "20"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "917df3320d778ddbaa5c5c7742bc4046",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "10"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "9a271f2a916b0b6ee6cecb2426f0b320",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "0"
   },
   {
     "type": "UncategorizedText",
@@ -1221,6 +1281,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "4d69c97b539d79ed01e02a13a6b0df76",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "0 / C"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "a1fb50e6c86fae1679ef3351296fd671",
     "metadata": {
       "data_source": {},
@@ -1228,16 +1298,6 @@
       "page_number": 4
     },
     "text": "12"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d30a16d722f11b7f40f526a9f1909b4a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "C/0"
   },
   {
     "type": "UncategorizedText",
@@ -1258,16 +1318,6 @@
       "page_number": 4
     },
     "text": "8"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4d69c97b539d79ed01e02a13a6b0df76",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "0 / C"
   },
   {
     "type": "UncategorizedText",
@@ -1298,6 +1348,26 @@
       "page_number": 4
     },
     "text": "2"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "e0f4c6a3d561d8fe1c9526e49896279c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "—=—Cc/0 2+ T T T 1"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d30a16d722f11b7f40f526a9f1909b4a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "C/0"
   },
   {
     "type": "UncategorizedText",
@@ -1400,14 +1470,14 @@
     "text": "SEM HV: Q0KY WD: 14.89 rmrm ‘9EM MAO: 209 x Det: DOE Pectomsence In nanospact"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "6121f41a05c15afa2efe50af3e838da4",
+    "type": "FigureCaption",
+    "element_id": "520d1da08c86ce165cd2843e2dc27f98",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "Fig. 6. SEM/EDX image of as-received stainless steel."
+    "text": "SEMHV: 20.0KV WD: 15.54 mm EM ING: ACO x Dei: OSE"
   },
   {
     "type": "FigureCaption",
@@ -1430,14 +1500,14 @@
     "text": "Fig. 7. SEM/EDX image of stainless steel immersed in 0.5 M H2SO4 solution without inhibitor."
   },
   {
-    "type": "FigureCaption",
-    "element_id": "520d1da08c86ce165cd2843e2dc27f98",
+    "type": "NarrativeText",
+    "element_id": "6121f41a05c15afa2efe50af3e838da4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEMHV: 20.0KV WD: 15.54 mm EM ING: ACO x Dei: OSE"
+    "text": "Fig. 6. SEM/EDX image of as-received stainless steel."
   },
   {
     "type": "NarrativeText",
@@ -1581,6 +1651,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "ba5ec51d07a4ac0e951608704431d59a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": ")"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "5ef0df6b867bd357888b9dc42b36cd2d",
     "metadata": {
       "data_source": {},
@@ -1638,6 +1718,16 @@
       "page_number": 6
     },
     "text": "IE ð%Þ ¼ CRo (cid:3) CR"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c13539d1568999137c4e0354795cd37b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "CR"
   },
   {
     "type": "UncategorizedText",

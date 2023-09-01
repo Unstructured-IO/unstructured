@@ -3,6 +3,7 @@ from typing import List
 import numpy as np
 
 from unstructured.documents.elements import CoordinatesMetadata, Element
+from unstructured.logger import logger
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
 from unstructured.partition.utils.xycut import recursive_xy_cut
 
@@ -27,7 +28,8 @@ def sort_page_elements(
     - sort_mode (str, optional): The mode by which the elements will be sorted. Default is
      SORT_MODE_XY_CUT.
         - SORT_MODE_XY_CUT: Sorts elements based on XY-cut sorting approach. Requires the
-         recursive_xy_cut function and coordinates_to_bbox function to be defined.
+         recursive_xy_cut function and coordinates_to_bbox function to be defined. And requires all
+         elements to have valid cooridnates
         - SORT_MODE_BASIC: Sorts elements based on their coordinates. Elements without coordinates
          will be pushed to the end.
         - If an unrecognized sort_mode is provided, the function returns the elements as-is.
@@ -41,10 +43,17 @@ def sort_page_elements(
 
     if sort_mode == SORT_MODE_XY_CUT:
         coordinates_list = [el.metadata.coordinates for el in page_elements]
-        boxes = [coordinates_to_bbox(coords) for coords in coordinates_list]
-        res: List[int] = []
-        recursive_xy_cut(np.asarray(boxes).astype(int), np.arange(len(boxes)), res)
-        sorted_page_elements = [page_elements[i] for i in res]
+        if any(coords is None for coords in coordinates_list):
+            logger.warning(
+                "some or all elements are missing coordinates from this page so we can't sort the "
+                "elements",
+            )
+            sorted_page_elements = page_elements
+        else:
+            boxes = [coordinates_to_bbox(coords) for coords in coordinates_list]
+            res: List[int] = []
+            recursive_xy_cut(np.asarray(boxes).astype(int), np.arange(len(boxes)), res)
+            sorted_page_elements = [page_elements[i] for i in res]
     elif sort_mode == SORT_MODE_BASIC:
         sorted_page_elements = sorted(
             page_elements,

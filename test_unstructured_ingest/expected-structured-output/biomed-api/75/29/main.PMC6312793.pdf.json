@@ -11,6 +11,26 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "5566737ab4d91f1c1831fae87f37ec87",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "ELSEVIER"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9234133787d0a6b3976b16569c0b5cf3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "journal homepage: www.elsevier.com/locate/dib"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "869adddb184177031536477262e0dde0",
     "metadata": {
       "data_source": {},
@@ -28,16 +48,6 @@
       "page_number": 1
     },
     "text": "Data in Brief"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "9234133787d0a6b3976b16569c0b5cf3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "journal homepage: www.elsevier.com/locate/dib"
   },
   {
     "type": "UncategorizedText",
@@ -58,6 +68,16 @@
       "page_number": 1
     },
     "text": "A benchmark dataset for the multiple depot vehicle scheduling problem"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "77b037daa0a8a3f7349bd57dda36499f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "(eee"
   },
   {
     "type": "NarrativeText",
@@ -321,6 +341,36 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "41ce7670e476aaf9a595bc28c13dbba0",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "The dataset contains 60 different problem instances of the multiple depot vehicle scheduling pro- blem (MDVSP). Each problem instance is provided in a separate file. Each file is named as ‘RN-m-n-k.dat’, where ‘m’, ‘n’, and ‘k’ denote the number of depots, the number of trips, and the instance number"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "a18c70d23b71c51ddfe33311232c241c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "‘RN-8-1500-01.dat’, is the first problem instance with 8 depots and 1500 trips. For the number of depots, m, we used three values, 8, 12, and 16. The four values for the number of trips, n, are 1500, 2000, 2500, and 3000. For each size, (m,n), five instances are provided. The dataset can be downloaded from https://orlib.uqcloud.net."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "10c22bcf4c768b515be4e94bcafc71bf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "for"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "4443614d5e9dada0ac5245412ed35771",
     "metadata": {
       "data_source": {},
@@ -471,6 +521,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "faee1001fc912565a74ea2d69fa0d689",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "travel empty from —¢). Aschedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to determine the minimum number of schedules to cover all trips that minimizes total time in waiting and empty travel. The following requirements must be satisfied:"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "f41b22faaa980f33f59eae3874a19ce3",
     "metadata": {
       "data_source": {},
@@ -538,6 +598,16 @@
       "page_number": 3
     },
     "text": "a ls"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4137b01e139589b7a1d3b3fc4da031d8",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "must"
   },
   {
     "type": "UncategorizedText",
@@ -831,6 +901,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "6d7ebc44c5bc26207e62f4f628f912e1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "l"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "41a69e1feefeb9fc3da6681575258ad3",
     "metadata": {
       "data_source": {},
@@ -841,13 +921,33 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "2403ade754d57e65d82387d4e14d226f",
+    "element_id": "6d7ebc44c5bc26207e62f4f628f912e1",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "i , the start"
+    "text": "l"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "78f6ff03dfac8dfb7f319de1e369590d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "The number of depots, the number of trips, and the number of locations. The number of vehicles rg at each depot d. One line for each trip, i= 1,2, ...,n. Each line provides the start location and the end time ¢¢ for the corresponding trip. Each element, 6j, where i,j ¢ 1,2, ...,1, refers to the travel time between location i and location j."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "336074805fc853987abe6f7fe3ad97a6",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "time"
   },
   {
     "type": "UncategorizedText",
@@ -861,23 +961,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "6d7ebc44c5bc26207e62f4f628f912e1",
+    "element_id": "2403ade754d57e65d82387d4e14d226f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "l"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6d7ebc44c5bc26207e62f4f628f912e1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "l"
+    "text": "i , the start"
   },
   {
     "type": "UncategorizedText",
