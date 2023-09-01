@@ -56,6 +56,7 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
     "outlook": OutlookIngestDoc,
     "reddit": RedditIngestDoc,
     "s3": S3IngestDoc,
+    "salesforce": SalesforceIngestDoc,
     "sharepoint": SharepointIngestDoc,
     "slack": SlackIngestDoc,
     "wikipedia_html": WikipediaIngestHTMLDoc,
