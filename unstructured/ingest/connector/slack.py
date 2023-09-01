@@ -56,6 +56,10 @@ class SimpleSlackConfig(BaseConnectorConfig):
         """Parses a comma separated list of channels into a list."""
         return [x.strip() for x in channel_str.split(",")]
 
+@dataclass
+class SlackFileMeta:
+    date_created: str
+    date_modified: str
 
 @dataclass
 class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -71,6 +75,8 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     token: str
     oldest: Optional[str]
     latest: Optional[str]
+    file_exists: Optional[bool] = False
+    file_meta: Optional[SlackFileMeta] = None
     registry_name: str = "slack"
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
@@ -84,25 +90,33 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _output_filename(self):
         output_file = self.channel + ".json"
         return Path(self.standard_config.output_dir) / output_file
+    
+    @property
+    def date_created(self) -> Optional[str]:
+        if self.file_meta is None:
+            self.get_file_metadata()
+        return self.file_meta.date_created
 
+    @property
+    def date_modified(self) -> Optional[str]:
+        if self.file_meta is None:
+            self.get_file_metadata()
+        return self.file_meta.date_modified
+    
+    @property
+    def exists(self) -> Optional[bool]:
+        if self.file_exists is None:
+            self.get_file_metadata()
+        return self.file_exists
+    
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
-    @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
-    def get_file(self):
+    def _fetch_messages(self):
         from slack_sdk import WebClient
         from slack_sdk.errors import SlackApiError
-
-        """Fetches the data from a slack channel and stores it locally."""
-
-        self._create_full_tmp_dir_path()
-
-        if self.config.verbose:
-            logger.debug(f"fetching channel {self.channel} - PID: {os.getpid()}")
-
         self.client = WebClient(token=self.token)
-
         try:
             oldest = "0"
             latest = "0"
@@ -117,37 +131,69 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 oldest=oldest,
                 latest=latest,
             )
-
-            root = ET.Element("messages")
-            for message in result["messages"]:
-                message_elem = ET.SubElement(root, "message")
-                text_elem = ET.SubElement(message_elem, "text")
-                text_elem.text = message.get("text")
-
-                cursor = None
-                while True:
-                    try:
-                        response = self.client.conversations_replies(
-                            channel=self.channel,
-                            ts=message["ts"],
-                            cursor=cursor,
-                        )
-
-                        for reply in response["messages"]:
-                            reply_msg = reply.get("text")
-                            text_elem.text = "".join([str(text_elem.text), " <reply> ", reply_msg])
-
-                        if not response["has_more"]:
-                            break
-
-                        cursor = response["response_metadata"]["next_cursor"]
-
-                    except SlackApiError as e:
-                        print(f"Error retrieving replies: {e.response['error']}")
-
         except SlackApiError as e:
             logger.error(f"Error: {e}")
+            self.file_exists = False
+            raise
+        self.file_exists = True
+        return result
 
+
+    def get_file_metadata(self, messages = None):
+        if messages is None:
+            messages = self._fetch_messages()
+        
+        timestamps = [m["ts"] for m in messages]
+        timestamps.sort()
+        if len(timestamps) > 0:
+            created = datetime.fromtimestamp(float(timestamps[0]))
+            modified = datetime.fromtimestamp(float(timestamps[len(timestamps)-1]))
+
+        self.file_meta = SlackFileMeta(
+            created.isoformat(),
+            modified.isoformat()
+        )
+
+
+    @BaseIngestDoc.skip_if_file_exists
+    @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
+    def get_file(self):
+        from slack_sdk.errors import SlackApiError
+        """Fetches the data from a slack channel and stores it locally."""
+
+        self._create_full_tmp_dir_path()
+
+        if self.config.verbose:
+            logger.debug(f"fetching channel {self.channel} - PID: {os.getpid()}")
+    
+        result = self._fetch_messages()
+        root = ET.Element("messages")
+        for message in result["messages"]:
+            message_elem = ET.SubElement(root, "message")
+            text_elem = ET.SubElement(message_elem, "text")
+            text_elem.text = message.get("text")
+
+            cursor = None
+            while True:
+                try:
+                    response = self.client.conversations_replies(
+                        channel=self.channel,
+                        ts=message["ts"],
+                        cursor=cursor,
+                    )
+
+                    for reply in response["messages"]:
+                        reply_msg = reply.get("text")
+                        text_elem.text = "".join([str(text_elem.text), " <reply> ", reply_msg])
+
+                    if not response["has_more"]:
+                        break
+
+                    cursor = response["response_metadata"]["next_cursor"]
+
+                except SlackApiError as e:
+                    print(f"Error retrieving replies: {e.response['error']}")
+        self.get_file_metadata(result["messages"])
         tree = ET.ElementTree(root)
         tree.write(self._tmp_download_file(), encoding="utf-8", xml_declaration=True)
 

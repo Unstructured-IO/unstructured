@@ -68,7 +68,8 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOneDriveConfig
     file_name: str
     file_path: str
-    meta: OneDriveFileMeta
+    file_exists: Optional[bool] = None
+    file_meta: Optional[OneDriveFileMeta] = None
     registry_name: str = "onedrive"
 
     def __post_init__(self):
@@ -114,58 +115,82 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def date_created(self) -> Optional[str]:
-        return datetime.fromisoformat(self.file.created_datetime).isoformat()
+        if self.file_meta is None:
+            self.get_file_metadata()
+        return self.file_meta.date_created
 
     @property
     def date_modified(self) -> Optional[str]:
-        return datetime.fromisoformat(self.file.last_modified_datetime).isoformat()
+        if self.file_meta is None:
+            self.get_file_metadata()
+        return self.file_meta.date_modified
 
     @property
     def exists(self) -> Optional[bool]:
-        return (self.file.name is not None) and (self.file.get_property("size", 0) > 0)
+        if self.file_exists is None:
+            self.get_file_metadata()
+        return self.file_exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
-        record_source = self.file.to_json()
         return {
-            "id": record_source.get("id", ""),
-            "web_url": record_source.get("webUrl", ""),
-            "drive_id": record_source.get("parentReference", {}).get("driveId", ""),
+            "user_pname": self.config.user_pname,
+            "server_relative_path": self.server_relative_path
         }
 
     @property
     def version(self) -> Optional[str]:
-        if (n_versions := len(self.file.versions)) > 0:
-            return self.file.versions[n_versions - 1].properties.get("id", None)
-        return None
+        if self.file_meta is None:
+            self.get_file_metadata()
+        return self.file_meta.version
 
-    @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"], extras="onedrive")
-    def get_file(self):
+    def _fetch_file(self):
         from office365.graph_client import GraphClient
-
+        from office365.runtime.client_request_exception import ClientRequestException
         try:
             client = GraphClient(self.config.token_factory)
             root = client.users[self.config.user_pname].drive.get().execute_query().root
-            self.file = root.get_by_path(self.server_relative_path).get().execute_query()
-            fsize = self.file.get_property("size", 0)
-            self.output_dir.mkdir(parents=True, exist_ok=True)
+            file = root.get_by_path(self.server_relative_path).get().execute_query()
+        except ClientRequestException as e:
+            if e.response.status_code == 404:
+                self.file_exists = False
+            raise
+        self.file_exists = True
+        return file
 
-            if not self.download_dir.is_dir():
-                logger.debug(f"Creating directory: {self.download_dir}")
-                self.download_dir.mkdir(parents=True, exist_ok=True)
+    def get_file_metadata(self, file: "DriveItem" = None):
+        if file is None:
+            file = self._fetch_file()
 
-            if fsize > MAX_MB_SIZE:
-                logger.info(f"Downloading file with size: {fsize} bytes in chunks")
-                with self.filename.open(mode="wb") as f:
-                    self.file.download_session(f, chunk_size=1024 * 1024 * 100).execute_query()
-            else:
-                with self.filename.open(mode="wb") as f:
-                    self.file.download(f).execute_query()
-        except Exception as e:
-            logger.error(f"Error while downloading and saving file: {self.filename}.")
-            logger.error(e)
-            return
+        version = None
+        if (n_versions := len(file.versions)) > 0:
+            version = file.versions[n_versions - 1].properties.get("id", None)
+
+        self.file_meta = OneDriveFileMeta(
+            datetime.strptime(file.created_datetime, "%Y-%m-%dT%H:%M:%SZ",).isoformat(),
+            datetime.strptime(file.last_modified_datetime, "%Y-%m-%dT%H:%M:%SZ",).isoformat(),
+            version
+        )
+
+    @BaseIngestDoc.skip_if_file_exists
+    def get_file(self):
+        file = self._fetch_file()
+        self.get_file_metadata(file)
+        fsize = file.get_property("size", 0)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+
+        if not self.download_dir.is_dir():
+            logger.debug(f"Creating directory: {self.download_dir}")
+            self.download_dir.mkdir(parents=True, exist_ok=True)
+
+        if fsize > MAX_MB_SIZE:
+            logger.info(f"Downloading file with size: {fsize} bytes in chunks")
+            with self.filename.open(mode="wb") as f:
+                file.download_session(f, chunk_size=1024 * 1024 * 100).execute_query()
+        else:
+            with self.filename.open(mode="wb") as f:
+                file.download(f).execute_query()
         logger.info(f"File downloaded: {self.filename}")
         return
 
@@ -196,20 +221,11 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
     def _gen_ingest_doc(self, file: "DriveItem") -> OneDriveIngestDoc:
         file_path = file.parent_reference.path.split(":")[-1]
         file_path = file_path[1:] if file_path[0] == "/" else file_path
-        version = ""
-        if (n_versions := len(file.versions)) > 0:
-            version = file.versions[n_versions - 1].content
-
         return OneDriveIngestDoc(
             self.standard_config,
             self.config,
             file.name,
             file_path,
-            OneDriveFileMeta(
-                file.created_datetime,
-                file.last_modified_datetime,
-                version,
-            ),
         )
 
     def initialize(self):
