@@ -165,11 +165,13 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         document_history = page["history"]
         #
         self.file_meta.date_created = datetime.strptime(
-            document_history["createdDate"], "%Y-%m-%dT%H:%M:%S.%fZ",
+            document_history["createdDate"],
+            "%Y-%m-%dT%H:%M:%S.%fZ",
         ).isoformat()
         if date_modified := document_history.get("lastUpdated", "").get("when", ""):
             self.file_meta.date_modified = datetime.strptime(
-                date_modified, "%Y-%m-%dT%H:%M:%S.%fZ",
+                date_modified,
+                "%Y-%m-%dT%H:%M:%S.%fZ",
             ).isoformat()
         else:
             self.file_meta.date_modified = self.file_meta.date_created

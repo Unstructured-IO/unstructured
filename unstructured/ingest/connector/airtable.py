@@ -123,8 +123,12 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return
         dates = [r.get("createdTime", "") for r in rows]
         dates.sort()
-        self.file_meta.date_created = datetime.strptime(dates[0], "%Y-%m-%dT%H:%M:%S.%fZ",).isoformat()
-        self.file_meta.date_modified = datetime.strptime(dates[-1], "%Y-%m-%dT%H:%M:%S.%fZ",).isoformat()
+        self.file_meta.date_created = datetime.strptime(
+            dates[0], "%Y-%m-%dT%H:%M:%S.%fZ",
+        ).isoformat()
+        self.file_meta.date_modified = datetime.strptime(
+            dates[-1], "%Y-%m-%dT%H:%M:%S.%fZ",
+        ).isoformat()
 
     @requires_dependencies(["pandas"])
     @BaseIngestDoc.skip_if_file_exists
