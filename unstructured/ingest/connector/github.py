@@ -37,13 +37,21 @@ class SimpleGitHubConfig(SimpleGitConfig):
         # If there's no issues, store the core repository info
         self.repo_path = parsed_gh_url.path
 
+    @requires_dependencies(["github"], extras="github")
+    def _get_repo(self) -> "Repository":
+        from github import Github
+
+        github = Github(self.access_token)
+        return github.get_repo(self.repo_path)
+
 
 @dataclass
 class GitHubIngestDoc(GitIngestDoc):
-    repo: "Repository"
+    config: SimpleGitHubConfig
+    registry_name: str = "github"
 
     def _fetch_and_write(self) -> None:
-        content_file = self.repo.get_contents(self.path)
+        content_file = self.config._get_repo().get_contents(self.path)
         contents = b""
         if (
             not content_file.content  # type: ignore
@@ -66,20 +74,16 @@ class GitHubIngestDoc(GitIngestDoc):
 @requires_dependencies(["github"], extras="github")
 @dataclass
 class GitHubConnector(GitConnector):
-    def __post_init__(self) -> None:
-        from github import Github
-
-        self.github = Github(self.config.access_token)
+    config: SimpleGitHubConfig
 
     def get_ingest_docs(self):
-        repo = self.github.get_repo(self.config.repo_path)
-
+        repo = self.config._get_repo()
         # Load the Git tree with all files, and then create Ingest docs
         # for all blobs, i.e. all files, ignoring directories
         sha = self.config.branch or repo.default_branch
         git_tree = repo.get_git_tree(sha, recursive=True)
         return [
-            GitHubIngestDoc(self.standard_config, self.config, element.path, repo)
+            GitHubIngestDoc(self.standard_config, self.config, element.path)
             for element in git_tree.tree
             if element.type == "blob"
             and self.is_file_type_supported(element.path)

@@ -1,4 +1,15 @@
-## 0.10.10-dev3
+## 0.10.11-dev1
+
+### Enhancements
+
+### Features
+
+* Add in ingest cli s3 writer
+* Add Jira Connector to be able to pull issues from a Jira organization
+
+### Fixes
+
+## 0.10.10
 
 ### Enhancements
 
@@ -7,12 +18,14 @@
   on carriage returns in the XML. Since `partition_xml` no longer calls `partition_text`,
   `min_partition` and `max_partition` are no longer supported in `partition_xml`.
 * Bump `unstructured-inference==0.5.18`, change non-default detectron2 classification threshold
+* Upgrade base image from rockylinux 8 to rockylinux 9
+* Serialize IngestDocs to JSON when passing to subprocesses
 
 ### Features
 
-* Add Jira Connector to be able to pull issues from a Jira organization
-
 ### Fixes
+
+- Fix a bug where mismatched `elements` and `bboxes` are passed into `add_pytesseract_bbox_to_elements`
 
 ## 0.10.9
 
@@ -32,6 +45,7 @@
 * Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
 * Re-enable test-ingest-confluence-diff for ingest tests
 * Fix syntax for ingest test check number of files
+* Fix a bug where `xy-cut` sorting attemps to sort elements without valid coordinates; now xy cut sorting only works when **all** elements have valid coordinates
 
 ## 0.10.8
 

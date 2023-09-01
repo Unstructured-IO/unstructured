@@ -89,6 +89,7 @@ six==1.16.0
     #   isodate
 typing-extensions==4.7.1
     # via
+    #   -c requirements/base.txt
     #   azure-core
     #   azure-storage-blob
 urllib3==1.26.16

@@ -50,6 +50,7 @@ numpy==1.24.4
     #   transformers
 packaging==23.1
     # via
+    #   -c requirements/base.txt
     #   huggingface-hub
     #   transformers
 pyyaml==6.0.1
@@ -94,6 +95,7 @@ transformers==4.32.1
     # via -r requirements/huggingface.in
 typing-extensions==4.7.1
     # via
+    #   -c requirements/base.txt
     #   filelock
     #   huggingface-hub
     #   torch

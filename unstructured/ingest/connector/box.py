@@ -27,36 +27,25 @@ class AccessTokenError(Exception):
 @dataclass
 class SimpleBoxConfig(SimpleFsspecConfig):
     @requires_dependencies(["boxfs"], extras="box")
-    def __post_init__(self):
+    def get_access_kwargs(self):
+        # Return access_kwargs with oauth. The oauth object can not be stored directly in the config
+        # because it is not serializable.
         from boxsdk import JWTAuth
 
-        super().__post_init__()
-        # We are passing in a json file path via the envt. variable.
-        # Need to convert that to an Oauth2 object.
-        try:
-            self.access_kwargs["oauth"] = JWTAuth.from_settings_file(
+        access_kwargs_with_oauth = {
+            "oauth": JWTAuth.from_settings_file(
                 self.access_kwargs["box_app_config"],
-            )
-        except (TypeError, ValueError, KeyError) as e:
-            raise AccessTokenError(f"Problem with box_app_config: {e}")
-
-    def __getstate__(self):
-        """
-        NOTE: This should not be a permanent solution.
-        Multiprocessing fails when it tries to pickle some Locks in the SimpleBoxConfig.
-        __getstate__ is called right before an object gets pickled.
-        We are setting those attributes to None to allow pickling.
-        """
-        state = self.__dict__.copy()
-        state["access_kwargs"]["oauth"]._refresh_lock = None
-        state["access_kwargs"]["oauth"]._rsa_private_key._blinding_lock = None
-        state["access_kwargs"]["oauth"]._rsa_private_key._backend = None
-        state["access_kwargs"]["oauth"]._rsa_private_key._rsa_cdata = None
-        state["access_kwargs"]["oauth"]._rsa_private_key._evp_pkey = None
-        return state
+            ),
+        }
+        access_kwargs_with_oauth.update(self.access_kwargs)
+        return access_kwargs_with_oauth
 
 
+@dataclass
 class BoxIngestDoc(FsspecIngestDoc):
+    config: SimpleBoxConfig
+    registry_name: str = "box"
+
     @requires_dependencies(["boxfs", "fsspec"], extras="box")
     def get_file(self):
         super().get_file()

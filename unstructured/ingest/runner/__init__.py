@@ -48,4 +48,5 @@ __all__ = [
     "sharepoint",
     "slack",
     "wikipedia",
+    "writer_map",
 ]

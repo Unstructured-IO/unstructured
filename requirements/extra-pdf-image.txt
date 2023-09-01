@@ -91,6 +91,7 @@ opencv-python==4.8.0.76
     #   unstructured-inference
 packaging==23.1
     # via
+    #   -c requirements/base.txt
     #   huggingface-hub
     #   matplotlib
     #   onnxruntime
@@ -201,6 +202,7 @@ transformers==4.32.1
     # via unstructured-inference
 typing-extensions==4.7.1
     # via
+    #   -c requirements/base.txt
     #   filelock
     #   huggingface-hub
     #   iopath
