@@ -1,7 +1,7 @@
 [
   {
     "type": "NarrativeText",
-    "element_id": "c08fcabe68ba13b7a7cc6592bd5513a8",
+    "element_id": "de114c294fc991a5e54f2ac72cb43cae",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
@@ -21,6 +21,246 @@
         "i"
       ]
     },
-    "text": "January 2023(Someone fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.)The way to get new ideas is to notice anomalies: what seems strange,\nor missing, or broken? You can see anomalies in everyday life (much\nof standup comedy is based on this), but the best place to look for\nthem is at the frontiers of knowledge.Knowledge grows fractally.\nFrom a distance its edges look smooth, but when you learn enough\nto get close to one, you'll notice it's full of gaps. These gaps\nwill seem obvious; it will seem inexplicable that no one has tried\nx or wondered about y. In the best case, exploring such gaps yields\nwhole new fractal buds."
+    "text": "January 2023(Someone fed my essays into GPT to make something that could answer"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ff8e75afa0e8e604d1d2fedf2679a352",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "index.html",
+        "https://twitter.com/stef/status/1617222428727586816"
+      ],
+      "link_texts": [
+        null,
+        null
+      ],
+      "emphasized_text_contents": [
+        "(Someone fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.)"
+      ],
+      "emphasized_text_tags": [
+        "i"
+      ]
+    },
+    "text": "questions based on them, then asked it where good ideas come from. The"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "591ac8e9e33cf5a11a81bb39af1433b4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "index.html",
+        "https://twitter.com/stef/status/1617222428727586816"
+      ],
+      "link_texts": [
+        null,
+        null
+      ],
+      "emphasized_text_contents": [
+        "(Someone fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.)"
+      ],
+      "emphasized_text_tags": [
+        "i"
+      ]
+    },
+    "text": "answer was ok, but not what I would have said. This is what I would have said. )The way to get new ideas is to notice anomalies: what seems strange,"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "1d458e0226406493001de608626cb962",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "index.html",
+        "https://twitter.com/stef/status/1617222428727586816"
+      ],
+      "link_texts": [
+        null,
+        null
+      ],
+      "emphasized_text_contents": [
+        "(Someone fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.)"
+      ],
+      "emphasized_text_tags": [
+        "i"
+      ]
+    },
+    "text": "or missing, or broken? You can see anomalies in everyday life (much"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "eb8ea5146b607f671ee03fb8fda706f1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "index.html",
+        "https://twitter.com/stef/status/1617222428727586816"
+      ],
+      "link_texts": [
+        null,
+        null
+      ],
+      "emphasized_text_contents": [
+        "(Someone fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.)"
+      ],
+      "emphasized_text_tags": [
+        "i"
+      ]
+    },
+    "text": "of standup comedy is based on this), but the best place to look for"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e7350209c9792d438b4ce6a6a25187be",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "index.html",
+        "https://twitter.com/stef/status/1617222428727586816"
+      ],
+      "link_texts": [
+        null,
+        null
+      ],
+      "emphasized_text_contents": [
+        "(Someone fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.)"
+      ],
+      "emphasized_text_tags": [
+        "i"
+      ]
+    },
+    "text": "them is at the frontiers of knowledge.Knowledge grows fractally."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "452b0380fbc6a34ffbabcef0c5f72a72",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "index.html",
+        "https://twitter.com/stef/status/1617222428727586816"
+      ],
+      "link_texts": [
+        null,
+        null
+      ],
+      "emphasized_text_contents": [
+        "(Someone fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.)"
+      ],
+      "emphasized_text_tags": [
+        "i"
+      ]
+    },
+    "text": "From a distance its edges look smooth, but when you learn enough"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "51954633272462fb205043c10c6321b5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "index.html",
+        "https://twitter.com/stef/status/1617222428727586816"
+      ],
+      "link_texts": [
+        null,
+        null
+      ],
+      "emphasized_text_contents": [
+        "(Someone fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.)"
+      ],
+      "emphasized_text_tags": [
+        "i"
+      ]
+    },
+    "text": "to get close to one, you'll notice it's full of gaps. These gaps"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4bfe3c28f6ecef9b9cb7b40c0aface51",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "index.html",
+        "https://twitter.com/stef/status/1617222428727586816"
+      ],
+      "link_texts": [
+        null,
+        null
+      ],
+      "emphasized_text_contents": [
+        "(Someone fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.)"
+      ],
+      "emphasized_text_tags": [
+        "i"
+      ]
+    },
+    "text": "will seem obvious; it will seem inexplicable that no one has tried"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "2901c12d0a6fd32a1b393a975c3b3d5f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "index.html",
+        "https://twitter.com/stef/status/1617222428727586816"
+      ],
+      "link_texts": [
+        null,
+        null
+      ],
+      "emphasized_text_contents": [
+        "(Someone fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.)"
+      ],
+      "emphasized_text_tags": [
+        "i"
+      ]
+    },
+    "text": "x or wondered about y. In the best case, exploring such gaps yields"
+  },
+  {
+    "type": "Title",
+    "element_id": "aaba8d80702beb744df9595cb032b976",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "index.html",
+        "https://twitter.com/stef/status/1617222428727586816"
+      ],
+      "link_texts": [
+        null,
+        null
+      ],
+      "emphasized_text_contents": [
+        "(Someone fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.)"
+      ],
+      "emphasized_text_tags": [
+        "i"
+      ]
+    },
+    "text": "whole new fractal buds."
   }
 ]
