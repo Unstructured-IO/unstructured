@@ -4,8 +4,8 @@ import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Type
-from unstructured.ingest.error import SourceConnectionError
 
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces2 import (
     BaseConnectorConfig,
     BaseDestinationConnector,

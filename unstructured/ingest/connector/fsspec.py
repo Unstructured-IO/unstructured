@@ -3,8 +3,8 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Type
-from unstructured.ingest.error import SourceConnectionError
 
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
