@@ -561,7 +561,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "Table": Table,
     "Header": Header,
     "Footer": Footer,
-    "Caption": Text,
+    "Caption": FigureCaption,
     "Footnote": Footer,
     "Formula": Formula,
     "List-item": ListItem,

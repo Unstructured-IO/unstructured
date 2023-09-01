@@ -1,9 +1,9 @@
-## 0.10.12-dev2
+## 0.10.12-dev3
 
 ### Enhancements
 
 * Removed PIL pin as issue has been resolved upstream
-
+* YoloX types added
 ### Features
 
 ### Fixes
