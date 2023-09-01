@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from itertools import chain
 from pathlib import Path
 from typing import List, Optional
+from unstructured.ingest.error import SourceConnectionError
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -109,6 +110,7 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _output_filename(self):
         return Path(self.output_filepath).resolve()
 
+    @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"], extras="outlook")
     def get_file(self):

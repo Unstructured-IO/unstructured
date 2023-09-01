@@ -4,6 +4,7 @@ import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Type
+from unstructured.ingest.error import SourceConnectionError
 
 from unstructured.ingest.interfaces2 import (
     BaseConnectorConfig,
@@ -104,6 +105,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Includes "directories" in the object path"""
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
+    @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the file from the current filesystem and stores it locally."""

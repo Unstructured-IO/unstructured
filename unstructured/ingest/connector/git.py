@@ -3,6 +3,7 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
+from unstructured.ingest.error import SourceConnectionError
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -40,6 +41,7 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """includes directories in in the gitlab repository"""
         self.filename.parent.mkdir(parents=True, exist_ok=True)
 
+    @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
