@@ -39,6 +39,10 @@ if TYPE_CHECKING:
         LocationlessLayoutElement,
     )
 
+HIERARCHY_RULE_SET = {
+    "Title": ["Title", "Text", "UncategorizedText", "NarrativeText", "ListItem", "BulletedText", "Figure", "Table"],
+    "Header": ["Title", "Text", "UncategorizedText", "NarrativeText", "ListItem", "BulletedText", "Figure", "Table"],
+}
 
 def get_last_modified_date(filename: str) -> Union[str, None]:
     modify_date = datetime.fromtimestamp(os.path.getmtime(filename))
@@ -474,5 +478,23 @@ def document_to_element_list(
         if include_page_breaks and i < num_pages - 1:
             sorted_page_elements.append(PageBreak(text=""))
         elements.extend(sorted_page_elements)
+
+    elements = set_element_hierarchy(elements)
+    return elements
+
+def set_element_hierarchy(elements):
+    stack = []
+    for element in elements:
+        # Skip elements that already have a parent
+        if element.metadata.parent_id:
+            continue
+
+        category = element.category
+        
+        should_pop = stack and category not in HIERARCHY_RULE_SET.get(stack[-1].category, [])
+        stack = [el for el in stack if not should_pop] + ([element] if category in HIERARCHY_RULE_SET else [])
+        
+        if stack:
+            element.metadata.parent_id = stack[-1].id
 
     return elements
