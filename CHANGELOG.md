@@ -1,4 +1,4 @@
-## 0.10.12-dev1
+## 0.10.12-dev2
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 ### Fixes
 
+* `partition_html` splits on paragraphs separated by line breaks into distince elements.
 * Update version-sync to prevent duplicate release versions
 
 ## 0.10.11
