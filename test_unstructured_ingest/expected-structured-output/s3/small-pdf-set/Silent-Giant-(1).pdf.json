@@ -1,6 +1,16 @@
 [
   {
     "type": "UncategorizedText",
+    "element_id": "4c4df5a5d648146ad05a437213014e72",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "WORLD NUCLEAR //s88ciation"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "51174df4a3a78fe261885b1818b66876",
     "metadata": {
       "data_source": {},
@@ -51,16 +61,6 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ae77460bce2d3a52d823954ccb9c708f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Energy is the essential agent for promoting human development, and global demand is projected to increase significantly in the coming decades. Securing access to modern and affordable energy is essential for lifting people out of poverty, and for promoting energy independence and economic growth."
-  },
-  {
-    "type": "NarrativeText",
     "element_id": "8e1e0570b2ba9211cc184c21a3ffbf90",
     "metadata": {
       "data_source": {},
@@ -68,6 +68,16 @@
       "page_number": 3
     },
     "text": "Nuclear energy is a proven solution with a long and well-established track record. Nuclear reactors – a grand total of 445 in 30 countries – are the low-carbon backbone of electricity systems, operating in the background, day in and day out, often out of sight and out of mind. Capable of generating immense amounts of clean power, they are the silent giants upon which we rely daily."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ae77460bce2d3a52d823954ccb9c708f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Energy is the essential agent for promoting human development, and global demand is projected to increase significantly in the coming decades. Securing access to modern and affordable energy is essential for lifting people out of poverty, and for promoting energy independence and economic growth."
   },
   {
     "type": "NarrativeText",
@@ -181,6 +191,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "62f86400f0347bdbe07e40c3063fd3bb",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "h W T"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "3034a0577f73a1b5076e3a6e4e209252",
     "metadata": {
       "data_source": {},
@@ -188,16 +208,6 @@
       "page_number": 4
     },
     "text": "40,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "8635a2005fe7dc2491c5d0f888d863ca",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " CSP"
   },
   {
     "type": "UncategorizedText",
@@ -211,26 +221,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "3c01e983d1c0b6e1f7e5009554c15bfc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Solar PV"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "24fda359cfaadc2b4765e4d96cc580bd",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Geothermal"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "ba980165f95d647935bbb000d0a9bf57",
     "metadata": {
       "data_source": {},
@@ -238,26 +228,6 @@
       "page_number": 4
     },
     "text": "30,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b4686d8980288cc18e25dd88862018fb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Wind"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "62f86400f0347bdbe07e40c3063fd3bb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "h W T"
   },
   {
     "type": "UncategorizedText",
@@ -271,16 +241,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "6a5e5dc7ebe4536d6c4a8358ceae6b52",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Bioenergy"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "6ea17978f8b5646d74e3640938409b0b",
     "metadata": {
       "data_source": {},
@@ -288,26 +248,6 @@
       "page_number": 4
     },
     "text": "20,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "f3869bfc418f6b38b211f34af7bbbee9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Hydro"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b1dad634c86b14162ce382a54d48adc4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Nuclear"
   },
   {
     "type": "UncategorizedText",
@@ -321,16 +261,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "17c583e364eb53f4713ee1b11c10eae5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Gas"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "ebf087fd620248057b4b331f6ff855ce",
     "metadata": {
       "data_source": {},
@@ -338,16 +268,6 @@
       "page_number": 4
     },
     "text": "10,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "79615d00dc2ebc2416ace53ae6e85050",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Oil"
   },
   {
     "type": "UncategorizedText",
@@ -361,16 +281,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "6ffe26de44efed734882cd46e5aec24e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Coal"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "9a271f2a916b0b6ee6cecb2426f0b320",
     "metadata": {
       "data_source": {},
@@ -378,6 +288,76 @@
       "page_number": 4
     },
     "text": "0"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4a60bf7d4bc1e485744cf7e8d0860524",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "zz"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "7ace431cb61584cb9b8dc7ec08cf38ac",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "~"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "bda050585a00f0f6cb502350559d7553",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "—"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "380918b946a526640a40df5dced65167",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "="
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "bda050585a00f0f6cb502350559d7553",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "—"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "bda050585a00f0f6cb502350559d7553",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "—"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "9911f4d2b18457c4726664d309385072",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "__"
   },
   {
     "type": "UncategorizedText",
@@ -430,6 +410,106 @@
     "text": "2040"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "8635a2005fe7dc2491c5d0f888d863ca",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " CSP"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "3c01e983d1c0b6e1f7e5009554c15bfc",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " Solar PV"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "24fda359cfaadc2b4765e4d96cc580bd",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " Geothermal"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "b4686d8980288cc18e25dd88862018fb",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " Wind"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "6a5e5dc7ebe4536d6c4a8358ceae6b52",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " Bioenergy"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f3869bfc418f6b38b211f34af7bbbee9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " Hydro"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "b1dad634c86b14162ce382a54d48adc4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " Nuclear"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "17c583e364eb53f4713ee1b11c10eae5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " Gas"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "79615d00dc2ebc2416ace53ae6e85050",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " Oil"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "6ffe26de44efed734882cd46e5aec24e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " Coal"
+  },
+  {
     "type": "NarrativeText",
     "element_id": "578e73d091a9463a76ea7502a6a92503",
     "metadata": {
@@ -461,6 +541,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "f6c1b0e99bd5f8d7ca3c879d69bca871",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "h W G"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "1d4566e4a45f0c4aba925b605c5c29a9",
     "metadata": {
       "data_source": {},
@@ -468,16 +558,6 @@
       "page_number": 4
     },
     "text": "30,000,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "57e953601d50f87b811dd3a1176459b8",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " High-carbon  Low-carbon"
   },
   {
     "type": "UncategorizedText",
@@ -498,16 +578,6 @@
       "page_number": 4
     },
     "text": "20,000,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "f6c1b0e99bd5f8d7ca3c879d69bca871",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "h W G"
   },
   {
     "type": "UncategorizedText",
@@ -548,6 +618,16 @@
       "page_number": 4
     },
     "text": "0"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "57e953601d50f87b811dd3a1176459b8",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " High-carbon  Low-carbon"
   },
   {
     "type": "UncategorizedText",
@@ -871,6 +951,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "0e6fac6a3ad129a64c2b9d6eaf6680e4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "SS"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "6eb2aff0d17ccc5c242423c49cd5b462",
     "metadata": {
       "data_source": {},
@@ -921,16 +1011,6 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "13ff2375260e277c2dfbc8826aa50a65",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Additionally, electricity markets fail to recognize the relative costs of different forms of electricity generation. Whilst the nuclear industry takes responsibility for its lifecycle costs (including decommissioning and waste management), other electricity generators do not. Fossil fuel generators are rarely required to pay the price in line with the environmental and health damage that their emissions cause, whilst the cost of wind and solar does not include the disposal of the sometimes toxic materials at the end of their life."
-  },
-  {
-    "type": "NarrativeText",
     "element_id": "4b3dad9b769c100e89b2c082e7d9e13e",
     "metadata": {
       "data_source": {},
@@ -938,6 +1018,16 @@
       "page_number": 7
     },
     "text": "In regard to the need to harmonize regulations, multiple regulatory barriers stemming from diverse national licensing processes and safety requirements currently limit global nuclear trade and investment. A lack of international standardization places unnecessary regulatory burdens on nuclear activities and causes delays in the licensing of new designs, hindering innovation."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "13ff2375260e277c2dfbc8826aa50a65",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Additionally, electricity markets fail to recognize the relative costs of different forms of electricity generation. Whilst the nuclear industry takes responsibility for its lifecycle costs (including decommissioning and waste management), other electricity generators do not. Fossil fuel generators are rarely required to pay the price in line with the environmental and health damage that their emissions cause, whilst the cost of wind and solar does not include the disposal of the sometimes toxic materials at the end of their life."
   },
   {
     "type": "NarrativeText",
@@ -981,6 +1071,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "fb67f6e44a2659caaa0e28f08280eb3c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "a t a F"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "e98b5c1980fd411c375277e496c5bf24",
     "metadata": {
       "data_source": {},
@@ -1011,13 +1111,23 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "fb67f6e44a2659caaa0e28f08280eb3c",
+    "element_id": "380918b946a526640a40df5dced65167",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "a t a F"
+    "text": "="
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "87d56fd00875b76bf2209a535fa9167a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "“99 :"
   },
   {
     "type": "UncategorizedText",
@@ -1051,13 +1161,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "95aebc97bc646c67fdcd923a5965b001",
+    "element_id": "673650f936cb3b0a2f93ce09d81be107",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "80"
+    "text": "40"
   },
   {
     "type": "UncategorizedText",
@@ -1071,16 +1181,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "673650f936cb3b0a2f93ce09d81be107",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "40"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "5378796307535df3ec8d8b15a2e2dc56",
     "metadata": {
       "data_source": {},
@@ -1088,6 +1188,16 @@
       "page_number": 8
     },
     "text": "20"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "95aebc97bc646c67fdcd923a5965b001",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "80"
   },
   {
     "type": "UncategorizedText",
@@ -1101,13 +1211,23 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "97b912eb4a61df5f806ca6239dde3e1a",
+    "element_id": "fc45e9339e2e3d1124113113be364f44",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "120"
+    "text": ":"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "a365e757e54096274d39b6cd5c4032a9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "1 :"
   },
   {
     "type": "UncategorizedText",
@@ -1118,6 +1238,16 @@
       "page_number": 8
     },
     "text": "C oal"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "97b912eb4a61df5f806ca6239dde3e1a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "120"
   },
   {
     "type": "UncategorizedText",
@@ -1141,16 +1271,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "325eaeb55b0a5f734132cd4762be703b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "71.9"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "e942714ca8bde7c2efa0a45180d3bcb0",
     "metadata": {
       "data_source": {},
@@ -1161,23 +1281,23 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "fcad23b33ff09a15b2bb9173b83240b6",
+    "element_id": "325eaeb55b0a5f734132cd4762be703b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "8.5"
+    "text": "71.9"
   },
   {
     "type": "UncategorizedText",
-    "element_id": "593ee7fbbc541c411bbecfec38b4592a",
+    "element_id": "593cbe414f10662e62c0da03ce3302b8",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "1.78"
+    "text": "fe)"
   },
   {
     "type": "UncategorizedText",
@@ -1191,6 +1311,56 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "e7ac0786668e0ff0f02b62bd04f45ff6",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": ":"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "1"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "1b16b1df538ba12dc3f97edbb85caa70",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "n"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "1"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "cdb4ee2aea69cc6a83331bbe96dc2caa",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "."
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "3f2b409fe77e145f11bb40601dd7fbc6",
     "metadata": {
       "data_source": {},
@@ -1198,6 +1368,16 @@
       "page_number": 8
     },
     "text": "(U K)"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "fcad23b33ff09a15b2bb9173b83240b6",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "8.5"
   },
   {
     "type": "UncategorizedText",
@@ -1211,13 +1391,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "87bab34064761c6eac995b7feca9a87c",
+    "element_id": "593ee7fbbc541c411bbecfec38b4592a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "0.245"
+    "text": "1.78"
   },
   {
     "type": "UncategorizedText",
@@ -1231,13 +1411,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "93d485bc75a984e0b6600c7735eb7e91",
+    "element_id": "87bab34064761c6eac995b7feca9a87c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "<0.01"
+    "text": "0.245"
   },
   {
     "type": "UncategorizedText",
@@ -1248,6 +1428,16 @@
       "page_number": 8
     },
     "text": "N uclear*"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "93d485bc75a984e0b6600c7735eb7e91",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "<0.01"
   },
   {
     "type": "NarrativeText",
@@ -1531,6 +1721,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "i"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "ef45d070844e892dd7274e2b58d343ea",
     "metadata": {
       "data_source": {},
@@ -1558,6 +1758,16 @@
       "page_number": 9
     },
     "text": "400"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "30b160442c1de4494644bbb253d47d62",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "z="
   },
   {
     "type": "UncategorizedText",
@@ -1591,6 +1801,46 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "c11e3f4837efde2441e23a7b9da02131",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "200"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "0b06ee5051e3d7dd686665a41ae1f2d9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "y ——"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "53bd2f6768df30b079584dd84720693b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "-—"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "53bd2f6768df30b079584dd84720693b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "-—"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "a9841ec903dc8bcd39950abd149df9dd",
     "metadata": {
       "data_source": {},
@@ -1608,16 +1858,6 @@
       "page_number": 9
     },
     "text": " Hydro"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c11e3f4837efde2441e23a7b9da02131",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "200"
   },
   {
     "type": "UncategorizedText",
@@ -1831,6 +2071,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "d3fc2842ddfad4c8d3859f84d4439bfd",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "Vv"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "24264aa519b9e325bd189fe67fa3ff8d",
     "metadata": {
       "data_source": {},
@@ -1838,6 +2088,16 @@
       "page_number": 10
     },
     "text": "v"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "vi"
   },
   {
     "type": "UncategorizedText",
@@ -1941,6 +2201,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "de49f1c955d7c8a4d1d6d261c1cf21ba",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "The Silent Giant © 2019 World Nuclear Association. Registered in England and Wales, company number 01215741"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "821daa4396c0087d9d5ee9240bc5c85c",
     "metadata": {
       "data_source": {},
@@ -1958,15 +2228,5 @@
       "page_number": 12
     },
     "text": "World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "de49f1c955d7c8a4d1d6d261c1cf21ba",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 12
-    },
-    "text": "The Silent Giant © 2019 World Nuclear Association. Registered in England and Wales, company number 01215741"
   }
 ]
