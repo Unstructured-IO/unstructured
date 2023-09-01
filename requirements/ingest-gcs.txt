@@ -14,20 +14,20 @@ attrs==23.1.0
     # via aiohttp
 beautifulsoup4==4.12.2
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   bs4
 bs4==0.0.1
-    # via -r requirements/ingest-gcs.in
+    # via -r ingest-gcs.in
 cachetools==5.3.1
     # via google-auth
 certifi==2023.7.22
     # via
-    #   -c requirements/base.txt
-    #   -c requirements/constraints.in
+    #   -c base.txt
+    #   -c constraints.in
     #   requests
 charset-normalizer==3.2.0
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   aiohttp
     #   requests
 decorator==5.1.1
@@ -38,10 +38,10 @@ frozenlist==1.4.0
     #   aiosignal
 fsspec==2023.6.0
     # via
-    #   -r requirements/ingest-gcs.in
+    #   -r ingest-gcs.in
     #   gcsfs
 gcsfs==2023.6.0
-    # via -r requirements/ingest-gcs.in
+    # via -r ingest-gcs.in
 google-api-core==2.11.1
     # via
     #   google-cloud-core
@@ -67,7 +67,7 @@ googleapis-common-protos==1.60.0
     # via google-api-core
 idna==3.4
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   requests
     #   yarl
 multidict==6.0.4
@@ -76,10 +76,11 @@ multidict==6.0.4
     #   yarl
 oauthlib==3.2.2
     # via requests-oauthlib
-protobuf==4.23.4
+protobuf==4.24.2
     # via
-    #   -c requirements/constraints.in
+    #   -c constraints.in
     #   google-api-core
+    #   googleapis-common-protos
 pyasn1==0.5.0
     # via
     #   pyasn1-modules
@@ -88,7 +89,7 @@ pyasn1-modules==0.3.0
     # via google-auth
 requests==2.31.0
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   gcsfs
     #   google-api-core
     #   google-cloud-storage
@@ -101,12 +102,12 @@ six==1.16.0
     # via google-auth
 soupsieve==2.4.1
     # via
-    #   -c requirements/base.txt
+    #   -c base.txt
     #   beautifulsoup4
 urllib3==1.26.16
     # via
-    #   -c requirements/base.txt
-    #   -c requirements/constraints.in
+    #   -c base.txt
+    #   -c constraints.in
     #   google-auth
     #   requests
 yarl==1.9.2
