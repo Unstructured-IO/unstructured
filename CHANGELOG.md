@@ -4,6 +4,8 @@
 
 ### Features
 
+* Add in ingest cli s3 writer
+
 ### Fixes
 
 ## 0.10.10
