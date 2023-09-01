@@ -292,7 +292,7 @@ def _parse_tag(
             continue
 
         element = _text_to_element(
-            text,
+            _text,
             tag_elem.tag,
             ancestortags,
             links=links,

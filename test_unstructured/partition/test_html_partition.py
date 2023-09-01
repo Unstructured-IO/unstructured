@@ -612,3 +612,12 @@ def test_pre_tag_parsing_respects_order():
         NarrativeText("The big brown bear is sleeping."),
         Title("The Big Blue Bear"),
     ]
+
+
+def test_partition_html_respects_line_breaks():
+    html_text = "<html><p>I am a parrot.\n\nParrots like to squawk.</p></html>"
+    elements = partition_html(text=html_text)
+    assert elements == [
+        NarrativeText("I am a parrot."),
+        NarrativeText("Parrots like to squawk."),
+    ]
