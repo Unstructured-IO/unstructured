@@ -2,7 +2,7 @@ import fnmatch
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -24,9 +24,25 @@ class SimpleGitConfig(BaseConnectorConfig):
 
 
 @dataclass
+class GitFileMeta:
+    date_created: str
+    date_modified: str
+    version: str
+
+
+@dataclass
 class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleGitConfig = field(repr=False)
     path: str
+    file_exists: Optional[bool] = None
+    file_metadata: Optional[GitFileMeta] = None
+
+    def __post_init__(self):
+        self.file_created_at = None
+        self.file_updated_at = None
+        self.file_version = None
+        self.file_exists = False
+        self.file_download_url = None
 
     @property
     def filename(self):
@@ -35,6 +51,32 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         return Path(self.standard_config.output_dir) / f"{self.path}.json"
+
+    @property
+    def date_modified(self) -> Optional[str]:
+        if self.file_metadata is None:
+            self.get_file_metadata()
+        return self.file_metadata.date_modified
+
+    @property
+    def exists(self) -> Optional[bool]:
+        if self.file_exists is None:
+            self.get_file_metadata()
+        return self.file_exists
+
+    @property
+    def version(self) -> Optional[str]:
+        if self.file_metadata is None:
+            self.get_file_metadata()
+        return self.file_metadata.version
+
+    @property
+    def record_locator(self) -> Dict[str, Any]:
+        return {
+            "url": self.config.url,
+            "repo_path": self.config.repo_path,
+            "file_path": self.path,
+        }
 
     def _create_full_tmp_dir_path(self):
         """includes directories in in the gitlab repository"""
@@ -46,6 +88,9 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._create_full_tmp_dir_path()
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         self._fetch_and_write()
+
+    def _fetch_content(self) -> None:
+        raise NotImplementedError()
 
     def _fetch_and_write(self) -> None:
         raise NotImplementedError()
