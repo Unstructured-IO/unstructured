@@ -48,7 +48,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --list-of-projects "JCTP3" \
         --list-of-boards "1" \
         --list-of-issues "JCTP2-4 JCTP2-7 JCTP2-8 10012 JCTP2-11" \
-        # --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
+        # --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified
 
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
