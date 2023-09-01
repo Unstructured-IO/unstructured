@@ -28,5 +28,5 @@ unstructured-inference==0.5.19
 # pinning to avoid error in argilla library
 pydantic<2
 # unable to build wheel for arm on 0.3.3+
-safetensors<=0.3.2
+safetensors<=0.3.3
 
