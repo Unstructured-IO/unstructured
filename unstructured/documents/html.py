@@ -144,11 +144,12 @@ class HTMLDocument(XMLDocument):
                             descendanttag_elems = tuple(tag_elem.iterdescendants())
 
                 elif _is_container_with_text(tag_elem):
-                    links = _get_links_from_tag(tag_elem)
-                    emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
-                    text_snippets = split_by_html_line_break(tag_elem)
-                    for _text in text_snippets:
-                        _element = _text_to_element(_text, "div", (), links, emphasized_texts)
+                    tag_elems = split_by_html_line_break(tag_elem)
+                    for _tag_elem in tag_elems:
+                        text = _construct_text(_tag_elem)
+                        links = _get_links_from_tag(tag_elem)
+                        emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+                        _element = _text_to_element(text, "div", (), links, emphasized_texts)
                         if _element is not None:
                             page.elements.append(_element)
 
@@ -280,11 +281,18 @@ def stringify_children(node):
 
 def split_by_html_line_break(tag_elem: etree.Element):
     if tag_elem.find("br") is None:
-        return _construct_text(tag_elem)
+        return [tag_elem]
     else:
         raw_inner_text = stringify_children(tag_elem)
         text_segments = re.split(r"<br\s*/?>", raw_inner_text)
-        return text_segments
+
+        tag_elems = []
+        for text_segment in text_segments:
+            tag = tag_elem.tag
+            _tag_elem = etree.fromstring(f"<{tag}>{text_segment}</{tag}>")
+            tag_elems.append(_tag_elem)
+
+        return tag_elems
 
 
 def _parse_tag(
@@ -295,21 +303,23 @@ def _parse_tag(
     processing the document tree again. In the future we might want to keep descendants too,
     but we don't have a use for them at the moment."""
     ancestortags: Tuple[str, ...] = tuple(el.tag for el in tag_elem.iterancestors())[::-1]
-    links = _get_links_from_tag(tag_elem)
-    emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
 
     if tag_elem.tag == "script":
         return []
 
-    text_snippets = split_by_html_line_break(tag_elem)
-
     elements: List[Element] = []
-    for _text in text_snippets:
-        if not _text:
+
+    tag_elems = split_by_html_line_break(tag_elem)
+    for tag_elem in tag_elems:
+        text = _construct_text(tag_elem)
+        if not text:
             continue
 
+        links = _get_links_from_tag(tag_elem)
+        emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+
         element = _text_to_element(
-            _text,
+            text,
             tag_elem.tag,
             ancestortags,
             links=links,
