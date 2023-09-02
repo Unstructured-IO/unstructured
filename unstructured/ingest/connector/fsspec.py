@@ -168,13 +168,13 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def date_created(self) -> Optional[str]:
         if self.file_metadata is None:
             self.get_file_metadata()
-        return self.file_metadata.date_created
+        return self.file_metadata.date_created  # type: ignore
 
     @property
     def date_modified(self) -> Optional[str]:
         if self.file_metadata is None:
             self.get_file_metadata()
-        return self.file_metadata.date_created
+        return self.file_metadata.date_created  # type: ignore
 
     @property
     def exists(self) -> Optional[bool]:
@@ -193,7 +193,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def version(self) -> Optional[str]:
         if self.file_metadata is None:
             self.get_file_metadata()
-        return self.file_metadata.version
+        return self.file_metadata.version  # type: ignore
 
 
 class FsspecConnector(ConnectorCleanupMixin, BaseConnector):
