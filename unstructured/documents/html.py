@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from copy import deepcopy
 from typing import List, Optional, Sequence, Tuple
 
 if sys.version_info < (3, 8):
@@ -288,9 +289,9 @@ def split_by_html_line_break(tag_elem: etree.Element):
         if _is_break_element(descendant):
             tag_elems.append(tag_sub_elem)
             tag_sub_elem = etree.Element(tag_elem.tag)
-            tag_sub_elem.append(descendant)
+            tag_sub_elem.append(deepcopy(descendant))
         else:
-            tag_sub_elem.append(descendant)
+            tag_sub_elem.append(deepcopy(descendant))
 
     tag_elems.append(tag_sub_elem)
 
