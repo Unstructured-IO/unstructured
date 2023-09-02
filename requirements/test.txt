@@ -97,7 +97,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-ruff==0.0.286
+ruff==0.0.287
     # via -r requirements/test.in
 six==1.16.0
     # via python-dateutil

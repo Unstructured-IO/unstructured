@@ -245,8 +245,8 @@
     "text": "text"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "f5cbeacfbddd0de7391bc723762001a6",
+    "type": "Title",
+    "element_id": "d47d7cb0e4f8fd2be5ee07826694c189",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
@@ -275,7 +275,106 @@
         "span"
       ]
     },
-    "text": "More \n        \n        \n          \n            text\n          \n        \n        \n           with \n        \n        \n          \n            link"
+    "text": "More"
+  },
+  {
+    "type": "Title",
+    "element_id": "982d9e3eb996f559e633f4d194def376",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-02T20:36:00.000Z",
+        "date_modified": "2023-08-17T18:49:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "/51243b9d55dc4131b2ae03eff1ef1783"
+      ],
+      "link_texts": [
+        "\n            link\n          "
+      ],
+      "emphasized_text_contents": [
+        "More",
+        "text",
+        "text",
+        "with",
+        "link"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span",
+        "span",
+        "span",
+        "span"
+      ]
+    },
+    "text": "text"
+  },
+  {
+    "type": "Title",
+    "element_id": "0695b563acde461fc2f8d9aebccf35c7",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-02T20:36:00.000Z",
+        "date_modified": "2023-08-17T18:49:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "/51243b9d55dc4131b2ae03eff1ef1783"
+      ],
+      "link_texts": [
+        "\n            link\n          "
+      ],
+      "emphasized_text_contents": [
+        "More",
+        "text",
+        "text",
+        "with",
+        "link"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span",
+        "span",
+        "span",
+        "span"
+      ]
+    },
+    "text": "with"
+  },
+  {
+    "type": "Title",
+    "element_id": "b1b1bdb480c61d075300d9bff7d9cb69",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-02T20:36:00.000Z",
+        "date_modified": "2023-08-17T18:49:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "/51243b9d55dc4131b2ae03eff1ef1783"
+      ],
+      "link_texts": [
+        "\n            link\n          "
+      ],
+      "emphasized_text_contents": [
+        "More",
+        "text",
+        "text",
+        "with",
+        "link"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span",
+        "span",
+        "span",
+        "span"
+      ]
+    },
+    "text": "link"
   },
   {
     "type": "Title",
@@ -453,8 +552,8 @@
     "text": "roman@unstructured.io"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "5d2e9bcd00123dd21fc54731fef97129",
+    "type": "Title",
+    "element_id": "548b1cea7491191a12465d055db621f4",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
@@ -479,11 +578,40 @@
         "span"
       ]
     },
-    "text": "Roman Isecke\n          \n        \n        \n          \n            Jason Scheirer"
+    "text": "Roman Isecke"
+  },
+  {
+    "type": "Title",
+    "element_id": "ca3a2ee04c4a3c71778bb74d49fc4747",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-02T20:36:00.000Z",
+        "date_modified": "2023-08-17T18:49:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "link_urls": [
+        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100",
+        "https://lh3.googleusercontent.com/a/AAcHTtdiriiUNnUcm1dkAp7cbmmQyeO-acsViQHFS9v0=s100"
+      ],
+      "link_texts": [
+        "\n            Roman Isecke\n          ",
+        "\n            Jason Scheirer\n          "
+      ],
+      "emphasized_text_contents": [
+        "Roman Isecke",
+        "Jason Scheirer"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span"
+      ]
+    },
+    "text": "Jason Scheirer"
   },
   {
     "type": "NarrativeText",
-    "element_id": "495e614a2084bd7c40e34b0b69534e67",
+    "element_id": "dae20021bc8bcb2be081ce394efd82a7",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
@@ -504,7 +632,57 @@
         "span"
       ]
     },
-    "text": "This is some \n        \n        \n          \n            formatted\n          \n        \n        \n           text"
+    "text": "This is some"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "def3a35ce8c8037ae46ce39fd2707fe3",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-02T20:36:00.000Z",
+        "date_modified": "2023-08-17T18:49:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "emphasized_text_contents": [
+        "This is some",
+        "formatted",
+        "formatted",
+        "text"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span",
+        "b",
+        "span"
+      ]
+    },
+    "text": "formatted"
+  },
+  {
+    "type": "Title",
+    "element_id": "982d9e3eb996f559e633f4d194def376",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-02T20:36:00.000Z",
+        "date_modified": "2023-08-17T18:49:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "emphasized_text_contents": [
+        "This is some",
+        "formatted",
+        "formatted",
+        "text"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span",
+        "b",
+        "span"
+      ]
+    },
+    "text": "text"
   },
   {
     "type": "Title",
@@ -520,8 +698,8 @@
     "text": "True"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "4b2e896ce5416db25c44f6918648d0f4",
+    "type": "Title",
+    "element_id": "206b16770f1f7a6eeab74786ad3c033b",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-02T20:36:00.000Z",
@@ -538,7 +716,28 @@
         "span"
       ]
     },
-    "text": "Option 2\n        \n        \n          Option 1"
+    "text": "Option 2"
+  },
+  {
+    "type": "Title",
+    "element_id": "fae2db093e1dd31042e8ab9427e8673a",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-02T20:36:00.000Z",
+        "date_modified": "2023-08-17T18:49:00.000Z"
+      },
+      "filetype": "text/html",
+      "page_number": 1,
+      "emphasized_text_contents": [
+        "Option 2",
+        "Option 1"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span"
+      ]
+    },
+    "text": "Option 1"
   },
   {
     "type": "UncategorizedText",

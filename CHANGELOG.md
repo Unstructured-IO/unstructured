@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* Removed PIL pin as issue has been resolved upstream
+
 ### Features
 
 ### Fixes
