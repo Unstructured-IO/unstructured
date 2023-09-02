@@ -32,14 +32,14 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 
-TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
+TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font", "pre"]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]
 HEADING_TAGS: Final[List[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
 TABLE_TAGS: Final[List[str]] = ["table", "tbody", "td", "tr"]
 PAGEBREAK_TAGS: Final[List[str]] = ["hr"]
 HEADER_OR_FOOTER_TAGS: Final[List[str]] = ["header", "footer"]
 EMPTY_TAGS: Final[List[str]] = ["br", "hr"]
-SECTION_TAGS: Final[List[str]] = ["div", "pre"]
+SECTION_TAGS: Final[List[str]] = ["div"]
 
 
 class TagsMixin:
@@ -149,7 +149,7 @@ class HTMLDocument(XMLDocument):
                     emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
                     _element = _text_to_element(tag_elem.text, "div", (), links, emphasized_texts)
                     if _element is not None:
-                        page.elements.append(element)
+                        page.elements.append(_element)
 
                 elif _is_bulleted_table(tag_elem):
                     bulleted_text = _bulleted_text_from_table(tag_elem)

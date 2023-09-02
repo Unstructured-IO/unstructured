@@ -642,15 +642,15 @@ def test_partition_html_respects_html_line_breaks_and_trailing_slash():
     assert elements[1].emphasized_texts == []
 
 
-# def test_partition_html_respects_html_line_breaks_in_pre_tag():
-#     html_text = """<html>
-#     <pre>I am a <strong>parrot</strong>.<br>Parrots like to squawk.</pre>
-#     </html>"""
-#     elements = partition_html(text=html_text)
-#     assert elements == [
-#         NarrativeText("I am a parrot."),
-#         NarrativeText("Parrots like to squawk."),
-#     ]
-#
-#     assert elements[0].emphasized_texts == [{"text": "parrot", "tag": "strong"}]
-#     assert elements[1].emphasized_texts == []
+def test_partition_html_respects_html_line_breaks_in_pre_tag():
+    html_text = """<html>
+    <pre>I am a <strong>parrot</strong>.<br>Parrots like to squawk.</pre>
+    </html>"""
+    elements = partition_html(text=html_text)
+    assert elements == [
+        NarrativeText("I am a parrot."),
+        NarrativeText("Parrots like to squawk."),
+    ]
+
+    assert elements[0].emphasized_texts == [{"text": "parrot", "tag": "strong"}]
+    assert elements[1].emphasized_texts == []
