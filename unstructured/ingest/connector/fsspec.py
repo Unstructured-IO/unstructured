@@ -1,8 +1,9 @@
 import os
 import re
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Optional, Type
+from typing import Any, Dict, Optional, Type
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -16,10 +17,6 @@ from unstructured.ingest.logger import logger
 from unstructured.utils import (
     requires_dependencies,
 )
-
-if TYPE_CHECKING:
-    from fsspec import AbstractFileSystem
-
 
 SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "s3",
@@ -81,9 +78,9 @@ class SimpleFsspecConfig(BaseConnectorConfig):
 
 @dataclass
 class FsspecFileMeta:
-    date_created: str
-    date_modified: str
-    version: str
+    date_created: Optional[str]
+    date_modified: Optional[str]
+    version: Optional[str]
 
 
 @dataclass
@@ -98,7 +95,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleFsspecConfig
     remote_file_path: str
     file_exists: Optional[bool] = None
-    file_metadata: FsspecFileMeta = None
+    file_metadata: Optional[FsspecFileMeta] = None
 
     def _tmp_download_file(self):
         return Path(self.standard_config.download_dir) / self.remote_file_path.replace(
@@ -136,18 +133,30 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             raise
         self.get_file_metadata()
 
+    def _catch_not_implemented(self, method) -> Optional[str]:
+        try:
+            value: datetime = method(self.remote_file_path)
+        except NotImplementedError:
+            return None
+        return value.isoformat()
+
     @requires_dependencies(["fsspec"])
     def get_file_metadata(self):
         """Fetches file metadata from the current filesystem."""
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
-                **self.config.get_access_kwargs())
+            **self.config.get_access_kwargs(),
+        )
         self.file_exists = fs.exists(self.remote_file_path)
+        date_created = self._catch_not_implemented(fs.created)
+        date_modified = self._catch_not_implemented(fs.modified)
+        version = str(fs.checksum(self.remote_file_path))
+
         self.file_metadata = FsspecFileMeta(
-            fs.created(self.remote_file_path).isoformat(),
-            fs.modified(self.remote_file_path).isoformat(),
-            str(fs.checksum(self.remote_file_path)),
+            date_created,
+            date_modified,
+            version,
         )
 
     @property
@@ -171,7 +180,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def exists(self) -> Optional[bool]:
         if self.file_exists is None:
             self.get_file_metadata()
-        self.file_exists
+        return self.file_exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
