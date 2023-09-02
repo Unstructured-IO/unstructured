@@ -3,7 +3,14 @@
     "type": "NarrativeText",
     "element_id": "c08fcabe68ba13b7a7cc6592bd5513a8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "version": "102685823936240142970839376607768292114",
+        "record_locator": {
+          "remote_file_path": "utic-test-ingest-fixtures/nested-1/ideas-page.html"
+        },
+        "date_created": "2023-07-08T20:46:41-07:00",
+        "date_modified": "2023-07-08T20:46:41-07:00"
+      },
       "filetype": "text/html",
       "page_number": 1,
       "link_urls": [

@@ -3,7 +3,12 @@
     "type": "NarrativeText",
     "element_id": "c08fcabe68ba13b7a7cc6592bd5513a8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "version": "97868440341969002655313511829421878057",
+        "record_locator": {
+          "remote_file_path": "/nested-1/ideas-page.html"
+        }
+      },
       "filetype": "text/html",
       "page_number": 1,
       "link_urls": [
