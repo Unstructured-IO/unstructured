@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import sys
 from typing import List, Optional, Sequence, Tuple
 
@@ -24,7 +25,6 @@ from unstructured.documents.elements import (
 )
 from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
-from unstructured.partition.text import split_by_paragraph
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -146,7 +146,7 @@ class HTMLDocument(XMLDocument):
                 elif _is_container_with_text(tag_elem):
                     links = _get_links_from_tag(tag_elem)
                     emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
-                    text_snippets = split_by_paragraph(tag_elem.text)
+                    text_snippets = split_by_html_line_break(tag_elem)
                     for _text in text_snippets:
                         _element = _text_to_element(_text, "div", (), links, emphasized_texts)
                         if _element is not None:
@@ -269,6 +269,24 @@ def _get_emphasized_texts_from_tag(tag_elem: etree.Element) -> List[dict]:
     return emphasized_texts
 
 
+def stringify_children(node):
+    s = node.text
+    if s is None:
+        s = ""
+    for child in node:
+        s += etree.tostring(child, encoding="unicode")
+    return s
+
+
+def split_by_html_line_break(tag_elem: etree.Element):
+    if tag_elem.find("br") is None:
+        return _construct_text(tag_elem)
+    else:
+        raw_inner_text = stringify_children(tag_elem)
+        text_segments = re.split(r"<br\s*/?>", raw_inner_text)
+        return text_segments
+
+
 def _parse_tag(
     tag_elem: etree.Element,
 ) -> List[Element]:
@@ -283,8 +301,7 @@ def _parse_tag(
     if tag_elem.tag == "script":
         return []
 
-    text = _construct_text(tag_elem)
-    text_snippets = split_by_paragraph(text)
+    text_snippets = split_by_html_line_break(tag_elem)
 
     elements: List[Element] = []
     for _text in text_snippets:
