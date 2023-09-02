@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import re
 import sys
 from typing import List, Optional, Sequence, Tuple
 
@@ -138,16 +137,18 @@ class HTMLDocument(XMLDocument):
 
                 if _is_text_tag(tag_elem):
                     _elements = _parse_tag(tag_elem)
+                    _descendanttag_elems: List[etree.Element] = []
                     for element in _elements:
                         if element is not None:
                             page.elements.append(element)
-                            descendanttag_elems = tuple(tag_elem.iterdescendants())
+                            _descendanttag_elems.extend(list(tag_elem.iterdescendants()))
+                    descendanttag_elems = tuple(_descendanttag_elems)
 
                 elif _is_container_with_text(tag_elem):
                     links = _get_links_from_tag(tag_elem)
                     emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
-                    element = _text_to_element(tag_elem.text, "div", (), links, emphasized_texts)
-                    if element is not None:
+                    _element = _text_to_element(tag_elem.text, "div", (), links, emphasized_texts)
+                    if _element is not None:
                         page.elements.append(element)
 
                 elif _is_bulleted_table(tag_elem):
@@ -265,15 +266,6 @@ def _get_emphasized_texts_from_tag(tag_elem: etree.Element) -> List[dict]:
             emphasized_texts.append({"text": text, "tag": descendant_tag_elem.tag})
 
     return emphasized_texts
-
-
-def _get_tag_elem_inner_text_with_tags(node):
-    s = node.text
-    if s is None:
-        s = ""
-    for child in node:
-        s += etree.tostring(child, encoding="unicode")
-    return s
 
 
 def _is_break_element(tag_elem: etree.Element) -> bool:
