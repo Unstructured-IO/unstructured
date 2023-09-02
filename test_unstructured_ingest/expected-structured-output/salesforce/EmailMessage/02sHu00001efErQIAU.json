@@ -1,0 +1,18 @@
+[
+  {
+    "type": "NarrativeText",
+    "element_id": "f5ac98aa9002453f536877714c5eb88d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2"
+    },
+    "text": "Hey Sean.\n\nTesting email parsing here.\nType: email\n\nJust testing the email system\n\n_____________________________________________________________________\nPowered by Salesforce\nhttp://www.salesforce.com/"
+  }
+]
