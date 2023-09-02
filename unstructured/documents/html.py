@@ -149,7 +149,9 @@ class HTMLDocument(XMLDocument):
                         text = _construct_text(_tag_elem)
                         links = _get_links_from_tag(_tag_elem)
                         emphasized_texts = _get_emphasized_texts_from_tag(_tag_elem)
-                        _element = _text_to_element(text, "div", (), links, emphasized_texts)
+                        _element = _text_to_element(
+                            tag_elem.text, "div", (), links, emphasized_texts
+                        )
                         if _element is not None:
                             page.elements.append(_element)
 
@@ -279,20 +281,25 @@ def _get_tag_elem_inner_text_with_tags(node):
     return s
 
 
+def _is_break_element(tag_elem: etree.Element) -> bool:
+    return tag_elem.tail and not tag_elem.text
+
+
 def split_by_html_line_break(tag_elem: etree.Element):
-    if tag_elem.find("br") is None:
-        return [tag_elem]
-    else:
-        raw_inner_text = _get_tag_elem_inner_text_with_tags(tag_elem)
-        text_segments = re.split(r"<br\s*/?>", raw_inner_text)
+    tag_elems = []
 
-        tag_elems = []
-        for text_segment in text_segments:
-            tag = tag_elem.tag
-            _tag_elem = etree.fromstring(f"<{tag}>{text_segment}</{tag}>")
-            tag_elems.append(_tag_elem)
+    tag_sub_elem = etree.Element(tag_elem.tag)
+    tag_sub_elem.text = tag_elem.text
 
-        return tag_elems
+    for descendant in tag_elem.iterdescendants():
+        if _is_break_element(descendant):
+            tag_elems.append(tag_sub_elem)
+            tag_sub_elem = etree.Element(tag_elem.tag)
+            tag_sub_elem.append(descendant)
+        else:
+            tag_sub_elem.append(descendant)
+
+    return tag_elems
 
 
 def _parse_tag(
