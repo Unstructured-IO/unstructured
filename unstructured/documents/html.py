@@ -33,14 +33,14 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 
-TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font", "pre"]
+TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]
 HEADING_TAGS: Final[List[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
 TABLE_TAGS: Final[List[str]] = ["table", "tbody", "td", "tr"]
 PAGEBREAK_TAGS: Final[List[str]] = ["hr"]
 HEADER_OR_FOOTER_TAGS: Final[List[str]] = ["header", "footer"]
 EMPTY_TAGS: Final[List[str]] = ["br", "hr"]
-SECTION_TAGS: Final[List[str]] = ["div"]
+SECTION_TAGS: Final[List[str]] = ["div", "pre"]
 
 
 class TagsMixin:
@@ -273,17 +273,12 @@ def _is_break_element(tag_elem: etree.Element) -> bool:
     return tag_elem.tail and not tag_elem.text
 
 
-def _has_nested_text_tags(tag_elem: etree.Element) -> bool:
-    return any(_is_text_tag(desc) for desc in tag_elem.iterdescendants())
-
-
 def split_by_html_line_break(tag_elem: etree.Element):
-    if _has_nested_text_tags(tag_elem):
-        return [tag_elem]
-
     tag_elems = []
     tag_sub_elem = etree.Element(tag_elem.tag)
     tag_sub_elem.text = tag_elem.text
+    for key, value in tag_elem.items():
+        tag_sub_elem.set(key, value)
 
     for descendant in tag_elem.iterdescendants():
         if _is_break_element(descendant):
