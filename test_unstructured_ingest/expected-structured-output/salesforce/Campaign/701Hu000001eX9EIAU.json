@@ -1,0 +1,101 @@
+[
+  {
+    "type": "UncategorizedText",
+    "element_id": "d6a8689a12ad0cd0314b04e1c2cee3c9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Id: 701Hu000001eX9EIAU"
+  },
+  {
+    "type": "Title",
+    "element_id": "69d9d94f0bc4b8d425fa99dce2b78311",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Name: GC Product Webinar - Jan 7, 2002"
+  },
+  {
+    "type": "Title",
+    "element_id": "f80d0033c7e5a8d6ae66778815e33f35",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Type: Webinar"
+  },
+  {
+    "type": "Title",
+    "element_id": "ad1b8a8ebbde05c57a773f60045de6f6",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Status: Completed"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "08336889c7ebb4ba297a396eb072d83c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "StartDate: 2023-01-29"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "887de29c98087cc9d07b242432cff930",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "EndDate: 2023-01-29"
+  },
+  {
+    "type": "Title",
+    "element_id": "ffe62693f34276315c62d28b06005bcf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "BudgetedCost: 10000.0"
+  },
+  {
+    "type": "Title",
+    "element_id": "5739187b01834fedcc2362b5d3841d07",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "ActualCost: 11400.0"
+  },
+  {
+    "type": "Title",
+    "element_id": "8750ec1f6f59b282d104b919c7ffab0f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "Description: None"
+  },
+  {
+    "type": "Title",
+    "element_id": "54e16b100bf2118d4c7c18c3f93e2223",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "NumberOfLeads: 0"
+  },
+  {
+    "type": "Title",
+    "element_id": "db1ed63f2ed83e51f75619047c417e49",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/plain"
+    },
+    "text": "NumberOfConvertedLeads: 0"
+  }
+]

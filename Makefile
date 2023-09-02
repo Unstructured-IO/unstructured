@@ -188,6 +188,10 @@ install-ingest-local:
 install-ingest-notion:
 	python3 -m pip install -r requirements/ingest-notion.txt
 
+.PHONY: install-ingest-salesforce
+install-ingest-salesforce:
+	python3 -m pip install -r requirements/ingest-salesforce.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
