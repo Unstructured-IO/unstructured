@@ -137,23 +137,18 @@ class HTMLDocument(XMLDocument):
                     continue
 
                 if _is_text_tag(tag_elem):
-                    elements = _parse_tag(tag_elem)
-                    for element in elements:
+                    _elements = _parse_tag(tag_elem)
+                    for element in _elements:
                         if element is not None:
                             page.elements.append(element)
                             descendanttag_elems = tuple(tag_elem.iterdescendants())
 
                 elif _is_container_with_text(tag_elem):
-                    tag_elems = split_by_html_line_break(tag_elem)
-                    for _tag_elem in tag_elems:
-                        text = _construct_text(_tag_elem)
-                        links = _get_links_from_tag(_tag_elem)
-                        emphasized_texts = _get_emphasized_texts_from_tag(_tag_elem)
-                        _element = _text_to_element(
-                            tag_elem.text, "div", (), links, emphasized_texts
-                        )
-                        if _element is not None:
-                            page.elements.append(_element)
+                    links = _get_links_from_tag(tag_elem)
+                    emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+                    element = _text_to_element(tag_elem.text, "div", (), links, emphasized_texts)
+                    if element is not None:
+                        page.elements.append(element)
 
                 elif _is_bulleted_table(tag_elem):
                     bulleted_text = _bulleted_text_from_table(tag_elem)
@@ -285,9 +280,15 @@ def _is_break_element(tag_elem: etree.Element) -> bool:
     return tag_elem.tail and not tag_elem.text
 
 
-def split_by_html_line_break(tag_elem: etree.Element):
-    tag_elems = []
+def _has_nested_text_tags(tag_elem: etree.Element) -> bool:
+    return any(_is_text_tag(desc) for desc in tag_elem.iterdescendants())
 
+
+def split_by_html_line_break(tag_elem: etree.Element):
+    if _has_nested_text_tags(tag_elem):
+        return [tag_elem]
+
+    tag_elems = []
     tag_sub_elem = etree.Element(tag_elem.tag)
     tag_sub_elem.text = tag_elem.text
 
@@ -298,6 +299,8 @@ def split_by_html_line_break(tag_elem: etree.Element):
             tag_sub_elem.append(descendant)
         else:
             tag_sub_elem.append(descendant)
+
+    tag_elems.append(tag_sub_elem)
 
     return tag_elems
 
@@ -317,17 +320,17 @@ def _parse_tag(
     elements: List[Element] = []
 
     tag_elems = split_by_html_line_break(tag_elem)
-    for tag_elem in tag_elems:
-        text = _construct_text(tag_elem)
+    for _tag_elem in tag_elems:
+        text = _construct_text(_tag_elem)
         if not text:
             continue
 
-        links = _get_links_from_tag(tag_elem)
-        emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+        links = _get_links_from_tag(_tag_elem)
+        emphasized_texts = _get_emphasized_texts_from_tag(_tag_elem)
 
         element = _text_to_element(
             text,
-            tag_elem.tag,
+            _tag_elem.tag,
             ancestortags,
             links=links,
             emphasized_texts=emphasized_texts,
