@@ -10,7 +10,6 @@
         "date_created": "2023-08-22T11:34:22.055+0000",
         "date_modified": "2023-08-22T11:37:45.208+0000"
       },
-      "last_modified": "2023-09-01T12:07:11",
       "filetype": "text/plain"
     },
     "text": "IssueID_IssueKey:10006     JCTP2-4"
@@ -26,7 +25,6 @@
         "date_created": "2023-08-22T11:34:22.055+0000",
         "date_modified": "2023-08-22T11:37:45.208+0000"
       },
-      "last_modified": "2023-09-01T12:07:11",
       "filetype": "text/plain"
     },
     "text": "ProjectID_Key:JCTP2     Jira Connector Test Project 2"
@@ -42,7 +40,6 @@
         "date_created": "2023-08-22T11:34:22.055+0000",
         "date_modified": "2023-08-22T11:37:45.208+0000"
       },
-      "last_modified": "2023-09-01T12:07:11",
       "filetype": "text/plain"
     },
     "text": "IssueType:Epic"
@@ -58,7 +55,6 @@
         "date_created": "2023-08-22T11:34:22.055+0000",
         "date_modified": "2023-08-22T11:37:45.208+0000"
       },
-      "last_modified": "2023-09-01T12:07:11",
       "filetype": "text/plain"
     },
     "text": "Status:In Progress"
@@ -74,7 +70,6 @@
         "date_created": "2023-08-22T11:34:22.055+0000",
         "date_modified": "2023-08-22T11:37:45.208+0000"
       },
-      "last_modified": "2023-09-01T12:07:11",
       "filetype": "text/plain"
     },
     "text": "Priority:{'self': 'https://unstructured-jira-connector-test.atlassian.net/rest/api/2/priority/3', 'iconUrl': 'https://unstructured-jira-connector-test.atlassian.net/images/icons/priorities/medium.svg', 'name': 'Medium', 'id': '3'}"
@@ -90,7 +85,6 @@
         "date_created": "2023-08-22T11:34:22.055+0000",
         "date_modified": "2023-08-22T11:37:45.208+0000"
       },
-      "last_modified": "2023-09-01T12:07:11",
       "filetype": "text/plain"
     },
     "text": "AssigneeID_Name:712020:7bc7fdcb-67e7-435d-b4a2-128aee12820c     Unstructured Devops"
@@ -106,7 +100,6 @@
         "date_created": "2023-08-22T11:34:22.055+0000",
         "date_modified": "2023-08-22T11:37:45.208+0000"
       },
-      "last_modified": "2023-09-01T12:07:11",
       "filetype": "text/plain"
     },
     "text": "ReporterAdr_Name:devops+jira-connector@unstructured.io     Unstructured Devops"
@@ -122,7 +115,6 @@
         "date_created": "2023-08-22T11:34:22.055+0000",
         "date_modified": "2023-08-22T11:37:45.208+0000"
       },
-      "last_modified": "2023-09-01T12:07:11",
       "filetype": "text/plain"
     },
     "text": "Labels:"
@@ -138,7 +130,6 @@
         "date_created": "2023-08-22T11:34:22.055+0000",
         "date_modified": "2023-08-22T11:37:45.208+0000"
       },
-      "last_modified": "2023-09-01T12:07:11",
       "filetype": "text/plain"
     },
     "text": "Components:"
@@ -154,7 +145,6 @@
         "date_created": "2023-08-22T11:34:22.055+0000",
         "date_modified": "2023-08-22T11:37:45.208+0000"
       },
-      "last_modified": "2023-09-01T12:07:11",
       "filetype": "text/plain"
     },
     "text": "Test Epic 1"
@@ -170,7 +160,6 @@
         "date_created": "2023-08-22T11:34:22.055+0000",
         "date_modified": "2023-08-22T11:37:45.208+0000"
       },
-      "last_modified": "2023-09-01T12:07:11",
       "filetype": "text/plain"
     },
     "text": "{}"

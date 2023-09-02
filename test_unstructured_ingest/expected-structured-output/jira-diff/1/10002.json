@@ -10,7 +10,6 @@
         "date_created": "2023-08-22T11:29:46.189+0000",
         "date_modified": "2023-08-23T14:36:31.252+0000"
       },
-      "last_modified": "2023-09-01T12:07:09",
       "filetype": "text/plain"
     },
     "text": "IssueID_IssueKey:10002     JCTP1-3"
@@ -26,7 +25,6 @@
         "date_created": "2023-08-22T11:29:46.189+0000",
         "date_modified": "2023-08-23T14:36:31.252+0000"
       },
-      "last_modified": "2023-09-01T12:07:09",
       "filetype": "text/plain"
     },
     "text": "ProjectID_Key:JCTP1     Jira Connector Test Project 1"
@@ -42,7 +40,6 @@
         "date_created": "2023-08-22T11:29:46.189+0000",
         "date_modified": "2023-08-23T14:36:31.252+0000"
       },
-      "last_modified": "2023-09-01T12:07:09",
       "filetype": "text/plain"
     },
     "text": "IssueType:Task"
@@ -58,7 +55,6 @@
         "date_created": "2023-08-22T11:29:46.189+0000",
         "date_modified": "2023-08-23T14:36:31.252+0000"
       },
-      "last_modified": "2023-09-01T12:07:09",
       "filetype": "text/plain"
     },
     "text": "Status:Done"
@@ -74,7 +70,6 @@
         "date_created": "2023-08-22T11:29:46.189+0000",
         "date_modified": "2023-08-23T14:36:31.252+0000"
       },
-      "last_modified": "2023-09-01T12:07:09",
       "filetype": "text/plain"
     },
     "text": "Priority:{'self': 'https://unstructured-jira-connector-test.atlassian.net/rest/api/2/priority/3', 'iconUrl': 'https://unstructured-jira-connector-test.atlassian.net/images/icons/priorities/medium.svg', 'name': 'Medium', 'id': '3'}"
@@ -90,7 +85,6 @@
         "date_created": "2023-08-22T11:29:46.189+0000",
         "date_modified": "2023-08-23T14:36:31.252+0000"
       },
-      "last_modified": "2023-09-01T12:07:09",
       "filetype": "text/plain"
     },
     "text": "AssigneeID_Name:{}     {}"
@@ -106,7 +100,6 @@
         "date_created": "2023-08-22T11:29:46.189+0000",
         "date_modified": "2023-08-23T14:36:31.252+0000"
       },
-      "last_modified": "2023-09-01T12:07:09",
       "filetype": "text/plain"
     },
     "text": "ReporterAdr_Name:devops+jira-connector@unstructured.io     Unstructured Devops"
@@ -122,7 +115,6 @@
         "date_created": "2023-08-22T11:29:46.189+0000",
         "date_modified": "2023-08-23T14:36:31.252+0000"
       },
-      "last_modified": "2023-09-01T12:07:09",
       "filetype": "text/plain"
     },
     "text": "Labels:"
@@ -138,7 +130,6 @@
         "date_created": "2023-08-22T11:29:46.189+0000",
         "date_modified": "2023-08-23T14:36:31.252+0000"
       },
-      "last_modified": "2023-09-01T12:07:09",
       "filetype": "text/plain"
     },
     "text": "Components:"
@@ -154,7 +145,6 @@
         "date_created": "2023-08-22T11:29:46.189+0000",
         "date_modified": "2023-08-23T14:36:31.252+0000"
       },
-      "last_modified": "2023-09-01T12:07:09",
       "filetype": "text/plain"
     },
     "text": "Unstructured Devops     My comment 1"
@@ -170,7 +160,6 @@
         "date_created": "2023-08-22T11:29:46.189+0000",
         "date_modified": "2023-08-23T14:36:31.252+0000"
       },
-      "last_modified": "2023-09-01T12:07:09",
       "filetype": "text/plain"
     },
     "text": "Test done 1"
@@ -186,7 +175,6 @@
         "date_created": "2023-08-22T11:29:46.189+0000",
         "date_modified": "2023-08-23T14:36:31.252+0000"
       },
-      "last_modified": "2023-09-01T12:07:09",
       "filetype": "text/plain"
     },
     "text": "_At iam decimum annum in spelunca iacet._ Quid ei reliquisti, nisi te, quoquo modo loqueretur, intellegere, quid diceret? Non laboro, inquit, de nomine. Duo Reges: constructio interrete. Nummus in Croesi divitiis obscuratur, pars est tamen divitiarum. Bork Itaque quantum adiit periculum! ad honestatem enim illum omnem conatum suum referebat, non ad voluptatem."
@@ -202,7 +190,6 @@
         "date_created": "2023-08-22T11:29:46.189+0000",
         "date_modified": "2023-08-23T14:36:31.252+0000"
       },
-      "last_modified": "2023-09-01T12:07:09",
       "filetype": "text/plain"
     },
     "text": "[Bork|http://loripsum.net/] Illi enim inter se dissentiunt. Et non ex maxima parte de tota iudicabis? [Refert tamen, quo modo.|http://loripsum.net/] [Quam ob rem tandem, inquit, non satisfacit?|http://loripsum.net/] Ex quo, id quod omnes expetunt, beate vivendi ratio inveniri et comparari potest."
@@ -218,7 +205,6 @@
         "date_created": "2023-08-22T11:29:46.189+0000",
         "date_modified": "2023-08-23T14:36:31.252+0000"
       },
-      "last_modified": "2023-09-01T12:07:09",
       "filetype": "text/plain"
     },
     "text": "Hic nihil fuit, quod quaereremus. Itaque haec cum illis est dissensio, cum Peripateticis nulla sane. Vos autem cum perspicuis dubia debeatis illustrare, dubiis perspicua conamini tollere. [Quae cum essent dicta, discessimus.|http://loripsum.net/] Nam, ut sint illa vendibiliora, haec uberiora certe sunt. [Equidem, sed audistine modo de Carneade?|http://loripsum.net/]"
