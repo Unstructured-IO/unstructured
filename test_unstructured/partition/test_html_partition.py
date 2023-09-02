@@ -614,10 +614,15 @@ def test_pre_tag_parsing_respects_order():
     ]
 
 
-def test_partition_html_respects_line_breaks():
-    html_text = "<html><p>I am a parrot.\n\nParrots like to squawk.</p></html>"
+def test_partition_html_respects_html_line_breaks():
+    html_text = """<html>
+    <p>I am a <strong>parrot</strong>.<br>Parrots like to squawk.</p>
+    </html>"""
     elements = partition_html(text=html_text)
     assert elements == [
         NarrativeText("I am a parrot."),
         NarrativeText("Parrots like to squawk."),
     ]
+
+    assert elements[0].emphasized_texts == [{"text": "parrot", "tag": "strong"}]
+    assert elements[1].emphasized_texts == []
