@@ -45,9 +45,9 @@ class ConfluenceFileMeta:
 
     space_id: str
     document_id: str
-    date_created: str = None
-    date_modified: str = None
-    version: str = None
+    date_created: Optional[str] = None
+    date_modified: Optional[str] = None
+    version: Optional[str] = None
 
 
 def scroll_wrapper(func):

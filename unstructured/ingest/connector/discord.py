@@ -65,7 +65,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     days: Optional[int]
     token: str
     file_exists: Optional[bool] = None
-    file_metadata: DiscordFileMeta = None
+    file_metadata: Optional[DiscordFileMeta] = None
     registry_name: str = "discord"
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
@@ -104,8 +104,8 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 async for msg in channel.history(after=after_date):  # type: ignore
                     messages.append(msg)
                 await bot.close()
-            except Exception as e:
-                logger.error(f"Error fetching messages")
+            except Exception:
+                logger.error("Error fetching messages")
                 self.file_exists = False
                 await bot.close()
                 raise
@@ -135,6 +135,8 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         messages = self._get_messages()
         self.get_file_metadata(messages)
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
+        self._output_filename.parent.mkdir(parents=True, exist_ok=True)
+
         with open(self._tmp_download_file(), "w") as f:
             for m in messages:
                 f.write(m.content + "\n")
@@ -148,13 +150,13 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def date_created(self) -> Optional[str]:
         if self.file_metadata is None:
             self.get_file_metadata()
-        return self.file_metadata.date_created
+        return self.file_metadata.date_created  # type: ignore
 
     @property
     def date_modified(self) -> Optional[str]:
         if self.file_metadata is None:
             self.get_file_metadata()
-        return self.file_metadata.date_modified
+        return self.file_metadata.date_modified  # type: ignore
 
     @property
     def exists(self) -> Optional[bool]:
@@ -166,7 +168,6 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
             "channel": self.channel,
-            "jump_url": self.jump_url,
         }
 
 

@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -36,8 +36,8 @@ class AirtableFileMeta:
 
     base_id: str
     table_id: str
-    date_created: str = None
-    date_modified: str = None
+    date_created: Optional[str] = None
+    date_modified: Optional[str] = None
     view_id: Optional[str] = None
 
 
@@ -104,7 +104,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             rows = api.table(self.file_meta.base_id, self.file_meta.table_id).all(
                 view=self.file_meta.view_id,
             )
-        except Exception as e:
+        except Exception:
             # TODO: more specific error handling?
             logger.error("Failed to retrieve rows from Airtable table.")
             self.file_exists = False
@@ -124,10 +124,12 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         dates = [r.get("createdTime", "") for r in rows]
         dates.sort()
         self.file_meta.date_created = datetime.strptime(
-            dates[0], "%Y-%m-%dT%H:%M:%S.%fZ",
+            dates[0],
+            "%Y-%m-%dT%H:%M:%S.%fZ",
         ).isoformat()
         self.file_meta.date_modified = datetime.strptime(
-            dates[-1], "%Y-%m-%dT%H:%M:%S.%fZ",
+            dates[-1],
+            "%Y-%m-%dT%H:%M:%S.%fZ",
         ).isoformat()
 
     @requires_dependencies(["pandas"])
