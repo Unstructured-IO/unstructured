@@ -147,8 +147,8 @@ class HTMLDocument(XMLDocument):
                     tag_elems = split_by_html_line_break(tag_elem)
                     for _tag_elem in tag_elems:
                         text = _construct_text(_tag_elem)
-                        links = _get_links_from_tag(tag_elem)
-                        emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+                        links = _get_links_from_tag(_tag_elem)
+                        emphasized_texts = _get_emphasized_texts_from_tag(_tag_elem)
                         _element = _text_to_element(text, "div", (), links, emphasized_texts)
                         if _element is not None:
                             page.elements.append(_element)
