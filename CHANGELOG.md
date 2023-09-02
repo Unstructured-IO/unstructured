@@ -1,4 +1,4 @@
-## 0.10.12-dev2
+## 0.10.12-dev3
 
 ### Enhancements
 
@@ -8,9 +8,11 @@
 
 ### Fixes
 
-## 0.10.12-dev1
+## 0.10.12-dev2
 
 ### Enhancements
+
+* Removed PIL pin as issue has been resolved upstream
 
 ### Features
 
