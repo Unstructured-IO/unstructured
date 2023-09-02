@@ -254,11 +254,11 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     file_meta: JiraFileMeta
     registry_name: str = "jira"
 
-    # @property
-    # def record_locator(self):  # Values must be JSON-serializable
-    #     """A dictionary with any data necessary to uniquely identify the document on
-    #     the source system."""
-    #     return {"issue_key": self.file_meta.issue_key}
+    @property
+    def record_locator(self):  # Values must be JSON-serializable
+        """A dictionary with any data necessary to uniquely identify the document on
+        the source system."""
+        return {"issue_key": self.file_meta.issue_key}
 
     @requires_dependencies(dependencies=["atlassian"], extras="jira")
     def get_metadata_fields(self):
@@ -283,36 +283,36 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
             else:
                 logger.error(f"Error: {error} for issue {self.file_meta.issue_key}")
 
-    # @property
-    # def date_created(self) -> Optional[str]:
-    #     if not self.metadata_fields:
-    #         self.get_metadata_fields()
+    @property
+    def date_created(self) -> Optional[str]:
+        if not hasattr(self, "metadata_fields"):
+            self.get_metadata_fields()
 
-    #     return self.metadata_fields["date_created"] if self.metadata_fields else None
+        return self.metadata_fields["date_created"] if hasattr(self, "metadata_fields") else None
 
-    # @property
-    # def date_modified(self) -> Optional[str]:
-    #     if not self.metadata_fields:
-    #         self.get_metadata_fields()
+    @property
+    def date_modified(self) -> Optional[str]:
+        if not hasattr(self, "metadata_fields"):
+            self.get_metadata_fields()
 
-    #     return self.metadata_fields["date_modified"] if self.metadata_fields else None
+        return self.metadata_fields["date_modified"] if hasattr(self, "metadata_fields") else None
 
-    # @property
-    # def date_processed(self) -> Optional[str]:
-    #     if not self.metadata_fields:
-    #         self.get_metadata_fields()
+    @property
+    def date_processed(self) -> Optional[str]:
+        if not hasattr(self, "metadata_fields"):
+            self.get_metadata_fields()
 
-    #     return self.metadata_fields["date_processed"] if self.metadata_fields else None
+        return self.metadata_fields["date_processed"] if hasattr(self, "metadata_fields") else None
 
-    # @property
-    # def exists(self) -> Optional[bool]:
-    #     """Whether the document exists on the remote source."""
-    #     if self.check_exists:
-    #         return self.file_exists
+    @property
+    def exists(self) -> Optional[bool]:
+        """Whether the document exists on the remote source."""
+        if self.check_exists:
+            return self.file_exists
 
-    #     self.get_metadata_fields()
+        self.get_metadata_fields()
 
-    #     return self.file_exists
+        return self.file_exists
 
     def grouping_folder_name(self):
         if self.file_meta.board_id:
