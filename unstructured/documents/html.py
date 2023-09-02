@@ -270,7 +270,7 @@ def _get_emphasized_texts_from_tag(tag_elem: etree.Element) -> List[dict]:
     return emphasized_texts
 
 
-def stringify_children(node):
+def _get_tag_elem_inner_text_with_tags(node):
     s = node.text
     if s is None:
         s = ""
@@ -283,7 +283,7 @@ def split_by_html_line_break(tag_elem: etree.Element):
     if tag_elem.find("br") is None:
         return [tag_elem]
     else:
-        raw_inner_text = stringify_children(tag_elem)
+        raw_inner_text = _get_tag_elem_inner_text_with_tags(tag_elem)
         text_segments = re.split(r"<br\s*/?>", raw_inner_text)
 
         tag_elems = []
