@@ -455,6 +455,7 @@ def test_partition_html_grabs_links():
         <a href="/loner">A lone link!</a>
     </html>"""
     elements = partition_html(text=html_text)
+
     assert elements[0] == NarrativeText("Hello there I am a very important link!")
     assert elements[0].metadata.link_urls == ["/link"]
     assert elements[0].metadata.link_texts == ["very important link!"]
