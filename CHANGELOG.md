@@ -3,7 +3,7 @@
 ### Enhancements
 
 * Removed PIL pin as issue has been resolved upstream
-* YoloX types added
+* YoloX element types added
 
 ### Features
 
