@@ -7,6 +7,8 @@
 
 ### Features
 
+* Add Salesforce Connector to be able to pull Account, Case, Campaign, EmailMessage, Lead
+
 ### Fixes
 
 * Update version-sync to prevent duplicate release versions
