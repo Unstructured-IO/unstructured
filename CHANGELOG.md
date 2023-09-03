@@ -1,4 +1,4 @@
-## 0.10.12-dev3
+## 0.10.12-dev4
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 * Add Salesforce Connector to be able to pull Account, Case, Campaign, EmailMessage, Lead
 
 ### Fixes
+
+* `partition_html` splits sections separated by tags like `<br>` into distince elements.
 
 ## 0.10.12-dev2
 
@@ -18,7 +20,6 @@
 
 ### Fixes
 
-* `partition_html` splits on paragraphs separated by line breaks into distince elements.
 * Update version-sync to prevent duplicate release versions
 
 ## 0.10.11
