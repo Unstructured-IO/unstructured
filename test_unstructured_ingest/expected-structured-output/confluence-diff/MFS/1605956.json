@@ -125,7 +125,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "9d43760c2ac5873a7a9fb595a7d919d1",
+    "element_id": "9b9790309cd70be343fc48438aced430",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Thoughtful responses can get lost and lose context as email replies pile up. And if you neglect to copy someone or want to add them later on, it's difficult for them to get up to speed."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "89a2f812f157205760db3116128299df",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
@@ -137,7 +147,7 @@
         null
       ]
     },
-    "text": "Thoughtful responses can get lost and lose context as email replies pile up. And if you neglect to copy someone or want to add them later on, it's difficult for them to get up to speed. Inline comments allow anyone (or everyone) to huddle around an idea while referencing key information on the project page."
+    "text": "Inline comments allow anyone (or everyone) to huddle around an idea while referencing key information on the project page.Inline comments"
   },
   {
     "type": "NarrativeText",
@@ -171,7 +181,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1e60bb772f35af42c7b4bbed025790bd",
+    "element_id": "894638c1171523c1f38f7242bbd8dcda",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
@@ -183,7 +193,7 @@
         null
       ]
     },
-    "text": "@mentions on Confluence function like @mentions on social media platforms like Twitter, Instagram, and Slack. Type the @ symbol on a Confluence page or in a comment, begin spelling a team member's first name, and a list will appear. Select the individual to ask a question or assign a task."
+    "text": "@mentions on Confluence function like @mentions on social media platforms like Twitter, Instagram, and Slack. Type the @ symbol on a Confluence page or in a comment, begin spelling a team member's first name, and a list will appear. Select the individual to ask a question or assign a task.@mentions"
   },
   {
     "type": "Title",

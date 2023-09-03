@@ -373,13 +373,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "First, take steps to better prepare for the seasonal hazards weather can throw at you."
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      "page_number": 1
     },
     "text": "This could include a spring cleaning of your storm shelter or ensuring your emergency kit is fully stocked. Take a look at our infographics and social media posts to help you become “weather-ready.”"
   },
@@ -439,16 +433,10 @@
       "filetype": "text/html",
       "page_number": 1,
       "link_urls": [
-        "http://www.commerce.gov",
-        "http://www.noaa.gov",
-        "https://www.weather.gov",
-        "https://www.weather.gov/news/contact"
+        "http://www.commerce.gov"
       ],
       "link_texts": [
-        "US Dept of Commerce",
-        "National Oceanic and Atmospheric Administration",
-        "National Weather Service",
-        "Comments? Questions? Please Contact Us."
+        "US Dept of Commerce"
       ]
     },
     "text": "US Dept of Commerce"
@@ -461,16 +449,10 @@
       "filetype": "text/html",
       "page_number": 1,
       "link_urls": [
-        "http://www.commerce.gov",
-        "http://www.noaa.gov",
-        "https://www.weather.gov",
-        "https://www.weather.gov/news/contact"
+        "http://www.noaa.gov"
       ],
       "link_texts": [
-        "US Dept of Commerce",
-        "National Oceanic and Atmospheric Administration",
-        "National Weather Service",
-        "Comments? Questions? Please Contact Us."
+        "National Oceanic and Atmospheric Administration"
       ]
     },
     "text": "National Oceanic and Atmospheric Administration"
@@ -483,41 +465,49 @@
       "filetype": "text/html",
       "page_number": 1,
       "link_urls": [
-        "http://www.commerce.gov",
-        "http://www.noaa.gov",
-        "https://www.weather.gov",
-        "https://www.weather.gov/news/contact"
+        "https://www.weather.gov"
       ],
       "link_texts": [
-        "US Dept of Commerce",
-        "National Oceanic and Atmospheric Administration",
-        "National Weather Service",
-        "Comments? Questions? Please Contact Us."
+        "National Weather Service"
       ]
     },
     "text": "National Weather Service"
   },
   {
+    "type": "Title",
+    "element_id": "41f6e17bf5e9a407fcca74e902f802a0",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "News Around NOAA"
+  },
+  {
+    "type": "Title",
+    "element_id": "d27040ad6074797db8e535d1fba3b5d8",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "1325 East West Highway"
+  },
+  {
     "type": "NarrativeText",
-    "element_id": "4945db303389e85454f6fa7a8420182d",
+    "element_id": "6907c74f69a6abff1472a4a149956ec3",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
       "link_urls": [
-        "http://www.commerce.gov",
-        "http://www.noaa.gov",
-        "https://www.weather.gov",
         "https://www.weather.gov/news/contact"
       ],
       "link_texts": [
-        "US Dept of Commerce",
-        "National Oceanic and Atmospheric Administration",
-        "National Weather Service",
         "Comments? Questions? Please Contact Us."
       ]
     },
-    "text": "News Around NOAA1325 East West HighwaySilver Spring, MD 20910Comments? Questions? Please Contact Us."
+    "text": "Silver Spring, MD 20910Comments? Questions? Please Contact Us."
   },
   {
     "type": "Title",

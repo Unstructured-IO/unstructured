@@ -249,58 +249,8 @@
     "text": "New Page With Verification"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "fa64ea1e82e1206f828ab2a02917c7e9",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "link_urls": [
-        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-      ],
-      "link_texts": [
-        "\n            Roman Isecke\n          "
-      ],
-      "emphasized_text_contents": [
-        "expired"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
-    },
-    "text": "expired"
-  },
-  {
-    "type": "Title",
-    "element_id": "548b1cea7491191a12465d055db621f4",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "link_urls": [
-        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-      ],
-      "link_texts": [
-        "\n            Roman Isecke\n          "
-      ],
-      "emphasized_text_contents": [
-        "expired"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
-    },
-    "text": "Roman Isecke"
-  },
-  {
     "type": "UncategorizedText",
-    "element_id": "807d3d51716a34d557ff942b15026c06",
+    "element_id": "20079ac60749535ee21512b3091a61e0",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -321,7 +271,7 @@
         "span"
       ]
     },
-    "text": "2023-08-04T04:00:00.000Z - 2023-08-11T04:00:00.000Z"
+    "text": "expired\n          \n          \n            Roman Isecke\n          \n          \n            2023-08-04T04:00:00.000Z - 2023-08-11T04:00:00.000Z"
   },
   {
     "type": "UncategorizedText",
@@ -490,8 +440,8 @@
     "text": "Mission, Vision, Values"
   },
   {
-    "type": "Title",
-    "element_id": "c587c2601ccfc456cb7d4d9bb34f12f0",
+    "type": "UncategorizedText",
+    "element_id": "575d595cf4830f838cc79edf3a4bd5fc",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -508,28 +458,7 @@
         "span"
       ]
     },
-    "text": "Vision"
-  },
-  {
-    "type": "Title",
-    "element_id": "67538900b235164b3f1debd8a8d80b44",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Vision",
-        "Company Updates"
-      ],
-      "emphasized_text_tags": [
-        "span",
-        "span"
-      ]
-    },
-    "text": "Company Updates"
+    "text": "Vision\n        \n        \n          Company Updates"
   },
   {
     "type": "Title",
@@ -800,8 +729,8 @@
     "text": "Page with every block"
   },
   {
-    "type": "Title",
-    "element_id": "67538900b235164b3f1debd8a8d80b44",
+    "type": "UncategorizedText",
+    "element_id": "d7501f757bf490f053005b707829e343",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -818,82 +747,11 @@
         "span"
       ]
     },
-    "text": "Company Updates"
-  },
-  {
-    "type": "Title",
-    "element_id": "d3ad1f1f8c9c4f5a4a593571085513a4",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Company Updates",
-        "Policies"
-      ],
-      "emphasized_text_tags": [
-        "span",
-        "span"
-      ]
-    },
-    "text": "Policies"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "1c34f88707b55e6104c4eb20e71ffa3d",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "link_urls": [
-        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-      ],
-      "link_texts": [
-        "\n            Roman Isecke\n          "
-      ],
-      "emphasized_text_contents": [
-        "verified"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
-    },
-    "text": "verified"
-  },
-  {
-    "type": "Title",
-    "element_id": "548b1cea7491191a12465d055db621f4",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:44:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "link_urls": [
-        "https://lh3.googleusercontent.com/a/AAcHTtf2bisNRhNNHsC5OPcmNuCkfjmi4nmdyZxgYv27=s100"
-      ],
-      "link_texts": [
-        "\n            Roman Isecke\n          "
-      ],
-      "emphasized_text_contents": [
-        "verified"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
-    },
-    "text": "Roman Isecke"
+    "text": "Company Updates\n        \n        \n          Policies"
   },
   {
     "type": "UncategorizedText",
-    "element_id": "05c09b0f5e8de9e007da39cb44c382d7",
+    "element_id": "aad0d1a0dbac83ea1906db66ecbff086",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -914,7 +772,7 @@
         "span"
       ]
     },
-    "text": "2023-08-04T04:00:00.000Z - 2023-11-02T04:00:00.000Z"
+    "text": "verified\n          \n          \n            Roman Isecke\n          \n          \n            2023-08-04T04:00:00.000Z - 2023-11-02T04:00:00.000Z"
   },
   {
     "type": "UncategorizedText",
