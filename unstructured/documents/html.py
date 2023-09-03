@@ -296,7 +296,7 @@ def split_by_html_line_break(tag_elem: etree.Element):
 def _parse_tag(
     tag_elem: etree.Element,
 ) -> List[Element]:
-    """Converts an etree element to a Text element if there is applicable text in the element.
+    """Converts an etree element to Text elements if there is applicable text in the element.
     Ancestor tags are kept so they can be used for filtering or classification without
     processing the document tree again. In the future we might want to keep descendants too,
     but we don't have a use for them at the moment."""
