@@ -5,6 +5,8 @@
 * Removed PIL pin as issue has been resolved upstream
 * Bump unstructured-inference
   * Support for yolox_quantized layout detection model (0.5.20)
+* YoloX element types added
+
 
 ### Features
 
