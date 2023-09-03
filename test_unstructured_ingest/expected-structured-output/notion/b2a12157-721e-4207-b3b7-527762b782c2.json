@@ -14,7 +14,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e4533ae21b3b1dd89ff3acfd70dcd96c",
+    "element_id": "be23aed1a36d4a5aa33b4dc454eff351",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -23,7 +23,7 @@
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "Notion Tip: When creating a page, it's important to give it a clear title and provide some content. This could include verifying the information, summarizing the topic, or sharing your thoughts and opinions on something that matters to you."
+    "text": "💡\n      \n      Notion Tip: When creating a page, it's important to give it a clear title and provide some content. This could include verifying the information, summarizing the topic, or sharing your thoughts and opinions on something that matters to you."
   },
   {
     "type": "Title",
@@ -53,7 +53,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "dfeba7bac167655ceffa27a958c92b9e",
+    "element_id": "6f7bd5b1aa870cb1bc65673b13c4f443",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -68,7 +68,7 @@
         "b"
       ]
     },
-    "text": "In your sidebar, click the"
+    "text": "\n      In your sidebar, click the \n      "
   },
   {
     "type": "Title",
@@ -228,7 +228,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "84c5efb55df93caa95f3e2c6ab56e3f1",
+    "element_id": "0a296a1b32283aa06e695312b049892b",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -237,7 +237,7 @@
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "Instead of using folders, Notion lets you nest pages inside pages. Type"
+    "text": "\n      Instead of using folders, Notion lets you nest pages inside pages. Type \n      "
   },
   {
     "type": "Title",
@@ -254,7 +254,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "00dac9674c8ff78bd49ee5433f64c6b5",
+    "element_id": "b8736e38d7aeb7d60b821eb715ac9bbc",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -269,11 +269,11 @@
         "\n        Notion Editor 101\n      "
       ]
     },
-    "text": "Check out this"
+    "text": "\n      Check out this \n      "
   },
   {
-    "type": "Title",
-    "element_id": "9065835b4ad5b61c5cf0666b8037b716",
+    "type": "UncategorizedText",
+    "element_id": "23b9158a48adb937cd37eae997f2dbe6",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -288,25 +288,6 @@
         "\n        Notion Editor 101\n      "
       ]
     },
-    "text": "Notion Editor 101"
-  },
-  {
-    "type": "Title",
-    "element_id": "9337da5279beb0ea5bde948c085972c8",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-04T18:31:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "link_urls": [
-        "https://www.notion.so/notion/Notion-editor-101-create-and-edit-68c7c67047494fdb87d50185429df93e"
-      ],
-      "link_texts": [
-        "\n        Notion Editor 101\n      "
-      ]
-    },
-    "text": "guide for more advanced tips and how-to's."
+    "text": "Notion Editor 101\n      \n       guide for more advanced tips and how-to's."
   }
 ]
