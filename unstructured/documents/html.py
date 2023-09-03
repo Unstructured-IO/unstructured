@@ -273,7 +273,14 @@ def _is_break_element(tag_elem: etree.Element) -> bool:
     return tag_elem.tail and not tag_elem.text
 
 
+def _has_break_elements(tag_elem: etree.Element) -> bool:
+    return any(_is_break_element(desc) for desc in tag_elem.iterdescendants())
+
+
 def split_by_html_line_break(tag_elem: etree.Element):
+    if not _has_break_elements(tag_elem):
+        return [tag_elem]
+
     tag_elems = []
     tag_sub_elem = etree.Element(tag_elem.tag)
     tag_sub_elem.text = tag_elem.text
