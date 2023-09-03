@@ -33,7 +33,7 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 
-TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
+TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font", "pre"]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]
 HEADING_TAGS: Final[List[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
 TABLE_TAGS: Final[List[str]] = ["table", "tbody", "td", "tr"]
