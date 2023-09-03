@@ -2,19 +2,12 @@
 
 ### Enhancements
 
+* Removed PIL pin as issue has been resolved upstream
+* YoloX element types added
+
 ### Features
 
 * Add Salesforce Connector to be able to pull Account, Case, Campaign, EmailMessage, Lead
-
-### Fixes
-
-## 0.10.12-dev2
-
-### Enhancements
-
-* Removed PIL pin as issue has been resolved upstream
-
-### Features
 
 ### Fixes
 
