@@ -1,3 +1,10 @@
+## 0.10.13-dev0
+
+### Enhancements
+
+* Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+
+
 ## 0.10.12
 
 ### Enhancements
