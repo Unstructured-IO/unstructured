@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import requests
+from dataclasses_json import DataClassJsonMixin
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.error import PartitionError, SourceConnectionError
@@ -26,7 +27,7 @@ class BaseSessionHandle(ABC):
 
 
 @dataclass
-class ProcessorConfigs:
+class ProcessorConfigs(DataClassJsonMixin):
     """Common set of config required when running data connectors."""
 
     partition_strategy: str
@@ -39,7 +40,7 @@ class ProcessorConfigs:
 
 
 @dataclass
-class StandardConnectorConfig:
+class StandardConnectorConfig(DataClassJsonMixin):
     """Common set of config options passed to all connectors."""
 
     # where raw documents are stored for processing, and then removed if not preserve_downloads
@@ -58,12 +59,13 @@ class StandardConnectorConfig:
     re_download: bool = False
 
 
-class BaseConnectorConfig(ABC):
+@dataclass
+class BaseConnectorConfig(DataClassJsonMixin, ABC):
     """Abstract definition on which to define connector-specific attributes."""
 
 
 @dataclass
-class BaseConnector(ABC):
+class BaseConnector(DataClassJsonMixin, ABC):
     """Abstract Base Class for a connector to a remote source, e.g. S3 or Google Drive."""
 
     standard_config: StandardConnectorConfig
@@ -99,7 +101,7 @@ class BaseConnector(ABC):
 
 
 @dataclass
-class BaseIngestDoc(ABC):
+class BaseIngestDoc(DataClassJsonMixin, ABC):
     """An "ingest document" is specific to a connector, and provides
     methods to fetch a single raw document, store it locally for processing, any cleanup
     needed after successful processing of the doc, and the ability to write the doc's

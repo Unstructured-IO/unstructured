@@ -141,12 +141,12 @@ locally if you are planning to contribute to the project.
 * Using `pyenv` to manage virtualenv's is recommended but not necessary
 	* Mac install instructions. See [here](https://github.com/Unstructured-IO/community#mac--homebrew) for more detailed instructions.
 		* `brew install pyenv-virtualenv`
-	  * `pyenv install 3.8.17`
+	  * `pyenv install 3.10`
   * Linux instructions are available [here](https://github.com/Unstructured-IO/community#linux).
 
 * Create a virtualenv to work in and activate it, e.g. for one named `unstructured`:
 
-	`pyenv  virtualenv 3.8.17 unstructured` <br />
+	`pyenv  virtualenv 3.10 unstructured` <br />
 	`pyenv activate unstructured`
 
 * Run `make install`
@@ -164,6 +164,14 @@ whether any linting or formatting changes should be applied, and `make tidy` to 
 If using the optional `pre-commit`, you'll just need to install the hooks with `pre-commit install` since the
 `pre-commit` package is installed as part of `make install` mentioned above. Finally, if you decided to use `pre-commit`
 you can also uninstall the hooks with `pre-commit uninstall`.
+
+In addition to develop in your local OS we also provide a helper to use docker providing a development environment:
+
+```bash
+make docker-start-dev
+```
+
+This starts a docker container with your local repo mounted to `/mnt/local_unstructured`. This docker image allows you to develop without worrying about your OS's compatibility with the repo and its dependencies.
 
 ## :clap: Quick Tour
 

@@ -1,3 +1,7 @@
+import typing as t
+
+import click
+
 from .airtable import get_cmd as airtable
 from .azure import get_cmd as azure
 from .biomed import get_cmd as biomed
@@ -17,10 +21,16 @@ from .notion import get_cmd as notion
 from .onedrive import get_cmd as onedrive
 from .outlook import get_cmd as outlook
 from .reddit import get_cmd as reddit
-from .s3 import get_cmd as s3
+from .s3_2 import get_dest_cmd as s3_dest
+from .s3_2 import get_source_cmd as s3
+from .salesforce import get_cmd as salesforce
 from .sharepoint import get_cmd as sharepoint
 from .slack import get_cmd as slack
 from .wikipedia import get_cmd as wikipedia
+
+src: t.List[click.Group] = [s3()]
+
+dest: t.List[click.Command] = [s3_dest()]
 
 __all__ = [
     "airtable",
@@ -43,7 +53,10 @@ __all__ = [
     "outlook",
     "reddit",
     "s3",
+    "salesforce",
     "sharepoint",
     "slack",
     "wikipedia",
+    "src",
+    "dest",
 ]

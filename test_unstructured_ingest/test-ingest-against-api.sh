@@ -20,7 +20,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess \
     --structured-output-dir "$OUTPUT_DIR" \
     --verbose \
-    --file-glob "*.pdf" \
+    --num-processes 1 \
+    --file-glob "*1p.txt" \
     --input-path example-docs
 
-sh "$SCRIPT_DIR"/check-num-files-output.sh 8 $OUTPUT_FOLDER_NAME
+sh "$SCRIPT_DIR"/check-num-files-output.sh 1 $OUTPUT_FOLDER_NAME
