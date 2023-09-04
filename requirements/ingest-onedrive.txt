@@ -48,7 +48,7 @@ requests==2.31.0
     #   -c requirements/base.txt
     #   msal
     #   office365-rest-python-client
-soupsieve==2.4.1
+soupsieve==2.5
     # via
     #   -c requirements/base.txt
     #   beautifulsoup4

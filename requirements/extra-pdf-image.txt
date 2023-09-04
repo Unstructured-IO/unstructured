@@ -37,7 +37,7 @@ flatbuffers==23.5.26
     # via onnxruntime
 fonttools==4.42.1
     # via matplotlib
-fsspec==2023.6.0
+fsspec==2023.9.0
     # via huggingface-hub
 huggingface-hub==0.16.4
     # via
@@ -74,6 +74,7 @@ numpy==1.24.4
     #   contourpy
     #   layoutparser
     #   matplotlib
+    #   onnx
     #   onnxruntime
     #   opencv-python
     #   pandas
@@ -83,6 +84,8 @@ numpy==1.24.4
     #   transformers
 omegaconf==2.3.0
     # via effdet
+onnx==1.14.1
+    # via unstructured-inference
 onnxruntime==1.15.1
     # via unstructured-inference
 opencv-python==4.8.0.76
@@ -122,6 +125,7 @@ portalocker==2.7.0
 protobuf==4.23.4
     # via
     #   -c requirements/constraints.in
+    #   onnx
     #   onnxruntime
 pycocotools==2.0.7
     # via effdet
@@ -175,7 +179,7 @@ sympy==1.12
     # via
     #   onnxruntime
     #   torch
-timm==0.9.6
+timm==0.9.7
     # via effdet
 tokenizers==0.13.3
     # via transformers
@@ -204,10 +208,11 @@ typing-extensions==4.7.1
     #   filelock
     #   huggingface-hub
     #   iopath
+    #   onnx
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.5.19
+unstructured-inference==0.5.21
     # via
     #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in

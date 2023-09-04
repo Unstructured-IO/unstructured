@@ -75,6 +75,9 @@ jobs:
           MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
           MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
           MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
+          SALESFORCE_USERNAME: ${{secrets.SALESFORCE_USERNAME}}
+          SALESFORCE_CONSUMER_KEY: ${{secrets.SALESFORCE_CONSUMER_KEY}}
+          SALESFORCE_PRIVATE_KEY: ${{secrets.SALESFORCE_PRIVATE_KEY}}
           SHAREPOINT_CLIENT_ID: ${{secrets.SHAREPOINT_CLIENT_ID}}
           SHAREPOINT_CRED: ${{secrets.SHAREPOINT_CRED}}
           SHAREPOINT_SITE: ${{secrets.SHAREPOINT_SITE}}
@@ -107,6 +110,7 @@ jobs:
           make install-ingest-jira
           make install-ingest-onedrive
           make install-ingest-outlook
+          make install-ingest-salesforce
           make install-ingest-slack
           make install-ingest-wikipedia
           make install-ingest-notion

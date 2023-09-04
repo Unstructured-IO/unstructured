@@ -148,6 +148,7 @@ setup(
         "airtable": load_requirements("requirements/ingest-airtable.in"),
         "sharepoint": load_requirements("requirements/ingest-sharepoint.in"),
         "delta-table": load_requirements("requirements/ingest-delta-table.in"),
+        "salesforce": load_requirements("requirements/ingest-salesforce.in"),
         "jira": load_requirements("requirements/ingest-jira.in"),
         # Legacy extra requirements
         "huggingface": load_requirements("requirements/huggingface.in"),
