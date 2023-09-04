@@ -25,6 +25,7 @@ from unstructured.ingest.connector.onedrive import OneDriveIngestDoc
 from unstructured.ingest.connector.outlook import OutlookIngestDoc
 from unstructured.ingest.connector.reddit import RedditIngestDoc
 from unstructured.ingest.connector.s3_2 import S3IngestDoc
+from unstructured.ingest.connector.salesforce import SalesforceIngestDoc
 from unstructured.ingest.connector.sharepoint import SharepointIngestDoc
 from unstructured.ingest.connector.slack import SlackIngestDoc
 from unstructured.ingest.connector.wikipedia import (
@@ -55,6 +56,7 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
     "outlook": OutlookIngestDoc,
     "reddit": RedditIngestDoc,
     "s3": S3IngestDoc,
+    "salesforce": SalesforceIngestDoc,
     "sharepoint": SharepointIngestDoc,
     "slack": SlackIngestDoc,
     "wikipedia_html": WikipediaIngestHTMLDoc,
