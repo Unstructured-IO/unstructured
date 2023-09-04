@@ -3,6 +3,8 @@
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+- Use `unstructured.pytesseract.run_and_get_multiple_output` function to reduce the number of calls
+  to `tesseract` by half when partitioning pdf or image with `tesseract`
 
 ### Fixes
 
