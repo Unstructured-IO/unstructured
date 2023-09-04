@@ -16,7 +16,7 @@ argon2-cffi-bindings==21.2.0
     # via argon2-cffi
 arrow==1.2.3
     # via isoduration
-asttokens==2.3.0
+asttokens==2.4.0
     # via stack-data
 async-lru==2.0.4
     # via jupyterlab
@@ -102,7 +102,7 @@ importlib-resources==6.0.1
     #   jsonschema
     #   jsonschema-specifications
     #   jupyterlab
-ipykernel==6.25.1
+ipykernel==6.25.2
     # via
     #   jupyter
     #   jupyter-console
@@ -317,7 +317,7 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
-rpds-py==0.10.0
+rpds-py==0.10.2
     # via
     #   jsonschema
     #   referencing

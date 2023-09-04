@@ -100,6 +100,7 @@ packaging==23.1
     #   onnxruntime
     #   pytesseract
     #   transformers
+    #   unstructured-pytesseract
 pandas==2.0.3
     # via layoutparser
 pdf2image==1.16.3
@@ -120,6 +121,7 @@ pillow==10.0.0
     #   pdfplumber
     #   pytesseract
     #   torchvision
+    #   unstructured-pytesseract
 portalocker==2.7.0
     # via iopath
 protobuf==4.23.4
@@ -216,6 +218,8 @@ unstructured-inference==0.5.21
     # via
     #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in
+unstructured-pytesseract==0.3.11
+    # via -r requirements/extra-pdf-image.in
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
