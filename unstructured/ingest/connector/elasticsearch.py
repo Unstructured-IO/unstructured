@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -102,6 +103,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         concatenated_values = seperator.join(values)
         return concatenated_values
 
+    @SourceConnectionError.wrap
     @requires_dependencies(["elasticsearch", "jq"], extras="elasticsearch")
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):

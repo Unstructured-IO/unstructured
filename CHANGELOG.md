@@ -1,4 +1,4 @@
-## 0.10.13-dev1
+## 0.10.13-dev2
 
 ### Enhancements
 
@@ -7,6 +7,10 @@
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization
+
+### Fixes
+
+* Ingest error handling to properly raise errors when wrapped
 
 ## 0.10.12
 
@@ -23,6 +27,7 @@
 * Add Salesforce Connector to be able to pull Account, Case, Campaign, EmailMessage, Lead
 
 ### Fixes
+
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)

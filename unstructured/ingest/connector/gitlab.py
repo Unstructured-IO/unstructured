@@ -7,6 +7,7 @@ from unstructured.ingest.connector.git import (
     GitIngestDoc,
     SimpleGitConfig,
 )
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
@@ -26,6 +27,7 @@ class SimpleGitLabConfig(SimpleGitConfig):
         while self.repo_path.startswith("/"):
             self.repo_path = self.repo_path[1:]
 
+    @SourceConnectionError.wrap
     @requires_dependencies(["gitlab"], extras="gitlab")
     def _get_project(self) -> "Project":
         from gitlab import Gitlab
