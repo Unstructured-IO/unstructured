@@ -37,7 +37,7 @@ flatbuffers==23.5.26
     # via onnxruntime
 fonttools==4.42.1
     # via matplotlib
-fsspec==2023.6.0
+fsspec==2023.9.0
     # via huggingface-hub
 huggingface-hub==0.16.4
     # via
@@ -175,7 +175,7 @@ sympy==1.12
     # via
     #   onnxruntime
     #   torch
-timm==0.9.6
+timm==0.9.7
     # via effdet
 tokenizers==0.13.3
     # via transformers
