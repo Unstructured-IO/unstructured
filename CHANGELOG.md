@@ -1,9 +1,12 @@
-## 0.10.12-dev3
+## 0.10.12
 
 ### Enhancements
 
 * Removed PIL pin as issue has been resolved upstream
+* Bump unstructured-inference
+  * Support for yolox_quantized layout detection model (0.5.20)
 * YoloX element types added
+
 
 ### Features
 
@@ -11,8 +14,9 @@
 
 ### Fixes
 
-* Update version-sync to prevent duplicate release versions
-
+* Bump unstructured-inference
+  * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
+  
 ## 0.10.11
 
 ### Enhancements

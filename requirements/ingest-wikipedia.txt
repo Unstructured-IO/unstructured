@@ -25,7 +25,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   wikipedia
-soupsieve==2.4.1
+soupsieve==2.5
     # via
     #   -c requirements/base.txt
     #   beautifulsoup4
