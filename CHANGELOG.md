@@ -1,8 +1,12 @@
-## 0.10.13-dev0
+## 0.10.13-dev1
 
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+
+### Fixes
+
+* Ingest error handling to properly raise errors when wrapped
 
 
 ## 0.10.12
@@ -20,6 +24,7 @@
 * Add Salesforce Connector to be able to pull Account, Case, Campaign, EmailMessage, Lead
 
 ### Fixes
+
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
