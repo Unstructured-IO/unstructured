@@ -1,7 +1,7 @@
 import os
 import re
+from contextlib import suppress
 from dataclasses import dataclass, field
-from datetime import datetime
 from functools import cached_property
 from pathlib import Path
 from typing import Any, Dict, Optional, Type
@@ -127,18 +127,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             **self.config.get_access_kwargs(),
         )
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-        try:
-            fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
-        except FileNotFoundError as e:
-            logger.error("Failed to find file in remote source.")
-            logger.error(e)
-
-    def _catch_not_implemented(self, method, **kwargs) -> Optional[str]:
-        try:
-            value: datetime = method(self.remote_file_path, kwargs)
-        except NotImplementedError:
-            return None
-        return value.isoformat()
+        fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
 
     @cached_property
     @requires_dependencies(["fsspec"])
@@ -149,13 +138,21 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
             **self.config.get_access_kwargs(),
         )
-        date_created = self._catch_not_implemented(fs.created)
-        date_modified = self._catch_not_implemented(fs.modified)
+        date_created = None
+        with suppress(NotImplementedError):
+            date_created = fs.created(self.remote_file_path)
+            date_created = date_created.isoformat()
+
+        date_modified = None
+        with suppress(NotImplementedError):
+            date_modified = fs.modified(self.remote_file_path)
+            date_modified = date_modified.isoformat()
+
+        source_url = None
+        with suppress(NotImplementedError):
+            source_url = fs.sign(self.remote_file_path, expiration=SIGNED_URL_EXPIRATION)
+
         version = str(fs.checksum(self.remote_file_path))
-        source_url = self._catch_not_implemented(
-            fs.sign(self.remote_file_path),
-            expiration=SIGNED_URL_EXPIRATION,
-        )
         file_exists = fs.exists(self.remote_file_path)
         return FsspecFileMeta(
             date_created,
@@ -176,7 +173,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def date_modified(self) -> Optional[str]:
-        return self.file_metadata.date_created  # type: ignore
+        return self.file_metadata.date_modified  # type: ignore
 
     @property
     def exists(self) -> Optional[bool]:
