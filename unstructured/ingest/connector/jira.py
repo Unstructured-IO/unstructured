@@ -261,7 +261,10 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     def record_locator(self):  # Values must be JSON-serializable
         """A dictionary with any data necessary to uniquely identify the document on
         the source system."""
-        return {"issue_key": self.file_meta.issue_key}
+        return {
+            "base_url": self.config.url,
+            "issue_key": self.file_meta.issue_key,
+        }
 
     @cached_property
     def issue(self):
