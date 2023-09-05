@@ -276,7 +276,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     @cached_property
     @SourceConnectionError.wrap
     @requires_dependencies(dependencies=["atlassian"], extras="jira")
-    def get_metadata_fields(self):
+    def metadata_fields(self):
         return {
             "date_modified": str(self.parsed_fields["updated"]),
             "date_created": str(self.parsed_fields["created"]),
@@ -286,15 +286,15 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
 
     @cached_property
     def date_created(self) -> Optional[str]:
-        return self.get_metadata_fields["date_created"]
+        return self.metadata_fields["date_created"]
 
     @cached_property
     def date_modified(self) -> Optional[str]:
-        return self.get_metadata_fields["date_modified"]
+        return self.metadata_fields["date_modified"]
 
     @cached_property
     def date_processed(self) -> Optional[str]:
-        return self.get_metadata_fields["date_processed"]
+        return self.metadata_fields["date_processed"]
 
     @cached_property
     def exists(self) -> Optional[bool]:
