@@ -209,10 +209,10 @@ class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
         return [
             AirtableIngestDoc(
-                read_config=self.read_config,
                 connector_config=self.connector_config,
                 partition_config=self.partition_config,
-                remote_file_path=AirtableFileMeta(base_id, table_id, view_id),
+                read_config=self.read_config,
+                file_meta=AirtableFileMeta(base_id, table_id, view_id),
             )
             for base_id, table_id, view_id in baseid_tableid_viewid_tuples
         ]

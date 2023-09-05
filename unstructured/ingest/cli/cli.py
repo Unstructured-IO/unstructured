@@ -23,7 +23,6 @@ subcommands = [
     cli_cmds.outlook,
     cli_cmds.local,
     cli_cmds.elasticsearch,
-    cli_cmds.confluence,
     cli_cmds.sharepoint,
     cli_cmds.salesforce,
     cli_cmds.jira,

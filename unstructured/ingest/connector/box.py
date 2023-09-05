@@ -18,12 +18,6 @@ from unstructured.ingest.connector.fsspec import (
     SimpleFsspecConfig,
 )
 from unstructured.ingest.error import SourceConnectionError
-from unstructured.ingest.interfaces2 import (
-    BaseConnectorConfig,
-    PartitionConfig,
-    ReadConfig,
-    WriteConfig,
-)
 from unstructured.utils import requires_dependencies
 
 
@@ -59,24 +53,11 @@ class BoxIngestDoc(FsspecIngestDoc):
         super().get_file()
 
 
+@dataclass
 class BoxSourceConnector(FsspecSourceConnector):
     ingest_doc_cls: Type[BoxIngestDoc] = BoxIngestDoc
 
-    @requires_dependencies(["boxfs", "fsspec"], extras="box")
-    def __init__(
-        self,
-        read_config: ReadConfig,
-        connector_config: BaseConnectorConfig,
-        partition_config: PartitionConfig,
-    ):
-        super().__init__(
-            read_config=read_config,
-            connector_config=connector_config,
-            partition_config=partition_config,
-        )
 
-
+@dataclass
 class BoxDestinationConnector(FsspecDestinationConnector):
-    @requires_dependencies(["boxfs", "fsspec"], extras="box")
-    def __init__(self, write_config: WriteConfig, connector_config: BaseConnectorConfig):
-        super().__init__(write_config=write_config, connector_config=connector_config)
+    pass

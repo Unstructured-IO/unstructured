@@ -16,8 +16,6 @@ from unstructured.ingest.interfaces2 import (
     BaseIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
-    PartitionConfig,
-    ReadConfig,
     SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
@@ -109,7 +107,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
 
 
 @dataclass
-class BiomedIngestDoc(IngestDocCleanupMixin, BaseSourceConnector):
+class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     connector_config: SimpleBiomedConfig
     file_meta: BiomedFileMeta
     registry_name: str = "biomed"
@@ -152,18 +150,6 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching documents from Biomedical literature FTP directory"""
 
     connector_config: SimpleBiomedConfig
-
-    def __init__(
-        self,
-        read_config: ReadConfig,
-        connector_config: BaseConnectorConfig,
-        partition_config: PartitionConfig,
-    ):
-        super().__init__(
-            read_config=read_config,
-            connector_config=connector_config,
-            partition_config=partition_config,
-        )
 
     def _list_objects_api(self) -> List[BiomedFileMeta]:
         def urls_to_metadata(urls):

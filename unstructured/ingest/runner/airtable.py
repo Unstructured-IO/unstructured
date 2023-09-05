@@ -39,11 +39,11 @@ def airtable(
     )
 
     source_doc_connector = AirtableSourceConnector(  # type: ignore
-        read_config=read_config,
         connector_config=SimpleAirtableConfig(
             personal_access_token=personal_access_token,
             list_of_paths=list_of_paths,
         ),
+        read_config=read_config,
         partition_config=partition_configs,
     )
 

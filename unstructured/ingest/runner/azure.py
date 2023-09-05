@@ -51,12 +51,12 @@ def azure(
     else:
         access_kwargs = {}
     source_doc_connector = AzureBlobStorageSourceConnector(  # type: ignore
-        read_config=read_config,
         connector_config=SimpleAzureBlobStorageConfig(
             path=remote_url,
             recursive=recursive,
             access_kwargs=access_kwargs,
         ),
+        read_config=read_config,
         partition_config=partition_configs,
     )
 
