@@ -255,6 +255,10 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     registry_name: str = "jira"
 
     @property
+    def source_url(self):
+        return f"{self.config.url}/browse/{self.file_meta.issue_key}"
+
+    @property
     def record_locator(self):  # Values must be JSON-serializable
         """A dictionary with any data necessary to uniquely identify the document on
         the source system."""
@@ -263,7 +267,8 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     @requires_dependencies(dependencies=["atlassian"], extras="jira")
     def get_metadata_fields(self):
         try:
-            issue = self.jira.issue(self.file_meta.issue_key)
+            jira = self.session_handle.service
+            issue = jira.issue(self.file_meta.issue_key)
             issue_fields = nested_object_to_field_getter(issue["fields"])
 
             self.metadata_fields = {
@@ -343,10 +348,9 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         try:
-            self.jira = self.config.create_session_handle().service
-
             # GET issue data
-            issue = self.jira.issue(self.file_meta.issue_key)
+            jira = self.session_handle.service
+            issue = jira.issue(self.file_meta.issue_key)
             self.check_exists = True
             self.file_exists = True
 
