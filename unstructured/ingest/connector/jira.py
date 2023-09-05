@@ -278,7 +278,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     @requires_dependencies(dependencies=["atlassian"], extras="jira")
     def metadata_fields(self):
         return {
-            "exists": bool(self.issue),
+            "exists": bool(self.session_handle.service.issue(self.file_meta.issue_key)),
             "date_modified": str(self.parsed_fields["updated"]),
             "date_created": str(self.parsed_fields["created"]),
             "date_processed": str(datetime.datetime.now().time()),
