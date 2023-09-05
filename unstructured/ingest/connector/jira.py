@@ -3,11 +3,13 @@ import math
 import os
 from collections import abc
 from dataclasses import dataclass
+from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
 from requests.exceptions import HTTPError
 
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -254,70 +256,49 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     file_meta: JiraFileMeta
     registry_name: str = "jira"
 
-    @property
+    @cached_property
     def source_url(self):
         return f"{self.config.url}/browse/{self.file_meta.issue_key}"
 
-    @property
+    @cached_property
     def record_locator(self):  # Values must be JSON-serializable
         """A dictionary with any data necessary to uniquely identify the document on
         the source system."""
         return {"issue_key": self.file_meta.issue_key}
 
+    @cached_property
+    @SourceConnectionError.wrap
     @requires_dependencies(dependencies=["atlassian"], extras="jira")
     def get_metadata_fields(self):
-        try:
-            jira = self.session_handle.service
-            issue = jira.issue(self.file_meta.issue_key)
-            issue_fields = nested_object_to_field_getter(issue["fields"])
 
-            self.metadata_fields = {
-                "date_modified": str(issue_fields["updated"]),
-                "date_created": str(issue_fields["created"]),
-                "date_processed": str(datetime.datetime.now().time()),
-                "record_locator": self.record_locator,
-            }
+        jira = self.session_handle.service
+        issue = jira.issue(self.file_meta.issue_key)
+        issue_fields = nested_object_to_field_getter(issue["fields"])
 
-            self.check_exists = True
-            self.file_exists = True
+        return {
+            "date_modified": str(issue_fields["updated"]),
+            "date_created": str(issue_fields["created"]),
+            "date_processed": str(datetime.datetime.now().time()),
+            "record_locator": self.record_locator,
+        }
 
-        except HTTPError as error:
-            if error.response.reason == "Not Found":
-                self.check_exists = True
-                self.file_exists = False
-            else:
-                logger.error(f"Error: {error} for issue {self.file_meta.issue_key}")
-
-    @property
+    @cached_property
     def date_created(self) -> Optional[str]:
-        if not hasattr(self, "metadata_fields"):
-            self.get_metadata_fields()
-
+        return self.get_metadata_fields["date_created"]
         return self.metadata_fields["date_created"] if hasattr(self, "metadata_fields") else None
 
-    @property
+    @cached_property
     def date_modified(self) -> Optional[str]:
-        if not hasattr(self, "metadata_fields"):
-            self.get_metadata_fields()
+        return self.get_metadata_fields["date_modified"]
 
-        return self.metadata_fields["date_modified"] if hasattr(self, "metadata_fields") else None
-
-    @property
+    @cached_property
     def date_processed(self) -> Optional[str]:
-        if not hasattr(self, "metadata_fields"):
-            self.get_metadata_fields()
+        return self.get_metadata_fields["date_processed"]
 
-        return self.metadata_fields["date_processed"] if hasattr(self, "metadata_fields") else None
-
-    @property
+    @cached_property
     def exists(self) -> Optional[bool]:
         """Whether the document exists on the remote source."""
-        if self.check_exists:
-            return self.file_exists
-
-        self.get_metadata_fields()
-
-        return self.file_exists
+        return bool(self.get_metadata_fields())
 
     def grouping_folder_name(self):
         if self.file_meta.board_id:
