@@ -129,22 +129,19 @@ class FieldGetter(dict):
         return value
 
 
-def get_fields_for_issue(issue, c_sep="|||", r_sep="\n\n\n"):
+def form_templated_string(issue, parsed_fields, c_sep="|||", r_sep="\n\n\n"):
     """Forms a template string via parsing the fields from the API response object on the issue
     The template string will be saved to the disk, and then will be processed by partition."""
-    issue_fields = nested_object_to_field_getter(issue["fields"])
-
-    all_fields = r_sep.join(
+    return r_sep.join(
         [
             _get_id_fields_for_issue(issue),
-            _get_project_fields_for_issue(issue_fields),
-            _get_dropdown_fields_for_issue(issue_fields),
-            _get_subtasks_for_issue(issue_fields),
-            _get_comments_for_issue(issue_fields),
-            _get_text_fields_for_issue(issue_fields),
+            _get_project_fields_for_issue(parsed_fields),
+            _get_dropdown_fields_for_issue(parsed_fields),
+            _get_subtasks_for_issue(parsed_fields),
+            _get_comments_for_issue(parsed_fields),
+            _get_text_fields_for_issue(parsed_fields),
         ],
     )
-    return all_fields
 
 
 DEFAULT_C_SEP = " " * 5
@@ -334,7 +331,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     def get_file(self):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
-        self.document = get_fields_for_issue(self.issue)
+        self.document = form_templated_string(self.issue, self.parsed_fields)
 
         self.filename.parent.mkdir(parents=True, exist_ok=True)
 
