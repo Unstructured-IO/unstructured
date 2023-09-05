@@ -4,6 +4,7 @@ from typing import IO, BinaryIO, List, Optional, Union, cast
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -21,12 +22,14 @@ from unstructured.partition.common import (
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.TSV)
+@add_chunking_strategy()
 def partition_tsv(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     include_metadata: bool = True,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions TSV files into document elements.
