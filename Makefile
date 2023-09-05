@@ -47,6 +47,9 @@ install-test:
 	# NOTE(robinson) - Installing weaviate-client separately here because the requests
 	# version conflicts with label_studio_sdk
 	python3 -m pip install weaviate-client
+	# NOTE(yao) - CI seem to always install tesseract to test so it would make sense to also require
+	# pytesseract installation into the virtual env for testing
+	python3 -m pip install unstructured.pytesseract
 
 .PHONY: install-dev
 install-dev:
