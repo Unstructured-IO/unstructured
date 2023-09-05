@@ -43,6 +43,7 @@ from unstructured.utils import requires_dependencies
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
+
 @process_metadata()
 @add_metadata_with_filetype(FileType.PDF)
 @add_chunking_strategy()
