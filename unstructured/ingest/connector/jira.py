@@ -130,6 +130,8 @@ class FieldGetter(dict):
 
 
 def get_fields_for_issue(issue, c_sep="|||", r_sep="\n\n\n"):
+    """Forms a template string via parsing the fields from the API response object on the issue
+    The template string will be saved to the disk, and then will be processed by partition."""
     issue_fields = nested_object_to_field_getter(issue["fields"])
 
     all_fields = r_sep.join(
@@ -265,17 +267,22 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
         return {"issue_key": self.file_meta.issue_key}
 
     @cached_property
+    def issue(self):
+        """Gets issue data"""
+        jira = self.session_handle.service
+        return jira.issue(self.file_meta.issue_key)
+
+    @cached_property
+    def parsed_fields(self):
+        return nested_object_to_field_getter(self.issue["fields"])
+
+    @cached_property
     @SourceConnectionError.wrap
     @requires_dependencies(dependencies=["atlassian"], extras="jira")
     def get_metadata_fields(self):
-
-        jira = self.session_handle.service
-        issue = jira.issue(self.file_meta.issue_key)
-        issue_fields = nested_object_to_field_getter(issue["fields"])
-
         return {
-            "date_modified": str(issue_fields["updated"]),
-            "date_created": str(issue_fields["created"]),
+            "date_modified": str(self.parsed_fields["updated"]),
+            "date_created": str(self.parsed_fields["created"]),
             "date_processed": str(datetime.datetime.now().time()),
             "record_locator": self.record_locator,
         }
@@ -295,8 +302,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     @cached_property
     def exists(self) -> Optional[bool]:
         """Whether the document exists on the remote source."""
-        jira = self.session_handle.service
-        return jira.issue(self.file_meta.issue_key)
+        return bool(self.issue)
 
     @property
     def grouping_folder_name(self):
@@ -328,12 +334,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     def get_file(self):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
-        # get issue data
-        jira = self.session_handle.service
-        issue = jira.issue(self.file_meta.issue_key)
-
-        # parse issue data
-        self.document = get_fields_for_issue(issue)
+        self.document = get_fields_for_issue(self.issue)
 
         self.filename.parent.mkdir(parents=True, exist_ok=True)
 
