@@ -4,6 +4,7 @@
     "element_id": "c08fcabe68ba13b7a7cc6592bd5513a8",
     "metadata": {
       "data_source": {
+        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-2/nested/ideas-page.html?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=2bMVopu8d4pY193RTcIsQUrnMMKS2maWKhsTYqOMAh1f5mx4utV%2BK7xsUSMuKPCrtPw78DAYngIsrF2y%2F79y8RNLqdYclKPLZkOtpBpOWjSLO9wPIAF3a6bqw76ACfSn4t%2FTPR5DYh2oREmedO3pT57dubmVggAfnu%2FV%2BhTSMF%2BLEL6vGpeWF6WtYb2dE2Job4bde9dtbAWYiD7X09khfRYq1O2CpPJKEnvRqBb5ppMVnu629PqRxCFrJ2KITEmGoaO7Ce%2FonIBgQFzKyevOU645pUaD8ci7CyzKHmsoOjhwyZbxMQduESID%2FbwAG0VsO3ajbINGtmvDC6mU4vypCg%3D%3D",
         "version": "185825815252702346084115160168059964528",
         "record_locator": {
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/nested/ideas-page.html"

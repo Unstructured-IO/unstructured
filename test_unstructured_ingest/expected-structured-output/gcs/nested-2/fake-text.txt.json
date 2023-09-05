@@ -4,6 +4,7 @@
     "element_id": "1df8eeb8be847c3a1a7411e3be3e0396",
     "metadata": {
       "data_source": {
+        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-2/fake-text.txt?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=r0zieOEArF0sA0sCblj8Ho52FVm8nyXcdnXbUFBVaFCGLRflTGg4RZGvLA36Dad3zZCv%2BRJ5cf1iOf%2BMtBW9kwtQaAMwLxInreh8SgflPLMWgonMJSJJDQG%2Fv5RwatfAVk6EpWq2YPkryHNjeC5KmlFuGCfOqemu%2B4QTttvnRNWlOQ0epzferDOR36aJbyti5LMh8q7H%2F%2FzyxXv35p2yzXjyzTeLVJa%2BbKADbRlXyggvh9aLCTEfPt3wRXIql%2F4pmsi3JVbP52sU%2FnwA6DBZMTDj7GEf728zvf2AN07qk1Xyj3C5RiSYGGjrTRN5alv9gdS9HGny4GWG8Jt84G%2BNvQ%3D%3D",
         "version": "219742931901912424867836160694743553102",
         "record_locator": {
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -20,6 +21,7 @@
     "element_id": "a9d4657034aa3fdb5177f1325e912362",
     "metadata": {
       "data_source": {
+        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-2/fake-text.txt?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=r0zieOEArF0sA0sCblj8Ho52FVm8nyXcdnXbUFBVaFCGLRflTGg4RZGvLA36Dad3zZCv%2BRJ5cf1iOf%2BMtBW9kwtQaAMwLxInreh8SgflPLMWgonMJSJJDQG%2Fv5RwatfAVk6EpWq2YPkryHNjeC5KmlFuGCfOqemu%2B4QTttvnRNWlOQ0epzferDOR36aJbyti5LMh8q7H%2F%2FzyxXv35p2yzXjyzTeLVJa%2BbKADbRlXyggvh9aLCTEfPt3wRXIql%2F4pmsi3JVbP52sU%2FnwA6DBZMTDj7GEf728zvf2AN07qk1Xyj3C5RiSYGGjrTRN5alv9gdS9HGny4GWG8Jt84G%2BNvQ%3D%3D",
         "version": "219742931901912424867836160694743553102",
         "record_locator": {
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -36,6 +38,7 @@
     "element_id": "9c218520320f238595f1fde74bdd137d",
     "metadata": {
       "data_source": {
+        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-2/fake-text.txt?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=r0zieOEArF0sA0sCblj8Ho52FVm8nyXcdnXbUFBVaFCGLRflTGg4RZGvLA36Dad3zZCv%2BRJ5cf1iOf%2BMtBW9kwtQaAMwLxInreh8SgflPLMWgonMJSJJDQG%2Fv5RwatfAVk6EpWq2YPkryHNjeC5KmlFuGCfOqemu%2B4QTttvnRNWlOQ0epzferDOR36aJbyti5LMh8q7H%2F%2FzyxXv35p2yzXjyzTeLVJa%2BbKADbRlXyggvh9aLCTEfPt3wRXIql%2F4pmsi3JVbP52sU%2FnwA6DBZMTDj7GEf728zvf2AN07qk1Xyj3C5RiSYGGjrTRN5alv9gdS9HGny4GWG8Jt84G%2BNvQ%3D%3D",
         "version": "219742931901912424867836160694743553102",
         "record_locator": {
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -52,6 +55,7 @@
     "element_id": "39a3ae572581d0f1fe7511fd7b3aa414",
     "metadata": {
       "data_source": {
+        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-2/fake-text.txt?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=r0zieOEArF0sA0sCblj8Ho52FVm8nyXcdnXbUFBVaFCGLRflTGg4RZGvLA36Dad3zZCv%2BRJ5cf1iOf%2BMtBW9kwtQaAMwLxInreh8SgflPLMWgonMJSJJDQG%2Fv5RwatfAVk6EpWq2YPkryHNjeC5KmlFuGCfOqemu%2B4QTttvnRNWlOQ0epzferDOR36aJbyti5LMh8q7H%2F%2FzyxXv35p2yzXjyzTeLVJa%2BbKADbRlXyggvh9aLCTEfPt3wRXIql%2F4pmsi3JVbP52sU%2FnwA6DBZMTDj7GEf728zvf2AN07qk1Xyj3C5RiSYGGjrTRN5alv9gdS9HGny4GWG8Jt84G%2BNvQ%3D%3D",
         "version": "219742931901912424867836160694743553102",
         "record_locator": {
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -68,6 +72,7 @@
     "element_id": "fc1adcb8eaceac694e500a103f9f698f",
     "metadata": {
       "data_source": {
+        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-2/fake-text.txt?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=r0zieOEArF0sA0sCblj8Ho52FVm8nyXcdnXbUFBVaFCGLRflTGg4RZGvLA36Dad3zZCv%2BRJ5cf1iOf%2BMtBW9kwtQaAMwLxInreh8SgflPLMWgonMJSJJDQG%2Fv5RwatfAVk6EpWq2YPkryHNjeC5KmlFuGCfOqemu%2B4QTttvnRNWlOQ0epzferDOR36aJbyti5LMh8q7H%2F%2FzyxXv35p2yzXjyzTeLVJa%2BbKADbRlXyggvh9aLCTEfPt3wRXIql%2F4pmsi3JVbP52sU%2FnwA6DBZMTDj7GEf728zvf2AN07qk1Xyj3C5RiSYGGjrTRN5alv9gdS9HGny4GWG8Jt84G%2BNvQ%3D%3D",
         "version": "219742931901912424867836160694743553102",
         "record_locator": {
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -84,6 +89,7 @@
     "element_id": "0b61e826b1c4ab05750184da72b89f83",
     "metadata": {
       "data_source": {
+        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-2/fake-text.txt?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=r0zieOEArF0sA0sCblj8Ho52FVm8nyXcdnXbUFBVaFCGLRflTGg4RZGvLA36Dad3zZCv%2BRJ5cf1iOf%2BMtBW9kwtQaAMwLxInreh8SgflPLMWgonMJSJJDQG%2Fv5RwatfAVk6EpWq2YPkryHNjeC5KmlFuGCfOqemu%2B4QTttvnRNWlOQ0epzferDOR36aJbyti5LMh8q7H%2F%2FzyxXv35p2yzXjyzTeLVJa%2BbKADbRlXyggvh9aLCTEfPt3wRXIql%2F4pmsi3JVbP52sU%2FnwA6DBZMTDj7GEf728zvf2AN07qk1Xyj3C5RiSYGGjrTRN5alv9gdS9HGny4GWG8Jt84G%2BNvQ%3D%3D",
         "version": "219742931901912424867836160694743553102",
         "record_locator": {
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"

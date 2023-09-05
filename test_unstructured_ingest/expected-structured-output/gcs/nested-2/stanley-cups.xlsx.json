@@ -4,6 +4,7 @@
     "element_id": "3e65b02bec20bb1056bd23a3b4ecd0f6",
     "metadata": {
       "data_source": {
+        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=UJCHRwQI%2F2app2PkYjlm3P74cU0by9gZ%2Bk7Ap8X8H6p07uaDj1a7njqOQd%2Bvi7RwIA0kAhvkJZfjANWR453sIRSXovZ8miTM8XYkfs19Jdbu%2Ff9J0wGf%2BJxpcQeLOw9wraGQ9LS4b9AaSkVO%2BLu7fG5lHttr7GUXlRe3Jm8984llr1UFbDyqjRHWSt7HbZMuIC6nddn9Hnr6PvMbFNk43UEFCZRR4tNXWX2UcKoEW4ALNGrMbYDmvEHG1ApPZcl3COZQBLPpYyk00kQOnXIys4ixFfEwo1fXZ%2BJadf2NDX%2FjG6cn8q6ERNVfSo5W9a1cP2Kwx9Gv9Q9mWTI4SHm9iQ%3D%3D",
         "version": "214134950597276071284054815285095540975",
         "record_locator": {
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx"
@@ -23,6 +24,7 @@
     "element_id": "0699dddf33814117e04654068f5182f6",
     "metadata": {
       "data_source": {
+        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=UJCHRwQI%2F2app2PkYjlm3P74cU0by9gZ%2Bk7Ap8X8H6p07uaDj1a7njqOQd%2Bvi7RwIA0kAhvkJZfjANWR453sIRSXovZ8miTM8XYkfs19Jdbu%2Ff9J0wGf%2BJxpcQeLOw9wraGQ9LS4b9AaSkVO%2BLu7fG5lHttr7GUXlRe3Jm8984llr1UFbDyqjRHWSt7HbZMuIC6nddn9Hnr6PvMbFNk43UEFCZRR4tNXWX2UcKoEW4ALNGrMbYDmvEHG1ApPZcl3COZQBLPpYyk00kQOnXIys4ixFfEwo1fXZ%2BJadf2NDX%2FjG6cn8q6ERNVfSo5W9a1cP2Kwx9Gv9Q9mWTI4SHm9iQ%3D%3D",
         "version": "214134950597276071284054815285095540975",
         "record_locator": {
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx"
