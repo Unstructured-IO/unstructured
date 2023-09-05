@@ -3,7 +3,13 @@
     "type": "Title",
     "element_id": "b4e929d8bcfe04189801a8ed61496d17",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "version": "",
+        "record_locator": {
+          "server_path": "/SitePages/Home.aspx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        }
+      },
       "filename": "Home.html",
       "filetype": "text/html",
       "page_number": 1
@@ -14,7 +20,13 @@
     "type": "Title",
     "element_id": "8d14f6e72de8f18ab1ee5c5330f00653",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "version": "",
+        "record_locator": {
+          "server_path": "/SitePages/Home.aspx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        }
+      },
       "filename": "Home.html",
       "filetype": "text/html",
       "page_number": 1
