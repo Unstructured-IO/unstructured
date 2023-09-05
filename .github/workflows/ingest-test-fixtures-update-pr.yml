@@ -108,6 +108,8 @@ jobs:
           make install-ingest-wikipedia
           make install-ingest-notion
           make install-ingest-delta-table
+          pip install ppocr-onnx
+          git clone -b yuming/inference_with_paddle_onnx_runtime --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && make install-project-local && cd ../
           ./test_unstructured_ingest/test-ingest.sh
 
       - name: Save branch name to environment file
