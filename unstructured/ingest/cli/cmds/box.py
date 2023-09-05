@@ -1,4 +1,5 @@
 import logging
+import typing as t
 from dataclasses import dataclass
 
 import click
@@ -21,7 +22,7 @@ from unstructured.ingest.runner import box as box_fn
 
 @dataclass
 class BoxCliConfigs(BaseConfig, CliMixin):
-    anonymous: bool = False
+    box_app_config: t.Optional[str] = None
 
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:

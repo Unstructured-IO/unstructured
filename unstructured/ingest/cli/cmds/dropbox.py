@@ -21,7 +21,7 @@ from unstructured.ingest.runner import dropbox as dropbox_fn
 
 @dataclass
 class DropboxCliConfigs(BaseConfig, CliMixin):
-    anonymous: bool = False
+    token: str
 
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:

@@ -4,13 +4,14 @@ from pathlib import Path
 from typing import Optional
 
 from unstructured.ingest.error import SourceConnectionError
-from unstructured.ingest.interfaces import (
-    BaseConnector,
+from unstructured.ingest.interfaces2 import (
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
-    StandardConnectorConfig,
+    PartitionConfig,
+    ReadConfig,
+    SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -48,14 +49,14 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     to fetch each document, rather than creating a it for each thread.
     """
 
-    config: SimpleAirtableConfig
+    connector_config: SimpleAirtableConfig
     file_meta: AirtableFileMeta
     registry_name: str = "airtable"
 
     @property
     def filename(self):
         return (
-            Path(self.standard_config.download_dir)
+            Path(self.read_config.download_dir)
             / self.file_meta.base_id
             / f"{self.file_meta.table_id}.csv"
         ).resolve()
@@ -64,7 +65,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _output_filename(self):
         """Create output file path based on output directory, base id, and table id"""
         output_file = f"{self.file_meta.table_id}.json"
-        return Path(self.standard_config.output_dir) / self.file_meta.base_id / output_file
+        return Path(self.partition_config.output_dir) / self.file_meta.base_id / output_file
 
     @SourceConnectionError.wrap
     @requires_dependencies(["pyairtable", "pandas"], extras="airtable")
@@ -77,7 +78,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         import pandas as pd
         from pyairtable import Api
 
-        self.api = Api(self.config.personal_access_token)
+        self.api = Api(self.connector_config.personal_access_token)
         table = self.api.table(self.file_meta.base_id, self.file_meta.table_id)
 
         df = pd.DataFrame.from_dict(
@@ -133,27 +134,32 @@ def check_path_validity(path):
 
 
 @dataclass
-class AirtableConnector(ConnectorCleanupMixin, BaseConnector):
+class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Fetches tables or views from an Airtable org."""
 
-    config: SimpleAirtableConfig
+    connector_config: SimpleAirtableConfig
 
     def __init__(
         self,
-        standard_config: StandardConnectorConfig,
-        config: SimpleAirtableConfig,
+        read_config: ReadConfig,
+        connector_config: BaseConnectorConfig,
+        partition_config: PartitionConfig,
     ):
-        super().__init__(standard_config, config)
+        super().__init__(
+            read_config=read_config,
+            connector_config=connector_config,
+            partition_config=partition_config,
+        )
 
     @requires_dependencies(["pyairtable"], extras="airtable")
     def initialize(self):
         from pyairtable import Api
 
         self.base_ids_to_fetch_tables_from = []
-        if self.config.list_of_paths:
-            self.list_of_paths = self.config.list_of_paths.split()
+        if self.connector_config.list_of_paths:
+            self.list_of_paths = self.connector_config.list_of_paths.split()
 
-        self.api = Api(self.config.personal_access_token)
+        self.api = Api(self.connector_config.personal_access_token)
 
     @requires_dependencies(["pyairtable"], extras="airtable")
     def use_all_bases(self):
@@ -187,14 +193,14 @@ class AirtableConnector(ConnectorCleanupMixin, BaseConnector):
         """Fetches documents in an Airtable org."""
 
         # When no list of paths provided, the connector ingests everything.
-        if not self.config.list_of_paths:
+        if not self.connector_config.list_of_paths:
             self.use_all_bases()
             baseid_tableid_viewid_tuples = self.fetch_table_ids()
 
         # When there is a list of paths, the connector checks the validity
         # of the paths, and fetches table_ids to be ingested, based on the paths.
         else:
-            self.paths = self.config.list_of_paths.split()
+            self.paths = self.connector_config.list_of_paths.split()
             self.paths = [path.strip("/") for path in self.paths]
 
             [check_path_validity(path) for path in self.paths]

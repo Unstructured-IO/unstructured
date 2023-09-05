@@ -1,4 +1,5 @@
 import logging
+import typing as t
 from dataclasses import dataclass
 
 import click
@@ -21,7 +22,9 @@ from unstructured.ingest.runner import azure as azure_fn
 
 @dataclass
 class AzureCliConfigs(BaseConfig, CliMixin):
-    anonymous: bool = False
+    account_id: t.Optional[str] = None
+    account_name: t.Optional[str] = None
+    connection_string: t.Optional[str] = None
 
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:

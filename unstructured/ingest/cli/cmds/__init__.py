@@ -2,7 +2,7 @@ import typing as t
 
 import click
 
-from .airtable import get_cmd as airtable
+from .airtable import get_source_cmd as airtable_src
 from .azure import get_source_cmd as azure_src
 from .biomed import get_cmd as biomed
 from .box import get_source_cmd as box_src
@@ -36,12 +36,12 @@ src: t.List[click.Group] = [
     dropbox_src(),
     fsspec_src(),
     gcs_src(),
+    airtable_src(),
 ]
 
 dest: t.List[click.Command] = [s3_dest()]
 
 __all__ = [
-    "airtable",
     "biomed",
     "confluence",
     "delta_table",
