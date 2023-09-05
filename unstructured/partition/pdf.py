@@ -566,7 +566,10 @@ def _partition_pdf_or_image_with_ocr(
                 page_number=page_number,
                 last_modified=metadata_last_modified,
             )
-            _text, _bboxes = pytesseract.run_and_get_multiple_output(image, extensions=["txt", "box"])
+            _text, _bboxes = pytesseract.run_and_get_multiple_output(
+                image,
+                extensions=["txt", "box"],
+            )
             width, height = image.size
 
             _elements = partition_text(
