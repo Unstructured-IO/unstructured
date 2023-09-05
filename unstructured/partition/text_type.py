@@ -291,7 +291,14 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
         return True
 
     capitalized = sum([word.istitle() or word.isupper() for word in tokens])
-    ratio = capitalized / len(tokens)
+    # NOTE(klaijan) - detect the first word in the sentence, whether it is alpha or not
+    is_first_word_capitalized = (text.split()[0]).istitle()
+
+    # NOTE(klaijan) - if-else to avoid divided by 0
+    if len(tokens) > 1:
+        ratio = (capitalized - is_first_word_capitalized) / (len(tokens) - is_first_word_capitalized)
+    else:
+        ratio = capitalized / len(tokens)
     return ratio > threshold
 
 
