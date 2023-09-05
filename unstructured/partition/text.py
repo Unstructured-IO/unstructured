@@ -247,7 +247,7 @@ def partition_text(
     for ctext in file_content:
         ctext = ctext.strip()
 
-        if ctext and clean_bullets(ctext):
+        if ctext:
             element = element_from_text(ctext)
             element.metadata = metadata
             elements.append(element)
@@ -261,11 +261,12 @@ def element_from_text(
     coordinate_system: Optional[CoordinateSystem] = None,
 ) -> Element:
     if is_bulleted_text(text):
-        return ListItem(
-            text=clean_bullets(text),
-            coordinates=coordinates,
-            coordinate_system=coordinate_system,
-        )
+        if clean_bullets(text):
+            return ListItem(
+                text=clean_bullets(text),
+                coordinates=coordinates,
+                coordinate_system=coordinate_system,
+            )
     elif is_email_address(text):
         return EmailAddress(text=text)
     elif is_us_city_state_zip(text):
