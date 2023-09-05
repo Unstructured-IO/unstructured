@@ -10,12 +10,7 @@ def ingest():
 
 # Dynamically update shared options for supported subcommands
 subcommands = [
-    cli_cmds.box,
-    cli_cmds.gcs,
     cli_cmds.delta_table,
-    cli_cmds.dropbox,
-    cli_cmds.azure,
-    cli_cmds.fsspec,
     cli_cmds.github,
     cli_cmds.gitlab,
     cli_cmds.reddit,
