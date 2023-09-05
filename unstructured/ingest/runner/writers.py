@@ -3,7 +3,7 @@ def s3_writer(
     anonymous: bool,
     verbose: bool = False,
 ):
-    from unstructured.ingest.connector.s3_2 import (
+    from unstructured.ingest.connector.s3 import (
         S3DestinationConnector,
         SimpleS3Config,
     )

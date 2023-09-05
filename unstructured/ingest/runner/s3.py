@@ -29,7 +29,7 @@ def s3(
         logger=logger,
     )
 
-    from unstructured.ingest.connector.s3_2 import S3SourceConnector, SimpleS3Config
+    from unstructured.ingest.connector.s3 import S3SourceConnector, SimpleS3Config
 
     source_doc_connector = S3SourceConnector(  # type: ignore
         read_config=read_config,
@@ -44,7 +44,6 @@ def s3(
     dest_doc_connector = None
     if writer_type:
         writer = writer_map[writer_type]
-        print(f"WRITER CONFIGS: {writer_kwargs}")
         dest_doc_connector = writer(**writer_kwargs)
 
     process_documents(
