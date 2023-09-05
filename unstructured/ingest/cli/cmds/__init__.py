@@ -4,7 +4,7 @@ import click
 
 from .airtable import get_source_cmd as airtable_src
 from .azure import get_source_cmd as azure_src
-from .biomed import get_cmd as biomed
+from .biomed import get_source_cmd as biomed_src
 from .box import get_source_cmd as box_src
 from .confluence import get_cmd as confluence
 from .delta_table import get_cmd as delta_table
@@ -30,6 +30,7 @@ from .slack import get_cmd as slack
 from .wikipedia import get_cmd as wikipedia
 
 src: t.List[click.Group] = [
+    biomed_src(),
     s3_src(),
     azure_src(),
     box_src(),
@@ -42,7 +43,6 @@ src: t.List[click.Group] = [
 dest: t.List[click.Command] = [s3_dest()]
 
 __all__ = [
-    "biomed",
     "confluence",
     "delta_table",
     "discord",

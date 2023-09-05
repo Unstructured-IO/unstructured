@@ -9,8 +9,6 @@ from unstructured.ingest.interfaces2 import (
     BaseIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
-    PartitionConfig,
-    ReadConfig,
     SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
@@ -139,18 +137,6 @@ class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
     connector_config: SimpleAirtableConfig
 
-    def __init__(
-        self,
-        read_config: ReadConfig,
-        connector_config: BaseConnectorConfig,
-        partition_config: PartitionConfig,
-    ):
-        super().__init__(
-            read_config=read_config,
-            connector_config=connector_config,
-            partition_config=partition_config,
-        )
-
     @requires_dependencies(["pyairtable"], extras="airtable")
     def initialize(self):
         from pyairtable import Api
@@ -223,9 +209,10 @@ class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
         return [
             AirtableIngestDoc(
-                self.standard_config,
-                self.config,
-                AirtableFileMeta(base_id, table_id, view_id),
+                read_config=self.read_config,
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                remote_file_path=AirtableFileMeta(base_id, table_id, view_id),
             )
             for base_id, table_id, view_id in baseid_tableid_viewid_tuples
         ]
