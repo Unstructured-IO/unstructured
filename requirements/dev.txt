@@ -281,7 +281,7 @@ python-dateutil==2.8.2
     #   jupyter-client
 python-json-logger==2.0.7
     # via jupyter-events
-pytz==2023.3
+pytz==2023.3.post1
     # via babel
 pyyaml==6.0.1
     # via
