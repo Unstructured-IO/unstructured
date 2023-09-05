@@ -6,4 +6,4 @@ pdfminer.six
 unstructured-inference
 # unstructured fork of pytesseract that provides an interface to allow for multiple output formats
 # from one tesseract call
-unstructured.pytesseract
+unstructured.pytesseract>=0.3.12
