@@ -2,6 +2,7 @@ import os
 import re
 from dataclasses import dataclass, field
 from datetime import datetime
+from functools import cached_property
 from pathlib import Path
 from typing import Any, Dict, Optional, Type
 
@@ -28,6 +29,8 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "box",
     "dropbox",
 ]
+
+SIGNED_URL_EXPIRATION = 300
 
 
 @dataclass
@@ -81,6 +84,8 @@ class FsspecFileMeta:
     date_created: Optional[str]
     date_modified: Optional[str]
     version: Optional[str]
+    source_url: Optional[str]
+    exists: Optional[bool]
 
 
 @dataclass
@@ -94,8 +99,6 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     config: SimpleFsspecConfig
     remote_file_path: str
-    file_exists: Optional[bool] = None
-    file_metadata: Optional[FsspecFileMeta] = None
 
     def _tmp_download_file(self):
         return Path(self.standard_config.download_dir) / self.remote_file_path.replace(
@@ -126,37 +129,40 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         try:
             fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
-            self.file_exists = True
-        except Exception as e:
-            if isinstance(e, FileNotFoundError):
-                self.file_exists = False
-            raise
-        self.get_file_metadata()
+        except FileNotFoundError as e:
+            logger.error("Failed to find file in remote source.")
+            logger.error(e)
 
-    def _catch_not_implemented(self, method) -> Optional[str]:
+    def _catch_not_implemented(self, method, **kwargs) -> Optional[str]:
         try:
-            value: datetime = method(self.remote_file_path)
+            value: datetime = method(self.remote_file_path, kwargs)
         except NotImplementedError:
             return None
         return value.isoformat()
 
+    @cached_property
     @requires_dependencies(["fsspec"])
-    def get_file_metadata(self):
+    def file_metadata(self):
         """Fetches file metadata from the current filesystem."""
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
             **self.config.get_access_kwargs(),
         )
-        self.file_exists = fs.exists(self.remote_file_path)
         date_created = self._catch_not_implemented(fs.created)
         date_modified = self._catch_not_implemented(fs.modified)
         version = str(fs.checksum(self.remote_file_path))
-
-        self.file_metadata = FsspecFileMeta(
+        source_url = self._catch_not_implemented(
+            fs.sign(self.remote_file_path),
+            expiration=SIGNED_URL_EXPIRATION,
+        )
+        file_exists = fs.exists(self.remote_file_path)
+        return FsspecFileMeta(
             date_created,
             date_modified,
             version,
+            source_url,
+            file_exists,
         )
 
     @property
@@ -166,21 +172,15 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def date_created(self) -> Optional[str]:
-        if self.file_metadata is None:
-            self.get_file_metadata()
         return self.file_metadata.date_created  # type: ignore
 
     @property
     def date_modified(self) -> Optional[str]:
-        if self.file_metadata is None:
-            self.get_file_metadata()
         return self.file_metadata.date_created  # type: ignore
 
     @property
     def exists(self) -> Optional[bool]:
-        if self.file_exists is None:
-            self.get_file_metadata()
-        return self.file_exists
+        return self.file_metadata.exists  # type: ignore
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
@@ -191,9 +191,11 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def version(self) -> Optional[str]:
-        if self.file_metadata is None:
-            self.get_file_metadata()
         return self.file_metadata.version  # type: ignore
+
+    @property
+    def source_url(self) -> Optional[str]:
+        return self.file_metadata.source_url
 
 
 class FsspecConnector(ConnectorCleanupMixin, BaseConnector):
