@@ -278,6 +278,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     @requires_dependencies(dependencies=["atlassian"], extras="jira")
     def metadata_fields(self):
         return {
+            "exists": bool(self.issue),
             "date_modified": str(self.parsed_fields["updated"]),
             "date_created": str(self.parsed_fields["created"]),
             "date_processed": str(datetime.datetime.now().time()),
@@ -295,11 +296,6 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     @cached_property
     def date_processed(self) -> Optional[str]:
         return self.metadata_fields["date_processed"]
-
-    @cached_property
-    def exists(self) -> Optional[bool]:
-        """Whether the document exists on the remote source."""
-        return bool(self.issue)
 
     @property
     def grouping_folder_name(self):
