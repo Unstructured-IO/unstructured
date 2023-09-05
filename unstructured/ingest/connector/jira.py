@@ -283,7 +283,6 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     @cached_property
     def date_created(self) -> Optional[str]:
         return self.get_metadata_fields["date_created"]
-        return self.metadata_fields["date_created"] if hasattr(self, "metadata_fields") else None
 
     @cached_property
     def date_modified(self) -> Optional[str]:
@@ -299,6 +298,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
         jira = self.session_handle.service
         return jira.issue(self.file_meta.issue_key)
 
+    @property
     def grouping_folder_name(self):
         if self.file_meta.board_id:
             return self.file_meta.board_id
@@ -310,7 +310,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
         download_file = f"{self.file_meta.issue_id}.txt"
 
         return (
-            Path(self.standard_config.download_dir) / self.grouping_folder_name() / download_file
+            Path(self.standard_config.download_dir) / self.grouping_folder_name / download_file
         ).resolve()
 
     @property
@@ -319,7 +319,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
         output_file = f"{self.file_meta.issue_id}.json"
 
         return (
-            Path(self.standard_config.output_dir) / self.grouping_folder_name() / output_file
+            Path(self.standard_config.output_dir) / self.grouping_folder_name / output_file
         ).resolve()
 
     @SourceConnectionError.wrap
