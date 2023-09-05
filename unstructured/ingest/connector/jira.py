@@ -296,7 +296,8 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     @cached_property
     def exists(self) -> Optional[bool]:
         """Whether the document exists on the remote source."""
-        return bool(self.get_metadata_fields())
+        jira = self.session_handle.service
+        return jira.issue(self.file_meta.issue_key)
 
     def grouping_folder_name(self):
         if self.file_meta.board_id:
