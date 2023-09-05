@@ -2,6 +2,7 @@ import datetime as dt
 import os
 from dataclasses import dataclass
 from datetime import datetime
+from functools import cached_property
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -48,8 +49,10 @@ class SimpleDiscordConfig(BaseConnectorConfig):
 
 @dataclass
 class DiscordFileMeta:
-    date_created: str
-    date_modified: str
+    date_created: Optional[str]
+    date_modified: Optional[str]
+    source_url: Optional[str]
+    exists: Optional[bool]
 
 
 @dataclass
@@ -64,8 +67,6 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     channel: str
     days: Optional[int]
     token: str
-    file_exists: Optional[bool] = None
-    file_metadata: Optional[DiscordFileMeta] = None
     registry_name: str = "discord"
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
@@ -85,7 +86,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @requires_dependencies(dependencies=["discord"], extras="discord")
     def _get_messages(self):
-        """Actually fetches the data from discord and stores it locally."""
+        """Actually fetches the data from discord."""
         import discord
         from discord.ext import commands
 
@@ -106,24 +107,29 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 await bot.close()
             except Exception:
                 logger.error("Error fetching messages")
-                self.file_exists = False
                 await bot.close()
-                raise
 
         bot.run(self.token)
-        self.file_exists = len(messages) >= 1
-        return messages
+        jump_url = bot.get_channel(int(self.channel)).jump_url  # type: ignore
+        return messages, jump_url
 
-    def get_file_metadata(self, messages=None):
-        if messages is None:
-            messages = self._get_messages()
-        if len(messages) < 1:
-            return
+    @cached_property
+    def file_metadata(self):
+        messages, source_url = self._get_messages()
+        if messages == []:
+            return DiscordFileMeta(
+                None,
+                None,
+                None,
+                False,
+            )
         dates = [m.created_at for m in messages if m.created_at]
         dates.sort()
         self.file_metadata = DiscordFileMeta(
             date_created=dates[0].isoformat(),
             date_modified=dates[-1].isoformat(),
+            source_url=source_url,
+            exists=True,
         )
 
     @BaseIngestDoc.skip_if_file_exists
@@ -132,8 +138,9 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         if self.config.verbose:
             logger.debug(f"fetching {self} - PID: {os.getpid()}")
 
-        messages = self._get_messages()
-        self.get_file_metadata(messages)
+        messages, _ = self._get_messages()
+        if messages == []:
+            raise ValueError(f"Failed to retrieve messages from Discord channel {self.channel}")
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
 
@@ -148,27 +155,25 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def date_created(self) -> Optional[str]:
-        if self.file_metadata is None:
-            self.get_file_metadata()
-        return self.file_metadata.date_created  # type: ignore
+        return self.file_metadata.date_created
 
     @property
     def date_modified(self) -> Optional[str]:
-        if self.file_metadata is None:
-            self.get_file_metadata()
-        return self.file_metadata.date_modified  # type: ignore
+        return self.file_metadata.date_modified
 
     @property
     def exists(self) -> Optional[bool]:
-        if self.file_exists is None:
-            self.get_file_metadata()
-        return self.file_exists
+        return self.file_metadata.exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
             "channel": self.channel,
         }
+
+    @property
+    def source_url(self) -> Optional[str]:
+        return self.file_metadata.source_url
 
 
 class DiscordConnector(ConnectorCleanupMixin, BaseConnector):

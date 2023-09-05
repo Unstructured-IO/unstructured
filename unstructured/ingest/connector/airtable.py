@@ -1,6 +1,7 @@
 import os
 from dataclasses import dataclass
 from datetime import datetime
+from functools import cached_property
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -30,15 +31,22 @@ class SimpleAirtableConfig(BaseConnectorConfig):
 
 
 @dataclass
-class AirtableFileMeta:
+class AirtableTableMeta:
     """Metadata specifying a table id, a base id which the table is stored in,
     and an optional view id in case particular rows and fields are to be ingested"""
 
     base_id: str
     table_id: str
-    date_created: Optional[str] = None
-    date_modified: Optional[str] = None
     view_id: Optional[str] = None
+
+
+@dataclass
+class AirtableFileMeta:
+    date_created: Optional[str]
+    date_modified: Optional[str]
+    version: Optional[str]
+    source_url: Optional[str]
+    exists: Optional[bool]
 
 
 @dataclass
@@ -51,49 +59,46 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """
 
     config: SimpleAirtableConfig
-    file_meta: AirtableFileMeta
-    file_exists: Optional[bool] = None
+    table_meta: AirtableTableMeta
     registry_name: str = "airtable"
 
     @property
     def filename(self):
         return (
             Path(self.standard_config.download_dir)
-            / self.file_meta.base_id
-            / f"{self.file_meta.table_id}.csv"
+            / self.table_meta.base_id
+            / f"{self.table_meta.table_id}.csv"
         ).resolve()
 
     @property
     def _output_filename(self):
         """Create output file path based on output directory, base id, and table id"""
-        output_file = f"{self.file_meta.table_id}.json"
-        return Path(self.standard_config.output_dir) / self.file_meta.base_id / output_file
+        output_file = f"{self.table_meta.table_id}.json"
+        return Path(self.standard_config.output_dir) / self.table_meta.base_id / output_file
 
     @property
     def date_created(self) -> Optional[str]:
-        if self.file_meta.date_created is None:
-            self.get_file_metadata()
-        return self.file_meta.date_created
+        return self.file_metadata.date_created
 
     @property
     def date_modified(self) -> Optional[str]:
-        if self.file_meta.date_modified is None:
-            self.get_file_metadata()
-        return self.file_meta.date_modified
+        return self.file_metadata.date_modified
 
     @property
     def exists(self) -> Optional[bool]:
-        if self.file_exists is None:
-            self.get_file_metadata()
-        return self.file_exists
+        return self.file_metadata.exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
-            "base_id": self.file_meta.base_id,
-            "table_id": self.file_meta.table_id,
-            "view_id": self.file_meta.view_id,
+            "base_id": self.table_meta.base_id,
+            "table_id": self.table_meta.table_id,
+            "view_id": self.table_meta.view_id,
         }
+
+    @property
+    def source_url(self) -> Optional[str]:
+        return self.file_metadata.source_url
 
     @requires_dependencies(["pyairtable"], extras="airtable")
     def _get_table_rows(self):
@@ -101,36 +106,52 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         api = Api(self.config.personal_access_token)
         try:
-            rows = api.table(self.file_meta.base_id, self.file_meta.table_id).all(
-                view=self.file_meta.view_id,
+            table = api.table(self.table_meta.base_id, self.table_meta.table_id)
+            table_url = table.url
+            rows = table.all(
+                view=self.table_meta.view_id,
             )
-        except Exception:
+        except Exception as e:
             # TODO: more specific error handling?
-            logger.error("Failed to retrieve rows from Airtable table.")
-            self.file_exists = False
-            raise
+            logger.error(e)
+            return None, None
 
         if len(rows) == 0:
             logger.info("Empty document, retrieved table but it has no rows.")
-        self.file_exists = True
-        return rows
+        return rows, table_url
 
-    def get_file_metadata(self, rows=None):
-        """Sets file metadata from the current table."""
-        if rows is None:
-            rows = self._get_table_rows()
-        if len(rows) < 1:
-            return
+    @cached_property
+    def file_metadata(self):
+        """Gets file metadata from the current table."""
+        rows, table_url = self._get_table_rows()
+        if rows is None or len(rows) < 1:
+            return AirtableFileMeta(
+                None,
+                None,
+                None,
+                None,
+                False,
+            )
         dates = [r.get("createdTime", "") for r in rows]
         dates.sort()
-        self.file_meta.date_created = datetime.strptime(
+
+        date_created = datetime.strptime(
             dates[0],
             "%Y-%m-%dT%H:%M:%S.%fZ",
         ).isoformat()
-        self.file_meta.date_modified = datetime.strptime(
+
+        date_modified = datetime.strptime(
             dates[-1],
             "%Y-%m-%dT%H:%M:%S.%fZ",
         ).isoformat()
+
+        return AirtableFileMeta(
+            date_created,
+            date_modified,
+            None,
+            table_url,
+            True,
+        )
 
     @requires_dependencies(["pandas"])
     @BaseIngestDoc.skip_if_file_exists
@@ -138,7 +159,13 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         import pandas as pd
 
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-        rows = self._get_table_rows()
+        rows, _ = self._get_table_rows()
+
+        if rows is None:
+            raise ValueError(
+                f"Failed to retrieve rows from table\
+                {self.table_meta.base_id}/{self.table_meta.table_id}. Check logs",
+            )
         # NOTE: Might be a good idea to add pagination for large tables
         df = pd.DataFrame.from_dict(
             [row["fields"] for row in rows],
@@ -149,7 +176,6 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
-        self.get_file_metadata(rows)
 
 
 airtable_id_prefixes = ["app", "tbl", "viw"]
@@ -275,12 +301,11 @@ class AirtableConnector(ConnectorCleanupMixin, BaseConnector):
                     )
 
             baseid_tableid_viewid_tuples += self.fetch_table_ids()
-
         return [
             AirtableIngestDoc(
                 self.standard_config,
                 self.config,
-                AirtableFileMeta(base_id, table_id, view_id),
+                AirtableTableMeta(base_id, table_id, view_id),
             )
             for base_id, table_id, view_id in baseid_tableid_viewid_tuples
         ]

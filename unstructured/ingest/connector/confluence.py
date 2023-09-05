@@ -2,6 +2,7 @@ import math
 import os
 from dataclasses import dataclass
 from datetime import datetime
+from functools import cached_property
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -37,7 +38,7 @@ class SimpleConfluenceConfig(BaseConnectorConfig):
 
 
 @dataclass
-class ConfluenceFileMeta:
+class ConfluenceDocumentMeta:
     """Metadata specifying:
     id for the confluence space that the document locates in,
     and the id of document that is being reached to.
@@ -45,9 +46,6 @@ class ConfluenceFileMeta:
 
     space_id: str
     document_id: str
-    date_created: Optional[str] = None
-    date_modified: Optional[str] = None
-    version: Optional[str] = None
 
 
 def scroll_wrapper(func):
@@ -77,6 +75,15 @@ def scroll_wrapper(func):
 
 
 @dataclass
+class ConfuenceFileMeta:
+    date_created: Optional[str]
+    date_modified: Optional[str]
+    version: Optional[str]
+    source_url: Optional[str]
+    exists: Optional[bool]
+
+
+@dataclass
 class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing).
@@ -86,8 +93,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """
 
     config: SimpleConfluenceConfig
-    file_meta: ConfluenceFileMeta
-    file_exists: Optional[bool] = None
+    document_meta: ConfluenceDocumentMeta
     registry_name: str = "confluence"
 
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
@@ -95,45 +101,41 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def filename(self):
         return (
             Path(self.standard_config.download_dir)
-            / self.file_meta.space_id
-            / f"{self.file_meta.document_id}.html"
+            / self.document_meta.space_id
+            / f"{self.document_meta.document_id}.html"
         ).resolve()
 
     @property
     def _output_filename(self):
         """Create output file path based on output directory, space id and document id."""
-        output_file = f"{self.file_meta.document_id}.json"
-        return Path(self.standard_config.output_dir) / self.file_meta.space_id / output_file
+        output_file = f"{self.document_meta.document_id}.json"
+        return Path(self.standard_config.output_dir) / self.document_meta.space_id / output_file
 
     @property
     def date_created(self) -> Optional[str]:
-        if self.file_meta.date_created is None:
-            self.get_file_metadata()
-        return self.file_meta.date_created
+        return self.file_metadata.date_created
 
     @property
     def date_modified(self) -> Optional[str]:
-        if self.file_meta.date_created is None:
-            self.get_file_metadata()
-        return self.file_meta.date_modified
+        return self.file_metadata.date_modified
 
     @property
     def exists(self) -> Optional[bool]:
-        if self.file_exists is None:
-            self.get_file_metadata()
-        return self.file_exists
+        return self.file_metadata.exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
-            "page_id": self.file_meta.document_id,
+            "page_id": self.document_meta.document_id,
         }
 
     @property
     def version(self) -> Optional[str]:
-        if self.file_meta.version is None:
-            self.get_file_metadata()
-        return self.file_meta.version
+        return self.file_metadata.version
+
+    @property
+    def source_url(self) -> Optional[str]:
+        return self.file_metadata.source_url
 
     @requires_dependencies(["atlassian"], extras="Confluence")
     def _get_page(self):
@@ -147,35 +149,46 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 password=self.config.api_token,
             )
             result = confluence.get_page_by_id(
-                page_id=self.file_meta.document_id,
+                page_id=self.document_meta.document_id,
                 expand="history.lastUpdated,version,body.view",
             )
-        except Exception as e:
-            if isinstance(e, ApiError):
-                self.file_exists = False
-            logger.error("Failed to retrieve confluence page: \n")
+        except ApiError as e:
             logger.error(e)
-        self.file_exists = True
+            return None
         return result
 
-    def get_file_metadata(self, page=None):
+    @cached_property
+    def file_metadata(self):
         """Fetches file metadata from the current page."""
+        page = self._get_page()
         if page is None:
-            page = self._get_page()
+            return ConfuenceFileMeta(
+                None,
+                None,
+                None,
+                None,
+                False,
+            )
         document_history = page["history"]
-        #
-        self.file_meta.date_created = datetime.strptime(
+        date_created = datetime.strptime(
             document_history["createdDate"],
             "%Y-%m-%dT%H:%M:%S.%fZ",
         ).isoformat()
-        if date_modified := document_history.get("lastUpdated", "").get("when", ""):
-            self.file_meta.date_modified = datetime.strptime(
-                date_modified,
+        if last_updated := document_history.get("lastUpdated", "").get("when", ""):
+            date_modified = datetime.strptime(
+                last_updated,
                 "%Y-%m-%dT%H:%M:%S.%fZ",
             ).isoformat()
         else:
-            self.file_meta.date_modified = self.file_meta.date_created
-        self.file_meta.version = page["version"]["number"]
+            date_modified = date_created
+        version = page["version"]["number"]
+        return ConfuenceFileMeta(
+            date_created,
+            date_modified,
+            version,
+            page["_links"].get("self", None),
+            True,
+        )
 
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
@@ -185,7 +198,9 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         # have a separate connection object for each process
 
         result = self._get_page()
-        self.get_file_metadata(result)
+        if result is None:
+            raise ValueError(f"Failed to retrieve page with ID {self.document_meta.document_id}")
+
         self.document = result["body"]["view"]["value"]
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
@@ -275,7 +290,7 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
             ConfluenceIngestDoc(
                 self.standard_config,
                 self.config,
-                ConfluenceFileMeta(space_id, doc_id),
+                ConfluenceDocumentMeta(space_id, doc_id),
             )
             for space_id, doc_id in doc_ids
         ]
