@@ -19,7 +19,7 @@ from unstructured.nlp.patterns import (
     US_CITY_STATE_ZIP_RE,
     US_PHONE_NUMBERS_RE,
 )
-from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
+from unstructured.nlp.tokenize import ne_chunk, pos_tag, sent_tokenize, word_tokenize
 
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
 ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s\-,.!?_\/]+")
@@ -293,11 +293,12 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     capitalized = sum([word.istitle() or word.isupper() for word in tokens])
     # NOTE(klaijan) - detect the first word in the sentence, whether it is alpha or not
     is_first_word_capitalized = (text.split()[0]).istitle()
+    ne_chunks = ne_chunk(text)
+    count_ne = sum([hasattr(chunk, "label") * len(chunk) for chunk in ne_chunks])
 
-    # NOTE(klaijan) - if-else to avoid divided by 0
-    if len(tokens) > 1:
-        ratio = (capitalized - is_first_word_capitalized) / (
-            len(tokens) - is_first_word_capitalized
+    if len(tokens) > is_first_word_capitalized + count_ne:
+        ratio = (capitalized - is_first_word_capitalized - count_ne) / (
+            len(tokens) - is_first_word_capitalized - count_ne
         )
     else:
         ratio = capitalized / len(tokens)

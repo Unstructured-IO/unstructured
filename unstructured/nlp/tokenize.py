@@ -8,9 +8,11 @@ else:
     from typing import Final
 
 import nltk
+from nltk import Tree
 from nltk import pos_tag as _pos_tag
 from nltk import sent_tokenize as _sent_tokenize
 from nltk import word_tokenize as _word_tokenize
+from nltk.chunk import ne_chunk as _ne_chunk
 
 CACHE_MAX_SIZE: Final[int] = 128
 
@@ -54,3 +56,24 @@ def pos_tag(text: str) -> List[Tuple[str, str]]:
         tokens = _word_tokenize(sentence)
         parts_of_speech.extend(_pos_tag(tokens))
     return parts_of_speech
+
+
+# @lru_cache(maxsize=CACHE_MAX_SIZE)
+# def ne_chunk(text: str) -> List[Tuple[str, List[Tuple[str, str]]]]:
+#     """A wrapper around the NLTK Chunk with LRU caching enabled."""
+#     pos = pos_tag(text)
+#     chunks = _ne_chunk(pos, binary=True)
+#     name_entities = []
+#     for chunk in chunks:
+#         if hasattr(chunk, 'label'):
+#             name_entities.append((chunk.label(), chunk.leaves()))
+#         else:
+#             name_entities.append((None, chunk))
+#     return name_entities
+
+
+@lru_cache(maxsize=CACHE_MAX_SIZE)
+def ne_chunk(text: str) -> Tree:
+    """A wrapper around the NLTK Chunk with LRU caching enabled."""
+    pos = pos_tag(text)
+    return _ne_chunk(pos, binary=True)
