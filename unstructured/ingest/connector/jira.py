@@ -384,12 +384,6 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
     def initialize(self):
         self.jira = self.config.create_session_handle().service
 
-        if self.config.list_of_projects or self.config.list_of_boards or self.config.list_of_issues:
-            self.ingest_all_issues = False
-
-        else:
-            self.ingest_all_issues = True
-
     @requires_dependencies(["atlassian"], extras="jira")
     def _get_all_project_ids(self):
         """Fetches ids for all projects in a Jira domain."""
@@ -409,11 +403,14 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
     @requires_dependencies(["atlassian"], extras="jira")
     def _get_issue_keys_within_projects(self, project_ids=None):
         if project_ids is None:
-            if self.ingest_all_issues:
-                project_ids = self._get_all_project_ids()
-            else:
+            # for when a component list is provided, without any projects
+            if bool(self.config.list_of_boards or self.config.list_of_issues):
                 return []
+            # for when no components are provided. all projects will be ingested
+            else:
+                return self._get_all_project_ids()
 
+        # for when a component list is provided, including some projects
         issue_keys_all = [self._get_issues_within_one_project(project_id=id) for id in project_ids]
 
         issue_keys_flattened = [
@@ -465,11 +462,15 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
     def get_ingest_docs(self):
         """Fetches all issues in a project."""
         print(str(self.config))
-        if self.ingest_all_issues:
+        if bool(
+            self.config.list_of_projects
+            or self.config.list_of_boards
+            or self.config.list_of_issues,
+        ):
+            issue_keys_and_ids = self.get_issue_keys_for_given_components()
+        else:
             # gets all issue ids from all projects
             issue_keys_and_ids = self._get_issue_keys_within_projects()
-        else:
-            issue_keys_and_ids = self.get_issue_keys_for_given_components()
 
         return [
             JiraIngestDoc(
