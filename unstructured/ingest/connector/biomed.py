@@ -153,6 +153,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
     def _list_objects_api(self) -> List[BiomedFileMeta]:
         def urls_to_metadata(urls):
+            download_dir = self.read_config.download_dir if self.read_config.download_dir else ""
             files = []
             for url in urls:
                 parts = url.split(PDF_DIR)
@@ -161,7 +162,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                     files.append(
                         BiomedFileMeta(
                             ftp_path=url,
-                            download_filepath=(Path(self.read_config.download_dir) / local_path)
+                            download_filepath=(Path(download_dir) / local_path)
                             .resolve()
                             .as_posix(),
                             output_filepath=(Path(self.partition_config.output_dir) / local_path)
@@ -217,6 +218,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         path: str = self.connector_config.path if self.connector_config.path else ""
 
         def traverse(path, download_dir, output_dir):
+            download_dir = self.read_config.download_dir if self.read_config.download_dir else ""
             full_path = Path(PMC_DIR) / path
             logger.debug(f"Traversing directory: {full_path}")
 
@@ -242,7 +244,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                         files.append(
                             BiomedFileMeta(
                                 ftp_path=ftp_path,
-                                download_filepath=(Path(self.read_config.download_dir) / local_path)
+                                download_filepath=(Path(download_dir) / local_path)
                                 .resolve()
                                 .as_posix(),
                                 output_filepath=(
@@ -262,22 +264,22 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
         ftp_path = f"{FTP_DOMAIN}/{PMC_DIR}/{self.connector_config.path}"
         if self.connector_config.is_file:
+            download_dir = self.read_config.download_dir if self.read_config.download_dir else ""
             local_path = "/".join(path.split("/")[1:])
             return [
                 BiomedFileMeta(
                     ftp_path=ftp_path,
-                    download_filepath=(Path(self.read_config.download_dir) / local_path)
-                    .resolve()
-                    .as_posix(),
+                    download_filepath=(Path(download_dir) / local_path).resolve().as_posix(),
                     output_filepath=(Path(self.partition_config.output_dir) / local_path)
                     .resolve()
                     .as_posix(),
                 ),
             ]
         else:
+            download_dir = self.read_config.download_dir if self.read_config.download_dir else ""
             traverse(
                 Path(path),
-                Path(self.read_config.download_dir),
+                Path(download_dir),
                 Path(self.partition_config.output_dir),
             )
 

@@ -88,6 +88,8 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
     @property
     def filename(self):
+        if not self.read_config.download_dir:
+            return None
         return (
             Path(self.read_config.download_dir)
             / self.file_meta.space_id
