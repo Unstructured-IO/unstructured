@@ -261,9 +261,10 @@ def element_from_text(
     coordinate_system: Optional[CoordinateSystem] = None,
 ) -> Element:
     if is_bulleted_text(text):
-        if clean_bullets(text):
+        clean_text = clean_bullets(text)
+        if clean_text:
             return ListItem(
-                text=clean_bullets(text),
+                text=clean_bullets(clean_text),
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
             )
