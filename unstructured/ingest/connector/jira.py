@@ -7,8 +7,6 @@ from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
-from requests.exceptions import HTTPError
-
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -323,32 +321,23 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
             Path(self.standard_config.output_dir) / self.grouping_folder_name() / output_file
         ).resolve()
 
+    @SourceConnectionError.wrap
     @requires_dependencies(["atlassian"], extras="jira")
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
-        try:
-            # GET issue data
-            jira = self.session_handle.service
-            issue = jira.issue(self.file_meta.issue_key)
-            self.check_exists = True
-            self.file_exists = True
+        # get issue data
+        jira = self.session_handle.service
+        issue = jira.issue(self.file_meta.issue_key)
 
-            # parse issue data
-            self.document = get_fields_for_issue(issue)
+        # parse issue data
+        self.document = get_fields_for_issue(issue)
 
-            self.filename.parent.mkdir(parents=True, exist_ok=True)
+        self.filename.parent.mkdir(parents=True, exist_ok=True)
 
-            with open(self.filename, "w", encoding="utf8") as f:
-                f.write(self.document)
-
-        except HTTPError as error:
-            if error.response.reason == "Not Found":
-                self.check_exists = True
-                self.file_exists = False
-            else:
-                logger.error(f"Error: {error} for issue {self.file_meta.issue_key}")
+        with open(self.filename, "w", encoding="utf8") as f:
+            f.write(self.document)
 
 
 @requires_dependencies(["atlassian"], extras="jira")
