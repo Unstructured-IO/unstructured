@@ -1,15 +1,36 @@
-## 0.10.12-dev2
+## 0.10.13-dev2
 
 ### Enhancements
 
+* Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+
+### Fixes
+
+* Ingest error handling to properly raise errors when wrapped
+
+
+## 0.10.12
+
+### Enhancements
+
+* Removed PIL pin as issue has been resolved upstream
+* Bump unstructured-inference
+  * Support for yolox_quantized layout detection model (0.5.20)
+* YoloX element types added
+
+
 ### Features
+
+* Add Salesforce Connector to be able to pull Account, Case, Campaign, EmailMessage, Lead
 
 ### Fixes
 * `add_pytesseract_bbox_to_elements` no longer returns `nan` values and logic is broken into new methods
   `_get_element_box` and `convert_multiple_coordinates_to_new_system`
 
-* Update version-sync to prevent duplicate release versions
 
+* Bump unstructured-inference
+  * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
+  
 ## 0.10.11
 
 ### Enhancements

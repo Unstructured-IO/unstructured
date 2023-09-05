@@ -121,7 +121,7 @@ def test_partition_pdf(
     file_mode,
     strategy,
     expected,
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename="example-docs/layout-parser-paper-with-empty-pages.pdf",
 ):
     # Test that the partition_pdf function can handle filename
     def _test(result):
@@ -219,7 +219,7 @@ def test_partition_pdf_with_fast_strategy(
     elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
     assert len(elements) > 10
     # check that the pdf has multiple different page numbers
-    assert {element.metadata.page_number for element in elements} == {1, 4}
+    assert {element.metadata.page_number for element in elements} == {1, 2}
     for element in elements:
         assert element.metadata.filename == "layout-parser-paper-fast.pdf"
 

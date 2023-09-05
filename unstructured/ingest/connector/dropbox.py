@@ -18,6 +18,7 @@ from unstructured.ingest.connector.fsspec import (
     FsspecIngestDoc,
     SimpleFsspecConfig,
 )
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import StandardConnectorConfig
 from unstructured.utils import requires_dependencies
 
@@ -35,6 +36,7 @@ class SimpleDropboxConfig(SimpleFsspecConfig):
 class DropboxIngestDoc(FsspecIngestDoc):
     registry_name: str = "dropbox"
 
+    @SourceConnectionError.wrap
     @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
     def get_file(self):
         super().get_file()

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 import pandas as pd
 
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -73,6 +74,7 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
 
+    @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["fsspec"], extras="delta-table")
     def get_file(self):
