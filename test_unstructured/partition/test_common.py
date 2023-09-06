@@ -8,11 +8,11 @@ from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CheckBox,
     FigureCaption,
+    Header,
     ListItem,
     NarrativeText,
     Text,
     Title,
-    Header,
 )
 from unstructured.partition import common
 from unstructured.partition.common import (
@@ -54,7 +54,8 @@ def test_normalize_layout_element_dict():
     }
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(
-        layout_element, coordinate_system=coordinate_system
+        layout_element,
+        coordinate_system=coordinate_system,
     )
     assert element == Title(
         text="Some lovely text",
@@ -71,7 +72,8 @@ def test_normalize_layout_element_dict_caption():
     }
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(
-        layout_element, coordinate_system=coordinate_system
+        layout_element,
+        coordinate_system=coordinate_system,
     )
     assert element == FigureCaption(
         text="Some lovely text",
@@ -88,7 +90,8 @@ def test_normalize_layout_element_dict_figure_caption():
     }
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(
-        layout_element, coordinate_system=coordinate_system
+        layout_element,
+        coordinate_system=coordinate_system,
     )
     assert element == FigureCaption(
         text="Some lovely text",
@@ -105,7 +108,8 @@ def test_normalize_layout_element_dict_misc():
     }
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(
-        layout_element, coordinate_system=coordinate_system
+        layout_element,
+        coordinate_system=coordinate_system,
     )
     assert element == Text(
         text="Some lovely text",
@@ -125,7 +129,8 @@ def test_normalize_layout_element_layout_element():
     )
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(
-        layout_element, coordinate_system=coordinate_system
+        layout_element,
+        coordinate_system=coordinate_system,
     )
     assert element == NarrativeText(
         text="Some lovely text",
@@ -145,7 +150,8 @@ def test_normalize_layout_element_layout_element_narrative_text():
     )
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(
-        layout_element, coordinate_system=coordinate_system
+        layout_element,
+        coordinate_system=coordinate_system,
     )
     assert element == NarrativeText(
         text="Some lovely text",
@@ -165,7 +171,8 @@ def test_normalize_layout_element_checked_box():
     )
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(
-        layout_element, coordinate_system=coordinate_system
+        layout_element,
+        coordinate_system=coordinate_system,
     )
     assert element == CheckBox(
         checked=True,
@@ -185,7 +192,8 @@ def test_normalize_layout_element_unchecked_box():
     )
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(
-        layout_element, coordinate_system=coordinate_system
+        layout_element,
+        coordinate_system=coordinate_system,
     )
     assert element == CheckBox(
         checked=False,
@@ -205,7 +213,8 @@ def test_normalize_layout_element_enumerated_list():
     )
     coordinate_system = PixelSpace(width=10, height=20)
     elements = common.normalize_layout_element(
-        layout_element, coordinate_system=coordinate_system
+        layout_element,
+        coordinate_system=coordinate_system,
     )
     assert elements == [
         ListItem(
@@ -237,7 +246,8 @@ def test_normalize_layout_element_bulleted_list():
     )
     coordinate_system = PixelSpace(width=10, height=20)
     elements = common.normalize_layout_element(
-        layout_element, coordinate_system=coordinate_system
+        layout_element,
+        coordinate_system=coordinate_system,
     )
     assert elements == [
         ListItem(
@@ -343,7 +353,7 @@ def test_set_element_hierarchy():
         elements[6].metadata.parent_id == elements[0].id
     ), "ListItem should be child of Title"
     assert (
-        elements[7].metadata.parent_id == None
+        elements[7].metadata.parent_id is None
     ), "CheckBox should be None, as it's not a Text based element"
     assert elements[8].metadata.parent_id is None, "Title 2 should be child of None"
     assert (
@@ -373,7 +383,8 @@ def test_set_element_hierarchy_custom_rule_set():
     }
 
     elements = common.set_element_hierarchy(
-        elements=elements_to_set, ruleset=custom_rule_set
+        elements=elements_to_set,
+        ruleset=custom_rule_set,
     )
 
     assert (
