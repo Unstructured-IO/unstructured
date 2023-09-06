@@ -30,6 +30,7 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "dropbox",
 ]
 
+
 @dataclass
 class SimpleFsspecConfig(BaseConnectorConfig):
     # fsspec specific options
