@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import Group
+from unstructured.ingest.cli.cmds.utils import Group, conform_click_options
 from unstructured.ingest.cli.common import (
     log_options,
 )
@@ -21,7 +21,7 @@ from unstructured.ingest.runner import box as box_fn
 
 
 @dataclass
-class BoxCliConfigs(BaseConfig, CliMixin):
+class BoxCliConfig(BaseConfig, CliMixin):
     box_app_config: t.Optional[str] = None
 
     @staticmethod
@@ -42,10 +42,7 @@ def box_source(ctx: click.Context, **options):
     if ctx.invoked_subcommand:
         return
 
-    # Click sets all multiple fields as tuple, this needs to be updated to list
-    for k, v in options.items():
-        if isinstance(v, tuple):
-            options[k] = list(v)
+    conform_click_options(options)
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
     log_options(options, verbose=verbose)
@@ -54,7 +51,7 @@ def box_source(ctx: click.Context, **options):
         read_configs = CliReadConfig.from_dict(options)
         partition_configs = CliPartitionConfig.from_dict(options)
         # Run for schema validation
-        BoxCliConfigs.from_dict(options)
+        BoxCliConfig.from_dict(options)
         box_fn(read_config=read_configs, partition_configs=partition_configs, **options)
     except Exception as e:
         logger.error(e, exc_info=True)
@@ -63,7 +60,7 @@ def box_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = box_source
-    BoxCliConfigs.add_cli_options(cmd)
+    BoxCliConfig.add_cli_options(cmd)
     CliRemoteUrlConfig.add_cli_options(cmd)
     CliRecursiveConfig.add_cli_options(cmd)
 

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import Group
+from unstructured.ingest.cli.cmds.utils import Group, conform_click_options
 from unstructured.ingest.cli.common import (
     log_options,
 )
@@ -19,7 +19,7 @@ from unstructured.ingest.runner import confluence as confluence_fn
 
 
 @dataclass
-class ConfluenceCliConfigs(BaseConfig, CliMixin):
+class ConfluenceCliConfig(BaseConfig, CliMixin):
     api_token: str
     url: str
     user_email: str
@@ -81,10 +81,7 @@ def confluence_source(ctx: click.Context, **options):
     if ctx.invoked_subcommand:
         return
 
-    # Click sets all multiple fields as tuple, this needs to be updated to list
-    for k, v in options.items():
-        if isinstance(v, tuple):
-            options[k] = list(v)
+    conform_click_options(options)
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
     log_options(options, verbose=verbose)
@@ -93,7 +90,7 @@ def confluence_source(ctx: click.Context, **options):
         read_configs = CliReadConfig.from_dict(options)
         partition_configs = CliPartitionConfig.from_dict(options)
         # Run for schema validation
-        ConfluenceCliConfigs.from_dict(options)
+        ConfluenceCliConfig.from_dict(options)
         confluence_fn(read_config=read_configs, partition_configs=partition_configs, **options)
     except Exception as e:
         logger.error(e, exc_info=True)
@@ -102,7 +99,7 @@ def confluence_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = confluence_source
-    ConfluenceCliConfigs.add_cli_options(cmd)
+    ConfluenceCliConfig.add_cli_options(cmd)
 
     # Common CLI configs
     CliReadConfig.add_cli_options(cmd)

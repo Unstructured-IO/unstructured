@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import Group
+from unstructured.ingest.cli.cmds.utils import Group, conform_click_options
 from unstructured.ingest.cli.common import (
     log_options,
 )
@@ -19,7 +19,7 @@ from unstructured.ingest.runner import airtable as airtable_fn
 
 
 @dataclass
-class AirtableCliConfigs(BaseConfig, CliMixin):
+class AirtableCliConfig(BaseConfig, CliMixin):
     personal_access_token: t.Optional[str] = None
 
     @staticmethod
@@ -77,10 +77,7 @@ def airtable_source(ctx: click.Context, **options):
     if ctx.invoked_subcommand:
         return
 
-    # Click sets all multiple fields as tuple, this needs to be updated to list
-    for k, v in options.items():
-        if isinstance(v, tuple):
-            options[k] = list(v)
+    conform_click_options(options)
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
     log_options(options, verbose=verbose)
@@ -89,7 +86,7 @@ def airtable_source(ctx: click.Context, **options):
         read_configs = CliReadConfig.from_dict(options)
         partition_configs = CliPartitionConfig.from_dict(options)
         # Run for schema validation
-        AirtableCliConfigs.from_dict(options)
+        AirtableCliConfig.from_dict(options)
         airtable_fn(read_config=read_configs, partition_configs=partition_configs, **options)
     except Exception as e:
         logger.error(e, exc_info=True)
@@ -98,7 +95,7 @@ def airtable_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = airtable_source
-    AirtableCliConfigs.add_cli_options(cmd)
+    AirtableCliConfig.add_cli_options(cmd)
 
     # Common CLI configs
     CliReadConfig.add_cli_options(cmd)

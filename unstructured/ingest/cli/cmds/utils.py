@@ -3,6 +3,13 @@ from gettext import gettext as _
 import click
 
 
+def conform_click_options(options: dict):
+    # Click sets all multiple fields as tuple, this needs to be updated to list
+    for k, v in options.items():
+        if isinstance(v, tuple):
+            options[k] = list(v)
+
+
 class Group(click.Group):
     def parse_args(self, ctx, args):
         """
