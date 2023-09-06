@@ -382,6 +382,14 @@ class CheckBox(Element):
         return out
 
 
+class Formula(Element):
+    "An element containing formulas in a document"
+
+    category = "Formula"
+
+    pass
+
+
 class Text(Element):
     """Base element for capturing free text from within document."""
 
@@ -554,4 +562,12 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "Table": Table,
     "Header": Header,
     "Footer": Footer,
+    "Caption": FigureCaption,
+    "Footnote": Footer,
+    "Formula": Formula,
+    "List-item": ListItem,
+    "Page-footer": Footer,
+    "Page-header": Header,  # Title?
+    "Picture": Image,
+    "Section-header": Header,
 }

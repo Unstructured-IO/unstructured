@@ -1,15 +1,38 @@
-## 0.10.12-dev2
+## 0.10.13-dev2
 
 ### Enhancements
 
+* Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+
 ### Features
 
-- Adds a naive hierarchy for elements via a `parent_id` on the element's metadata
+* Add Jira Connector to be able to pull issues from a Jira organization
+* Adds a naive hierarchy for elements via a `parent_id` on the element's metadata
 
 ### Fixes
 
-* Update version-sync to prevent duplicate release versions
+* Ingest error handling to properly raise errors when wrapped
 
+## 0.10.12
+
+### Enhancements
+
+* Removed PIL pin as issue has been resolved upstream
+* Bump unstructured-inference
+  * Support for yolox_quantized layout detection model (0.5.20)
+* YoloX element types added
+
+
+### Features
+
+* Add Salesforce Connector to be able to pull Account, Case, Campaign, EmailMessage, Lead
+
+### Fixes
+
+
+* Bump unstructured-inference
+  * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
+  
 ## 0.10.11
 
 ### Enhancements
