@@ -386,13 +386,9 @@ def _construct_text(tag_elem: etree.Element, include_tail_text: bool = True) -> 
     return text.strip()
 
 
-def _is_break_tag(tag_elem: etree.Element) -> bool:
-    return tag_elem.tag in TEXTBREAK_TAGS
-
-
 def _has_break_tags(tag_elem: etree.Element) -> bool:
     for descendant in tag_elem.iterdescendants():
-        if _is_break_tag(descendant):
+        if tag_elem.tag in TEXTBREAK_TAGS:
             return True
     return False
 
@@ -404,6 +400,10 @@ def _unfurl_break_tags(tag_elem: etree.Element) -> List[etree.Element]:
         if not _has_break_tags(child):
             unfurled.append(child)
         else:
+            if child.text:
+                _tag_elem = etree.Element(child.tag)
+                _tag_elem.text = child.text
+                unfurled.append(_tag_elem)
             unfurled.extend(_unfurl_break_tags(child))
 
     return unfurled
