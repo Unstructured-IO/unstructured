@@ -137,10 +137,18 @@ class HTMLDocument(XMLDocument):
                     continue
 
                 if _is_text_tag(tag_elem):
-                    element = _parse_tag(tag_elem)
-                    if element is not None:
-                        page.elements.append(element)
-                        descendanttag_elems = tuple(tag_elem.iterdescendants())
+                    if _has_break_tags(tag_elem):
+                        flattened_elems = _unfurl_break_tags(tag_elem)
+                        for _tag_elem in flattened_elems:
+                            element = _parse_tag(_tag_elem)
+                            if element is not None:
+                                page.elements.append(element)
+
+                    else:
+                        element = _parse_tag(tag_elem)
+                        if element is not None:
+                            page.elements.append(element)
+                    descendanttag_elems = tuple(tag_elem.iterdescendants())
 
                 elif _is_container_with_text(tag_elem):
                     links = _get_links_from_tag(tag_elem)
@@ -388,7 +396,7 @@ def _construct_text(tag_elem: etree.Element, include_tail_text: bool = True) -> 
 
 def _has_break_tags(tag_elem: etree.Element) -> bool:
     for descendant in tag_elem.iterdescendants():
-        if tag_elem.tag in TEXTBREAK_TAGS:
+        if descendant.tag in TEXTBREAK_TAGS:
             return True
     return False
 
