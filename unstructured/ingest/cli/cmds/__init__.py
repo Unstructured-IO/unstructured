@@ -13,8 +13,8 @@ from .dropbox import get_source_cmd as dropbox_src
 from .elasticsearch import get_source_cmd as elasticsearch_src
 from .fsspec import get_source_cmd as fsspec_src
 from .gcs import get_source_cmd as gcs_src
-from .github import get_cmd as github
-from .gitlab import get_cmd as gitlab
+from .github import get_source_cmd as github_src
+from .gitlab import get_source_cmd as gitlab_src
 from .google_drive import get_cmd as gdrive
 from .jira import get_cmd as jira
 from .local import get_cmd as local
@@ -41,6 +41,8 @@ src: t.List[click.Group] = [
     elasticsearch_src(),
     fsspec_src(),
     gcs_src(),
+    github_src(),
+    gitlab_src(),
     s3_src(),
 ]
 

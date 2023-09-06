@@ -1,3 +1,6 @@
+from unstructured.ingest.interfaces2 import WriteConfig
+
+
 def s3_writer(
     remote_url: str,
     anonymous: bool,
@@ -9,7 +12,7 @@ def s3_writer(
     )
 
     return S3DestinationConnector(
-        write_config=None,
+        write_config=WriteConfig(),
         connector_config=SimpleS3Config(
             path=remote_url,
             access_kwargs={"anon": anonymous},

@@ -10,8 +10,6 @@ def ingest():
 
 # Dynamically update shared options for supported subcommands
 subcommands = [
-    cli_cmds.github,
-    cli_cmds.gitlab,
     cli_cmds.reddit,
     cli_cmds.slack,
     cli_cmds.wikipedia,

@@ -7,12 +7,6 @@ from unstructured.ingest.connector.fsspec import (
     FsspecSourceConnector,
     SimpleFsspecConfig,
 )
-from unstructured.ingest.interfaces2 import (
-    BaseConnectorConfig,
-    PartitionConfig,
-    ReadConfig,
-    WriteConfig,
-)
 from unstructured.utils import requires_dependencies
 
 
@@ -34,21 +28,6 @@ class S3IngestDoc(FsspecIngestDoc):
 class S3SourceConnector(FsspecSourceConnector):
     ingest_doc_cls: Type[S3IngestDoc] = S3IngestDoc
 
-    @requires_dependencies(["s3fs", "fsspec"], extras="s3")
-    def __init__(
-        self,
-        read_config: ReadConfig,
-        connector_config: BaseConnectorConfig,
-        partition_config: PartitionConfig,
-    ):
-        super().__init__(
-            read_config=read_config,
-            connector_config=connector_config,
-            partition_config=partition_config,
-        )
-
 
 class S3DestinationConnector(FsspecDestinationConnector):
-    @requires_dependencies(["s3fs", "fsspec"], extras="s3")
-    def __init__(self, write_config: WriteConfig, connector_config: BaseConnectorConfig):
-        super().__init__(write_config=write_config, connector_config=connector_config)
+    pass

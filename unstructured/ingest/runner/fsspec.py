@@ -44,11 +44,11 @@ def fsspec(
     )
 
     source_doc_connector = FsspecSourceConnector(  # type: ignore
-        read_config=read_config,
         connector_config=SimpleFsspecConfig(
             path=remote_url,
             recursive=recursive,
         ),
+        read_config=read_config,
         partition_config=partition_configs,
     )
 

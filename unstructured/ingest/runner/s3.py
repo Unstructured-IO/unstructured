@@ -32,12 +32,12 @@ def s3(
     from unstructured.ingest.connector.s3 import S3SourceConnector, SimpleS3Config
 
     source_doc_connector = S3SourceConnector(  # type: ignore
-        read_config=read_config,
         connector_config=SimpleS3Config(
             path=remote_url,
             recursive=recursive,
             access_kwargs={"anon": anonymous},
         ),
+        read_config=read_config,
         partition_config=partition_configs,
     )
 

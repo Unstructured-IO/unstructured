@@ -32,12 +32,12 @@ def gcs(
     from unstructured.ingest.connector.gcs import GcsSourceConnector, SimpleGcsConfig
 
     source_doc_connector = GcsSourceConnector(  # type: ignore
-        read_config=read_config,
         connector_config=SimpleGcsConfig(
             path=remote_url,
             recursive=recursive,
             access_kwargs={"token": token},
         ),
+        read_config=read_config,
         partition_config=partition_configs,
     )
 

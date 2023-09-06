@@ -18,7 +18,7 @@ class SimpleGcsConfig(SimpleFsspecConfig):
 
 @dataclass
 class GcsIngestDoc(FsspecIngestDoc):
-    config: SimpleGcsConfig
+    connector_config: SimpleGcsConfig
     registry_name: str = "gcs"
 
     @SourceConnectionError.wrap
