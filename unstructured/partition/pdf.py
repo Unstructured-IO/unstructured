@@ -2,7 +2,7 @@ import os
 import re
 import warnings
 from tempfile import SpooledTemporaryFile
-from typing import BinaryIO, Iterator, List, Optional, Union, cast
+from typing import BinaryIO, Iterator, List, Optional, Tuple, Union, cast
 
 import pdf2image
 import PIL
@@ -467,12 +467,12 @@ def convert_pdf_to_images(
 def _get_element_box(
     boxes: List[str],
     char_count: int,
-):
+) -> Tuple[Tuple[int, int], int]:
     """Helper function to get the bounding box of an element.
 
     Args:
-        boxes (List[str], optional): Defaults to [].
-        char_count (int, optional): Defaults to 0.
+        boxes (List[str])
+        char_count (int)
     """
     min_x = float("inf")
     min_y = float("inf")
@@ -490,7 +490,7 @@ def _get_element_box(
     return ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y)), char_count
 
 
-def add_pytesseract_bbox_to_elements(
+def _add_pytesseract_bboxes_to_elements(
     elements: List[Text],
     bboxes: str,
     width: int,
@@ -577,7 +577,7 @@ def _partition_pdf_or_image_with_ocr(
             metadata_last_modified=metadata_last_modified,
         )
         width, height = image.size
-        add_pytesseract_bbox_to_elements(
+        _add_pytesseract_bboxes_to_elements(
             elements=elements,
             bboxes=bboxes,
             width=width,
@@ -607,7 +607,7 @@ def _partition_pdf_or_image_with_ocr(
             for element in _elements:
                 element.metadata = metadata
 
-            add_pytesseract_bbox_to_elements(
+            _add_pytesseract_bboxes_to_elements(
                 elements=_elements,
                 bboxes=_bboxes,
                 width=width,
