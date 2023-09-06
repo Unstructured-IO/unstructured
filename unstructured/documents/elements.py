@@ -167,6 +167,9 @@ class ElementMetadata:
     # Metadata extracted via regex
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
 
+    # Title depth to map chipper elements Headline and Subheadline
+    title_depth: Optional[int] = None
+
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
             self.filename = str(self.filename)
@@ -569,4 +572,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "Page-header": Header,  # Title?
     "Picture": Image,
     "Section-header": Header,
+    "Headline": Title,
+    "Subheadline": Title,
+    "Abstract": NarrativeText,
 }
