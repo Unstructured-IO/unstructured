@@ -265,7 +265,7 @@ def test_partition_html_raises_with_too_many_specified():
         partition_html(filename=filename, text=text)
 
 
-def test_partition_html_on_ideas_page():
+def test_partition_html_on_ideas_page(filename="example-docs/ideas-page.html"):
     elements = partition_html(filename=filename)
     assert len(elements) == 4
 
