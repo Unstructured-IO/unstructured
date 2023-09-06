@@ -15,8 +15,8 @@ from .fsspec import get_source_cmd as fsspec_src
 from .gcs import get_source_cmd as gcs_src
 from .github import get_source_cmd as github_src
 from .gitlab import get_source_cmd as gitlab_src
-from .jira import get_cmd as jira
 from .google_drive import get_source_cmd as google_drive_src
+from .jira import get_cmd as jira
 from .local import get_source_cmd as local_src
 from .notion import get_source_cmd as notion_src
 from .onedrive import get_source_cmd as onedrive_src
@@ -27,7 +27,7 @@ from .s3 import get_source_cmd as s3_src
 from .salesforce import get_source_cmd as salesforce_src
 from .sharepoint import get_source_cmd as sharepoint_src
 from .slack import get_source_cmd as slack_src
-from .wikipedia import get_cmd as wikipedia
+from .wikipedia import get_source_cmd as wikipedia_src
 
 src: t.List[click.Group] = [
     airtable_src(),
@@ -53,16 +53,13 @@ src: t.List[click.Group] = [
     sharepoint_src(),
     slack_src(),
     s3_src(),
+    wikipedia_src(),
 ]
 
 dest: t.List[click.Command] = [s3_dest()]
 
 __all__ = [
     "jira",
-    "salesforce",
-    "sharepoint",
-    "slack",
-    "wikipedia",
     "src",
     "dest",
 ]

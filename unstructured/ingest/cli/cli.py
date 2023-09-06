@@ -10,9 +10,6 @@ def ingest():
 
 # Dynamically update shared options for supported subcommands
 subcommands = [
-    cli_cmds.wikipedia,
-    cli_cmds.sharepoint,
-    cli_cmds.salesforce,
     cli_cmds.jira,
 ]
 
@@ -28,6 +25,4 @@ def get_cmd() -> click.Command:
         for dest_subcommand in cli_cmds.dest:
             src_subcommand.add_command(dest_subcommand)
         cmd.add_command(src_subcommand)
-    for subcommand in subcommands:
-        cmd.add_command(subcommand())
     return cmd
