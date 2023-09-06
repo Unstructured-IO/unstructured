@@ -15,8 +15,12 @@ from .fsspec import get_source_cmd as fsspec_src
 from .gcs import get_source_cmd as gcs_src
 from .github import get_source_cmd as github_src
 from .gitlab import get_source_cmd as gitlab_src
+<<<<<<< HEAD
 from .google_drive import get_cmd as gdrive
 from .jira import get_cmd as jira
+=======
+from .google_drive import get_source_cmd as google_drive_src
+>>>>>>> cb5b5734 (refactor google drive connectors)
 from .local import get_cmd as local
 from .notion import get_cmd as notion
 from .onedrive import get_cmd as onedrive
@@ -43,15 +47,13 @@ src: t.List[click.Group] = [
     gcs_src(),
     github_src(),
     gitlab_src(),
+    google_drive_src(),
     s3_src(),
 ]
 
 dest: t.List[click.Command] = [s3_dest()]
 
 __all__ = [
-    "gdrive",
-    "github",
-    "gitlab",
     "jira",
     "local",
     "notion",

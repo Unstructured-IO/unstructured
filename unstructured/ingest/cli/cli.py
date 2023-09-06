@@ -13,7 +13,6 @@ subcommands = [
     cli_cmds.reddit,
     cli_cmds.slack,
     cli_cmds.wikipedia,
-    cli_cmds.gdrive,
     cli_cmds.notion,
     cli_cmds.onedrive,
     cli_cmds.outlook,
