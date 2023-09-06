@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from unstructured.ingest.error import SourceConnectionError
-from unstructured.ingest.interfaces2 import (
+from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
     BaseIngestDoc,

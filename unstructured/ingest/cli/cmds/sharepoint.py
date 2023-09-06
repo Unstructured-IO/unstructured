@@ -14,7 +14,7 @@ from unstructured.ingest.cli.interfaces import (
     CliReadConfig,
     CliRecursiveConfig,
 )
-from unstructured.ingest.interfaces2 import BaseConfig
+from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import sharepoint as sharepoint_fn
 

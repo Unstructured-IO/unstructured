@@ -7,7 +7,7 @@ from pathlib import Path
 import pandas as pd
 
 from unstructured.ingest.error import SourceConnectionError
-from unstructured.ingest.interfaces2 import (
+from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSourceConnector,

@@ -2,10 +2,10 @@ import hashlib
 import logging
 import typing as t
 
-from unstructured.ingest.interfaces2 import PartitionConfig, ReadConfig
+from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.processor2 import process_documents
-from unstructured.ingest.runner.utils2 import update_download_dir_hash
+from unstructured.ingest.processor import process_documents
+from unstructured.ingest.runner.utils import update_download_dir_hash
 from unstructured.ingest.runner.writers import writer_map
 
 

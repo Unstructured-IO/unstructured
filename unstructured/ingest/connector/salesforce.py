@@ -17,7 +17,7 @@ from textwrap import dedent
 
 from dateutil import parser  # type: ignore
 
-from unstructured.ingest.interfaces2 import (
+from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSourceConnector,

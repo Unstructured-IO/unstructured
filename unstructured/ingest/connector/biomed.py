@@ -11,7 +11,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util import Retry
 
 from unstructured.ingest.error import SourceConnectionError
-from unstructured.ingest.interfaces2 import (
+from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSourceConnector,

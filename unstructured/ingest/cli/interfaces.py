@@ -2,7 +2,7 @@ from abc import abstractmethod
 
 import click
 
-from unstructured.ingest.interfaces2 import BaseConfig, PartitionConfig, ReadConfig
+from unstructured.ingest.interfaces import BaseConfig, PartitionConfig, ReadConfig
 
 
 class CliMixin:

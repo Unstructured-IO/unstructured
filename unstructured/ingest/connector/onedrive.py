@@ -4,7 +4,7 @@ from pathlib import Path
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.error import SourceConnectionError
-from unstructured.ingest.interfaces2 import (
+from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSourceConnector,

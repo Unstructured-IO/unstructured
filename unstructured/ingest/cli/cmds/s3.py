@@ -14,7 +14,7 @@ from unstructured.ingest.cli.interfaces import (
     CliRecursiveConfig,
     CliRemoteUrlConfig,
 )
-from unstructured.ingest.interfaces2 import BaseConfig
+from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import s3 as s3_fn
 

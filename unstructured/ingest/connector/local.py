@@ -5,7 +5,7 @@ import typing as t
 from dataclasses import dataclass
 from pathlib import Path
 
-from unstructured.ingest.interfaces2 import (
+from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSourceConnector,

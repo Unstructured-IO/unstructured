@@ -1,4 +1,4 @@
-from unstructured.ingest.interfaces2 import WriteConfig
+from unstructured.ingest.interfaces import WriteConfig
 
 
 def s3_writer(
