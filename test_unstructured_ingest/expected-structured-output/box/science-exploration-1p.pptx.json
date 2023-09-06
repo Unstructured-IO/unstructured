@@ -4,9 +4,10 @@
     "element_id": "1f2a5d80586cf70bc264150f6d3f4c7c",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!w4rghyaQdsajjj0ZTWqZbHMATeFaWZoMhINbtdqorEGJwMBk1a41gsDyidaRfyilRyiU35Ew7xgtJ8HknMuZVvptyIFNiKeZwWUqIw-SNabiZGnQlMi7-fkGL9tHux9vlO5Y6IJZtLn-floGsRKVKRnZknCB_C9AQYsvL0TRLDsYxX1BBsRY7SNKsfDrks9rIZRFkLhmTfiLm1dQi3_8nDBj_1oaierTfPYzLFVQwcKnQ37s4vG9YFwBLSnHg7opFNuHLnRJ9Ag3cAG2U0x1AS-BdIe9UgH5uJkor0PD_lP5gdTcm3OiAqGUHEGYMSmh23q9zHUbYfIbt9z80h9h5EElVK3ITaupNVlRPHAPtGVjiQLFiUVavaFqzsVfxdJLzreT04GQB6PekZF9-cNau7s8jEQjW8ZhIMOOfSqvqZAktetrOMgvwB9O3F1vax8qZ1UWsmhhu1k3_NHBA0XEdjaSjerprzx7nSdy18m84aAa9sZ_NVrgIaaNPSIHr7ARF3FKnBLYajOxhxS8yaB_TKM1Gf4Sgsbt0qfrA4d79hMa24ZS065ogetiGtdN1NUKPZ9xbyiwpJMCRG5hmfBj0RaaMITQnv__mxrw8c24oMh6DXaMsRZn8WS2iE0uVwA4z_Ku6cQKJsFsz2wgmlMomre-TDrXzZQqihPwA5_B1ZMfH22m_40CFFihzlENqoLaNwokbuShitjhVlNX5CAmn2TAldK6IlqLDsB335ZPTsl1YW3MCt4Zguz4Lvyb2BCxrJTODrASBhCscNRDioomYFk7tPF5WpOC_Mz5gPEf-JT3icDrOYlazQ3eXJU1JFfhUdiF5bhvvVkapBrIiyaAMpBu-VKNnTRQKuLca-1mHAX9vsH9D8Zr61eP57Pj9SijVbkYKIJGd_3xJO_QmEkJMA0uDsnoWNTHf5oIPwDPapVVFGn1xka2SSEDbT7GzX2Mvd0Yr5mS57k4xFs05knetNB3kKRktSEr_Agihb99tDT9-rtUt4rmqw7Izl6PuS0r_0qZPxrINYlxilt2uc-3puXVCKtxYjDlF3gzyBFngz9ueOewoQr11hDJjqx0zDg3dqfgUzqN20d8tDxGgulLl-4ysyKI_8939W8Gc9Q-YkDv0CKcQZmlboqHrx1X-5q0xCRjct-AXCxQjqA_5Ag3xZcXW-Swx3-eWtg9IZpNpdzTi8BNS1ql0cmzDZGkvDHiIbzsXRvuDGZMPqBuiVvK2S_tl7-OYA50oErr9PLP9HJGaCfnoxr7ioupeQCAlDB8pYA3acxQfLi1C-yRMBrt8AoH-rqlCrnOIlHFAEaODYPFxNIyl0UEoMbtrMinTw4_Kvp9PGXmrS2FYTINBsMHmbotZoJu3njnFieNKyH1/download",
+        "url": "box://utic-test-ingest-fixtures/science-exploration-1p.pptx",
         "version": "270341003012620714829454923411021136396",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/science-exploration-1p.pptx"
         },
         "date_created": "2023-07-08T20:47:08-07:00",
@@ -22,9 +23,10 @@
     "element_id": "7cf7093dc3fec7fa3f7045666578e75a",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!w4rghyaQdsajjj0ZTWqZbHMATeFaWZoMhINbtdqorEGJwMBk1a41gsDyidaRfyilRyiU35Ew7xgtJ8HknMuZVvptyIFNiKeZwWUqIw-SNabiZGnQlMi7-fkGL9tHux9vlO5Y6IJZtLn-floGsRKVKRnZknCB_C9AQYsvL0TRLDsYxX1BBsRY7SNKsfDrks9rIZRFkLhmTfiLm1dQi3_8nDBj_1oaierTfPYzLFVQwcKnQ37s4vG9YFwBLSnHg7opFNuHLnRJ9Ag3cAG2U0x1AS-BdIe9UgH5uJkor0PD_lP5gdTcm3OiAqGUHEGYMSmh23q9zHUbYfIbt9z80h9h5EElVK3ITaupNVlRPHAPtGVjiQLFiUVavaFqzsVfxdJLzreT04GQB6PekZF9-cNau7s8jEQjW8ZhIMOOfSqvqZAktetrOMgvwB9O3F1vax8qZ1UWsmhhu1k3_NHBA0XEdjaSjerprzx7nSdy18m84aAa9sZ_NVrgIaaNPSIHr7ARF3FKnBLYajOxhxS8yaB_TKM1Gf4Sgsbt0qfrA4d79hMa24ZS065ogetiGtdN1NUKPZ9xbyiwpJMCRG5hmfBj0RaaMITQnv__mxrw8c24oMh6DXaMsRZn8WS2iE0uVwA4z_Ku6cQKJsFsz2wgmlMomre-TDrXzZQqihPwA5_B1ZMfH22m_40CFFihzlENqoLaNwokbuShitjhVlNX5CAmn2TAldK6IlqLDsB335ZPTsl1YW3MCt4Zguz4Lvyb2BCxrJTODrASBhCscNRDioomYFk7tPF5WpOC_Mz5gPEf-JT3icDrOYlazQ3eXJU1JFfhUdiF5bhvvVkapBrIiyaAMpBu-VKNnTRQKuLca-1mHAX9vsH9D8Zr61eP57Pj9SijVbkYKIJGd_3xJO_QmEkJMA0uDsnoWNTHf5oIPwDPapVVFGn1xka2SSEDbT7GzX2Mvd0Yr5mS57k4xFs05knetNB3kKRktSEr_Agihb99tDT9-rtUt4rmqw7Izl6PuS0r_0qZPxrINYlxilt2uc-3puXVCKtxYjDlF3gzyBFngz9ueOewoQr11hDJjqx0zDg3dqfgUzqN20d8tDxGgulLl-4ysyKI_8939W8Gc9Q-YkDv0CKcQZmlboqHrx1X-5q0xCRjct-AXCxQjqA_5Ag3xZcXW-Swx3-eWtg9IZpNpdzTi8BNS1ql0cmzDZGkvDHiIbzsXRvuDGZMPqBuiVvK2S_tl7-OYA50oErr9PLP9HJGaCfnoxr7ioupeQCAlDB8pYA3acxQfLi1C-yRMBrt8AoH-rqlCrnOIlHFAEaODYPFxNIyl0UEoMbtrMinTw4_Kvp9PGXmrS2FYTINBsMHmbotZoJu3njnFieNKyH1/download",
+        "url": "box://utic-test-ingest-fixtures/science-exploration-1p.pptx",
         "version": "270341003012620714829454923411021136396",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/science-exploration-1p.pptx"
         },
         "date_created": "2023-07-08T20:47:08-07:00",
@@ -40,9 +42,10 @@
     "element_id": "b4dac8600214b4829bac302326593c47",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!w4rghyaQdsajjj0ZTWqZbHMATeFaWZoMhINbtdqorEGJwMBk1a41gsDyidaRfyilRyiU35Ew7xgtJ8HknMuZVvptyIFNiKeZwWUqIw-SNabiZGnQlMi7-fkGL9tHux9vlO5Y6IJZtLn-floGsRKVKRnZknCB_C9AQYsvL0TRLDsYxX1BBsRY7SNKsfDrks9rIZRFkLhmTfiLm1dQi3_8nDBj_1oaierTfPYzLFVQwcKnQ37s4vG9YFwBLSnHg7opFNuHLnRJ9Ag3cAG2U0x1AS-BdIe9UgH5uJkor0PD_lP5gdTcm3OiAqGUHEGYMSmh23q9zHUbYfIbt9z80h9h5EElVK3ITaupNVlRPHAPtGVjiQLFiUVavaFqzsVfxdJLzreT04GQB6PekZF9-cNau7s8jEQjW8ZhIMOOfSqvqZAktetrOMgvwB9O3F1vax8qZ1UWsmhhu1k3_NHBA0XEdjaSjerprzx7nSdy18m84aAa9sZ_NVrgIaaNPSIHr7ARF3FKnBLYajOxhxS8yaB_TKM1Gf4Sgsbt0qfrA4d79hMa24ZS065ogetiGtdN1NUKPZ9xbyiwpJMCRG5hmfBj0RaaMITQnv__mxrw8c24oMh6DXaMsRZn8WS2iE0uVwA4z_Ku6cQKJsFsz2wgmlMomre-TDrXzZQqihPwA5_B1ZMfH22m_40CFFihzlENqoLaNwokbuShitjhVlNX5CAmn2TAldK6IlqLDsB335ZPTsl1YW3MCt4Zguz4Lvyb2BCxrJTODrASBhCscNRDioomYFk7tPF5WpOC_Mz5gPEf-JT3icDrOYlazQ3eXJU1JFfhUdiF5bhvvVkapBrIiyaAMpBu-VKNnTRQKuLca-1mHAX9vsH9D8Zr61eP57Pj9SijVbkYKIJGd_3xJO_QmEkJMA0uDsnoWNTHf5oIPwDPapVVFGn1xka2SSEDbT7GzX2Mvd0Yr5mS57k4xFs05knetNB3kKRktSEr_Agihb99tDT9-rtUt4rmqw7Izl6PuS0r_0qZPxrINYlxilt2uc-3puXVCKtxYjDlF3gzyBFngz9ueOewoQr11hDJjqx0zDg3dqfgUzqN20d8tDxGgulLl-4ysyKI_8939W8Gc9Q-YkDv0CKcQZmlboqHrx1X-5q0xCRjct-AXCxQjqA_5Ag3xZcXW-Swx3-eWtg9IZpNpdzTi8BNS1ql0cmzDZGkvDHiIbzsXRvuDGZMPqBuiVvK2S_tl7-OYA50oErr9PLP9HJGaCfnoxr7ioupeQCAlDB8pYA3acxQfLi1C-yRMBrt8AoH-rqlCrnOIlHFAEaODYPFxNIyl0UEoMbtrMinTw4_Kvp9PGXmrS2FYTINBsMHmbotZoJu3njnFieNKyH1/download",
+        "url": "box://utic-test-ingest-fixtures/science-exploration-1p.pptx",
         "version": "270341003012620714829454923411021136396",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/science-exploration-1p.pptx"
         },
         "date_created": "2023-07-08T20:47:08-07:00",
@@ -58,9 +61,10 @@
     "element_id": "de72c858257919ced58456afa3d4412e",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!w4rghyaQdsajjj0ZTWqZbHMATeFaWZoMhINbtdqorEGJwMBk1a41gsDyidaRfyilRyiU35Ew7xgtJ8HknMuZVvptyIFNiKeZwWUqIw-SNabiZGnQlMi7-fkGL9tHux9vlO5Y6IJZtLn-floGsRKVKRnZknCB_C9AQYsvL0TRLDsYxX1BBsRY7SNKsfDrks9rIZRFkLhmTfiLm1dQi3_8nDBj_1oaierTfPYzLFVQwcKnQ37s4vG9YFwBLSnHg7opFNuHLnRJ9Ag3cAG2U0x1AS-BdIe9UgH5uJkor0PD_lP5gdTcm3OiAqGUHEGYMSmh23q9zHUbYfIbt9z80h9h5EElVK3ITaupNVlRPHAPtGVjiQLFiUVavaFqzsVfxdJLzreT04GQB6PekZF9-cNau7s8jEQjW8ZhIMOOfSqvqZAktetrOMgvwB9O3F1vax8qZ1UWsmhhu1k3_NHBA0XEdjaSjerprzx7nSdy18m84aAa9sZ_NVrgIaaNPSIHr7ARF3FKnBLYajOxhxS8yaB_TKM1Gf4Sgsbt0qfrA4d79hMa24ZS065ogetiGtdN1NUKPZ9xbyiwpJMCRG5hmfBj0RaaMITQnv__mxrw8c24oMh6DXaMsRZn8WS2iE0uVwA4z_Ku6cQKJsFsz2wgmlMomre-TDrXzZQqihPwA5_B1ZMfH22m_40CFFihzlENqoLaNwokbuShitjhVlNX5CAmn2TAldK6IlqLDsB335ZPTsl1YW3MCt4Zguz4Lvyb2BCxrJTODrASBhCscNRDioomYFk7tPF5WpOC_Mz5gPEf-JT3icDrOYlazQ3eXJU1JFfhUdiF5bhvvVkapBrIiyaAMpBu-VKNnTRQKuLca-1mHAX9vsH9D8Zr61eP57Pj9SijVbkYKIJGd_3xJO_QmEkJMA0uDsnoWNTHf5oIPwDPapVVFGn1xka2SSEDbT7GzX2Mvd0Yr5mS57k4xFs05knetNB3kKRktSEr_Agihb99tDT9-rtUt4rmqw7Izl6PuS0r_0qZPxrINYlxilt2uc-3puXVCKtxYjDlF3gzyBFngz9ueOewoQr11hDJjqx0zDg3dqfgUzqN20d8tDxGgulLl-4ysyKI_8939W8Gc9Q-YkDv0CKcQZmlboqHrx1X-5q0xCRjct-AXCxQjqA_5Ag3xZcXW-Swx3-eWtg9IZpNpdzTi8BNS1ql0cmzDZGkvDHiIbzsXRvuDGZMPqBuiVvK2S_tl7-OYA50oErr9PLP9HJGaCfnoxr7ioupeQCAlDB8pYA3acxQfLi1C-yRMBrt8AoH-rqlCrnOIlHFAEaODYPFxNIyl0UEoMbtrMinTw4_Kvp9PGXmrS2FYTINBsMHmbotZoJu3njnFieNKyH1/download",
+        "url": "box://utic-test-ingest-fixtures/science-exploration-1p.pptx",
         "version": "270341003012620714829454923411021136396",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/science-exploration-1p.pptx"
         },
         "date_created": "2023-07-08T20:47:08-07:00",
@@ -76,9 +80,10 @@
     "element_id": "7de2e4c70a5120577d71e2eabeac36ad",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!w4rghyaQdsajjj0ZTWqZbHMATeFaWZoMhINbtdqorEGJwMBk1a41gsDyidaRfyilRyiU35Ew7xgtJ8HknMuZVvptyIFNiKeZwWUqIw-SNabiZGnQlMi7-fkGL9tHux9vlO5Y6IJZtLn-floGsRKVKRnZknCB_C9AQYsvL0TRLDsYxX1BBsRY7SNKsfDrks9rIZRFkLhmTfiLm1dQi3_8nDBj_1oaierTfPYzLFVQwcKnQ37s4vG9YFwBLSnHg7opFNuHLnRJ9Ag3cAG2U0x1AS-BdIe9UgH5uJkor0PD_lP5gdTcm3OiAqGUHEGYMSmh23q9zHUbYfIbt9z80h9h5EElVK3ITaupNVlRPHAPtGVjiQLFiUVavaFqzsVfxdJLzreT04GQB6PekZF9-cNau7s8jEQjW8ZhIMOOfSqvqZAktetrOMgvwB9O3F1vax8qZ1UWsmhhu1k3_NHBA0XEdjaSjerprzx7nSdy18m84aAa9sZ_NVrgIaaNPSIHr7ARF3FKnBLYajOxhxS8yaB_TKM1Gf4Sgsbt0qfrA4d79hMa24ZS065ogetiGtdN1NUKPZ9xbyiwpJMCRG5hmfBj0RaaMITQnv__mxrw8c24oMh6DXaMsRZn8WS2iE0uVwA4z_Ku6cQKJsFsz2wgmlMomre-TDrXzZQqihPwA5_B1ZMfH22m_40CFFihzlENqoLaNwokbuShitjhVlNX5CAmn2TAldK6IlqLDsB335ZPTsl1YW3MCt4Zguz4Lvyb2BCxrJTODrASBhCscNRDioomYFk7tPF5WpOC_Mz5gPEf-JT3icDrOYlazQ3eXJU1JFfhUdiF5bhvvVkapBrIiyaAMpBu-VKNnTRQKuLca-1mHAX9vsH9D8Zr61eP57Pj9SijVbkYKIJGd_3xJO_QmEkJMA0uDsnoWNTHf5oIPwDPapVVFGn1xka2SSEDbT7GzX2Mvd0Yr5mS57k4xFs05knetNB3kKRktSEr_Agihb99tDT9-rtUt4rmqw7Izl6PuS0r_0qZPxrINYlxilt2uc-3puXVCKtxYjDlF3gzyBFngz9ueOewoQr11hDJjqx0zDg3dqfgUzqN20d8tDxGgulLl-4ysyKI_8939W8Gc9Q-YkDv0CKcQZmlboqHrx1X-5q0xCRjct-AXCxQjqA_5Ag3xZcXW-Swx3-eWtg9IZpNpdzTi8BNS1ql0cmzDZGkvDHiIbzsXRvuDGZMPqBuiVvK2S_tl7-OYA50oErr9PLP9HJGaCfnoxr7ioupeQCAlDB8pYA3acxQfLi1C-yRMBrt8AoH-rqlCrnOIlHFAEaODYPFxNIyl0UEoMbtrMinTw4_Kvp9PGXmrS2FYTINBsMHmbotZoJu3njnFieNKyH1/download",
+        "url": "box://utic-test-ingest-fixtures/science-exploration-1p.pptx",
         "version": "270341003012620714829454923411021136396",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/science-exploration-1p.pptx"
         },
         "date_created": "2023-07-08T20:47:08-07:00",
@@ -94,9 +99,10 @@
     "element_id": "8a5c7edcf0545e74e86e9f33bbc254fd",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!w4rghyaQdsajjj0ZTWqZbHMATeFaWZoMhINbtdqorEGJwMBk1a41gsDyidaRfyilRyiU35Ew7xgtJ8HknMuZVvptyIFNiKeZwWUqIw-SNabiZGnQlMi7-fkGL9tHux9vlO5Y6IJZtLn-floGsRKVKRnZknCB_C9AQYsvL0TRLDsYxX1BBsRY7SNKsfDrks9rIZRFkLhmTfiLm1dQi3_8nDBj_1oaierTfPYzLFVQwcKnQ37s4vG9YFwBLSnHg7opFNuHLnRJ9Ag3cAG2U0x1AS-BdIe9UgH5uJkor0PD_lP5gdTcm3OiAqGUHEGYMSmh23q9zHUbYfIbt9z80h9h5EElVK3ITaupNVlRPHAPtGVjiQLFiUVavaFqzsVfxdJLzreT04GQB6PekZF9-cNau7s8jEQjW8ZhIMOOfSqvqZAktetrOMgvwB9O3F1vax8qZ1UWsmhhu1k3_NHBA0XEdjaSjerprzx7nSdy18m84aAa9sZ_NVrgIaaNPSIHr7ARF3FKnBLYajOxhxS8yaB_TKM1Gf4Sgsbt0qfrA4d79hMa24ZS065ogetiGtdN1NUKPZ9xbyiwpJMCRG5hmfBj0RaaMITQnv__mxrw8c24oMh6DXaMsRZn8WS2iE0uVwA4z_Ku6cQKJsFsz2wgmlMomre-TDrXzZQqihPwA5_B1ZMfH22m_40CFFihzlENqoLaNwokbuShitjhVlNX5CAmn2TAldK6IlqLDsB335ZPTsl1YW3MCt4Zguz4Lvyb2BCxrJTODrASBhCscNRDioomYFk7tPF5WpOC_Mz5gPEf-JT3icDrOYlazQ3eXJU1JFfhUdiF5bhvvVkapBrIiyaAMpBu-VKNnTRQKuLca-1mHAX9vsH9D8Zr61eP57Pj9SijVbkYKIJGd_3xJO_QmEkJMA0uDsnoWNTHf5oIPwDPapVVFGn1xka2SSEDbT7GzX2Mvd0Yr5mS57k4xFs05knetNB3kKRktSEr_Agihb99tDT9-rtUt4rmqw7Izl6PuS0r_0qZPxrINYlxilt2uc-3puXVCKtxYjDlF3gzyBFngz9ueOewoQr11hDJjqx0zDg3dqfgUzqN20d8tDxGgulLl-4ysyKI_8939W8Gc9Q-YkDv0CKcQZmlboqHrx1X-5q0xCRjct-AXCxQjqA_5Ag3xZcXW-Swx3-eWtg9IZpNpdzTi8BNS1ql0cmzDZGkvDHiIbzsXRvuDGZMPqBuiVvK2S_tl7-OYA50oErr9PLP9HJGaCfnoxr7ioupeQCAlDB8pYA3acxQfLi1C-yRMBrt8AoH-rqlCrnOIlHFAEaODYPFxNIyl0UEoMbtrMinTw4_Kvp9PGXmrS2FYTINBsMHmbotZoJu3njnFieNKyH1/download",
+        "url": "box://utic-test-ingest-fixtures/science-exploration-1p.pptx",
         "version": "270341003012620714829454923411021136396",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/science-exploration-1p.pptx"
         },
         "date_created": "2023-07-08T20:47:08-07:00",
@@ -112,9 +118,10 @@
     "element_id": "5eb8e42b719e3e8ade72dc706bed5b9f",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!w4rghyaQdsajjj0ZTWqZbHMATeFaWZoMhINbtdqorEGJwMBk1a41gsDyidaRfyilRyiU35Ew7xgtJ8HknMuZVvptyIFNiKeZwWUqIw-SNabiZGnQlMi7-fkGL9tHux9vlO5Y6IJZtLn-floGsRKVKRnZknCB_C9AQYsvL0TRLDsYxX1BBsRY7SNKsfDrks9rIZRFkLhmTfiLm1dQi3_8nDBj_1oaierTfPYzLFVQwcKnQ37s4vG9YFwBLSnHg7opFNuHLnRJ9Ag3cAG2U0x1AS-BdIe9UgH5uJkor0PD_lP5gdTcm3OiAqGUHEGYMSmh23q9zHUbYfIbt9z80h9h5EElVK3ITaupNVlRPHAPtGVjiQLFiUVavaFqzsVfxdJLzreT04GQB6PekZF9-cNau7s8jEQjW8ZhIMOOfSqvqZAktetrOMgvwB9O3F1vax8qZ1UWsmhhu1k3_NHBA0XEdjaSjerprzx7nSdy18m84aAa9sZ_NVrgIaaNPSIHr7ARF3FKnBLYajOxhxS8yaB_TKM1Gf4Sgsbt0qfrA4d79hMa24ZS065ogetiGtdN1NUKPZ9xbyiwpJMCRG5hmfBj0RaaMITQnv__mxrw8c24oMh6DXaMsRZn8WS2iE0uVwA4z_Ku6cQKJsFsz2wgmlMomre-TDrXzZQqihPwA5_B1ZMfH22m_40CFFihzlENqoLaNwokbuShitjhVlNX5CAmn2TAldK6IlqLDsB335ZPTsl1YW3MCt4Zguz4Lvyb2BCxrJTODrASBhCscNRDioomYFk7tPF5WpOC_Mz5gPEf-JT3icDrOYlazQ3eXJU1JFfhUdiF5bhvvVkapBrIiyaAMpBu-VKNnTRQKuLca-1mHAX9vsH9D8Zr61eP57Pj9SijVbkYKIJGd_3xJO_QmEkJMA0uDsnoWNTHf5oIPwDPapVVFGn1xka2SSEDbT7GzX2Mvd0Yr5mS57k4xFs05knetNB3kKRktSEr_Agihb99tDT9-rtUt4rmqw7Izl6PuS0r_0qZPxrINYlxilt2uc-3puXVCKtxYjDlF3gzyBFngz9ueOewoQr11hDJjqx0zDg3dqfgUzqN20d8tDxGgulLl-4ysyKI_8939W8Gc9Q-YkDv0CKcQZmlboqHrx1X-5q0xCRjct-AXCxQjqA_5Ag3xZcXW-Swx3-eWtg9IZpNpdzTi8BNS1ql0cmzDZGkvDHiIbzsXRvuDGZMPqBuiVvK2S_tl7-OYA50oErr9PLP9HJGaCfnoxr7ioupeQCAlDB8pYA3acxQfLi1C-yRMBrt8AoH-rqlCrnOIlHFAEaODYPFxNIyl0UEoMbtrMinTw4_Kvp9PGXmrS2FYTINBsMHmbotZoJu3njnFieNKyH1/download",
+        "url": "box://utic-test-ingest-fixtures/science-exploration-1p.pptx",
         "version": "270341003012620714829454923411021136396",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/science-exploration-1p.pptx"
         },
         "date_created": "2023-07-08T20:47:08-07:00",
@@ -130,9 +137,10 @@
     "element_id": "4875cf409fe04ada73cef724f8ed3840",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!w4rghyaQdsajjj0ZTWqZbHMATeFaWZoMhINbtdqorEGJwMBk1a41gsDyidaRfyilRyiU35Ew7xgtJ8HknMuZVvptyIFNiKeZwWUqIw-SNabiZGnQlMi7-fkGL9tHux9vlO5Y6IJZtLn-floGsRKVKRnZknCB_C9AQYsvL0TRLDsYxX1BBsRY7SNKsfDrks9rIZRFkLhmTfiLm1dQi3_8nDBj_1oaierTfPYzLFVQwcKnQ37s4vG9YFwBLSnHg7opFNuHLnRJ9Ag3cAG2U0x1AS-BdIe9UgH5uJkor0PD_lP5gdTcm3OiAqGUHEGYMSmh23q9zHUbYfIbt9z80h9h5EElVK3ITaupNVlRPHAPtGVjiQLFiUVavaFqzsVfxdJLzreT04GQB6PekZF9-cNau7s8jEQjW8ZhIMOOfSqvqZAktetrOMgvwB9O3F1vax8qZ1UWsmhhu1k3_NHBA0XEdjaSjerprzx7nSdy18m84aAa9sZ_NVrgIaaNPSIHr7ARF3FKnBLYajOxhxS8yaB_TKM1Gf4Sgsbt0qfrA4d79hMa24ZS065ogetiGtdN1NUKPZ9xbyiwpJMCRG5hmfBj0RaaMITQnv__mxrw8c24oMh6DXaMsRZn8WS2iE0uVwA4z_Ku6cQKJsFsz2wgmlMomre-TDrXzZQqihPwA5_B1ZMfH22m_40CFFihzlENqoLaNwokbuShitjhVlNX5CAmn2TAldK6IlqLDsB335ZPTsl1YW3MCt4Zguz4Lvyb2BCxrJTODrASBhCscNRDioomYFk7tPF5WpOC_Mz5gPEf-JT3icDrOYlazQ3eXJU1JFfhUdiF5bhvvVkapBrIiyaAMpBu-VKNnTRQKuLca-1mHAX9vsH9D8Zr61eP57Pj9SijVbkYKIJGd_3xJO_QmEkJMA0uDsnoWNTHf5oIPwDPapVVFGn1xka2SSEDbT7GzX2Mvd0Yr5mS57k4xFs05knetNB3kKRktSEr_Agihb99tDT9-rtUt4rmqw7Izl6PuS0r_0qZPxrINYlxilt2uc-3puXVCKtxYjDlF3gzyBFngz9ueOewoQr11hDJjqx0zDg3dqfgUzqN20d8tDxGgulLl-4ysyKI_8939W8Gc9Q-YkDv0CKcQZmlboqHrx1X-5q0xCRjct-AXCxQjqA_5Ag3xZcXW-Swx3-eWtg9IZpNpdzTi8BNS1ql0cmzDZGkvDHiIbzsXRvuDGZMPqBuiVvK2S_tl7-OYA50oErr9PLP9HJGaCfnoxr7ioupeQCAlDB8pYA3acxQfLi1C-yRMBrt8AoH-rqlCrnOIlHFAEaODYPFxNIyl0UEoMbtrMinTw4_Kvp9PGXmrS2FYTINBsMHmbotZoJu3njnFieNKyH1/download",
+        "url": "box://utic-test-ingest-fixtures/science-exploration-1p.pptx",
         "version": "270341003012620714829454923411021136396",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/science-exploration-1p.pptx"
         },
         "date_created": "2023-07-08T20:47:08-07:00",
@@ -148,9 +156,10 @@
     "element_id": "046e9117c748370b9b920c893fa52ecc",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!w4rghyaQdsajjj0ZTWqZbHMATeFaWZoMhINbtdqorEGJwMBk1a41gsDyidaRfyilRyiU35Ew7xgtJ8HknMuZVvptyIFNiKeZwWUqIw-SNabiZGnQlMi7-fkGL9tHux9vlO5Y6IJZtLn-floGsRKVKRnZknCB_C9AQYsvL0TRLDsYxX1BBsRY7SNKsfDrks9rIZRFkLhmTfiLm1dQi3_8nDBj_1oaierTfPYzLFVQwcKnQ37s4vG9YFwBLSnHg7opFNuHLnRJ9Ag3cAG2U0x1AS-BdIe9UgH5uJkor0PD_lP5gdTcm3OiAqGUHEGYMSmh23q9zHUbYfIbt9z80h9h5EElVK3ITaupNVlRPHAPtGVjiQLFiUVavaFqzsVfxdJLzreT04GQB6PekZF9-cNau7s8jEQjW8ZhIMOOfSqvqZAktetrOMgvwB9O3F1vax8qZ1UWsmhhu1k3_NHBA0XEdjaSjerprzx7nSdy18m84aAa9sZ_NVrgIaaNPSIHr7ARF3FKnBLYajOxhxS8yaB_TKM1Gf4Sgsbt0qfrA4d79hMa24ZS065ogetiGtdN1NUKPZ9xbyiwpJMCRG5hmfBj0RaaMITQnv__mxrw8c24oMh6DXaMsRZn8WS2iE0uVwA4z_Ku6cQKJsFsz2wgmlMomre-TDrXzZQqihPwA5_B1ZMfH22m_40CFFihzlENqoLaNwokbuShitjhVlNX5CAmn2TAldK6IlqLDsB335ZPTsl1YW3MCt4Zguz4Lvyb2BCxrJTODrASBhCscNRDioomYFk7tPF5WpOC_Mz5gPEf-JT3icDrOYlazQ3eXJU1JFfhUdiF5bhvvVkapBrIiyaAMpBu-VKNnTRQKuLca-1mHAX9vsH9D8Zr61eP57Pj9SijVbkYKIJGd_3xJO_QmEkJMA0uDsnoWNTHf5oIPwDPapVVFGn1xka2SSEDbT7GzX2Mvd0Yr5mS57k4xFs05knetNB3kKRktSEr_Agihb99tDT9-rtUt4rmqw7Izl6PuS0r_0qZPxrINYlxilt2uc-3puXVCKtxYjDlF3gzyBFngz9ueOewoQr11hDJjqx0zDg3dqfgUzqN20d8tDxGgulLl-4ysyKI_8939W8Gc9Q-YkDv0CKcQZmlboqHrx1X-5q0xCRjct-AXCxQjqA_5Ag3xZcXW-Swx3-eWtg9IZpNpdzTi8BNS1ql0cmzDZGkvDHiIbzsXRvuDGZMPqBuiVvK2S_tl7-OYA50oErr9PLP9HJGaCfnoxr7ioupeQCAlDB8pYA3acxQfLi1C-yRMBrt8AoH-rqlCrnOIlHFAEaODYPFxNIyl0UEoMbtrMinTw4_Kvp9PGXmrS2FYTINBsMHmbotZoJu3njnFieNKyH1/download",
+        "url": "box://utic-test-ingest-fixtures/science-exploration-1p.pptx",
         "version": "270341003012620714829454923411021136396",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/science-exploration-1p.pptx"
         },
         "date_created": "2023-07-08T20:47:08-07:00",
@@ -166,9 +175,10 @@
     "element_id": "bd3a820c31b89c5d4e1cc60c1ada41bc",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!w4rghyaQdsajjj0ZTWqZbHMATeFaWZoMhINbtdqorEGJwMBk1a41gsDyidaRfyilRyiU35Ew7xgtJ8HknMuZVvptyIFNiKeZwWUqIw-SNabiZGnQlMi7-fkGL9tHux9vlO5Y6IJZtLn-floGsRKVKRnZknCB_C9AQYsvL0TRLDsYxX1BBsRY7SNKsfDrks9rIZRFkLhmTfiLm1dQi3_8nDBj_1oaierTfPYzLFVQwcKnQ37s4vG9YFwBLSnHg7opFNuHLnRJ9Ag3cAG2U0x1AS-BdIe9UgH5uJkor0PD_lP5gdTcm3OiAqGUHEGYMSmh23q9zHUbYfIbt9z80h9h5EElVK3ITaupNVlRPHAPtGVjiQLFiUVavaFqzsVfxdJLzreT04GQB6PekZF9-cNau7s8jEQjW8ZhIMOOfSqvqZAktetrOMgvwB9O3F1vax8qZ1UWsmhhu1k3_NHBA0XEdjaSjerprzx7nSdy18m84aAa9sZ_NVrgIaaNPSIHr7ARF3FKnBLYajOxhxS8yaB_TKM1Gf4Sgsbt0qfrA4d79hMa24ZS065ogetiGtdN1NUKPZ9xbyiwpJMCRG5hmfBj0RaaMITQnv__mxrw8c24oMh6DXaMsRZn8WS2iE0uVwA4z_Ku6cQKJsFsz2wgmlMomre-TDrXzZQqihPwA5_B1ZMfH22m_40CFFihzlENqoLaNwokbuShitjhVlNX5CAmn2TAldK6IlqLDsB335ZPTsl1YW3MCt4Zguz4Lvyb2BCxrJTODrASBhCscNRDioomYFk7tPF5WpOC_Mz5gPEf-JT3icDrOYlazQ3eXJU1JFfhUdiF5bhvvVkapBrIiyaAMpBu-VKNnTRQKuLca-1mHAX9vsH9D8Zr61eP57Pj9SijVbkYKIJGd_3xJO_QmEkJMA0uDsnoWNTHf5oIPwDPapVVFGn1xka2SSEDbT7GzX2Mvd0Yr5mS57k4xFs05knetNB3kKRktSEr_Agihb99tDT9-rtUt4rmqw7Izl6PuS0r_0qZPxrINYlxilt2uc-3puXVCKtxYjDlF3gzyBFngz9ueOewoQr11hDJjqx0zDg3dqfgUzqN20d8tDxGgulLl-4ysyKI_8939W8Gc9Q-YkDv0CKcQZmlboqHrx1X-5q0xCRjct-AXCxQjqA_5Ag3xZcXW-Swx3-eWtg9IZpNpdzTi8BNS1ql0cmzDZGkvDHiIbzsXRvuDGZMPqBuiVvK2S_tl7-OYA50oErr9PLP9HJGaCfnoxr7ioupeQCAlDB8pYA3acxQfLi1C-yRMBrt8AoH-rqlCrnOIlHFAEaODYPFxNIyl0UEoMbtrMinTw4_Kvp9PGXmrS2FYTINBsMHmbotZoJu3njnFieNKyH1/download",
+        "url": "box://utic-test-ingest-fixtures/science-exploration-1p.pptx",
         "version": "270341003012620714829454923411021136396",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/science-exploration-1p.pptx"
         },
         "date_created": "2023-07-08T20:47:08-07:00",
@@ -184,9 +194,10 @@
     "element_id": "e01f8f787617a1ab334f52a0bc5b4a9c",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!w4rghyaQdsajjj0ZTWqZbHMATeFaWZoMhINbtdqorEGJwMBk1a41gsDyidaRfyilRyiU35Ew7xgtJ8HknMuZVvptyIFNiKeZwWUqIw-SNabiZGnQlMi7-fkGL9tHux9vlO5Y6IJZtLn-floGsRKVKRnZknCB_C9AQYsvL0TRLDsYxX1BBsRY7SNKsfDrks9rIZRFkLhmTfiLm1dQi3_8nDBj_1oaierTfPYzLFVQwcKnQ37s4vG9YFwBLSnHg7opFNuHLnRJ9Ag3cAG2U0x1AS-BdIe9UgH5uJkor0PD_lP5gdTcm3OiAqGUHEGYMSmh23q9zHUbYfIbt9z80h9h5EElVK3ITaupNVlRPHAPtGVjiQLFiUVavaFqzsVfxdJLzreT04GQB6PekZF9-cNau7s8jEQjW8ZhIMOOfSqvqZAktetrOMgvwB9O3F1vax8qZ1UWsmhhu1k3_NHBA0XEdjaSjerprzx7nSdy18m84aAa9sZ_NVrgIaaNPSIHr7ARF3FKnBLYajOxhxS8yaB_TKM1Gf4Sgsbt0qfrA4d79hMa24ZS065ogetiGtdN1NUKPZ9xbyiwpJMCRG5hmfBj0RaaMITQnv__mxrw8c24oMh6DXaMsRZn8WS2iE0uVwA4z_Ku6cQKJsFsz2wgmlMomre-TDrXzZQqihPwA5_B1ZMfH22m_40CFFihzlENqoLaNwokbuShitjhVlNX5CAmn2TAldK6IlqLDsB335ZPTsl1YW3MCt4Zguz4Lvyb2BCxrJTODrASBhCscNRDioomYFk7tPF5WpOC_Mz5gPEf-JT3icDrOYlazQ3eXJU1JFfhUdiF5bhvvVkapBrIiyaAMpBu-VKNnTRQKuLca-1mHAX9vsH9D8Zr61eP57Pj9SijVbkYKIJGd_3xJO_QmEkJMA0uDsnoWNTHf5oIPwDPapVVFGn1xka2SSEDbT7GzX2Mvd0Yr5mS57k4xFs05knetNB3kKRktSEr_Agihb99tDT9-rtUt4rmqw7Izl6PuS0r_0qZPxrINYlxilt2uc-3puXVCKtxYjDlF3gzyBFngz9ueOewoQr11hDJjqx0zDg3dqfgUzqN20d8tDxGgulLl-4ysyKI_8939W8Gc9Q-YkDv0CKcQZmlboqHrx1X-5q0xCRjct-AXCxQjqA_5Ag3xZcXW-Swx3-eWtg9IZpNpdzTi8BNS1ql0cmzDZGkvDHiIbzsXRvuDGZMPqBuiVvK2S_tl7-OYA50oErr9PLP9HJGaCfnoxr7ioupeQCAlDB8pYA3acxQfLi1C-yRMBrt8AoH-rqlCrnOIlHFAEaODYPFxNIyl0UEoMbtrMinTw4_Kvp9PGXmrS2FYTINBsMHmbotZoJu3njnFieNKyH1/download",
+        "url": "box://utic-test-ingest-fixtures/science-exploration-1p.pptx",
         "version": "270341003012620714829454923411021136396",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/science-exploration-1p.pptx"
         },
         "date_created": "2023-07-08T20:47:08-07:00",
@@ -202,9 +213,10 @@
     "element_id": "3dbd91c87d3e2850a7cb31251c4a1b21",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!w4rghyaQdsajjj0ZTWqZbHMATeFaWZoMhINbtdqorEGJwMBk1a41gsDyidaRfyilRyiU35Ew7xgtJ8HknMuZVvptyIFNiKeZwWUqIw-SNabiZGnQlMi7-fkGL9tHux9vlO5Y6IJZtLn-floGsRKVKRnZknCB_C9AQYsvL0TRLDsYxX1BBsRY7SNKsfDrks9rIZRFkLhmTfiLm1dQi3_8nDBj_1oaierTfPYzLFVQwcKnQ37s4vG9YFwBLSnHg7opFNuHLnRJ9Ag3cAG2U0x1AS-BdIe9UgH5uJkor0PD_lP5gdTcm3OiAqGUHEGYMSmh23q9zHUbYfIbt9z80h9h5EElVK3ITaupNVlRPHAPtGVjiQLFiUVavaFqzsVfxdJLzreT04GQB6PekZF9-cNau7s8jEQjW8ZhIMOOfSqvqZAktetrOMgvwB9O3F1vax8qZ1UWsmhhu1k3_NHBA0XEdjaSjerprzx7nSdy18m84aAa9sZ_NVrgIaaNPSIHr7ARF3FKnBLYajOxhxS8yaB_TKM1Gf4Sgsbt0qfrA4d79hMa24ZS065ogetiGtdN1NUKPZ9xbyiwpJMCRG5hmfBj0RaaMITQnv__mxrw8c24oMh6DXaMsRZn8WS2iE0uVwA4z_Ku6cQKJsFsz2wgmlMomre-TDrXzZQqihPwA5_B1ZMfH22m_40CFFihzlENqoLaNwokbuShitjhVlNX5CAmn2TAldK6IlqLDsB335ZPTsl1YW3MCt4Zguz4Lvyb2BCxrJTODrASBhCscNRDioomYFk7tPF5WpOC_Mz5gPEf-JT3icDrOYlazQ3eXJU1JFfhUdiF5bhvvVkapBrIiyaAMpBu-VKNnTRQKuLca-1mHAX9vsH9D8Zr61eP57Pj9SijVbkYKIJGd_3xJO_QmEkJMA0uDsnoWNTHf5oIPwDPapVVFGn1xka2SSEDbT7GzX2Mvd0Yr5mS57k4xFs05knetNB3kKRktSEr_Agihb99tDT9-rtUt4rmqw7Izl6PuS0r_0qZPxrINYlxilt2uc-3puXVCKtxYjDlF3gzyBFngz9ueOewoQr11hDJjqx0zDg3dqfgUzqN20d8tDxGgulLl-4ysyKI_8939W8Gc9Q-YkDv0CKcQZmlboqHrx1X-5q0xCRjct-AXCxQjqA_5Ag3xZcXW-Swx3-eWtg9IZpNpdzTi8BNS1ql0cmzDZGkvDHiIbzsXRvuDGZMPqBuiVvK2S_tl7-OYA50oErr9PLP9HJGaCfnoxr7ioupeQCAlDB8pYA3acxQfLi1C-yRMBrt8AoH-rqlCrnOIlHFAEaODYPFxNIyl0UEoMbtrMinTw4_Kvp9PGXmrS2FYTINBsMHmbotZoJu3njnFieNKyH1/download",
+        "url": "box://utic-test-ingest-fixtures/science-exploration-1p.pptx",
         "version": "270341003012620714829454923411021136396",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/science-exploration-1p.pptx"
         },
         "date_created": "2023-07-08T20:47:08-07:00",
@@ -220,9 +232,10 @@
     "element_id": "36cd7086df7ce77d623ffdc1ba6a8513",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!w4rghyaQdsajjj0ZTWqZbHMATeFaWZoMhINbtdqorEGJwMBk1a41gsDyidaRfyilRyiU35Ew7xgtJ8HknMuZVvptyIFNiKeZwWUqIw-SNabiZGnQlMi7-fkGL9tHux9vlO5Y6IJZtLn-floGsRKVKRnZknCB_C9AQYsvL0TRLDsYxX1BBsRY7SNKsfDrks9rIZRFkLhmTfiLm1dQi3_8nDBj_1oaierTfPYzLFVQwcKnQ37s4vG9YFwBLSnHg7opFNuHLnRJ9Ag3cAG2U0x1AS-BdIe9UgH5uJkor0PD_lP5gdTcm3OiAqGUHEGYMSmh23q9zHUbYfIbt9z80h9h5EElVK3ITaupNVlRPHAPtGVjiQLFiUVavaFqzsVfxdJLzreT04GQB6PekZF9-cNau7s8jEQjW8ZhIMOOfSqvqZAktetrOMgvwB9O3F1vax8qZ1UWsmhhu1k3_NHBA0XEdjaSjerprzx7nSdy18m84aAa9sZ_NVrgIaaNPSIHr7ARF3FKnBLYajOxhxS8yaB_TKM1Gf4Sgsbt0qfrA4d79hMa24ZS065ogetiGtdN1NUKPZ9xbyiwpJMCRG5hmfBj0RaaMITQnv__mxrw8c24oMh6DXaMsRZn8WS2iE0uVwA4z_Ku6cQKJsFsz2wgmlMomre-TDrXzZQqihPwA5_B1ZMfH22m_40CFFihzlENqoLaNwokbuShitjhVlNX5CAmn2TAldK6IlqLDsB335ZPTsl1YW3MCt4Zguz4Lvyb2BCxrJTODrASBhCscNRDioomYFk7tPF5WpOC_Mz5gPEf-JT3icDrOYlazQ3eXJU1JFfhUdiF5bhvvVkapBrIiyaAMpBu-VKNnTRQKuLca-1mHAX9vsH9D8Zr61eP57Pj9SijVbkYKIJGd_3xJO_QmEkJMA0uDsnoWNTHf5oIPwDPapVVFGn1xka2SSEDbT7GzX2Mvd0Yr5mS57k4xFs05knetNB3kKRktSEr_Agihb99tDT9-rtUt4rmqw7Izl6PuS0r_0qZPxrINYlxilt2uc-3puXVCKtxYjDlF3gzyBFngz9ueOewoQr11hDJjqx0zDg3dqfgUzqN20d8tDxGgulLl-4ysyKI_8939W8Gc9Q-YkDv0CKcQZmlboqHrx1X-5q0xCRjct-AXCxQjqA_5Ag3xZcXW-Swx3-eWtg9IZpNpdzTi8BNS1ql0cmzDZGkvDHiIbzsXRvuDGZMPqBuiVvK2S_tl7-OYA50oErr9PLP9HJGaCfnoxr7ioupeQCAlDB8pYA3acxQfLi1C-yRMBrt8AoH-rqlCrnOIlHFAEaODYPFxNIyl0UEoMbtrMinTw4_Kvp9PGXmrS2FYTINBsMHmbotZoJu3njnFieNKyH1/download",
+        "url": "box://utic-test-ingest-fixtures/science-exploration-1p.pptx",
         "version": "270341003012620714829454923411021136396",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/science-exploration-1p.pptx"
         },
         "date_created": "2023-07-08T20:47:08-07:00",

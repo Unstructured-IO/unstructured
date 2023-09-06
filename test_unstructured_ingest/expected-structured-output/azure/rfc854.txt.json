@@ -4,8 +4,10 @@
     "element_id": "9d9c35fa1d7fddcc714465fa09f0235f",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -20,8 +22,10 @@
     "element_id": "1aa219fe9a1aca1df4d8b65822638714",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -36,8 +40,10 @@
     "element_id": "38919550227ea90ec9000499adfcc0dc",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -52,8 +58,10 @@
     "element_id": "348348036267fa046df6956d6bff62c9",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -68,8 +76,10 @@
     "element_id": "215bca5e1e129a16357b94b1b6ee94ae",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -84,8 +94,10 @@
     "element_id": "defe145fa5bc9931d3cf454c6304c7e8",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -100,8 +112,10 @@
     "element_id": "da71ce4b9adc9382a2b42bed704dffd2",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -116,8 +130,10 @@
     "element_id": "0fda734539641b01f24e6ffb2e95683a",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -132,8 +148,10 @@
     "element_id": "f2612ca5f313c20b7f83b278ae4a7f8c",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -148,8 +166,10 @@
     "element_id": "62568fbce1903e5c511b5d459a141b53",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -164,8 +184,10 @@
     "element_id": "d6aba6625dc1ed17f255bf2f85b941ab",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -180,8 +202,10 @@
     "element_id": "9af56ccadf39b6ca9034b00ba047359e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -196,8 +220,10 @@
     "element_id": "e669e7122e07d36968559af501974ca3",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -212,8 +238,10 @@
     "element_id": "319d6358cf6e682f16e83ac6d588a9bc",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -228,8 +256,10 @@
     "element_id": "942657db5dcb996291bfe2a03b49e543",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -244,8 +274,10 @@
     "element_id": "f9873e724b7ae4011d3e9dba2c60623d",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -260,8 +292,10 @@
     "element_id": "d38748f70330c37b70fa1dc04cf1a3a1",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -276,8 +310,10 @@
     "element_id": "9e32b94fc790d431c6fa8a676af3cbaf",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -292,8 +328,10 @@
     "element_id": "ff7aa50f2925f769ecb12a1e698e9584",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -308,8 +346,10 @@
     "element_id": "24e9436d0bc55a7deca7493b0fcedd4a",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -324,8 +364,10 @@
     "element_id": "7827951a4f21fea14163d0de60726f45",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -340,8 +382,10 @@
     "element_id": "9af56ccadf39b6ca9034b00ba047359e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -356,8 +400,10 @@
     "element_id": "144a5ce3d6829d43750d91c4b3eb72d0",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -372,8 +418,10 @@
     "element_id": "ce0d97ed5c14adea403bb22de0a75332",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -388,8 +436,10 @@
     "element_id": "52ef0ced6124d5d2dc7089ce8d7994e4",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -404,8 +454,10 @@
     "element_id": "bd19f3c237975d17b17d7c91d298755a",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -420,8 +472,10 @@
     "element_id": "68734d5a02b8db2ad3e696b09a865bb9",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -436,8 +490,10 @@
     "element_id": "9af56ccadf39b6ca9034b00ba047359e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -452,8 +508,10 @@
     "element_id": "bdcaf702af42702d311aac50aabd3226",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -468,8 +526,10 @@
     "element_id": "bc5f9099176c143aac62ae123dd767c9",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -484,8 +544,10 @@
     "element_id": "c48cc46df7357e14ff20073d9273bb39",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -500,8 +562,10 @@
     "element_id": "4a3542aaa9f57bf8429c3c5d93ce4e27",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -516,8 +580,10 @@
     "element_id": "0f0d2ea1d48a40c50965293238bff820",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -532,8 +598,10 @@
     "element_id": "01bd15a53f4371b4e844e97a77f5bb2a",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -548,8 +616,10 @@
     "element_id": "60b6e527e9d3d7888ece691efde3c9b8",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -564,8 +634,10 @@
     "element_id": "2281cdd30362aa9f5856225e643dad29",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -580,8 +652,10 @@
     "element_id": "8fc8c959beb7240f0a1c4a05473c8b16",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -596,8 +670,10 @@
     "element_id": "9af56ccadf39b6ca9034b00ba047359e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -612,8 +688,10 @@
     "element_id": "5aed3428518b29cd8e8e599e5b7f0f17",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -628,8 +706,10 @@
     "element_id": "8aa60fbfa7fdb5de8d562608d3ccb069",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -644,8 +724,10 @@
     "element_id": "53d04e2a47e3b5a89ee1cc6f1aca011c",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -660,8 +742,10 @@
     "element_id": "24c6236ce1666a2ef74bd5883a9d95d5",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -676,8 +760,10 @@
     "element_id": "54835bd57c213034083e9919f28c8569",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -692,8 +778,10 @@
     "element_id": "a1953d2fa86ff41b2fa7b8968c02f8cd",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -708,8 +796,10 @@
     "element_id": "265efac50109dcdaa89fe58e8d85e111",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -724,8 +814,10 @@
     "element_id": "9af56ccadf39b6ca9034b00ba047359e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -740,8 +832,10 @@
     "element_id": "a3cc4dd577869dff55febbff9f4cfe39",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -756,8 +850,10 @@
     "element_id": "3fd46da8688f3bc4c678c017c6fb69d1",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -772,8 +868,10 @@
     "element_id": "62d1f502b9eb3cb8d5065b452c210af9",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -788,8 +886,10 @@
     "element_id": "a5f819c974517cfdb87d1cfc1dc5bab1",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -804,8 +904,10 @@
     "element_id": "2a0e4160163c6e97a5789fdd9219b374",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -820,8 +922,10 @@
     "element_id": "2c6caa2540c50ef8a32d957068a49f94",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -836,8 +940,10 @@
     "element_id": "bcbd1176407c21ff89f17449fb237a88",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -852,8 +958,10 @@
     "element_id": "9af56ccadf39b6ca9034b00ba047359e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -868,8 +976,10 @@
     "element_id": "2036ad99c25beb881b43d0028f979dde",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -884,8 +994,10 @@
     "element_id": "ca1bfdec5493818e7b22e166378266bf",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -900,8 +1012,10 @@
     "element_id": "79c0bef6144e6c022a98c52191d2cc1f",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -916,8 +1030,10 @@
     "element_id": "3a099ca87969610fedfe671ccdb86ea3",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -932,8 +1048,10 @@
     "element_id": "cf5a6363a9fbb9b781ea38f6020e173a",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -948,8 +1066,10 @@
     "element_id": "d25aecf67f08e7c631249d8153750660",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -964,8 +1084,10 @@
     "element_id": "bd9fa1fd3236890727773ae72025f671",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -980,8 +1102,10 @@
     "element_id": "9af56ccadf39b6ca9034b00ba047359e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -996,8 +1120,10 @@
     "element_id": "7d22082b41cde240f211ac5a0ade4b8f",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1012,8 +1138,10 @@
     "element_id": "bff1dcd551614ce7d3a6e3b02e58fe23",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1028,8 +1156,10 @@
     "element_id": "02e248473bc7c658d3d79b13cc1ec7b3",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1044,8 +1174,10 @@
     "element_id": "8aa4adfba79e5f2fa83efb41a1f58667",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1060,8 +1192,10 @@
     "element_id": "e2ea3a51c85c4be3650d6bceb4528cb9",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1076,8 +1210,10 @@
     "element_id": "d5bf23fd7f622ba14b5dd626721d0388",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1092,8 +1228,10 @@
     "element_id": "7b176cf1b933d811eaf8add1e3c7186d",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1108,8 +1246,10 @@
     "element_id": "9b30c230514ae22b216a8471265d0b46",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1124,8 +1264,10 @@
     "element_id": "09a4f8f6eb0a5dd31f1ea410d7e53fdb",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1140,8 +1282,10 @@
     "element_id": "b34bb89d3f93777025abbee8ef5783b9",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1156,8 +1300,10 @@
     "element_id": "aa8a99cc294c8c50d62f7dc514f145d1",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1172,8 +1318,10 @@
     "element_id": "9af56ccadf39b6ca9034b00ba047359e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1188,8 +1336,10 @@
     "element_id": "1aba1baa1702fabd1d5cc42d5e4c5e3b",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1204,8 +1354,10 @@
     "element_id": "e55499f7d2ec38d218167b801a8b99ec",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1220,8 +1372,10 @@
     "element_id": "9bdd15b36c0d14d291739a406cd17d9a",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1236,8 +1390,10 @@
     "element_id": "0efeba9f351796010b1844ed92924492",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1252,8 +1408,10 @@
     "element_id": "a31d6700b23beb1a30609a089539f4cb",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1268,8 +1426,10 @@
     "element_id": "5ef90f01c3f14f5540993d19ea2fe4da",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1284,8 +1444,10 @@
     "element_id": "0b1f6831ef54c56a695a59e6e3ff5a9c",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1300,8 +1462,10 @@
     "element_id": "d6bbda77854950cd49b01cf04409ce1a",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1316,8 +1480,10 @@
     "element_id": "017f53c38513cce0bd9e30b4a79757e3",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1332,8 +1498,10 @@
     "element_id": "9af56ccadf39b6ca9034b00ba047359e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1348,8 +1516,10 @@
     "element_id": "b30276354ef766f6f6e7dc89d6c674ba",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1364,8 +1534,10 @@
     "element_id": "8459ff8791582f54cd1435d6b9d770db",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1380,8 +1552,10 @@
     "element_id": "e0bfbeb5fb2c2920562cfd6eace856e5",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1396,8 +1570,10 @@
     "element_id": "31cb7cd4c96c1730b310d34dc47e38e4",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1412,8 +1588,10 @@
     "element_id": "82bd9d7fe0aa06d113db3be28abbda8e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1428,8 +1606,10 @@
     "element_id": "618808c48ecd9bdc1ac5a97e633131b9",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1444,8 +1624,10 @@
     "element_id": "c90a3a45f10625efcdfae70dd5b743e1",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1460,8 +1642,10 @@
     "element_id": "536d7ee39b8d2079ff694e8a1b980595",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1476,8 +1660,10 @@
     "element_id": "9210502194941b4803a4ba43fbcbf5c5",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1492,8 +1678,10 @@
     "element_id": "eb632a25185338ea0ad51b54a612e6b2",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1508,8 +1696,10 @@
     "element_id": "841187377bce6923fe53218f66db152d",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1524,8 +1714,10 @@
     "element_id": "2c3b550675c1b3d3d5ca0773bfbfb91f",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1540,8 +1732,10 @@
     "element_id": "f40a5e63a74cda11d85f49dbd66bc4d2",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1556,8 +1750,10 @@
     "element_id": "9af56ccadf39b6ca9034b00ba047359e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1572,8 +1768,10 @@
     "element_id": "61d98d72b0a4c0c649b50d6a6b75cb2c",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1588,8 +1786,10 @@
     "element_id": "21f803688e568b70b1042c09d8fd5549",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1604,8 +1804,10 @@
     "element_id": "88e5fc1ef88578ed70545f183012c03c",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1620,8 +1822,10 @@
     "element_id": "34b79faf45f06e3238f306e3fc6405e9",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1636,8 +1840,10 @@
     "element_id": "c56bfb7b7d935d228199117e2de59a48",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1652,8 +1858,10 @@
     "element_id": "b43d41417fa5c38bb49fa462cbf499e0",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1668,8 +1876,10 @@
     "element_id": "9af56ccadf39b6ca9034b00ba047359e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1684,8 +1894,10 @@
     "element_id": "f493d9017462ce6d8b4ccd221abda910",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1700,8 +1912,10 @@
     "element_id": "f68c7b512bbd224f2d0ff9ba4f9bbd60",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1716,8 +1930,10 @@
     "element_id": "6ce389bb5ce56be75c65454093b6ee2e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1732,8 +1948,10 @@
     "element_id": "660034f650427140416d6b661d760b8a",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1748,8 +1966,10 @@
     "element_id": "6d3117fed415340f3977665e3aacdb7d",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1764,8 +1984,10 @@
     "element_id": "17947a1c3e54900ea83e1642f9030244",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1780,8 +2002,10 @@
     "element_id": "db0fc7a6ec084dcba89e10c351712406",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1796,8 +2020,10 @@
     "element_id": "ca1bfdec5493818e7b22e166378266bf",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1812,8 +2038,10 @@
     "element_id": "6fb4b4ff891456acb5242415c84764e9",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1828,8 +2056,10 @@
     "element_id": "fa26f5ee464f54c81e43a216ed3327ae",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1844,8 +2074,10 @@
     "element_id": "9af56ccadf39b6ca9034b00ba047359e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1860,8 +2092,10 @@
     "element_id": "3a099ca87969610fedfe671ccdb86ea3",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1876,8 +2110,10 @@
     "element_id": "decf7dffaa93bf7e117d34581db05b9e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1892,8 +2128,10 @@
     "element_id": "bff1dcd551614ce7d3a6e3b02e58fe23",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1908,8 +2146,10 @@
     "element_id": "e1e93182e47bdf0d40b350d08e0cd276",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1924,8 +2164,10 @@
     "element_id": "8aa4adfba79e5f2fa83efb41a1f58667",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1940,8 +2182,10 @@
     "element_id": "7804c30377a4b13ee0091b1006d4c02a",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1956,8 +2200,10 @@
     "element_id": "7b176cf1b933d811eaf8add1e3c7186d",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1972,8 +2218,10 @@
     "element_id": "ae12408b31b73bdcd8269fc162dbed03",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -1988,8 +2236,10 @@
     "element_id": "1c83a99be24b3569f5bf256fed55fc54",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2004,8 +2254,10 @@
     "element_id": "7a574d03f8038dd3f4b0fd0105123f8b",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2020,8 +2272,10 @@
     "element_id": "7fed71fcf6b2f2998cb40eccb1fc120c",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2036,8 +2290,10 @@
     "element_id": "6641aee9e33d501c1204084d1b684d68",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2052,8 +2308,10 @@
     "element_id": "9af56ccadf39b6ca9034b00ba047359e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2068,8 +2326,10 @@
     "element_id": "341d288bfe8e4a13228e42c39e5e8503",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2084,8 +2344,10 @@
     "element_id": "780a5bdae3e4453a1d426819c3a4ed10",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2100,8 +2362,10 @@
     "element_id": "3c0b142938dbb65d94545c1f6b6d4194",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2116,8 +2380,10 @@
     "element_id": "5a908333aa1f29c8380d53a6bcd8f751",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2132,8 +2398,10 @@
     "element_id": "293a8f5e9f51f9040366616c3d71c6bf",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2148,8 +2416,10 @@
     "element_id": "9af56ccadf39b6ca9034b00ba047359e",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2164,8 +2434,10 @@
     "element_id": "dd1df7717b8b224fc0f40e7f293d4b56",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2180,8 +2452,10 @@
     "element_id": "e480464f54a31675c206fa4f3e97dd32",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2196,8 +2470,10 @@
     "element_id": "05d804fb7a30d2a5030b846bb9dfec95",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2212,8 +2488,10 @@
     "element_id": "c796a41eedaac19c8da9212b0b3b30de",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
@@ -2228,8 +2506,10 @@
     "element_id": "b5652f8997476a4e588ff3cf95aa76b9",
     "metadata": {
       "data_source": {
+        "url": "abfs://container1/rfc854.txt",
         "version": "296132324119720228801627547314730835862",
         "record_locator": {
+          "protocol": "abfs",
           "remote_file_path": "container1/rfc854.txt"
         },
         "date_created": "2023-03-10T09:55:50+00:00",
