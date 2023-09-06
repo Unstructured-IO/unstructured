@@ -35,6 +35,7 @@ def gdrive(
         hashed_dir_name=hashed_dir_name,
         logger=logger,
     )
+
     from unstructured.ingest.connector.google_drive import (
         GoogleDriveSourceConnector,
         SimpleGoogleDriveConfig,

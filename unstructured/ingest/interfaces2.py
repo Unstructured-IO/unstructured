@@ -48,6 +48,7 @@ class PartitionConfig(BaseConfig):
     metadata_exclude: t.List[str] = field(default_factory=list)
     metadata_include: t.List[str] = field(default_factory=list)
     partition_endpoint: t.Optional[str] = None
+    partition_by_api: bool = False
     api_key: t.Optional[str] = None
 
 
@@ -182,7 +183,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
 
     @PartitionError.wrap
     def partition_file(self, **partition_kwargs) -> t.List[t.Dict[str, t.Any]]:
-        if not self.partition_config.partition_endpoint:
+        if not self.partition_config.partition_by_api:
             logger.debug("Using local partition")
             elements = partition(
                 filename=str(self.filename),

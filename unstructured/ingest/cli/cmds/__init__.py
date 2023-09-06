@@ -18,7 +18,7 @@ from .gitlab import get_source_cmd as gitlab_src
 from .jira import get_cmd as jira
 from .google_drive import get_source_cmd as google_drive_src
 from .local import get_source_cmd as local_src
-from .notion import get_cmd as notion
+from .notion import get_source_cmd as notion_src
 from .onedrive import get_cmd as onedrive
 from .outlook import get_cmd as outlook
 from .reddit import get_cmd as reddit
@@ -45,6 +45,7 @@ src: t.List[click.Group] = [
     gitlab_src(),
     google_drive_src(),
     local_src(),
+    notion_src(),
     s3_src(),
 ]
 

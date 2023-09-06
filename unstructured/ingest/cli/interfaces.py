@@ -130,9 +130,17 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 help="If set, drop the specified metadata fields if they exist. ",
             ),
             click.Option(
+                ["--partition-by-api"],
+                is_flag=True,
+                default=False,
+                help="Use a remote API to partition the files."
+                " Otherwise, use the function from partition.auto",
+            ),
+            click.Option(
                 ["--partition-endpoint"],
-                default=None,
-                help="If provided, will use api to run partition",
+                default="https://api.unstructured.io/general/v0/general",
+                help="If partitioning via api, use the following host. "
+                "Default: https://api.unstructured.io/general/v0/general",
             ),
             click.Option(
                 ["--api-key"],

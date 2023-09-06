@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import Group
+from unstructured.ingest.cli.cmds.utils import Group, conform_click_options
 from unstructured.ingest.cli.common import (
     log_options,
 )
@@ -69,10 +69,7 @@ def gitlab_source(ctx: click.Context, **options):
     if ctx.invoked_subcommand:
         return
 
-    # Click sets all multiple fields as tuple, this needs to be updated to list
-    for k, v in options.items():
-        if isinstance(v, tuple):
-            options[k] = list(v)
+    conform_click_options(options)
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
     log_options(options, verbose=verbose)
