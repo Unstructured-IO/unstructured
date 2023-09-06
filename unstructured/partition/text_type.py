@@ -4,6 +4,8 @@ import re
 import sys
 from typing import List, Optional
 
+import numpy as np
+
 if sys.version_info < (3, 8):
     from typing_extensions import Final  # pragma: nocover
 else:
@@ -89,6 +91,9 @@ def is_possible_narrative_text(
         return False
 
     return True
+
+
+# add test case for entity capitalized case
 
 
 def is_possible_title(
@@ -286,26 +291,34 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     # ex. world_tokenize("ITEM 1. Financial Statements (Unaudited)")
     #     = ['ITEM', '1', '.', 'Financial', 'Statements', '(', 'Unaudited', ')'],
     # however, "ITEM 1. Financial Statements (Unaudited)" is Title, not NarrativeText
-    tokens = [tk for tk in word_tokenize(text) if tk.isalpha()]
+    # tokens = [tk for tk in word_tokenize(text) if tk.isalpha()]
+    tokens = word_tokenize(text)
+    is_alpha = np.array([token.isalpha() for token in tokens])
 
-    # NOTE(jay-ylee) - If word_tokenize(text) is empty, return must be True to
-    # avoid being misclassified as Narrative Text.
-    if len(tokens) == 0:
+    # NOTE(klaijan) - If all alphas in word_tokenize(text) is empty
+    # return must be True to avoid being misclassified as Narrative Text.
+    if sum(is_alpha) == 0:
         return True
 
-    capitalized = sum([word.istitle() or word.isupper() for word in tokens])
-    # NOTE(klaijan) - detect the first word in the sentence, whether it is alpha or not
-    is_first_word_capitalized = (text.split()[0]).istitle()
-    ne_chunks = ne_chunk(text)
-    count_ne = sum([hasattr(chunk, "label") * len(chunk) for chunk in ne_chunks])
+    is_capitalized = np.array([word.istitle() or word.isupper() for word in tokens])
+    is_ne = np.zeros(len(tokens))
+    i = 0
+    for chunk in ne_chunk(text):
+        if hasattr(chunk, "label"):
+            is_ne[i : i + len(chunk)] = [True] * len(chunk)
+            i += len(chunk)
+        else:
+            i += 1
 
-    if len(tokens) > is_first_word_capitalized + count_ne:
-        ratio = (capitalized - is_first_word_capitalized - count_ne) / (
-            len(tokens) - is_first_word_capitalized - count_ne
+    ignored_capitalize = sum(np.logical_and(is_alpha, np.logical_or(is_capitalized, is_ne)))
+
+    if sum(is_alpha) > ignored_capitalize:
+        ratio = (sum(np.logical_and(is_alpha, is_capitalized)) - ignored_capitalize) / (
+            sum(is_alpha) - ignored_capitalize
         )
     else:
-        ratio = capitalized / len(tokens)
-    return ratio > threshold
+        ratio = sum(np.logical_and(is_alpha, is_capitalized)) / sum(is_alpha)
+    return bool(ratio > threshold)
 
 
 def is_us_city_state_zip(text) -> bool:

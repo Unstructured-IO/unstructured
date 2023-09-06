@@ -217,6 +217,8 @@ def test_contains_english_word(text, expected, monkeypatch):
         ("LOOK AT THIS IT IS CAPS BUT NOT A TITLE.", True),
         ("This Has All Caps. It's Weird But Two Sentences", False),
         ("The Business Report is expected within 6 hours of closing", False),
+        ("United States' Intellectual Property", True),
+        ("United States' intellectual property", False),
         ("", True),
     ],
 )
