@@ -58,20 +58,6 @@ def pos_tag(text: str) -> List[Tuple[str, str]]:
     return parts_of_speech
 
 
-# @lru_cache(maxsize=CACHE_MAX_SIZE)
-# def ne_chunk(text: str) -> List[Tuple[str, List[Tuple[str, str]]]]:
-#     """A wrapper around the NLTK Chunk with LRU caching enabled."""
-#     pos = pos_tag(text)
-#     chunks = _ne_chunk(pos, binary=True)
-#     name_entities = []
-#     for chunk in chunks:
-#         if hasattr(chunk, 'label'):
-#             name_entities.append((chunk.label(), chunk.leaves()))
-#         else:
-#             name_entities.append((None, chunk))
-#     return name_entities
-
-
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def ne_chunk(text: str) -> Tree:
     """A wrapper around the NLTK Chunk with LRU caching enabled."""

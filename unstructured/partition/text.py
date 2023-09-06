@@ -286,12 +286,6 @@ def element_from_text(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )
-    # elif is_possible_title(text):
-    #     return Title(
-    #         text=text,
-    #         coordinates=coordinates,
-    #         coordinate_system=coordinate_system,
-    #     )
     else:
         return Text(
             text=text,
