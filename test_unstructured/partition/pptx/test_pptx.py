@@ -188,7 +188,9 @@ def test_partition_pptx_orders_elements(tmpdir):
     elements = partition_pptx(filename=filename)
     assert elements == [
         Text("-------------TOP-------------"),
-        NarrativeText("This is higher and should come first"),
+        # NOTE(klaijan) - edit the ElementType from NarrativeText to Title
+        # due to the change in conditional ordering
+        Title("This is higher and should come first"),
         NarrativeText("This is lower and should come second"),
     ]
     for element in elements:

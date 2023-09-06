@@ -154,7 +154,6 @@ def partition_pdf_or_image(
     # route. Decoding the routing should probably be handled by a single function designed for
     # that task so as routing design changes, those changes are implemented in a single
     # function.
-
     last_modification_date = get_the_last_modification_date_pdf_or_img(
         file=file,
         filename=filename,

@@ -89,6 +89,7 @@ def partition_pptx(
         metadata = ElementMetadata.from_dict(metadata.to_dict())
         metadata.last_modified = metadata_last_modified or last_modification_date
         metadata.page_number = i + 1
+        page_title_detected = False
         if include_slide_notes and slide.has_notes_slide is True:
             notes_slide = slide.notes_slide
             if notes_slide.notes_text_frame is not None:
@@ -125,10 +126,11 @@ def partition_pptx(
                     elements.append(ListItem(text=text, metadata=metadata))
                 elif is_email_address(text):
                     elements.append(EmailAddress(text=text))
+                elif is_possible_title(text) and not page_title_detected:
+                    elements.append(Title(text=text, metadata=metadata))
+                    page_title_detected = True
                 elif is_possible_narrative_text(text):
                     elements.append(NarrativeText(text=text, metadata=metadata))
-                elif is_possible_title(text):
-                    elements.append(Title(text=text, metadata=metadata))
                 else:
                     elements.append(Text(text=text, metadata=metadata))
 

@@ -7,7 +7,7 @@ import requests
 from requests.models import Response
 
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import ListItem, NarrativeText, Title
+from unstructured.documents.elements import ListItem, NarrativeText, Text, Title
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
@@ -324,7 +324,7 @@ def test_partition_html_can_turn_off_assemble_articles():
 </html>
 """
     elements = partition_html(text=html_text, html_assemble_articles=False)
-    assert elements[-1] == Title("This is outside of the article.")
+    assert elements[-1] == Text("This is outside of the article.")
 
 
 def test_partition_html_with_pre_tag():

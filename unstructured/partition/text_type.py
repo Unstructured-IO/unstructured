@@ -128,6 +128,9 @@ def is_possible_title(
     if text.isupper() and ENDS_IN_PUNCT_RE.search(text) is not None:
         return False
 
+    if text.endswith(".") and not text.endswith("..."):
+        return False
+
     title_max_word_length = int(
         os.environ.get("UNSTRUCTURED_TITLE_MAX_WORD_LENGTH", title_max_word_length),
     )

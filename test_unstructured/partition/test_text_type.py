@@ -211,7 +211,7 @@ def test_contains_english_word(text, expected, monkeypatch):
 @pytest.mark.parametrize(
     ("text", "expected"),
     [
-        ("Intellectual Property in the United States", True),
+        ("Intellectual Property in the United States", False),
         ("Intellectual property helps incentivize innovation.", False),
         ("THIS IS ALL CAPS. BUT IT IS TWO SENTENCES.", False),
         ("LOOK AT THIS IT IS CAPS BUT NOT A TITLE.", True),
