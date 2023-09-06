@@ -136,6 +136,23 @@ class HTMLDocument(XMLDocument):
                     continue
 
                 if _is_text_tag(tag_elem):
+                    from copy import deepcopy
+                    for br_elem in article.xpath("//br"):
+                        br_elem.text = "<BR>"
+
+                    text_snippets = _construct_text(tag_elem).split("<BR>")
+                    for text_snippet in text_snippets:
+                        if not text_snippet:
+                            continue
+
+                        _tag_elem = deepcopy(tag_elem)
+                        _tag_elem.text = text_snippet
+                        import ipdb; ipdb.set_trace()
+                        element = _parse_tag(_tag_elem)
+                        if element is not None:
+                            page.elements.append(element)
+                            descendanttag_elems = tuple(tag_elem.iterdescendants())
+
                     element = _parse_tag(tag_elem)
                     if element is not None:
                         page.elements.append(element)
