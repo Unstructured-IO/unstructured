@@ -24,7 +24,8 @@ fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     salesforce \
-    --categories "EmailMessage,Campaign" \
+    --categories "Campaign" \
+    --categories "EmailMessage" \
     --download-dir "$DOWNLOAD_DIR" \
     --username "$SALESFORCE_USERNAME" \
     --consumer-key "$SALESFORCE_CONSUMER_KEY" \
@@ -34,7 +35,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --preserve-downloads \
     --recursive \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
