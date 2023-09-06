@@ -546,12 +546,14 @@ def _partition_pdf_or_image_with_ocr(
             text, bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,
                 extensions=["txt", "box"],
+                lang=ocr_languages,
             )
         else:
             image = PIL.Image.open(filename)
             text, bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,
                 extensions=["txt", "box"],
+                lang=ocr_languages,
             )
         elements = partition_text(
             text=text,
@@ -575,6 +577,7 @@ def _partition_pdf_or_image_with_ocr(
             _text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,
                 extensions=["txt", "box"],
+                lang=ocr_languages,
             )
             width, height = image.size
 
