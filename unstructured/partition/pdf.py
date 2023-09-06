@@ -492,7 +492,7 @@ def _get_element_box(
 
 def _add_pytesseract_bboxes_to_elements(
     elements: List[Text],
-    bboxes: str,
+    bboxes_string: str,
     width: int,
     height: int,
 ) -> List[Text]:
@@ -517,7 +517,7 @@ def _add_pytesseract_bboxes_to_elements(
         height=height,
     )
 
-    boxes = bboxes.strip().split("\n")
+    boxes = bboxes_string.strip().split("\n")
     box_idx = 0
     for element in elements:
         if not element.text:
@@ -565,11 +565,11 @@ def _partition_pdf_or_image_with_ocr(
         if file is not None:
             image = PIL.Image.open(file)
             text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
-            bboxes = pytesseract.image_to_boxes(image, config=f"-l '{ocr_languages}'")
+            _bboxes = pytesseract.image_to_boxes(image, config=f"-l '{ocr_languages}'")
         else:
             image = PIL.Image.open(filename)
             text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
-            bboxes = pytesseract.image_to_boxes(filename, config=f"-l '{ocr_languages}'")
+            _bboxes = pytesseract.image_to_boxes(filename, config=f"-l '{ocr_languages}'")
         elements = partition_text(
             text=text,
             max_partition=max_partition,
@@ -579,7 +579,7 @@ def _partition_pdf_or_image_with_ocr(
         width, height = image.size
         _add_pytesseract_bboxes_to_elements(
             elements=elements,
-            bboxes=bboxes,
+            bboxes_string=_bboxes,
             width=width,
             height=height,
         )
@@ -609,7 +609,7 @@ def _partition_pdf_or_image_with_ocr(
 
             _add_pytesseract_bboxes_to_elements(
                 elements=_elements,
-                bboxes=_bboxes,
+                bboxes_string=_bboxes,
                 width=width,
                 height=height,
             )
