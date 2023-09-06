@@ -1,13 +1,16 @@
-## 0.10.13-dev1
+## 0.10.13-dev2
 
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
 
+### Features
+
+* Add Jira Connector to be able to pull issues from a Jira organization
+
 ### Fixes
 
 * Ingest error handling to properly raise errors when wrapped
-
 
 ## 0.10.12
 
