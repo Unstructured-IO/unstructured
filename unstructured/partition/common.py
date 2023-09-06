@@ -109,11 +109,12 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )
-        if element_type in ["Title", "Headline", "Subheadline"]:
-            title_depth = 0
-            title_depth = 1 if element_type == "Headline" else title_depth
-            title_depth = 2 if element_type == "Subheadline" else title_depth
-            _element_class.metadata.title_depth = title_depth
+        if element_type == "Title":
+            _element_class.metadata.title_depth = 0
+        elif element_type == "Headline":
+            _element_class.metadata.title_depth = 1
+        elif element_type == "Subheadline":
+            _element_class.metadata.title_depth = 2
         return _element_class
     elif element_type == "Checked":
         return CheckBox(
