@@ -191,8 +191,8 @@ def test_chunk_by_title_groups_across_pages():
         ),
         CheckBox(),
     ]
-    
-    
+
+
 def test_add_chunking_strategy_on_partition_html():
     filename = "example-docs/example-10k-1p.html"
     chunk_elements = partition_html(filename, chunking_strategy="by_title")
@@ -200,16 +200,41 @@ def test_add_chunking_strategy_on_partition_html():
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
-    
-    
+
+
 def test_add_chunking_strategy_on_partition_html_respects_multipage():
     filename = "example-docs/example-10k-1p.html"
-    partitioned_elements_multipage_false_combine_chars_0 = partition_html(filename, chunking_strategy="by_title", multipage_sections=False, combine_under_n_chars=0)
-    partitioned_elements_multipage_true_combine_chars_0 = partition_html(filename, chunking_strategy="by_title", multipage_sections=True, combine_under_n_chars=0)
+    partitioned_elements_multipage_false_combine_chars_0 = partition_html(
+        filename,
+        chunking_strategy="by_title",
+        multipage_sections=False,
+        combine_under_n_chars=0,
+    )
+    partitioned_elements_multipage_true_combine_chars_0 = partition_html(
+        filename,
+        chunking_strategy="by_title",
+        multipage_sections=True,
+        combine_under_n_chars=0,
+    )
     elements = partition_html(filename)
-    cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(elements, multipage_sections=False, combine_under_n_chars=0)
-    cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(elements, multipage_sections=True, combine_under_n_chars=0)
-    assert partitioned_elements_multipage_false_combine_chars_0 == cleaned_elements_multipage_false_combine_chars_0
-    assert partitioned_elements_multipage_true_combine_chars_0 == cleaned_elements_multipage_true_combine_chars_0
-    assert len(partitioned_elements_multipage_true_combine_chars_0) != len(partitioned_elements_multipage_false_combine_chars_0)
-    
+    cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(
+        elements,
+        multipage_sections=False,
+        combine_under_n_chars=0,
+    )
+    cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(
+        elements,
+        multipage_sections=True,
+        combine_under_n_chars=0,
+    )
+    assert (
+        partitioned_elements_multipage_false_combine_chars_0
+        == cleaned_elements_multipage_false_combine_chars_0
+    )
+    assert (
+        partitioned_elements_multipage_true_combine_chars_0
+        == cleaned_elements_multipage_true_combine_chars_0
+    )
+    assert len(partitioned_elements_multipage_true_combine_chars_0) != len(
+        partitioned_elements_multipage_false_combine_chars_0,
+    )

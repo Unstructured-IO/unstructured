@@ -38,10 +38,14 @@ def chunk_by_title(
     if (
         combine_under_n_chars is not None
         and new_after_n_chars is not None
-        and (combine_under_n_chars > new_after_n_chars or combine_under_n_chars < 0 or new_after_n_chars < 0)
+        and (
+            combine_under_n_chars > new_after_n_chars
+            or combine_under_n_chars < 0
+            or new_after_n_chars < 0
+        )
     ):
         raise ValueError("Invalid values for combine_under_n_chars and/or new_after_n_chars.")
-    
+
     chunked_elements: List[Element] = []
     sections = _split_elements_by_title_and_table(
         elements,
