@@ -305,10 +305,9 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     i = 0
     for chunk in ne_chunk(text):
         if hasattr(chunk, "label"):
-            is_ne[i: i + len(chunk)] = [True] * len(chunk)
-            i += len(chunk)
-        else:
-            i += 1
+            for word in range(len(chunk)):
+                is_ne[word + i] = 1
+        i += 1
 
     ignored_capitalize = sum(np.logical_and(is_alpha, np.logical_or(is_capitalized, is_ne)))
 
