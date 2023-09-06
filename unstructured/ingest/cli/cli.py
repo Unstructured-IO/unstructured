@@ -13,7 +13,6 @@ subcommands = [
     cli_cmds.reddit,
     cli_cmds.slack,
     cli_cmds.wikipedia,
-    cli_cmds.outlook,
     cli_cmds.sharepoint,
     cli_cmds.salesforce,
     cli_cmds.jira,

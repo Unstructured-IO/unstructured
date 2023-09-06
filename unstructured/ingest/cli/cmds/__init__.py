@@ -20,7 +20,7 @@ from .google_drive import get_source_cmd as google_drive_src
 from .local import get_source_cmd as local_src
 from .notion import get_source_cmd as notion_src
 from .onedrive import get_source_cmd as onedrive_src
-from .outlook import get_cmd as outlook
+from .outlook import get_source_cmd as outlook_src
 from .reddit import get_cmd as reddit
 from .s3 import get_dest_cmd as s3_dest
 from .s3 import get_source_cmd as s3_src
@@ -47,6 +47,7 @@ src: t.List[click.Group] = [
     local_src(),
     notion_src(),
     onedrive_src(),
+    outlook_src(),
     s3_src(),
 ]
 
