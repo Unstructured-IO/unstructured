@@ -7,6 +7,15 @@ Introduction
 The ``unstructured`` library aims to simplify and streamline the preprocessing of structured and unstructured documents for downstream tasks. And what that means is no matter where your data is
 and no matter what format that data is in, Unstructured's toolkit will transform and preprocess that data into an easily digestable and usable format.
 
+Product Offerings
+^^^^^^^^^^^^^^^^^
+
+- **Python Library**: Unstructured's open source software `(library) <https://github.com/Unstructured-IO/unstructured>`_.
+
+- **Hosted API**: Easiest and most scalable way to process large documents in quantity `(library) <https://github.com/Unstructured-IO/unstructured-api>`_.
+
+- **Enterprise Product**: In development with the hopes of launching late 2023.
+
 Key Features
 ^^^^^^^^^^^^^
 
@@ -18,14 +27,13 @@ Key Features
     
 - **Customizability**: Easily extend and customize the library to fit specific requirements or unique use cases.
 
-Key Concepts
-^^^^^^^^^^^^^
+Common Use Cases
+^^^^^^^^^^^^^^^^
 
-- **Connectors**: Interfaces that enable the library to interact with different data sources and sinks, like cloud storage or databases.
-
-- **Bricks**: Modular units of the library that allow users to partition, clean, and stage data efficiently.
-
-- **Metadata**: Data about data. In ``unstructured``, metadata helps in keeping track of the source, type, and other essential attributes of the data.
+- **Pretraining Models**
+- **Fine-tuning Models**
+- **Retrieval Augmented Generation (RAG)**
+- **Traditional ETL**
 
 Quickstart Tutorial
 ^^^^^^^^^^^^^^^^^^^^
