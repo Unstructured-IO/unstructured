@@ -25,7 +25,7 @@ from .reddit import get_source_cmd as reddit_src
 from .s3 import get_dest_cmd as s3_dest
 from .s3 import get_source_cmd as s3_src
 from .salesforce import get_source_cmd as salesforce_src
-from .sharepoint import get_cmd as sharepoint
+from .sharepoint import get_source_cmd as sharepoint_src
 from .slack import get_cmd as slack
 from .wikipedia import get_cmd as wikipedia
 
@@ -50,6 +50,7 @@ src: t.List[click.Group] = [
     outlook_src(),
     reddit_src(),
     salesforce_src(),
+    sharepoint_src(),
     s3_src(),
 ]
 
