@@ -102,7 +102,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.standard_config.output_dir) / self.file_meta.space_id / output_file
 
     @SourceConnectionError.wrap
-    @requires_dependencies(["atlassian"], extras="Confluence")
+    @requires_dependencies(["atlassian"], extras="confluence")
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         from atlassian import Confluence
@@ -124,7 +124,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             f.write(self.document)
 
 
-@requires_dependencies(["atlassian"], extras="Confluence")
+@requires_dependencies(["atlassian"], extras="confluence")
 @dataclass
 class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
     """Fetches body fields from all documents within all spaces in a Confluence Cloud instance."""
