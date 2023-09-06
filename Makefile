@@ -323,7 +323,9 @@ check-src:
 .PHONY: check-tests
 check-tests:
 	black --line-length 100 test_${PACKAGE_NAME} --check
+	black --line-length 100 test_${PACKAGE_NAME}_ingest --check
 	flake8 test_${PACKAGE_NAME}
+	flake8 test_${PACKAGE_NAME}_ingest
 
 ## check-scripts:           run shellcheck
 .PHONY: check-scripts
@@ -344,6 +346,7 @@ tidy:
 	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --fix-only || true
 	black --line-length 100 ${PACKAGE_NAME}
 	black --line-length 100 test_${PACKAGE_NAME}
+	black --line-length 100 test_${PACKAGE_NAME}_ingest
 
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync
