@@ -54,7 +54,7 @@ class PartitionConfig(BaseConfig):
 @dataclass
 class ReadConfig(BaseConfig):
     # where raw documents are stored for processing, and then removed if not preserve_downloads
-    download_dir: t.Optional[str] = None
+    download_dir: str = ""
     re_download: bool = False
     preserve_downloads: bool = False
     download_only: bool = False

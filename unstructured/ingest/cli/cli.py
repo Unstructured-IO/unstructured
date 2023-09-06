@@ -14,7 +14,6 @@ subcommands = [
     cli_cmds.gitlab,
     cli_cmds.reddit,
     cli_cmds.slack,
-    cli_cmds.discord,
     cli_cmds.wikipedia,
     cli_cmds.gdrive,
     cli_cmds.notion,

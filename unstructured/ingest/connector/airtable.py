@@ -53,9 +53,10 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def filename(self):
-        download_dir = self.read_config.download_dir if self.read_config.download_dir else ""
         return (
-            Path(download_dir) / self.file_meta.base_id / f"{self.file_meta.table_id}.csv"
+            Path(self.read_config.download_dir)
+            / self.file_meta.base_id
+            / f"{self.file_meta.table_id}.csv"
         ).resolve()
 
     @property
