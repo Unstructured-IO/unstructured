@@ -12,6 +12,7 @@ from unstructured.documents.elements import (
     NarrativeText,
     Text,
     Title,
+    Header,
 )
 from unstructured.partition import common
 from unstructured.partition.common import (
@@ -52,7 +53,9 @@ def test_normalize_layout_element_dict():
         "text": "Some lovely text",
     }
     coordinate_system = PixelSpace(width=10, height=20)
-    element = common.normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+    element = common.normalize_layout_element(
+        layout_element, coordinate_system=coordinate_system
+    )
     assert element == Title(
         text="Some lovely text",
         coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
@@ -67,7 +70,9 @@ def test_normalize_layout_element_dict_caption():
         "text": "Some lovely text",
     }
     coordinate_system = PixelSpace(width=10, height=20)
-    element = common.normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+    element = common.normalize_layout_element(
+        layout_element, coordinate_system=coordinate_system
+    )
     assert element == FigureCaption(
         text="Some lovely text",
         coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
@@ -82,7 +87,9 @@ def test_normalize_layout_element_dict_figure_caption():
         "text": "Some lovely text",
     }
     coordinate_system = PixelSpace(width=10, height=20)
-    element = common.normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+    element = common.normalize_layout_element(
+        layout_element, coordinate_system=coordinate_system
+    )
     assert element == FigureCaption(
         text="Some lovely text",
         coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
@@ -97,7 +104,9 @@ def test_normalize_layout_element_dict_misc():
         "text": "Some lovely text",
     }
     coordinate_system = PixelSpace(width=10, height=20)
-    element = common.normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+    element = common.normalize_layout_element(
+        layout_element, coordinate_system=coordinate_system
+    )
     assert element == Text(
         text="Some lovely text",
         coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
@@ -115,7 +124,9 @@ def test_normalize_layout_element_layout_element():
         text="Some lovely text",
     )
     coordinate_system = PixelSpace(width=10, height=20)
-    element = common.normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+    element = common.normalize_layout_element(
+        layout_element, coordinate_system=coordinate_system
+    )
     assert element == NarrativeText(
         text="Some lovely text",
         coordinates=((1, 2), (1, 4), (3, 4), (3, 2)),
@@ -133,7 +144,9 @@ def test_normalize_layout_element_layout_element_narrative_text():
         text="Some lovely text",
     )
     coordinate_system = PixelSpace(width=10, height=20)
-    element = common.normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+    element = common.normalize_layout_element(
+        layout_element, coordinate_system=coordinate_system
+    )
     assert element == NarrativeText(
         text="Some lovely text",
         coordinates=((1, 2), (1, 4), (3, 4), (3, 2)),
@@ -151,7 +164,9 @@ def test_normalize_layout_element_checked_box():
         text="",
     )
     coordinate_system = PixelSpace(width=10, height=20)
-    element = common.normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+    element = common.normalize_layout_element(
+        layout_element, coordinate_system=coordinate_system
+    )
     assert element == CheckBox(
         checked=True,
         coordinates=((1, 2), (1, 4), (3, 4), (3, 2)),
@@ -169,7 +184,9 @@ def test_normalize_layout_element_unchecked_box():
         text="",
     )
     coordinate_system = PixelSpace(width=10, height=20)
-    element = common.normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+    element = common.normalize_layout_element(
+        layout_element, coordinate_system=coordinate_system
+    )
     assert element == CheckBox(
         checked=False,
         coordinates=((1, 2), (1, 4), (3, 4), (3, 2)),
@@ -187,7 +204,9 @@ def test_normalize_layout_element_enumerated_list():
         text="1. I'm so cool! 2. You're cool too. 3. We're all cool!",
     )
     coordinate_system = PixelSpace(width=10, height=20)
-    elements = common.normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+    elements = common.normalize_layout_element(
+        layout_element, coordinate_system=coordinate_system
+    )
     assert elements == [
         ListItem(
             text="I'm so cool!",
@@ -217,7 +236,9 @@ def test_normalize_layout_element_bulleted_list():
         text="* I'm so cool! * You're cool too. * We're all cool!",
     )
     coordinate_system = PixelSpace(width=10, height=20)
-    elements = common.normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+    elements = common.normalize_layout_element(
+        layout_element, coordinate_system=coordinate_system
+    )
     assert elements == [
         ListItem(
             text="I'm so cool!",
@@ -285,3 +306,88 @@ def test_get_page_image_metadata_and_coordinate_system():
     doc = MockDocumentLayout()
     metadata = _get_page_image_metadata(doc.pages[0])
     assert isinstance(metadata, dict)
+
+
+def test_set_element_hierarchy():
+    elements_to_set = [
+        Title(text="Title"),  # 0
+        NarrativeText(text="NarrativeText"),  # 1
+        FigureCaption(text="FigureCaption"),  # 2
+        ListItem(text="ListItem"),  # 3
+        ListItem(text="ListItem"),  # 4
+        ListItem(text="ListItem"),  # 5
+        ListItem(text="ListItem"),  # 6
+        CheckBox(element_id="some-id-1", checked=True),  # 7
+        Title(text="Title 2"),  # 8
+        ListItem(text="ListItem"),  # 9
+        ListItem(text="ListItem"),  # 10
+        Text(text="Text"),  # 11
+    ]
+    elements = common.set_element_hierarchy(elements_to_set)
+    assert (
+        elements[1].metadata.parent_id == elements[0].id
+    ), "NarrativeText should be child of Title"
+    assert (
+        elements[2].metadata.parent_id == elements[0].id
+    ), "FigureCaption should be child of Title"
+    assert (
+        elements[3].metadata.parent_id == elements[0].id
+    ), "ListItem should be child of Title"
+    assert (
+        elements[4].metadata.parent_id == elements[0].id
+    ), "ListItem should be child of Title"
+    assert (
+        elements[5].metadata.parent_id == elements[0].id
+    ), "ListItem should be child of Title"
+    assert (
+        elements[6].metadata.parent_id == elements[0].id
+    ), "ListItem should be child of Title"
+    assert (
+        elements[7].metadata.parent_id == None
+    ), "CheckBox should be None, as it's not a Text based element"
+    assert elements[8].metadata.parent_id is None, "Title 2 should be child of None"
+    assert (
+        elements[9].metadata.parent_id == elements[8].id
+    ), "ListItem should be child of Title 2"
+    assert (
+        elements[10].metadata.parent_id == elements[8].id
+    ), "ListItem should be child of Title 2"
+    assert (
+        elements[11].metadata.parent_id == elements[8].id
+    ), "Text should be child of Title 2"
+
+
+def test_set_element_hierarchy_custom_rule_set():
+    elements_to_set = [
+        Header(text="Header"),  # 0
+        Title(text="Title"),  # 1
+        NarrativeText(text="NarrativeText"),  # 2
+        Text(text="Text"),  # 3
+        Title(text="Title 2"),  # 4
+        FigureCaption(text="FigureCaption"),  # 5
+    ]
+
+    custom_rule_set = {
+        "Header": ["Title", "Text"],
+        "Title": ["NarrativeText", "UncategorizedText", "FigureCaption"],
+    }
+
+    elements = common.set_element_hierarchy(
+        elements=elements_to_set, ruleset=custom_rule_set
+    )
+
+    assert (
+        elements[1].metadata.parent_id == elements[0].id
+    ), "Title should be child of Header"
+    assert (
+        elements[2].metadata.parent_id == elements[1].id
+    ), "NarrativeText should be child of Title"
+    assert (
+        elements[3].metadata.parent_id == elements[1].id
+    ), "Text should be child of Title"
+    assert (
+        elements[4].metadata.parent_id == elements[0].id
+    ), "Title 2 should be child of Header"
+    assert (
+        elements[5].metadata.parent_id == elements[4].id
+    ), "FigureCaption should be child of Title 2"
