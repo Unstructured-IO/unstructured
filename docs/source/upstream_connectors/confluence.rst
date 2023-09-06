@@ -1,6 +1,6 @@
 Confluence
 ==========
-Connect Confluence to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem. 
+Connect Confluence to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
 
 First you'll need to install the Confluence dependencies as shown here.
 
@@ -34,7 +34,7 @@ Run Locally
 
         command = [
           "unstructured-ingest",
-          "confluence"
+          "confluence",
           "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
           "--url", "https://unstructured-ingest-test.atlassian.net",
           "--user-email", "12345678@unstructured.io",
@@ -58,7 +58,7 @@ Run Locally
 Run via the API
 ---------------
 
-You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``. 
+You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``.
 
 .. tabs::
 
@@ -85,7 +85,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         command = [
           "unstructured-ingest",
-          "confluence"
+          "confluence",
           "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
           "--url", "https://unstructured-ingest-test.atlassian.net",
           "--user-email", "12345678@unstructured.io",
