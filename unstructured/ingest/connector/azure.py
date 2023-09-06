@@ -18,6 +18,7 @@ class SimpleAzureBlobStorageConfig(SimpleFsspecConfig):
 
 @dataclass
 class AzureBlobStorageIngestDoc(FsspecIngestDoc):
+    connector_config: SimpleAzureBlobStorageConfig
     registry_name: str = "azure"
 
     @SourceConnectionError.wrap
@@ -28,9 +29,10 @@ class AzureBlobStorageIngestDoc(FsspecIngestDoc):
 
 @dataclass
 class AzureBlobStorageSourceConnector(FsspecSourceConnector):
+    connector_config: SimpleAzureBlobStorageConfig
     ingest_doc_cls: t.Type[AzureBlobStorageIngestDoc] = AzureBlobStorageIngestDoc
 
 
 @dataclass
 class AzureBlobStorageDestinationConnector(FsspecDestinationConnector):
-    pass
+    connector_config: SimpleAzureBlobStorageConfig

@@ -136,6 +136,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return
 
 
+@dataclass
 class OneDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleOneDriveConfig
 

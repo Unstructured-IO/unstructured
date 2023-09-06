@@ -44,7 +44,7 @@ class SimpleBoxConfig(SimpleFsspecConfig):
 
 @dataclass
 class BoxIngestDoc(FsspecIngestDoc):
-    config: SimpleBoxConfig
+    connector_config: SimpleBoxConfig
     registry_name: str = "box"
 
     @SourceConnectionError.wrap
@@ -55,9 +55,10 @@ class BoxIngestDoc(FsspecIngestDoc):
 
 @dataclass
 class BoxSourceConnector(FsspecSourceConnector):
+    connector_config: SimpleBoxConfig
     ingest_doc_cls: t.Type[BoxIngestDoc] = BoxIngestDoc
 
 
 @dataclass
 class BoxDestinationConnector(FsspecDestinationConnector):
-    pass
+    connector_config: SimpleBoxConfig

@@ -122,6 +122,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self._tmp_download_file()
 
 
+@dataclass
 class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching document(s) from"""
 
@@ -187,6 +188,7 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         ]
 
 
+@dataclass
 class FsspecDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleFsspecConfig
 

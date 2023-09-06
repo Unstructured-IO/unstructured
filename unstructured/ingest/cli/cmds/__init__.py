@@ -21,7 +21,7 @@ from .local import get_source_cmd as local_src
 from .notion import get_source_cmd as notion_src
 from .onedrive import get_source_cmd as onedrive_src
 from .outlook import get_source_cmd as outlook_src
-from .reddit import get_cmd as reddit
+from .reddit import get_source_cmd as reddit_src
 from .s3 import get_dest_cmd as s3_dest
 from .s3 import get_source_cmd as s3_src
 from .salesforce import get_cmd as salesforce
@@ -48,6 +48,7 @@ src: t.List[click.Group] = [
     notion_src(),
     onedrive_src(),
     outlook_src(),
+    reddit_src(),
     s3_src(),
 ]
 
@@ -55,8 +56,6 @@ dest: t.List[click.Command] = [s3_dest()]
 
 __all__ = [
     "jira",
-    "outlook",
-    "reddit",
     "salesforce",
     "sharepoint",
     "slack",

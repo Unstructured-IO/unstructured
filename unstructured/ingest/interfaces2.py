@@ -313,6 +313,7 @@ class BaseSourceConnector(DataClassJsonMixin, ABC):
         pass
 
 
+@dataclass
 class BaseDestinationConnector(DataClassJsonMixin, ABC):
     write_config: WriteConfig
     connector_config: BaseConnectorConfig

@@ -136,6 +136,7 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return
 
 
+@dataclass
 class OutlookSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleOutlookConfig
 

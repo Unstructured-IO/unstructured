@@ -65,6 +65,7 @@ class LocalIngestDoc(BaseIngestDoc):
         return Path(self.partition_config.output_dir) / basename
 
 
+@dataclass
 class LocalSourceConnector(BaseSourceConnector):
     """Objects of this class support fetching document(s) from local file system"""
 

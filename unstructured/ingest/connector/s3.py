@@ -17,6 +17,7 @@ class SimpleS3Config(SimpleFsspecConfig):
 
 @dataclass
 class S3IngestDoc(FsspecIngestDoc):
+    connector_config: SimpleS3Config
     remote_file_path: str
     registry_name: str = "s3"
 
@@ -25,9 +26,12 @@ class S3IngestDoc(FsspecIngestDoc):
         super().get_file()
 
 
+@dataclass
 class S3SourceConnector(FsspecSourceConnector):
+    connector_config: SimpleS3Config
     ingest_doc_cls: Type[S3IngestDoc] = S3IngestDoc
 
 
+@dataclass
 class S3DestinationConnector(FsspecDestinationConnector):
-    pass
+    connector_config: SimpleS3Config

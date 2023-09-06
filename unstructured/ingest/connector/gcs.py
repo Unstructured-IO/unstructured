@@ -29,9 +29,10 @@ class GcsIngestDoc(FsspecIngestDoc):
 
 @dataclass
 class GcsSourceConnector(FsspecSourceConnector):
+    connector_config: SimpleGcsConfig
     ingest_doc_cls: Type[GcsIngestDoc] = GcsIngestDoc
 
 
 @dataclass
 class GcsDestinationConnector(FsspecDestinationConnector):
-    pass
+    connector_config: SimpleGcsConfig

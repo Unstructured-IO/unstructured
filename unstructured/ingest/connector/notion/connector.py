@@ -254,6 +254,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
 
 @requires_dependencies(dependencies=["notion_client"])
+@dataclass
 class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching document(s) from"""
 

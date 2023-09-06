@@ -24,7 +24,6 @@ from unstructured.ingest.interfaces2 import (
     BaseConnectorConfig,
     PartitionConfig,
     ReadConfig,
-    WriteConfig,
 )
 from unstructured.utils import requires_dependencies
 
@@ -40,6 +39,7 @@ class SimpleDropboxConfig(SimpleFsspecConfig):
 
 @dataclass
 class DropboxIngestDoc(FsspecIngestDoc):
+    connector_config: SimpleDropboxConfig
     registry_name: str = "dropbox"
 
     @SourceConnectionError.wrap
@@ -84,7 +84,9 @@ class DropboxIngestDoc(FsspecIngestDoc):
             )
 
 
+@dataclass
 class DropboxSourceConnector(FsspecSourceConnector):
+    connector_config: SimpleDropboxConfig
     ingest_doc_cls: Type[DropboxIngestDoc] = DropboxIngestDoc
 
     @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
@@ -144,7 +146,6 @@ class DropboxSourceConnector(FsspecSourceConnector):
             ]
 
 
+@dataclass
 class DropboxDestinationConnector(FsspecDestinationConnector):
-    @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
-    def __init__(self, write_config: WriteConfig, connector_config: BaseConnectorConfig):
-        super().__init__(write_config=write_config, connector_config=connector_config)
+    connector_config: SimpleFsspecConfig

@@ -176,6 +176,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
         logger.info(f"Wrote {self._output_filename}")
 
 
+@dataclass
 class GoogleDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching documents from Google Drive"""
 
