@@ -138,6 +138,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         fs: AbstractFileSystem = get_filesystem_class(self.config.protocol)(
             **self.config.get_access_kwargs(),
         )
+
         date_created = None
         with suppress(NotImplementedError):
             date_created = fs.created(self.remote_file_path)
@@ -148,17 +149,13 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             date_modified = fs.modified(self.remote_file_path)
             date_modified = date_modified.isoformat()
 
-        source_url = None
-        with suppress(NotImplementedError):
-            source_url = fs.sign(self.remote_file_path, expiration=SIGNED_URL_EXPIRATION)
-
         version = str(fs.checksum(self.remote_file_path))
         file_exists = fs.exists(self.remote_file_path)
         return FsspecFileMeta(
             date_created,
             date_modified,
             version,
-            source_url,
+            f"{self.config.protocol}://{self.remote_file_path}",
             file_exists,
         )
 
@@ -183,6 +180,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def record_locator(self) -> Optional[Dict[str, Any]]:
         """Returns the equivalent of ls in dict"""
         return {
+            "protocol": self.config.protocol,
             "remote_file_path": self.remote_file_path,
         }
 
