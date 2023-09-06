@@ -612,3 +612,27 @@ def test_pre_tag_parsing_respects_order():
         NarrativeText("The big brown bear is sleeping."),
         Title("The Big Blue Bear"),
     ]
+
+
+def test_partition_html_breaks_on_br_tags(filename="example-docs/ideas-page.html"):
+    elements = partition_html(filename=filename)
+    assert len(elements) == 4
+
+    assert elements[0] == Title("January 2023")
+    assert elements[0].metadata.emphasized_text_contents is None
+    assert elements[0].metadata.link_urls is None
+
+    assert elements[1].text.startswith("(Someone fed my essays")
+    assert elements[1].text.endswith("I would have said.)")
+    assert len(elements[1].metadata.emphasized_text_contents) == 1
+    assert len(elements[1].metadata.link_urls) == 1
+
+    assert elements[2].text.startswith("The way to get new ideas")
+    assert elements[2].text.endswith("the frontiers of knowledge.")
+    assert elements[2].metadata.emphasized_text_contents is None
+    assert elements[2].metadata.link_urls is None
+
+    assert elements[3].text.startswith("Knowledge grows fractally")
+    assert elements[3].text.endswith("whole new fractal buds.")
+    assert elements[3].metadata.emphasized_text_contents is None
+    assert elements[3].metadata.link_urls is None
