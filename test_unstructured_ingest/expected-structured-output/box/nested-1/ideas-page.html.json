@@ -4,9 +4,10 @@
     "element_id": "c08fcabe68ba13b7a7cc6592bd5513a8",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!4yPilLx5bbFZYXLtPh8wNkqpu46JaOUBe5vDvB9_Y1a7M4cvAGiwm-bQBYcljI6KqTIlnE9wA9XrFPm9g1DAfrnzVtO87NIhDHPf-DjSikImDH5bV036mA0-IlXf_Fqeb6vnKQBYR2Eh6zTf-RX870vuSgCI1zID1hxXqZvGU8Qf7MRD3qZcqR637-H0diR7v_Lqx4UeCulITiv8UgM4lSABK9zGirBc29kkoRKV9ZEpPSpP8IzmEM-xgPeoBIasjQ2dB5Xy9i_zN0KqQ4GTLFvCMBkj5nlIkX8bk_1vS8Ox9CB3p6ZXqwa1zilRt90u6-ClwSVgH2CNdWKiWhTqxh39j5FN2enLLQGUkmu8H6ryPDr1upxPqim3ZHem1BrxZBvjkcmKmSDiuy9-8OZQpJAwF9npF2QdVxjHvRdQDvJEBxjBFxSxkv2B_JMYY0otZQu9p2OOheuawPyEg5dHdZgLlm_wUThPDaT3020YIKCaOkK341JuCW7Ar5yUOS-QuuGf9IJOlBQBMycIduUHZ4xHCXIZkL1_B1iYxoI8r8UmLa-R__5Hu5TNLua59Xy71bBq4vnoBlxqfB2xST3JFPHE5eem6jKMCFbieKndZYnEox3jEe5UC5fTsR3moqJHEtlg8d63kX0d9DdIfvQ4E8V9jHQBMrtFa8oQbj8RpiujfdUGHgDzTxYGAv77VoMB4LmqWhxzuAOss_spBn6kK4QWWMHl_nPB8ezVUcjSQCduLz4_vxnklxi_urrFVNP5LeF-D1ULx8j_XUjY1pViMQWpPpJ92ozEvvHmrGZV5oYWmzs2rArZHOaRISqbqaqn5nY1GmSDPQu-0Xh8B7vBfNkm_cyDdUO7LkwogE_J9vgrnVNAnl5sY7MVoZLPK9ISK0EUNlycQrvnU1ew1bbnwYTkmU8ZXRo6kFpSNeGxM7u1ifh9M46zD67QyCQ4vYVy3aiwQxFBGlQJvCRX8Tp1Osb-yHWxRxykn_q-DGmGZxFYfaTvUHBH2QtT0Pq7mogTDAUsKFa6TE78QMjR5kls4wTas6T4_YyKcuw9HrluhVk-ESWq1hZSghggm1Wx01O75pylQd7MHZe13K5793B62kH4IqLP26euvHVTBzlYyI9Z3wjlGLvezNN1K4GGfwKFMgzmwAjwOSjbkFuKC0n2b2k-McVTqpF5_oVE2Pjmt56yRCvZKCPLLFMoFk0x_OmMdOajwHsV5fz8Ou3503P-hw66mGV5j9z-qJEsmW3WUN-a_fPfwdvfK9VqhtS_oYFuBEkwAmSe-zhgDsXU-2Y0XNIKsF4g9bc17-s2MLz8n7aAaOf-/download",
+        "url": "box://utic-test-ingest-fixtures/nested-1/ideas-page.html",
         "version": "102685823936240142970839376607768292114",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/nested-1/ideas-page.html"
         },
         "date_created": "2023-07-08T20:46:41-07:00",

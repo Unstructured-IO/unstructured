@@ -4,9 +4,10 @@
     "element_id": "4791dd98269fcb004add63ef773c6867",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -22,9 +23,10 @@
     "element_id": "8ed906945500938a06129c30763f300e",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -46,9 +48,10 @@
     "element_id": "348348036267fa046df6956d6bff62c9",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -70,9 +73,10 @@
     "element_id": "a9f8f222e3a281af9a626683f881af17",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -88,9 +92,10 @@
     "element_id": "e74b0fbd76f6797cad25bec01ff6d6b2",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -106,9 +111,10 @@
     "element_id": "44ee744fed4045b95ce492678a7d780a",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -124,9 +130,10 @@
     "element_id": "4ab54ca78854a3da32f22a5765bd194c",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -142,9 +149,10 @@
     "element_id": "67483276a5011df9e435b054ad7fde6e",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -160,9 +168,10 @@
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -177,9 +186,10 @@
     "element_id": "4966c7804baab3f751348b349370ec3a",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -195,9 +205,10 @@
     "element_id": "caa2416842c288251ef040d0c096e3f3",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -213,9 +224,10 @@
     "element_id": "2373a57d3967a41ea2d60b52749773c2",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -231,9 +243,10 @@
     "element_id": "ba76416d7694fefb8e1c7e3d30aa93e1",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -249,9 +262,10 @@
     "element_id": "c14906791f9e639fa9163558d28bdc1f",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -267,9 +281,10 @@
     "element_id": "34a34610cc4415f9f3d547012ca226e6",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",
@@ -285,9 +300,10 @@
     "element_id": "8dfc77ab4089e09d4397e12306086c19",
     "metadata": {
       "data_source": {
-        "url": "https://dl.boxcloud.com/d/1/b1!WaAd49be6yfgZT18K-n1z0zBc3raOWCpq6SiMiGy4hpZqVE63iHzWnnlcfzjPP1dapbG6lFTxuaANAYMpTbHsiNKLVOBxn_jt3kmJ3BQF4J_8sKshGeNObuyvS8JqQNL5lkcbhCM75mNaL_Bbl5Q1BFrSrFul8HwKO8_gmggIv1XU7DVewEXTquTuJFqGc2uvT8z76oPwAUtid2FhhoR4YZ3tq33m_G9mX0fUPCVnHuhr3ChnFWAZApd-iwyQCqr1Z1lV2iON5YRg0-fI0NpdJuHqKN2CSbDFEmXReXVJ806LniYXnNtjnPy_-v7CN9RxSScDx8RGy7pQ5oU_jKU-FTmApzqXnGsLiX3o4MS2mmyNtA9_YOrqrKlr3jeLxRiRvMuY67xokm3PROVnxw92m7mss0OD9ltv6zGhohbZO0UxbMWHln8iqUAIjmsnYa3R9qpVKx64WMrwEnQKFP0TvY9YHFaRo6DS_3yFbuHSx4u-G6xUXECwBORJQyJdYPzw2a61QjfiJq0EHYtrI_A9xSKjZcPNblVhrLFh3lEaffXXHMm0XE1zeh-KydTjTTH3k6poLtIrQ1L2Z_qN1b1nwwWJFoQxm9X9-lspkqVSIKXW0dkq5Avj9X9lB73rZvU5ujyW_G1EeF7ycm9H9nJru5cnAgfn_pq2msu1HMv9-ijTg5D-xN1zhiRn10bbBwNk8AFSxxmyELRfflkmGimk4JHw6nClPtbx1SpCFOd7s4sVlebno4-1I7QIk8b3yqWfke57_c4DEv_HVRlxEeYNV9IlluenzT2aK9hFbC7KTiYHkdl8G4mwptyU32o8tfpKT8LBcJyyNWJmLuwY34eYJ6o_MEUi7z7X8GmavB9XLf0vSgUxGOygUbntIDklPINGqOUjJxvu7QKF6F5qgPwJhYHGXZ4TtkVhhw4LPUnU85DVllZrtGREFj8oLnDeoolWiJL1BRkRyPvlcArap9V3PJVRKonteIirys7ZcReT1cVWaKusR0beRDquveKDx3AAVt4lCuTh1QmwIYSR68LxxIac6x7igr_uyhfEtiII4RarlsyBUCnck3CgDJRX0xiZXW-rwqZJGQqK0hCU5PdI92aw-reVFYzo-nsnXxkIx1VZWbHXk4afJrzCmFuVhla3YVMVOJkNE_8bRFk8njy5FdhMYIREHeFjIaifhgwGP8CX43dGy0WCZfIn60ONug06uOC-7XyOnRezEr5dPtg88F3WpEwjZr1LQcXf6aTlQZ8mN6lwRJoP-wYGCHJK_RBd0mvKZjTZU-9OODe-cz2Y4MC0r9Jzp3tTGlkd4gXbs5oU4-IvUxkCZc_lhAQgXNVv12-B0T23t7AFWrbfYTwug../download",
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
         "version": "279067178702899831567111695812844052273",
         "record_locator": {
+          "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
         },
         "date_created": "2023-07-08T20:47:31-07:00",

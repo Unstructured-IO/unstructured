@@ -4,8 +4,10 @@
     "element_id": "c08fcabe68ba13b7a7cc6592bd5513a8",
     "metadata": {
       "data_source": {
+        "url": "dropbox:///nested-1/ideas-page.html",
         "version": "97868440341969002655313511829421878057",
         "record_locator": {
+          "protocol": "dropbox",
           "remote_file_path": "/nested-1/ideas-page.html"
         }
       },
