@@ -804,7 +804,8 @@ def test_partition_categorization_backup():
     text = "This is Clearly a Title."
     with mock.patch.object(pdf, "_partition_pdf_or_image_local", return_value=[Text(text)]):
         elements = pdf.partition_pdf_or_image(
-            "example-docs/layout-parser-paper-fast.pdf", strategy="hi_res"
+            "example-docs/layout-parser-paper-fast.pdf",
+            strategy="hi_res",
         )
         # Should have changed the element class from Text to Title
         assert isinstance(elements[0], Title)
