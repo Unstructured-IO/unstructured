@@ -4,9 +4,10 @@
     "element_id": "c08fcabe68ba13b7a7cc6592bd5513a8",
     "metadata": {
       "data_source": {
-        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/ideas-page.html?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=wy9FPu9Q96gGimtWCZxCTihnow%2BiiOH0sDt2Fq17S3ijKr9IFmt57MsxcRapY7kjOxA30pLcNkp0jcvMgotO%2BMDVNFBvGGiZNnE2VLRBL9rX3tKswxG1X4yu3VOeq25Jqjv4DxppVJjqyW0B06I9P3yGXfNaNt2HTiTFJn8z8SVN8ntEdPlDfkVYa%2BZq3%2FO8wVFBZfdDRaajwbO%2FVY8gc%2FV2pAU3oksxtEpEhs2ZO5Djy1V37YXU15FZ2fWPxSa1u7iHeJ96jAktjcH1P%2BwnpMfSmdbdExHq6jC7XapAfFB7akWRb%2FrT5%2B7BRk953gkoH5ehPJRThjj4lb0y%2F4zoxg%3D%3D",
+        "url": "gs://utic-test-ingest-fixtures/ideas-page.html",
         "version": "189403906109618130703889512627649588011",
         "record_locator": {
+          "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/ideas-page.html"
         },
         "date_created": "2023-06-20T23:49:31.038000+00:00",

@@ -4,9 +4,10 @@
     "element_id": "c08fcabe68ba13b7a7cc6592bd5513a8",
     "metadata": {
       "data_source": {
-        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-1/nested/ideas-page.html?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=4crWYmrSKm7%2BveQXqu6XSawjMG%2BdOERdK4Ww54p4uWq%2FcgPaTdj9C3uib3yClmDssZN0YIpiqJnmK7pNPtLAbt3PmtGvuxyBFak5sS1fIhJQdeYBXeV9wnOV1%2BjHXsoDCaXC2hD%2BjQswO1ks97rhuG1Z%2FARUGLss%2F3BvjXvdPPfXJCNRc1w9M%2FaZ%2Fk1pqw%2Bq%2FMrIcTXy2J94sBW7vENrhTz7i0lNzn%2FkpBT%2F88SolGSvq2LyH6KR9q31oqyy64FnYogxDW6mLDu5JIfc3Nu5K6u%2FVlyMfbnzi1GBsSZgHCVUJGB8s7HYTjrAFQLRvf5vNQWnw78OVq8SXrveAhg8Gw%3D%3D",
+        "url": "gs://utic-test-ingest-fixtures/nested-1/nested/ideas-page.html",
         "version": "70544926477954091261023154775639605287",
         "record_locator": {
+          "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-1/nested/ideas-page.html"
         },
         "date_created": "2023-06-20T23:48:13.750000+00:00",

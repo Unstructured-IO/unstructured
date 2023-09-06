@@ -4,9 +4,10 @@
     "element_id": "1df8eeb8be847c3a1a7411e3be3e0396",
     "metadata": {
       "data_source": {
-        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-1/fake-text.txt?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=Cg8%2F9lKczlCtOMfx7WM1RzCOURC%2FKYBRJQwUidOhcRi2ImdGOpQCGV6Pxc%2FlQ%2F%2FpS77XTXWkqcwgmf%2BWxnk89gFpBA4dLYSzlRKarc7m%2F5mXJnPzf03OpBiZF6XrAGd0k8rg5%2FJulDReVxYzu5iyMHpnGgaD0%2B12bHkqeuIvD3l6OhLMMF0arR1jx15blQl%2BA%2Bezm51RMiw9sEghiK4u5e0WIot8KxunfHBo05jmzi5EflQBgRAfrpC%2BS%2BQuT86rjUX0jl5%2FouQ803%2FJySveFLbSIilF6xmdaOBu7zV7afY7qABr9OLNjdZrkjhu7743osbVH6eh9Da6K4ayQZ%2FcCw%3D%3D",
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
         "version": "35203903171123543413474513551323385928",
         "record_locator": {
+          "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-1/fake-text.txt"
         },
         "date_created": "2023-06-20T23:48:13.303000+00:00",
@@ -21,9 +22,10 @@
     "element_id": "a9d4657034aa3fdb5177f1325e912362",
     "metadata": {
       "data_source": {
-        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-1/fake-text.txt?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=Cg8%2F9lKczlCtOMfx7WM1RzCOURC%2FKYBRJQwUidOhcRi2ImdGOpQCGV6Pxc%2FlQ%2F%2FpS77XTXWkqcwgmf%2BWxnk89gFpBA4dLYSzlRKarc7m%2F5mXJnPzf03OpBiZF6XrAGd0k8rg5%2FJulDReVxYzu5iyMHpnGgaD0%2B12bHkqeuIvD3l6OhLMMF0arR1jx15blQl%2BA%2Bezm51RMiw9sEghiK4u5e0WIot8KxunfHBo05jmzi5EflQBgRAfrpC%2BS%2BQuT86rjUX0jl5%2FouQ803%2FJySveFLbSIilF6xmdaOBu7zV7afY7qABr9OLNjdZrkjhu7743osbVH6eh9Da6K4ayQZ%2FcCw%3D%3D",
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
         "version": "35203903171123543413474513551323385928",
         "record_locator": {
+          "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-1/fake-text.txt"
         },
         "date_created": "2023-06-20T23:48:13.303000+00:00",
@@ -38,9 +40,10 @@
     "element_id": "9c218520320f238595f1fde74bdd137d",
     "metadata": {
       "data_source": {
-        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-1/fake-text.txt?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=Cg8%2F9lKczlCtOMfx7WM1RzCOURC%2FKYBRJQwUidOhcRi2ImdGOpQCGV6Pxc%2FlQ%2F%2FpS77XTXWkqcwgmf%2BWxnk89gFpBA4dLYSzlRKarc7m%2F5mXJnPzf03OpBiZF6XrAGd0k8rg5%2FJulDReVxYzu5iyMHpnGgaD0%2B12bHkqeuIvD3l6OhLMMF0arR1jx15blQl%2BA%2Bezm51RMiw9sEghiK4u5e0WIot8KxunfHBo05jmzi5EflQBgRAfrpC%2BS%2BQuT86rjUX0jl5%2FouQ803%2FJySveFLbSIilF6xmdaOBu7zV7afY7qABr9OLNjdZrkjhu7743osbVH6eh9Da6K4ayQZ%2FcCw%3D%3D",
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
         "version": "35203903171123543413474513551323385928",
         "record_locator": {
+          "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-1/fake-text.txt"
         },
         "date_created": "2023-06-20T23:48:13.303000+00:00",
@@ -55,9 +58,10 @@
     "element_id": "39a3ae572581d0f1fe7511fd7b3aa414",
     "metadata": {
       "data_source": {
-        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-1/fake-text.txt?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=Cg8%2F9lKczlCtOMfx7WM1RzCOURC%2FKYBRJQwUidOhcRi2ImdGOpQCGV6Pxc%2FlQ%2F%2FpS77XTXWkqcwgmf%2BWxnk89gFpBA4dLYSzlRKarc7m%2F5mXJnPzf03OpBiZF6XrAGd0k8rg5%2FJulDReVxYzu5iyMHpnGgaD0%2B12bHkqeuIvD3l6OhLMMF0arR1jx15blQl%2BA%2Bezm51RMiw9sEghiK4u5e0WIot8KxunfHBo05jmzi5EflQBgRAfrpC%2BS%2BQuT86rjUX0jl5%2FouQ803%2FJySveFLbSIilF6xmdaOBu7zV7afY7qABr9OLNjdZrkjhu7743osbVH6eh9Da6K4ayQZ%2FcCw%3D%3D",
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
         "version": "35203903171123543413474513551323385928",
         "record_locator": {
+          "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-1/fake-text.txt"
         },
         "date_created": "2023-06-20T23:48:13.303000+00:00",
@@ -72,9 +76,10 @@
     "element_id": "fc1adcb8eaceac694e500a103f9f698f",
     "metadata": {
       "data_source": {
-        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-1/fake-text.txt?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=Cg8%2F9lKczlCtOMfx7WM1RzCOURC%2FKYBRJQwUidOhcRi2ImdGOpQCGV6Pxc%2FlQ%2F%2FpS77XTXWkqcwgmf%2BWxnk89gFpBA4dLYSzlRKarc7m%2F5mXJnPzf03OpBiZF6XrAGd0k8rg5%2FJulDReVxYzu5iyMHpnGgaD0%2B12bHkqeuIvD3l6OhLMMF0arR1jx15blQl%2BA%2Bezm51RMiw9sEghiK4u5e0WIot8KxunfHBo05jmzi5EflQBgRAfrpC%2BS%2BQuT86rjUX0jl5%2FouQ803%2FJySveFLbSIilF6xmdaOBu7zV7afY7qABr9OLNjdZrkjhu7743osbVH6eh9Da6K4ayQZ%2FcCw%3D%3D",
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
         "version": "35203903171123543413474513551323385928",
         "record_locator": {
+          "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-1/fake-text.txt"
         },
         "date_created": "2023-06-20T23:48:13.303000+00:00",
@@ -89,9 +94,10 @@
     "element_id": "0b61e826b1c4ab05750184da72b89f83",
     "metadata": {
       "data_source": {
-        "url": "https://storage.googleapis.com/utic-test-ingest-fixtures/nested-1/fake-text.txt?Expires=300&GoogleAccessId=ingest%40unstructured-ingest-test.iam.gserviceaccount.com&Signature=Cg8%2F9lKczlCtOMfx7WM1RzCOURC%2FKYBRJQwUidOhcRi2ImdGOpQCGV6Pxc%2FlQ%2F%2FpS77XTXWkqcwgmf%2BWxnk89gFpBA4dLYSzlRKarc7m%2F5mXJnPzf03OpBiZF6XrAGd0k8rg5%2FJulDReVxYzu5iyMHpnGgaD0%2B12bHkqeuIvD3l6OhLMMF0arR1jx15blQl%2BA%2Bezm51RMiw9sEghiK4u5e0WIot8KxunfHBo05jmzi5EflQBgRAfrpC%2BS%2BQuT86rjUX0jl5%2FouQ803%2FJySveFLbSIilF6xmdaOBu7zV7afY7qABr9OLNjdZrkjhu7743osbVH6eh9Da6K4ayQZ%2FcCw%3D%3D",
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
         "version": "35203903171123543413474513551323385928",
         "record_locator": {
+          "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-1/fake-text.txt"
         },
         "date_created": "2023-06-20T23:48:13.303000+00:00",
