@@ -30,9 +30,6 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "dropbox",
 ]
 
-SIGNED_URL_EXPIRATION = 300
-
-
 @dataclass
 class SimpleFsspecConfig(BaseConnectorConfig):
     # fsspec specific options
@@ -141,13 +138,11 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         date_created = None
         with suppress(NotImplementedError):
-            date_created = fs.created(self.remote_file_path)
-            date_created = date_created.isoformat()
+            date_created = fs.created(self.remote_file_path).isoformat()
 
         date_modified = None
         with suppress(NotImplementedError):
-            date_modified = fs.modified(self.remote_file_path)
-            date_modified = date_modified.isoformat()
+            date_modified = fs.modified(self.remote_file_path).isoformat()
 
         version = str(fs.checksum(self.remote_file_path))
         file_exists = fs.exists(self.remote_file_path)
