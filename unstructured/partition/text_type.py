@@ -305,7 +305,7 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     i = 0
     for chunk in ne_chunk(text):
         if hasattr(chunk, "label"):
-            is_ne[i : i + len(chunk)] = [True] * len(chunk)
+            is_ne[i: i + len(chunk)] = [True] * len(chunk)
             i += len(chunk)
         else:
             i += 1
