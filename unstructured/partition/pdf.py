@@ -467,7 +467,7 @@ def convert_pdf_to_images(
 def _get_element_box(
     boxes: List[str],
     char_count: int,
-) -> Tuple[Tuple[int, int], int]:
+) -> Tuple[Tuple[Tuple[float, float], Tuple[float, int], Tuple[int, int], Tuple[int, float]], int]:
     """Helper function to get the bounding box of an element.
 
     Args:
