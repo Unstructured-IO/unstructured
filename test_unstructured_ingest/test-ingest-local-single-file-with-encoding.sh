@@ -10,7 +10,7 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --partition-encoding cp1252 \
     --verbose \
     --reprocess \

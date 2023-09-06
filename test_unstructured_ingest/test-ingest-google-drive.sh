@@ -23,10 +23,10 @@ PYTHONPATH=. unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
     --num-processes 2 \
-    --partition-strategy hi_res \
+    --strategy hi_res \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --drive-id 1OQZ66OHBE30rNsNa7dweGLfRmXvkT_jr \
     --service-account-key "$GCP_INGEST_SERVICE_KEY_FILE"

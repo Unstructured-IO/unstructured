@@ -29,7 +29,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --partition-strategy hi_res \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --url dcneiner/Downloadify \
     --git-file-glob '*.html,*.txt' \

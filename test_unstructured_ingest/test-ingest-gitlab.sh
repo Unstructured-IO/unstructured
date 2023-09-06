@@ -15,7 +15,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --partition-strategy hi_res \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --git-branch 'v0.0.7' \
     --git-file-glob '*.md,*.txt' \

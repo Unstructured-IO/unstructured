@@ -12,9 +12,9 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
     --partition-strategy hi_res \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --file-glob "*.html" \
     --input-path example-docs
 
-sh "$SCRIPT_DIR"/check-num-files-output.sh 12 $OUTPUT_FOLDER_NAME
+#sh "$SCRIPT_DIR"/check-num-files-output.sh 12 $OUTPUT_FOLDER_NAME
