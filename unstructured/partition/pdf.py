@@ -208,6 +208,12 @@ def partition_pdf_or_image(
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 **kwargs,
             )
+            layout_elements = [
+                el
+                if hasattr(el, "category") and el.category != "UncategorizedText"
+                else element_from_text(el.text)
+                for el in layout_elements
+            ]
 
     elif strategy == "fast":
         return extracted_elements
