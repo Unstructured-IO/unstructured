@@ -3,6 +3,8 @@
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+* Add to mapping from `chipper` to `unstructured` element types: `Headline`, `Subheadline` and `Abstract`.
+* New optional metadata `title_depth` for `Title`, `Headline` and `Subheadline`.
 
 ### Features
 
