@@ -1,3 +1,13 @@
+## 0.10.13-dev3
+
+### Enhancements
+
+* Adds data source properties (date_created, date_modified, version, exists, source_url, record_locator) to the fsspec base interface.
+
+### Features
+
+### Fixes
+
 ## 0.10.13-dev2
 
 ### Enhancements
