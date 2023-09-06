@@ -3,6 +3,8 @@
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+* Updated `is_possible_title` detection rule
+* Updated `exceeds_cap_ratio` calculation by ignoring name-entity and first-word capitalized
 
 ### Features
 
