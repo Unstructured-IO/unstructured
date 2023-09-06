@@ -525,7 +525,7 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
     return elements
 
 
-@requires_dependencies("pytesseract")
+@requires_dependencies("unstructured.pytesseract")
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
@@ -538,15 +538,21 @@ def _partition_pdf_or_image_with_ocr(
 ):
     """Partitions an image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
-    import pytesseract
+    import unstructured_pytesseract
 
     if is_image:
         if file is not None:
             image = PIL.Image.open(file)
-            text, bboxes = pytesseract.run_and_get_multiple_output(image, extensions=["txt", "box"])
+            text, bboxes = unstructured_pytesseract.run_and_get_multiple_output(
+                image,
+                extensions=["txt", "box"],
+            )
         else:
             image = PIL.Image.open(filename)
-            text, bboxes = pytesseract.run_and_get_multiple_output(image, extensions=["txt", "box"])
+            text, bboxes = unstructured_pytesseract.run_and_get_multiple_output(
+                image,
+                extensions=["txt", "box"],
+            )
         elements = partition_text(
             text=text,
             max_partition=max_partition,
@@ -566,7 +572,7 @@ def _partition_pdf_or_image_with_ocr(
                 page_number=page_number,
                 last_modified=metadata_last_modified,
             )
-            _text, _bboxes = pytesseract.run_and_get_multiple_output(
+            _text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,
                 extensions=["txt", "box"],
             )
