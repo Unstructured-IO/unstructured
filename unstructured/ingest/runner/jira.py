@@ -1,52 +1,72 @@
 import hashlib
 import logging
-from typing import Optional
+import typing as t
 
-from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
+from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.processor import process_documents
 from unstructured.ingest.runner.utils import update_download_dir_hash
+from unstructured.ingest.runner.writers import writer_map
 
 
 def jira(
     verbose: bool,
-    connector_config: StandardConnectorConfig,
-    processor_config: ProcessorConfigs,
+    read_config: ReadConfig,
+    partition_configs: PartitionConfig,
     url: str,
     user_email: str,
     api_token: str,
-    list_of_projects: Optional[str],
-    list_of_boards: Optional[str],
-    list_of_issues: Optional[str],
+    projects: t.Optional[t.List[str]],
+    boards: t.Optional[t.List[str]],
+    issues: t.Optional[t.List[str]],
+    writer_type: t.Optional[str] = None,
+    writer_kwargs: t.Optional[dict] = None,
     **kwargs,
 ):
+    writer_kwargs = writer_kwargs if writer_kwargs else {}
+
+    projects = projects if projects else []
+    boards = boards if boards else []
+    issues = issues if issues else []
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
 
     hashed_dir_name = hashlib.sha256(
         url.encode("utf-8"),
     )
-    connector_config.download_dir = update_download_dir_hash(
+
+    read_config.download_dir = update_download_dir_hash(
         connector_name="jira",
-        connector_config=connector_config,
+        read_configs=read_config,
         hashed_dir_name=hashed_dir_name,
         logger=logger,
     )
 
     from unstructured.ingest.connector.jira import (
-        JiraConnector,
+        JiraSourceConnector,
         SimpleJiraConfig,
     )
 
-    doc_connector = JiraConnector(  # type: ignore
-        standard_config=connector_config,
-        config=SimpleJiraConfig(
+    source_doc_connector = JiraSourceConnector(  # type: ignore
+        connector_config=SimpleJiraConfig(
             url=url,
             user_email=user_email,
             api_token=api_token,
-            list_of_projects=list_of_projects,
-            list_of_boards=list_of_boards,
-            list_of_issues=list_of_issues,
+            projects=projects,
+            boards=boards,
+            issues=issues,
         ),
+        read_config=read_config,
+        partition_config=partition_configs,
     )
 
-    process_documents(doc_connector=doc_connector, processor_config=processor_config)
+    dest_doc_connector = None
+    if writer_type:
+        writer = writer_map[writer_type]
+        dest_doc_connector = writer(**writer_kwargs)
+
+    process_documents(
+        source_doc_connector=source_doc_connector,
+        partition_config=partition_configs,
+        verbose=verbose,
+        dest_doc_connector=dest_doc_connector,
+    )

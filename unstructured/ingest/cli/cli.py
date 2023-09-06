@@ -8,15 +8,6 @@ def ingest():
     pass
 
 
-# Dynamically update shared options for supported subcommands
-subcommands = [
-    cli_cmds.jira,
-]
-
-for subcommand in subcommands:
-    ingest.add_command(subcommand())
-
-
 def get_cmd() -> click.Command:
     cmd = ingest
     # Add all subcommands

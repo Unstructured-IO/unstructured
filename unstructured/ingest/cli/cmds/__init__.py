@@ -16,7 +16,7 @@ from .gcs import get_source_cmd as gcs_src
 from .github import get_source_cmd as github_src
 from .gitlab import get_source_cmd as gitlab_src
 from .google_drive import get_source_cmd as google_drive_src
-from .jira import get_cmd as jira
+from .jira import get_source_cmd as jira_src
 from .local import get_source_cmd as local_src
 from .notion import get_source_cmd as notion_src
 from .onedrive import get_source_cmd as onedrive_src
@@ -44,6 +44,7 @@ src: t.List[click.Group] = [
     github_src(),
     gitlab_src(),
     google_drive_src(),
+    jira_src(),
     local_src(),
     notion_src(),
     onedrive_src(),
@@ -59,7 +60,6 @@ src: t.List[click.Group] = [
 dest: t.List[click.Command] = [s3_dest()]
 
 __all__ = [
-    "jira",
     "src",
     "dest",
 ]

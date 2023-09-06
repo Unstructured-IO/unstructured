@@ -41,14 +41,14 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --num-processes 2 \
         --preserve-downloads \
         --reprocess \
-        --structured-output-dir "$OUTPUT_DIR" \
+        --output-dir "$OUTPUT_DIR" \
         --verbose \
         --url https://unstructured-jira-connector-test.atlassian.net \
         --user-email "$JIRA_INGEST_USER_EMAIL" \
         --api-token "$JIRA_INGEST_API_TOKEN" \
-        --list-of-projects "JCTP3" \
-        --list-of-boards "1" \
-        --list-of-issues "JCTP2-4 JCTP2-7 JCTP2-8 10012 JCTP2-11" \
+        --projects "JCTP3" \
+        --boards "1" \
+        --issues "JCTP2-4 JCTP2-7 JCTP2-8 10012 JCTP2-11"
 
 
 
