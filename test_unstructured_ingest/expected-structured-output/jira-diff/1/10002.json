@@ -6,6 +6,7 @@
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
         "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP1-3"
         },
         "date_created": "2023-08-22T11:29:46.189+0000",
@@ -22,6 +23,7 @@
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
         "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP1-3"
         },
         "date_created": "2023-08-22T11:29:46.189+0000",
@@ -38,6 +40,7 @@
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
         "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP1-3"
         },
         "date_created": "2023-08-22T11:29:46.189+0000",
@@ -54,6 +57,7 @@
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
         "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP1-3"
         },
         "date_created": "2023-08-22T11:29:46.189+0000",
@@ -70,6 +74,7 @@
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
         "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP1-3"
         },
         "date_created": "2023-08-22T11:29:46.189+0000",
@@ -86,6 +91,7 @@
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
         "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP1-3"
         },
         "date_created": "2023-08-22T11:29:46.189+0000",
@@ -102,6 +108,7 @@
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
         "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP1-3"
         },
         "date_created": "2023-08-22T11:29:46.189+0000",
@@ -118,6 +125,7 @@
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
         "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP1-3"
         },
         "date_created": "2023-08-22T11:29:46.189+0000",
@@ -134,6 +142,7 @@
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
         "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP1-3"
         },
         "date_created": "2023-08-22T11:29:46.189+0000",
@@ -150,6 +159,7 @@
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
         "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP1-3"
         },
         "date_created": "2023-08-22T11:29:46.189+0000",
@@ -166,6 +176,7 @@
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
         "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP1-3"
         },
         "date_created": "2023-08-22T11:29:46.189+0000",
@@ -182,6 +193,7 @@
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
         "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP1-3"
         },
         "date_created": "2023-08-22T11:29:46.189+0000",
@@ -198,6 +210,7 @@
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
         "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP1-3"
         },
         "date_created": "2023-08-22T11:29:46.189+0000",
@@ -214,6 +227,7 @@
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
         "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP1-3"
         },
         "date_created": "2023-08-22T11:29:46.189+0000",
