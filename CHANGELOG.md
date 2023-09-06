@@ -1,7 +1,8 @@
-## 0.10.13-dev2
+## 0.10.13-dev3
 
 ### Enhancements
 
+* Use text-based element classification for PDF hi_res when detection fails.
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
 
 ### Features
