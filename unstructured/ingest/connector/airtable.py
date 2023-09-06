@@ -1,7 +1,7 @@
 import os
+import typing as t
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces2 import (
@@ -25,7 +25,7 @@ class SimpleAirtableConfig(BaseConnectorConfig):
     """
 
     personal_access_token: str
-    list_of_paths: Optional[str]
+    list_of_paths: t.Optional[str]
 
 
 @dataclass
@@ -35,7 +35,7 @@ class AirtableFileMeta:
 
     base_id: str
     table_id: str
-    view_id: Optional[str] = None
+    view_id: t.Optional[str] = None
 
 
 @dataclass

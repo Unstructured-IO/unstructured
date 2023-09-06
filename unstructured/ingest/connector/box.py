@@ -8,8 +8,8 @@ Maybe check 'Make api calls as the as-user header'
 REAUTHORIZE app after making any of the above changes
 """
 
+import typing as t
 from dataclasses import dataclass
-from typing import Type
 
 from unstructured.ingest.connector.fsspec import (
     FsspecDestinationConnector,
@@ -55,7 +55,7 @@ class BoxIngestDoc(FsspecIngestDoc):
 
 @dataclass
 class BoxSourceConnector(FsspecSourceConnector):
-    ingest_doc_cls: Type[BoxIngestDoc] = BoxIngestDoc
+    ingest_doc_cls: t.Type[BoxIngestDoc] = BoxIngestDoc
 
 
 @dataclass

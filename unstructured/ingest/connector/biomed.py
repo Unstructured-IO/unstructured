@@ -1,9 +1,9 @@
 import os
+import typing as t
 import urllib.request
 from dataclasses import dataclass
 from ftplib import FTP, error_perm
 from pathlib import Path
-from typing import List, Optional
 
 import requests
 from bs4 import BeautifulSoup
@@ -41,11 +41,11 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     """Connector config where path is the FTP directory path and
     id_, from_, until, format are API parameters."""
 
-    path: Optional[str]
+    path: t.Optional[str]
     # OA Web Service API Options
-    id_: Optional[str]
-    from_: Optional[str]
-    until: Optional[str]
+    id_: t.Optional[str]
+    from_: t.Optional[str]
+    until: t.Optional[str]
     max_retries: int = 5
     request_timeout: int = 45
     decay: float = 0.3
@@ -151,7 +151,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
     connector_config: SimpleBiomedConfig
 
-    def _list_objects_api(self) -> List[BiomedFileMeta]:
+    def _list_objects_api(self) -> t.List[BiomedFileMeta]:
         def urls_to_metadata(urls):
             download_dir = self.read_config.download_dir if self.read_config.download_dir else ""
             files = []
@@ -173,7 +173,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
             return files
 
-        files: List[BiomedFileMeta] = []
+        files: t.List[BiomedFileMeta] = []
 
         endpoint_url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?format=pdf"
 
@@ -210,7 +210,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
         return files
 
-    def _list_objects(self) -> List[BiomedFileMeta]:
+    def _list_objects(self) -> t.List[BiomedFileMeta]:
         files = []
 
         # Conform to mypy, null check performed elsewhere.

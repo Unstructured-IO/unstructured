@@ -7,7 +7,7 @@ from .azure import get_source_cmd as azure_src
 from .biomed import get_source_cmd as biomed_src
 from .box import get_source_cmd as box_src
 from .confluence import get_source_cmd as confluence_src
-from .delta_table import get_cmd as delta_table
+from .delta_table import get_source_cmd as delta_table_src
 from .discord import get_cmd as discord
 from .dropbox import get_source_cmd as dropbox_src
 from .elasticsearch import get_cmd as elasticsearch
@@ -34,6 +34,7 @@ src: t.List[click.Group] = [
     azure_src(),
     biomed_src(),
     confluence_src(),
+    delta_table_src(),
     box_src(),
     dropbox_src(),
     fsspec_src(),
@@ -44,7 +45,6 @@ src: t.List[click.Group] = [
 dest: t.List[click.Command] = [s3_dest()]
 
 __all__ = [
-    "delta_table",
     "discord",
     "elasticsearch",
     "gdrive",

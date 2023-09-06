@@ -1,5 +1,5 @@
+import typing as t
 from dataclasses import dataclass
-from typing import Type
 
 from unstructured.ingest.connector.fsspec import (
     FsspecDestinationConnector,
@@ -28,7 +28,7 @@ class AzureBlobStorageIngestDoc(FsspecIngestDoc):
 
 @dataclass
 class AzureBlobStorageSourceConnector(FsspecSourceConnector):
-    ingest_doc_cls: Type[AzureBlobStorageIngestDoc] = AzureBlobStorageIngestDoc
+    ingest_doc_cls: t.Type[AzureBlobStorageIngestDoc] = AzureBlobStorageIngestDoc
 
 
 @dataclass
