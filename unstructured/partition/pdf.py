@@ -501,7 +501,7 @@ def _add_pytesseract_bboxes_to_elements(
 
     Args:
         elements: elements containing text detected by pytesseract.image_to_string.
-        bboxes (str): The return value of pytesseract.image_to_boxes.
+        bboxes_string (str): The return value of pytesseract.image_to_boxes.
         width: width of image
         height: height of image
     """
