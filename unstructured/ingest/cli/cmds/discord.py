@@ -28,7 +28,7 @@ class DiscordCliConfig(BaseConfig, CliMixin):
     def add_cli_options(cmd: click.Command) -> None:
         options = [
             click.Option(
-                ["]--token"],
+                ["--token"],
                 required=True,
                 help="Bot token used to access Discord API, must have "
                 "READ_MESSAGE_HISTORY scope for the bot user",
