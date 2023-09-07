@@ -16,6 +16,9 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
     discord \
     --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
+    --download-dir "$DOWNLOAD_DIR" \
+    --preserve-downloads \
+    --reprocess \
     --output-dir "$OUTPUT_DIR" \
     --verbose \
     --channels 1099442333440802930,1099601456321003600 \
