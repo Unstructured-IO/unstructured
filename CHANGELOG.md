@@ -9,6 +9,7 @@
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization
+* Add `clean_ligatures` function to expand ligatures in text
 
 ### Fixes
 
