@@ -65,6 +65,10 @@ def ne_chunk(text: str) -> Tree:
         package_category="chunkers",
         package_name="maxent_ne_chunker",
     )
+    _download_nltk_package_if_not_present(
+        package_category="corpora",
+        package_name="words",
+    )
     pos = pos_tag(text)
     # NOTE(klaijan) - binary=True captures everything that is name-entity as NE,
     # and not its specific NE category such as PERSON, ORGANIZATION, LOCATION.
