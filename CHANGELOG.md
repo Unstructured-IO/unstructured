@@ -1,4 +1,4 @@
-## 0.10.13-dev3
+## 0.10.13-dev4
 
 ### Enhancements
 
@@ -33,7 +33,7 @@
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
-
+  
 ## 0.10.11
 
 ### Enhancements
