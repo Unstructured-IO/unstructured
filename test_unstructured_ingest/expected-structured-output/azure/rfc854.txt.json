@@ -1,6 +1,6 @@
 [
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "9d9c35fa1d7fddcc714465fa09f0235f",
     "metadata": {
       "data_source": {},
@@ -774,7 +774,7 @@
     "text": "1. Send the TELNET IP character;"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "e0bfbeb5fb2c2920562cfd6eace856e5",
     "metadata": {
       "data_source": {},
@@ -792,7 +792,7 @@
     "text": "Send the Data Mark (DM) as the only character in a TCP urgent mode send operation."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "82bd9d7fe0aa06d113db3be28abbda8e",
     "metadata": {
       "data_source": {},
@@ -918,7 +918,7 @@
     "text": "The sequence \"CR LF\", as defined, will cause the NVT to be positioned at the left margin of the next print line (as would, for example, the sequence \"LF CR\"). However, many systems and terminals do not treat CR and LF independently, and will have to go to some effort to simulate their effect. (For example, some terminals do not have a CR independent of the LF, but on such terminals it may be possible to simulate a CR by backspacing.) Therefore, the sequence \"CR LF\" must be treated as a single \"new line\" character and used whenever their combined action is intended; the sequence \"CR NUL\" must be used where a carriage return alone is actually desired; and the CR character must be avoided in other contexts. This rule gives assurance to systems which must decide whether to perform a \"new line\" function or a multiple-backspace that the TELNET stream contains a character following a CR that will allow a rational decision."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "c56bfb7b7d935d228199117e2de59a48",
     "metadata": {
       "data_source": {},

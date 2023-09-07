@@ -122,7 +122,7 @@
     "text": "Meet the team"
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "44a4aebe327cd902d50cc9462de55db4",
     "metadata": {
       "data_source": {},

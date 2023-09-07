@@ -60,7 +60,7 @@
     "text": "Application for Change in Accounting Method"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "766cf1d1243ef2cdbb0db5ad32d7f9c9",
     "metadata": {
       "data_source": {},
@@ -230,7 +230,7 @@
     "text": "Generally, applicants must file this form within the first 180 days of the tax year in which it is desired to make the change."
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "9dda11db48254f5e0d0000afb5d1dd9b",
     "metadata": {
       "data_source": {},

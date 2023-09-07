@@ -1,6 +1,6 @@
 [
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "a4f2bf04a36fb5c2b02a946fa94076d9",
     "metadata": {
       "data_source": {},
@@ -10,7 +10,7 @@
     "text": "testing <reply> testing <reply> threads are cool"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "d91e2d32f4816b7c0f23c2e760aaf166",
     "metadata": {
       "data_source": {},
@@ -20,7 +20,7 @@
     "text": "<@U051UBRR946> has joined the channel <reply> <@U051UBRR946> has joined the channel"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "f452aa470d0eab626eddf33b5a60386c",
     "metadata": {
       "data_source": {},

@@ -10,7 +10,7 @@
     "text": "Data in Brief 22 (2019) 451–457"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "b0658ce9dccc0acba9a472c2bb992cc9",
     "metadata": {
       "data_source": {},
@@ -80,7 +80,7 @@
     "text": "Department of Chemical, Metallurgical and Materials Engineering, Tshwane University of Technology, Pretoria, South Africa"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "fbd221e3c1f82c8601661213b98b0962",
     "metadata": {
       "data_source": {},
@@ -90,7 +90,7 @@
     "text": "a r t i c l e i n f o"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "d6923075e35e5f3296e0d24ceb70a2bb",
     "metadata": {
       "data_source": {},
@@ -100,7 +100,7 @@
     "text": "a b s t r a c t"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "c382dd715a85d683f056834c4af7be85",
     "metadata": {
       "data_source": {},
@@ -190,7 +190,7 @@
     "text": "n Corresponding author. tayo.sanni@yahoo.com; SanniO@tut.ac.za"
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "e102dc7c1db28c29d5e4bde8062592ed",
     "metadata": {
       "data_source": {},
@@ -220,7 +220,7 @@
     "text": "452"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
       "data_source": {},
@@ -230,7 +230,7 @@
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "6928b78d26af54b6acb804ed319b5c05",
     "metadata": {
       "data_source": {},
@@ -320,7 +320,7 @@
     "text": "(cid:1) The data can be used to examine the relationship between the process variable as it affect the"
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "1ddde62c3188f81dfc835b6f036f1734",
     "metadata": {
       "data_source": {},
@@ -510,7 +510,7 @@
     "text": "Fig. 1. Weight loss versus exposure time for stainless steel presence of ES."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "cbd563dd2fcd7d0b5a0b2173465fd328",
     "metadata": {
       "data_source": {},
@@ -520,7 +520,7 @@
     "text": "immersed in 0.5 M H2SO4 solution in the absence and"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
       "data_source": {},
@@ -550,7 +550,7 @@
     "text": "2.7"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "4f0139b605dfdd9eb93e920a6115e1b5",
     "metadata": {
       "data_source": {},
@@ -760,7 +760,7 @@
     "text": "("
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "bbe120714b80df07396e808f98b3f354",
     "metadata": {
       "data_source": {},
@@ -780,7 +780,7 @@
     "text": "i"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "74599fca46202613cccb12e97774b306",
     "metadata": {
       "data_source": {},
@@ -1030,7 +1030,7 @@
     "text": "454"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
       "data_source": {},
@@ -1350,7 +1350,7 @@
     "text": "Concentration (g)"
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "8a3295d93db27fa58d12326d345eaad5",
     "metadata": {
       "data_source": {},
@@ -1360,7 +1360,7 @@
     "text": "Fig. 5. Langmuir adsorption isotherm of ES."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
       "data_source": {},
@@ -1380,7 +1380,7 @@
     "text": "455"
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "6cad98316bfa45c17e82a1836920ed12",
     "metadata": {
       "data_source": {},
@@ -1420,7 +1420,7 @@
     "text": "456"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
       "data_source": {},
@@ -1460,7 +1460,7 @@
     "text": "Austenitic stainless steel Type 316 was used in this study with chemical composition reported in [1,2]. The chemicals used were of annular grade. The inhibitor concentrations are in the range of 2, 4, 6, 8 and 10 g [3–5]. The structural formula of egg shell powder is shown in Fig. 9."
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "1dc2692eee9b01e9a960f80c4dabe07b",
     "metadata": {
       "data_source": {},
@@ -1490,7 +1490,7 @@
     "text": "This physical measurement was carried out in order to provide direct result on how the corrosive environment affects the test sample. The cleaned and weighed specimen was suspended in beakers with the aid of glass hooks and rods with the test solution of ES at different concentration (2, 4, 6, 8 and 10 g). The pre-weighed specimen was retrieved from the test solution after every 24 h, cleaned, dried and reweighed. The difference between the weight at a given time and the initial weight of the specimen was taken as the weight loss which was used to calculate corrosion rate and inhibition efﬁciency."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "ae938bb6586c4ef6d0a287923ac2a9ae",
     "metadata": {
       "data_source": {},
@@ -1660,7 +1660,7 @@
     "text": "The potentiodynamic polarization method was performed on the prepared test samples immersed in 0.5 M H2SO4 solution in the presence and absence of different ES concentrations. A three electrode system was used; stainless steel Type 316 plate as working electrode with an exposed area of 1.0 cm2, platinum rod as counter electrode and silver chloride electrode as reference electrode. The electrode was polished, degreased in acetone and thoroughly rinsed with distilled water before the experiment. Current density against applied potential was plotted. The slope of the linear part in anodic and cathodic plots gives anodic and cathodic constants according to the Stern–Geary equation, and the"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
       "data_source": {},
@@ -1710,7 +1710,7 @@
     "text": "This work was supported by the National Research Foundation of South Africa and the Tshwane"
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "287fb148184f12ff62e9b0207567dac7",
     "metadata": {
       "data_source": {},
@@ -1720,7 +1720,7 @@
     "text": "University of Technology Pretoria South Africa."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "d202816913e482abce90d70d88f202c3",
     "metadata": {
       "data_source": {},

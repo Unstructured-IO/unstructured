@@ -10,7 +10,7 @@
     "text": "Data in Brief 22 (2019) 484–487"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "b0658ce9dccc0acba9a472c2bb992cc9",
     "metadata": {
       "data_source": {},
@@ -70,7 +70,7 @@
     "text": "Sarang Kulkarni a,b,c,n, Mohan Krishnamoorthy d,e, Abhiram Ranade f, Andreas T. Ernst c, Rahul Patil b"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "cd24a5d2989d27bd46eede4ea54cb41e",
     "metadata": {
       "data_source": {},
@@ -80,7 +80,7 @@
     "text": "a IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai 400076, India b SJM School of Management, IIT Bombay, Powai, Mumbai 400076, India c School of Mathematical Sciences, Monash University, Clayton, VIC 3800, Australia d Department of Mechanical and Aerospace Engineering, Monash University, Clayton, VIC 3800, Australia e School of Information Technology and Electrical Engineering, The University of Queensland, QLD 4072, Australia f Department of Computer Science and Engineering, IIT Bombay, Powai, Mumbai 400076, India"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "fbd221e3c1f82c8601661213b98b0962",
     "metadata": {
       "data_source": {},
@@ -90,7 +90,7 @@
     "text": "a r t i c l e i n f o"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "d6923075e35e5f3296e0d24ceb70a2bb",
     "metadata": {
       "data_source": {},
@@ -100,7 +100,7 @@
     "text": "a b s t r a c t"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "ed0a4666ce85e6310a0984f37e0e98f8",
     "metadata": {
       "data_source": {},
@@ -130,7 +130,7 @@
     "text": "& 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/)."
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "149d0d44f9fe5d3c234aa32aec552e99",
     "metadata": {
       "data_source": {},
@@ -140,7 +140,7 @@
     "text": "DOI of original article: https://doi.org/10.1016/j.trb.2018.11.007 n Corresponding author at: IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai 400076, India."
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "5810d7d862f5f5d65e257a3ed9b102ac",
     "metadata": {
       "data_source": {},
@@ -160,7 +160,7 @@
     "text": "https://doi.org/10.1016/j.dib.2018.12.055 2352-3409/& 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/)."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "0a1b09ff562f4d063703cbf021ee297f",
     "metadata": {
       "data_source": {},
@@ -260,7 +260,7 @@
     "text": "(cid:2) The data provide all the information that is required to model the MDVSP by using the existing"
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "bd7d750cb9f652c80c17a264072b8858",
     "metadata": {
       "data_source": {},
@@ -280,7 +280,7 @@
     "text": "(cid:2) All the problem instances are available for use without any restrictions. (cid:2) The benchmark solutions and solution time for the problem instances are presented in [3] and can"
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "68d39f7bcfe99749cc221fa901314626",
     "metadata": {
       "data_source": {},
@@ -460,7 +460,7 @@
     "text": "486"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "0a1b09ff562f4d063703cbf021ee297f",
     "metadata": {
       "data_source": {},
@@ -500,7 +500,7 @@
     "text": "A trip j can be covered after trip i by the same vehicle, if ts j"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "3e549e73bba49a63f20841b5821cfda9",
     "metadata": {
       "data_source": {},
@@ -530,7 +530,7 @@
     "text": "Z te"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "5201e1037409ea15055e320409a9f5eb",
     "metadata": {
       "data_source": {},
@@ -570,7 +570,7 @@
     "text": "1. Each schedule should start and end at the same depot. 2. Each trip should be covered by only one vehicle. 3. The number of schedules that start from a depot should not exceed the number of vehicles at"
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "e46a5a30f05d06e82d8b7d10448de683",
     "metadata": {
       "data_source": {},
@@ -770,7 +770,7 @@
     "text": "668,279.40 1,195,844.80 1,866,175.20 2,705,617.00 674,191.00 1,199,659.80 1,878,745.20 2,711,180.40 673,585.80 1,200,560.80 1,879,387.00 2,684,983.60"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "0a1b09ff562f4d063703cbf021ee297f",
     "metadata": {
       "data_source": {},
@@ -790,7 +790,7 @@
     "text": "487"
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "6ad378122bcd6e47bbfc3a3d2c23984a",
     "metadata": {
       "data_source": {},
@@ -930,7 +930,7 @@
     "text": "Our dataset provides start/end location and time of trips as well as the travel time between any two locations. The location and time information is required to model the MDVSP on a time-space network. The feasible connections and the cost of connections between the trips can be obtained as discussed in [3]. Thus, the dataset has all the information that is required to model the MDVSP on the time-space network (see [2]) as well as the connection-network (see [5]). The benchmark solutions for all the problem instances are presented in [3]."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "d202816913e482abce90d70d88f202c3",
     "metadata": {
       "data_source": {},

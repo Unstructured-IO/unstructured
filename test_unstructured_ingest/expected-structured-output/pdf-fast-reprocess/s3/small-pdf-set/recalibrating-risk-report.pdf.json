@@ -1,6 +1,6 @@
 [
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "1536456ece03fdb7bdbb6b848116dfde",
     "metadata": {
       "data_source": {},
@@ -10,7 +10,7 @@
     "text": "Recalibrating risk"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "38ae4eaf24988f8ff8a9f5b2eaab7449",
     "metadata": {
       "data_source": {},
@@ -110,7 +110,7 @@
     "text": "1"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "f193ae2dc90e6bc6856125ad88fdab12",
     "metadata": {
       "data_source": {},
@@ -500,7 +500,7 @@
     "text": "Artificial"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "d4a293a7987bc37f4a826e0da1961aab",
     "metadata": {
       "data_source": {},
@@ -510,7 +510,7 @@
     "text": " 48% Radon  14% Buildings & soil  12% Food & water  10% Cosmic  4% Thoron"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "0f748653e413fbddbb18262352d56b23",
     "metadata": {
       "data_source": {},
@@ -600,7 +600,7 @@
     "text": "18.4"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "e11247712b3df61756970b45f019ad68",
     "metadata": {
       "data_source": {},
@@ -640,7 +640,7 @@
     "text": "15"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "f9bb49945b60897227abdd75b5f8d39b",
     "metadata": {
       "data_source": {},
@@ -780,7 +780,7 @@
     "text": "0.04"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "5275a384f63ded9bf8541f52dec2c2cb",
     "metadata": {
       "data_source": {},
@@ -860,7 +860,7 @@
     "text": "2 Including 28 firefighters that were exposed to lethal amounts of radiation during the accident night, and 15 fatal cases of thyroid cancer. 3 Sources drawn upon: Markandya, A., & Wilkinson, P. (2007), Sovacool et al. (2016). Data for nuclear accidents modified to reflect the"
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "31138d5dc0c297144d27d5dbd15d5ef0",
     "metadata": {
       "data_source": {},
@@ -940,7 +940,7 @@
     "text": "4"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "6bb7c030badb0c440af61aec7f6976c4",
     "metadata": {
       "data_source": {},
@@ -1020,7 +1020,7 @@
     "text": "Social and environmental costs of emissions, land-use, climate change, security of supply, etc."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "2044b8086c660cb4ae3dbf0c91f168b1",
     "metadata": {
       "data_source": {},
@@ -1060,7 +1060,7 @@
     "text": "5"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "b5b9075460067db9eb092a70c73a83a4",
     "metadata": {
       "data_source": {},
@@ -1170,7 +1170,7 @@
     "text": "i"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "e72fdf383c0b4d8cba0284d4f7ff06d5",
     "metadata": {
       "data_source": {},
@@ -1230,7 +1230,7 @@
     "text": "iv United Nations Scientific Committee on the Effects of Radiation (2016). Report of the United Nations Scientific"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "98e5f594de0e79990a0650489fdf295c",
     "metadata": {
       "data_source": {},
@@ -1300,7 +1300,7 @@
     "text": "global assessment of the burden of disease from environmental risks’. Available at: https://www.who.int/data/gho/ data/themes/public-health-and-environment [Accessed on 8 April 2021]"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "794a96b3ab9a3e860f65549c3a106704",
     "metadata": {
       "data_source": {},
@@ -1320,7 +1320,7 @@
     "text": "understanding/statistics"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "94178a8c2e84bf4b8f2eed9c79d7cfd5",
     "metadata": {
       "data_source": {},
@@ -1340,7 +1340,7 @@
     "text": "professional/cancer-statistics/risk"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "26a84724035df76d7d8a6610a6fa4627",
     "metadata": {
       "data_source": {},
@@ -1360,7 +1360,7 @@
     "text": "the-full-costs-of-electricity-provision?details=true"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "d85940c91ae6b53fc4b41bd5137e7371",
     "metadata": {
       "data_source": {},
