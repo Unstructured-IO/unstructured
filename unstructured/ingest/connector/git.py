@@ -1,6 +1,7 @@
 import fnmatch
 import os
 from dataclasses import dataclass, field
+from functools import cached_property
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -26,24 +27,17 @@ class SimpleGitConfig(BaseConnectorConfig):
 
 @dataclass
 class GitFileMeta:
-    date_created: str
-    date_modified: str
-    version: str
+    date_created: Optional[str] = None
+    date_modified: Optional[str] = None
+    version: Optional[str] = None
+    source_url: Optional[str] = None
+    exists: Optional[bool] = None
 
 
 @dataclass
 class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleGitConfig = field(repr=False)
     path: str
-    file_exists: Optional[bool] = None
-    file_metadata: Optional[GitFileMeta] = None
-
-    def __post_init__(self):
-        self.file_created_at = None
-        self.file_updated_at = None
-        self.file_version = None
-        self.file_exists = False
-        self.file_download_url = None
 
     @property
     def filename(self):
@@ -55,21 +49,19 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def date_modified(self) -> Optional[str]:
-        if self.file_metadata is None:
-            self.get_file_metadata()
         return self.file_metadata.date_modified
 
     @property
     def exists(self) -> Optional[bool]:
-        if self.file_exists is None:
-            self.get_file_metadata()
-        return self.file_exists
+        return self.file_metadata.exists
 
     @property
     def version(self) -> Optional[str]:
-        if self.file_metadata is None:
-            self.get_file_metadata()
         return self.file_metadata.version
+
+    @property
+    def source_url(self) -> Optional[str]:
+        return self.file_metadata.source_url
 
     @property
     def record_locator(self) -> Dict[str, Any]:
@@ -95,6 +87,10 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         raise NotImplementedError()
 
     def _fetch_and_write(self) -> None:
+        raise NotImplementedError()
+
+    @cached_property
+    def file_metadata(self) -> GitFileMeta:
         raise NotImplementedError()
 
 

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from functools import cached_property
 from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
@@ -9,6 +10,7 @@ from unstructured.ingest.connector.git import (
     SimpleGitConfig,
 )
 from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
@@ -42,34 +44,43 @@ class GitLabIngestDoc(GitIngestDoc):
     config: SimpleGitLabConfig
     registry_name: str = "gitlab"
 
+    @requires_dependencies(["gitlab"], extras="gitlab")
     def _fetch_content(self):
+        from gitlab.exceptions import GitlabHttpError
+
         try:
             project = self.config._get_project()
             content_file = project.files.get(
                 self.path,
                 ref=self.config.branch or project.default_branch,
             )
-        except Exception as e:
-            self.file_exists = False
+        except GitlabHttpError as e:
+            if e.response_code == 404:
+                logger.error(f"File doesn't exists {self.config.url}/{self.path}")
+                return None
             raise
-        self.file_exists = True
         return content_file
 
     def _fetch_and_write(self) -> None:
         content_file = self._fetch_content()
+        if content_file is None:
+            raise ValueError(
+                f"Failed to retrieve file from repo " f"{self.config.url}/{self.path}. Check logs.",
+            )
         contents = content_file.decode()
-        self.file_exists = True
-        self.get_file_metadata(content_file)
         with open(self.filename, "wb") as f:
             f.write(contents)
 
-    def get_file_metadata(self, content_file=None):
+    @cached_property
+    def file_metadata(self):
+        content_file = self._fetch_content()
         if content_file is None:
-            content_file = self._fetch_content()
-        self.file_metadata = GitFileMeta(
-            None,
-            None,
-            content_file.attributes.get("commit_id", ""),
+            return GitFileMeta(
+                exists=None,
+            )
+        return GitFileMeta(
+            version=content_file.attributes.get("commit_id", ""),
+            exists=True,
         )
 
 

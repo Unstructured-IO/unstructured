@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from functools import cached_property
 from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
@@ -54,14 +55,19 @@ class GitHubIngestDoc(GitIngestDoc):
     config: SimpleGitHubConfig
     registry_name: str = "github"
 
+    @requires_dependencies(["github"], extras="github")
     def _fetch_content(self, is_content_file=False):
+        from github.GithubException import UnknownObjectException
+
         try:
             content_file = self.config._get_repo().get_contents(self.path)
-            self.file_exists = True
-        except Exception as e:
-            logger.error(f"Couldn't retrieve file {self.path}")
-            self.file_exists = False
+        except UnknownObjectException:
+            logger.error(f"File doesn't exists {self.config.url}/{self.path}")
+            return None
+        except Exception:
+            logger.error(f"Error processing {self.config.url}/{self.path}")
             raise
+
         if is_content_file:
             return content_file
 
@@ -75,25 +81,35 @@ class GitHubIngestDoc(GitIngestDoc):
             # NOTE: Maybe add a raise_for_status to catch connection timeout or HTTP Errors?
             response = requests.get(content_file.download_url)  # type: ignore
             if response.status_code != 200:
-                self.file_exists = False
                 logger.info("Direct download link has failed... Skipping this file.")
+                return None
             else:
                 contents = response.content
         else:
             contents = content_file.decoded_content  # type: ignore
         return contents
 
-    def get_file_metadata(self):
-        content_file = self.config._get_repo().get_contents(self.path)
-        self.file_metadata = GitFileMeta(
+    @cached_property
+    def file_metadata(self) -> GitFileMeta:
+        content_file = self._fetch_content(True)
+        if content_file is None:
+            return GitFileMeta(
+                exists=False,
+            )
+        return GitFileMeta(
             None,
             datetime.strptime(content_file.last_modified, "%a, %d %b %Y %H:%M:%S %Z").isoformat(),
             content_file.etag,
+            content_file.download_url,
+            True,
         )
 
     def _fetch_and_write(self) -> None:
         contents = self._fetch_content()
-        self.get_file_metadata()
+        if contents is None:
+            raise ValueError(
+                f"Failed to retrieve file from repo " f"{self.config.url}/{self.path}. Check logs",
+            )
         with open(self.filename, "wb") as f:
             f.write(contents)
 
