@@ -1,6 +1,6 @@
 Google Drive
 =============
-Connect Google Drive to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem. 
+Connect Google Drive to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
 
 First you'll need to install the Google Drive dependencies as shown here.
 
@@ -21,7 +21,7 @@ Run Locally
           gdrive \
           --drive-id "<file or folder id>" \
           --service-account-key "<path to drive service account key>" \
-          --structured-output-dir google-drive-ingest-output \
+          --output-dir google-drive-ingest-output \
           --num-processes 2 \
           --recursive \
           --verbose \
@@ -37,7 +37,7 @@ Run Locally
           "gdrive",
           "--drive-id", "<file or folder id>",
           "--service-account-key",, "Path/To/Your/Service/Account/Key"
-          "--structured-output-dir", "/Output/Path/To/Files",
+          "--output-dir", "/Output/Path/To/Files",
           "--num-processes", "2",
         ]
 
@@ -56,7 +56,7 @@ Run Locally
 Run via the API
 ---------------
 
-You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``. 
+You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``.
 
 .. tabs::
 
@@ -68,7 +68,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
           gdrive \
           --drive-id "<file or folder id>" \
           --service-account-key "<path to drive service account key>" \
-          --structured-output-dir google-drive-ingest-output \
+          --output-dir google-drive-ingest-output \
           --num-processes 2 \
           --recursive \
           --verbose \
@@ -86,7 +86,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
           "gdrive",
           "--drive-id", "<file or folder id>",
           "--service-account-key",, "Path/To/Your/Service/Account/Key"
-          "--structured-output-dir", "/Output/Path/To/Files",
+          "--output-dir", "/Output/Path/To/Files",
           "--num-processes", "2",
           "--partition-by-api",
           "--api-key", "<UNSTRUCTURED-API-KEY>",
@@ -104,7 +104,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
             print('Command failed. Error:')
             print(error.decode())
 
-Additionaly, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
+Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 
 For a full list of the options the CLI accepts check ``unstructured-ingest gdrive --help``.
 

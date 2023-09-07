@@ -20,11 +20,13 @@ Run Locally
 
         unstructured-ingest \
           jira \
-          --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+          --metadata-exclude filename \
+          --metadata-exclude file_directory \
+          --metadata-exclude metadata.data_source.date_processed \
           --url https://unstructured-jira-connector-test.atlassian.net \
           --user-email 12345678@unstructured.io \
           --api-token ABCDE1234ABDE1234ABCDE1234 \
-          --structured-output-dir jira-ingest-output \
+          --output-dir jira-ingest-output \
           --num-processes 2
 
    .. tab:: Python
@@ -36,11 +38,13 @@ Run Locally
         command = [
             "unstructured-ingest",
             "jira",
-            "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
+            "--metadata-exclude", "filename",
+            "--metadata-exclude", "file_directory",
+            "--metadata-exclude", "metadata.data_source.date_processed",
             "--url", "https://unstructured-jira-connector-test.atlassian.net",
             "--user-email", "12345678@unstructured.io",
             "--api-token", "ABCDE1234ABDE1234ABCDE1234",
-            "--structured-output-dir", "jira-ingest-output",
+            "--output-dir", "jira-ingest-output",
             "--num-processes", "2",
         ]
 
@@ -69,11 +73,13 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         unstructured-ingest \
           jira \
-          --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+          --metadata-exclude filename \
+          --metadata-exclude file_directory \
+          --metadata-exclude metadata.data_source.date_processed \
           --url https://unstructured-jira-connector-test.atlassian.net \
           --user-email 12345678@unstructured.io \
           --api-token ABCDE1234ABDE1234ABCDE1234 \
-          --structured-output-dir jira-ingest-output \
+          --output-dir jira-ingest-output \
           --num-processes 2 \
           --partition-by-api \
           --api-key "<UNSTRUCTURED-API-KEY>"
@@ -87,11 +93,13 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
         command = [
           "unstructured-ingest",
           "jira",
-          "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
+          "--metadata-exclude", "filename",
+          "--metadata-exclude", "file_directory",
+          "--metadata-exclude", "metadata.data_source.date_processed",
           "--url", "https://unstructured-jira-connector-test.atlassian.net",
           "--user-email", "12345678@unstructured.io",
           "--api-token", "ABCDE1234ABDE1234ABCDE1234",
-          "--structured-output-dir", "jira-ingest-output",
+          "--output-dir", "jira-ingest-output",
           "--num-processes", "2",
           "--partition-by-api",
           "--api-key", "<UNSTRUCTURED-API-KEY>",
@@ -109,7 +117,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
             print('Command failed. Error:')
             print(error.decode())
 
-Additionaly, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
+Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 
 For a full list of the options the CLI accepts check ``unstructured-ingest jira --help``.
 
