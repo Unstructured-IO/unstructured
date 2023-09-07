@@ -8,13 +8,13 @@ https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_de
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_connected_app.htm
 """
 import os
+from collections import OrderedDict
 from dataclasses import dataclass
 from email.utils import formatdate
 from pathlib import Path
 from string import Template
 from textwrap import dedent
 from typing import Any, Dict, List, Type
-from collections import OrderedDict
 
 from dateutil import parser  # type: ignore
 
@@ -180,13 +180,13 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 if isinstance(value, OrderedDict):
                     flatten_dict(value, parent, prefix=f"{prefix}{key}.")
                 else:
-                    item = ET.Element('item')
+                    item = ET.Element("item")
                     item.text = f"{prefix}{key}: {value}"
                     parent.append(item)
 
-        root = ET.Element('root')
+        root = ET.Element("root")
         flatten_dict(record, root)
-        xml_string = ET.tostring(root, encoding='utf-8', xml_declaration=True).decode()
+        xml_string = ET.tostring(root, encoding="utf-8", xml_declaration=True).decode()
         return xml_string
 
     def _eml_for_record(self, email_json: Dict[str, Any]) -> str:
