@@ -20,11 +20,6 @@ from unstructured.ingest.connector.fsspec import (
     SimpleFsspecConfig,
 )
 from unstructured.ingest.error import SourceConnectionError
-from unstructured.ingest.interfaces import (
-    BaseConnectorConfig,
-    PartitionConfig,
-    ReadConfig,
-)
 from unstructured.utils import requires_dependencies
 
 
@@ -88,19 +83,6 @@ class DropboxIngestDoc(FsspecIngestDoc):
 class DropboxSourceConnector(FsspecSourceConnector):
     connector_config: SimpleDropboxConfig
     ingest_doc_cls: Type[DropboxIngestDoc] = DropboxIngestDoc
-
-    @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
-    def __init__(
-        self,
-        read_config: ReadConfig,
-        connector_config: BaseConnectorConfig,
-        partition_config: PartitionConfig,
-    ):
-        super().__init__(
-            read_config=read_config,
-            connector_config=connector_config,
-            partition_config=partition_config,
-        )
 
     @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
     def initialize(self):

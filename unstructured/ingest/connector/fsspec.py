@@ -11,10 +11,7 @@ from unstructured.ingest.interfaces import (
     BaseIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
-    PartitionConfig,
-    ReadConfig,
     SourceConnectorCleanupMixin,
-    WriteConfig,
 )
 from unstructured.ingest.logger import logger
 
@@ -129,24 +126,13 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleFsspecConfig
     ingest_doc_cls: t.Type[FsspecIngestDoc] = FsspecIngestDoc
 
-    def __init__(
-        self,
-        read_config: ReadConfig,
-        connector_config: BaseConnectorConfig,
-        partition_config: PartitionConfig,
-    ):
+    def initialize(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
-        super().__init__(
-            read_config=read_config,
-            connector_config=connector_config,
-            partition_config=partition_config,
-        )
         self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
             **self.connector_config.access_kwargs,
         )
 
-    def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""
         ls_output = self.fs.ls(self.connector_config.path_without_protocol)
         if len(ls_output) < 1:
@@ -192,16 +178,12 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 class FsspecDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleFsspecConfig
 
-    def __init__(self, write_config: WriteConfig, connector_config: BaseConnectorConfig):
+    def initialize(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
-        super().__init__(write_config=write_config, connector_config=connector_config)
         self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
             **self.connector_config.access_kwargs,
         )
-
-    def initialize(self):
-        pass
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         from fsspec import AbstractFileSystem, get_filesystem_class
