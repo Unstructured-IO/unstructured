@@ -53,7 +53,7 @@ class JiraCliConfig(BaseConfig, CliMixin):
                 help="Email to authenticate into Atlassian (Jira) Cloud.",
             ),
             click.Option(
-                "--projects",
+                ["--projects"],
                 default=None,
                 multiple=True,
                 type=str,
