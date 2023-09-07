@@ -20,7 +20,7 @@ from unstructured.ingest.runner import salesforce as salesforce_fn
 
 
 @dataclass
-class SalesforceCliConfigs(BaseConfig, CliMixin):
+class SalesforceCliConfig(BaseConfig, CliMixin):
     username: str
     consumer_key: str
     private_key_path: str
@@ -74,11 +74,11 @@ def salesforce_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         # run_init_checks(**options)
-        read_configs = CliReadConfig.from_dict(options)
-        partition_configs = CliPartitionConfig.from_dict(options)
+        read_config = CliReadConfig.from_dict(options)
+        partition_config = CliPartitionConfig.from_dict(options)
         # Run for schema validation
-        SalesforceCliConfigs.from_dict(options)
-        salesforce_fn(read_config=read_configs, partition_configs=partition_configs, **options)
+        SalesforceCliConfig.from_dict(options)
+        salesforce_fn(read_config=read_config, partition_config=partition_config, **options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
@@ -86,7 +86,7 @@ def salesforce_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = salesforce_source
-    SalesforceCliConfigs.add_cli_options(cmd)
+    SalesforceCliConfig.add_cli_options(cmd)
     CliRecursiveConfig.add_cli_options(cmd)
 
     # Common CLI configs

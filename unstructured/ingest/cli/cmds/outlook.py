@@ -20,7 +20,7 @@ from unstructured.ingest.runner import outlook as outlook_fn
 
 
 @dataclass
-class OutlookCliConfigs(BaseConfig, CliMixin):
+class OutlookCliConfig(BaseConfig, CliMixin):
     client_id: str
     user_email: str
     tenant: t.Optional[str] = "common"
@@ -85,11 +85,11 @@ def outlook_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         # run_init_checks(**options)
-        read_configs = CliReadConfig.from_dict(options)
-        partition_configs = CliPartitionConfig.from_dict(options)
+        read_config = CliReadConfig.from_dict(options)
+        partition_config = CliPartitionConfig.from_dict(options)
         # Run for schema validation
-        OutlookCliConfigs.from_dict(options)
-        outlook_fn(read_config=read_configs, partition_configs=partition_configs, **options)
+        OutlookCliConfig.from_dict(options)
+        outlook_fn(read_config=read_config, partition_config=partition_config, **options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
@@ -97,7 +97,7 @@ def outlook_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = outlook_source
-    OutlookCliConfigs.add_cli_options(cmd)
+    OutlookCliConfig.add_cli_options(cmd)
     CliRecursiveConfig.add_cli_options(cmd)
 
     # Common CLI configs

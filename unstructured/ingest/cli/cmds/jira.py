@@ -19,7 +19,7 @@ from unstructured.ingest.runner import jira as jira_fn
 
 
 @dataclass
-class JiraCliConfigs(BaseConfig, CliMixin):
+class JiraCliConfig(BaseConfig, CliMixin):
     api_token: str
     url: str
     user_email: str
@@ -91,11 +91,11 @@ def jira_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         # run_init_checks(**options)
-        read_configs = CliReadConfig.from_dict(options)
-        partition_configs = CliPartitionConfig.from_dict(options)
+        read_config = CliReadConfig.from_dict(options)
+        partition_config = CliPartitionConfig.from_dict(options)
         # Run for schema validation
-        JiraCliConfigs.from_dict(options)
-        jira_fn(read_config=read_configs, partition_configs=partition_configs, **options)
+        JiraCliConfig.from_dict(options)
+        jira_fn(read_config=read_config, partition_config=partition_config, **options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
@@ -103,7 +103,7 @@ def jira_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = jira_source
-    JiraCliConfigs.add_cli_options(cmd)
+    JiraCliConfig.add_cli_options(cmd)
 
     # Common CLI configs
     CliReadConfig.add_cli_options(cmd)

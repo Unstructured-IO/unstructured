@@ -13,7 +13,7 @@ from unstructured.ingest.runner.writers import writer_map
 def delta_table(
     verbose: bool,
     read_config: ReadConfig,
-    partition_configs: PartitionConfig,
+    partition_config: PartitionConfig,
     table_uri: t.Union[str, Path],
     version: t.Optional[int] = None,
     storage_options: t.Optional[str] = None,
@@ -32,7 +32,7 @@ def delta_table(
     )
     read_config.download_dir = update_download_dir_hash(
         connector_name="delta_table",
-        read_configs=read_config,
+        read_config=read_config,
         hashed_dir_name=hashed_dir_name,
         logger=logger,
     )
@@ -54,7 +54,7 @@ def delta_table(
             columns=columns,
         ),
         read_config=read_config,
-        partition_config=partition_configs,
+        partition_config=partition_config,
     )
 
     dest_doc_connector = None
@@ -64,7 +64,7 @@ def delta_table(
 
     process_documents(
         source_doc_connector=source_doc_connector,
-        partition_config=partition_configs,
+        partition_config=partition_config,
         verbose=verbose,
         dest_doc_connector=dest_doc_connector,
     )

@@ -10,7 +10,7 @@ from unstructured.ingest.runner.writers import writer_map
 def local(
     verbose: bool,
     read_config: ReadConfig,
-    partition_configs: PartitionConfig,
+    partition_config: PartitionConfig,
     input_path: str,
     recursive: bool,
     file_glob: t.Optional[str],
@@ -34,7 +34,7 @@ def local(
             file_glob=file_glob,
         ),
         read_config=read_config,
-        partition_config=partition_configs,
+        partition_config=partition_config,
     )
 
     dest_doc_connector = None
@@ -44,7 +44,7 @@ def local(
 
     process_documents(
         source_doc_connector=source_doc_connector,
-        partition_config=partition_configs,
+        partition_config=partition_config,
         verbose=verbose,
         dest_doc_connector=dest_doc_connector,
     )

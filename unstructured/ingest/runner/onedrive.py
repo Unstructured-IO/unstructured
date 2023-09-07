@@ -12,7 +12,7 @@ from unstructured.ingest.runner.writers import writer_map
 def onedrive(
     verbose: bool,
     read_config: ReadConfig,
-    partition_configs: PartitionConfig,
+    partition_config: PartitionConfig,
     tenant: str,
     user_pname: str,
     client_id: str,
@@ -34,7 +34,7 @@ def onedrive(
 
     read_config.download_dir = update_download_dir_hash(
         connector_name="onedrive",
-        read_configs=read_config,
+        read_config=read_config,
         hashed_dir_name=hashed_dir_name,
         logger=logger,
     )
@@ -55,7 +55,7 @@ def onedrive(
             recursive=recursive,
         ),
         read_config=read_config,
-        partition_config=partition_configs,
+        partition_config=partition_config,
     )
 
     dest_doc_connector = None
@@ -65,7 +65,7 @@ def onedrive(
 
     process_documents(
         source_doc_connector=source_doc_connector,
-        partition_config=partition_configs,
+        partition_config=partition_config,
         verbose=verbose,
         dest_doc_connector=dest_doc_connector,
     )

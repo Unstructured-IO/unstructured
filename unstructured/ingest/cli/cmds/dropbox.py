@@ -20,7 +20,7 @@ from unstructured.ingest.runner import dropbox as dropbox_fn
 
 
 @dataclass
-class DropboxCliConfigs(BaseConfig, CliMixin):
+class DropboxCliConfig(BaseConfig, CliMixin):
     token: str
 
     @staticmethod
@@ -47,11 +47,11 @@ def dropbox_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         # run_init_checks(**options)
-        read_configs = CliReadConfig.from_dict(options)
-        partition_configs = CliPartitionConfig.from_dict(options)
+        read_config = CliReadConfig.from_dict(options)
+        partition_config = CliPartitionConfig.from_dict(options)
         # Run for schema validation
-        DropboxCliConfigs.from_dict(options)
-        dropbox_fn(read_config=read_configs, partition_configs=partition_configs, **options)
+        DropboxCliConfig.from_dict(options)
+        dropbox_fn(read_config=read_config, partition_config=partition_config, **options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
@@ -59,7 +59,7 @@ def dropbox_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = dropbox_source
-    DropboxCliConfigs.add_cli_options(cmd)
+    DropboxCliConfig.add_cli_options(cmd)
     CliRemoteUrlConfig.add_cli_options(cmd)
     CliRecursiveConfig.add_cli_options(cmd)
 

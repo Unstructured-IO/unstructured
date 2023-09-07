@@ -20,7 +20,7 @@ from unstructured.ingest.runner import sharepoint as sharepoint_fn
 
 
 @dataclass
-class SharepointCliConfigs(BaseConfig, CliMixin):
+class SharepointCliConfig(BaseConfig, CliMixin):
     client_id: t.Optional[str] = None
     client_cred: t.Optional[str] = None
     site: t.Optional[str] = None
@@ -76,11 +76,11 @@ def sharepoint_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         # run_init_checks(**options)
-        read_configs = CliReadConfig.from_dict(options)
-        partition_configs = CliPartitionConfig.from_dict(options)
+        read_config = CliReadConfig.from_dict(options)
+        partition_config = CliPartitionConfig.from_dict(options)
         # Run for schema validation
-        SharepointCliConfigs.from_dict(options)
-        sharepoint_fn(read_config=read_configs, partition_configs=partition_configs, **options)
+        SharepointCliConfig.from_dict(options)
+        sharepoint_fn(read_config=read_config, partition_config=partition_config, **options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
@@ -88,7 +88,7 @@ def sharepoint_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = sharepoint_source
-    SharepointCliConfigs.add_cli_options(cmd)
+    SharepointCliConfig.add_cli_options(cmd)
     CliRecursiveConfig.add_cli_options(cmd)
 
     # Common CLI configs

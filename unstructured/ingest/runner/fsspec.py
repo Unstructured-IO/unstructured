@@ -13,7 +13,7 @@ from unstructured.ingest.runner.writers import writer_map
 def fsspec(
     verbose: bool,
     read_config: ReadConfig,
-    partition_configs: PartitionConfig,
+    partition_config: PartitionConfig,
     remote_url: str,
     recursive: bool,
     writer_type: t.Optional[str] = None,
@@ -25,7 +25,7 @@ def fsspec(
 
     read_config.download_dir = update_download_dir_remote_url(
         connector_name="fsspec",
-        read_configs=read_config,
+        read_config=read_config,
         remote_url=remote_url,
         logger=logger,
     )
@@ -49,7 +49,7 @@ def fsspec(
             recursive=recursive,
         ),
         read_config=read_config,
-        partition_config=partition_configs,
+        partition_config=partition_config,
     )
 
     dest_doc_connector = None
@@ -59,7 +59,7 @@ def fsspec(
 
     process_documents(
         source_doc_connector=source_doc_connector,
-        partition_config=partition_configs,
+        partition_config=partition_config,
         verbose=verbose,
         dest_doc_connector=dest_doc_connector,
     )

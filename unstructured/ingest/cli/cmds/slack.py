@@ -19,7 +19,7 @@ from unstructured.ingest.runner import slack as slack_fn
 
 
 @dataclass
-class SlackCliConfigs(BaseConfig, CliMixin):
+class SlackCliConfig(BaseConfig, CliMixin):
     token: str
     channels: t.List[str]
     start_date: t.Optional[str] = None
@@ -73,11 +73,11 @@ def slack_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         # run_init_checks(**options)
-        read_configs = CliReadConfig.from_dict(options)
-        partition_configs = CliPartitionConfig.from_dict(options)
+        read_config = CliReadConfig.from_dict(options)
+        partition_config = CliPartitionConfig.from_dict(options)
         # Run for schema validation
-        SlackCliConfigs.from_dict(options)
-        slack_fn(read_config=read_configs, partition_configs=partition_configs, **options)
+        SlackCliConfig.from_dict(options)
+        slack_fn(read_config=read_config, partition_config=partition_config, **options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
@@ -85,7 +85,7 @@ def slack_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = slack_source
-    SlackCliConfigs.add_cli_options(cmd)
+    SlackCliConfig.add_cli_options(cmd)
 
     # Common CLI configs
     CliReadConfig.add_cli_options(cmd)

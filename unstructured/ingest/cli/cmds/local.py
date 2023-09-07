@@ -20,7 +20,7 @@ from unstructured.ingest.runner import local as local_fn
 
 
 @dataclass
-class LocalCliConfigs(BaseConfig, CliMixin):
+class LocalCliConfig(BaseConfig, CliMixin):
     input_path: str
     file_glob: t.Optional[str] = None
 
@@ -56,11 +56,11 @@ def local_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         # run_init_checks(**options)
-        read_configs = CliReadConfig.from_dict(options)
-        partition_configs = CliPartitionConfig.from_dict(options)
+        read_config = CliReadConfig.from_dict(options)
+        partition_config = CliPartitionConfig.from_dict(options)
         # Run for schema validation
-        LocalCliConfigs.from_dict(options)
-        local_fn(read_config=read_configs, partition_configs=partition_configs, **options)
+        LocalCliConfig.from_dict(options)
+        local_fn(read_config=read_config, partition_config=partition_config, **options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
@@ -68,7 +68,7 @@ def local_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = local_source
-    LocalCliConfigs.add_cli_options(cmd)
+    LocalCliConfig.add_cli_options(cmd)
     CliRecursiveConfig.add_cli_options(cmd)
 
     # Common CLI configs

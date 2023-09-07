@@ -20,7 +20,7 @@ from unstructured.ingest.runner import s3 as s3_fn
 
 
 @dataclass
-class S3CliConfigs(BaseConfig, CliMixin):
+class S3CliConfig(BaseConfig, CliMixin):
     anonymous: bool = False
 
     @staticmethod
@@ -51,11 +51,11 @@ def s3_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         # run_init_checks(**options)
-        read_configs = CliReadConfig.from_dict(options)
-        partition_configs = CliPartitionConfig.from_dict(options)
+        read_config = CliReadConfig.from_dict(options)
+        partition_config = CliPartitionConfig.from_dict(options)
         # Run for schema validation
-        S3CliConfigs.from_dict(options)
-        s3_fn(read_config=read_configs, partition_configs=partition_configs, **options)
+        S3CliConfig.from_dict(options)
+        s3_fn(read_config=read_config, partition_config=partition_config, **options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
@@ -78,13 +78,13 @@ def s3_dest(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         # run_init_checks(**options)
-        read_configs = CliReadConfig.from_dict(parent_options)
-        partition_configs = CliPartitionConfig.from_dict(parent_options)
+        read_config = CliReadConfig.from_dict(parent_options)
+        partition_config = CliPartitionConfig.from_dict(parent_options)
         # Run for schema validation
-        S3CliConfigs.from_dict(options)
+        S3CliConfig.from_dict(options)
         s3_fn(
-            read_config=read_configs,
-            partition_configs=partition_configs,
+            read_config=read_config,
+            partition_config=partition_config,
             writer_type="s3",
             writer_kwargs=options,
             **parent_options,
@@ -96,14 +96,14 @@ def s3_dest(ctx: click.Context, **options):
 
 def get_dest_cmd() -> click.Command:
     cmd = s3_dest
-    S3CliConfigs.add_cli_options(cmd)
+    S3CliConfig.add_cli_options(cmd)
     CliRemoteUrlConfig.add_cli_options(cmd)
     return cmd
 
 
 def get_source_cmd() -> click.Group:
     cmd = s3_source
-    S3CliConfigs.add_cli_options(cmd)
+    S3CliConfig.add_cli_options(cmd)
     CliRemoteUrlConfig.add_cli_options(cmd)
     CliRecursiveConfig.add_cli_options(cmd)
 

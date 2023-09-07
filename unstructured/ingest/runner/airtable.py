@@ -12,7 +12,7 @@ from unstructured.ingest.runner.writers import writer_map
 def airtable(
     verbose: bool,
     read_config: ReadConfig,
-    partition_configs: PartitionConfig,
+    partition_config: PartitionConfig,
     personal_access_token: str,
     list_of_paths: t.Optional[str],
     writer_type: t.Optional[str] = None,
@@ -28,7 +28,7 @@ def airtable(
 
     read_config.download_dir = update_download_dir_hash(
         connector_name="airtable",
-        read_configs=read_config,
+        read_config=read_config,
         hashed_dir_name=hashed_dir_name,
         logger=logger,
     )
@@ -44,7 +44,7 @@ def airtable(
             list_of_paths=list_of_paths,
         ),
         read_config=read_config,
-        partition_config=partition_configs,
+        partition_config=partition_config,
     )
 
     dest_doc_connector = None
@@ -54,7 +54,7 @@ def airtable(
 
     process_documents(
         source_doc_connector=source_doc_connector,
-        partition_config=partition_configs,
+        partition_config=partition_config,
         verbose=verbose,
         dest_doc_connector=dest_doc_connector,
     )

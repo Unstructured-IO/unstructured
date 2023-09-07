@@ -20,7 +20,7 @@ from unstructured.ingest.runner import onedrive as onedrive_fn
 
 
 @dataclass
-class OnedriveCliConfigs(BaseConfig, CliMixin):
+class OnedriveCliConfig(BaseConfig, CliMixin):
     client_id: str
     client_cred: str
     user_pname: str
@@ -72,11 +72,11 @@ def onedrive_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         # run_init_checks(**options)
-        read_configs = CliReadConfig.from_dict(options)
-        partition_configs = CliPartitionConfig.from_dict(options)
+        read_config = CliReadConfig.from_dict(options)
+        partition_config = CliPartitionConfig.from_dict(options)
         # Run for schema validation
-        OnedriveCliConfigs.from_dict(options)
-        onedrive_fn(read_config=read_configs, partition_configs=partition_configs, **options)
+        OnedriveCliConfig.from_dict(options)
+        onedrive_fn(read_config=read_config, partition_config=partition_config, **options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
@@ -84,7 +84,7 @@ def onedrive_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = onedrive_source
-    OnedriveCliConfigs.add_cli_options(cmd)
+    OnedriveCliConfig.add_cli_options(cmd)
     CliRecursiveConfig.add_cli_options(cmd)
 
     # Common CLI configs

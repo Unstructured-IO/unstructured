@@ -12,7 +12,7 @@ from unstructured.ingest.runner.writers import writer_map
 def outlook(
     verbose: bool,
     read_config: ReadConfig,
-    partition_configs: PartitionConfig,
+    partition_config: PartitionConfig,
     user_email: str,
     client_id: t.Optional[str],
     client_cred: t.Optional[str],
@@ -32,7 +32,7 @@ def outlook(
 
     read_config.download_dir = update_download_dir_hash(
         connector_name="outlook",
-        read_configs=read_config,
+        read_config=read_config,
         hashed_dir_name=hashed_dir_name,
         logger=logger,
     )
@@ -53,7 +53,7 @@ def outlook(
             recursive=recursive,
         ),
         read_config=read_config,
-        partition_config=partition_configs,
+        partition_config=partition_config,
     )
 
     dest_doc_connector = None
@@ -63,7 +63,7 @@ def outlook(
 
     process_documents(
         source_doc_connector=source_doc_connector,
-        partition_config=partition_configs,
+        partition_config=partition_config,
         verbose=verbose,
         dest_doc_connector=dest_doc_connector,
     )

@@ -11,7 +11,7 @@ from unstructured.ingest.runner.writers import writer_map
 def s3(
     verbose: bool,
     read_config: ReadConfig,
-    partition_configs: PartitionConfig,
+    partition_config: PartitionConfig,
     remote_url: str,
     recursive: bool,
     anonymous: bool,
@@ -24,7 +24,7 @@ def s3(
 
     read_config.download_dir = update_download_dir_remote_url(
         connector_name="s3",
-        read_configs=read_config,
+        read_config=read_config,
         remote_url=remote_url,
         logger=logger,
     )
@@ -38,7 +38,7 @@ def s3(
             access_kwargs={"anon": anonymous},
         ),
         read_config=read_config,
-        partition_config=partition_configs,
+        partition_config=partition_config,
     )
 
     dest_doc_connector = None
@@ -48,7 +48,7 @@ def s3(
 
     process_documents(
         source_doc_connector=source_doc_connector,
-        partition_config=partition_configs,
+        partition_config=partition_config,
         verbose=verbose,
         dest_doc_connector=dest_doc_connector,
     )

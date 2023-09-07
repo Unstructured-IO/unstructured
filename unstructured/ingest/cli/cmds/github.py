@@ -21,7 +21,7 @@ from unstructured.ingest.runner import github as github_fn
 
 
 @dataclass
-class GithubCliConfigs(BaseConfig, CliMixin):
+class GithubCliConfig(BaseConfig, CliMixin):
     url: str
     git_access_token: t.Optional[str] = None
     git_branch: t.Optional[str] = None
@@ -75,11 +75,11 @@ def github_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         # run_init_checks(**options)
-        read_configs = CliReadConfig.from_dict(options)
-        partition_configs = CliPartitionConfig.from_dict(options)
+        read_config = CliReadConfig.from_dict(options)
+        partition_config = CliPartitionConfig.from_dict(options)
         # Run for schema validation
-        GithubCliConfigs.from_dict(options)
-        github_fn(read_config=read_configs, partition_configs=partition_configs, **options)
+        GithubCliConfig.from_dict(options)
+        github_fn(read_config=read_config, partition_config=partition_config, **options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
@@ -87,7 +87,7 @@ def github_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = github_source
-    GithubCliConfigs.add_cli_options(cmd)
+    GithubCliConfig.add_cli_options(cmd)
     CliRemoteUrlConfig.add_cli_options(cmd)
     CliRecursiveConfig.add_cli_options(cmd)
 
