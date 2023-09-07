@@ -220,26 +220,6 @@
     "text": "Nice to have:"
   },
   {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": ""
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": ""
-  },
-  {
     "type": "Title",
     "element_id": "7f999c0456e4e85cc028aa6ed90455d4",
     "metadata": {
@@ -254,26 +234,6 @@
       ]
     },
     "text": "Not in scope:"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": ""
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": ""
   },
   {
     "type": "Title",
