@@ -197,7 +197,7 @@ class HTMLDocument(XMLDocument):
     def doc_after_cleaners(
         self,
         skip_headers_and_footers=False,
-        skip_table_text=False,
+        skip_table=False,
         inplace=False,
     ) -> HTMLDocument:
         """Filters the elements and returns a new instance of the class based on the criteria
@@ -205,8 +205,8 @@ class HTMLDocument(XMLDocument):
         page are filtered out.
         Parameters
         ----------
-        skip_table_text:
-            If True, skips text that is contained within a table element
+        skip_table:
+            If True, skips table element
         skip_headers_and_footers:
             If True, ignores any content that is within <header> or <footer> tags
         inplace:
@@ -216,8 +216,8 @@ class HTMLDocument(XMLDocument):
         excluders = []
         if skip_headers_and_footers:
             excluders.append(in_header_or_footer)
-        if skip_table_text:
-            excluders.append(has_table_ancestor)
+        if skip_table:
+            excluders.append(_is_table_item)
 
         pages = []
         page_number = 0
@@ -462,9 +462,12 @@ def _process_leaf_table_item(
         nested_table = tag_elem.findall("table")
         if not nested_table:
             rows = tag_elem.findall("tr")
+            if not rows:
+                body = tag_elem.find("tbody")
+                rows = body.findall("tr")
             if len(rows) > 0:
-                table_data = [[list(row.itertext())] for row in rows]
-                table_text = tabulate(table_data, headers="firstrow", tablefmt="html")
+                table_data = [list(row.itertext()) for row in rows]
+                table_text = tabulate(table_data, tablefmt="html")
             else:
                 table_text = ""
 
