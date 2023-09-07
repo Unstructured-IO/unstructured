@@ -195,6 +195,10 @@ install-ingest-notion:
 install-ingest-salesforce:
 	python3 -m pip install -r requirements/ingest-salesforce.txt
 
+.PHONY: install-ingest-jira
+install-ingest-jira:
+	python3 -m pip install -r requirements/ingest-jira.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt

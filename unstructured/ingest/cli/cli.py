@@ -33,6 +33,7 @@ subcommands = [
     cli_cmds.sharepoint,
     cli_cmds.airtable,
     cli_cmds.salesforce,
+    cli_cmds.jira,
 ]
 
 for subcommand in subcommands:

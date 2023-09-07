@@ -1,4 +1,4 @@
-## 0.10.13-dev1
+## 0.10.13-dev2
 
 ### Enhancements
 
@@ -6,10 +6,13 @@
 - Use `unstructured.pytesseract.run_and_get_multiple_output` function to reduce the number of calls
   to `tesseract` by half when partitioning pdf or image with `tesseract`
 
+### Features
+
+* Add Jira Connector to be able to pull issues from a Jira organization
+
 ### Fixes
 
 * Ingest error handling to properly raise errors when wrapped
-
 
 ## 0.10.12
 
