@@ -114,7 +114,7 @@ def test_read_without_skipping_table(monkeypatch):
 </html>"""
     document = HTMLDocument.from_string(doc).doc_after_cleaners(skip_table=False)
     assert document.pages[0].elements[0] == Table(
-        text="<table>\n<tbody>\n<tr><td></td><td>Hi there! I am Matt!</td><td></td></tr>\n</tbody>\n</table>"
+        text="<table>\n<tbody>\n<tr><td></td><td>Hi there! I am Matt!</td><td></td></tr>\n</tbody>\n</table>",
     )
 
 
