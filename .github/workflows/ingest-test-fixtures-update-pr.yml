@@ -56,6 +56,7 @@ jobs:
           source .venv/bin/activate
           mkdir "$NLTK_DATA"
           make install-ci
+          LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
       - name: Update test fixtures
         env:
           AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
@@ -115,6 +116,8 @@ jobs:
           make install-ingest-wikipedia
           make install-ingest-notion
           make install-ingest-delta-table
+          pip install unstructured_paddleocr
+          git clone -b  yuming/inference_with_paddle --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && make install-project-local && cd ../
           ./test_unstructured_ingest/test-ingest.sh
 
       - name: Save branch name to environment file
