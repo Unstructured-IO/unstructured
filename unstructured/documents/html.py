@@ -217,7 +217,7 @@ class HTMLDocument(XMLDocument):
         if skip_headers_and_footers:
             excluders.append(in_header_or_footer)
         if skip_table:
-            excluders.append(_is_table_item)
+            excluders.append(is_table)
 
         pages = []
         page_number = 0
@@ -259,7 +259,6 @@ def _get_links_from_tag(tag_elem: etree.Element) -> List[Link]:
     href = tag_elem.get("href")
     if href:
         links.append({"text": tag_elem.text, "url": href})
-
     for tag in tag_elem.iterdescendants():
         href = tag.get("href")
         if href:
@@ -479,7 +478,7 @@ def _process_leaf_table_item(
                 tag_elem,
             )
 
-        return None, None
+    return None, None
 
 
 def _process_list_item(
@@ -587,6 +586,11 @@ def has_table_ancestor(element: TagsMixin) -> bool:
     """Checks to see if an element has ancestors that are table elements. If so, we consider
     it to be a table element rather than a section of narrative text."""
     return any(ancestor in TABLE_TAGS for ancestor in element.ancestortags)
+
+
+def is_table(element: TagsMixin) -> bool:
+    """Checks to see if an element is a table"""
+    return element.tag in TABLE_TAGS
 
 
 def in_header_or_footer(element: TagsMixin) -> bool:
