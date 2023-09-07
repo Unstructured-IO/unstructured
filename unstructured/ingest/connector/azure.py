@@ -6,6 +6,7 @@ from unstructured.ingest.connector.fsspec import (
     FsspecIngestDoc,
     SimpleFsspecConfig,
 )
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import StandardConnectorConfig
 from unstructured.utils import requires_dependencies
 
@@ -19,6 +20,7 @@ class SimpleAzureBlobStorageConfig(SimpleFsspecConfig):
 class AzureBlobStorageIngestDoc(FsspecIngestDoc):
     registry_name: str = "azure"
 
+    @SourceConnectionError.wrap
     @requires_dependencies(["adlfs", "fsspec"], extras="azure")
     def get_file(self):
         super().get_file()

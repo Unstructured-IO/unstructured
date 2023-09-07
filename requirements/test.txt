@@ -81,7 +81,7 @@ pydantic==1.10.12
     #   label-studio-sdk
 pyflakes==3.1.0
     # via flake8
-pytest==7.4.0
+pytest==7.4.1
     # via
     #   pytest-cov
     #   pytest-mock
@@ -97,7 +97,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-ruff==0.0.286
+ruff==0.0.287
     # via -r requirements/test.in
 six==1.16.0
     # via python-dateutil
