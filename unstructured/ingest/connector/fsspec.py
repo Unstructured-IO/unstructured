@@ -38,6 +38,9 @@ class SimpleFsspecConfig(BaseConnectorConfig):
     dir_path: str = field(init=False)
     file_path: str = field(init=False)
 
+    def get_access_kwargs(self) -> dict:
+        return self.access_kwargs
+
     def __post_init__(self):
         self.protocol, self.path_without_protocol = self.path.split("://")
         if self.protocol not in SUPPORTED_REMOTE_FSSPEC_PROTOCOLS:
@@ -108,7 +111,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         self._create_full_tmp_dir_path()
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.access_kwargs,
+            **self.connector_config.get_access_kwargs(),
         )
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
@@ -130,7 +133,7 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.access_kwargs,
+            **self.connector_config.get_access_kwargs(),
         )
 
         """Verify that can get metadata for an object, validates connections info."""
@@ -182,14 +185,14 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.access_kwargs,
+            **self.connector_config.get_access_kwargs(),
         )
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.access_kwargs,
+            **self.connector_config.get_access_kwargs(),
         )
 
         logger.info(f"Writing content using filesystem: {type(fs).__name__}")
