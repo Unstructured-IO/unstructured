@@ -1,4 +1,4 @@
-## 0.10.13-dev3
+## 0.10.13-dev4
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization
+* Create and add `add_chunking_strategy` decorator to partition functions
 
 ### Fixes
 
