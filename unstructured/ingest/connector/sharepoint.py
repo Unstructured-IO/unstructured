@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 from urllib.parse import urlparse
 from functools import cached_property
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -134,6 +135,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def source_url(self) -> Optional[str]:
         return self.file_metadata.source_url # type: ignore
 
+    @SourceConnectionError.wrap
     @requires_dependencies(["office365"], extras="sharepoint")
     def _fetch_file(self):
         """Retrieves the actual page/file from the Sharepoint instance"""

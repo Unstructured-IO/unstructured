@@ -12,12 +12,14 @@ from .gcs import gcs
 from .github import github
 from .gitlab import gitlab
 from .google_drive import gdrive
+from .jira import jira
 from .local import local
 from .notion import notion
 from .onedrive import onedrive
 from .outlook import outlook
 from .reddit import reddit
 from .s3 import s3
+from .salesforce import salesforce
 from .sharepoint import sharepoint
 from .slack import slack
 from .wikipedia import wikipedia
@@ -37,12 +39,14 @@ __all__ = [
     "gdrive",
     "github",
     "gitlab",
+    "jira",
     "local",
     "notion",
     "onedrive",
     "outlook",
     "reddit",
     "s3",
+    "salesforce",
     "sharepoint",
     "slack",
     "wikipedia",

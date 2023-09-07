@@ -15,4 +15,4 @@ export PYTHONPATH=.:$PYTHONPATH && python examples/custom-layout-order/evaluate_
 ```
 
 ### Running jupyter notebook
-The Google Colab version of the notebook can be found here: `<Unstructured colab Gdrive>/evaluate_xy_cut_sorting.ipynb`
+The Google Colab version of the notebook can be found here: https://colab.research.google.com/drive/1HgBvHNPnY-dXO043DftvvMeynlLPgQ_p
