@@ -167,8 +167,8 @@ class ElementMetadata:
     # Metadata extracted via regex
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
 
-    # Title depth to map chipper elements Headline and Subheadline
-    title_depth: Optional[int] = None
+    # Depth relative to the element's category 
+    category_depth: Optional[int] = 0
 
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
