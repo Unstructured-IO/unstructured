@@ -226,7 +226,8 @@ def main():
         "Expected revenue for GC Product Webinar",
         "High priority cases",
         "My email to Patricia",
-        "All of my emails to Bertha" "Anything on Farmers Cooperation of Florida",
+        "All of my emails to Bertha",
+        "Anything on Farmers Cooperation of Florida",
     ]
 
     for query in queries:
