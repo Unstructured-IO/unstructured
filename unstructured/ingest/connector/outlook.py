@@ -2,9 +2,10 @@ import hashlib
 import os
 from collections import defaultdict
 from dataclasses import dataclass, field
+from functools import cached_property
 from itertools import chain
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
@@ -77,6 +78,15 @@ class SimpleOutlookConfig(BaseConnectorConfig):
 
 
 @dataclass
+class OutlookFileMeta:
+    date_created: Optional[str] = None
+    date_modified: Optional[str] = None
+    version: Optional[str] = None
+    source_url: Optional[str] = None
+    exists: Optional[bool] = None
+
+
+@dataclass
 class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOutlookConfig
     message_id: str
@@ -109,6 +119,57 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         return Path(self.output_filepath).resolve()
+
+    @property
+    def date_created(self) -> Optional[str]:
+        return self.file_metadata.date_created  # type: ignore
+
+    @property
+    def date_modified(self) -> Optional[str]:
+        return self.file_metadata.date_modified  # type: ignore
+
+    @property
+    def exists(self) -> Optional[bool]:
+        return self.file_metadata.exists
+
+    @property
+    def record_locator(self) -> Optional[Dict[str, Any]]:
+        return {
+            "message_id": self.message_id,
+            "user_email": self.config.user_email,
+        }
+
+    @property
+    def version(self) -> Optional[str]:
+        return self.file_metadata.version  # type: ignore
+
+    @property
+    def source_url(self) -> Optional[str]:
+        return self.file_metadata.source_url  # type: ignore
+
+    @cached_property
+    @requires_dependencies(["office365"], extras="outlook")
+    def file_metadata(self) -> OutlookFileMeta:
+        from office365.runtime.client_request_exception import ClientRequestException
+
+        try:
+            client = self.config._get_client()
+            msg = (
+                client.users[self.config.user_email].messages[self.message_id].get().execute_query()
+            )
+        except ClientRequestException as e:
+            if e.response.status_code == 404:
+                return OutlookFileMeta(
+                    exists=False,
+                )
+            raise
+        return OutlookFileMeta(
+            msg.created_datetime.isoformat(),
+            msg.last_modified_datetime.isoformat(),
+            msg.get_property("changeKey"),
+            msg.get_property("webLink"),
+            True,
+        )
 
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists

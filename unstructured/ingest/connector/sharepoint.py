@@ -1,10 +1,11 @@
 from dataclasses import dataclass, field
 from datetime import datetime
+from functools import cached_property
 from html import unescape
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 from urllib.parse import urlparse
-from functools import cached_property
+
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
@@ -65,6 +66,7 @@ class SharepointFileMeta:
     version: Optional[str] = None
     source_url: Optional[str] = None
     exists: Optional[bool] = None
+
 
 @dataclass
 class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -130,10 +132,10 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def version(self) -> Optional[str]:
         return self.file_metadata.version  # type: ignore
-    
+
     @property
     def source_url(self) -> Optional[str]:
-        return self.file_metadata.source_url # type: ignore
+        return self.file_metadata.source_url  # type: ignore
 
     @SourceConnectionError.wrap
     @requires_dependencies(["office365"], extras="sharepoint")
@@ -166,14 +168,12 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return None
         return page
 
-
     @cached_property
     def file_metadata(self) -> SharepointFileMeta:
-
         file = self._fetch_file()
         if file is None:
             return SharepointFileMeta(
-                exists=False
+                exists=False,
             )
         if not self.is_page:
             return SharepointFileMeta(
@@ -181,20 +181,20 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 datetime.strptime(file.time_last_modified, "%Y-%m-%dT%H:%M:%S.%fZ").isoformat(),
                 file.major_version,
                 self.server_path,
-                True
+                True,
             )
         else:
             page = self._fetch_page()
             if page is None:
                 return SharepointFileMeta(
-                exists=False
+                    exists=False,
                 )
             return SharepointFileMeta(
                 page.get_property("FirstPublished", None),
                 page.get_property("Modified", None),
                 page.get_property("Version", ""),
                 page.absolute_url,
-                True
+                True,
             )
 
     def _download_page(self):
