@@ -4,7 +4,7 @@ from html import unescape
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 from urllib.parse import urlparse
-
+from functools import cached_property
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -59,10 +59,11 @@ class SimpleSharepointConfig(BaseConnectorConfig):
 
 @dataclass
 class SharepointFileMeta:
-    date_created: str
-    date_modified: str
-    version: str
-
+    date_created: Optional[str] = None
+    date_modified: Optional[str] = None
+    version: Optional[str] = None
+    source_url: Optional[str] = None
+    exists: Optional[bool] = None
 
 @dataclass
 class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -71,8 +72,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     server_path: str
     is_page: bool
     file_path: str
-    file_exists: Optional[bool] = None
-    file_meta: Optional[SharepointFileMeta] = None
     registry_name: str = "sharepoint"
 
     def __post_init__(self):
@@ -110,21 +109,15 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def date_created(self) -> Optional[str]:
-        if self.file_meta is None:
-            self.get_file_metadata()
-        return self.file_meta.date_created  # type: ignore
+        return self.file_metadata.date_created  # type: ignore
 
     @property
     def date_modified(self) -> Optional[str]:
-        if self.file_meta is None:
-            self.get_file_metadata()
-        return self.file_meta.date_modified  # type: ignore
+        return self.file_metadata.date_modified  # type: ignore
 
     @property
     def exists(self) -> Optional[bool]:
-        if self.file_exists is None:
-            self.get_file_metadata()
-        return self.file_exists
+        return self.file_metadata.exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
@@ -135,9 +128,11 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def version(self) -> Optional[str]:
-        if self.file_meta is None:
-            self.get_file_metadata()
-        return self.file_meta.version  # type: ignore
+        return self.file_metadata.version  # type: ignore
+    
+    @property
+    def source_url(self) -> Optional[str]:
+        return self.file_metadata.source_url # type: ignore
 
     @requires_dependencies(["office365"], extras="sharepoint")
     def _fetch_file(self):
@@ -154,7 +149,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         except ClientRequestException as e:
             if e.response.status_code == 404:
-                self.file_exists = False
+                return None
             raise
         self.file_exists = True
         return file
@@ -169,30 +164,40 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return None
         return page
 
-    @requires_dependencies(["office365"], extras="sharepoint")
-    def get_file_metadata(self, file=None):
+
+    @cached_property
+    def file_metadata(self) -> SharepointFileMeta:
+
+        file = self._fetch_file()
         if file is None:
-            file = self._fetch_file()
+            return SharepointFileMeta(
+                exists=False
+            )
         if not self.is_page:
-            self.file_meta = SharepointFileMeta(
+            return SharepointFileMeta(
                 datetime.strptime(file.time_created, "%Y-%m-%dT%H:%M:%S.%fZ").isoformat(),
                 datetime.strptime(file.time_last_modified, "%Y-%m-%dT%H:%M:%S.%fZ").isoformat(),
                 file.major_version,
+                self.server_path,
+                True
             )
         else:
             page = self._fetch_page()
             if page is None:
-                return
-            self.file_meta = SharepointFileMeta(
+                return SharepointFileMeta(
+                exists=False
+                )
+            return SharepointFileMeta(
                 page.get_property("FirstPublished", None),
                 page.get_property("Modified", None),
                 page.get_property("Version", ""),
+                page.absolute_url,
+                True
             )
 
     def _download_page(self):
         """Formats and saves locally page content"""
         file = self._fetch_file()
-        self.get_file_metadata(file)
         content = file.listItemAllFields.select(CONTENT_LABELS).get().execute_query()
         pld = (content.properties.get("LayoutWebpartsContent1", "") or "") + (
             content.properties.get("CanvasContent1", "") or ""
@@ -216,7 +221,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def _download_file(self):
         file = self._fetch_file()
-        self.get_file_metadata(file)
         fsize = file.length
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
