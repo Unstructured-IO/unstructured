@@ -9,7 +9,7 @@
 * Add Jira Connector to be able to pull issues from a Jira organization
 
 ### Fixes
-* `add_pytesseract_bbox_to_elements` no longer returns `nan` values and logic is broken into new methods
+* `add_pytesseract_bboxes_to_elements` no longer returns `nan` values and logic is broken into new methods
   `_get_element_box` and `convert_multiple_coordinates_to_new_system`
 
 * `partition_html` breaks on `<br>` elements.
