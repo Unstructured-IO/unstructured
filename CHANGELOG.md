@@ -1,3 +1,13 @@
+## 0.10.13-dev4
+
+### Enhancements
+
+* Adds data source properties (date_created, date_modified, version, exists, source_url, record_locator) to Sharepoint and Outlook connectors.
+
+### Features
+
+### Fixes
+
 ## 0.10.13-dev3
 
 ### Enhancements
