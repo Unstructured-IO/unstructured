@@ -9,7 +9,6 @@ else:
     from typing import Final
 
 from lxml import etree
-
 from tabulate import tabulate
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
@@ -21,9 +20,9 @@ from unstructured.documents.elements import (
     Link,
     ListItem,
     NarrativeText,
+    Table,
     Text,
     Title,
-    Table,
 )
 from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
@@ -456,23 +455,26 @@ def _is_text_tag(tag_elem: etree.Element, max_predecessor_len: int = 5) -> bool:
     return False
 
 
-def _process_leaf_table_item(tag_elem: etree.Element
+def _process_leaf_table_item(
+    tag_elem: etree.Element,
 ) -> Tuple[Optional[Element], etree.Element]:
     if tag_elem.tag in TABLE_TAGS:
-        nested_table = tag_elem.findall('table')
+        nested_table = tag_elem.findall("table")
         if not nested_table:
-            rows = tag_elem.findall('tr')
+            rows = tag_elem.findall("tr")
             if len(rows) > 0:
-                table_data = [[[cell for cell in row.itertext()]] for row in rows]
+                table_data = [[list(row.itertext())] for row in rows]
                 table_text = tabulate(table_data, headers="firstrow", tablefmt="html")
             else:
                 table_text = ""
 
-            return (HTMLTable(
+            return (
+                HTMLTable(
                     text=table_text,
-                    tag=tag_elem.tag
-                    ),
-                    tag_elem)
+                    tag=tag_elem.tag,
+                ),
+                tag_elem,
+            )
 
         return None, None
 
