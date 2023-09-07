@@ -40,7 +40,7 @@ TEST_DATE_PROCESSSED = "2022-12-13T15:44:08"
 
 @dataclass
 class TestIngestDoc(BaseIngestDoc):
-    config: TestConfig
+    connector_config: TestConfig
 
     @property
     def filename(self):
