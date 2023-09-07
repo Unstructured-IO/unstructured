@@ -126,7 +126,7 @@ def partition_pptx(
                     elements.append(ListItem(text=text, metadata=metadata))
                 elif is_email_address(text):
                     elements.append(EmailAddress(text=text))
-                elif is_possible_title(text) and not page_title_detected:
+                elif not page_title_detected and is_possible_title(text):
                     elements.append(Title(text=text, metadata=metadata))
                     page_title_detected = True
                 elif is_possible_narrative_text(text):
