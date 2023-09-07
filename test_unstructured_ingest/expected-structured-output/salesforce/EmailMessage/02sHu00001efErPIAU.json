@@ -1,18 +1,1 @@
-[
-  {
-    "type": "NarrativeText",
-    "element_id": "d954fa8e82ded23ebde30b2d53d5f81d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "message/rfc822",
-      "sent_from": [
-        "devops+salesforce-connector@unstructured.io"
-      ],
-      "sent_to": [
-        "jane_gray@uoa.edu"
-      ],
-      "subject": "Test of email 1"
-    },
-    "text": "Jane. This is a test of sending you an email from Salesforce!\n\n_____________________________________________________________________\nPowered by Salesforce\nhttp://www.salesforce.com/"
-  }
-]
+[]
