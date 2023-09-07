@@ -12,6 +12,7 @@ from unstructured.documents.elements import (
     NarrativeText,
     Text,
     Title,
+    Table,
 )
 from unstructured.documents.html import (
     HEADING_TAGS,
@@ -78,12 +79,7 @@ def test_parses_tags_correctly():
     doc = HTMLDocument.from_string(raw_html)
     el = doc.elements[0]
     assert el.ancestortags + (el.tag,) == (
-        "html",
-        "body",
         "table",
-        "tbody",
-        "tr",
-        "td",
     )
 
 
@@ -118,8 +114,8 @@ def test_read_without_skipping_table(monkeypatch):
         </table>
     </body>
 </html>"""
-    document = HTMLDocument.from_string(doc).doc_after_cleaners(skip_table_text=False)
-    assert document.pages[0].elements[0] == NarrativeText(text="Hi there! I am Matt!")
+    document = HTMLDocument.from_string(doc).doc_after_cleaners(skip_table=False)
+    assert document.pages[0].elements[0] == Table(text='<table>\n<tbody>\n<tr><td></td><td>Hi there! I am Matt!</td><td></td></tr>\n</tbody>\n</table>')
 
 
 @pytest.mark.parametrize(
@@ -356,7 +352,7 @@ def test_read_html_doc(tmpdir, monkeypatch):
 
     html_document = HTMLDocument.from_file(filename=filename).doc_after_cleaners(
         skip_headers_and_footers=True,
-        skip_table_text=True,
+        skip_table=True,
     )
     print("original pages: ", HTMLDocument.from_file(filename=filename).pages)
     print("filtered pages: ", html_document.pages)
@@ -370,7 +366,7 @@ def test_read_html_doc(tmpdir, monkeypatch):
         Title(text=TITLE1),
         NarrativeText(text=SECTION1),
         Title(text=TITLE2),
-        NarrativeText(text=SECTION2),
+        NarrativeText(text=SECTION2)
     ]
 
     page_two = html_document.pages[1]
@@ -472,7 +468,7 @@ def test_include_headers_and_footers(sample_doc):
 
 
 def test_include_table_text(sample_doc):
-    html_document = sample_doc.doc_after_cleaners(skip_table_text=False)
+    html_document = sample_doc.doc_after_cleaners(skip_table=False)
     assert len(html_document.pages[0].elements) == 2
 
 
@@ -503,8 +499,8 @@ def test_exclude_tag_types(tag):
 
 
 def test_tag_types_table(sample_doc):
-    html_document = sample_doc.doc_after_cleaners(skip_table_text=True)
-    assert len(html_document.pages[0].elements) == 1
+    html_document = sample_doc.doc_after_cleaners(skip_table=True)
+    assert len(html_document.pages[0].elements) == 2
 
 
 def test_nested_text_tags():
@@ -518,7 +514,7 @@ def test_nested_text_tags():
         </{tag1}>
     </body>
     """
-    html_document = HTMLDocument.from_string(html_str).doc_after_cleaners(skip_table_text=False)
+    html_document = HTMLDocument.from_string(html_str).doc_after_cleaners(skip_table=False)
     assert len(html_document.pages[0].elements) == 1
 
 
@@ -664,7 +660,7 @@ def test_filter_in_place():
     """
     doc = HTMLDocument.from_string(html_doc)
     assert len(doc.elements) == 2
-    doc.doc_after_cleaners(skip_table_text=True, inplace=True)
+    doc.doc_after_cleaners(skip_table=True, inplace=True)
     assert len(doc.elements) == 1
 
 
