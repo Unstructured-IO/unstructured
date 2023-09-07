@@ -10,6 +10,8 @@ else:
 
 from lxml import etree
 
+from tabulate import tabulate
+
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.base import Page
 from unstructured.documents.elements import (
@@ -21,6 +23,7 @@ from unstructured.documents.elements import (
     NarrativeText,
     Text,
     Title,
+    Table,
 )
 from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
@@ -101,6 +104,12 @@ class HTMLListItem(TagsMixin, ListItem):
     pass
 
 
+class HTMLTable(TagsMixin, Table):
+    """NarrativeText with tag information"""
+
+    pass
+
+
 class HTMLDocument(XMLDocument):
     """Class for handling HTML documents. Uses rules based parsing to identify sections
     of interest within the document."""
@@ -167,6 +176,12 @@ class HTMLDocument(XMLDocument):
                     if element is not None:
                         page.elements.append(element)
                         descendanttag_elems = _get_bullet_descendants(tag_elem, next_element)
+
+                elif _is_table_item(tag_elem):
+                    element, next_element = _process_leaf_table_item(tag_elem)
+                    if element is not None:
+                        page.elements.append(element)
+                        descendanttag_elems = tuple(tag_elem.iterdescendants())
 
                 elif tag_elem.tag in PAGEBREAK_TAGS and len(page.elements) > 0:
                     pages.append(page)
@@ -441,6 +456,27 @@ def _is_text_tag(tag_elem: etree.Element, max_predecessor_len: int = 5) -> bool:
     return False
 
 
+def _process_leaf_table_item(tag_elem: etree.Element
+) -> Tuple[Optional[Element], etree.Element]:
+    if tag_elem.tag in TABLE_TAGS:
+        nested_table = tag_elem.findall('table')
+        if not nested_table:
+            rows = tag_elem.findall('tr')
+            if len(rows) > 0:
+                table_data = [[[cell for cell in row.itertext()]] for row in rows]
+                table_text = tabulate(table_data, headers="firstrow", tablefmt="html")
+            else:
+                table_text = ""
+
+            return (HTMLTable(
+                    text=table_text,
+                    tag=tag_elem.tag
+                    ),
+                    tag_elem)
+
+        return None, None
+
+
 def _process_list_item(
     tag_elem: etree.Element,
     max_predecessor_len: int = 5,
@@ -492,6 +528,13 @@ def is_list_item_tag(tag_elem: etree.Element) -> bool:
     if tag_elem.tag in LIST_ITEM_TAGS or (
         tag_elem.tag in SECTION_TAGS and is_bulleted_text(_construct_text(tag_elem))
     ):
+        return True
+    return False
+
+
+def _is_table_item(tag_elem: etree.Element) -> bool:
+    """Checks to see if a tag contains table item"""
+    if tag_elem.tag in TABLE_TAGS:
         return True
     return False
 
