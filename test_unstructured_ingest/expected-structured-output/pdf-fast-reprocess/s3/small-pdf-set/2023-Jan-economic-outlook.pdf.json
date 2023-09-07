@@ -680,7 +680,7 @@
     "text": "The balance of risks to the global outlook remains tilted to the downside, with scope for lower growth and higher inflation, but adverse risks have moderated since the October 2022 World Economic Outlook."
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "8f81c653cbf1334344d3063cb9f4de04",
     "metadata": {
       "data_source": {},
@@ -1220,7 +1220,7 @@
     "text": "4.1 4.9 4.1 7.1 2.8 2.0 1.9 2.2 1.9 . . . 3.5 . . . 2.9 1.8"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "9e5246f529e197f84af65bbcd8e0d2a4",
     "metadata": {
       "data_source": {},
@@ -1320,7 +1320,7 @@
     "text": "2.5 2.0 4.0 . . . 4.1 . . ."
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "0c76bc4e35219e2a31b09428cd47d009",
     "metadata": {
       "data_source": {},
@@ -1420,7 +1420,7 @@
     "text": ". . . . . . . . ."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "3c0578f4d944258ffa4ffac7615f1ff9",
     "metadata": {
       "data_source": {},
@@ -1520,7 +1520,7 @@
     "text": "–5.9 –0.2"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "6bb1e757e09d7fa3aba323a375abd047",
     "metadata": {
       "data_source": {},
