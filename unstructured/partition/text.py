@@ -264,7 +264,7 @@ def element_from_text(
         clean_text = clean_bullets(text)
         if clean_text:
             return ListItem(
-                text=clean_bullets(clean_text),
+                text=clean_text,
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
             )
