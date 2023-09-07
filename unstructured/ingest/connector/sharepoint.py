@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from office365.sharepoint.publishing.pages.page import SitePage
 
 MAX_MB_SIZE = 512_000_000
-CONTENT_LABELS = ["CanvasContent1", "LayoutWebpartsContent1"]
+CONTENT_LABELS = ["CanvasContent1", "LayoutWebpartsContent1", "TimeCreated"]
 
 
 @dataclass
@@ -80,7 +80,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def __post_init__(self):
         self.extension = "".join(Path(self.file_path).suffixes) if not self.is_page else ".html"
         self.extension = ".html" if self.extension == ".aspx" else self.extension
-
         if not self.extension:
             raise ValueError("Unsupported file without extension.")
 
@@ -139,7 +138,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @SourceConnectionError.wrap
     @requires_dependencies(["office365"], extras="sharepoint")
-    def _fetch_file(self):
+    def _fetch_file(self, properties_only: bool = False):
         """Retrieves the actual page/file from the Sharepoint instance"""
         from office365.runtime.client_request_exception import ClientRequestException
 
@@ -148,20 +147,27 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         try:
             if self.is_page:
                 file = site_client.web.get_file_by_server_relative_path(self.server_path)
+                file = file.listItemAllFields.select(CONTENT_LABELS).get().execute_query()
             else:
                 file = site_client.web.get_file_by_server_relative_url(self.server_path)
+                if properties_only:
+                    file = file.get().execute_query()
 
         except ClientRequestException as e:
             if e.response.status_code == 404:
                 return None
             raise
-        self.file_exists = True
         return file
 
     def _fetch_page(self):
         site_client = self.config.get_site_client(self.site_url)
         try:
-            page = site_client.site_pages.pages.get_by_url(self.server_path)
+            page = (
+                site_client.site_pages.pages.get_by_url(self.server_path)
+                .expand(["FirstPublished", "Modified", "Version"])
+                .get()
+                .execute_query()
+            )
         except Exception as e:
             logger.error(f"Failed to retrieve page {self.server_path} from site {self.server_path}")
             logger.error(e)
@@ -170,20 +176,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @cached_property
     def file_metadata(self) -> SharepointFileMeta:
-        file = self._fetch_file()
-        if file is None:
-            return SharepointFileMeta(
-                exists=False,
-            )
-        if not self.is_page:
-            return SharepointFileMeta(
-                datetime.strptime(file.time_created, "%Y-%m-%dT%H:%M:%S.%fZ").isoformat(),
-                datetime.strptime(file.time_last_modified, "%Y-%m-%dT%H:%M:%S.%fZ").isoformat(),
-                file.major_version,
-                self.server_path,
-                True,
-            )
-        else:
+        if self.is_page:
             page = self._fetch_page()
             if page is None:
                 return SharepointFileMeta(
@@ -197,10 +190,22 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 True,
             )
 
+        file = self._fetch_file(True)
+        if file is None:
+            return SharepointFileMeta(
+                exists=False,
+            )
+        return SharepointFileMeta(
+            datetime.strptime(file.time_created, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
+            datetime.strptime(file.time_last_modified, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
+            file.major_version,
+            file.properties.get("LinkingUrl", None),
+            True,
+        )
+
     def _download_page(self):
         """Formats and saves locally page content"""
-        file = self._fetch_file()
-        content = file.listItemAllFields.select(CONTENT_LABELS).get().execute_query()
+        content = self._fetch_file()
         pld = (content.properties.get("LayoutWebpartsContent1", "") or "") + (
             content.properties.get("CanvasContent1", "") or ""
         )
@@ -290,7 +295,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
             self.config,
             base_url,
             server_path,
-            True,
+            is_page,
             file_path,
         )
 
