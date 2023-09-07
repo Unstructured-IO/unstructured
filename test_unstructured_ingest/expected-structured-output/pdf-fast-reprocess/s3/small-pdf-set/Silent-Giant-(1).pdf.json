@@ -430,7 +430,7 @@
     "text": "2040"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "da2a1eade528ab599d4421bd78e7185a",
     "metadata": {
       "data_source": {},
@@ -680,7 +680,7 @@
     "text": "Despite impressive recent growth, the stark reality is that renewables alone will not be able to resolve our dependence on fossil fuels. Clearly, the sun does not always shine, and the wind does not always blow, and this is compounded by the fact that many times these periods coincide with when electricity demand is at its highest, but renewables can be complementary to nuclear energy. Storage solutions, such as batteries, will not be able to power our societies for days or weeks when the weather is not favourable. Natural gas is currently the most used solution for the intermittency problem, which only serves to reinforce our economy’s dependence of fossil fuels, and severely undermines the apparently ‘green credentials’ of many renewables."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "3655eec20e80973efc46cc09db7a04ba",
     "metadata": {
       "data_source": {},
@@ -820,7 +820,7 @@
     "text": "0"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "4b5ebf5890b9c61b43c5daf4c40cbab0",
     "metadata": {
       "data_source": {},
@@ -890,7 +890,7 @@
     "text": "C oal"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "8ec0de3652344a83cd2b538ecd3bd8aa",
     "metadata": {
       "data_source": {},
@@ -970,7 +970,7 @@
     "text": "140"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "e11247712b3df61756970b45f019ad68",
     "metadata": {
       "data_source": {},
@@ -1000,7 +1000,7 @@
     "text": "e"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "f9bb49945b60897227abdd75b5f8d39b",
     "metadata": {
       "data_source": {},
@@ -1190,7 +1190,7 @@
     "text": "(U K)"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "50a78acc78a3c5b4acc8c439af743a0a",
     "metadata": {
       "data_source": {},
@@ -1240,7 +1240,7 @@
     "text": "N uclear*"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "26a7b59940bf704ccad5e0482bbc79c7",
     "metadata": {
       "data_source": {},
@@ -1700,7 +1700,7 @@
     "text": "The incredible energy density of uranium means that just a few kilos is all that is required to provide one person with enough power for a lifetime. Uranium is abundant and can be found in many parts of the world, as well as in seawater. Furthermore, spent nuclear fuel is well managed and can in most cases be recycled to produce even more power. By using nuclear energy, countries are able to take charge of their own destinies by decreasing their reliance on imported energy – enhanced independence and security in uncertain times."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "36ca9b7cdbbcba729a46487cf86c07eb",
     "metadata": {
       "data_source": {},
