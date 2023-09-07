@@ -4,11 +4,14 @@
     "element_id": "54bdbe8a7a031cf41a7f99cf3a27b8ff",
     "metadata": {
       "data_source": {
-        "version": "",
+        "url": "https://unstructuredio.sharepoint.com/SitePages/This-is-a-title.aspx",
+        "version": "1.0",
         "record_locator": {
           "server_path": "/SitePages/This-is-a-title.aspx",
           "site_url": "https://unstructuredio.sharepoint.com"
-        }
+        },
+        "date_created": "0001-01-01T08:00:00Z",
+        "date_modified": "2023-07-31T07:03:37Z"
       },
       "filename": "This-is-a-title.html",
       "filetype": "text/html",
@@ -21,11 +24,14 @@
     "element_id": "7499f3d6c2534c6017c1c6e08406640f",
     "metadata": {
       "data_source": {
-        "version": "",
+        "url": "https://unstructuredio.sharepoint.com/SitePages/This-is-a-title.aspx",
+        "version": "1.0",
         "record_locator": {
           "server_path": "/SitePages/This-is-a-title.aspx",
           "site_url": "https://unstructuredio.sharepoint.com"
-        }
+        },
+        "date_created": "0001-01-01T08:00:00Z",
+        "date_modified": "2023-07-31T07:03:37Z"
       },
       "filename": "This-is-a-title.html",
       "filetype": "text/html",
@@ -38,11 +44,14 @@
     "element_id": "3d8a9d73a6fae35d8fd19f8e82578fa5",
     "metadata": {
       "data_source": {
-        "version": "",
+        "url": "https://unstructuredio.sharepoint.com/SitePages/This-is-a-title.aspx",
+        "version": "1.0",
         "record_locator": {
           "server_path": "/SitePages/This-is-a-title.aspx",
           "site_url": "https://unstructuredio.sharepoint.com"
-        }
+        },
+        "date_created": "0001-01-01T08:00:00Z",
+        "date_modified": "2023-07-31T07:03:37Z"
       },
       "filename": "This-is-a-title.html",
       "filetype": "text/html",
@@ -55,11 +64,14 @@
     "element_id": "27f6715881d63c1795b3c7e17b20090a",
     "metadata": {
       "data_source": {
-        "version": "",
+        "url": "https://unstructuredio.sharepoint.com/SitePages/This-is-a-title.aspx",
+        "version": "1.0",
         "record_locator": {
           "server_path": "/SitePages/This-is-a-title.aspx",
           "site_url": "https://unstructuredio.sharepoint.com"
-        }
+        },
+        "date_created": "0001-01-01T08:00:00Z",
+        "date_modified": "2023-07-31T07:03:37Z"
       },
       "filename": "This-is-a-title.html",
       "filetype": "text/html",
