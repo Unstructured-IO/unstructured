@@ -1,4 +1,4 @@
-## 0.10.13-dev2
+## 0.10.13-dev3
 
 ### Enhancements
 
@@ -10,6 +10,7 @@
 
 ### Fixes
 
+* `partition_html` breaks on `<br>` elements.
 * Ingest error handling to properly raise errors when wrapped
 
 ## 0.10.12
@@ -31,7 +32,7 @@
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
-  
+
 ## 0.10.11
 
 ### Enhancements

@@ -36,9 +36,10 @@ TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]
 HEADING_TAGS: Final[List[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
 TABLE_TAGS: Final[List[str]] = ["table", "tbody", "td", "tr"]
+TEXTBREAK_TAGS: Final[List[str]] = ["br"]
 PAGEBREAK_TAGS: Final[List[str]] = ["hr"]
+EMPTY_TAGS: Final[List[str]] = PAGEBREAK_TAGS + TEXTBREAK_TAGS
 HEADER_OR_FOOTER_TAGS: Final[List[str]] = ["header", "footer"]
-EMPTY_TAGS: Final[List[str]] = ["br", "hr"]
 SECTION_TAGS: Final[List[str]] = ["div", "pre"]
 
 
@@ -136,10 +137,18 @@ class HTMLDocument(XMLDocument):
                     continue
 
                 if _is_text_tag(tag_elem):
-                    element = _parse_tag(tag_elem)
-                    if element is not None:
-                        page.elements.append(element)
-                        descendanttag_elems = tuple(tag_elem.iterdescendants())
+                    if _has_break_tags(tag_elem):
+                        flattened_elems = _unfurl_break_tags(tag_elem)
+                        for _tag_elem in flattened_elems:
+                            element = _parse_tag(_tag_elem)
+                            if element is not None:
+                                page.elements.append(element)
+
+                    else:
+                        element = _parse_tag(tag_elem)
+                        if element is not None:
+                            page.elements.append(element)
+                    descendanttag_elems = tuple(tag_elem.iterdescendants())
 
                 elif _is_container_with_text(tag_elem):
                     links = _get_links_from_tag(tag_elem)
@@ -383,6 +392,29 @@ def _construct_text(tag_elem: etree.Element, include_tail_text: bool = True) -> 
 
     text = replace_unicode_quotes(text)
     return text.strip()
+
+
+def _has_break_tags(tag_elem: etree.Element) -> bool:
+    for descendant in tag_elem.iterdescendants():
+        if descendant.tag in TEXTBREAK_TAGS:
+            return True
+    return False
+
+
+def _unfurl_break_tags(tag_elem: etree.Element) -> List[etree.Element]:
+    unfurled = []
+    children = tag_elem.getchildren()
+    for child in children:
+        if not _has_break_tags(child):
+            unfurled.append(child)
+        else:
+            if child.text:
+                _tag_elem = etree.Element(child.tag)
+                _tag_elem.text = child.text
+                unfurled.append(_tag_elem)
+            unfurled.extend(_unfurl_break_tags(child))
+
+    return unfurled
 
 
 def _is_text_tag(tag_elem: etree.Element, max_predecessor_len: int = 5) -> bool:
