@@ -70,6 +70,7 @@ networkx==3.1
     # via torch
 numpy==1.24.4
     # via
+    #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   contourpy
     #   layoutparser
@@ -145,7 +146,7 @@ python-dateutil==2.8.2
     #   pandas
 python-multipart==0.0.6
     # via unstructured-inference
-pytz==2023.3
+pytz==2023.3.post1
     # via pandas
 pyyaml==6.0.1
     # via
@@ -200,7 +201,7 @@ tqdm==4.66.1
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.32.1
+transformers==4.33.1
     # via unstructured-inference
 typing-extensions==4.7.1
     # via

@@ -10,6 +10,7 @@ fsspec==2023.9.0
     # via -r requirements/ingest-delta-table.in
 numpy==1.24.4
     # via
+    #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   pyarrow
 pyarrow==13.0.0
