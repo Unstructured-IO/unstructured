@@ -4,7 +4,7 @@
 
 * Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
 
-## 0.10.13-dev2
+## 0.10.13-dev3
 
 ### Enhancements
 
