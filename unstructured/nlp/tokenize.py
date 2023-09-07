@@ -62,7 +62,8 @@ def pos_tag(text: str) -> List[Tuple[str, str]]:
 def ne_chunk(text: str) -> Tree:
     """A wrapper around the NLTK Chunk with LRU caching enabled."""
     _download_nltk_package_if_not_present(
-        package_category="chunkers", package_name="maxent_ne_chunker"
+        package_category="chunkers",
+        package_name="maxent_ne_chunker",
     )
     pos = pos_tag(text)
     # NOTE(klaijan) - binary=True captures everything that is name-entity as NE,
