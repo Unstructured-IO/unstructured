@@ -1,18 +1,18 @@
 import os
-import time
 import uuid
 
 import weaviate
+from weaviate.embedded import EmbeddedOptions
 from weaviate.util import get_valid_uuid
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.partition.json import partition_json
 
-# from weaviate.embedded import EmbeddedOptions
-
 LOGS = []
 ERROR_LOGS = []
+COHERE_KEY = os.environ.get("COHERE_API_KEY")
+OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
 
 
 def find_files_recursive(folder_path):
@@ -32,10 +32,14 @@ def get_chunks(elements):
             # note: data_source attribute is assigned as a dict and this breaks chunking
             delattr(element.metadata, "data_source")
 
+        if hasattr(element.metadata, "coordinates"):
+            # note: coordinates attribute maps each element to an individual chunk,
+            # this breaks chunking logically (outputs lots of small chunks)
+            delattr(element.metadata, "coordinates")
+
     chunks = chunk_by_title(elements)
 
     for i in range(len(chunks)):
-        # import pdb; pdb.set_trace()
         chunks[i] = {"last_modified": chunks[i].metadata.last_modified, "text": chunks[i].text}
 
     return chunks
@@ -44,9 +48,6 @@ def get_chunks(elements):
 def get_weaviate():
     WEAVIATE_URL = os.environ.get("WEAVIATE_URL")
     WEAVIATE_API_KEY = os.environ.get("WEAVIATE_API_KEY")
-    COHERE_KEY = os.environ.get("COHERE_API_KEY")
-    OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
-
     auth_config = weaviate.AuthApiKey(api_key=WEAVIATE_API_KEY)
 
     client = weaviate.Client(
@@ -58,12 +59,18 @@ def get_weaviate():
     return client
 
 
+def get_weaviate_local():
+    return weaviate.Client(
+        embedded_options=EmbeddedOptions(
+            additional_env_vars={"ENABLE_MODULES": "text2vec-openai,reranker-cohere"},
+        ),
+        additional_headers={"X-OpenAI-Api-Key": OPENAI_KEY, "X-Cohere-API-Key": COHERE_KEY},
+    )
+
+
 def get_schema():
-    # vectorizer = "text2vec-huggingface"
     vectorizer = "text2vec-openai"
-    # vectorizer = "none"
-    schema = {
-        # xml, eml, pdf, xlsx, docx
+    return {
         "classes": [
             {
                 "class": "myfiletype",
@@ -90,7 +97,6 @@ def get_schema():
             },
         ],
     }
-    return schema
 
 
 def upload_schema(my_schema, weaviate):
@@ -144,9 +150,11 @@ def add_data_to_weaviate(files, weaviate):
             chunks = get_chunks(elements)
             msg = f"\n\n{str(filename)} is succesfully processed."
             LOGS.append(msg)
+            print(msg)
         except IndexError:
             error_msg = f"\n\nindex error for {filename}"
             ERROR_LOGS.append(error_msg)
+            print(error_msg)
             continue
 
         for i, chunk in enumerate(chunks):
@@ -157,10 +165,9 @@ def add_data_to_weaviate(files, weaviate):
             )
             msg = f"chunk {i} is added"
             LOGS.append(msg)
-            time.sleep(0.01)
 
     weaviate.batch.flush()
-    print("\n\n-----\n\n", "Batch flushed")
+    # print("\n\n-----\n\n","Batch flushed")
 
 
 def get_batch_with_cursor(client, class_name, class_properties, batch_size, cursor=None):
@@ -184,61 +191,46 @@ def delete_objects(weaviate):
     )
 
 
+def query_and_show_results(query, weaviate):
+    request_object = get_request_object_for_ranking(query)
+    response = weaviate.query.raw(request_object)
+    print(response)
+    print(query, "\n\n\n---\n")
+    return response
+
+
 def main():
     # pip install weaviate-client here
     # I've created a WCS instance: https://console.weaviate.cloud/create-cluster
-    weaviate = get_weaviate()
+    weaviate = get_weaviate_local()
 
-    # # import pdb; pdb.set_trace()
-    # my_schema = get_schema()
+    my_schema = get_schema()
+    upload_schema(my_schema, weaviate=weaviate)
 
-    # upload_schema(my_schema,
-    #                 weaviate=weaviate)
-
-    # files = find_files_recursive("data/results")
-
-    # add_data_to_weaviate(files=files,
-    #                      weaviate=weaviate)
-
-    # response = get_file_using_query(weaviate=weaviate,
-    #                 query_str="Ryan")
-
-    # delete_objects(weaviate=weaviate)
-
-    print("Sending query request")
-
-    # response = get_batch_with_cursor(client=weaviate,
-    #                       class_name="myfiletype",
-    #                       class_properties=["text","last_modified"],
-    #                       batch_size=2)
-
-    # response = get_file_using_query(weaviate=weaviate,
-    #                      query_str="Ryan")
-
-    # import pdb; pdb.set_trace()
+    files = find_files_recursive("data/results")
+    add_data_to_weaviate(files=files, weaviate=weaviate)
 
     for log in LOGS:
         print(log)
     for log in ERROR_LOGS:
         print(log)
 
-    query = "Scientific investments in Asia"
-    request_object = get_request_object_for_ranking(query)
-    response = weaviate.query.raw(request_object)
-    print(response)
-    print(query, "\n\n\n---\n")
+    print("Sending query request")
 
-    query = "My email to Patricia"
-    request_object = get_request_object_for_ranking(query)
-    response = weaviate.query.raw(request_object)
-    print(response)
-    print(query, "\n\n\n---\n")
+    queries = [
+        "Market sizes for hardware manufacturing",
+        "Information on the planets",
+        "Recent research related initiatives",
+        "When will Dragon spacecraft land back?",
+        "Billing street for Edge Communications",
+        "Expected revenue for GC Product Webinar",
+        "High priority cases",
+        "My email to Patricia",
+        "All of my emails to Bertha" "Anything on Farmers Cooperation of Florida",
+    ]
 
-    query = "Information on the planets"
-    request_object = get_request_object_for_ranking(query)
-    response = weaviate.query.raw(request_object)
-    print(response)
-    print(query, "\n\n\n---\n")
+    for query in queries:
+        query_and_show_results(query, weaviate)
 
 
 if __name__ == "__main__":
