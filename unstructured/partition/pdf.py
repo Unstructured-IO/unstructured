@@ -54,7 +54,7 @@ def partition_pdf(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    ocr_languages: str = "None", #change default for deprecation
+    ocr_languages: str = None, #change default for deprecation
     languages: List[str] = ["eng"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
@@ -113,6 +113,8 @@ def partition_pdf(
             "Please use languages instead.",
         )
     kwargs.setdefault("languages", languages)
+
+    print(languages)
 
     return partition_pdf_or_image(
         filename=filename,
