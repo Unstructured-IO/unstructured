@@ -36,6 +36,7 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
+from unstructured.partition.lang import prepare_languages_for_tesseract, convert_old_ocr_languages_to_languages
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
@@ -55,7 +56,7 @@ def partition_pdf(
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: str = None, #change default for deprecation
-    languages: List[str] = ["eng"],
+    languages: List[str] = ["eng"], #NOTE(shreya): this default is causing line 107 check to never be true because it gets caught at 101 instead
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     include_metadata: bool = True,
@@ -107,14 +108,11 @@ def partition_pdf(
         )
     
     if ocr_languages is not None:
-        languages = ocr_languages #TODO(shreya): convert format to list
+        languages = convert_old_ocr_languages_to_languages(ocr_languages)
         logger.warn(
             "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
             "Please use languages instead.",
         )
-    kwargs.setdefault("languages", languages)
-
-    print(languages)
 
     return partition_pdf_or_image(
         filename=filename,
