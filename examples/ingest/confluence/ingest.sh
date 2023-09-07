@@ -22,9 +22,11 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 #     --> The maximum number of documents to be ingested from each space. Set as 250 in the example.
 PYTHONPATH=. ./unstructured/ingest/main.py \
         confluence \
-        --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+        --metadata-exclude filename \
+        --metadata-exclude file_directory \
+        --metadata-exclude metadata.data_source.date_processed \
         --url https://unstructured-ingest-test.atlassian.net \
         --user-email 12345678@unstructured.io \
         --api-token ABCDE1234ABDE1234ABCDE1234 \
-        --structured-output-dir confluence-ingest-output \
+        --output-dir confluence-ingest-output \
         --num-processes 2

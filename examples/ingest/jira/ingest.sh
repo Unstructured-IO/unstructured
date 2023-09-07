@@ -29,11 +29,13 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
         jira \
-        --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+        --metadata-exclude filename \
+        --metadata-exclude file_directory \
+        --metadata-exclude metadata.data_source.date_processed \
         --url https://unstructured-jira-connector-test.atlassian.net \
         --user-email "$JIRA_USER_EMAIL" \
         --api-token "$JIRA_API_TOKEN" \
-        --structured-output-dir jira-ingest-output \
+        --output-dir jira-ingest-output \
         --num-processes 2 \
         --reprocess
         # --list-of-projects <your project keys/ids here (space separated)> \

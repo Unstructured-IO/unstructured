@@ -15,9 +15,11 @@ trap 'echo "Stopping Elasticsearch Docker container"; docker stop es-test' EXIT
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
         elasticsearch \
-        --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+        --metadata-exclude filename \
+        --metadata-exclude file_directory \
+        --metadata-exclude metadata.data_source.date_processed \
         --url http://localhost:9200 \
         --index-name movies \
         --jq-query '{ethnicity, director, plot}' \
-        --structured-output-dir elasticsearch-ingest-output \
+        --output-dir elasticsearch-ingest-output \
         --num-processes 2

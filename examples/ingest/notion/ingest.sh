@@ -17,8 +17,8 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
     notion \
     --api-key "<Notion api key>" \
-    --structured-output-dir notion-ingest-output \
-    --page-ids "<Comma delimited list of page ids to process>" \
-    --database-ids "<Comma delimited list of database ids to process>" \
+    --output-dir notion-ingest-output \
+    --page-ids "<List of page ids to process>" \
+    --database-ids "<List of database ids to process>" \
     --num-processes 2 \
     --verbose
