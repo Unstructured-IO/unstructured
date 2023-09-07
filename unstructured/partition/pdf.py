@@ -26,6 +26,7 @@ from unstructured.file_utils.filetype import (
     FileType,
     add_metadata_with_filetype,
 )
+from unstructured.logger import logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
     convert_to_bytes,
@@ -53,7 +54,8 @@ def partition_pdf(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    ocr_languages: str = "eng",
+    ocr_languages: str = "None", #change default for deprecation
+    languages: List[str] = ["eng"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     include_metadata: bool = True,
@@ -97,13 +99,29 @@ def partition_pdf(
         The last modified date for the document.
     """
     exactly_one(filename=filename, file=file)
+
+    if languages and ocr_languages:
+        raise ValueError(
+            "Only one of languages and ocr_languages should be specified. "
+            "languages is preferred. ocr_languages is marked for deprecation.",
+        )
+    
+    if ocr_languages is not None:
+        languages = ocr_languages #TODO(shreya): convert format to list
+        logger.warn(
+            "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
+            "Please use languages instead.",
+        )
+    kwargs.setdefault("languages", languages)
+
     return partition_pdf_or_image(
         filename=filename,
         file=file,
         include_page_breaks=include_page_breaks,
         strategy=strategy,
         infer_table_structure=infer_table_structure,
-        ocr_languages=ocr_languages,
+        # ocr_languages=ocr_languages,
+        languages=languages,
         max_partition=max_partition,
         min_partition=min_partition,
         metadata_last_modified=metadata_last_modified,
@@ -146,7 +164,8 @@ def partition_pdf_or_image(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    ocr_languages: str = "eng",
+    # ocr_languages: str = "eng",
+    languages: List[str] = ["eng"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
@@ -206,7 +225,8 @@ def partition_pdf_or_image(
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
-                ocr_languages=ocr_languages,
+                # ocr_languages=ocr_languages,
+                languages=languages,
                 ocr_mode="entire_page",
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 **kwargs,
@@ -222,7 +242,8 @@ def partition_pdf_or_image(
                 filename=filename,
                 file=file,
                 include_page_breaks=include_page_breaks,
-                ocr_languages=ocr_languages,
+                # ocr_languages=ocr_languages,
+                languages=languages,
                 is_image=is_image,
                 max_partition=max_partition,
                 min_partition=min_partition,
@@ -239,7 +260,8 @@ def _partition_pdf_or_image_local(
     is_image: bool = False,
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
-    ocr_languages: str = "eng",
+    # ocr_languages: str = "eng",
+    languages: List[str] = ["eng"],
     ocr_mode: str = "entire_page",
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
@@ -250,6 +272,8 @@ def _partition_pdf_or_image_local(
         process_data_with_model,
         process_file_with_model,
     )
+
+    ocr_languages = prepare_languages_for_tesseract(languages)
 
     model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
     if file is None:
@@ -536,7 +560,8 @@ def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = False,
-    ocr_languages: str = "eng",
+    # ocr_languages: str = "eng",
+    languages: List[str] = ["eng"],
     is_image: bool = False,
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
@@ -545,6 +570,8 @@ def _partition_pdf_or_image_with_ocr(
     """Partitions an image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
     import pytesseract
+
+    ocr_languages = prepare_languages_for_tesseract(languages)
 
     if is_image:
         if file is not None:
