@@ -145,7 +145,7 @@ python-dateutil==2.8.2
     #   pandas
 python-multipart==0.0.6
     # via unstructured-inference
-pytz==2023.3
+pytz==2023.3.post1
     # via pandas
 pyyaml==6.0.1
     # via
@@ -200,7 +200,7 @@ tqdm==4.66.1
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.32.1
+transformers==4.33.1
     # via unstructured-inference
 typing-extensions==4.7.1
     # via
@@ -212,7 +212,7 @@ typing-extensions==4.7.1
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.5.21
+unstructured-inference==0.5.22
     # via
     #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in
