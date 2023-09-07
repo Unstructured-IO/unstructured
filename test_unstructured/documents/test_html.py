@@ -10,9 +10,9 @@ from unstructured.documents.elements import (
     Address,
     ListItem,
     NarrativeText,
+    Table,
     Text,
     Title,
-    Table,
 )
 from unstructured.documents.html import (
     HEADING_TAGS,
@@ -78,9 +78,7 @@ def test_parses_tags_correctly():
 </html>"""
     doc = HTMLDocument.from_string(raw_html)
     el = doc.elements[0]
-    assert el.ancestortags + (el.tag,) == (
-        "table",
-    )
+    assert el.ancestortags + (el.tag,) == ("table",)
 
 
 def test_has_table_ancestor():
@@ -115,7 +113,9 @@ def test_read_without_skipping_table(monkeypatch):
     </body>
 </html>"""
     document = HTMLDocument.from_string(doc).doc_after_cleaners(skip_table=False)
-    assert document.pages[0].elements[0] == Table(text='<table>\n<tbody>\n<tr><td></td><td>Hi there! I am Matt!</td><td></td></tr>\n</tbody>\n</table>')
+    assert document.pages[0].elements[0] == Table(
+        text="<table>\n<tbody>\n<tr><td></td><td>Hi there! I am Matt!</td><td></td></tr>\n</tbody>\n</table>"
+    )
 
 
 @pytest.mark.parametrize(
@@ -366,7 +366,7 @@ def test_read_html_doc(tmpdir, monkeypatch):
         Title(text=TITLE1),
         NarrativeText(text=SECTION1),
         Title(text=TITLE2),
-        NarrativeText(text=SECTION2)
+        NarrativeText(text=SECTION2),
     ]
 
     page_two = html_document.pages[1]
