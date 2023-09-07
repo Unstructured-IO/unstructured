@@ -59,7 +59,7 @@ RUN python3.10 -m pip install pip==${PIP_VERSION} && \
 
 RUN python3.10 -c "import nltk; nltk.download('punkt')" && \
   python3.10 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
-  python3.10 -c "import nltk; nltk.download('maxent_ne_chunker'"
+  python3.10 -c "import nltk; nltk.download('maxent_ne_chunker')"
 
 FROM deps as code
 
