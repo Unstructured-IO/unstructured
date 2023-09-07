@@ -57,7 +57,8 @@ RUN python3.10 -m pip install pip==${PIP_VERSION} && \
   dnf -y groupremove "Development Tools" && \
   dnf clean all
 
-RUN python3.10 -c "import nltk; nltk.download('punkt')" && \
+RUN chown -R ${NB_UID}.${NB_UID} ${HOME}/nltk_data && \
+  python3.10 -c "import nltk; nltk.download('punkt')" && \
   python3.10 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
   python3.10 -c "import nltk; nltk.download('maxent_ne_chunker')"
 
