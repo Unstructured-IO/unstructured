@@ -510,7 +510,7 @@
     "text": " 48% Radon  14% Buildings & soil  12% Food & water  10% Cosmic  4% Thoron"
   },
   {
-    "type": "NarrativeText",
+    "type": "UncategorizedText",
     "element_id": "0f748653e413fbddbb18262352d56b23",
     "metadata": {
       "data_source": {},
