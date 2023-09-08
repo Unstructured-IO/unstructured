@@ -1,10 +1,11 @@
-## 0.10.13-dev3
+## 0.10.13-dev5
 
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
 * Updated `is_possible_title` detection rule by adding condition that title does not end with period, but can end with 3 dots
 * Updated `exceeds_cap_ratio` calculation by ignoring name-entity and first-word capitalized
+* Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
 
 ### Features
 
@@ -15,6 +16,8 @@
 
 * `partition_html` breaks on `<br>` elements.
 * Ingest error handling to properly raise errors when wrapped
+* Bump unstructured-inference
+  * Brings back embedded images in PDF's (0.5.23)
 
 ## 0.10.12
 

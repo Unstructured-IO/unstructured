@@ -32,7 +32,7 @@ flake8==6.1.0
     # via -r requirements/test.in
 freezegun==1.2.2
     # via -r requirements/test.in
-grpcio==1.57.0
+grpcio==1.58.0
     # via -r requirements/test.in
 idna==3.4
     # via
@@ -81,7 +81,7 @@ pydantic==1.10.12
     #   label-studio-sdk
 pyflakes==3.1.0
     # via flake8
-pytest==7.4.1
+pytest==7.4.2
     # via
     #   pytest-cov
     #   pytest-mock
