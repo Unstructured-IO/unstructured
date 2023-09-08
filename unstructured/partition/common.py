@@ -50,36 +50,6 @@ if TYPE_CHECKING:
         LocationlessLayoutElement,
     )
 
-HIERARCHY_RULE_SET = {
-    "Title": [
-        "Text",
-        "UncategorizedText",
-        "NarrativeText",
-        "ListItem",
-        "BulletedText",
-        "Table",
-        "FigureCaption",
-        "CheckBox",
-    ],
-    "Header": [
-        "Title",
-        "Text",
-        "UncategorizedText",
-        "NarrativeText",
-        "ListItem",
-        "BulletedText",
-        "Table",
-        "FigureCaption",
-        "CheckBox",
-    ],
-    "Text": ["Address", "EmailAddress"],
-    "UncategorizedText": ["Address", "EmailAddress"],
-    "NarrativeText": ["Address", "EmailAddress"],
-}
-
-T = TypeVar("T")
-NestedDict = Dict[str, Union[T, "NestedDict"]]
-
 
 def get_last_modified_date(filename: str) -> Union[str, None]:
     modify_date = datetime.fromtimestamp(os.path.getmtime(filename))
@@ -219,7 +189,9 @@ def _add_element_metadata(
         if coordinates is not None and coordinate_system is not None
         else None
     )
-    links = element.links if hasattr(element, "links") and len(element.links) > 0 else None
+    links = (
+        element.links if hasattr(element, "links") and len(element.links) > 0 else None
+    )
     link_urls = [link.get("url") for link in links] if links else None
     link_texts = [link.get("text") for link in links] if links else None
     emphasized_texts = (
@@ -496,11 +468,15 @@ def document_to_element_list(
                 if last_modification_date:
                     element.metadata.last_modified = last_modification_date
                 element.metadata.text_as_html = (
-                    layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
+                    layout_element.text_as_html
+                    if hasattr(layout_element, "text_as_html")
+                    else None
                 )
                 page_elements.append(element)
             coordinates = (
-                element.metadata.coordinates.points if element.metadata.coordinates else None
+                element.metadata.coordinates.points
+                if element.metadata.coordinates
+                else None
             )
             _add_element_metadata(
                 element,
@@ -518,39 +494,5 @@ def document_to_element_list(
         if include_page_breaks and i < num_pages - 1:
             sorted_page_elements.append(PageBreak(text=""))
         elements.extend(sorted_page_elements)
-
-    elements = set_element_hierarchy(elements)
-    return elements
-
-
-def set_element_hierarchy(
-    elements: List[Element],
-    ruleset: Dict[str, List[str]] = HIERARCHY_RULE_SET,
-) -> List[Element]:
-    # NOTE(newel) - Keep In-place memory modification or should we copy the elements?
-    last_parent_by_category: NestedDict = {}  # Tracks the last parent for each category
-
-    for element in elements:
-        if element.metadata.parent_id is not None:  # Skip if already has a parent
-            continue
-
-        # Find the potential parent category from the ruleset
-        potential_parent_category = next(
-            (key for key, values in ruleset.items() if getattr(element, "category", "") in values),
-            None,
-        )
-
-        # Assign parent if exists in the last_parent_by_category dictionary
-        if potential_parent_category:
-            element.metadata.parent_id = last_parent_by_category.get(
-                potential_parent_category,
-                {},
-            ).get("id", None)
-
-        # Update last parent for the current category if it's a potential parent for others
-        if getattr(element, "category", "") in ruleset:
-            last_parent_by_category[getattr(element, "category", "")] = {
-                "id": element.id,
-            }
 
     return elements
