@@ -1,26 +1,22 @@
-## 0.10.13-dev3
-
-### Enhancements
-
-* Adds data source properties (date_created, date_modified, version, exists, source_url, record_locator) to the fsspec base interface.
-
-### Features
-
-### Fixes
-
-## 0.10.13-dev2
+## 0.10.13-dev5
 
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+* Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
+* Adds data source properties (date_created, date_modified, version, exists, source_url, record_locator) to the fsspec base interface.
 
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization
+* Add `clean_ligatures` function to expand ligatures in text
 
 ### Fixes
 
+* `partition_html` breaks on `<br>` elements.
 * Ingest error handling to properly raise errors when wrapped
+* Bump unstructured-inference
+  * Brings back embedded images in PDF's (0.5.23)
 
 ## 0.10.12
 
@@ -41,7 +37,7 @@
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
-  
+
 ## 0.10.11
 
 ### Enhancements
