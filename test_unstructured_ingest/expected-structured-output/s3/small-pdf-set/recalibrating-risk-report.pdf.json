@@ -45,7 +45,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 2
+      "page_number": 2,
+      "detection_class_prob": 0.8613132834434509
     },
     "text": "Registered in England and Wales, company number 01215741. This report represents the views of individual experts, but does not necessarily represent those of any of the World Nuclear Association’s individual member organizations."
   },
@@ -65,7 +66,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 3
+      "page_number": 3,
+      "detection_class_prob": 0.9995033740997314
     },
     "text": "Nuclear energy is crucial to meeting the world’s ever-increasing demand for energy, thanks to its ability to supply affordable, reliable, and sustainable electricity and heat. Despite the many benefits of nuclear energy, its deployment is hindered in some parts of the world due to long-standing misconceptions about its risks. Even with its safety record – unmatched by any other energy source – the perception of nuclear power as uniquely dangerous endures."
   },
@@ -75,7 +77,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 3
+      "page_number": 3,
+      "detection_class_prob": 0.998198926448822
     },
     "text": "This is reflected in the regulatory burden placed on the nuclear industry, which is geared towards an “as low as possible” approach, demanding radiation levels to be far below the levels where health effects have been observed (and in many cases below natural background radiation). This has resulted in higher costs, without delivering any additional health benefits, and has resulted in policymakers choosing other, more risky energy sources. More often than not, those alternative energy sources have been fossil fuels, greatly exacerbating the well-known risks posed by air pollution and climate change."
   },
@@ -85,7 +88,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 3
+      "page_number": 3,
+      "detection_class_prob": 0.9984734654426575
     },
     "text": "Expanding the use of nuclear energy is essential for solving some of the biggest challenges facing humanity. Nuclear power has already played a major role in avoiding the emission of air pollutants and greenhouse gases, a role that will have to be greatly expanded in the future to ensure global energy supplies are decarbonized by 2050. Nuclear energy will also play a major part in ensuring that the transition to a low-carbon future is done in an equitable fashion, providing people across the world with a high-powered and sustainable future."
   },
@@ -95,7 +99,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 3
+      "page_number": 3,
+      "detection_class_prob": 0.99226975440979
     },
     "text": "In order to fully unlock the potential of the atom, it is crucial that the gap between perceived and actual risks is addressed. The window of opportunity to act on climate change and other global challenges is closing fast – we must not delay increasing the contribution of nuclear energy on the grounds of myths and misconceptions."
   },
@@ -105,7 +110,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 3
+      "page_number": 3,
+      "detection_class_prob": 0.9993665814399719
     },
     "text": "Therefore, World Nuclear Association calls upon policymakers and regulators to adopt an all-hazards approach, where different risks associated with energy producing technologies are placed in perspective and the appropriate context, and examined in line with the latest scientific evidence. Policymakers and regulators must ensure that their decisions regarding radiation protection do not create greater risks elsewhere. This include the recalibration of existing regulations regarding nuclear power and radiation, weighing the cost of regulatory measures against the societal benefits provided by nuclear energy."
   },
@@ -135,7 +141,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 4
+      "page_number": 4,
+      "detection_class_prob": 0.9986936450004578
     },
     "text": "In reality, radiation is a natural part of life; indeed, we are all exposed to radiation every day, on average receiving 2-3 millisieverts (mSv) per year. Most of this radiation is naturally occurring, with radon gas from the ground being the main source of exposure. The nuclear industry is responsible for a very small part of radiation exposure to the public, as seen in Figure 2. To put this into perspective, eating 10 bananas or two Brazil nuts results in the same radiation dose as living nearby a nuclear power plant for a year. Humans are also naturally radioactive, and the radiation dose from sleeping next to someone else each night for a year is ten times higher than the exposure from living nearby a nuclear power plant for the same time span."
   },
@@ -145,7 +152,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 4
+      "page_number": 4,
+      "detection_class_prob": 0.9993060827255249
     },
     "text": "It is widely accepted that humans have skewed perceptions of risks, and the way we respond to them is shaped by these perceptions, rather than the actual threats posed. Approximately 1.35 millioni people die every year because of traffic accidents, in comparison with 257 aviation fatalities in 2019ii, yet more people are nervous about flying, fearing a rare deadly crash, than being in a fatal traffic accident. These numbers tell a powerful and well-established story: evaluations of risk are largely the result of emotions, rather than logic or facts. Although it is hard to recognize and accept that our perceptions may mislead us and curtail effective decision making, this is a well-established characteristic of humanity."
   },
@@ -455,7 +463,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 4
+      "page_number": 4,
+      "detection_class_prob": 0.9987009763717651
     },
     "text": "In fact, scientific consensus is that when it comes to preventing exposure to radiation, nuclear power is much better than other electricity generators. A 2016 reportiii from the United Nations Scientific Committee on the Effects of Atomic Radiation (UNSCEAR) found that coal-generated electricity is responsible for more than half of the total global radiation exposure arising from electricity generation, while nuclear power contributed less than a fifth. Coal miners received high occupational exposure and workers in solar and wind farms received the highest occupational exposure associated with plant construction for the same amount of installed capacity."
   },
@@ -545,7 +554,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 5
+      "page_number": 5,
+      "detection_class_prob": 0.9900137186050415
     },
     "text": "Figure 2. Global average exposure from different sources of radiation"
   },
@@ -555,7 +565,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 5
+      "page_number": 5,
+      "detection_class_prob": 0.9991330504417419
     },
     "text": "Fossil fuels – currently accounting for around 81% of total energy supplyiv – cause significant levels of emissions in terms of both greenhouse gases and air pollutants. Despite the serious and ongoing health and environmental harms caused by air pollution, it is often considered to be an inevitable consequence of economic development. Air pollution’s contribution to the burden of disease is profound, with an estimated 8.7 million people dying worldwide prematurely in 2018 alonev,vi. Despite this, it fails to induce the same fears and anxieties in people as nuclear energy does."
   },
@@ -565,7 +576,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 5
+      "page_number": 5,
+      "detection_class_prob": 0.9991475343704224
     },
     "text": "In terms of accidents, hydropower is the deadliest electricity generator, mostly due to collapsing dams and the consequences of flooding. The Banqiao Dam failure in 1975 led to at least 26,000 people drowning, and as many as 150,000 deaths resulting from the secondary effects of the accident. In comparison, radiation exposure following Chernobyl caused 54 deaths2, while no casualties due to radiation are likely to occur from the accident at Fukushima Daiichi."
   },
@@ -875,7 +887,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 5
+      "page_number": 5,
+      "detection_class_prob": 0.9972472786903381
     },
     "text": "Contrary to perceptions, nuclear is an incredibly safe source of energy (see Figure 3 for a comparison). What is also clear is that the continued use of alternative energy sources in preference to nuclear energy – in particular fossil fuels – poses a far greater risk to public health by significantly contributing to climate change and air pollution."
   },
@@ -925,7 +938,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 6
+      "page_number": 6,
+      "detection_class_prob": 0.9990088939666748
     },
     "text": "Since the 1950s, the Linear No-Threshold (LNT) theory has been used to inform regulatory decisions, positing that any dose of radiation, regardless of the amount or the duration over which it is received, poses a risk. Assuming that LNT is correct, we should expect to see that people living in areas of the world where background doses are higher (e.g. India, Iran and northern Europe) have a higher incidence of cancer. However, despite people living in areas of the world where radiation doses are naturally higher than those that would be received in parts of the evacuation zones around Chernobyl and Fukushima Daiichi, there is no evidence that these populations exhibit any negative health effects. Living nearby a nuclear power plant on average exposes the local population to 0.00009mSv/year, which according to LNT would increase the risk of developing cancer by 0.00000045%. After Chernobyl, the average dose to those evacuated was 30mSv, which would theoretically increase the risk of cancer at some point in their lifetime by 0.15% (on top of the average baseline lifetime risk of cancer, which is 39.5% in the USviii, 50% in the UKix)."
   },
@@ -935,7 +949,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 6
+      "page_number": 6,
+      "detection_class_prob": 0.9988064765930176
     },
     "text": "Since the 1980s, there has been considerable scientific debate as to whether the LNT theory is valid, following scientific breakthroughs within, for example, radiobiology and medicine. Indeed, the Chernobyl accident helped illuminate some of the issues associated with LNT. Multiplication of the low doses after the accident (many far too low to be of any health concern) with large populations – using the assumptions made by LNT – led to a large number of predicted cancer deaths, which have not, and likely will not materialize. This practice has been heavily criticized for being inappropriate in making risk assessments by UNSCEAR, the International Commission on Radiation Protection and a large number of independent scientists."
   },
@@ -945,7 +960,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 6
+      "page_number": 6,
+      "detection_class_prob": 0.9977286458015442
     },
     "text": "Determining the precise risk (or lack thereof) of the extremely small radiation doses associated with the routine operations of nuclear power plants, the disposal of nuclear waste or even extremely rare nuclear accidents is a purely academic exercise, that tries to determine whether the risk is extremely low, too small to detect, or non- existent. The risks of low-level radiation pale in comparison to other societal risks such as obesity, smoking, and air pollution."
   },
@@ -955,7 +971,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 6
+      "page_number": 6,
+      "detection_class_prob": 0.9984778761863708
     },
     "text": "By looking at radiation risks in isolation, we prolong the over-regulation of radiation in nuclear plants, driving up costs, whilst not delivering any additional health benefits, in turn incentivising the use of more harmful energy sources. A recalibration is required, and this can only done by ensuring a holistic approach to risk is taken."
   },
@@ -975,7 +992,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 7
+      "page_number": 7,
+      "detection_class_prob": 0.8913263082504272
     },
     "text": "Adopting an all-hazards approach"
   },
@@ -985,7 +1003,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 7
+      "page_number": 7,
+      "detection_class_prob": 0.9992584586143494
     },
     "text": "However, the regulatory process and the policy debate around nuclear more broadly has long departed from the ALARA principle, no longer weighing cost versus benefits, or considering the overall advantages of nuclear energy, but rather looking at radiation in isolation. This has resulted in a subtle shift towards an ‘as low as possible’ mentality. Attempting to reduce radiation far below de facto safe levels has resulted in an escalation of costs and loss of public confidence, and in some cases has deprived communities of the many benefits nuclear energy provides. In practical terms, this has led to the continued use of more harmful energy sources, such as fossil fuels."
   },
@@ -995,7 +1014,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 7
+      "page_number": 7,
+      "detection_class_prob": 0.9915705919265747
     },
     "text": "The overall regulatory philosophy, at least theoretically, used in the nuclear industry is the ALARA (As Low As Reasonably Achievable) principle, where any regulatory action on radiation should account for socio- economic benefits and costs, as opposed to making decisions based on radiation risks alone."
   },
@@ -1005,7 +1025,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 7
+      "page_number": 7,
+      "detection_class_prob": 0.9994388222694397
     },
     "text": "Contemporary debates around nuclear energy often reflect the precautionary principle, a problematic concept applied across a range of regulatory and policy issues. A ‘strong’ interpretation of the precautionary principle, or a ‘as low as possible’ approach to risk, dictates that regulation is required whenever there is a potential adverse health risk, even if the evidence is not certain and regardless of the cost of regulation."
   },
@@ -1015,7 +1036,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 7
+      "page_number": 7,
+      "detection_class_prob": 0.9985867738723755
     },
     "text": "If the potential of nuclear energy is to be fully realized, public health and safety approaches must be recalibrated to consider a wider range of factors when considering radiation, adopting an “all-hazards” approach. Such an approach must ensure that risks are placed within a proper perspective and context, rather than looking at them in isolation. We therefore must not look at the costs – be they economic, environmental, or public health – associated with an individual power plant in isolation, but rather the costs associated with it (and its alternatives) at a societal level (Figure 4). This would entail looking at the potential risks arising from the use of nuclear power and comparing these with the risks associated with not adopting nuclear power."
   },
@@ -1065,7 +1087,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 7
+      "page_number": 7,
+      "detection_class_prob": 0.9635563492774963
     },
     "text": "Figure 4. The different levels of cost associated with electricity generationx"
   },
@@ -1075,7 +1098,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 7
+      "page_number": 7,
+      "detection_class_prob": 0.9985116124153137
     },
     "text": "A more holistic regulatory process would be required, in which regulators move away from being siloed, looking at specific risks in isolation, with little regard for the greater picture. The move towards an all-hazard, holistic approach would require greater coordination between regulators, ensuring that the combined risks of a specific nuclear project are weighed against the risks posed by not advancing said project."
   },
@@ -1085,7 +1109,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 7
+      "page_number": 7,
+      "detection_class_prob": 0.9984286427497864
     },
     "text": "Equally, the adoption of an all-hazards approach means regulators should consider declaring when a risk is too low to be a public health concern, in line with what the U.S. Nuclear Regulatory Commission attempted to do with its Below Regulatory Concern policy statements in the 1980s and early 1990s. In the context of nuclear power, this means departing from the notion that LNT instils of no safe level of radiation, and adopting a regulatory framework which notes the impossibility of eradicating risks. Failing to do so will result in excessive regulation that continues to limit the full potential of nuclear power in tackling climate change and sees a continued reliance on objectively more harmful energy sources."
   },
@@ -1105,7 +1130,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 8
+      "page_number": 8,
+      "detection_class_prob": 0.9309973120689392
     },
     "text": "Recalibrating the risk conversation"
   },
@@ -1115,7 +1141,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 8
+      "page_number": 8,
+      "detection_class_prob": 0.9994723200798035
     },
     "text": "By looking at radiation risks in isolation, we have created something akin to a “radiation phobia”, that both directly and indirectly harms people around the world. For instance, it is well established that the vast majority of health impacts from Chernobyl and Fukushima Daiichi were not radiological, but rather psychosocial. There has been an observable and dramatic increase in depression, PTSD, substance abuse, and suicides following these events, which can be significantly attributed to the dissonance between the actual and perceived risks of radiation, and the stigmatization they caused."
   },
@@ -1125,7 +1152,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 8
+      "page_number": 8,
+      "detection_class_prob": 0.9988840222358704
     },
     "text": "Similarly, many of the tremendous challenges the global community faces are significantly driven by this “radiation phobia”. Indeed, several of these issues have been considerably exacerbated by the fact that certain risks are given a disproportionate amount of focus, whereas others are de facto ignored. The global conversation around climate change is a prime example of this. The historical use of fossil fuels has contributed significantly to climate change through greenhouse gas emissions, causing unprecedented changes in the liveability of the Earth. By 2025, half of the world’s population will be living in water-stressed areas, as extreme heat and droughts are exacerbating water resources. Between 2030 and 2050, climate change is expected to be the cause of an additional 250,000 deaths per year, arising from malnutrition, malaria, diarrhoea and heat stressx. Yet, despite the huge risks associated with climate change, our addiction to coal, oil, and fossil gas remains, with fossil fuels providing 84% of global primary energy in 2019xii. The continued prioritization of fossil fuels at the expense of nuclear energy results in a considerable increase in the risks posed by climate change."
   },
@@ -1135,7 +1163,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 8
+      "page_number": 8,
+      "detection_class_prob": 0.9990718364715576
     },
     "text": "Equally, it is well established that living without access to electricity results in illness and death around the world, caused by everything from not having access to modern healthcare to household air pollution. As of today, 770 million people around the world do not have access to electricity, with over 75% of that population living in Sub-Saharan Africa. The world's poorest 4 billion people consume a mere 5% of the energy used in developed economies, and we need to find ways of delivering reliable electricity to the entire human population in a fashion that is sustainable. Household and ambient air pollution causes 8.7 million deaths each year, largely because of the continued use of fossil fuels. Widespread electrification is a key tool for delivering a just energy transition. Investment in nuclear, has become an urgent necessity. Discarding it, based on risk perceptions divorced from science, would be to abandon the moral obligation to ensure affordable, reliable, and sustainable energy for every community around the world."
   },
@@ -1155,7 +1184,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 9
+      "page_number": 9,
+      "detection_class_prob": 0.9981552958488464
     },
     "text": "We must begin to holistically look at the severity of the consequences of maintaining the current energy production system, many of which are irreversible. The ways in which we address climate change and other issues of global importance must be sustainable and not create new hazards down the line. The reality is that nuclear has always been and remains an exceptionally safe source of energy, representing the lowest risk, the most sustainable, and the most affordable ways to generate around-the-clock electricity."
   },
@@ -1165,7 +1195,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 9
+      "page_number": 9,
+      "detection_class_prob": 0.9985719919204712
     },
     "text": "Therefore, World Nuclear Association calls upon policymakers and regulators to adopt an all-hazards approach, where different risks associated with energy producing technologies are placed in perspective and the appropriate context, and examined in line with the latest scientific evidence. Policymakers and regulators must ensure that their decisions regarding radiation protection do not create greater risks elsewhere. This include the recalibration of existing regulations regarding nuclear power and radiation, weighing the cost of regulatory measures against the societal benefits provided by nuclear energy."
   },
@@ -1175,7 +1206,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 9
+      "page_number": 9,
+      "detection_class_prob": 0.9979793429374695
     },
     "text": "Clearly, we have reached a point where we must establish a new conversation about the relative risks of using nuclear, especially when risks created by other energy sources are considered. We cannot address many of the global challenges we face without a significant increase in the use of nuclear energy. The detrimental effects of decades of looking at nuclear risks in isolation highlights just how crucial it is that regulators and policymakers change the way they view nuclear energy, and transition towards an all-hazards approach, ensuring that actions taken to mitigate risks do not result in creating more severe risks."
   },
@@ -1185,7 +1217,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 9
+      "page_number": 9,
+      "detection_class_prob": 0.9928848147392273
     },
     "text": "yeee PALEESO OOcrane a 72."
   },

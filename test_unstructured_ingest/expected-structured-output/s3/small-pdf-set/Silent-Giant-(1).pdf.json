@@ -45,7 +45,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 3
+      "page_number": 3,
+      "detection_class_prob": 0.999121367931366
     },
     "text": "In a world centred on short-term fixes, many of the traits that make nuclear energy a key player in the transition to a sustainable world are not properly valued and often taken for granted. Reflecting on the popular discourse in the world of energy politics it would seem that renewables, and renewables alone, will be responsible for, and capable of, delivering a zero-carbon energy system – and that it is just a matter of time."
   },
@@ -55,7 +56,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 3
+      "page_number": 3,
+      "detection_class_prob": 0.9885860085487366
     },
     "text": "The reality today is that both global carbon dioxide emissions and fossil fuel use are still on the rise. This does not only make the battle against climate change much harder, but also results in hundreds of thousands of pollution deaths every year."
   },
@@ -65,7 +67,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 3
+      "page_number": 3,
+      "detection_class_prob": 0.9940896034240723
     },
     "text": "Nuclear energy is a proven solution with a long and well-established track record. Nuclear reactors – a grand total of 445 in 30 countries – are the low-carbon backbone of electricity systems, operating in the background, day in and day out, often out of sight and out of mind. Capable of generating immense amounts of clean power, they are the silent giants upon which we rely daily."
   },
@@ -75,7 +78,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 3
+      "page_number": 3,
+      "detection_class_prob": 0.9966819882392883
     },
     "text": "Energy is the essential agent for promoting human development, and global demand is projected to increase significantly in the coming decades. Securing access to modern and affordable energy is essential for lifting people out of poverty, and for promoting energy independence and economic growth."
   },
@@ -85,7 +89,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 3
+      "page_number": 3,
+      "detection_class_prob": 0.9980474710464478
     },
     "text": "Nuclear energy has shown – be it in France or Sweden – that it has the potential to be the catalyst for delivering sustainable energy transitions, long before climate change was on the agenda. The use of nuclear energy is the fast track to a high-powered and clean energy system, which not only delivers a healthier environment and an affordable supply of electricity, but also strengthens energy security and helps mitigate climate change."
   },
@@ -95,7 +100,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 3
+      "page_number": 3,
+      "detection_class_prob": 0.9898147583007812
     },
     "text": "The global nuclear industry, led by World Nuclear Association, is ready to take on the challenge. As part of the Harmony Programme, we have set a target to build an additional 1000GWe of reactors across the world before 2050, bringing the global share of electricity production of nuclear to 25%."
   },
@@ -105,7 +111,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 3
+      "page_number": 3,
+      "detection_class_prob": 0.9427670240402222
     },
     "text": "In order to realise the full potential of nuclear energy we have identified three key areas where actions are required:"
   },
@@ -155,7 +162,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 4
+      "page_number": 4,
+      "detection_class_prob": 0.9401677250862122
     },
     "text": "The drivers for a clean energy system"
   },
@@ -165,7 +173,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 4
+      "page_number": 4,
+      "detection_class_prob": 0.9995643496513367
     },
     "text": "Electricity is central to modern life – it powers our daily lives, as well as our dreams and ambitions. Demand has grown steadily for more than 100 years, and will continue to do so as many parts of the world continue to develop, and electrification takes a central role in efforts to decarbonize (Figure 1). With nearly a billion people around the world still living in the dark, without access to electricity, humanity has a responsibility to learn from the past - everyone has the right to enjoy a modern lifestyle in a way that does not cause harm to people or the planet."
   },
@@ -515,7 +524,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 4
+      "page_number": 4,
+      "detection_class_prob": 0.9769452810287476
     },
     "text": "Figure 1. IEA projected electricity production and sources to 2040 i"
   },
@@ -525,7 +535,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 4
+      "page_number": 4,
+      "detection_class_prob": 0.998404324054718
     },
     "text": "The challenge before us, however, goes far beyond just electricity – we will need to find ways to decarbonize all parts of the economy, and we need solutions that are sustainable in the long-term. That means changing the way we heat our homes and power our industrial processes, as well as ensuring that the way we travel, export our products and ship our food moves away from fossil fuels."
   },
@@ -535,7 +546,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 4
+      "page_number": 4,
+      "detection_class_prob": 0.9987083673477173
     },
     "text": "Despite the very considerable efforts to decarbonize the economy and the countless billions spent, our world remains heavily addicted to fossil fuels. The trend is clear – instead of reducing our dependence on fossil fuels, we are increasing it (Figure 2). As a direct result, greenhouse gas emissions continue to rise when they need to drastically fall."
   },
@@ -695,7 +707,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 4
+      "page_number": 4,
+      "detection_class_prob": 0.9666571021080017
     },
     "text": "Figure 2. Worldwide electricity generation by fuel (1990-2016)ii"
   },
@@ -715,7 +728,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 5
+      "page_number": 5,
+      "detection_class_prob": 0.9954484105110168
     },
     "text": "We need to deliver a worldwide transformation that is socially, economically and environmentally sustainable. We need a system that is affordable – no one should have to choose between heating their home, and essentials like eating – as well as helping to alleviate poverty, and ensure the realization of human potential globally. We need a power source that can not only help us mitigate the effects of climate change and environmental degradation, but can also help bring the enormous benefits of reliable electricity supply to the corners of the world that do not have access to it."
   },
@@ -725,7 +739,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 5
+      "page_number": 5,
+      "detection_class_prob": 0.992099940776825
     },
     "text": "Nuclear energy is already making a major contribution. By using nuclear energy rather than fossil fuels, we currently avoid the emission of more than 2500 million tonnes of carbon dioxide every year. To put that into perspective, it is the equivalent of removing about 400 million cars from the world’s roads."
   },
@@ -735,7 +750,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 5
+      "page_number": 5,
+      "detection_class_prob": 0.999581515789032
     },
     "text": "Modern society is dependent on the steady supply of electricity, every day of the year – regardless of weather, season or time of day – and nuclear energy is particularly well-suited to providing this service. Given that the majority of baseload supply is fossil-based, an increase in the use of nuclear energy would result in a rapid decarbonization of the electricity system. The International Energy Agency’s (IEA) recent report III on nuclear energy highlighted the importance of dependable baseload electricity generators and the need to properly value and compensate them for the electricity security and reliability services they provide."
   },
@@ -745,7 +761,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 5
+      "page_number": 5,
+      "detection_class_prob": 0.9815477132797241
     },
     "text": "ee Nie"
   },
@@ -765,7 +782,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 6
+      "page_number": 6,
+      "detection_class_prob": 0.998764157295227
     },
     "text": "Despite impressive recent growth, the stark reality is that renewables alone will not be able to resolve our dependence on fossil fuels. Clearly, the sun does not always shine, and the wind does not always blow, and this is compounded by the fact that many times these periods coincide with when electricity demand is at its highest, but renewables can be complementary to nuclear energy. Storage solutions, such as batteries, will not be able to power our societies for days or weeks when the weather is not favourable. Natural gas is currently the most used solution for the intermittency problem, which only serves to reinforce our economy’s dependence of fossil fuels, and severely undermines the apparently ‘green credentials’ of many renewables."
   },
@@ -775,7 +793,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 6
+      "page_number": 6,
+      "detection_class_prob": 0.9152606129646301
     },
     "text": "Moving to a sustainable future"
   },
@@ -785,7 +804,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 6
+      "page_number": 6,
+      "detection_class_prob": 0.9997100234031677
     },
     "text": "The Intergovernmental Panel on Climate Change (IPCC) special report on Global Warming of 1.5°C iv examined a large number of different scenarios for limiting global warming to 1.5°C. Of those scenarios which would achieve the 1.5°C target, the mean increase in nuclear energy’s contribution to electricity production was 2.5 times higher compared to today. However, the ‘middle-of-the-road’ scenario – in which social, economic, and technological trends follow current patterns and would not require major changes to, for example, diet and travel habits – sees the need for nuclear increase by five times globally by 2050."
   },
@@ -795,7 +815,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 6
+      "page_number": 6,
+      "detection_class_prob": 0.9987830519676208
     },
     "text": "The IEA has concluded that without an expanded contribution from nuclear energy, the already huge challenge of achieving emissions reductions will become drastically harder and more costly. In their latest report on nuclear energy v, published in 2019, they also conclude that not using nuclear would have negative implications for energy security and result in higher costs for the consumers. The IEA recommends policy reforms to ‘… ensure competition on a level playing field’ and that the ‘… focus should be on designing electricity markets in a way that values the clean energy and energy security attributes of low-carbon technologies, including nuclear power.’ Such reforms should also ensure that reliability of electricity production is properly valued and compensated."
   },
@@ -805,7 +826,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 6
+      "page_number": 6,
+      "detection_class_prob": 0.9893984794616699
     },
     "text": "As part of the Harmony Programme, the world’s nuclear industry has identified three key policy areas for action to unlock the true potential of nuclear energy - the need for a level playing field, the harmonization of regulations and the establishment of an effective safety paradigm."
   },
@@ -815,7 +837,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 6
+      "page_number": 6,
+      "detection_class_prob": 0.9974718689918518
     },
     "text": "In regard to the need for a level playing field, we see that many of the world’s electricity markets operate in an unsustainable fashion, dominated by short-term thinking. Electricity supply which is affordable, reliable and available 24/7 generates broad societal benefits, and as seen in Figure 3, nuclear is one of the most affordable electricity sources."
   },
@@ -995,7 +1018,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 7
+      "page_number": 7,
+      "detection_class_prob": 0.9909664392471313
     },
     "text": "Figure 3. Comparative cost projections for main electricity generators vi"
   },
@@ -1005,7 +1029,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 7
+      "page_number": 7,
+      "detection_class_prob": 0.9990270137786865
     },
     "text": "However, markets fail to give due credit to electricity generators, such as nuclear energy, that are able to meet these societal demands. This has resulted in situations where nuclear energy has struggled to compete with energy sources that have been subsidized, do not pay the hidden costs brought on by their intermittency (e.g. costly backup provisions and investments in the grid), or do not have to take responsibility for using our common atmosphere as a dumping ground."
   },
@@ -1015,7 +1040,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 7
+      "page_number": 7,
+      "detection_class_prob": 0.9950200319290161
     },
     "text": "In regard to the need to harmonize regulations, multiple regulatory barriers stemming from diverse national licensing processes and safety requirements currently limit global nuclear trade and investment. A lack of international standardization places unnecessary regulatory burdens on nuclear activities and causes delays in the licensing of new designs, hindering innovation."
   },
@@ -1025,7 +1051,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 7
+      "page_number": 7,
+      "detection_class_prob": 0.9992061257362366
     },
     "text": "Additionally, electricity markets fail to recognize the relative costs of different forms of electricity generation. Whilst the nuclear industry takes responsibility for its lifecycle costs (including decommissioning and waste management), other electricity generators do not. Fossil fuel generators are rarely required to pay the price in line with the environmental and health damage that their emissions cause, whilst the cost of wind and solar does not include the disposal of the sometimes toxic materials at the end of their life."
   },
@@ -1035,7 +1062,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 7
+      "page_number": 7,
+      "detection_class_prob": 0.9991777539253235
     },
     "text": "The International Atomic Energy Agency (IAEA) has highlighted the importance of addressing this issue, concluding that the lack of regulatory harmony ‘…causes many drawbacks for the entire nuclear industry, including developers, vendors, operators and even regulators themselves…This results in increased costs and reduced predictability in project execution’. vii It is therefore crucial that we harmonize the regulatory process to address these weaknesses, and avoid unnecessary duplication and inconsistencies."
   },
@@ -1055,7 +1083,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 8
+      "page_number": 8,
+      "detection_class_prob": 0.998721182346344
     },
     "text": "In regard to the need for a holistic safety paradigm for the whole electricity system, we need to consider safety from a societal perspective, something the current energy system fails to do. The health, environmental and safety benefits of nuclear energy are not sufficiently understood and valued when compared with other electricity sources. Nuclear energy remains the safest form of electricity generation (Figure 4). Additionally, the use of nuclear consistently prevents many tens of thousands of deaths (mainly resulting from air pollution) every year by avoiding the use of coal - lifesaving measures which must be better recognised and valued."
   },
@@ -1445,7 +1474,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 8
+      "page_number": 8,
+      "detection_class_prob": 0.9778141379356384
     },
     "text": "Figure 4. Comparison of number of fatalities due to electricity generation viii"
   },
@@ -1455,7 +1485,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 8
+      "page_number": 8,
+      "detection_class_prob": 0.9599145650863647
     },
     "text": "Nuclear for a sustainable tomorrow"
   },
@@ -1465,7 +1496,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 8
+      "page_number": 8,
+      "detection_class_prob": 0.9997746348381042
     },
     "text": "Nuclear energy is already making a significant contribution to providing the world with clean and abundant electricity, and has a proven track record of being a reliable workhorse around the world. Countries like France, Sweden and Switzerland have proven that it is possible to divorce economic growth from an increase in damaging emissions and over the timescales required to effectively challenge climate change and environmental degradation (Figures 5 and 6). Nuclear can ensure that fast-growing populations achieve rising standards of living – without having to sacrifice the planet or their own well-being."
   },
@@ -1685,7 +1717,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 8
+      "page_number": 8,
+      "detection_class_prob": 0.8947625160217285
     },
     "text": "Figure 5. The importance of nuclear in ensuring clean energy systems in France, Sweden and Switzerland ix"
   },
@@ -1945,7 +1978,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 9
+      "page_number": 9,
+      "detection_class_prob": 0.9995425939559937
     },
     "text": "The incredible energy density of uranium means that just a few kilos is all that is required to provide one person with enough power for a lifetime. Uranium is abundant and can be found in many parts of the world, as well as in seawater. Furthermore, spent nuclear fuel is well managed and can in most cases be recycled to produce even more power. By using nuclear energy, countries are able to take charge of their own destinies by decreasing their reliance on imported energy – enhanced independence and security in uncertain times."
   },
@@ -1955,7 +1989,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 9
+      "page_number": 9,
+      "detection_class_prob": 0.9927425384521484
     },
     "text": "One fuel pellet contains as much energy as a tonne of coal"
   },
@@ -1965,7 +2000,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 9
+      "page_number": 9,
+      "detection_class_prob": 0.9942188262939453
     },
     "text": "Unlike other power sources, nuclear energy helps us reduce our total footprint, going beyond just the environment. When accounting for factors such as cost (e.g. fuel and construction costs), carbon (lifecycle greenhouse gas emissions), water and land footprints, nuclear is far ahead of all other energy generators."
   },
@@ -1975,7 +2011,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 9
+      "page_number": 9,
+      "detection_class_prob": 0.9950716495513916
     },
     "text": "Nuclear energy offers a multitude of services beyond just electricity. With nuclear, we can decarbonize the way we heat our homes, provide process heat for industry, and ensure access to clean water. As freshwater supplies come under increasing pressure worldwide, nuclear reactors can provide desalination, ensuring a reliable flow of fresh drinking water in areas where it is scarce."
   },
@@ -1995,7 +2032,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 10
+      "page_number": 10,
+      "detection_class_prob": 0.9977275729179382
     },
     "text": "Nuclear energy can be relied upon to power the new mobility revolution taking place. Every day, we use almost 20 million barrels of oil to power our vehicles. By swapping to an electric or hydrogen-powered transport fleet – all powered by the atom – we are able to address one of the key challenges to a sustainable economy."
   },
@@ -2005,7 +2043,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 10
+      "page_number": 10,
+      "detection_class_prob": 0.9916635751724243
     },
     "text": "We cannot afford to wait – we need every part of the puzzle to contribute towards solving some of the greatest challenges faced by humankind in a very long time. The impacts of climate change will hit the poorest and most vulnerable first, and failing to act will have significant humanitarian consequences."
   },
@@ -2015,7 +2054,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 10
+      "page_number": 10,
+      "detection_class_prob": 0.996250331401825
     },
     "text": "Nuclear power is the silent giant of today’s energy system – it runs quietly in the background, capable of delivering immense amounts of power, regardless of weather or season, allowing us to focus on everything else in life. It is a technology that is available now, and can be expanded quickly across the world to help us solve some of the most defining challenges we face. Nuclear energy holds the potential to herald a new, cleaner and truly sustainable world – enabling us to pass on a cleaner planet to our children."
   },
@@ -2175,7 +2215,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 10
+      "page_number": 10,
+      "detection_class_prob": 0.9844016432762146
     },
     "text": "Photo credits: Front cover: Mike Baird; page 2: Vattenfall; page 4: Getty Images; page 5: Adobe Stock; page 6: Rosatom; page 8: Dean Calma, IAEA; page 10: Kazatomprom; page 11: EDF."
   },
