@@ -117,6 +117,8 @@ def test_partition_image_with_auto_strategy(
     titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
     assert titles[0].text == title
+    assert elements[0].metadata.detection_class_prob is not None
+    assert isinstance(elements[0].metadata.detection_class_prob, float)
 
 
 def test_partition_image_with_table_extraction(
@@ -240,6 +242,8 @@ def test_partition_image_default_strategy_hi_res():
     first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
     assert elements[0].text == first_line
     assert elements[0].metadata.coordinates is not None
+    assert elements[0].metadata.detection_class_prob is not None
+    assert isinstance(elements[0].metadata.detection_class_prob, float)
 
 
 def test_partition_image_metadata_date(

@@ -1,12 +1,14 @@
-## 0.10.13-dev3
+## 0.10.13-dev4
 
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+* Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
 
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization
+* Add `clean_ligatures` function to expand ligatures in text
 
 ### Fixes
 * `add_pytesseract_bboxes_to_elements` no longer returns `nan` values and logic is broken into new methods

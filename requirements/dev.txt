@@ -16,7 +16,7 @@ argon2-cffi-bindings==21.2.0
     # via argon2-cffi
 arrow==1.2.3
     # via isoduration
-asttokens==2.3.0
+asttokens==2.4.0
     # via stack-data
 async-lru==2.0.4
     # via jupyterlab
@@ -34,7 +34,7 @@ beautifulsoup4==4.12.2
     #   nbconvert
 bleach==6.0.0
     # via nbconvert
-build==1.0.0
+build==1.0.3
     # via pip-tools
 certifi==2023.7.22
     # via
@@ -102,7 +102,7 @@ importlib-resources==6.0.1
     #   jsonschema
     #   jsonschema-specifications
     #   jupyterlab
-ipykernel==6.25.1
+ipykernel==6.25.2
     # via
     #   jupyter
     #   jupyter-console
@@ -281,7 +281,7 @@ python-dateutil==2.8.2
     #   jupyter-client
 python-json-logger==2.0.7
     # via jupyter-events
-pytz==2023.3
+pytz==2023.3.post1
     # via babel
 pyyaml==6.0.1
     # via
@@ -317,7 +317,7 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
-rpds-py==0.10.0
+rpds-py==0.10.2
     # via
     #   jsonschema
     #   referencing

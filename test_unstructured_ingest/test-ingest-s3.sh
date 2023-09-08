@@ -18,6 +18,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude file_directory \
     --metadata-exclude metadata.data_source.date_processed \
     --metadata-exclude metadata.last_modified \
+    --metadata-exclude metadata.detection_class_prob \
     --strategy hi_res \
     --preserve-downloads \
     --reprocess \
