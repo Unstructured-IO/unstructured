@@ -1,18 +1,23 @@
-## 0.10.13-dev4
+## 0.10.13-dev6
 
 ### Enhancements
 
 * Use text-based element classification for PDF hi_res when detection fails.
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+* Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
+* Updated the `_detect_filetype_from_octet_stream()` function to use libmagic to infer the content type of file when it is not a zip file.
 
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization
+* Add `clean_ligatures` function to expand ligatures in text
 
 ### Fixes
 
 * `partition_html` breaks on `<br>` elements.
 * Ingest error handling to properly raise errors when wrapped
+* Bump unstructured-inference
+  * Brings back embedded images in PDF's (0.5.23)
 
 ## 0.10.12
 
