@@ -1,4 +1,4 @@
-## 0.10.13-dev4
+## 0.10.13-dev5
 
 ### Enhancements
 
@@ -16,6 +16,8 @@
 
 * `partition_html` breaks on `<br>` elements.
 * Ingest error handling to properly raise errors when wrapped
+* Bump unstructured-inference
+  * Brings back embedded images in PDF's (0.5.23)
 
 ## 0.10.12
 
