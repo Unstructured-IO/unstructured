@@ -1,3 +1,5 @@
+import pytest
+
 from unstructured.chunking.title import (
     _split_elements_by_title_and_table,
     chunk_by_title,
@@ -238,3 +240,20 @@ def test_add_chunking_strategy_on_partition_html_respects_multipage():
     assert len(partitioned_elements_multipage_true_combine_chars_0) != len(
         partitioned_elements_multipage_false_combine_chars_0,
     )
+
+
+def test_add_chunking_strategy_raises_error_for_invalid_n_chars():
+    elements = [
+        Title("A Great Day"),
+        Text("Today is a great day."),
+        Text("It is sunny outside."),
+        Table("<table></table>"),
+        Title("An Okay Day"),
+        Text("Today is an okay day."),
+        Text("It is rainy outside."),
+        Title("A Bad Day"),
+        Text("It is storming outside."),
+        CheckBox(),
+    ]
+    with pytest.raises(ValueError):
+        chunk_by_title(elements, combine_under_n_chars=1, new_after_n_chars=0)

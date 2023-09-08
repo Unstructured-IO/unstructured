@@ -54,7 +54,6 @@ def chunk_by_title(
         new_after_n_chars=new_after_n_chars,
     )
 
-    # TODO (jennings): raise error if combine_under_n_chars is less than  new_after_n_chars
     for section in sections:
         if not isinstance(section[0], Text) or isinstance(section[0], Table):
             chunked_elements.extend(section)
