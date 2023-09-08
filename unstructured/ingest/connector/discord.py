@@ -126,13 +126,14 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             )
         dates = [m.created_at for m in messages if m.created_at]
         dates.sort()
-        self.file_metadata = DiscordFileMeta(
+        return DiscordFileMeta(
             date_created=dates[0].isoformat(),
             date_modified=dates[-1].isoformat(),
             source_url=source_url,
             exists=True,
         )
 
+    @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         self._create_full_tmp_dir_path()
@@ -143,7 +144,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         if messages == []:
             raise ValueError(f"Failed to retrieve messages from Discord channel {self.channel}")
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
-        self._output_filename.parent.mkdir(parents=True, exist_ok=True)
+        # self._output_filename.parent.mkdir(parents=True, exist_ok=True)
 
         with open(self._tmp_download_file(), "w") as f:
             for m in messages:
