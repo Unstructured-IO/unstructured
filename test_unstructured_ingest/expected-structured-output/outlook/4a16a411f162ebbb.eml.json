@@ -13,7 +13,8 @@
       "sent_to": [
         "devops@unstructuredio.onmicrosoft.com"
       ],
-      "subject": "message for subfolder"
+      "subject": "message for subfolder",
+      "category_depth": 0
     },
     "text": "this is a message for the subfolder"
   }

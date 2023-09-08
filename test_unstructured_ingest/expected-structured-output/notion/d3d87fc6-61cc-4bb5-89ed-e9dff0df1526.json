@@ -8,7 +8,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "2023-08-14 - 2023-08-27"
   },
@@ -27,7 +28,8 @@
       ],
       "link_texts": [
         "\n        Roman Isecke\n      "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Roman Isecke"
   },
@@ -40,7 +42,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "2023-08-02T20:36:00.000Z"
   },
@@ -53,7 +56,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "2023-08-31"
   },
@@ -66,7 +70,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "email@custom.domaine"
   },
@@ -85,7 +90,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "DevOps-Bot"
   },
@@ -98,7 +104,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "False"
   },
@@ -117,7 +124,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Option 1"
   },
@@ -130,7 +138,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "12"
   },
@@ -143,7 +152,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "SPRI1-2"
   },
@@ -156,7 +166,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Next"
   },
@@ -169,7 +180,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "notion://sprints/sprint_task_relation"
   },
@@ -182,7 +194,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "2023-08-28 - 2023-09-10"
   },
@@ -201,7 +214,8 @@
       ],
       "link_texts": [
         "\n        Roman Isecke\n      "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Roman Isecke"
   },
@@ -214,7 +228,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "2023-08-02T20:36:00.000Z"
   },
@@ -227,7 +242,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "2023-08-29T00:00:00.000-04:00 - 2023-08-31T00:00:00.000-04:00"
   },
@@ -240,7 +256,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "text"
   },
@@ -273,7 +290,8 @@
         "span",
         "span",
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "More \n        \n        \n          \n            text\n          \n        \n        \n           with \n        \n        \n          \n            link"
   },
@@ -286,7 +304,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "False"
   },
@@ -299,7 +318,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "45666645345465454"
   },
@@ -312,7 +332,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "option 1"
   },
@@ -325,7 +346,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "SPRI1-3"
   },
@@ -338,7 +360,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Sprint 3"
   },
@@ -351,7 +374,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Future"
   },
@@ -364,7 +388,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "notion://sprints/sprint_task_relation"
   },
@@ -377,7 +402,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "0.25"
   },
@@ -390,7 +416,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "2023-07-31 - 2023-08-13"
   },
@@ -409,7 +436,8 @@
       ],
       "link_texts": [
         "\n        Roman Isecke\n      "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Roman Isecke"
   },
@@ -422,7 +450,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "2023-08-02T20:36:00.000Z"
   },
@@ -435,7 +464,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "2023-08-07"
   },
@@ -448,7 +478,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "roman@unstructured.io"
   },
@@ -477,7 +508,8 @@
       "emphasized_text_tags": [
         "span",
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Roman Isecke\n          \n        \n        \n          \n            Jason Scheirer"
   },
@@ -502,7 +534,8 @@
         "span",
         "b",
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "This is some \n        \n        \n          \n            formatted\n          \n        \n        \n           text"
   },
@@ -515,7 +548,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "True"
   },
@@ -536,7 +570,8 @@
       "emphasized_text_tags": [
         "span",
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Option 2\n        \n        \n          Option 1"
   },
@@ -549,7 +584,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "32"
   },
@@ -562,7 +598,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "1234"
   },
@@ -575,7 +612,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "option 2"
   },
@@ -588,7 +626,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "SPRI1-1"
   },
@@ -601,7 +640,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Sprint 1"
   },
@@ -614,7 +654,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Current"
   },
@@ -627,7 +668,8 @@
         "date_modified": "2023-08-17T18:49:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "notion://sprints/sprint_task_relation"
   },
@@ -646,7 +688,8 @@
       ],
       "link_texts": [
         "\n        www.google.com\n      "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "www.google.com"
   }

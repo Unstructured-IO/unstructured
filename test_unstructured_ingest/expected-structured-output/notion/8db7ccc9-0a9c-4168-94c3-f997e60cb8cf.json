@@ -8,7 +8,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Recent Press"
   },
@@ -21,7 +22,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "💡\n      \n      Notion Tip: Telling employees about news about your company is important because it helps them stay informed about the direction of the company and their role in it."
   }

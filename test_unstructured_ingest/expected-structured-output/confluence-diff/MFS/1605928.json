@@ -5,7 +5,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "\\uD83D\\uDDD3 Date"
   },
@@ -15,7 +16,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "\\uD83D\\uDC65 Participants"
   },
@@ -25,7 +27,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": ""
   },
@@ -35,7 +38,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": ""
   },
@@ -45,7 +49,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "\\uD83E\\uDD45 Goals"
   },
@@ -55,7 +60,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": ""
   },
@@ -65,7 +71,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "\\uD83D\\uDDE3 Discussion topics"
   },
@@ -81,7 +88,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Time"
   },
@@ -97,7 +105,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Item"
   },
@@ -113,7 +122,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Presenter"
   },
@@ -129,7 +139,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Notes"
   },
@@ -139,7 +150,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "✅ Action items"
   },
@@ -149,7 +161,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": ""
   },
@@ -159,7 +172,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "⤴ Decisions"
   }
