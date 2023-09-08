@@ -12,8 +12,6 @@ from unstructured.ingest.cli.interfaces import (
     CliMixin,
     CliPartitionConfig,
     CliReadConfig,
-    CliRecursiveConfig,
-    CliRemoteUrlConfig,
 )
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
@@ -88,8 +86,6 @@ def gitlab_source(ctx: click.Context, **options):
 def get_source_cmd() -> click.Group:
     cmd = gitlab_source
     GitlabCliConfig.add_cli_options(cmd)
-    CliRemoteUrlConfig.add_cli_options(cmd)
-    CliRecursiveConfig.add_cli_options(cmd)
 
     # Common CLI configs
     CliReadConfig.add_cli_options(cmd)
