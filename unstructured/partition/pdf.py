@@ -55,8 +55,8 @@ def partition_pdf(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    ocr_languages: str = None, #change default for deprecation
-    languages: List[str] = ["eng"], #NOTE(shreya): this default is causing line 107 check to never be true because it gets caught at 101 instead
+    ocr_languages: str = None, #changing default for deprecation
+    languages: List[str] = ["eng"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     include_metadata: bool = True,
@@ -99,20 +99,23 @@ def partition_pdf(
     metadata_last_modified
         The last modified date for the document.
     """
-    exactly_one(filename=filename, file=file)
-
-    if languages and ocr_languages:
-        raise ValueError(
-            "Only one of languages and ocr_languages should be specified. "
-            "languages is preferred. ocr_languages is marked for deprecation.",
-        )
+    exactly_one(filename=filename, file=file)  
     
     if ocr_languages is not None:
-        languages = convert_old_ocr_languages_to_languages(ocr_languages)
-        logger.warn(
-            "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
-            "Please use languages instead.",
-        )
+        # check if languages was set to anything not the default value
+        # languages and ocr_languages were both provided - raise error
+        if languages != ["eng"]: 
+            raise ValueError(
+                "Only one of languages and ocr_languages should be specified. "
+                "languages is preferred. ocr_languages is marked for deprecation.",
+            )
+        
+        else:
+            languages = convert_old_ocr_languages_to_languages(ocr_languages)
+            logger.warn(
+                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
+                "Please use languages instead.",
+            )
 
     return partition_pdf_or_image(
         filename=filename,
