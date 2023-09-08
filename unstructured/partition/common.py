@@ -177,6 +177,7 @@ def _add_element_metadata(
     coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
     section: Optional[str] = None,
+    category_depth: int = 0,
     **kwargs,
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
@@ -209,6 +210,12 @@ def _add_element_metadata(
         if emphasized_texts
         else None
     )
+    depth = (
+        element.metadata.category_depth
+        if element.metadata.category_depth
+        else category_depth
+    )
+
     metadata = ElementMetadata(
         coordinates=coordinates_metadata,
         filename=filename,
@@ -221,7 +228,11 @@ def _add_element_metadata(
         emphasized_text_contents=emphasized_text_contents,
         emphasized_text_tags=emphasized_text_tags,
         section=section,
+        category_depth=depth,
     )
+    # NOTE(newel) - Element metadata is being merged into
+    # newly constructed metadata, not the other way around
+    # TODO? Make this more expected behavior?
     element.metadata = metadata.merge(element.metadata)
     return element
 
@@ -484,6 +495,7 @@ def document_to_element_list(
                 filetype=image_format,
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
+                category_depth=element.metadata.category_depth,
                 **kwargs,
             )
 

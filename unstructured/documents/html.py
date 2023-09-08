@@ -15,6 +15,7 @@ from unstructured.documents.base import Page
 from unstructured.documents.elements import (
     Address,
     Element,
+    ElementMetadata,
     EmailAddress,
     Link,
     ListItem,
@@ -34,6 +35,7 @@ from unstructured.partition.text_type import (
 
 TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]
+LIST_TAGS: Final[List[str]] = ["ul", "ol", "dl"]
 HEADING_TAGS: Final[List[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
 TABLE_TAGS: Final[List[str]] = ["table", "tbody", "td", "tr"]
 TEXTBREAK_TAGS: Final[List[str]] = ["br"]
@@ -153,7 +155,14 @@ class HTMLDocument(XMLDocument):
                 elif _is_container_with_text(tag_elem):
                     links = _get_links_from_tag(tag_elem)
                     emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
-                    element = _text_to_element(tag_elem.text, "div", (), links, emphasized_texts)
+                    element = _text_to_element(
+                        tag_elem.text,
+                        "div",
+                        (),
+                        depth=0,
+                        links=links,
+                        emphasized_texts=emphasized_texts,
+                    )
                     if element is not None:
                         page.elements.append(element)
 
@@ -166,7 +175,9 @@ class HTMLDocument(XMLDocument):
                     element, next_element = _process_list_item(tag_elem)
                     if element is not None:
                         page.elements.append(element)
-                        descendanttag_elems = _get_bullet_descendants(tag_elem, next_element)
+                        descendanttag_elems = _get_bullet_descendants(
+                            tag_elem, next_element
+                        )
 
                 elif tag_elem.tag in PAGEBREAK_TAGS and len(page.elements) > 0:
                     pages.append(page)
@@ -219,7 +230,9 @@ class HTMLDocument(XMLDocument):
                     )
                 if not any(excluder(el) for excluder in excluders):
                     elements.append(el)
-                if skip_headers_and_footers and "footer" in tuple(el.ancestortags) + (el.tag,):
+                if skip_headers_and_footers and "footer" in tuple(el.ancestortags) + (
+                    el.tag,
+                ):
                     break
             if elements:
                 new_page.elements = elements
@@ -236,7 +249,9 @@ class HTMLDocument(XMLDocument):
                 # NOTE(robinson) - Skipping for test coverage because this condition is impossible.
                 # Added type check because from_pages is a method on Document. Without the type
                 # check, mypy complains about returning Document instead of HTMLDocument
-                raise ValueError(f"Unexpected class: {self.__class__.__name__}")  # pragma: no cover
+                raise ValueError(
+                    f"Unexpected class: {self.__class__.__name__}"
+                )  # pragma: no cover
             return out
 
 
@@ -281,9 +296,27 @@ def _parse_tag(
     Ancestor tags are kept so they can be used for filtering or classification without
     processing the document tree again. In the future we might want to keep descendants too,
     but we don't have a use for them at the moment."""
-    ancestortags: Tuple[str, ...] = tuple(el.tag for el in tag_elem.iterancestors())[::-1]
+    ancestortags: Tuple[str, ...] = tuple(el.tag for el in tag_elem.iterancestors())[
+        ::-1
+    ]
     links = _get_links_from_tag(tag_elem)
     emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+
+    if tag_elem.tag in HEADING_TAGS:
+        # Zero index the depth
+        depth = int(tag_elem.tag[1]) - 1
+        # TODO(newel): Check the surrounding divs to see if should be root level
+
+    elif tag_elem.tag in LIST_TAGS + LIST_ITEM_TAGS:
+        depth = len(
+            [
+                el
+                for el in tag_elem.iterancestors()
+                if el.tag in LIST_TAGS + LIST_ITEM_TAGS
+            ]
+        )
+    else:
+        depth = 0
 
     if tag_elem.tag == "script":
         return None
@@ -296,6 +329,7 @@ def _parse_tag(
         ancestortags,
         links=links,
         emphasized_texts=emphasized_texts,
+        depth=depth,
     )
 
 
@@ -303,6 +337,7 @@ def _text_to_element(
     text: str,
     tag: str,
     ancestortags: Tuple[str, ...],
+    depth: int,
     links: List[Link] = [],
     emphasized_texts: List[dict] = [],
 ) -> Optional[Element]:
@@ -317,6 +352,7 @@ def _text_to_element(
             ancestortags=ancestortags,
             links=links,
             emphasized_texts=emphasized_texts,
+            metadata=ElementMetadata(category_depth=depth),
         )
     elif is_us_city_state_zip(text):
         return HTMLAddress(
@@ -327,7 +363,9 @@ def _text_to_element(
             emphasized_texts=emphasized_texts,
         )
     elif is_email_address(text):
-        return HTMLEmailAddress(text=text, tag=tag, links=links, emphasized_texts=emphasized_texts)
+        return HTMLEmailAddress(
+            text=text, tag=tag, links=links, emphasized_texts=emphasized_texts
+        )
 
     if len(text) < 2:
         return None
@@ -346,6 +384,7 @@ def _text_to_element(
             ancestortags=ancestortags,
             links=links,
             emphasized_texts=emphasized_texts,
+            metadata=ElementMetadata(category_depth=depth),
         )
     else:
         return HTMLText(
@@ -448,16 +487,24 @@ def _process_list_item(
     """If an etree element contains bulleted text, extracts the relevant bulleted text
     and converts it to ListItem objects. Also returns the next html elements so that
     we can skip processing if bullets are found in a div element."""
-    if tag_elem.tag in LIST_ITEM_TAGS:
+    if tag_elem.tag in LIST_TAGS + LIST_ITEM_TAGS:
         text = _construct_text(tag_elem)
         links = _get_links_from_tag(tag_elem)
         emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+        depth = len(
+            [
+                el
+                for el in tag_elem.iterancestors()
+                if el.tag in LIST_TAGS + LIST_ITEM_TAGS
+            ]
+        )
         return (
             HTMLListItem(
                 text=text,
                 tag=tag_elem.tag,
                 links=links,
                 emphasized_texts=emphasized_texts,
+                metadata=ElementMetadata(category_depth=depth),
             ),
             tag_elem,
         )
@@ -470,7 +517,9 @@ def _process_list_item(
         next_text = _construct_text(next_element)
         # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
         # it could be the text representation of a giant div
-        empty_elems_len = len([el for el in tag_elem.getchildren() if el.tag in EMPTY_TAGS])
+        empty_elems_len = len(
+            [el for el in tag_elem.getchildren() if el.tag in EMPTY_TAGS]
+        )
         if len(tag_elem) > max_predecessor_len + empty_elems_len:
             return None, None
         if next_text:
@@ -524,12 +573,16 @@ def _is_bulleted_table(tag_elem) -> bool:
     return True
 
 
-def _has_adjacent_bulleted_spans(tag_elem: etree.Element, children: List[etree.Element]) -> bool:
+def _has_adjacent_bulleted_spans(
+    tag_elem: etree.Element, children: List[etree.Element]
+) -> bool:
     """Checks to see if a div contains two or more adjacent spans beginning with a bullet. If
     this is the case, it is treated as a single bulleted text element."""
     if tag_elem.tag in SECTION_TAGS:
         all_spans = all(child.tag == "span" for child in children)
-        _is_bulleted = children[0].text is not None and is_bulleted_text(children[0].text)
+        _is_bulleted = children[0].text is not None and is_bulleted_text(
+            children[0].text
+        )
         if all_spans and _is_bulleted:
             return True
     return False
@@ -555,7 +608,9 @@ def _find_main(root: etree.Element) -> etree.Element:
     return main_tag_elem if main_tag_elem is not None else root
 
 
-def _find_articles(root: etree.Element, assemble_articles: bool = True) -> List[etree.Element]:
+def _find_articles(
+    root: etree.Element, assemble_articles: bool = True
+) -> List[etree.Element]:
     """Tries to break the HTML document into distinct articles. If there are no article
     tags, the entire document is returned as a single item list."""
     if assemble_articles is False:
