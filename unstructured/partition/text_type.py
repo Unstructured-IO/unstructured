@@ -282,19 +282,13 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     if text.isupper():
         return True
 
-    # NOTE(jay-ylee) - The word_tokenize function also recognizes and separates special characters
-    # into one word, causing problems with ratio measurement.
-    # Therefore, only words consisting of alphabets are used to measure the ratio.
-    # ex. world_tokenize("ITEM 1. Financial Statements (Unaudited)")
-    #     = ['ITEM', '1', '.', 'Financial', 'Statements', '(', 'Unaudited', ')'],
-    # however, "ITEM 1. Financial Statements (Unaudited)" is Title, not NarrativeText
-    # tokens = [tk for tk in word_tokenize(text) if tk.isalpha()]
     tokens = word_tokenize(text)
     is_alpha = np.array([token.isalpha() for token in tokens])
+    alpha_token = sum(is_alpha)
 
     # NOTE(klaijan) - If all alphas in word_tokenize(text) is empty
     # return must be True to avoid being misclassified as Narrative Text.
-    if sum(is_alpha) == 0:
+    if alpha_token == 0:
         return True
 
     is_capitalized = np.array([word.istitle() or word.isupper() for word in tokens])
@@ -308,12 +302,12 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
 
     ignored_capitalize = sum(np.logical_and(is_alpha, np.logical_or(is_capitalized, is_ne)))
 
-    if sum(is_alpha) > ignored_capitalize:
+    if alpha_token > ignored_capitalize:
         ratio = (sum(np.logical_and(is_alpha, is_capitalized)) - ignored_capitalize) / (
-            sum(is_alpha) - ignored_capitalize
+            alpha_token - ignored_capitalize
         )
     else:
-        ratio = sum(np.logical_and(is_alpha, is_capitalized)) / sum(is_alpha)
+        ratio = sum(np.logical_and(is_alpha, is_capitalized)) / alpha_token
     return bool(ratio > threshold)
 
 
