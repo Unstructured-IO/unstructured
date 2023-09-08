@@ -30,14 +30,14 @@
     "text": "2023 JAN"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "dc3e35f42d4566d77a9bf08d9ce44677",
+    "type": "Image",
+    "element_id": "99da8c57dbe142711b2490953f27157f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "WORLD ECONOMIC OUTLOOK UPDATE"
+    "text": "JANive, WORLD ECONOMIC OUTLOOK UPDATE"
   },
   {
     "type": "Title",
@@ -201,16 +201,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "c620a5b5b4db7227ec57c4de63d5705a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "–2"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "42954d589ec9936c27951193ea1a0055",
     "metadata": {
       "data_source": {},
@@ -218,6 +208,16 @@
       "page_number": 3
     },
     "text": "16 14 12 10 8 6 4 2 0"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c620a5b5b4db7227ec57c4de63d5705a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "–2"
   },
   {
     "type": "UncategorizedText",
@@ -591,16 +591,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "3"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "95af4f3feb2d03b2310ce31abc0c435d",
     "metadata": {
       "data_source": {},
@@ -731,16 +721,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "4"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "b3080428cb4e8896623bf36c001e868a",
     "metadata": {
       "data_source": {},
@@ -861,16 +841,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "ef2d127de37b942baad06145e54b0c61",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6
-    },
-    "text": "5"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "95af4f3feb2d03b2310ce31abc0c435d",
     "metadata": {
       "data_source": {},
@@ -881,13 +851,13 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1ad611b76683e54171ae0b1fddd827ca",
+    "element_id": "df59a495ef85c5f70c5ba5356caf764a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "Table 1. Overview of the World Economic Outlook Projections (Percent change, unless noted otherwise)"
+    "text": "Upside risks—Plausible upside risks include more favorable surprises to domestic spending—as in the third quarter of 2022—which, however, would increase inflation further. At the same time, there is room for an upside scenario with lower-than-expected inflation and less monetary tightening:"
   },
   {
     "type": "Table",
@@ -900,6 +870,166 @@
     "text": "Difference from October 2022 Q4 over Q4 2/ Estimate___ Projections WEO Projections 1/ Estimate Projections 2021 2022 2023 2024 2023 2024 2022 2023 2024 World Output 6.2 34 29 34 0.2 0.1 1.9 3.2 3.0 Advanced Economies 5.4 27 1.2 14 04 0.2 1.3 14 1.6 United States 5.9 2.0 14 1.0 04 -0.2 07 1.0 13 Euro Area 5.3 3.5 07 16 0.2 -0.2 19 0.5 24 Germany 26 19 01 14 04 0.1 14 0.0 23 France 68 26 07 16 0.0 0.0 0.5 09 18 Italy 67 3.9 06 0.9 08 -04 21 0.1 1.0 Spain 5.5 5.2 14 24 -0.1 -0.2 21 13 28 Japan 21 14 18 0.9 0.2 -04 17 1.0 1.0 United Kingdom 76 41 -06 0.9 -0.9 03 04 -05 18 Canada 5.0 3.5 15 15 0.0 0.1 23 12 1.9 Other Advanced Economies 3/ 5.3 28 20 24 -03 02 14 2a 2.2 Emerging Market and Developing Economies 67 3.9 40 42 0.3 -0.1 25 5.0 4A Emerging and Developing Asia 74 43 5.3 5.2 04 0.0 3.4 6.2 49 China 84 3.0 5.2 45 08 0.0 29 5.9 41 India 4/ 87 68 61 68 0.0 0.0 43 70 7A Emerging and Developing Europe 69 07 15 26 0.9 01 -2.0 3.5 28 Russia 47 -2.2 0.3 21 26 06 441 1.0 2.0 Latin America and the Caribbean 7.0 3.9 18 2a 04 0.3 26 1.9 19 Brazil 5.0 34 12 15 0.2 -04 28 0.8 22 Mexico 47 34 47 16 05 -0.2 37 14 1.9 Middle East and Central Asia 45 5.3 3.2 37 -04 0.2 . . . Saudi Arabia 3.2 87 26 34 -11 0.5 46 27 35 Sub-Saharan Africa 47 38 38 41 04 0.0 = ao ao Nigeria 3.6 3.0 3.2 29 0.2 0.0 26 31 29 South Africa 49 26 12 13 01 0.0 3.0 0.5 18 Memorandum World Growth Based on Market Exchange Rates 6.0 3.41 24 25 03 -0.1 17 25 25 European Union 5.5 37 07 18 0.0 -0.3 18 1.2 2.0 ASEAN-5 5/ 3.8 5.2 43 47 0.2 -0.2 37 57 40 Middle East and North Africa 41 54 3.2 35 -04 0.2 a . . Emerging Market and Middle-Income Economies 70 38 40 44 04 0.0 25 5.0 44 Low-Income Developing Countries 441 49 49 56 0.0 01 World Trade Volume (goods and services) 6/ 10.4 5.4 24 3.4 -01 -0.3 Advanced Economies 94 66 23 27 0.0 -04 Emerging Market and Developing Economies 124 34 26 46 03 0.0 Commodity Prices Oil 7/ 65.8 39.8 -16.2 71 33 -0.9 11.2 -98 59 Nonfuel (average based on world commodity import weights) 26.4 70 -6.3 -0.4 -01 03 -2.0 14 -0.2 World Consumer Prices 8/ 47 88 6.6 43 04 0.2 9.2 5.0 3.5 Advanced Economies 9/ 34 73 46 26 0.2 02 78 31 23 Emerging Market and Developing Economies 8/ 5.9 99 84 5.5 0.0 02 10.4 66 45,"
   },
   {
+    "type": "NarrativeText",
+    "element_id": "1ad611b76683e54171ae0b1fddd827ca",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Table 1. Overview of the World Economic Outlook Projections (Percent change, unless noted otherwise)"
+  },
+  {
+    "type": "Image",
+    "element_id": "540bc32db8a421651282bffd7c2a442d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Table 1. Overview of the World Economic Outlook Projections)TDnenact et dnd nthe"
+  },
+  {
+    "type": "Image",
+    "element_id": "8236b16b2ad86a5f15b46f119d6741cc",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "OLEAN GM NENS aieBrazilMavien"
+  },
+  {
+    "type": "Image",
+    "element_id": "c834fc3aff60dee41d2f48e82acf09c4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "ENONLatin America and the CaribbeanDeasil"
+  },
+  {
+    "type": "Image",
+    "element_id": "a4bcb1e1582a2ce3121b700702ce9c4e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "SET IMS MeN Pig SMRussiaLatin Amarina and the Carihhaan"
+  },
+  {
+    "type": "Image",
+    "element_id": "6a75b7cec1768f3bf778123fc81bc787",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Emerging and Developing EuropeDa."
+  },
+  {
+    "type": "Image",
+    "element_id": "153df67e1a36638132d6e031b27fca16",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "EITC TSHTS GID MIC VOIOP HY PwictChinabese at"
+  },
+  {
+    "type": "Image",
+    "element_id": "fc37cf98a788a9e71f0e549c0ed5a55d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "“eae a eee eeg and Developing Asia"
+  },
+  {
+    "type": "Image",
+    "element_id": "03637712ed35192011dc21b2045b34f2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "MEE REEmerging Market and Developing Economiesnee a ree"
+  },
+  {
+    "type": "Image",
+    "element_id": "905ef34014f5c5bef345f954c887ff54",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "INOSOther Advanced Economies 3/"
+  },
+  {
+    "type": "Image",
+    "element_id": "0e8f0cb1ef4a7dc404dea7ad0c423b2a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Vw eeCanadaAbn Ndime nnd Camnaeeinn O)"
+  },
+  {
+    "type": "Image",
+    "element_id": "bcdbcecbdd7b77025f47d469fca8dd72",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "voro!United KingdomPanada"
+  },
+  {
+    "type": "Image",
+    "element_id": "a78b8acaaec8185306f40eed0a8ad033",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "“penJapanVithed Vinmdaee,"
+  },
+  {
+    "type": "Image",
+    "element_id": "b262e0f56f506c7996682cf3e05a23cf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "STN taeEuro Area‘Rareram)"
+  },
+  {
+    "type": "Image",
+    "element_id": "49138a3a0f8166106b4f6db595ceec01",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "eee meeeUnited StatesCo Ae"
+  },
+  {
+    "type": "Image",
+    "element_id": "715c31c1a0b1460f1a406fd7d94a8d06",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "nmeAdvanced EconomiesTinta Chetan"
+  },
+  {
     "type": "UncategorizedText",
     "element_id": "528d8d2d6956ed52388c4fd81efe4d90",
     "metadata": {
@@ -908,6 +1038,86 @@
       "page_number": 7
     },
     "text": "World Output"
+  },
+  {
+    "type": "Image",
+    "element_id": "c8900721d4ae948a58771038a9fe6e71",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "eenMexicoRoeldia Cast end antral Asia"
+  },
+  {
+    "type": "Image",
+    "element_id": "272e12f17c6d57c6662073d77d600f70",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "bichinanbaiastelMiddle East and Central AsiaCad; Apahia"
+  },
+  {
+    "type": "Image",
+    "element_id": "c3873133cb5fdc4a5e3475c4e96346fd",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "ee ON EN EENSaudi ArabiaCok Gahacen Af"
+  },
+  {
+    "type": "Image",
+    "element_id": "9608bc1ea567ee8f9c997e2fe50220de",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "ve eeSub-Saharan AfricaAlinaria"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ba23de0762dea86fd9cd418884203f6c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Note: Real effective exchange rates are assumed to remain constant at the levels prevailing during October 26, 20: data are seasonally adjusted. WEO = World Economic Outlook. 1 Difference based on rounded figures for the current and October 2022 WEO forecasts. Countries whose forecasts have been updated relative to October 2022 WEO forecasts account for approximately 90 percent of world GDP measured at purchasing-power-parity weights. 21 For World Output (Emerging Market and Developing Economies), the quarterly estimates and projections account for approximately 90 percent (80 percent) of annual world (emerging market and developing economies’) output at purchasing-power-parity weights. 3/ Excludes the Group of Seven (Canada, France, Germany, Italy, Japan, United Kingdom, United States) and euro area countries. 4/For India, data and projections are presented on a fiscal year basis, with FY 2022/23 (starting in April 2022) shown in the 2022 column. India's growth projections are 5.4 percent in 2023 and 6.8 percent in 2024 based on calendar year. 51 Indonesia, Malaysia, Philippines, Singapore, Thailand. 6/ Simple average of growth rates for export and import volumes (goods and services). 7/'Simple average of prices of UK Brent, Dubai Fateh, and West Texas Intermediate crude oil. The average assumed price of oil in US dollars a barrel, based on futures markets (as of November 29, 2022), is $81.13 in 2023 and $75.36 in 2024. 8/ Excludes Venezuela 91 The inflation rate for the euro area is 6.7% in 2023 and 3.3% in 2024, that for Japan is 2.8% in 2023 and 2.0% in 2024, and that for the United States is 4.0% in 2023 and 2.2% in 2024. November 23, 2022. Economies are listed on the basis of economic size. The aggregated quarterly"
+  },
+  {
+    "type": "Image",
+    "element_id": "5ae421d10bdebbbda678d77d8e8d58c4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "fame i i al oe vt =: Lone aNate’ Ranl affective auchanna mtoe ara aeaamnad tn ramain oanatant atthe laugle nraunlinn dinna Oeinhar dA D00_Nevemherd] O00) Fenny nine noe ct Tho an"
+  },
+  {
+    "type": "Image",
+    "element_id": "c5ddcb99b242654f5b0c4a63e00431f3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "rE RS OTEmerging Market and Developing Economies 8/"
+  },
+  {
+    "type": "Image",
+    "element_id": "33ffe3f574b711cf7bc06041b3ffcadb",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Se MESES EIS OFAdvanced Economies 9/Emarninn Marbat and Navalaninn Erancs"
   },
   {
     "type": "UncategorizedText",
@@ -920,14 +1130,34 @@
     "text": "World Consumer Prices 8/ Advanced Economies 9/ Emerging Market and Developing Economies 8/"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "98dd3f393c886d9c6f711eadb942fcc3",
+    "type": "Image",
+    "element_id": "1da084141fae5e073db268a3ce6e60d3",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "World Trade Volume (goods and services) 6/ Advanced Economies Emerging Market and Developing Economies"
+    "text": "DMI! \\arvliagy Veo nN Ay aeWorld Consumer Prices 8/Aehiannedd Kamnemnian fii"
+  },
+  {
+    "type": "Image",
+    "element_id": "85d77bfd407731d8d67c5ae7b103c021",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "MirNonfuel (average based on world commodity import weights)"
+  },
+  {
+    "type": "Image",
+    "element_id": "e52eb5173bfa770dd377d1018c4056e3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "EIN!Oil 7/be® an! fesempnses became! nun taniied ananenelieeeS"
   },
   {
     "type": "UncategorizedText",
@@ -940,64 +1170,134 @@
     "text": "Commodity Prices Oil 7/ Nonfuel (average based on world commodity import weights)"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "12629937182fa7dc287c650de98baa7c",
+    "type": "Image",
+    "element_id": "bd00bf497a4fa4668d1bf41de3f22fbc",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "Latin America and the Caribbean"
+    "text": "BESTT MIGINGL ait event eSCommodity Prices=)"
+  },
+  {
+    "type": "Image",
+    "element_id": "2a5dac300d63ae65f04e8b32df3e911a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "iawn eensEmerging Market and Developing Economies"
+  },
+  {
+    "type": "Image",
+    "element_id": "e9e2253f80fc2257a411bcfa256c3ad6",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "ON ES NOES OE DESO NEAdvanced Economieser"
   },
   {
     "type": "UncategorizedText",
-    "element_id": "a005698da5ad176ddd7fcf99f1e72052",
+    "element_id": "98dd3f393c886d9c6f711eadb942fcc3",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "Middle East and Central Asia"
+    "text": "World Trade Volume (goods and services) 6/ Advanced Economies Emerging Market and Developing Economies"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "20f5efc45d2f76e4b28389cfb4427fb8",
+    "type": "Image",
+    "element_id": "7c40d04ad4e46e6e74987e439a1ecc87",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "Saudi Arabia Sub-Saharan Africa"
+    "text": "awe nan eee eeeWorld Trade Volume (goods and services) 6/Aduannad Enanamineneo"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "9667705c9b14e33b63121010f690b8f2",
+    "type": "Image",
+    "element_id": "bd6c61488129aa278f2c407cab1a7200",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "Emerging Market and Developing Economies Emerging and Developing Asia"
+    "text": "ee eee, Oe eee eeeLow-Income Developing Countries"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "9125c7c4a007ad95a0ea2328a61481e2",
+    "type": "Image",
+    "element_id": "8f7701093e5d7787839a8f2ae334306c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "Emerging and Developing Europe"
+    "text": "NS EO EN EENEmerging Market and Middle-Income Economies"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "2aaf1fdc5675c7dc6c4a04d2ad50dfc9",
+    "type": "Image",
+    "element_id": "4c535d90ae5729493dcddac6ad83a8ef",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "Advanced Economies United States Euro Area"
+    "text": "rawMiddle East and North Africa"
+  },
+  {
+    "type": "Image",
+    "element_id": "5808342df3b25c6ea8bfb07444c9be62",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "aurea eatASEAN-5 5/Reebde Cred ered Rbesie Adslan"
+  },
+  {
+    "type": "Image",
+    "element_id": "a406deec163df0f7febd79f07925e448",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "TN EE BO VN ene ee eeEuropean UnionACCA EE!"
+  },
+  {
+    "type": "Image",
+    "element_id": "492f94cdce347fca0eee6866c03ad4b5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "BEES GEESIAISTWorld Growth Based on Market Exchange Ratesco"
+  },
+  {
+    "type": "Image",
+    "element_id": "6859ed019b0423150b20200652c3ec5c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "STMemorandumUae Pereath Beene an Marat Conhanns Dates"
+  },
+  {
+    "type": "Image",
+    "element_id": "876b810423c7845eee9f4341105e60a2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "eee eee eee ee OS NEE ESSA NOONAN SISOS ESA EINE(Percent change, unless noted otherwise)"
   },
   {
     "type": "UncategorizedText",
@@ -1011,6 +1311,66 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "2aaf1fdc5675c7dc6c4a04d2ad50dfc9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Advanced Economies United States Euro Area"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "9125c7c4a007ad95a0ea2328a61481e2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Emerging and Developing Europe"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "9667705c9b14e33b63121010f690b8f2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Emerging Market and Developing Economies Emerging and Developing Asia"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "20f5efc45d2f76e4b28389cfb4427fb8",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Saudi Arabia Sub-Saharan Africa"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "a005698da5ad176ddd7fcf99f1e72052",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Middle East and Central Asia"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "12629937182fa7dc287c650de98baa7c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Latin America and the Caribbean"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "d3651b0ff5fd7f4dc6e946418ff72ed9",
     "metadata": {
       "data_source": {},
@@ -1018,36 +1378,6 @@
       "page_number": 7
     },
     "text": "Japan United Kingdom Canada Other Advanced Economies 3/"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d366b7da298b208d406559e07737e49c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Russia"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "5e994f4f6e6c548cdc7722b87d4ec753",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Nigeria South Africa"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "f12f86253ce335ea221a6a30850e0b5a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "China India 4/"
   },
   {
     "type": "UncategorizedText",
@@ -1068,6 +1398,36 @@
       "page_number": 7
     },
     "text": "Germany France Italy Spain"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d366b7da298b208d406559e07737e49c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Russia"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f12f86253ce335ea221a6a30850e0b5a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "China India 4/"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "5e994f4f6e6c548cdc7722b87d4ec753",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Nigeria South Africa"
   },
   {
     "type": "UncategorizedText",
@@ -1111,16 +1471,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "7d36553691fec70856008092c5295ac7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "5.4 5.9 5.3 2.6 6.8 6.7 5.5 2.1 7.6 5.0 5.3"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "a4b95354ba7613f7e18be039400cfdb5",
     "metadata": {
       "data_source": {},
@@ -1131,13 +1481,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "e18fc7615777b155357a9245de518953",
+    "element_id": "7d36553691fec70856008092c5295ac7",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "6.2"
+    "text": "5.4 5.9 5.3 2.6 6.8 6.7 5.5 2.1 7.6 5.0 5.3"
   },
   {
     "type": "UncategorizedText",
@@ -1151,6 +1501,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "e18fc7615777b155357a9245de518953",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "6.2"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "f9e434990230ffa44a7228127daa3f7a",
     "metadata": {
       "data_source": {},
@@ -1158,16 +1518,6 @@
       "page_number": 7
     },
     "text": "Estimate 2022"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "dea26ed47b6dc12eb6adee5ab2b75085",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "39.8 7.0"
   },
   {
     "type": "UncategorizedText",
@@ -1181,6 +1531,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "dea26ed47b6dc12eb6adee5ab2b75085",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "39.8 7.0"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "203553ae126b466359ef798cd13e8dea",
     "metadata": {
       "data_source": {},
@@ -1188,6 +1548,16 @@
       "page_number": 7
     },
     "text": "2.7 2.0 3.5 1.9 2.6 3.9 5.2 1.4 4.1 3.5 2.8"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "b6bf373cba13ecb49fa2a76e42bfaa4f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "8.8 7.3 9.9"
   },
   {
     "type": "UncategorizedText",
@@ -1208,16 +1578,6 @@
       "page_number": 7
     },
     "text": "3.4"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b6bf373cba13ecb49fa2a76e42bfaa4f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "8.8 7.3 9.9"
   },
   {
     "type": "UncategorizedText",
@@ -1261,26 +1621,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "adbebe93f3dd02702155f1137d795bee",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "6.6 4.6 8.1"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "3f2b6e9cef343067dfeca9879f9b84c1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "4.0 5.3 5.2 6.1 1.5 0.3 1.8 1.2 1.7 3.2 2.6 3.8 3.2 1.2"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "c516993a0b87171b00b1077d5dd6d74c",
     "metadata": {
       "data_source": {},
@@ -1291,6 +1631,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "adbebe93f3dd02702155f1137d795bee",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "6.6 4.6 8.1"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "edc938a1a24c61a1194b6c639e3990d6",
     "metadata": {
       "data_source": {},
@@ -1298,6 +1648,16 @@
       "page_number": 7
     },
     "text": "2.9"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "3f2b6e9cef343067dfeca9879f9b84c1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "4.0 5.3 5.2 6.1 1.5 0.3 1.8 1.2 1.7 3.2 2.6 3.8 3.2 1.2"
   },
   {
     "type": "UncategorizedText",
@@ -1341,26 +1701,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "0467f459036882861625e0737e9e855c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "2.5 1.8 4.7 3.5 4.1 5.6"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4ea3cb11b10238ad45401cb44c2bad04",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "4.2 5.2 4.5 6.8 2.6 2.1 2.1 1.5 1.6 3.7 3.4 4.1 2.9 1.3"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "e8f9af141197bda9d821f606d7ded664",
     "metadata": {
       "data_source": {},
@@ -1371,13 +1711,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "240013161d0e0a646aff1593638ffeae",
+    "element_id": "0467f459036882861625e0737e9e855c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "3.1"
+    "text": "2.5 1.8 4.7 3.5 4.1 5.6"
   },
   {
     "type": "UncategorizedText",
@@ -1401,6 +1741,26 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "240013161d0e0a646aff1593638ffeae",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "3.1"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4ea3cb11b10238ad45401cb44c2bad04",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "4.2 5.2 4.5 6.8 2.6 2.1 2.1 1.5 1.6 3.7 3.4 4.1 2.9 1.3"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "a818ed93ce57d385096f12f5c767b245",
     "metadata": {
       "data_source": {},
@@ -1408,6 +1768,26 @@
       "page_number": 7
     },
     "text": "Difference from October 2022"
+  },
+  {
+    "type": "Image",
+    "element_id": "60a99a3fefd8d5d682852cce1c15cfa9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "WEO Projections 1/ eeeanne"
+  },
+  {
+    "type": "Image",
+    "element_id": "60a99a3fefd8d5d682852cce1c15cfa9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "WEO Projections 1/ eeeanne"
   },
   {
     "type": "UncategorizedText",
@@ -1441,26 +1821,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "ecaac8cd996a549924838abe8d5acc61",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "–0.1 0.0 –0.3"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "870afa912cf0647be2cd823f4823f202",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "0.3 0.4 0.8 0.0 0.9 2.6 0.1 0.2 0.5 –0.4 –1.1 0.1 0.2 0.1"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "6095b96ddfd471fdd827fc57191deac7",
     "metadata": {
       "data_source": {},
@@ -1481,13 +1841,23 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "3c63bc13e514ddd48c37472aa7929053",
+    "element_id": "ecaac8cd996a549924838abe8d5acc61",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "0.2"
+    "text": "–0.1 0.0 –0.3"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "870afa912cf0647be2cd823f4823f202",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "0.3 0.4 0.8 0.0 0.9 2.6 0.1 0.2 0.5 –0.4 –1.1 0.1 0.2 0.1"
   },
   {
     "type": "UncategorizedText",
@@ -1498,6 +1868,16 @@
       "page_number": 7
     },
     "text": "0.1 0.2 0.0"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "3c63bc13e514ddd48c37472aa7929053",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "0.2"
   },
   {
     "type": "UncategorizedText",
@@ -1521,16 +1901,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "70578227051e41ea9da4ac4aea3767ac",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "–0.3 –0.4 0.0"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "79f60a6e6672305416099fb6a14d74cf",
     "metadata": {
       "data_source": {},
@@ -1541,13 +1911,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "c0713b0896efa06ae24239673633206e",
+    "element_id": "79b864b70b3eef393667d557fa5270ed",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "–0.1"
+    "text": "–0.2 –0.2 –0.2 –0.1 0.0 –0.4 –0.2 –0.4 0.3 –0.1 –0.2"
   },
   {
     "type": "UncategorizedText",
@@ -1561,13 +1931,23 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "79b864b70b3eef393667d557fa5270ed",
+    "element_id": "70578227051e41ea9da4ac4aea3767ac",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "–0.2 –0.2 –0.2 –0.1 0.0 –0.4 –0.2 –0.4 0.3 –0.1 –0.2"
+    "text": "–0.3 –0.4 0.0"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c0713b0896efa06ae24239673633206e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "–0.1"
   },
   {
     "type": "UncategorizedText",
@@ -1591,13 +1971,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "9e0af8006c1b96c35937f0d08d85711d",
+    "element_id": "aa03ccf072c1540515836879196279f4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "9.2 7.8 10.4"
+    "text": "11.2 –2.0"
   },
   {
     "type": "UncategorizedText",
@@ -1611,13 +1991,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "aa03ccf072c1540515836879196279f4",
+    "element_id": "9e0af8006c1b96c35937f0d08d85711d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "11.2 –2.0"
+    "text": "9.2 7.8 10.4"
   },
   {
     "type": "UncategorizedText",
@@ -1628,6 +2008,16 @@
       "page_number": 7
     },
     "text": ". . . . . . . . ."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "a3d3441a9c8b1f9f5815fd747f7173b0",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "1.7 1.8 3.7 . . . 2.5 . . ."
   },
   {
     "type": "UncategorizedText",
@@ -1648,16 +2038,6 @@
       "page_number": 7
     },
     "text": "1.9"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "a3d3441a9c8b1f9f5815fd747f7173b0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "1.7 1.8 3.7 . . . 2.5 . . ."
   },
   {
     "type": "UncategorizedText",
@@ -1701,13 +2081,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "2ebea8c404fdbf0f73f7190810d22cf8",
+    "element_id": "40696241a92836702680491eb3d6f31d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "5.0 3.1 6.6"
+    "text": "5.0 6.2 5.9 7.0 3.5 1.0 1.9 0.8 1.1 . . . 2.7 . . . 3.1 0.5"
   },
   {
     "type": "UncategorizedText",
@@ -1721,13 +2101,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "56010fa3453e21765ccdf5076960ad2c",
+    "element_id": "2ebea8c404fdbf0f73f7190810d22cf8",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "3.2"
+    "text": "5.0 3.1 6.6"
   },
   {
     "type": "UncategorizedText",
@@ -1741,13 +2121,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "40696241a92836702680491eb3d6f31d",
+    "element_id": "56010fa3453e21765ccdf5076960ad2c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "5.0 6.2 5.9 7.0 3.5 1.0 1.9 0.8 1.1 . . . 2.7 . . . 3.1 0.5"
+    "text": "3.2"
   },
   {
     "type": "UncategorizedText",
@@ -1771,26 +2151,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "97b19eab144ecd45afce13280ebf73f0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "4.1 4.9 4.1 7.1 2.8 2.0 1.9 2.2 1.9 . . . 3.5 . . . 2.9 1.8"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "54add9deb165bffe2c1e635146114e1d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "2.5 2.0 4.0 . . . 4.1 . . ."
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "df7318d8afd930b2f2049127f4e90e0e",
     "metadata": {
       "data_source": {},
@@ -1801,13 +2161,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "82eb710aeec934b729906546268a7087",
+    "element_id": "73356c80e67292eab1403c43e9bbb6fa",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "3.0"
+    "text": ". . . . . . . . ."
   },
   {
     "type": "UncategorizedText",
@@ -1821,33 +2181,33 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "73356c80e67292eab1403c43e9bbb6fa",
+    "element_id": "82eb710aeec934b729906546268a7087",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": ". . . . . . . . ."
+    "text": "3.0"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "df59a495ef85c5f70c5ba5356caf764a",
+    "type": "UncategorizedText",
+    "element_id": "54add9deb165bffe2c1e635146114e1d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "Upside risks—Plausible upside risks include more favorable surprises to domestic spending—as in the third quarter of 2022—which, however, would increase inflation further. At the same time, there is room for an upside scenario with lower-than-expected inflation and less monetary tightening:"
+    "text": "2.5 2.0 4.0 . . . 4.1 . . ."
   },
   {
-    "type": "NarrativeText",
-    "element_id": "dd295fca8aff81058c48312a022b69b2",
+    "type": "UncategorizedText",
+    "element_id": "97b19eab144ecd45afce13280ebf73f0",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "Note: Real effective exchange rates are assumed to remain constant at the levels prevailing during October 26, 2022--November 23, 2022. Economies are listed on the basis of economic size. The aggregated quarterly data are seasonally adjusted. WEO = World Economic Outlook. 1/ Difference based on rounded figures for the current and October 2022 WEO forecasts. Countries whose forecasts have been updated relative to October 2022 WEO forecasts account for approximately 90 percent of world GDP measured at purchasing-power-parity weights. 2/ For World Output (Emerging Market and Developing Economies), the quarterly estimates and projections account for approximately 90 percent (80 percent) of annual world (emerging market and developing economies') output at purchasing-power-parity weights. 3/ Excludes the Group of Seven (Canada, France, Germany, Italy, Japan, United Kingdom, United States) and euro area countries. 4/ For India, data and projections are presented on a fiscal year basis, with FY 2022/23 (starting in April 2022) shown in the 2022 column. India's growth projections are 5.4 percent in 2023 and 6.8 percent in 2024 based on calendar year. 5/ Indonesia, Malaysia, Philippines, Singapore, Thailand. 6/ Simple average of growth rates for export and import volumes (goods and services). 7/ Simple average of prices of UK Brent, Dubai Fateh, and West Texas Intermediate crude oil. The average assumed price of oil in US dollars a barrel, based on futures markets (as of November 29, 2022), is $81.13 in 2023 and $75.36 in 2024. 8/ Excludes Venezuela. 9/ The inflation rate for the euro area is 5.7% in 2023 and 3.3% in 2024, that for Japan is 2.8% in 2023 and 2.0% in 2024, and that for the United States is 4.0% in 2023 and 2.2% in 2024."
+    "text": "4.1 4.9 4.1 7.1 2.8 2.0 1.9 2.2 1.9 . . . 3.5 . . . 2.9 1.8"
   },
   {
     "type": "UncategorizedText",
@@ -1868,16 +2228,6 @@
       "page_number": 7
     },
     "text": "support and, in many cases, still-tight labor markets and solid wage growth, pent-up demand remains an upside risk to the growth outlook. In some advanced economies, recent data show that households are still on net adding to their stock of excess savings (as in some euro area countries and the United Kingdom) or have ample savings left (as in the United States). This leaves scope for a further boost to consumption—particularly of services, including tourism."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "e7f6c011776e8db7cd330b54174fd76f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "6"
   },
   {
     "type": "UncategorizedText",
@@ -2041,16 +2391,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "7902699be42c8a8e46fbbb4501726517",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "7"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "95af4f3feb2d03b2310ce31abc0c435d",
     "metadata": {
       "data_source": {},
@@ -2138,16 +2478,6 @@
       "page_number": 9
     },
     "text": "1 See “Geo-Economic Fragmentation and the Future of Multilateralism,” IMF Staff Discussion Note 2023/001."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "2c624232cdd221771294dfbb310aca00",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "8"
   },
   {
     "type": "UncategorizedText",
@@ -2290,44 +2620,44 @@
     "text": "International Monetary Fund | January 2023"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "19581e27de7ced00ff1ce50b2047e7a5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "9"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "591fe13f580ac8ffd1d3902f5f74c6f1",
+    "type": "Image",
+    "element_id": "0e1f5e74082ed333d383fa20680f0909",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "BOX 1. GL AL FINANCIAL STABILITY UPDATE —— — other"
+    "text": "BOX 1. GLOBAL FINANCIAL STABILITY UPDATE"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "a2fa3a13e51ab7dd0859ee2c869b70e5",
+    "type": "Image",
+    "element_id": "abc4599a24dd1e7be5a91128865e95eb",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "Overall, financial stability risks remain elevated as investors reassess their inflation and monetary policy outlook. Global financial conditions have eased somewhat since the October 2022 Global Financial Stability Report, driven largely by changing market expectations regarding the interest rate cycle (Figure 1.1). While the expected peak in policy rates—the terminal rate—has risen, markets now also expect the subsequent fall in rates will be significantly faster, and further, than what was forecast in October (Figure 1.2). As a result, global bond yields have recently declined, corporate spreads have tightened, and equity markets have rebounded. That said, central banks are likely to continue to tighten monetary policy to fight inflation, and concerns that this restrictive stance could tip the economy into a recession have increased in major advanced economies."
+    "text": "Overall, financial stability risks remain elevated as investors reassess their inflation and monetary policy outlook. Global financial conditions have eased somewhat since the October 2022 Global Financial Stability Report, driven largely by changing market expectations regarding the interest rate cycle (Figure 1.1). While the expected peak in policy rates—the terminal rate—has risen, markets now also expect the subsequent fall in rates will be significantly faster, and further, than what was forecast in October (Figure 1.2). As a result, global bond yields have recently declined, corporate spreads have tightened, and equity markets have rebounded. That said, central banks are likely to continue to tighten monetary policy to fight inflation, and concerns that this restrictive stance could tip the economy into a recession have increased in major advanced economies. Slowing aggregate demand and weaker-than-expected inflation prints in some major advanced economies have prompted investors’ anticipation of a further reduction in the pace of future policy rate hikes. Corporate earnings forecasts have been cut due to headwinds from slowing demand, and margins have contracted across most regions. In addition, survey-based probabilities of recession have been increasing, particularly in the United States and Europe. However, upside risks to the inflation outlook remain. Despite the recent moderation in headline inflation, core inflation remains stubbornly high across most regions, labor markets are still tight, energy prices remain pressured by Russia’s ongoing war in Ukraine, and supply chain disruptions may reappear. To keep these risks in check, financial conditions will likely need to tighten further. If not, central banks may need to increase policy rates even more in order to achieve their inflation objectives. Figure 1.1. Global Financial Conditions: Selected Regions(Standard deviations from mean) October2022 GFSR United StatesEuro areaChinaOther AEsOther EMs 7 6 5 4 3 2 1 0 –1 –2 –3 2006 0808 06 10 10 12 12 14 16 14 16 18 18 20 2222 20 Sources: Bloomberg Finance L.P.; Haver Analytics; national data sources; and IMF staff calculations.Note: AEs = advanced economies; EMs = emerging markets. GFSR = Global Financial Stability Report. Figure 1.2. Market-Implied Expectations of Policy Rates(Percent) Latest October 2022 GFSR 1. United States 2. Euro area 5 4 3 2 1 Oct.22 Apr.23 Oct.23 Dec.24 Dec.26 Oct.22 Apr.23 Oct.23 Dec.24 Dec.26 6 5 4 3 2 1 Given the tension between rising recession risks and monetary policy uncertainty, markets have seen significant volatility. While many central banks in advanced economies have stepped down the size of hikes, they have also explicitly stated they will need to keep rates higher, for a longer period of time, to tamp down inflation. Risk assets could face significant declines if earnings retrench further or if investors reassess their outlook for monetary policy given central bank communications. Globally, the partial reversal of the dollar rally has contributed to recent easing due to improved risk appetite, and some emerging market central banks have paused tightening amid tentative signs that inflation may have peaked. Sources: Bloomberg Finance L.P.; and IMF staff calculations.Note: GFSR = Global Financial Stability Report. Financial market volatility is expected to remain elevated and could be exacerbated by poor market liquidity. For some asset classes (such as US Treasuries), liquidity has deteriorated to the March 2020 lows of the COVID-19 pandemic. With the process of central bank balance sheet reduction (quantitative tightening) underway, market liquidity is expected to remain challenging. Overall, financial stability 1 tisks remain elevated as investors rr ©wereassess their inflation and monetary policy outlook. Global~ 47 + + ~~ hl wtfinancial conditions have eased somewhat since the October 2022 Global Financial Stability Report, driven largely by a ee anne OU Tschanging market expectations regarding the i interest rate cycle en a re(Figure 1.1). While the expected peak in policy rates—the Sm eS aS as Ss en aterminal rate—has tisen, markets now also expect the Sssubsequent fall i in rates will be significantly faster, and further, es aethan what was forecast in October (Figure 1.2). As a result, a, > aglobal bond yields have recently declined, corporate spreads+ +. 14 Ia Vehave tightened, and equity markets have rebounded. That oe Seessaid, central banks are likely to continue to tighten monetary policy to fight inflation, and concerns that this restrictive a mrstance could tip the economy into a recession have increased eS Ain major advanced economies. Slowing aggregate demand and weaker-than-expected cm ce TSinflation prints in some major advanced economies have prompted i investors’ anticipation ofa farther reduction ir in the pace, oeof future policy rate hikes. Corporate earnings forecasts It a r°have been cut lve to headwinds from 1 slowing demand, and margins a a a ae a>have contracted across most regions. In addition, survey-based a ee a aeprobabilities of recession have been increasing, particularly in the United States and Europe. However, upside risks to the inflation outlook remain. Despite a SS Msthe recent moderation in headline inflation, core inflation remains labor markets ate still tight, a a a, a ae o> eeenergy prices remain pressured by Russia’s ongoing war in Ukraine, Of tT OFand supply chain disruptions may reappear. To keep these tisks in es ae ars er es ae escheck, financial conditions will likely need to tighten further. ik not, a a i a acentral banks may need to increase policy rates even more in order oa _ rtto achieve their inflation objectives. i ae Given the tension between rising recession risks and monetary policy uncertainty, markets have seen significant volatility. ItWhile ma many central banks in advanced economies have stepped ordown the size of hikes, they have also explicitly stated they will need to keep rates higher, for a longer period « of time, to tamp down inflations Risk assets could face significant -edeclines if earnings poner further or if investors reassess theit outlook for monetary policy ¢1 given central oa ~— a a a orebank communications. Globally, the partial reversal of the dollar rally has contributed to recent easing due - oto improved risk appetite, and some emerging market central banks have paused tightening amid tentative rc tr”signs that inflation may have peaked.a Financial market volatility i is expected 1 to remain n elevated and could be exacerbated by poor Ed a aemarket liquidity. For some as s (such as US Treasuries), liquidity has deteriorated to the March ee os ae2020 lows of the COVID- 19 pandemic. With the Process of central bank Iballertae sheet reduction expected to remain challenging.(quantitative tightening) underway, ees liquidity Euro areaChinaOther AEsOther EMs Other AEsOther EMs"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "375adf2b48cfbcfa82de8c38d2d31569",
+    "type": "Image",
+    "element_id": "00a36f426117b58ae8910914d560aa62",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "Given the tension between rising recession risks and monetary policy uncertainty, markets have seen significant volatility. While many central banks in advanced economies have stepped down the size of hikes, they have also explicitly stated they will need © —— Sources: Bloomberg Finance L.P.; and IMF staff calculations. Note: GFSR = Global Financial Stability Report. to keep rates higher, for a longer period of time, to tamp down inflation. Risk assets could face significant declines if earnings retrench further or if investors reassess theit outlook for monetary policy given central bank communications. Globally, the partial reversal of the dollar rally has contributed to recent easing due to improved risk appetite, and some emerging market central banks have paused tightening amid tentative signs that inflation may have peaked."
+    "text": "a SS Msthe recent moderation in headline inflation, core inflation remains"
+  },
+  {
+    "type": "Image",
+    "element_id": "1785b4af2ab04f2ea679dd9114d560cc",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "However, upside risks to the inflation outlook remain. Despite"
   },
   {
     "type": "UncategorizedText",
@@ -2340,14 +2670,14 @@
     "text": "Slowing aggregate demand and weaker-than-expected inflation prints in some major advanced economies have prompted investors’ anticipation of a further reduction in the pace of future policy rate hikes. Corporate earnings forecasts have been cut due to headwinds from slowing demand, and margins have contracted across most regions. In addition, survey-based probabilities of recession have been increasing, particularly in the United States and Europe. However, upside risks to the inflation outlook remain. Despite the recent moderation in headline inflation, core inflation remains stubbornly high across most regions, labor markets are still tight, energy prices remain pressured by Russia’s ongoing war in Ukraine, and supply chain disruptions may reappear. To keep these risks in check, financial conditions will likely need to tighten further. If not, central banks may need to increase policy rates even more in order to achieve their inflation objectives."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "4355a46b19d348dc2f57c046f8ef63d4",
+    "type": "Image",
+    "element_id": "62910f4fb4cdcad4499e78c53c883583",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "1"
+    "text": "Figure 1.1. Global Financial Conditions: Selected Regions(Standard deviations from mean) October2022 GFSR United StatesEuro areaChinaOther AEsOther EMs 7 6 5 4 3 2 1 0 –1 –2 –3 2006 0808 06 10 10 12 12 14 16 14 16 18 18 20 2222 20 Sources: Bloomberg Finance L.P.; Haver Analytics; national data sources; and IMF staff calculations.Note: AEs = advanced economies; EMs = emerging markets. GFSR = Global Financial Stability Report. Euro areaChinaOther AEsOther EMs Other AEsOther EMs"
   },
   {
     "type": "UncategorizedText",
@@ -2361,26 +2691,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "1121cfccd5913f0a63fec40a6ffd44ea",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "3"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "7de1555df0c2700329e815b93b32c571",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "4"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "f0b5c2c2211c8d67ed15e75e656c7862",
     "metadata": {
       "data_source": {},
@@ -2388,6 +2698,16 @@
       "page_number": 11
     },
     "text": "5"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4355a46b19d348dc2f57c046f8ef63d4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "1"
   },
   {
     "type": "UncategorizedText",
@@ -2408,6 +2728,26 @@
       "page_number": 11
     },
     "text": "Figure 1.2. Market-Implied Expectations of Policy Rates (Percent)"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "7de1555df0c2700329e815b93b32c571",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "4"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "1121cfccd5913f0a63fec40a6ffd44ea",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "3"
   },
   {
     "type": "UncategorizedText",
@@ -2471,26 +2811,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "10159baf262b43a92d95db59dae1f72c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "7"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "53c234e5e8472b6ac51c1ae1cab3fe06",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "2"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "06e9d52c1720fca412803e3b07c4b228",
     "metadata": {
       "data_source": {},
@@ -2521,23 +2841,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "b7b22a1a0dd52d65e13ef53d11836932",
+    "element_id": "10159baf262b43a92d95db59dae1f72c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "2006 08 08"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "9a271f2a916b0b6ee6cecb2426f0b320",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "0"
+    "text": "7"
   },
   {
     "type": "UncategorizedText",
@@ -2551,6 +2861,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "53c234e5e8472b6ac51c1ae1cab3fe06",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "2"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "4355a46b19d348dc2f57c046f8ef63d4",
     "metadata": {
       "data_source": {},
@@ -2561,6 +2881,26 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "9a271f2a916b0b6ee6cecb2426f0b320",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "0"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "b7b22a1a0dd52d65e13ef53d11836932",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "2006 08 08"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "09249963490d90835afd8926fbb61e62",
     "metadata": {
       "data_source": {},
@@ -2568,6 +2908,16 @@
       "page_number": 11
     },
     "text": "06"
+  },
+  {
+    "type": "Image",
+    "element_id": "661b14c0170e1c851afd72f52e658ca5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "Euro areaChinaOther AEsOther EMs"
   },
   {
     "type": "UncategorizedText",
@@ -2761,16 +3111,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "5378796307535df3ec8d8b15a2e2dc56",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "20"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "32d9d432ea30d4913ea73770664638a6",
     "metadata": {
       "data_source": {},
@@ -2778,6 +3118,16 @@
       "page_number": 11
     },
     "text": "October 2022 GFSR"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "5378796307535df3ec8d8b15a2e2dc56",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "20"
   },
   {
     "type": "UncategorizedText",
@@ -2791,13 +3141,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "53c234e5e8472b6ac51c1ae1cab3fe06",
+    "element_id": "4355a46b19d348dc2f57c046f8ef63d4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "2"
+    "text": "1"
   },
   {
     "type": "UncategorizedText",
@@ -2821,13 +3171,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "4355a46b19d348dc2f57c046f8ef63d4",
+    "element_id": "53c234e5e8472b6ac51c1ae1cab3fe06",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "1"
+    "text": "2"
   },
   {
     "type": "UncategorizedText",
@@ -2838,16 +3188,6 @@
       "page_number": 11
     },
     "text": "5"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "a404b982431c5d79e96fa2c0fdd1544d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "Financial market volatility is expected to remain elevated and could be exacerbated by poor market liquidity. For some asset classes (such as US Treasuries), liquidity has deteriorated to the March 2020 lows of the COVID-19 pandemic. With the process of central bank balance sheet reduction (quantitative tightening) underway, market liquidity is expected to remain challenging."
   },
   {
     "type": "UncategorizedText",
