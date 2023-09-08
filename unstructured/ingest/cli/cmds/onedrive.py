@@ -32,13 +32,6 @@ class OnedriveCliConfig(BaseConfig, CliMixin):
     def add_cli_options(cmd: click.Command) -> None:
         options = [
             click.Option(
-                ["--authority-url"],
-                default="https://login.microsoftonline.com",
-                type=str,
-                help="Authentication token provider for Microsoft apps, default is "
-                "https://login.microsoftonline.com",
-            ),
-            click.Option(
                 ["--client-id"],
                 required=True,
                 type=str,
@@ -51,10 +44,29 @@ class OnedriveCliConfig(BaseConfig, CliMixin):
                 help="Microsoft App client secret",
             ),
             click.Option(
+                ["--user-pname"],
+                required=True,
+                type=str,
+                help="User principal name, usually is your Azure AD email.",
+            ),
+            click.Option(
+                ["--tenant"],
+                default="common",
+                type=str,
+                help="ID or domain name associated with your Azure AD instance",
+            ),
+            click.Option(
                 ["--path"],
                 default=None,
                 type=str,
                 help="Folder to start parsing files from.",
+            ),
+            click.Option(
+                ["--authority-url"],
+                default="https://login.microsoftonline.com",
+                type=str,
+                help="Authentication token provider for Microsoft apps, default is "
+                "https://login.microsoftonline.com",
             ),
         ]
         cmd.params.extend(options)
