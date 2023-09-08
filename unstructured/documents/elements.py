@@ -167,7 +167,7 @@ class ElementMetadata:
     # Metadata extracted via regex
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
 
-    # Depth relative to the element's category 
+    # Depth relative to the element's category
     category_depth: Optional[int] = 0
 
     def __post_init__(self):

@@ -8,6 +8,7 @@ from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CheckBox,
     FigureCaption,
+    Header,
     ListItem,
     NarrativeText,
     Text,
@@ -73,6 +74,27 @@ def test_normalize_layout_element_dict_caption():
         coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
         coordinate_system=coordinate_system,
     )
+
+
+@pytest.mark.parametrize(
+    ("element_type", "expected_type", "expected_depth"),
+    [
+        ("Title", Title, 0),
+        ("Headline", Title, 1),
+        ("Subheadline", Title, 2),
+        ("Header", Header, 0),
+    ],
+)
+def test_normalize_layout_element_headline(element_type, expected_type, expected_depth):
+    layout_element = {
+        "type": element_type,
+        "coordinates": [[1, 2], [3, 4], [5, 6], [7, 8]],
+        "text": "Some lovely text",
+    }
+    coordinate_system = PixelSpace(width=10, height=20)
+    element = common.normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+    assert element.metadata.category_depth == expected_depth
+    assert type(element) == expected_type
 
 
 def test_normalize_layout_element_dict_figure_caption():
