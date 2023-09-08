@@ -4,7 +4,11 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import Group, conform_click_options
+from unstructured.ingest.cli.cmds.utils import (
+    CommaDelimitedString,
+    Group,
+    conform_click_options,
+)
 from unstructured.ingest.cli.common import (
     log_options,
 )
@@ -53,9 +57,8 @@ class SalesforceCliConfig(BaseConfig, CliMixin):
                 ["--categories"],
                 default=None,
                 required=True,
-                multiple=True,
-                type=click.Choice(possible_categories),
-                help="Salesforce categories to download. "
+                type=CommaDelimitedString(choices=possible_categories),
+                help="Comma-delimited salesforce categories to download. "
                 "Currently only {}.".format(", ".join(possible_categories)),
             ),
         ]

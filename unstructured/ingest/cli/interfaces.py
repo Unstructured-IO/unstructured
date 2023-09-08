@@ -2,6 +2,7 @@ from abc import abstractmethod
 
 import click
 
+from unstructured.ingest.cli.cmds.utils import CommaDelimitedString
 from unstructured.ingest.interfaces import BaseConfig, PartitionConfig, ReadConfig
 
 
@@ -104,9 +105,10 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
             ),
             click.Option(
                 ["--fields-include"],
-                multiple=True,
+                type=CommaDelimitedString(),
                 default=["element_id", "text", "type", "metadata"],
-                help="If set, include the specified top-level fields in an element. ",
+                help="Comma-delimited list. If set, include the specified top-level "
+                "fields in an element.",
             ),
             click.Option(
                 ["--flatten-metadata"],
@@ -119,15 +121,16 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
             click.Option(
                 ["--metadata-include"],
                 default=[],
-                multiple=True,
-                help="If set, include the specified metadata fields if they exist "
-                "and drop all other fields. ",
+                type=CommaDelimitedString(),
+                help="Comma-delimited list. If set, include the specified metadata "
+                "fields if they exist and drop all other fields. ",
             ),
             click.Option(
                 ["--metadata-exclude"],
                 default=[],
-                multiple=True,
-                help="If set, drop the specified metadata fields if they exist. ",
+                type=CommaDelimitedString(),
+                help="Comma-delimited list. If set, drop the specified metadata "
+                "fields if they exist.",
             ),
             click.Option(
                 ["--partition-by-api"],

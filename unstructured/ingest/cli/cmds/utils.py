@@ -1,4 +1,6 @@
+import typing as t
 from gettext import gettext as _
+from gettext import ngettext
 
 import click
 
@@ -8,6 +10,38 @@ def conform_click_options(options: dict):
     for k, v in options.items():
         if isinstance(v, tuple):
             options[k] = list(v)
+
+
+class CommaDelimitedString(click.ParamType):
+    name = "comma-delimited-string"
+
+    def __init__(self, choices: t.Optional[t.List[str]] = None):
+        self.choices = choices if choices else []
+
+    def convert(
+        self,
+        value: t.Any,
+        param: t.Optional[click.Parameter],
+        ctx: t.Optional[click.Context],
+    ) -> t.Any:
+        # In case a list is provided as the default, will not break
+        if isinstance(value, list):
+            return [str(v).strip() for v in value]
+        split = [v.strip() for v in value.split(",")]
+        if not self.choices:
+            return split
+        choices_str = ", ".join(map(repr, self.choices))
+        for s in split:
+            if s not in self.choices:
+                self.fail(
+                    ngettext(
+                        "{value!r} is not {choice}.",
+                        "{value!r} is not one of {choices}.",
+                        len(self.choices),
+                    ).format(value=s, choice=choices_str, choices=choices_str),
+                    param,
+                    ctx,
+                )
 
 
 class Group(click.Group):

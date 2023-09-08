@@ -4,7 +4,11 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import Group, conform_click_options
+from unstructured.ingest.cli.cmds.utils import (
+    CommaDelimitedString,
+    Group,
+    conform_click_options,
+)
 from unstructured.ingest.cli.common import (
     log_options,
 )
@@ -36,8 +40,8 @@ class DiscordCliConfig(BaseConfig, CliMixin):
             click.Option(
                 ["--channels"],
                 required=True,
-                multiple=True,
-                help="List of discord channel ids to ingest from.",
+                type=CommaDelimitedString(),
+                help="Comma-delimited list of discord channel ids to ingest from.",
             ),
             click.Option(
                 ["--period"],

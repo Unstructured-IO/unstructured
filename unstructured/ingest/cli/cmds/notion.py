@@ -4,7 +4,11 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import Group, conform_click_options
+from unstructured.ingest.cli.cmds.utils import (
+    CommaDelimitedString,
+    Group,
+    conform_click_options,
+)
 from unstructured.ingest.cli.common import (
     log_options,
 )
@@ -37,15 +41,13 @@ class NotionCliConfig(BaseConfig, CliMixin):
             click.Option(
                 ["--page-ids"],
                 default=None,
-                multiple=True,
-                type=str,
+                type=CommaDelimitedString(),
                 help="Notion page IDs to pull text from",
             ),
             click.Option(
                 ["--database-ids"],
                 default=None,
-                multiple=True,
-                type=str,
+                type=CommaDelimitedString(),
                 help="Notion database IDs to pull text from",
             ),
         ]
