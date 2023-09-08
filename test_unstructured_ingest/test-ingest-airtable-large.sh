@@ -27,7 +27,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
     --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
     --list-of-paths "$LARGE_TEST_LIST_OF_PATHS" \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date,metadata.detection_class_prob \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \
