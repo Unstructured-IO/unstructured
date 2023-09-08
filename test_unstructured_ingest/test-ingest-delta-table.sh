@@ -15,7 +15,7 @@ fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     delta-table \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
     --download-dir "$DOWNLOAD_DIR" \
     --table-uri s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/ \
     --structured-output-dir "$OUTPUT_DIR" \

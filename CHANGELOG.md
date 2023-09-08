@@ -1,19 +1,23 @@
-## 0.10.13-dev3
+## 0.10.13-dev5
 
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
 * Add to mapping from `chipper` to `unstructured` element types: `Headline`, `Subheadline` and `Abstract`.
 * New optional metadata for the depth relative to the element's category. Name: `cagegory_depth`.
+* Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
 
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization
+* Add `clean_ligatures` function to expand ligatures in text
 
 ### Fixes
 
 * `partition_html` breaks on `<br>` elements.
 * Ingest error handling to properly raise errors when wrapped
+* Bump unstructured-inference
+  * Brings back embedded images in PDF's (0.5.23)
 
 ## 0.10.12
 

@@ -91,7 +91,7 @@ tqdm==4.66.1
     #   huggingface-hub
     #   sacremoses
     #   transformers
-transformers==4.32.1
+transformers==4.33.1
     # via -r requirements/huggingface.in
 typing-extensions==4.7.1
     # via

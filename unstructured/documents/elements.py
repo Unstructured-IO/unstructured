@@ -170,6 +170,9 @@ class ElementMetadata:
     # Depth relative to the element's category
     category_depth: Optional[int] = 0
 
+    # Detection Model Class Probabilities from Unstructured-Inference Hi-Res
+    detection_class_prob: Optional[float] = None
+
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
             self.filename = str(self.filename)
