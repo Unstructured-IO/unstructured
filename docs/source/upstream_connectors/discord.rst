@@ -1,6 +1,6 @@
 Discord
 ==========
-Connect Discord to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem. 
+Connect Discord to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
 
 First you'll need to install the Discord dependencies as shown here.
 
@@ -34,7 +34,7 @@ Run Locally
 
         command = [
           "unstructured-ingest",
-            "discord"
+            "discord",
             "--channels", "12345678",
             "--token", "$DISCORD_TOKEN",
             "--download-dir", "discord-ingest-download",
@@ -58,7 +58,7 @@ Run Locally
 Run via the API
 ---------------
 
-You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``. 
+You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``.
 
 .. tabs::
 
@@ -73,7 +73,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
           --download-dir discord-ingest-download \
           --structured-output-dir discord-example \
           --preserve-downloads \
-          --verbose \ 
+          --verbose \
           --partition-by-api \
           --api-key "<UNSTRUCTURED-API-KEY>"
 
@@ -85,7 +85,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         command = [
           "unstructured-ingest",
-          "discord"
+          "discord",
           "--channels", "12345678",
           "--token", "$DISCORD_TOKEN",
           "--download-dir", "discord-ingest-download",

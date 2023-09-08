@@ -6,6 +6,7 @@ from unstructured.ingest.connector.fsspec import (
     FsspecIngestDoc,
     SimpleFsspecConfig,
 )
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import StandardConnectorConfig
 from unstructured.utils import requires_dependencies
 
@@ -20,6 +21,7 @@ class GcsIngestDoc(FsspecIngestDoc):
     config: SimpleGcsConfig
     registry_name: str = "gcs"
 
+    @SourceConnectionError.wrap
     @requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
     def get_file(self):
         super().get_file()

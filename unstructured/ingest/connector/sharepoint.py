@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, List
 from urllib.parse import urlparse
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -123,6 +124,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return
         logger.info(f"File downloaded: {self.filename}")
 
+    @SourceConnectionError.wrap
     @requires_dependencies(["office365"], extras="sharepoint")
     def _get_file(self):
         from office365.runtime.auth.client_credential import ClientCredential

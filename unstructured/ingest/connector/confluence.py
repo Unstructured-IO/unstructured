@@ -6,6 +6,7 @@ from functools import cached_property
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -190,6 +191,8 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             True,
         )
 
+    @SourceConnectionError.wrap
+    @requires_dependencies(["atlassian"], extras="confluence")
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
@@ -207,7 +210,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             f.write(self.document)
 
 
-@requires_dependencies(["atlassian"], extras="Confluence")
+@requires_dependencies(["atlassian"], extras="confluence")
 @dataclass
 class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
     """Fetches body fields from all documents within all spaces in a Confluence Cloud instance."""

@@ -8,7 +8,7 @@ attrs==23.1.0
     # via boxsdk
 boxfs==0.2.1
     # via -r requirements/ingest-box.in
-boxsdk[jwt]==3.8.1
+boxsdk[jwt]==3.9.0
     # via boxfs
 certifi==2023.7.22
     # via
@@ -23,7 +23,7 @@ charset-normalizer==3.2.0
     #   requests
 cryptography==41.0.3
     # via boxsdk
-fsspec==2023.6.0
+fsspec==2023.9.0
     # via
     #   -r requirements/ingest-box.in
     #   boxfs

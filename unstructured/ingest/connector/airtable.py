@@ -5,6 +5,7 @@ from functools import cached_property
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -153,6 +154,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             True,
         )
 
+    @SourceConnectionError.wrap
     @requires_dependencies(["pandas"])
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):

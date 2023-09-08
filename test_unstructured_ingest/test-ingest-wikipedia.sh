@@ -11,7 +11,7 @@ DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 PYTHONPATH=. ./unstructured/ingest/main.py \
     wikipedia \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.last_modified \
+    --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.detection_class_prob \
     --num-processes 2 \
     --partition-strategy hi_res \
     --preserve-downloads \
