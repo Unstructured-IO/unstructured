@@ -440,7 +440,7 @@
     "text": "Mission, Vision, Values"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "575d595cf4830f838cc79edf3a4bd5fc",
     "metadata": {
       "data_source": {
@@ -544,7 +544,7 @@
     "text": "Recent Press"
   },
   {
-    "type": "Title",
+    "type": "NarrativeText",
     "element_id": "67538900b235164b3f1debd8a8d80b44",
     "metadata": {
       "data_source": {
