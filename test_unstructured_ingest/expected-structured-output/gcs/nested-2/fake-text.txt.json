@@ -5,7 +5,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": "219742931901912424867836160694743553102",
+        "version": 198731266903969902154134165613731741332,
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -23,7 +23,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": "219742931901912424867836160694743553102",
+        "version": 198731266903969902154134165613731741332,
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -41,7 +41,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": "219742931901912424867836160694743553102",
+        "version": 198731266903969902154134165613731741332,
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -59,7 +59,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": "219742931901912424867836160694743553102",
+        "version": 198731266903969902154134165613731741332,
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -77,7 +77,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": "219742931901912424867836160694743553102",
+        "version": 198731266903969902154134165613731741332,
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -95,7 +95,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": "219742931901912424867836160694743553102",
+        "version": 198731266903969902154134165613731741332,
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
