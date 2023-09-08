@@ -4,7 +4,6 @@ from typing import IO, BinaryIO, List, Optional, Union, cast
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
 
-from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -20,7 +19,6 @@ from unstructured.partition.common import (
 )
 
 
-@add_chunking_strategy()
 @process_metadata()
 @add_metadata_with_filetype(FileType.CSV)
 def partition_csv(
@@ -29,7 +27,6 @@ def partition_csv(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     include_metadata: bool = True,
-    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .csv format into its document elements.
