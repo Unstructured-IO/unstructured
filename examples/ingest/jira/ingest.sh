@@ -29,9 +29,7 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
         jira \
-        --metadata-exclude filename \
-        --metadata-exclude file_directory \
-        --metadata-exclude metadata.data_source.date_processed \
+        --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
         --url https://unstructured-jira-connector-test.atlassian.net \
         --user-email "$JIRA_USER_EMAIL" \
         --api-token "$JIRA_API_TOKEN" \
