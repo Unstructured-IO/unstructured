@@ -1,8 +1,8 @@
-ElasticSearch
+Elasticsearch
 ==============
-Connect ElasticSearch to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
+Connect Elasticsearch to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
 
-First you'll need to install the Elastic Search dependencies as shown here.
+First you'll need to install the Elasticsearch dependencies as shown here.
 
 .. code:: shell
 
@@ -19,9 +19,7 @@ Run Locally
 
         unstructured-ingest \
           elasticsearch \
-          --metadata-exclude filename \
-          --metadata-exclude file_directory \
-          --metadata-exclude metadata.data_source.date_processed \
+          --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
           --url http://localhost:9200 \
           --index-name movies \
           --jq-query '{ethnicity, director, plot}' \
@@ -37,9 +35,7 @@ Run Locally
         command = [
           "unstructured-ingest",
           "elasticsearch",
-          "--metadata-exclude", "filename",
-          "--metadata-exclude", "file_directory",
-          "--metadata-exclude", "metadata.data_source.date_processed",
+          "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
           "--url", "http://localhost:9200",
           "--index-name", "movies",
           "--jq-query", "{ethnicity, director, plot}",
@@ -72,9 +68,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         unstructured-ingest \
           elasticsearch \
-          --metadata-exclude filename \
-          --metadata-exclude file_directory \
-          --metadata-exclude metadata.data_source.date_processed \
+          --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
           --url http://localhost:9200 \
           --index-name movies \
           --jq-query '{ethnicity, director, plot}' \
@@ -92,9 +86,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
         command = [
           "unstructured-ingest",
           "elasticsearch",
-          "--metadata-exclude", "filename",
-          "--metadata-exclude", "file_directory",
-          "--metadata-exclude", "metadata.data_source.date_processed",
+          "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
           "--url", "http://localhost:9200",
           "--index-name", "movies",
           "--jq-query", "{ethnicity, director, plot}",

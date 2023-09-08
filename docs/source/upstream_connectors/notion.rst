@@ -21,8 +21,8 @@ Run Locally
             notion \
             --api-key "<Notion api key>" \
             --output-dir notion-ingest-output \
-            --page-ids "<List of page ids to process>" \
-            --database-ids "<List of database ids to process>" \
+            --page-ids "<Comma delimited list of page ids to process>" \
+            --database-ids "<Comma delimited list of database ids to process>" \
             --num-processes 2 \
             --verbose
 
@@ -37,8 +37,8 @@ Run Locally
             "notion",
                 "--api-key", "<Notion api key>",
                 "--output-dir", "notion-ingest-output",
-                "--page-ids",  "<List of page ids to process>",
-                "--database-ids", ""<List of database ids to process>"",
+                "--page-ids",  "<Comma delimited list of page ids to process>",
+                "--database-ids", ""<Comma delimited list of database ids to process>"",
                 "--num-processes", "2",
                 "--verbose",
         ]
@@ -70,8 +70,8 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
             notion \
             --api-key "<Notion api key>" \
             --output-dir notion-ingest-output \
-            --page-ids "<List of page ids to process>" \
-            --database-ids "<List of database ids to process>" \
+            --page-ids "<Comma delimited list of page ids to process>" \
+            --database-ids "<Comma delimited list of database ids to process>" \
             --num-processes 2 \
             --verbose \
             --partition-by-api \
@@ -88,8 +88,8 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
             "notion",
             "--api-key", "<Notion api key>",
             "--output-dir", "notion-ingest-output",
-            "--page-ids",  "<List of page ids to process>",
-            "--database-ids", ""<List of database ids to process>"",
+            "--page-ids",  "<Comma delimited list of page ids to process>",
+            "--database-ids", ""<Comma delimited list of database ids to process>"",
             "--num-processes", "2",
             "--verbose",
             "--partition-by-api",

@@ -20,9 +20,7 @@ Run Locally
 
         unstructured-ingest \
           jira \
-          --metadata-exclude filename \
-          --metadata-exclude file_directory \
-          --metadata-exclude metadata.data_source.date_processed \
+          --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
           --url https://unstructured-jira-connector-test.atlassian.net \
           --user-email 12345678@unstructured.io \
           --api-token ABCDE1234ABDE1234ABCDE1234 \
@@ -38,9 +36,7 @@ Run Locally
         command = [
             "unstructured-ingest",
             "jira",
-            "--metadata-exclude", "filename",
-            "--metadata-exclude", "file_directory",
-            "--metadata-exclude", "metadata.data_source.date_processed",
+            "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
             "--url", "https://unstructured-jira-connector-test.atlassian.net",
             "--user-email", "12345678@unstructured.io",
             "--api-token", "ABCDE1234ABDE1234ABCDE1234",
@@ -73,9 +69,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         unstructured-ingest \
           jira \
-          --metadata-exclude filename \
-          --metadata-exclude file_directory \
-          --metadata-exclude metadata.data_source.date_processed \
+          --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
           --url https://unstructured-jira-connector-test.atlassian.net \
           --user-email 12345678@unstructured.io \
           --api-token ABCDE1234ABDE1234ABCDE1234 \
@@ -93,9 +87,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
         command = [
           "unstructured-ingest",
           "jira",
-          "--metadata-exclude", "filename",
-          "--metadata-exclude", "file_directory",
-          "--metadata-exclude", "metadata.data_source.date_processed",
+          "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
           "--url", "https://unstructured-jira-connector-test.atlassian.net",
           "--user-email", "12345678@unstructured.io",
           "--api-token", "ABCDE1234ABDE1234ABCDE1234",

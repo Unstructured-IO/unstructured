@@ -19,9 +19,7 @@ Run Locally
 
         unstructured-ingest \
           airtable \
-          --metadata-exclude filename \
-          --metadata-exclude file_directory \
-          --metadata-exclude metadata.data_source.date_processed \
+          --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
           --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
           --output-dir airtable-ingest-output \
           --num-processes 2 \
@@ -36,9 +34,7 @@ Run Locally
         command = [
           "unstructured-ingest",
           "airtable",
-          "--metadata-exclude", "filename",
-          "--metadata-exclude", "file_directory",
-          "--metadata-exclude", "metadata.data_source.date_processed",
+          "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
           "--personal-access-token", "$AIRTABLE_PERSONAL_ACCESS_TOKEN",
           "--output-dir", "airtable-ingest-output"
           "--num-processes", "2",
@@ -70,9 +66,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         unstructured-ingest \
           airtable \
-          --metadata-exclude filename \
-          --metadata-exclude file_directory \
-          --metadata-exclude metadata.data_source.date_processed \
+          --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
           --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
           --output-dir airtable-ingest-output \
           --num-processes 2 \
@@ -89,9 +83,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
         command = [
           "unstructured-ingest",
           "airtable",
-          "--metadata-exclude", "filename",
-          "--metadata-exclude", "file_directory",
-          "--metadata-exclude", "metadata.data_source.date_processed",
+          "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
           "--personal-access-token", "$AIRTABLE_PERSONAL_ACCESS_TOKEN",
           "--output-dir", "airtable-ingest-output"
           "--num-processes", "2",
