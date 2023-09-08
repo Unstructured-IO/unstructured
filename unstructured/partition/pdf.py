@@ -36,7 +36,10 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.lang import prepare_languages_for_tesseract, convert_old_ocr_languages_to_languages
+from unstructured.partition.lang import (
+    convert_old_ocr_languages_to_languages,
+    prepare_languages_for_tesseract,
+)
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
