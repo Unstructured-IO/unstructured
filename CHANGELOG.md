@@ -1,8 +1,9 @@
-## 0.10.13-dev1
+## 0.10.13-dev2
 
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+* Installs PaddleOCR in Docker images including support for aarch64 architecture
 
 ### Fixes
 
@@ -28,7 +29,7 @@
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
-  
+
 ## 0.10.11
 
 ### Enhancements
