@@ -3,12 +3,13 @@
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
-* Updated `is_possible_title` detection rule by adding condition that title would not ends with period, but can ends with 3 dots
+* Updated `is_possible_title` detection rule by adding condition that title does not end with period, but can end with 3 dots
 * Updated `exceeds_cap_ratio` calculation by ignoring name-entity and first-word capitalized
 
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization
+* Add `clean_ligatures` function to expand ligatures in text
 
 ### Fixes
 
