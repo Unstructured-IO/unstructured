@@ -27,7 +27,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --url https://unstructured-ingest-test.atlassian.net \
     --user-email "$CONFLUENCE_USER_EMAIL" \
     --api-token "$CONFLUENCE_API_TOKEN" \
-    --spaces testteamsp \
-    --spaces MFS
+    --spaces testteamsp,MFS
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
