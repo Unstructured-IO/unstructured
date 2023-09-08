@@ -61,6 +61,8 @@ def pos_tag(text: str) -> List[Tuple[str, str]]:
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def ne_chunk(text: str) -> Tree:
     """A wrapper around the NLTK Chunk with LRU caching enabled."""
+    # NOTE(klaijan) - we will want to specify the language to download from
+    # the corpus in the future when nltk or future library in use supports such language
     _download_nltk_package_if_not_present(
         package_category="chunkers",
         package_name="maxent_ne_chunker",

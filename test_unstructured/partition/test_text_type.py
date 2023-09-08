@@ -217,8 +217,8 @@ def test_contains_english_word(text, expected, monkeypatch):
         ("LOOK AT THIS IT IS CAPS BUT NOT A TITLE.", True),
         ("This Has All Caps. It's Weird But Two Sentences", False),
         ("The Business Report is expected within 6 hours of closing", False),
-        ("United States' Intellectual Property", True),
-        ("United States' intellectual property", False),
+        ("United States' Intellectual Property Helps Incentivize Innovation", True),
+        ("United States' intellectual property helps incentivize innovation", False),
         ("", True),
     ],
 )
@@ -230,12 +230,13 @@ def test_set_caps_ratio_with_environment_variable(monkeypatch):
     monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
     monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
     monkeypatch.setenv("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", 0.8)
+    monkeypatch.setenv("UNSTRUCTURED_LANGUAGE", "en")
 
     text = "All The King's Horses. And All The King's Men."
     with patch.object(text_type, "exceeds_cap_ratio", return_value=False) as mock_exceeds:
         text_type.is_possible_narrative_text(text)
 
-    mock_exceeds.assert_called_once_with(text, threshold=0.8)
+    mock_exceeds.assert_called_once_with(text, threshold=0.8, language="en")
 
 
 def test_set_title_non_alpha_threshold_with_environment_variable(monkeypatch):

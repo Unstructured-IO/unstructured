@@ -76,7 +76,7 @@ def is_possible_narrative_text(
     cap_threshold = float(
         os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold),
     )
-    if exceeds_cap_ratio(text, threshold=cap_threshold):
+    if exceeds_cap_ratio(text, threshold=cap_threshold, language=language):
         trace_logger.detail(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")  # type: ignore # noqa: E501
         return False
 
@@ -262,7 +262,7 @@ def under_non_alpha_ratio(text: str, threshold: float = 0.5):
     return ratio < threshold
 
 
-def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
+def exceeds_cap_ratio(text: str, threshold: float = 0.5, language: str = "en") -> bool:
     """Checks the title ratio in a section of text. If a sufficient proportion of the words
     are capitalized, that can be indicated on non-narrative text (i.e. "1A. Risk Factors").
 
@@ -273,6 +273,9 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     threshold
         If the percentage of words beginning with a capital letter exceeds this threshold,
         the function returns True
+    language
+        Specify the language of the text. Default to "en" (English). The nltk corpus
+        only supports English language for now
     """
     # NOTE(robinson) - Currently limiting this to only sections of text with one sentence.
     # The assumption is that sections with multiple sentences are not titles.
@@ -293,21 +296,22 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
 
     is_capitalized = np.array([word.istitle() or word.isupper() for word in tokens])
     is_ne = np.zeros(len(tokens))
-    i = 0
-    for chunk in ne_chunk(text):
-        if hasattr(chunk, "label"):
-            for word in range(len(chunk)):
-                is_ne[word + i] = 1
-        i += 1
+    if language == "en":
+        i = 0
+        for chunk in ne_chunk(text):
+            if hasattr(chunk, "label"):
+                for word in range(len(chunk)):
+                    is_ne[word + i] = 1
+            i += 1
 
-    ignored_capitalize = sum(np.logical_and(is_alpha, np.logical_or(is_capitalized, is_ne)))
+    unrequisite_capitalized = sum(
+        np.logical_and(
+            is_alpha,
+            np.logical_and(np.logical_xor(is_capitalized, is_ne), np.logical_not(is_ne)),
+        ),
+    )
 
-    if alpha_token > ignored_capitalize:
-        ratio = (sum(np.logical_and(is_alpha, is_capitalized)) - ignored_capitalize) / (
-            alpha_token - ignored_capitalize
-        )
-    else:
-        ratio = sum(np.logical_and(is_alpha, is_capitalized)) / alpha_token
+    ratio = unrequisite_capitalized / alpha_token
     return bool(ratio > threshold)
 
 
