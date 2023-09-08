@@ -2,21 +2,14 @@
 
 ### Enhancements
 
+* Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+* Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
 * Adds data source properties (date_created, date_modified, version, exists, source_url, record_locator) to Sharepoint and Outlook connectors.
 
 ### Features
 
-### Fixes
-
-## 0.10.13-dev3
-
-### Enhancements
-
-* Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
-
-### Features
-
 * Add Jira Connector to be able to pull issues from a Jira organization
+* Add `clean_ligatures` function to expand ligatures in text
 
 ### Fixes
 
