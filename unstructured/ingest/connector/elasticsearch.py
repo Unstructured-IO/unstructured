@@ -4,7 +4,7 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Optional
-
+from functools import cached_property
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -34,16 +34,26 @@ class SimpleElasticsearchConfig(BaseConnectorConfig):
 
 
 @dataclass
-class ElasticsearchFileMeta:
+class ElasticsearchDocumentMeta:
     """Metadata specifying:
     name of the elasticsearch index that is being reached to,
     and the id of document that is being reached to,
     """
 
-    index_name: str
+    index_name: Optional[str]
     document_id: str
-    version: str = None
 
+
+@dataclass
+class ElasticsearchFileMeta:
+    """Metadata specifying:
+    version of the document as a str
+    exists, whether if the document exists or not
+    """
+
+    version: Optional[str] = None
+    exists: Optional[bool] = None
+    
 
 @dataclass
 class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -55,17 +65,16 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """
 
     config: SimpleElasticsearchConfig
-    file_meta: ElasticsearchFileMeta
+    document_meta: ElasticsearchDocumentMeta
     registry_name: str = "elasticsearch"
-    file_exists: Optional[bool] = None
 
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
     @property
     def filename(self):
         return (
             Path(self.standard_config.download_dir)
-            / self.file_meta.index_name
-            / f"{self.file_meta.document_id}.txt"
+            / self.document_meta.index_name
+            / f"{self.document_meta.document_id}.txt"
         ).resolve()
 
     @property
@@ -74,7 +83,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         the output file."""
         # Generate SHA256 hash and take the first 8 characters
         query_hash = hashlib.sha256((self.config.jq_query or "").encode()).hexdigest()[:8]
-        output_file = f"{self.file_meta.document_id}-{query_hash}.json"
+        output_file = f"{self.document_meta.document_id}-{query_hash}.json"
         return Path(self.standard_config.output_dir) / self.config.index_name / output_file
 
     # TODO: change test fixtures such that examples with
@@ -115,20 +124,27 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             es = Elasticsearch(self.config.url)
             document = es.get(
                 index=self.config.index_name,
-                id=self.file_meta.document_id,
+                id=self.document_meta.document_id,
             )
-        except Exception as e:
-            if isinstance(e, NotFoundError):
-                logger.error("Couldn't find document with ID: %s", self.file_meta.document_id)
-                self.file_exists = False
+        except NotFoundError:
+            logger.error("Couldn't find document with ID: %s", self.document_meta.document_id)
+            return None
+        except Exception:                
             raise
-        self.file_exists = document["found"]
         return document
 
-    def get_file_metadata(self, document=None):
+    @cached_property
+    def file_metadata(self):
+        document = self._get_document()
         if document is None:
-            document = self._get_document()
-        self.file_meta.version = document["_version"]
+            return ElasticsearchFileMeta(
+                exists=False
+            )
+        
+        return ElasticsearchFileMeta(
+            document["_version"],
+            document["found"]
+        )
 
     @SourceConnectionError.wrap
     @requires_dependencies(["jq"], extras="elasticsearch")
@@ -139,33 +155,33 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         # NOTE: rename variable?
         document = self._get_document()
+        if document is None:
+            raise ValueError(
+                f"Failed to get document {self.document_meta.document_id}"
+            )
+
         document_dict = document.body["_source"]
         if self.config.jq_query:
             document_dict = json.loads(jq.compile(self.config.jq_query).input(document_dict).text())
         self.document = self._concatenate_dict_fields(document_dict)
-        self.get_file_metadata(document)
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
 
     @property
     def exists(self) -> Optional[bool]:
-        if self.file_exists is None:
-            self.get_file_metadata()
-        return self.file_exists
+        return self.file_metadata.exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
             "index_name": self.config.index_name,
-            "document_id": self.file_meta.document_id,
+            "document_id": self.document_meta.document_id,
         }
 
     @property
     def version(self) -> Optional[str]:
-        if self.file_meta.version is None:
-            self.get_file_metadata()
-        return self.file_meta.version
+        return self.file_metadata.version
 
 
 @dataclass
@@ -211,7 +227,7 @@ class ElasticsearchConnector(ConnectorCleanupMixin, BaseConnector):
             ElasticsearchIngestDoc(
                 self.standard_config,
                 self.config,
-                ElasticsearchFileMeta(self.config.index_name, id),
+                ElasticsearchDocumentMeta(self.config.index_name, id),
             )
             for id in ids
         ]
