@@ -103,7 +103,7 @@ def partition_pdf(
     
     if ocr_languages is not None:
         # check if languages was set to anything not the default value
-        # languages and ocr_languages were both provided - raise error
+        # languages and ocr_languages were therefore both provided - raise error
         if languages != ["eng"]: 
             raise ValueError(
                 "Only one of languages and ocr_languages should be specified. "
@@ -167,7 +167,7 @@ def partition_pdf_or_image(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    # ocr_languages: str = "eng",
+    ocr_languages: str = None,
     languages: List[str] = ["eng"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
@@ -179,6 +179,20 @@ def partition_pdf_or_image(
     # route. Decoding the routing should probably be handled by a single function designed for
     # that task so as routing design changes, those changes are implemented in a single
     # function.
+
+    if ocr_languages is not None:
+        if languages != ["eng"]: 
+            raise ValueError(
+                "Only one of languages and ocr_languages should be specified. "
+                "languages is preferred. ocr_languages is marked for deprecation.",
+            )
+        
+        else:
+            languages = convert_old_ocr_languages_to_languages(ocr_languages)
+            logger.warn(
+                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
+                "Please use languages instead.",
+            )
 
     last_modification_date = get_the_last_modification_date_pdf_or_img(
         file=file,
