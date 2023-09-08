@@ -340,31 +340,17 @@ def test_set_element_hierarchy():
     assert (
         elements[2].metadata.parent_id == elements[0].id
     ), "FigureCaption should be child of Title"
-    assert (
-        elements[3].metadata.parent_id == elements[0].id
-    ), "ListItem should be child of Title"
-    assert (
-        elements[4].metadata.parent_id == elements[0].id
-    ), "ListItem should be child of Title"
-    assert (
-        elements[5].metadata.parent_id == elements[0].id
-    ), "ListItem should be child of Title"
-    assert (
-        elements[6].metadata.parent_id == elements[0].id
-    ), "ListItem should be child of Title"
+    assert elements[3].metadata.parent_id == elements[0].id, "ListItem should be child of Title"
+    assert elements[4].metadata.parent_id == elements[0].id, "ListItem should be child of Title"
+    assert elements[5].metadata.parent_id == elements[0].id, "ListItem should be child of Title"
+    assert elements[6].metadata.parent_id == elements[0].id, "ListItem should be child of Title"
     assert (
         elements[7].metadata.parent_id is None
     ), "CheckBox should be None, as it's not a Text based element"
     assert elements[8].metadata.parent_id is None, "Title 2 should be child of None"
-    assert (
-        elements[9].metadata.parent_id == elements[8].id
-    ), "ListItem should be child of Title 2"
-    assert (
-        elements[10].metadata.parent_id == elements[8].id
-    ), "ListItem should be child of Title 2"
-    assert (
-        elements[11].metadata.parent_id == elements[8].id
-    ), "Text should be child of Title 2"
+    assert elements[9].metadata.parent_id == elements[8].id, "ListItem should be child of Title 2"
+    assert elements[10].metadata.parent_id == elements[8].id, "ListItem should be child of Title 2"
+    assert elements[11].metadata.parent_id == elements[8].id, "Text should be child of Title 2"
 
 
 def test_set_element_hierarchy_custom_rule_set():
@@ -387,18 +373,12 @@ def test_set_element_hierarchy_custom_rule_set():
         ruleset=custom_rule_set,
     )
 
-    assert (
-        elements[1].metadata.parent_id == elements[0].id
-    ), "Title should be child of Header"
+    assert elements[1].metadata.parent_id == elements[0].id, "Title should be child of Header"
     assert (
         elements[2].metadata.parent_id == elements[1].id
     ), "NarrativeText should be child of Title"
-    assert (
-        elements[3].metadata.parent_id == elements[1].id
-    ), "Text should be child of Title"
-    assert (
-        elements[4].metadata.parent_id == elements[0].id
-    ), "Title 2 should be child of Header"
+    assert elements[3].metadata.parent_id == elements[1].id, "Text should be child of Title"
+    assert elements[4].metadata.parent_id == elements[0].id, "Title 2 should be child of Header"
     assert (
         elements[5].metadata.parent_id == elements[4].id
     ), "FigureCaption should be child of Title 2"
