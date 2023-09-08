@@ -8,7 +8,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Getting Started"
   },
@@ -21,7 +22,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "💡\n      \n      Notion Tip: When creating a page, it's important to give it a clear title and provide some content. This could include verifying the information, summarizing the topic, or sharing your thoughts and opinions on something that matters to you."
   },
@@ -34,7 +36,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "The Basics"
   },
@@ -47,7 +50,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Create a Page"
   },
@@ -66,7 +70,8 @@
       ],
       "emphasized_text_tags": [
         "b"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "\n      In your sidebar, click the \n      "
   },
@@ -79,7 +84,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Headings"
   },
@@ -92,7 +98,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "You can add headings and subheadings in one of two ways:"
   },
@@ -105,7 +112,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Type \n        \n          /heading\n        \n         or \n        \n          /h1\n        \n        , \n        \n          /h2\n        \n        , or \n        \n          /h3\n        \n         to choose the heading size you want."
   },
@@ -118,7 +126,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Use Markdown shortcuts, like \n        \n          #\n        \n        , \n        \n          ##\n        \n        , and \n        \n          ###\n        \n        ."
   },
@@ -131,7 +140,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Create inline code by wrapping text with \n          \n            `\n          \n           (or with the shortcut \n          \n            cmd/ctrl + e\n          \n          )."
   },
@@ -144,7 +154,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Toggle Lists"
   },
@@ -157,7 +168,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Toggle lists streamline your content. Click the arrow to open."
   },
@@ -170,7 +182,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Callout Blocks"
   },
@@ -183,7 +196,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Code Blocks"
   },
@@ -196,7 +210,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "You can add code notation to any Notion page:"
   },
@@ -209,7 +224,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Your teammates can select any code to comment on it."
   },
@@ -222,7 +238,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Organizing Pages"
   },
@@ -235,7 +252,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "\n      Instead of using folders, Notion lets you nest pages inside pages. Type \n      "
   },
@@ -248,7 +266,8 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Advanced Techniques"
   },
@@ -267,7 +286,8 @@
       ],
       "link_texts": [
         "\n        Notion Editor 101\n      "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "\n      Check out this \n      "
   },
@@ -286,7 +306,8 @@
       ],
       "link_texts": [
         "\n        Notion Editor 101\n      "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Notion Editor 101\n      \n       guide for more advanced tips and how-to's."
   }

@@ -5,7 +5,8 @@
     "metadata": {
       "data_source": {},
       "filename": "fake-text.txt",
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "This is a test document to use for unit tests."
   },
@@ -15,7 +16,8 @@
     "metadata": {
       "data_source": {},
       "filename": "fake-text.txt",
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "Doylestown, PA 18901"
   },
@@ -25,7 +27,8 @@
     "metadata": {
       "data_source": {},
       "filename": "fake-text.txt",
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "Important points:"
   },
@@ -35,7 +38,8 @@
     "metadata": {
       "data_source": {},
       "filename": "fake-text.txt",
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "Hamburgers are delicious"
   },
@@ -45,7 +49,8 @@
     "metadata": {
       "data_source": {},
       "filename": "fake-text.txt",
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "Dogs are the best"
   },
@@ -55,7 +60,8 @@
     "metadata": {
       "data_source": {},
       "filename": "fake-text.txt",
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "I love fuzzy blankets"
   }

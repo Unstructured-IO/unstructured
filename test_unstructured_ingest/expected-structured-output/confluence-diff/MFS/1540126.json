@@ -11,7 +11,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Driver"
   },
@@ -27,7 +28,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Approver"
   },
@@ -43,7 +45,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Contributors"
   },
@@ -59,7 +62,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Informed"
   },
@@ -75,7 +79,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Objective"
   },
@@ -91,7 +96,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Due date"
   },
@@ -107,7 +113,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Key outcomes"
   },
@@ -123,7 +130,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Status"
   },
@@ -143,7 +151,8 @@
         "span",
         "span",
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "NOT STARTED / IN PROGRESS / COMPLETE"
   },
@@ -153,7 +162,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "\\uD83E\\uDD14 Problem Statement"
   },
@@ -163,7 +173,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "🎯 Scope"
   },
@@ -179,7 +190,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Must have:"
   },
@@ -189,7 +201,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": ""
   },
@@ -199,7 +212,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": ""
   },
@@ -215,7 +229,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Nice to have:"
   },
@@ -231,7 +246,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Not in scope:"
   },
@@ -241,7 +257,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "\\uD83D\\uDDD3 Timeline"
   },
@@ -251,7 +268,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Lane 1"
   },
@@ -261,7 +279,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Lane 2"
   },
@@ -271,7 +290,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Feature 1"
   },
@@ -281,7 +301,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Feature 2"
   },
@@ -291,7 +312,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Feature 3"
   },
@@ -301,7 +323,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Feature 4"
   },
@@ -311,7 +334,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "iOS app"
   },
@@ -321,7 +345,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Android app"
   },
@@ -331,7 +356,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "\\uD83D\\uDEA9 Milestones and deadlines"
   },
@@ -347,7 +373,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Milestone"
   },
@@ -363,7 +390,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Owner"
   },
@@ -379,7 +407,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Deadline"
   },
@@ -395,7 +424,8 @@
       ],
       "emphasized_text_tags": [
         "strong"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Status"
   },
@@ -405,7 +435,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "\\uD83D\\uDD17 Reference materials"
   }

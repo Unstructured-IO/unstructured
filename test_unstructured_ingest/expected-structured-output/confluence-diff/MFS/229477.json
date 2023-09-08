@@ -5,7 +5,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Welcome to your team space!"
   },
@@ -15,7 +16,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "We've added some suggestions and placeholders. Everything is customizable."
   },
@@ -35,7 +37,8 @@
         "Template - Project plan",
         "Template - Meeting notes",
         "Template - Weekly status report"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Get started with page templates:Template - Project planTemplate - Meeting notesTemplate - Weekly status report"
   },
@@ -51,7 +54,8 @@
       ],
       "link_texts": [
         "Get the most out of your team space"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Check out Get the most out of your team space for more tips."
   },
@@ -61,7 +65,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "About"
   },
@@ -79,7 +84,8 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "What is your team all about?"
   },
@@ -89,7 +95,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Mission and vision"
   },
@@ -107,7 +114,8 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "What is your team's mission? What is your vision?"
   },
@@ -117,7 +125,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Meet the team"
   },
@@ -135,7 +144,8 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Add team members to your space."
   },
@@ -151,7 +161,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Team member"
   },
@@ -167,7 +178,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Role"
   },
@@ -183,7 +195,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Responsibility"
   },
@@ -199,7 +212,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Team member"
   },
@@ -215,7 +229,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Role"
   },
@@ -231,7 +246,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Responsibility"
   },
@@ -247,7 +263,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Team member"
   },
@@ -263,7 +280,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Role"
   },
@@ -279,7 +297,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Responsibility"
   },
@@ -289,7 +308,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Contact us"
   },
@@ -307,7 +327,8 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "How can someone reach out to your team?"
   },
@@ -329,7 +350,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "team@email.com"
   },
@@ -345,7 +367,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Tickets"
   },
@@ -361,7 +384,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Jira board"
   },
@@ -377,7 +401,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "#channel"
   },
@@ -387,7 +412,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Important Pages"
   },
@@ -405,7 +431,8 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "List them here"
   },
@@ -415,7 +442,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": ""
   },
@@ -425,7 +453,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": ""
   },
@@ -435,7 +464,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": ""
   },
@@ -445,7 +475,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Onboarding FAQs"
   },
@@ -463,7 +494,8 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Add resources for new hires"
   },
@@ -473,7 +505,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Meeting notes"
   },
@@ -491,7 +524,8 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Add links to meeting notes"
   },
@@ -501,7 +535,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Team goals"
   },
@@ -519,7 +554,8 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "List them here"
   },
@@ -529,7 +565,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Team news"
   },
@@ -547,7 +584,8 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Create a blog post to share team news. It will automatically appear here once it's published."
   },
@@ -557,7 +595,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Blog stream"
   },
@@ -567,7 +606,8 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Create a blog post to share news and announcements with your team and company."
   }

@@ -5,7 +5,8 @@
     "metadata": {
       "data_source": {},
       "filename": "C052BGT7718.xml",
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "category_depth": 0
     },
     "text": "testing <reply> testing <reply> threads are cool"
   },
@@ -15,7 +16,8 @@
     "metadata": {
       "data_source": {},
       "filename": "C052BGT7718.xml",
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "category_depth": 0
     },
     "text": "<@U051UBRR946> has joined the channel <reply> <@U051UBRR946> has joined the channel"
   },
@@ -25,7 +27,8 @@
     "metadata": {
       "data_source": {},
       "filename": "C052BGT7718.xml",
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "category_depth": 0
     },
     "text": "<@U04ST78RXU3> has joined the channel <reply> <@U04ST78RXU3> has joined the channel"
   }

@@ -12,7 +12,8 @@
         "date_created": "2023-08-22T11:35:25.467+0000",
         "date_modified": "2023-08-22T11:35:30.285+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "IssueID_IssueKey:10009     JCTP2-7"
   },
@@ -29,7 +30,8 @@
         "date_created": "2023-08-22T11:35:25.467+0000",
         "date_modified": "2023-08-22T11:35:30.285+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "ProjectID_Key:JCTP2     Jira Connector Test Project 2"
   },
@@ -46,7 +48,8 @@
         "date_created": "2023-08-22T11:35:25.467+0000",
         "date_modified": "2023-08-22T11:35:30.285+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "IssueType:Task"
   },
@@ -63,7 +66,8 @@
         "date_created": "2023-08-22T11:35:25.467+0000",
         "date_modified": "2023-08-22T11:35:30.285+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "Status:To Do"
   },
@@ -80,7 +84,8 @@
         "date_created": "2023-08-22T11:35:25.467+0000",
         "date_modified": "2023-08-22T11:35:30.285+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "Priority:{'self': 'https://unstructured-jira-connector-test.atlassian.net/rest/api/2/priority/3', 'iconUrl': 'https://unstructured-jira-connector-test.atlassian.net/images/icons/priorities/medium.svg', 'name': 'Medium', 'id': '3'}"
   },
@@ -97,7 +102,8 @@
         "date_created": "2023-08-22T11:35:25.467+0000",
         "date_modified": "2023-08-22T11:35:30.285+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "AssigneeID_Name:712020:7bc7fdcb-67e7-435d-b4a2-128aee12820c     Unstructured Devops"
   },
@@ -114,7 +120,8 @@
         "date_created": "2023-08-22T11:35:25.467+0000",
         "date_modified": "2023-08-22T11:35:30.285+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "ReporterAdr_Name:devops+jira-connector@unstructured.io     Unstructured Devops"
   },
@@ -131,7 +138,8 @@
         "date_created": "2023-08-22T11:35:25.467+0000",
         "date_modified": "2023-08-22T11:35:30.285+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "Labels:"
   },
@@ -148,7 +156,8 @@
         "date_created": "2023-08-22T11:35:25.467+0000",
         "date_modified": "2023-08-22T11:35:30.285+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "Components:"
   },
@@ -165,7 +174,8 @@
         "date_created": "2023-08-22T11:35:25.467+0000",
         "date_modified": "2023-08-22T11:35:30.285+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "Test Epic 1 Task 3"
   },
@@ -182,7 +192,8 @@
         "date_created": "2023-08-22T11:35:25.467+0000",
         "date_modified": "2023-08-22T11:35:30.285+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "category_depth": 0
     },
     "text": "{}"
   }

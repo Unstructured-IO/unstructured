@@ -8,7 +8,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Page with every block"
   },
@@ -21,7 +22,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "💡\n      \n      Notion Tip: Tag pages to let collaborators know what they can expect to use the page for. You can add one or many tags to any page in a wiki."
   },
@@ -34,7 +36,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Heading 2"
   },
@@ -47,7 +50,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "This is some new text"
   },
@@ -72,7 +76,8 @@
       ],
       "emphasized_text_tags": [
         "b"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "\n      Some/less → \n      more\n       \n      "
   },
@@ -91,7 +96,8 @@
       ],
       "link_texts": [
         "\n        text\n      "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "text\n      \n       with other"
   },
@@ -110,7 +116,8 @@
       ],
       "emphasized_text_tags": [
         "b"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "c1r1 \n          \n            content"
   },
@@ -123,7 +130,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "c2r1 table \n          2023-08-08T09:00:00.000-04:00\n            cell"
   },
@@ -142,7 +150,8 @@
       ],
       "link_texts": [
         "\n            Page with every block \n          "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Page with every block"
   },
@@ -161,7 +170,8 @@
       ],
       "link_texts": [
         "\n            content\n          "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "c1r2 more \n          \n            content"
   },
@@ -180,7 +190,8 @@
       ],
       "emphasized_text_tags": [
         "span"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "c2r2 table \n          \n            cell"
   },
@@ -199,7 +210,8 @@
       ],
       "link_texts": [
         "\n            Untitled\n          "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Untitled"
   },
@@ -212,7 +224,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "this is some green text"
   },
@@ -233,7 +246,8 @@
       "emphasized_text_tags": [
         "b",
         "b"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "this is \n          \n            an \n          \n          \n            equation"
   },
@@ -252,7 +266,8 @@
       ],
       "link_texts": [
         "\n            Untitled\n          "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Untitled"
   },
@@ -271,7 +286,8 @@
       ],
       "emphasized_text_tags": [
         "i"
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "text1\n\n\n          \n            text2\n          \n          \n\nMultiline cell"
   },
@@ -284,7 +300,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Another cell"
   },
@@ -303,7 +320,8 @@
       ],
       "link_texts": [
         "\n            Untitled\n          "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Untitled"
   },
@@ -316,7 +334,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "E = {mc^2}"
   },
@@ -329,7 +348,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Numbered list"
   },
@@ -342,7 +362,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "A number child"
   },
@@ -355,7 +376,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "A number grandchild"
   },
@@ -368,7 +390,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "great"
   },
@@ -381,7 +404,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "super great"
   },
@@ -394,7 +418,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": ""
   },
@@ -407,7 +432,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "with test text"
   },
@@ -420,7 +446,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Bullet one"
   },
@@ -433,7 +460,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "A child bullet"
   },
@@ -446,7 +474,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "A grandchild bullet"
   },
@@ -459,7 +488,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "great"
   },
@@ -472,7 +502,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "super great"
   },
@@ -485,7 +516,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "Bullet two"
   },
@@ -498,7 +530,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1
+      "page_number": 1,
+      "category_depth": 0
     },
     "text": "I quote myself testings Notion"
   },
@@ -517,7 +550,8 @@
       ],
       "link_texts": [
         "\n        https://www.notion.so/icons/airplane_brown.svg\n      "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "https://www.notion.so/icons/airplane_brown.svg\n      \n      I call this out"
   },
@@ -536,7 +570,8 @@
       ],
       "link_texts": [
         "\n        https://www.wikipedia.org/\n      "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "https://www.wikipedia.org/"
   },
@@ -555,7 +590,8 @@
       ],
       "link_texts": [
         "\n        https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG2tV4mrh1z3kXi5z_warlk\n      "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG2tV4mrh1z3kXi5z_warlk"
   },
@@ -568,7 +604,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "category_depth": 0
     },
     "text": "Child Database:"
   },
@@ -587,7 +624,8 @@
       ],
       "link_texts": [
         "\n        Analytics\n      "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Analytics"
   },
@@ -600,7 +638,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "category_depth": 0
     },
     "text": "Child Page:"
   },
@@ -619,7 +658,8 @@
       ],
       "link_texts": [
         "\n        Untitled\n      "
-      ]
+      ],
+      "category_depth": 0
     },
     "text": "Untitled"
   },
@@ -632,7 +672,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "category_depth": 0
     },
     "text": "This is my code caption"
   },
@@ -645,7 +686,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "category_depth": 0
     },
     "text": "This is some text"
   },
@@ -658,7 +700,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "category_depth": 0
     },
     "text": "This is text in next column"
   },
@@ -671,7 +714,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "category_depth": 0
     },
     "text": "Final text in column"
   },
@@ -684,7 +728,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "category_depth": 0
     },
     "text": "Heading 1 content"
   },
@@ -697,7 +742,8 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2
+      "page_number": 2,
+      "category_depth": 0
     },
     "text": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526"
   }
