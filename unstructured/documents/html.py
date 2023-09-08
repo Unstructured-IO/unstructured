@@ -55,6 +55,7 @@ class TagsMixin:
         ancestortags: Sequence[str] = (),
         links: Sequence[Link] = [],
         emphasized_texts: Sequence[dict] = [],
+        text_as_html: Optional[str] = None,
         **kwargs,
     ):
         if tag is None:
@@ -64,6 +65,7 @@ class TagsMixin:
         self.ancestortags = ancestortags
         self.links = links
         self.emphasized_texts = emphasized_texts
+        self.text_as_html = text_as_html
         super().__init__(*args, **kwargs)
 
 
@@ -466,14 +468,17 @@ def _process_leaf_table_item(
                 rows = body.findall("tr")
             if len(rows) > 0:
                 table_data = [list(row.itertext()) for row in rows]
-                table_text = tabulate(table_data, tablefmt="html")
+                html_table = tabulate(table_data, tablefmt="html")
+                table_text = " ".join(" ".join(row) for row in table_data).strip()
             else:
                 table_text = ""
-
+                html_table = ""
             return (
                 HTMLTable(
                     text=table_text,
+                    text_as_html=html_table,
                     tag=tag_elem.tag,
+                    ancestortags=tuple(el.tag for el in tag_elem.iterancestors())[::-1],
                 ),
                 tag_elem,
             )

@@ -268,25 +268,24 @@ def test_partition_html_raises_with_too_many_specified():
 def test_partition_html_on_ideas_page(filename="example-docs/ideas-page.html"):
     elements = partition_html(filename=filename)
     assert len(elements) == 1
-
     assert elements[0] == Table(
-        text="<table>\n<tbody>\n<tr><td>January 2023</td><td>(</td><td>Someone"
-        "</td><td>fed my essays into GPT to make something that could answer"
-        "\nquestions based on them, then asked it where good ideas come from.  "
-        "The\nanswer was ok, but not what I would have said. This is what"
-        " I would have said.) </td><td>The way to get new ideas is to notice"
-        " anomalies: what seems strange,\nor missing, or broken? You can see"
-        " anomalies in everyday life (much\nof standup comedy is based on this), "
-        "but the best place to look for\nthem is at the frontiers of knowledge. "
-        "</td><td>Knowledge grows fractally.\nFrom a distance its edges look smooth,"
-        " but when you learn enough\nto get close to one, you&#x27;ll notice "
-        "it&#x27;s full of gaps. These gaps\nwill seem obvious; it will seem "
-        "inexplicable that no one has tried\nx or wondered about y. In the best case,"
-        " exploring such gaps yields\nwhole new fractal buds. </td></tr>\n</tbody>\n</table>",
+        text="January 2023 ( Someone  fed my essays into GPT to make something "
+        "that could answer\nquestions based on them, then asked it where good "
+        "ideas come from.  The\nanswer was ok, but not what I would have said. "
+        "This is what I would have said.) The way to get new ideas is to notice "
+        "anomalies: what seems strange,\nor missing, or broken? You can see anomalies"
+        " in everyday life (much\nof standup comedy is based on this), but the best "
+        "place to look for\nthem is at the frontiers of knowledge. Knowledge grows "
+        "fractally.\nFrom a distance its edges look smooth, but when you learn "
+        "enough\nto get close to one, you'll notice it's full of gaps. These "
+        "gaps\nwill seem obvious; it will seem inexplicable that no one has tried\nx "
+        "or wondered about y. In the best case, exploring such gaps yields\nwhole "
+        "new fractal buds.",
     )
 
     assert elements[0].metadata.emphasized_text_contents is None
     assert elements[0].metadata.link_urls is None
+    assert elements[0].metadata.text_as_html is not None
 
 
 def test_user_without_file_write_permission_can_partition_html(tmp_path, monkeypatch):

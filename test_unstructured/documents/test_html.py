@@ -78,7 +78,7 @@ def test_parses_tags_correctly():
 </html>"""
     doc = HTMLDocument.from_string(raw_html)
     el = doc.elements[0]
-    assert el.ancestortags + (el.tag,) == ("table",)
+    assert el.ancestortags + (el.tag,) == ("html", "body", "table")
 
 
 def test_has_table_ancestor():
@@ -113,11 +113,7 @@ def test_read_without_skipping_table(monkeypatch):
     </body>
 </html>"""
     document = HTMLDocument.from_string(doc).doc_after_cleaners(skip_table=False)
-    assert document.pages[0].elements[0] == Table(
-        text="<table>\n<tbody>\n<tr><td>"
-        "</td><td>Hi there! I am Matt!</td>"
-        "<td></td></tr>\n</tbody>\n</table>",
-    )
+    assert document.pages[0].elements[0] == Table(text="Hi there! I am Matt!")
 
 
 @pytest.mark.parametrize(
