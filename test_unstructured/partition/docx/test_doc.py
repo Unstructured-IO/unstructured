@@ -3,6 +3,7 @@ from tempfile import SpooledTemporaryFile
 
 import docx
 import pytest
+
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     Address,

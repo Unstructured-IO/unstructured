@@ -1,6 +1,7 @@
 import os
 import pathlib
 
+from unstructured.chunking.title import chunk_by_title
 from unstructured.partition.epub import partition_epub
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
@@ -151,8 +152,9 @@ def test_partition_epub_from_file_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_epub_with_json():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub")
+def test_partition_epub_with_json(
+    filename=os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub"),
+):
     elements = partition_epub(filename=filename)
     test_elements = partition_json(text=elements_to_json(elements))
 
@@ -161,3 +163,13 @@ def test_partition_epub_with_json():
     assert elements[0].metadata.section == test_elements[0].metadata.section
     for i in range(len(elements)):
         elements[i] == test_elements[i]
+
+
+def test_add_chunking_strategy_on_partition_epub(
+    filename=os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub"),
+):
+    elements = partition_epub(filename=filename)
+    chunk_elements = partition_epub(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
