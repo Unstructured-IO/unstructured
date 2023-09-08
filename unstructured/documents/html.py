@@ -476,7 +476,7 @@ def _process_leaf_table_item(
             return (
                 HTMLTable(
                     text=table_text,
-                    text_as_html=html_table,
+                    text_as_html=html_table.replace("\n", "<br>"),
                     tag=tag_elem.tag,
                     ancestortags=tuple(el.tag for el in tag_elem.iterancestors())[::-1],
                 ),
