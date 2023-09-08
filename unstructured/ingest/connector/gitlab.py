@@ -63,6 +63,7 @@ class GitLabIngestDoc(GitIngestDoc):
 
     def _fetch_and_write(self) -> None:
         content_file = self._fetch_content()
+        logger.debug(content_file.attributes)
         if content_file is None:
             raise ValueError(
                 f"Failed to retrieve file from repo " f"{self.config.url}/{self.path}. Check logs.",
@@ -79,7 +80,7 @@ class GitLabIngestDoc(GitIngestDoc):
                 exists=None,
             )
         return GitFileMeta(
-            version=content_file.attributes.get("commit_id", ""),
+            version=content_file.attributes.get("last_commit_id", ""),
             exists=True,
         )
 
