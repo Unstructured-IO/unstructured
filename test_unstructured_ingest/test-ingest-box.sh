@@ -27,13 +27,12 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
     --box-app-config "$BOX_APP_CONFIG_PATH" \
     --remote-url box://utic-test-ingest-fixtures \
-    --structured-output-dir box-output \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
+    --structured-output-dir "$OUTPUT_DIR" \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
     --num-processes 2 \
     --preserve-downloads \
     --recursive \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
     --verbose
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

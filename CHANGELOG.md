@@ -1,12 +1,41 @@
-## 0.10.12-dev1
+## 0.10.13-dev5
 
 ### Enhancements
 
+* Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+* Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
+
 ### Features
+
+* Add Jira Connector to be able to pull issues from a Jira organization
+* Add `clean_ligatures` function to expand ligatures in text
 
 ### Fixes
 
-* Update version-sync to prevent duplicate release versions
+* `partition_html` breaks on `<br>` elements.
+* Ingest error handling to properly raise errors when wrapped
+* Bump unstructured-inference
+  * Brings back embedded images in PDF's (0.5.23)
+
+## 0.10.12
+
+### Enhancements
+
+* Removed PIL pin as issue has been resolved upstream
+* Bump unstructured-inference
+  * Support for yolox_quantized layout detection model (0.5.20)
+* YoloX element types added
+
+
+### Features
+
+* Add Salesforce Connector to be able to pull Account, Case, Campaign, EmailMessage, Lead
+
+### Fixes
+
+
+* Bump unstructured-inference
+  * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
 
 ## 0.10.11
 

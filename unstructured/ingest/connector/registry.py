@@ -16,6 +16,7 @@ from unstructured.ingest.connector.gcs import GcsIngestDoc
 from unstructured.ingest.connector.github import GitHubIngestDoc
 from unstructured.ingest.connector.gitlab import GitLabIngestDoc
 from unstructured.ingest.connector.google_drive import GoogleDriveIngestDoc
+from unstructured.ingest.connector.jira import JiraIngestDoc
 from unstructured.ingest.connector.local import LocalIngestDoc
 from unstructured.ingest.connector.notion.connector import (
     NotionDatabaseIngestDoc,
@@ -25,6 +26,7 @@ from unstructured.ingest.connector.onedrive import OneDriveIngestDoc
 from unstructured.ingest.connector.outlook import OutlookIngestDoc
 from unstructured.ingest.connector.reddit import RedditIngestDoc
 from unstructured.ingest.connector.s3_2 import S3IngestDoc
+from unstructured.ingest.connector.salesforce import SalesforceIngestDoc
 from unstructured.ingest.connector.sharepoint import SharepointIngestDoc
 from unstructured.ingest.connector.slack import SlackIngestDoc
 from unstructured.ingest.connector.wikipedia import (
@@ -48,6 +50,7 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
     "github": GitHubIngestDoc,
     "gitlab": GitLabIngestDoc,
     "google_drive": GoogleDriveIngestDoc,
+    "jira": JiraIngestDoc,
     "local": LocalIngestDoc,
     "notion_database": NotionDatabaseIngestDoc,
     "notion_page": NotionPageIngestDoc,
@@ -55,6 +58,7 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
     "outlook": OutlookIngestDoc,
     "reddit": RedditIngestDoc,
     "s3": S3IngestDoc,
+    "salesforce": SalesforceIngestDoc,
     "sharepoint": SharepointIngestDoc,
     "slack": SlackIngestDoc,
     "wikipedia_html": WikipediaIngestHTMLDoc,

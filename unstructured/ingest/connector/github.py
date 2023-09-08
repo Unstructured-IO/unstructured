@@ -9,6 +9,7 @@ from unstructured.ingest.connector.git import (
     GitIngestDoc,
     SimpleGitConfig,
 )
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
@@ -37,6 +38,7 @@ class SimpleGitHubConfig(SimpleGitConfig):
         # If there's no issues, store the core repository info
         self.repo_path = parsed_gh_url.path
 
+    @SourceConnectionError.wrap
     @requires_dependencies(["github"], extras="github")
     def _get_repo(self) -> "Repository":
         from github import Github
