@@ -18,7 +18,7 @@ Run Locally
       .. code:: shell
 
         unstructured-ingest \
-          gdrive \
+          google-drive \
           --drive-id "<file or folder id>" \
           --service-account-key "<path to drive service account key>" \
           --output-dir google-drive-ingest-output \
@@ -34,7 +34,7 @@ Run Locally
 
         command = [
           "unstructured-ingest",
-          "gdrive",
+          "google-drive",
           "--drive-id", "<file or folder id>",
           "--service-account-key",, "Path/To/Your/Service/Account/Key"
           "--output-dir", "/Output/Path/To/Files",
@@ -65,7 +65,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
       .. code:: shell
 
         unstructured-ingest \
-          gdrive \
+          google-drive \
           --drive-id "<file or folder id>" \
           --service-account-key "<path to drive service account key>" \
           --output-dir google-drive-ingest-output \
@@ -83,7 +83,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         command = [
           "unstructured-ingest",
-          "gdrive",
+          "google-drive",
           "--drive-id", "<file or folder id>",
           "--service-account-key",, "Path/To/Your/Service/Account/Key"
           "--output-dir", "/Output/Path/To/Files",

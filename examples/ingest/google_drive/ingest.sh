@@ -24,7 +24,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    gdrive \
+    google-drive \
     --drive-id "<file or folder id>" \
     --service-account-key "<path to drive service account key>" \
     --output-dir google-drive-ingest-output \
