@@ -24,8 +24,7 @@ fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     salesforce \
-    --categories "Campaign" \
-    --categories "EmailMessage" \
+    --categories "EmailMessage,Campaign" \
     --download-dir "$DOWNLOAD_DIR" \
     --username "$SALESFORCE_USERNAME" \
     --consumer-key "$SALESFORCE_CONSUMER_KEY" \

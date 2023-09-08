@@ -25,11 +25,11 @@ fi
 
 # Optional arguments:
 # --list-of-projects
-#     --> Space separated project ids or keys
+#     --> Comma separated project ids or keys
 # --list-of-boards
-#     --> Space separated board ids or keys
+#     --> Comma separated board ids or keys
 # --list-of-issues
-#     --> Space separated issue ids or keys
+#     --> Comma separated issue ids or keys
 
 # Note: When any of the optional arguments are provided, connector will ingest only those components, and nothing else.
 #       When none of the optional arguments are provided, all issues in all projects will be ingested.
@@ -48,7 +48,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --api-token "$JIRA_INGEST_API_TOKEN" \
         --projects "JCTP3" \
         --boards "1" \
-        --issues "JCTP2-4 JCTP2-7 JCTP2-8 10012 JCTP2-11"
+        --issues "JCTP2-4,JCTP2-7,JCTP2-8,10012,JCTP2-11"
 
 
 
