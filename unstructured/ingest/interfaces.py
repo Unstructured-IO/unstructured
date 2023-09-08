@@ -382,14 +382,14 @@ class ConfigSessionHandleMixin:
 
 
 class IngestDocSessionHandleMixin:
-    config: ConfigSessionHandleMixin
+    connector_config: ConfigSessionHandleMixin
     _session_handle: t.Optional[BaseSessionHandle] = None
 
     @property
     def session_handle(self):
         """If a session handle is not assigned, creates a new one and assigns it."""
         if self._session_handle is None:
-            self._session_handle = self.config.create_session_handle()
+            self._session_handle = self.connector_config.create_session_handle()
         return self._session_handle
 
     @session_handle.setter
