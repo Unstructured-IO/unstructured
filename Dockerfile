@@ -50,7 +50,6 @@ RUN python3.10 -m pip install pip==${PIP_VERSION} && \
   pip install --no-cache -r requirements/extra-markdown.txt && \
   pip install --no-cache -r requirements/extra-msg.txt && \
   pip install --no-cache -r requirements/extra-odt.txt && \
-  pip install --no-cache -r requirements/extra-paddleocr.txt && \
   pip install --no-cache -r requirements/extra-pandoc.txt && \
   pip install --no-cache -r requirements/extra-pdf-image.txt && \
   pip install --no-cache -r requirements/extra-pptx.txt && \
