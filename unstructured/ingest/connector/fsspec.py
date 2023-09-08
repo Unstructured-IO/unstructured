@@ -147,7 +147,11 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         with suppress(NotImplementedError):
             date_modified = fs.modified(self.remote_file_path).isoformat()
 
-        version = fs.checksum(self.remote_file_path)
+        version = (
+            fs.checksum(self.remote_file_path)
+            if self.config.protocol != "gs"
+            else fs.info(self.remote_file_path).get("etag", "")
+        )
         file_exists = fs.exists(self.remote_file_path)
         return FsspecFileMeta(
             date_created,
