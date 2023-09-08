@@ -86,6 +86,11 @@ class DropboxSourceConnector(FsspecSourceConnector):
 
     @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
     def initialize(self):
+        from fsspec import AbstractFileSystem, get_filesystem_class
+
+        self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
+            **self.connector_config.get_access_kwargs(),
+        )
         # Dropbox requires a forward slash at the front of the folder path. This
         # creates some complications in path joining so a custom path is created here.
         ls_output = self.fs.ls(f"/{self.connector_config.path_without_protocol}")
