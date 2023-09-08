@@ -94,7 +94,7 @@ def test_normalize_layout_element_headline(element_type, expected_type, expected
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(layout_element, coordinate_system=coordinate_system)
     assert element.metadata.category_depth == expected_depth
-    assert type(element) == expected_type
+    assert isinstance(element, expected_type)
 
 
 def test_normalize_layout_element_dict_figure_caption():
