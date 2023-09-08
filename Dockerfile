@@ -22,7 +22,8 @@ FROM base as deps
 # Copy and install Unstructured
 COPY requirements requirements
 
-RUN python3.10 -m pip install pip==${PIP_VERSION} && \
+RUN export ARCH=$(uname -m) && \
+  python3.10 -m pip install pip==${PIP_VERSION} && \
   dnf -y groupinstall "Development Tools" && \
   pip install --no-cache -r requirements/base.txt && \
   pip install --no-cache -r requirements/test.txt && \
@@ -50,10 +51,16 @@ RUN python3.10 -m pip install pip==${PIP_VERSION} && \
   pip install --no-cache -r requirements/extra-markdown.txt && \
   pip install --no-cache -r requirements/extra-msg.txt && \
   pip install --no-cache -r requirements/extra-odt.txt && \
+  pip install --no-cache -r requirements/extra-paddleocr.txt && \
   pip install --no-cache -r requirements/extra-pandoc.txt && \
   pip install --no-cache -r requirements/extra-pdf-image.txt && \
   pip install --no-cache -r requirements/extra-pptx.txt && \
   pip install --no-cache -r requirements/extra-xlsx.txt && \
+  # aarch64 requires a custom build of paddlepaddle
+  if [ "$ARCH" == "aarch64" ]; \
+    then pip install --no-cache unstructured.paddlepaddle; \
+    else pip install --no-cache paddlepaddle; \
+  fi && \
   dnf -y groupremove "Development Tools" && \
   dnf clean all
 
