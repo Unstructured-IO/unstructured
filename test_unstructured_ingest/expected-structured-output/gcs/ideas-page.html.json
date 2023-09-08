@@ -3,7 +3,16 @@
     "type": "Title",
     "element_id": "17c1a6701c263407d0fcf7c3ebfb2986",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/ideas-page.html",
+        "version": 199523943725186047835150971481714294476,
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "utic-test-ingest-fixtures/ideas-page.html"
+        },
+        "date_created": "2023-06-20T23:49:31.038000+00:00",
+        "date_modified": "2023-06-20T23:49:31.038000+00:00"
+      },
       "filetype": "text/html",
       "page_number": 1
     },
@@ -15,7 +24,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/ideas-page.html",
-        "version": "189403906109618130703889512627649588011",
+        "version": 199523943725186047835150971481714294476,
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/ideas-page.html"
@@ -44,7 +53,16 @@
     "type": "NarrativeText",
     "element_id": "a8ce0a2e7d66af2000e6c3bd36994411",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/ideas-page.html",
+        "version": 199523943725186047835150971481714294476,
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "utic-test-ingest-fixtures/ideas-page.html"
+        },
+        "date_created": "2023-06-20T23:49:31.038000+00:00",
+        "date_modified": "2023-06-20T23:49:31.038000+00:00"
+      },
       "filetype": "text/html",
       "page_number": 1
     },
@@ -54,7 +72,16 @@
     "type": "NarrativeText",
     "element_id": "4eafbff98b81999dfbf3572440d22393",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/ideas-page.html",
+        "version": 199523943725186047835150971481714294476,
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "utic-test-ingest-fixtures/ideas-page.html"
+        },
+        "date_created": "2023-06-20T23:49:31.038000+00:00",
+        "date_modified": "2023-06-20T23:49:31.038000+00:00"
+      },
       "filetype": "text/html",
       "page_number": 1
     },

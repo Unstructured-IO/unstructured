@@ -5,7 +5,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
-        "version": "214134950597276071284054815285095540975",
+        "version": 25646232132200560657189097157576319365,
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx"
@@ -26,7 +26,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
-        "version": "214134950597276071284054815285095540975",
+        "version": 25646232132200560657189097157576319365,
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx"
