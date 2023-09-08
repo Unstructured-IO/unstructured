@@ -88,18 +88,24 @@ def normalize_layout_element(
     # in order to add coordinates metadata to the element.
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
+    if layout_dict.get("prob"):
+        class_prob_metadata = ElementMetadata(detection_class_prob=float(layout_dict.get("prob")))
+    else:
+        class_prob_metadata = ElementMetadata()
     if element_type == "List":
         if infer_list_items:
             return layout_list_to_list_items(
                 text,
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
+                metadata=class_prob_metadata,
             )
         else:
             return ListItem(
                 text=text,
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
+                metadata=class_prob_metadata,
             )
 
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
@@ -108,24 +114,28 @@ def normalize_layout_element(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
+            metadata=class_prob_metadata,
         )
     elif element_type == "Checked":
         return CheckBox(
             checked=True,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
+            metadata=class_prob_metadata,
         )
     elif element_type == "Unchecked":
         return CheckBox(
             checked=False,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
+            metadata=class_prob_metadata,
         )
     else:
         return Text(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
+            metadata=class_prob_metadata,
         )
 
 
@@ -133,6 +143,7 @@ def layout_list_to_list_items(
     text: str,
     coordinates: Tuple[Tuple[float, float], ...],
     coordinate_system: Optional[CoordinateSystem],
+    metadata=Optional[ElementMetadata],
 ) -> List[Element]:
     """Converts a list LayoutElement to a list of ListItem elements."""
     split_items = ENUMERATED_BULLETS_RE.split(text)
@@ -150,6 +161,7 @@ def layout_list_to_list_items(
                     text=text_segment.strip(),
                     coordinates=coordinates,
                     coordinate_system=coordinate_system,
+                    metadata=metadata,
                 ),
             )
 

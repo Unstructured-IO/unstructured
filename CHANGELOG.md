@@ -1,8 +1,9 @@
-## 0.10.13-dev3
+## 0.10.13-dev4
 
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+* Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
 
 ### Features
 
