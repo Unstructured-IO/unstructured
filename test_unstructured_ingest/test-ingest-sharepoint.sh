@@ -16,7 +16,7 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
     sharepoint \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified \
+    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
     --num-processes 2 \
     --partition-strategy hi_res \
     --preserve-downloads \
