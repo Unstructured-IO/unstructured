@@ -222,24 +222,6 @@
     "text": "Notes"
   },
   {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
-        "version": 1,
-        "record_locator": {
-          "page_id": "1605928"
-        },
-        "date_created": "2023-07-09T12:54:45.162000",
-        "date_modified": "2023-07-09T12:54:45.162000"
-      },
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": ""
-  },
-  {
     "type": "Title",
     "element_id": "f158a8eaf72c7e9511d5e8ee03692652",
     "metadata": {
