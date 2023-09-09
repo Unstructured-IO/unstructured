@@ -384,6 +384,8 @@ def test_partition_pdf_with_copy_protection():
     )
     # check that the pdf has multiple different page numbers
     assert {element.metadata.page_number for element in elements} == {1, 2}
+    assert elements[0].metadata.detection_class_prob is not None
+    assert isinstance(elements[0].metadata.detection_class_prob, float)
 
 
 def test_partition_pdf_with_dpi():

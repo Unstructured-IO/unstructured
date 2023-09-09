@@ -29,7 +29,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --username "$SALESFORCE_USERNAME" \
     --consumer-key "$SALESFORCE_CONSUMER_KEY" \
     --private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
     --num-processes 2 \
     --preserve-downloads \
     --recursive \
