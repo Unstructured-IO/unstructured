@@ -42,6 +42,16 @@ def test_sort_xycut_neg_coordinates():
     # NOTE(crag): xycut not attempted, sort_page_elements returns original list
     assert sort_page_elements(elements, sort_mode=SORT_MODE_XY_CUT) is elements
 
+def test_sort_xycut_pos_coordinates():
+    elements = []
+    for idx in range(2):
+        elem = Text(str(idx))
+        elem.metadata.coordinates = CoordinatesMetadata([(1, 2), (3, 4), (6, 7), (8, 9)], PixelSpace)
+        elements.append(elem)
+
+    # NOTE(crag): xycut attempted, list reference returned is different from elements passed in
+    assert sort_page_elements(elements, sort_mode=SORT_MODE_XY_CUT) is not elements
+
 def test_sort_basic_neg_coordinates():
     elements = []
     for idx in range(3):
