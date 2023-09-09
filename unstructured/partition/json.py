@@ -1,7 +1,6 @@
 import json
 from typing import IO, List, Optional
 
-from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import (
     FileType,
@@ -18,7 +17,6 @@ from unstructured.staging.base import dict_to_elements
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.JSON)
-@add_chunking_strategy()
 def partition_json(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -26,7 +24,6 @@ def partition_json(
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .json document into its constituent elements.
