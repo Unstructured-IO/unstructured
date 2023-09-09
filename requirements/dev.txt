@@ -391,7 +391,7 @@ urllib3==1.26.16
     #   -c requirements/constraints.in
     #   -c requirements/test.txt
     #   requests
-virtualenv==20.24.4
+virtualenv==20.24.5
     # via pre-commit
 wcwidth==0.2.6
     # via prompt-toolkit
