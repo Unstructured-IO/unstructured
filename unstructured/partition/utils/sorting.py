@@ -15,6 +15,25 @@ def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> List[int]:
     return [int(left), int(top), int(right), int(bottom)]
 
 
+def coord_has_valid_points(coordinates: CoordinatesMetadata) -> bool:
+    """
+    Verifies all 4 points in a coordinate exist and are positive.
+    """
+    if not coordinates:
+        return False
+    if len(coordinates.points) != 4:
+        return False
+    for point in coordinates.points:
+        if len(point) != 2:
+            return False
+        try:
+            if point < 0:
+                return False
+        except Exception:
+            return False
+    return True
+
+
 def sort_page_elements(
     page_elements: List[Element],
     sort_mode: str = SORT_MODE_XY_CUT,
@@ -41,20 +60,36 @@ def sort_page_elements(
     if not page_elements:
         return []
 
+    coordinates_list = [el.metadata.coordinates for el in page_elements]
+
+    def _coords_ok(strict_points: bool):
+        warned = False
+
+        for coord in coordinates_list:
+            if coord is None or not coord.points:
+                logger.warning(
+                    "some or all elements are missing coordinates, skipping sort",
+                )
+                return False
+            elif not coord_has_valid_points(coord):
+                if not warned:
+                    logger.warning(f"coord {coord} does not have valid points")
+                    warned = True
+                if strict_points:
+                    return False
+        return True
+
     if sort_mode == SORT_MODE_XY_CUT:
-        coordinates_list = [el.metadata.coordinates for el in page_elements]
-        if any(coords is None for coords in coordinates_list):
-            logger.warning(
-                "some or all elements are missing coordinates from this page so we can't sort the "
-                "elements",
-            )
-            sorted_page_elements = page_elements
-        else:
-            boxes = [coordinates_to_bbox(coords) for coords in coordinates_list]
-            res: List[int] = []
-            recursive_xy_cut(np.asarray(boxes).astype(int), np.arange(len(boxes)), res)
-            sorted_page_elements = [page_elements[i] for i in res]
+        if not _coords_ok(strict_points=True):
+            return page_elements
+        breakpoint()
+        boxes = [coordinates_to_bbox(coords) for coords in coordinates_list]
+        res: List[int] = []
+        recursive_xy_cut(np.asarray(boxes).astype(int), np.arange(len(boxes)), res)
+        sorted_page_elements = [page_elements[i] for i in res]
     elif sort_mode == SORT_MODE_BASIC:
+        if not _coords_ok(strict_points=False):
+            return page_elements
         sorted_page_elements = sorted(
             page_elements,
             key=lambda el: (
