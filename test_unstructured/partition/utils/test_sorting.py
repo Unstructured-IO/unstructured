@@ -45,7 +45,8 @@ def test_sort_xycut_neg_coordinates():
     for idx in range(2):
         elem = Text(str(idx))
         elem.metadata.coordinates = CoordinatesMetadata(
-            [(-idx, 2), (3, 4), (6, 7), (8, 9)], PixelSpace
+            [(-idx, 2), (3, 4), (6, 7), (8, 9)],
+            PixelSpace,
         )
         elements.append(elem)
 
@@ -58,7 +59,8 @@ def test_sort_xycut_pos_coordinates():
     for idx in range(2):
         elem = Text(str(idx))
         elem.metadata.coordinates = CoordinatesMetadata(
-            [(1, 2), (3, 4), (6, 7), (8, 9)], PixelSpace
+            [(1, 2), (3, 4), (6, 7), (8, 9)],
+            PixelSpace,
         )
         elements.append(elem)
 
@@ -71,7 +73,8 @@ def test_sort_basic_neg_coordinates():
     for idx in range(3):
         elem = Text(str(idx))
         elem.metadata.coordinates = CoordinatesMetadata(
-            [(1, -idx), (3, 4), (6, 7), (8, 9)], PixelSpace
+            [(1, -idx), (3, 4), (6, 7), (8, 9)],
+            PixelSpace,
         )
         elements.append(elem)
 
@@ -87,7 +90,8 @@ def test_sort_basic_pos_coordinates():
     for idx in range(3):
         elem = Text(str(idx))
         elem.metadata.coordinates = CoordinatesMetadata(
-            [(1, idx), (3, 4), (6, 7), (8, 9)], PixelSpace
+            [(1, idx), (3, 4), (6, 7), (8, 9)],
+            PixelSpace,
         )
         elements.append(elem)
 

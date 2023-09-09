@@ -3,7 +3,7 @@ from typing import List
 import numpy as np
 
 from unstructured.documents.elements import CoordinatesMetadata, Element
-from unstructured.logger import logger
+from unstructured.logger import logger, trace_logger
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
 from unstructured.partition.utils.xycut import recursive_xy_cut
 
@@ -67,13 +67,13 @@ def sort_page_elements(
 
         for coord in coordinates_list:
             if coord is None or not coord.points:
-                logger.warning(
+                trace_logger.detail(
                     "some or all elements are missing coordinates, skipping sort",
                 )
                 return False
             elif not coord_has_valid_points(coord):
                 if not warned:
-                    logger.warning(f"coord {coord} does not have valid points")
+                    trace_logger.detail(f"coord {coord} does not have valid points")
                     warned = True
                 if strict_points:
                     return False
