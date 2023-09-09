@@ -5,6 +5,7 @@ import pathlib
 
 import pytest
 
+from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     ElementMetadata,
     Image,
@@ -553,8 +554,9 @@ def test_partition_email_odd_attachment_filename(
     assert elements[1].metadata.filename == "odd=file=name.txt"
 
 
-def test_partition_email_with_json():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+def test_partition_email_with_json(
+    filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+):
     elements = partition_email(filename=filename)
     test_elements = partition_json(text=elements_to_json(elements))
 
@@ -573,3 +575,13 @@ def test_partition_email_with_pgp_encrypted_message(
     assert elements == []
     assert "WARNING" in caplog.text
     assert "Encrypted email detected" in caplog.text
+
+
+def test_add_chunking_strategy_on_partition_email(
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.txt")
+):
+    elements = partition_email(filename=filename)
+    chunk_elements = partition_email(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks

@@ -137,7 +137,7 @@ def test_partition_rtf_from_file_with_custom_metadata_date(
 
 
 def test_partition_rtf_with_json(
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "fake-doc.rtf")
+    filename=os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "fake-doc.rtf"),
 ):
     elements = partition_rtf(filename=filename)
 
