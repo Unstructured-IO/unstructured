@@ -4,7 +4,6 @@ from typing import IO, BinaryIO, List, Optional, Union, cast
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
 
-from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -22,7 +21,6 @@ from unstructured.partition.common import (
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.XLSX)
-@add_chunking_strategy()
 def partition_xlsx(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
@@ -30,7 +28,6 @@ def partition_xlsx(
     include_metadata: bool = True,
     metadata_last_modified: Optional[str] = None,
     include_header: bool = True,
-    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .xlsx format into its document elements.
