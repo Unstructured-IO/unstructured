@@ -340,42 +340,6 @@
     "text": "Nice to have:"
   },
   {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1540126",
-        "version": 1,
-        "record_locator": {
-          "page_id": "1540126"
-        },
-        "date_created": "2023-07-09T12:55:50.911000",
-        "date_modified": "2023-07-09T12:56:10.564000"
-      },
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": ""
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1540126",
-        "version": 1,
-        "record_locator": {
-          "page_id": "1540126"
-        },
-        "date_created": "2023-07-09T12:55:50.911000",
-        "date_modified": "2023-07-09T12:56:10.564000"
-      },
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": ""
-  },
-  {
     "type": "Title",
     "element_id": "7f999c0456e4e85cc028aa6ed90455d4",
     "metadata": {
@@ -398,42 +362,6 @@
       ]
     },
     "text": "Not in scope:"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1540126",
-        "version": 1,
-        "record_locator": {
-          "page_id": "1540126"
-        },
-        "date_created": "2023-07-09T12:55:50.911000",
-        "date_modified": "2023-07-09T12:56:10.564000"
-      },
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": ""
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1540126",
-        "version": 1,
-        "record_locator": {
-          "page_id": "1540126"
-        },
-        "date_created": "2023-07-09T12:55:50.911000",
-        "date_modified": "2023-07-09T12:56:10.564000"
-      },
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": ""
   },
   {
     "type": "Title",
