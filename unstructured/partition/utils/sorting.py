@@ -67,13 +67,13 @@ def sort_page_elements(
 
         for coord in coordinates_list:
             if coord is None or not coord.points:
-                trace_logger.detail(
+                trace_logger.detail(  # type: ignore
                     "some or all elements are missing coordinates, skipping sort",
                 )
                 return False
             elif not coord_has_valid_points(coord):
                 if not warned:
-                    trace_logger.detail(f"coord {coord} does not have valid points")
+                    trace_logger.detail(f"coord {coord} does not have valid points")  # type: ignore
                     warned = True
                 if strict_points:
                     return False

@@ -11,27 +11,27 @@ from unstructured.partition.utils.sorting import (
 
 def test_coord_valid_coordinates():
     coordinates = CoordinatesMetadata([(1, 2), (3, 4), (5, 6), (7, 8)], PixelSpace)
-    assert coord_has_valid_points(coordinates) == True
+    assert coord_has_valid_points(coordinates) is True
 
 
 def test_coord_missing_incomplete_point():
     coordinates = CoordinatesMetadata([(1, 2), (3, 4), (5, 6)], PixelSpace)
-    assert coord_has_valid_points(coordinates) == False
+    assert coord_has_valid_points(coordinates) is False
 
 
 def test_coord_negative_values():
     coordinates = CoordinatesMetadata([(1, 2), (3, 4), (5, -6), (7, 8)], PixelSpace)
-    assert coord_has_valid_points(coordinates) == False
+    assert coord_has_valid_points(coordinates) is False
 
 
 def test_coord_weird_values():
     coordinates = CoordinatesMetadata([(1, 2), ("3", 4), (5, 6), (7, 8)], PixelSpace)
-    assert coord_has_valid_points(coordinates) == False
+    assert coord_has_valid_points(coordinates) is False
 
 
 def test_coord_invalid_point_structure():
     coordinates = CoordinatesMetadata([(1, 2), (3, 4, 5), (6, 7), (8, 9)], PixelSpace)
-    assert coord_has_valid_points(coordinates) == False
+    assert coord_has_valid_points(coordinates) is False
 
 
 @pytest.mark.parametrize("sort_mode", ["xy-cut", "basic"])
