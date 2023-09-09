@@ -29,7 +29,7 @@ def coord_has_valid_points(coordinates: CoordinatesMetadata) -> bool:
         try:
             if point[0] < 0 or point[1] < 0:
                 return False
-        except Exception:
+        except TypeError:
             return False
     return True
 
@@ -82,7 +82,6 @@ def sort_page_elements(
     if sort_mode == SORT_MODE_XY_CUT:
         if not _coords_ok(strict_points=True):
             return page_elements
-        breakpoint()
         boxes = [coordinates_to_bbox(coords) for coords in coordinates_list]
         res: List[int] = []
         recursive_xy_cut(np.asarray(boxes).astype(int), np.arange(len(boxes)), res)
