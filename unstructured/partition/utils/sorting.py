@@ -27,7 +27,7 @@ def coord_has_valid_points(coordinates: CoordinatesMetadata) -> bool:
         if len(point) != 2:
             return False
         try:
-            if point < 0:
+            if point[0] < 0 or point[1] < 0:
                 return False
         except Exception:
             return False
