@@ -5,7 +5,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": 198731266903969902154134165613731741332,
+        "version": "CPXPxMuE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -23,7 +23,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": 198731266903969902154134165613731741332,
+        "version": "CPXPxMuE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -41,7 +41,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": 198731266903969902154134165613731741332,
+        "version": "CPXPxMuE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -59,7 +59,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": 198731266903969902154134165613731741332,
+        "version": "CPXPxMuE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -77,7 +77,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": 198731266903969902154134165613731741332,
+        "version": "CPXPxMuE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"
@@ -95,7 +95,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": 198731266903969902154134165613731741332,
+        "version": "CPXPxMuE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-2/fake-text.txt"

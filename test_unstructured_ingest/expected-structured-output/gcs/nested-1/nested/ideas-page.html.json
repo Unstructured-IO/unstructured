@@ -5,7 +5,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-1/nested/ideas-page.html",
-        "version": 310890354306462681752199911957569001015,
+        "version": "CMWrx8aE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-1/nested/ideas-page.html"
@@ -24,7 +24,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-1/nested/ideas-page.html",
-        "version": 310890354306462681752199911957569001015,
+        "version": "CMWrx8aE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-1/nested/ideas-page.html"
@@ -55,7 +55,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-1/nested/ideas-page.html",
-        "version": 310890354306462681752199911957569001015,
+        "version": "CMWrx8aE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-1/nested/ideas-page.html"
@@ -74,7 +74,7 @@
     "metadata": {
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-1/nested/ideas-page.html",
-        "version": 310890354306462681752199911957569001015,
+        "version": "CMWrx8aE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "utic-test-ingest-fixtures/nested-1/nested/ideas-page.html"
