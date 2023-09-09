@@ -24,7 +24,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
     --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
     --list-of-paths "$VARIED_DATA_BASE_ID $VARIED_DATA_BASE_ID_2" \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date,metadata.last_modified \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date,metadata.last_modified,metadata.detection_class_prob \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \
