@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 import pytest
 
 from unstructured.documents.coordinates import PixelSpace
