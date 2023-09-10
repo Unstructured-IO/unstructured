@@ -419,10 +419,11 @@ def _process_pdfminer_pages(
                     )
                     page_elements.append(element)
 
-        sorted_page_elements = sort_page_elements(page_elements, sort_mode)
-        if sort_mode != SORT_MODE_BASIC and sorted_page_elements is page_elements:
-            # NOTE(crag): the list object ref is the same, fall back to basic sort
-            sorted_page_elements = sort_page_elements(page_elements, SORT_MODE_BASIC)
+        # NOTE(crag, christine): always do the basic sort first for determinsitic order across
+        # python versions.
+        sorted_page_elements = sort_page_elements(page_elements, SORT_MODE_BASIC)
+        if sort_mode != SORT_MODE_BASIC:
+            sorted_page_elements = sort_page_elements(sorted_page_elements, sort_mode)
 
         elements += sorted_page_elements
 

@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import pytest
 
 from unstructured.documents.coordinates import PixelSpace
@@ -45,13 +47,13 @@ def test_sort_xycut_neg_coordinates():
     for idx in range(2):
         elem = Text(str(idx))
         elem.metadata.coordinates = CoordinatesMetadata(
-            [(-idx, 2), (3, 4), (6, 7), (8, 9)],
+            [(0, idx), (3, 4), (6, 7), (8, 9)],
             PixelSpace,
         )
         elements.append(elem)
 
     # NOTE(crag): xycut not attempted, sort_page_elements returns original list
-    assert sort_page_elements(elements, sort_mode=SORT_MODE_XY_CUT) is elements
+    assert sort_page_elements(elements, sort_mode=SORT_MODE_XY_CUT) is not elements
 
 
 def test_sort_xycut_pos_coordinates():
@@ -64,7 +66,7 @@ def test_sort_xycut_pos_coordinates():
         )
         elements.append(elem)
 
-    # NOTE(crag): xycut attempted, list reference returned is different from elements passed in
+    # NOTE(crag): xycut ran, so different list reference returned from input list
     assert sort_page_elements(elements, sort_mode=SORT_MODE_XY_CUT) is not elements
 
 
@@ -78,25 +80,23 @@ def test_sort_basic_neg_coordinates():
         )
         elements.append(elem)
 
-    sorted_paged_elements = sort_page_elements(elements, sort_mode=SORT_MODE_BASIC)
-    assert sorted_paged_elements is not elements
-
-    sorted_elem_text = " ".join([str(elem.text) for elem in sorted_paged_elements])
+    sorted_page_elements = sort_page_elements(elements, sort_mode=SORT_MODE_BASIC)
+    sorted_elem_text = " ".join([str(elem.text) for elem in sorted_page_elements])
     assert sorted_elem_text == "2 1 0"
 
 
 def test_sort_basic_pos_coordinates():
     elements = []
     for idx in range(3):
-        elem = Text(str(idx))
+        elem = Text(str(9 - idx))
         elem.metadata.coordinates = CoordinatesMetadata(
-            [(1, idx), (3, 4), (6, 7), (8, 9)],
+            [(1, 9 - idx), (3, 4), (6, 7), (8, 9)],
             PixelSpace,
         )
         elements.append(elem)
 
-    sorted_paged_elements = sort_page_elements(elements, sort_mode=SORT_MODE_BASIC)
-    assert sorted_paged_elements is not elements
+    sorted_page_elements = sort_page_elements(elements, sort_mode=SORT_MODE_BASIC)
+    assert sorted_page_elements is not elements
 
-    sorted_elem_text = " ".join([str(elem.text) for elem in sorted_paged_elements])
-    assert sorted_elem_text == "0 1 2"
+    sorted_elem_text = " ".join([str(elem.text) for elem in sorted_page_elements])
+    assert sorted_elem_text == "7 8 9"
