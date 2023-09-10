@@ -71,9 +71,6 @@ def get_box_from_image_file_with_model(image_file, model):
         is_image=True,
     )
     table_bbs = [ele.metadata.coordinates for ele in elements if ele.category == "Table"]
-    for i, table in enumerate([ele for ele in elements if ele.category == "Table"]):
-        with open(f"/tmp/{os.path.basename(image_file)}-table{i}-yolox.html", "w") as fp:
-            fp.write(table.metadata.text_as_html)
     return [
         (coord.points[0][0], coord.points[0][1], coord.points[2][0], coord.points[2][1])
         for coord in table_bbs
