@@ -161,6 +161,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "4523540f1504cd17100c4835e85b7eef",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "17"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "785f3ec7eb32f30b90cd0fcf3657d388",
     "metadata": {
       "data_source": {},
@@ -178,16 +188,6 @@
       "page_number": 4
     },
     "text": "30"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4523540f1504cd17100c4835e85b7eef",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "17"
   },
   {
     "type": "UncategorizedText",
@@ -221,13 +221,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
+    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "3"
+    "text": ""
   },
   {
     "type": "UncategorizedText",
@@ -251,13 +251,23 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
+    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": ""
+    "text": "3"
+  },
+  {
+    "type": "Title",
+    "element_id": "1656c455012b016fbac5eac0a38397bd",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Electric power (non-nuclear)"
   },
   {
     "type": "Title",
@@ -268,26 +278,6 @@
       "page_number": 4
     },
     "text": "Motor vehicles"
-  },
-  {
-    "type": "Title",
-    "element_id": "82a60569029ed9032f1b08891e8524c2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Nuclear power"
-  },
-  {
-    "type": "Title",
-    "element_id": "ed3861e631428b9b77e2bdc0384d2cbe",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Vaccinations"
   },
   {
     "type": "Title",
@@ -311,13 +301,23 @@
   },
   {
     "type": "Title",
-    "element_id": "1656c455012b016fbac5eac0a38397bd",
+    "element_id": "ed3861e631428b9b77e2bdc0384d2cbe",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Electric power (non-nuclear)"
+    "text": "Vaccinations"
+  },
+  {
+    "type": "Title",
+    "element_id": "82a60569029ed9032f1b08891e8524c2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Nuclear power"
   },
   {
     "type": "Title",
@@ -391,16 +391,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "4"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
     "metadata": {
       "data_source": {},
@@ -408,6 +398,16 @@
       "page_number": 4
     },
     "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "4"
   },
   {
     "type": "UncategorizedText",
