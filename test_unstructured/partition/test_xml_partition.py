@@ -281,7 +281,7 @@ def test_partition_xml_with_narrative_line_breaks():
 
 
 def test_add_chunking_strategy_on_partition_xml(
-    filename = "example-docs/factbook.xml"
+    filename="example-docs/factbook.xml",
 ):
     elements = partition_xml(filename=filename)
     chunk_elements = partition_xml(filename, chunking_strategy="by_title")

@@ -629,10 +629,10 @@ def test_pre_tag_parsing_respects_order():
         NarrativeText("The big brown bear is sleeping."),
         Title("The Big Blue Bear"),
     ]
-    
-    
+
+
 def test_add_chunking_strategy_on_partition_html(
-    filename = "example-docs/example-10k.html"
+    filename="example-docs/example-10k.html",
 ):
     elements = partition_html(filename=filename)
     chunk_elements = partition_html(filename, chunking_strategy="by_title")
