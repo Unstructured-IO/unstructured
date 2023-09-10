@@ -1,4 +1,4 @@
-## 0.10.13-dev5
+## 0.10.13-dev6
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 * New optional metadata for the depth relative to the element's category. Name: `cagegory_depth`.
 * Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
 * Updated the `_detect_filetype_from_octet_stream()` function to use libmagic to infer the content type of file when it is not a zip file.
+* Tesseract minor version bump to 5.3.2
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization
