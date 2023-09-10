@@ -1,5 +1,6 @@
 Jira
-==========
+=====
+
 Connect Jira to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
 
 First you'll need to install the Jira dependencies as shown here.
