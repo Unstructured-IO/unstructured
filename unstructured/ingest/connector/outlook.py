@@ -149,7 +149,10 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         try:
             client = self.connector_config._get_client()
             msg = (
-                client.users[self.connector_config.user_email].messages[self.message_id].get().execute_query()
+                client.users[self.connector_config.user_email]
+                .messages[self.message_id]
+                .get()
+                .execute_query()
             )
         except ClientRequestException as e:
             if e.response.status_code == 404:
