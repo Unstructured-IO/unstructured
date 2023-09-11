@@ -18,7 +18,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
     --download-dir "$DOWNLOAD_DIR" \
     --table-uri s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/ \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --storage_options "AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
     --preserve-downloads \
     --verbose

@@ -8,38 +8,6 @@ def ingest():
     pass
 
 
-# Dynamically update shared options for supported subcommands
-subcommands = [
-    cli_cmds.box,
-    cli_cmds.gcs,
-    cli_cmds.delta_table,
-    cli_cmds.dropbox,
-    cli_cmds.azure,
-    cli_cmds.fsspec,
-    cli_cmds.github,
-    cli_cmds.gitlab,
-    cli_cmds.reddit,
-    cli_cmds.slack,
-    cli_cmds.discord,
-    cli_cmds.wikipedia,
-    cli_cmds.gdrive,
-    cli_cmds.biomed,
-    cli_cmds.notion,
-    cli_cmds.onedrive,
-    cli_cmds.outlook,
-    cli_cmds.local,
-    cli_cmds.elasticsearch,
-    cli_cmds.confluence,
-    cli_cmds.sharepoint,
-    cli_cmds.airtable,
-    cli_cmds.salesforce,
-    cli_cmds.jira,
-]
-
-for subcommand in subcommands:
-    ingest.add_command(subcommand())
-
-
 def get_cmd() -> click.Command:
     cmd = ingest
     # Add all subcommands
@@ -48,6 +16,4 @@ def get_cmd() -> click.Command:
         for dest_subcommand in cli_cmds.dest:
             src_subcommand.add_command(dest_subcommand)
         cmd.add_command(src_subcommand)
-    for subcommand in subcommands:
-        cmd.add_command(subcommand())
     return cmd

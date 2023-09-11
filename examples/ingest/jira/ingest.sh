@@ -33,7 +33,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --url https://unstructured-jira-connector-test.atlassian.net \
         --user-email "$JIRA_USER_EMAIL" \
         --api-token "$JIRA_API_TOKEN" \
-        --structured-output-dir jira-ingest-output \
+        --output-dir jira-ingest-output \
         --num-processes 2 \
         --reprocess
         # --list-of-projects <your project keys/ids here (space separated)> \

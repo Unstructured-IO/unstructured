@@ -19,5 +19,5 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --url http://localhost:9200 \
         --index-name movies \
         --jq-query '{ethnicity, director, plot}' \
-        --structured-output-dir elasticsearch-ingest-output \
+        --output-dir elasticsearch-ingest-output \
         --num-processes 2
