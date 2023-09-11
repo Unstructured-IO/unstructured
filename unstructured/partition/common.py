@@ -59,6 +59,7 @@ HIERARCHY_RULE_SET = {
         "Table",
         "FigureCaption",
         "CheckBox",
+        "Table",
     ],
     "Header": [
         "Title",
@@ -70,6 +71,7 @@ HIERARCHY_RULE_SET = {
         "Table",
         "FigureCaption",
         "CheckBox",
+        "Table",
     ],
 }
 
@@ -273,7 +275,9 @@ def _add_element_metadata(
         if coordinates is not None and coordinate_system is not None
         else None
     )
-    links = element.links if hasattr(element, "links") and len(element.links) > 0 else None
+    links = (
+        element.links if hasattr(element, "links") and len(element.links) > 0 else None
+    )
     link_urls = [link.get("url") for link in links] if links else None
     link_texts = [link.get("text") for link in links] if links else None
     emphasized_texts = (
@@ -556,11 +560,15 @@ def document_to_element_list(
                 if last_modification_date:
                     element.metadata.last_modified = last_modification_date
                 element.metadata.text_as_html = (
-                    layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
+                    layout_element.text_as_html
+                    if hasattr(layout_element, "text_as_html")
+                    else None
                 )
                 page_elements.append(element)
             coordinates = (
-                element.metadata.coordinates.points if element.metadata.coordinates else None
+                element.metadata.coordinates.points
+                if element.metadata.coordinates
+                else None
             )
             _add_element_metadata(
                 element,
