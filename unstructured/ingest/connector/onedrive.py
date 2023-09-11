@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from functools import cached_property
 from pathlib import Path
+
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
@@ -129,7 +130,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
-            "user_pname": self.config.user_pname,
+            "user_pname": self.connector_config.user_pname,
             "server_relative_path": self.server_relative_path,
         }
 
@@ -147,8 +148,8 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         from office365.runtime.client_request_exception import ClientRequestException
 
         try:
-            client = GraphClient(self.config.token_factory)
-            root = client.users[self.config.user_pname].drive.get().execute_query().root
+            client = GraphClient(self.connector_config.token_factory)
+            root = client.users[self.connector_config.user_pname].drive.get().execute_query().root
             file = root.get_by_path(self.server_relative_path).get().execute_query()
         except ClientRequestException as e:
             if e.response.status_code == 404:

@@ -44,7 +44,7 @@ class RedditFileMeta:
 
 @dataclass
 class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
-    config: SimpleRedditConfig = field(repr=False)
+    connector_config: SimpleRedditConfig = field(repr=False)
     post_id: str
     registry_name: str = "reddit"
 
@@ -58,9 +58,9 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         try:
             reddit = Reddit(
-                client_id=self.config.client_id,
-                client_secret=self.config.client_secret,
-                user_agent=self.config.user_agent,
+                client_id=self.connector_config.client_id,
+                client_secret=self.connector_config.client_secret,
+                user_agent=self.connector_config.user_agent,
             )
             post = Submission(reddit, self.post_id)
         except Exception:
@@ -106,11 +106,11 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def filename(self) -> Path:
-        return (Path(self.standard_config.download_dir) / f"{self.post_id}.md").resolve()
+        return (Path(self.read_config.download_dir) / f"{self.post_id}.md").resolve()
 
     @property
     def _output_filename(self):
-        return Path(self.standard_config.output_dir) / f"{self.post_id}.json"
+        return Path(self.partition_config.output_dir) / f"{self.post_id}.json"
 
     @property
     def date_created(self) -> Optional[str]:
@@ -123,7 +123,7 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
-            "subreddit_name": self.config.subreddit_name,
+            "subreddit_name": self.connector_config.subreddit_name,
             "id": self.post_id,
         }
 
@@ -160,7 +160,7 @@ class RedditSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 connector_config=self.connector_config,
                 partition_config=self.partition_config,
                 read_config=self.read_config,
-                post=post,
+                post_id=post.id,
             )
             for post in posts
         ]

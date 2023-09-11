@@ -162,7 +162,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         self._create_full_tmp_dir_path()
 
-        if self.config.verbose:
+        if self.connector_config.verbose:
             logger.debug(f"fetching channel {self.channel} - PID: {os.getpid()}")
 
         result = self._fetch_messages()
