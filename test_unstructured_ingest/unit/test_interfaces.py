@@ -4,13 +4,13 @@ from dataclasses import dataclass
 from typing import Any, Dict
 
 import pytest
-from freezegun import freeze_time
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
-    StandardConnectorConfig,
+    PartitionConfig,
+    ReadConfig,
 )
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
@@ -40,7 +40,7 @@ TEST_DATE_PROCESSSED = "2022-12-13T15:44:08"
 
 @dataclass
 class TestIngestDoc(BaseIngestDoc):
-    config: TestConfig
+    connector_config: TestConfig
 
     @property
     def filename(self):
@@ -114,11 +114,9 @@ def test_partition_file():
     """Validate partition_file returns a list of dictionaries with the expected keys,
     metadatakeys, and data source metadata values."""
     test_ingest_doc = TestIngestDoc(
-        config=TEST_CONFIG,
-        standard_config=StandardConnectorConfig(
-            download_dir=TEST_DOWNLOAD_DIR,
-            output_dir=TEST_OUTPUT_DIR,
-        ),
+        connector_config=TEST_CONFIG,
+        read_config=ReadConfig(download_dir=TEST_DOWNLOAD_DIR),
+        partition_config=PartitionConfig(output_dir=TEST_OUTPUT_DIR),
     )
     test_ingest_doc._date_processed = TEST_DATE_PROCESSSED
     isd_elems = test_ingest_doc.partition_file()
@@ -131,7 +129,13 @@ def test_partition_file():
     }
     # The document in TEST_FILE_PATH does not have elements with coordinates so
     # partition is not expected to return coordinates metadata.
-    expected_metadata_keys = {"data_source", "filename", "file_directory", "filetype", "last_modified"}
+    expected_metadata_keys = {
+        "data_source",
+        "filename",
+        "file_directory",
+        "filetype",
+        "last_modified",
+    }
     for elem in isd_elems:
         assert expected_keys == set(elem.keys())
         assert expected_metadata_keys == set(elem["metadata"].keys())
@@ -152,11 +156,9 @@ def test_process_file_fields_include_default(mocker, partition_test_results):
         return_value=partition_test_results,
     )
     test_ingest_doc = TestIngestDoc(
-        config=TEST_CONFIG,
-        standard_config=StandardConnectorConfig(
-            download_dir=TEST_DOWNLOAD_DIR,
-            output_dir=TEST_OUTPUT_DIR,
-        ),
+        connector_config=TEST_CONFIG,
+        read_config=ReadConfig(download_dir=TEST_DOWNLOAD_DIR),
+        partition_config=PartitionConfig(output_dir=TEST_OUTPUT_DIR),
     )
     isd_elems = test_ingest_doc.process_file()
     assert len(isd_elems)
@@ -180,11 +182,11 @@ def test_process_file_metadata_includes_filename_and_filetype(mocker, partition_
         return_value=partition_test_results,
     )
     test_ingest_doc = TestIngestDoc(
-        config=TEST_CONFIG,
-        standard_config=StandardConnectorConfig(
-            download_dir=TEST_DOWNLOAD_DIR,
+        connector_config=TEST_CONFIG,
+        read_config=ReadConfig(download_dir=TEST_DOWNLOAD_DIR),
+        partition_config=PartitionConfig(
             output_dir=TEST_OUTPUT_DIR,
-            metadata_include="filename,filetype",
+            metadata_include=["filename", "filetype"],
         ),
     )
     isd_elems = test_ingest_doc.process_file()
@@ -201,11 +203,11 @@ def test_process_file_metadata_exclude_filename_pagenum(mocker, partition_test_r
         return_value=partition_test_results,
     )
     test_ingest_doc = TestIngestDoc(
-        config=TEST_CONFIG,
-        standard_config=StandardConnectorConfig(
-            download_dir=TEST_DOWNLOAD_DIR,
+        connector_config=TEST_CONFIG,
+        read_config=ReadConfig(download_dir=TEST_DOWNLOAD_DIR),
+        partition_config=PartitionConfig(
             output_dir=TEST_OUTPUT_DIR,
-            metadata_exclude="filename,page_number",
+            metadata_exclude=["filename", "page_number"],
         ),
     )
     isd_elems = test_ingest_doc.process_file()
@@ -221,11 +223,11 @@ def test_process_file_flatten_metadata(mocker, partition_test_results):
         return_value=partition_test_results,
     )
     test_ingest_doc = TestIngestDoc(
-        config=TEST_CONFIG,
-        standard_config=StandardConnectorConfig(
-            download_dir=TEST_DOWNLOAD_DIR,
+        connector_config=TEST_CONFIG,
+        read_config=ReadConfig(download_dir=TEST_DOWNLOAD_DIR),
+        partition_config=PartitionConfig(
             output_dir=TEST_OUTPUT_DIR,
-            metadata_include="filename,data_source",
+            metadata_include=["filename", "data_source"],
             flatten_metadata=True,
         ),
     )

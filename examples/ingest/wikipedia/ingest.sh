@@ -11,7 +11,7 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
     wikipedia \
     --page-title "Open Source Software" \
-    --structured-output-dir wikipedia-ingest-output \
+    --output-dir wikipedia-ingest-output \
     --num-processes 2 \
     --verbose
 
