@@ -50,22 +50,6 @@ class DataSourceMetadata:
     def from_dict(cls, input_dict):
         return cls(**input_dict)
 
-        # url = input_dict.get("url",None)
-        # version = input_dict.get("version",None)
-        # record_locator = input_dict.get("record_locator",None)
-        # date_created = input_dict.get("date_created",None)
-        # date_modified = input_dict.get("date_modified",None)
-        # date_processed = input_dict.get("date_processed",None)
-
-        # constructor_args = {"url": url,
-        #                     "version": version,
-        #                     "record_locator":record_locator,
-        #                     "date_created":date_created,
-        #                     "date_modified":date_modified,
-        #                     "date_processed":date_processed,}
-
-        # return cls(**constructor_args)
-
 
 @dataclass
 class CoordinatesMetadata:
