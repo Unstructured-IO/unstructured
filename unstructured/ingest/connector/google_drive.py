@@ -3,6 +3,7 @@ import json
 import os
 from dataclasses import dataclass
 from datetime import datetime
+from functools import cached_property
 from mimetypes import guess_extension
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional
@@ -103,80 +104,99 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 
 
 @dataclass
+class GoogleDriveFileMeta:
+    date_created: Optional[str] = None
+    date_modified: Optional[str] = None
+    version: Optional[str] = None
+    source_url: Optional[str] = None
+    exists: Optional[bool] = None
+
+
+@dataclass
 class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleGoogleDriveConfig
-    file_meta: Dict[str, str]
+    meta: Dict[str, str]
     file_exists: Optional[bool] = None
     registry_name: str = "google_drive"
 
     @property
     def filename(self):
-        return Path(self.file_meta.get("download_filepath")).resolve()  # type: ignore
+        return Path(self.meta.get("download_filepath")).resolve()  # type: ignore
 
     @property
     def _output_filename(self):
-        return Path(f"{self.file_meta.get('output_filepath')}.json").resolve()
+        return Path(f"{self.meta.get('output_filepath')}.json").resolve()
 
     @property
     def date_created(self) -> Optional[str]:
-        if self.file_meta.get("date_created", None) is None:
-            self.get_file_metadata()
-        return self.file_meta["date_created"]
+        return self.file_metadata.date_created
 
     @property
     def date_modified(self) -> Optional[str]:
-        if self.file_meta.get("date_modified", None) is None:
-            self.get_file_metadata()
-        return self.file_meta["date_modified"]
+        return self.file_metadata.date_modified
 
     @property
     def exists(self) -> Optional[bool]:
-        if self.file_exists is None:
-            self.get_file_metadata()
-        return self.file_exists
+        return self.file_metadata.exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
         return {
-            "id": self.file_meta["id"],
+            "drive_id": self.config.drive_id,
+            "file_id": self.meta["id"],
         }
 
     @property
     def version(self) -> Optional[str]:
-        if self.file_meta.get("version", None) is None:
-            self.get_file_metadata()
-        return self.file_meta["version"]
+        return self.file_metadata.version
 
+    @property
+    def source_url(self) -> Optional[str]:
+        return self.file_metadata.source_url
 
+    @cached_property
     @requires_dependencies(["googleapiclient"], extras="google-drive")
-    def get_file_metadata(self):
+    def file_metadata(self):
         from googleapiclient.errors import HttpError
 
         try:
             file_obj = (
                 self.session_handle.service.files()
-                .get(fileId=self.file_meta["id"], fields="id, createdTime, modifiedTime, version")
+                .get(
+                    fileId=self.meta["id"],
+                    fields="id, createdTime, modifiedTime, version, webContentLink",
+                )
                 .execute()
             )
-            if date_created := file_obj.get("createdTime", ""):
-                self.file_meta["date_created"] = datetime.strptime(
-                    date_created,
-                    "%Y-%m-%dT%H:%M:%S.%fZ",
-                ).isoformat()
-
-            if date_modified := file_obj.get("modifiedTime", ""):
-                self.file_meta["date_modifed"] = datetime.strptime(
-                    date_modified,
-                    "%Y-%m-%dT%H:%M:%S.%fZ",
-                ).isoformat()
-
-            self.file_meta["version"] = file_obj.get("version", "")
         except HttpError as e:
             if e.status_code == 404:
-                logger.error(f"File {self.file_meta['name']} not found")
-                self.file_exists = False
+                logger.error(f"File {self.meta['name']} not found")
+                return GoogleDriveFileMeta(
+                    exists=True,
+                )
             raise
-        self.file_exists = True
+
+        date_created = None
+        if dc := file_obj.get("createdTime", ""):
+            date_created = datetime.strptime(
+                dc,
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            ).isoformat()
+
+        date_modified = None
+        if dm := file_obj.get("modifiedTime", ""):
+            date_modified = datetime.strptime(
+                dm,
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            ).isoformat()
+
+        return GoogleDriveFileMeta(
+            date_created,
+            date_modified,
+            file_obj.get("version", ""),
+            file_obj.get("webContentLink", ""),
+            True,
+        )
 
     @requires_dependencies(["googleapiclient"], extras="google-drive")
     @SourceConnectionError.wrap
@@ -185,24 +205,24 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
         from googleapiclient.errors import HttpError
         from googleapiclient.http import MediaIoBaseDownload
 
-        if self.file_meta.get("mimeType", "").startswith("application/vnd.google-apps"):
+        if self.meta.get("mimeType", "").startswith("application/vnd.google-apps"):
             export_mime = GOOGLE_DRIVE_EXPORT_TYPES.get(
-                self.file_meta.get("mimeType"),  # type: ignore
+                self.meta.get("mimeType"),  # type: ignore
             )
             if not export_mime:
                 logger.info(
-                    f"File not supported. Name: {self.file_meta.get('name')} "
-                    f"ID: {self.file_meta.get('id')} "
-                    f"MimeType: {self.file_meta.get('mimeType')}",
+                    f"File not supported. Name: {self.meta.get('name')} "
+                    f"ID: {self.meta.get('id')} "
+                    f"MimeType: {self.meta.get('mimeType')}",
                 )
                 return
 
             request = self.session_handle.service.files().export_media(
-                fileId=self.file_meta.get("id"),
+                fileId=self.meta.get("id"),
                 mimeType=export_mime,
             )
         else:
-            request = self.session_handle.service.files().get_media(fileId=self.file_meta.get("id"))
+            request = self.session_handle.service.files().get_media(fileId=self.meta.get("id"))
         file = io.BytesIO()
         downloader = MediaIoBaseDownload(file, request)
         downloaded = False
@@ -214,10 +234,10 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
 
         saved = False
         if downloaded and file:
-            dir_ = Path(self.file_meta["download_dir"])
+            dir_ = Path(self.meta["download_dir"])
             if dir_:
                 if not dir_.is_dir():
-                    logger.debug(f"Creating directory: {self.file_meta.get('download_dir')}")
+                    logger.debug(f"Creating directory: {self.meta.get('download_dir')}")
 
                     if dir_:
                         dir_.mkdir(parents=True, exist_ok=True)
@@ -229,7 +249,6 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
 
         if not saved:
             logger.error(f"Error while downloading and saving file: {self.filename}.")
-        self.get_file_metadata()
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""

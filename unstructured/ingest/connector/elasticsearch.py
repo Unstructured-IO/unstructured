@@ -2,9 +2,10 @@ import hashlib
 import json
 import os
 from dataclasses import dataclass
+from functools import cached_property
 from pathlib import Path
 from typing import Any, Dict, Optional
-from functools import cached_property
+
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnector,
@@ -40,7 +41,7 @@ class ElasticsearchDocumentMeta:
     and the id of document that is being reached to,
     """
 
-    index_name: Optional[str]
+    index_name: str
     document_id: str
 
 
@@ -53,7 +54,7 @@ class ElasticsearchFileMeta:
 
     version: Optional[str] = None
     exists: Optional[bool] = None
-    
+
 
 @dataclass
 class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -129,7 +130,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         except NotFoundError:
             logger.error("Couldn't find document with ID: %s", self.document_meta.document_id)
             return None
-        except Exception:                
+        except Exception:
             raise
         return document
 
@@ -138,12 +139,12 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         document = self._get_document()
         if document is None:
             return ElasticsearchFileMeta(
-                exists=False
+                exists=False,
             )
-        
+
         return ElasticsearchFileMeta(
             document["_version"],
-            document["found"]
+            document["found"],
         )
 
     @SourceConnectionError.wrap
@@ -157,7 +158,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         document = self._get_document()
         if document is None:
             raise ValueError(
-                f"Failed to get document {self.document_meta.document_id}"
+                f"Failed to get document {self.document_meta.document_id}",
             )
 
         document_dict = document.body["_source"]

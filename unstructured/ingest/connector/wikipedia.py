@@ -1,5 +1,6 @@
 import os
 from dataclasses import dataclass, field
+from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
@@ -27,20 +28,28 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
 
 @dataclass
 class WikipediaFileMeta:
-    page_url: str
-    page_id: str
-    version: str
+    version: Optional[str] = None
+    source_url: Optional[str] = None
+    exists: Optional[bool] = None
 
 
 @dataclass
 class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleWikipediaConfig = field(repr=False)
-    file_meta: Optional[WikipediaFileMeta] = None
-    file_exists: Optional[bool] = None
 
     @property
     @requires_dependencies(["wikipedia"], extras="wikipedia")
     def page(self) -> "WikipediaPage":
+        import wikipedia
+
+        return wikipedia.page(
+            self.config.title,
+            auto_suggest=self.config.auto_suggest,
+        )
+
+    @cached_property
+    @requires_dependencies(["wikipedia"], extras="wikipedia")
+    def file_metadata(self):
         import wikipedia
         from wikipedia.exceptions import PageError
 
@@ -49,18 +58,14 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 self.config.title,
                 auto_suggest=self.config.auto_suggest,
             )
-        except PageError as e:
-            self.file_exists = False
-            raise
-
-        self.file_exists = True
-        return page
-
-    def get_file_meta(self):
-        self.file_meta = WikipediaFileMeta(
-            self.page.url,
-            self.page.pageid,
-            self.page.revision_id,
+        except PageError:
+            return WikipediaFileMeta(
+                exists=False,
+            )
+        return WikipediaFileMeta(
+            page.revision_id,
+            page.url,
+            True,
         )
 
     @property
@@ -89,26 +94,22 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def exists(self) -> Optional[bool]:
-        if self.file_exists is None:
-            self.get_file_metadata()
-        return self.file_exists
+        return self.file_metadata.exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
-        if self.file_meta is None:
-            self.get_file_meta()
-
         return {
-            "page_url": self.file_meta.page_url,
-            "page_id": self.file_meta.page_id,
+            "page_title": self.config.title,
+            "page_url": self.file_metadata.source_url,
         }
 
     @property
     def version(self) -> Optional[str]:
-        if self.file_meta is None:
-            self.get_file_meta()
+        return self.file_metadata.version
 
-        return self.file_meta.version
+    @property
+    def source_url(self) -> Optional[str]:
+        return self.file_metadata.source_url
 
 
 @dataclass
