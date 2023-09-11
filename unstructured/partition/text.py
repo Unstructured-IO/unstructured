@@ -2,6 +2,7 @@ import re
 import textwrap
 from typing import IO, Callable, List, Optional, Tuple
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import (
     auto_paragraph_grouper,
     clean_bullets,
@@ -155,6 +156,7 @@ def combine_paragraphs_less_than_min(
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.TXT)
+@add_chunking_strategy()
 def partition_text(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -166,6 +168,7 @@ def partition_text(
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.

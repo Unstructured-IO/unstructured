@@ -1,9 +1,10 @@
-## 0.10.15-dev2
+## 0.10.15-dev3
 
 ### Enhancements
 
 * Updated HTML Partitioning to extract tables
 * Add paddleocr extra and makefile command to install
+* Create and add `add_chunking_strategy` decorator to partition functions
 
 ### Features
 

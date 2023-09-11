@@ -2,6 +2,7 @@ import os
 import tempfile
 from typing import IO, List, Optional
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
@@ -15,6 +16,7 @@ from unstructured.partition.docx import partition_docx
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.DOC)
+@add_chunking_strategy()
 def partition_doc(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -23,6 +25,7 @@ def partition_doc(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     libre_office_filter: Optional[str] = "MS Word 2007 XML",
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
