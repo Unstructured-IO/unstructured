@@ -1,19 +1,18 @@
 import math
 import os
-from dataclasses import dataclass
 from datetime import datetime
 from functools import cached_property
+import typing as t
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, Optional
 
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -33,9 +32,9 @@ class SimpleConfluenceConfig(BaseConnectorConfig):
     user_email: str
     api_token: str
     url: str
-    list_of_spaces: Optional[str]
     max_number_of_spaces: int
     max_number_of_docs_from_each_space: int
+    spaces: t.List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -77,11 +76,11 @@ def scroll_wrapper(func):
 
 @dataclass
 class ConfuenceFileMeta:
-    date_created: Optional[str]
-    date_modified: Optional[str]
-    version: Optional[str]
-    source_url: Optional[str]
-    exists: Optional[bool]
+    date_created: t.Optional[str]
+    date_modified: t.Optional[str]
+    version: t.Optional[str]
+    source_url: t.Optional[str]
+    exists: t.Optional[bool]
 
 
 @dataclass
@@ -93,15 +92,17 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     to fetch each doc, rather than creating a it for each thread.
     """
 
-    config: SimpleConfluenceConfig
+    connector_config: SimpleConfluenceConfig
     document_meta: ConfluenceDocumentMeta
     registry_name: str = "confluence"
 
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
     @property
     def filename(self):
+        if not self.read_config.download_dir:
+            return None
         return (
-            Path(self.standard_config.download_dir)
+            Path(self.read_config.download_dir)
             / self.document_meta.space_id
             / f"{self.document_meta.document_id}.html"
         ).resolve()
@@ -109,33 +110,33 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         """Create output file path based on output directory, space id and document id."""
-        output_file = f"{self.document_meta.document_id}.json"
-        return Path(self.standard_config.output_dir) / self.document_meta.space_id / output_file
+        output_file = f"{self.file_meta.document_id}.json"
+        return Path(self.partition_config.output_dir) / self.file_meta.space_id / output_file
 
     @property
-    def date_created(self) -> Optional[str]:
+    def date_created(self) -> t.Optional[str]:
         return self.file_metadata.date_created
 
     @property
-    def date_modified(self) -> Optional[str]:
+    def date_modified(self) -> t.Optional[str]:
         return self.file_metadata.date_modified
 
     @property
-    def exists(self) -> Optional[bool]:
+    def exists(self) -> t.Optional[bool]:
         return self.file_metadata.exists
 
     @property
-    def record_locator(self) -> Optional[Dict[str, Any]]:
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
             "page_id": self.document_meta.document_id,
         }
 
     @property
-    def version(self) -> Optional[str]:
+    def version(self) -> t.Optional[str]:
         return self.file_metadata.version
 
     @property
-    def source_url(self) -> Optional[str]:
+    def source_url(self) -> t.Optional[str]:
         return self.file_metadata.source_url
 
     @requires_dependencies(["atlassian"], extras="Confluence")
@@ -210,54 +211,46 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             f.write(self.document)
 
 
-@requires_dependencies(["atlassian"], extras="confluence")
 @dataclass
-class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
+class ConfluenceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Fetches body fields from all documents within all spaces in a Confluence Cloud instance."""
 
-    config: SimpleConfluenceConfig
+    connector_config: SimpleConfluenceConfig
 
-    def __init__(
-        self,
-        standard_config: StandardConnectorConfig,
-        config: SimpleConfluenceConfig,
-    ):
-        super().__init__(standard_config, config)
-
-    @requires_dependencies(["atlassian"])
+    @requires_dependencies(["atlassian"], extras="Confluence")
     def initialize(self):
         from atlassian import Confluence
 
         self.confluence = Confluence(
-            url=self.config.url,
-            username=self.config.user_email,
-            password=self.config.api_token,
+            url=self.connector_config.url,
+            username=self.connector_config.user_email,
+            password=self.connector_config.api_token,
         )
 
         self.list_of_spaces = None
-        if self.config.list_of_spaces:
-            self.list_of_spaces = self.config.list_of_spaces.split(",")
-            if self.config.max_number_of_spaces < len(self.list_of_spaces):
+        if self.connector_config.spaces:
+            self.list_of_spaces = self.connector_config.spaces
+            if self.connector_config.max_number_of_spaces:
                 logger.warning(
                     """--confluence-list-of-spaces and --confluence-num-of-spaces cannot
                     be used at the same time. Connector will only fetch the
                     --confluence-list-of-spaces that you've provided.""",
                 )
 
-    @requires_dependencies(["atlassian"])
+    @requires_dependencies(["atlassian"], extras="Confluence")
     def _get_space_ids(self):
         """Fetches spaces in a confluence domain."""
 
         get_spaces_with_scroll = scroll_wrapper(self.confluence.get_all_spaces)
 
         all_results = get_spaces_with_scroll(
-            number_of_items_to_fetch=self.config.max_number_of_spaces,
+            number_of_items_to_fetch=self.connector_config.max_number_of_spaces,
         )
 
         space_ids = [space["key"] for space in all_results]
         return space_ids
 
-    @requires_dependencies(["atlassian"])
+    @requires_dependencies(["atlassian"], extras="Confluence")
     def _get_docs_ids_within_one_space(
         self,
         space_id: str,
@@ -266,14 +259,14 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         get_pages_with_scroll = scroll_wrapper(self.confluence.get_all_pages_from_space)
         results = get_pages_with_scroll(
             space=space_id,
-            number_of_items_to_fetch=self.config.max_number_of_docs_from_each_space,
+            number_of_items_to_fetch=self.connector_config.max_number_of_docs_from_each_space,
             content_type=content_type,
         )
 
         doc_ids = [(space_id, doc["id"]) for doc in results]
         return doc_ids
 
-    @requires_dependencies(["atlassian"])
+    @requires_dependencies(["atlassian"], extras="Confluence")
     def _get_doc_ids_within_spaces(self):
         space_ids = self._get_space_ids() if not self.list_of_spaces else self.list_of_spaces
 
@@ -291,9 +284,10 @@ class ConfluenceConnector(ConnectorCleanupMixin, BaseConnector):
         doc_ids = self._get_doc_ids_within_spaces()
         return [
             ConfluenceIngestDoc(
-                self.standard_config,
-                self.config,
-                ConfluenceDocumentMeta(space_id, doc_id),
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                read_config=self.read_config,
+                document_meta=ConfluenceDocumentMeta(space_id, doc_id),
             )
             for space_id, doc_id in doc_ids
         ]

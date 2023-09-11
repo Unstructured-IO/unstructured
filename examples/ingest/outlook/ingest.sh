@@ -26,7 +26,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --tenant "$MS_TENANT_ID" \
     --user-email "$MS_USER_EMAIL" \
     --outlook-folders Inbox,"Sent Items" \
-    --structured-output-dir outlook-output \
+    --output-dir outlook-output \
     --num-processes 2 \
     --recursive \
     --verbose

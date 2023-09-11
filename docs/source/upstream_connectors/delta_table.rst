@@ -20,7 +20,7 @@ Run Locally
         unstructured-ingest \
             delta-table \
             --table-uri s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/ \
-            --structured-output-dir delta-table-example \
+            --output-dir delta-table-example \
             --storage_options "AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
             --verbose
 
@@ -35,7 +35,7 @@ Run Locally
           "delta-table",
           "--table-uri", "s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/",
           "--download-dir", "delta-table-ingest-download",
-          "--structured-output-dir", "delta-table-example",
+          "--output-dir", "delta-table-example",
           "--preserve-downloads",
           "--storage_options", "AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY",
           "--verbose",
@@ -67,7 +67,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
         unstructured-ingest \
           delta-table \
           --table-uri s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/ \
-          --structured-output-dir delta-table-example \
+          --output-dir delta-table-example \
           --storage_options "AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
           --verbose
           --partition-by-api \
@@ -84,7 +84,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
           "delta-table",
           "--table-uri", "s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/",
           "--download-dir", "delta-table-ingest-download",
-          "--structured-output-dir", "delta-table-example",
+          "--output-dir", "delta-table-example",
           "--preserve-downloads",
           "--storage_options", "AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY",
           "--verbose",

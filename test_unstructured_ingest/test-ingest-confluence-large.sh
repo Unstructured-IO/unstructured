@@ -28,13 +28,13 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --url https://unstructured-ingest-test.atlassian.net \
     --user-email "$CONFLUENCE_USER_EMAIL" \
     --api-token "$CONFLUENCE_API_TOKEN" \
     --max-num-of-spaces 10 \
-    --list-of-spaces testteamsp1 \
+    --spaces testteamsp1 \
     --max-num-of-docs-from-each-space 250 \
 
 OUTPUT_SUBFOLDER_NAME=testteamsp1

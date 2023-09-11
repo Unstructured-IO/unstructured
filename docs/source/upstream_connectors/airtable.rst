@@ -1,6 +1,6 @@
 Airtable
 ==========
-Connect Airtable to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem. 
+Connect Airtable to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
 
 First you'll need to install the Airtable dependencies as shown here.
 
@@ -21,7 +21,7 @@ Run Locally
           airtable \
           --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
           --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
-          --structured-output-dir airtable-ingest-output \
+          --output-dir airtable-ingest-output \
           --num-processes 2 \
           --reprocess
 
@@ -36,7 +36,7 @@ Run Locally
           "airtable",
           "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
           "--personal-access-token", "$AIRTABLE_PERSONAL_ACCESS_TOKEN",
-          "--structured-output-dir", "airtable-ingest-output"
+          "--output-dir", "airtable-ingest-output"
           "--num-processes", "2",
           "--reprocess",
         ]
@@ -56,7 +56,7 @@ Run Locally
 Run via the API
 ---------------
 
-You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``. 
+You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``.
 
 .. tabs::
 
@@ -68,9 +68,9 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
           airtable \
           --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
           --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
-          --structured-output-dir airtable-ingest-output \
+          --output-dir airtable-ingest-output \
           --num-processes 2 \
-          --reprocess \ 
+          --reprocess \
           --partition-by-api \
           --api-key "<UNSTRUCTURED-API-KEY>"
 
@@ -85,7 +85,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
           "airtable",
           "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
           "--personal-access-token", "$AIRTABLE_PERSONAL_ACCESS_TOKEN",
-          "--structured-output-dir", "airtable-ingest-output"
+          "--output-dir", "airtable-ingest-output"
           "--num-processes", "2",
           "--reprocess",
           "--partition-by-api",
@@ -104,7 +104,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
             print('Command failed. Error:')
             print(error.decode())
 
-Additionaly, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
+Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 
 For a full list of the options the CLI accepts check ``unstructured-ingest airtable --help``.
 
