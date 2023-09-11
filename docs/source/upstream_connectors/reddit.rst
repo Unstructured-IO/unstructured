@@ -1,6 +1,6 @@
 Reddit
 ==========
-Connect Reddit to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem. 
+Connect Reddit to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
 
 First you'll need to install the Reddit dependencies as shown here.
 
@@ -25,7 +25,7 @@ Run Locally
           --user-agent "Unstructured Ingest Subreddit fetcher by \u\..." \
           --search-query "Unstructured" \
           --num-posts 10 \
-          --structured-output-dir reddit-ingest-output \
+          --output-dir reddit-ingest-output \
           --num-processes 2 \
           --verbose
 
@@ -44,7 +44,7 @@ Run Locally
             "--user-agent", "Unstructured Ingest Subreddit fetcher by \\u\\...",
             "--search-query", "Unstructured",
             "--num-posts", "10",
-            "--structured-output-dir", "reddit-ingest-output",
+            "--output-dir", "reddit-ingest-output",
             "--num-processes", "2",
             "--verbose"
         ]
@@ -64,7 +64,7 @@ Run Locally
 Run via the API
 ---------------
 
-You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``. 
+You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``.
 
 .. tabs::
 
@@ -80,7 +80,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
           --user-agent "Unstructured Ingest Subreddit fetcher by \u\..." \
           --search-query "Unstructured" \
           --num-posts 10 \
-          --structured-output-dir reddit-ingest-output \
+          --output-dir reddit-ingest-output \
           --num-processes 2 \
           --verbose \
           --partition-by-api \
@@ -101,7 +101,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
             "--user-agent", "Unstructured Ingest Subreddit fetcher by \\u\\...",
             "--search-query", "Unstructured",
             "--num-posts", "10",
-            "--structured-output-dir", "reddit-ingest-output",
+            "--output-dir", "reddit-ingest-output",
             "--num-processes", "2",
             "--verbose"
             "--partition-by-api",
@@ -120,7 +120,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
             print('Command failed. Error:')
             print(error.decode())
 
-Additionaly, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
+Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 
 For a full list of the options the CLI accepts check ``unstructured-ingest reddit --help``.
 

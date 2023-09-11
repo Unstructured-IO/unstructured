@@ -1,6 +1,6 @@
 Biomed
 ==========
-Connect Biomed to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem. 
+Connect Biomed to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
 
 First you'll need to install the Biomed dependencies as shown here.
 
@@ -20,7 +20,7 @@ Run Locally
         unstructured-ingest \
           biomed \
           --path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
-          --structured-output-dir biomed-ingest-output-path \
+          --output-dir biomed-ingest-output-path \
           --num-processes 2 \
           --verbose \
           --preserve-downloads
@@ -35,7 +35,7 @@ Run Locally
           "unstructured-ingest",
           "biomed",
           "--path", "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf",
-          "--structured-output-dir", "/Output/Path/To/Files",
+          "--output-dir", "/Output/Path/To/Files",
           "--num-processes", "2",
           "--verbose",
           "--preserve-downloads",
@@ -56,7 +56,7 @@ Run Locally
 Run via the API
 ---------------
 
-You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``. 
+You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``.
 
 .. tabs::
 
@@ -67,7 +67,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
         unstructured-ingest \
           biomed \
           --path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
-          --structured-output-dir biomed-ingest-output-path \
+          --output-dir biomed-ingest-output-path \
           --num-processes 2 \
           --verbose \
           --preserve-downloads \
@@ -84,7 +84,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
           "unstructured-ingest",
           "biomed",
           "--path", "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf",
-          "--structured-output-dir", "/Output/Path/To/Files",
+          "--output-dir", "/Output/Path/To/Files",
           "--num-processes", "2",
           "--verbose",
           "--preserve-downloads",
@@ -104,7 +104,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
             print('Command failed. Error:')
             print(error.decode())
 
-Additionaly, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
+Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 
 For a full list of the options the CLI accepts check ``unstructured-ingest biomed --help``.
 

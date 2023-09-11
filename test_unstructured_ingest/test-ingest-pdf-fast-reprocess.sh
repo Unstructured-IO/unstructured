@@ -16,9 +16,9 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
     --num-processes 2 \
-    --partition-strategy fast \
+    --strategy fast \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --file-glob "*.pdf" \
     --input-path "$INPUT_PATH" \
