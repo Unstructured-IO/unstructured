@@ -135,9 +135,11 @@ def test_partition_file():
         "file_directory",
         "filetype",
         "last_modified",
-        "parent_id",  # TODO: Remove this key
     }
     for elem in isd_elems:
+        # Parent IDs are non-deterministic - remove them from the test
+        elem["metadata"].pop("parent_id", None)
+
         assert expected_keys == set(elem.keys())
         assert expected_metadata_keys == set(elem["metadata"].keys())
         data_source_metadata = elem["metadata"]["data_source"]
