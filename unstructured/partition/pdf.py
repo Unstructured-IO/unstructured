@@ -58,7 +58,7 @@ def partition_pdf(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    ocr_languages: str = None, #changing default for deprecation
+    ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: List[str] = ["eng"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
@@ -102,20 +102,20 @@ def partition_pdf(
     metadata_last_modified
         The last modified date for the document.
     """
-    exactly_one(filename=filename, file=file)  
+    exactly_one(filename=filename, file=file)
 
     if not isinstance(languages, list):
         raise TypeError("The language parameter must be a list of language codes as strings.")
-   
+
     if ocr_languages is not None:
         # check if languages was set to anything not the default value
         # languages and ocr_languages were therefore both provided - raise error
-        if languages != ["eng"]: 
+        if languages != ["eng"]:
             raise ValueError(
                 "Only one of languages and ocr_languages should be specified. "
                 "languages is preferred. ocr_languages is marked for deprecation.",
             )
-        
+
         else:
             languages = convert_old_ocr_languages_to_languages(ocr_languages)
             logger.warn(
@@ -173,7 +173,7 @@ def partition_pdf_or_image(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    ocr_languages: str = None,
+    ocr_languages: Optional[str] = None,
     languages: List[str] = ["eng"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
@@ -190,12 +190,12 @@ def partition_pdf_or_image(
         raise TypeError("The language parameter must be a list of language codes as strings.")
 
     if ocr_languages is not None:
-        if languages != ["eng"]: 
+        if languages != ["eng"]:
             raise ValueError(
                 "Only one of languages and ocr_languages should be specified. "
                 "languages is preferred. ocr_languages is marked for deprecation.",
             )
-        
+
         else:
             languages = convert_old_ocr_languages_to_languages(ocr_languages)
             logger.warn(

@@ -162,7 +162,7 @@ def test_partition_pdf_with_model_name_env_var(
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            ocr_languages="eng",
+            languages=["eng"],
             ocr_mode="entire_page",
             extract_tables=False,
             model_name="checkbox",
@@ -183,7 +183,7 @@ def test_partition_pdf_with_model_name(
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            ocr_languages="eng",
+            languages=["eng"],
             ocr_mode="entire_page",
             extract_tables=False,
             model_name="checkbox",
@@ -395,7 +395,7 @@ def test_partition_pdf_with_dpi():
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            ocr_languages="eng",
+            languages=["eng"],
             ocr_mode="entire_page",
             extract_tables=False,
             model_name=None,
