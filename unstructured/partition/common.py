@@ -49,6 +49,30 @@ if TYPE_CHECKING:
         LocationlessLayoutElement,
     )
 
+HIERARCHY_RULE_SET = {
+    "Title": [
+        "Text",
+        "UncategorizedText",
+        "NarrativeText",
+        "ListItem",
+        "BulletedText",
+        "Table",
+        "FigureCaption",
+        "CheckBox",
+    ],
+    "Header": [
+        "Title",
+        "Text",
+        "UncategorizedText",
+        "NarrativeText",
+        "ListItem",
+        "BulletedText",
+        "Table",
+        "FigureCaption",
+        "CheckBox",
+    ],
+}
+
 
 def get_last_modified_date(filename: str) -> Union[str, None]:
     modify_date = datetime.fromtimestamp(os.path.getmtime(filename))
@@ -166,6 +190,48 @@ def layout_list_to_list_items(
     return list_items
 
 
+def set_element_hierarchy(
+    elements: List[Element],
+    ruleset: Dict[str, List[str]] = HIERARCHY_RULE_SET,
+) -> List[Element]:
+    """Sets the parent_id for each element in the list of elements based on the element's category, depth and a ruleset"""
+    stack: List[Element] = []
+    for element in elements:
+        parent_id = None
+        element_category = getattr(element, "category", None)
+        element_category_depth = getattr(element.metadata, "category_depth", 0)
+
+        if not element_category:
+            continue
+
+        while stack:
+            top_element: Element = stack[-1]
+            top_element_category = getattr(top_element, "category")
+            top_element_category_depth = getattr(
+                top_element.metadata, "category_depth", 0
+            )
+
+            if (
+                top_element_category == element_category and top_element_category_depth
+                if top_element_category_depth
+                else 0 < element_category_depth
+                if element_category_depth
+                else 0
+            ) or (
+                top_element_category != element_category
+                and element_category in ruleset.get(top_element_category, [])
+            ):
+                parent_id = top_element.id
+                break
+
+            stack.pop()
+
+        element.metadata.parent_id = parent_id
+        stack.append(element)
+
+    return elements
+
+
 def _add_element_metadata(
     element: Element,
     filename: Optional[str] = None,
@@ -176,7 +242,6 @@ def _add_element_metadata(
     coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
     section: Optional[str] = None,
-    category_depth: int = 0,
     **kwargs,
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
@@ -189,7 +254,9 @@ def _add_element_metadata(
         if coordinates is not None and coordinate_system is not None
         else None
     )
-    links = element.links if hasattr(element, "links") and len(element.links) > 0 else None
+    links = (
+        element.links if hasattr(element, "links") and len(element.links) > 0 else None
+    )
     link_urls = [link.get("url") for link in links] if links else None
     link_texts = [link.get("text") for link in links] if links else None
     emphasized_texts = (
@@ -207,7 +274,7 @@ def _add_element_metadata(
         if emphasized_texts
         else None
     )
-    depth = element.metadata.category_depth if element.metadata.category_depth else category_depth
+    depth = element.metadata.category_depth if element.metadata.category_depth else None
 
     metadata = ElementMetadata(
         coordinates=coordinates_metadata,
@@ -472,11 +539,15 @@ def document_to_element_list(
                 if last_modification_date:
                     element.metadata.last_modified = last_modification_date
                 element.metadata.text_as_html = (
-                    layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
+                    layout_element.text_as_html
+                    if hasattr(layout_element, "text_as_html")
+                    else None
                 )
                 page_elements.append(element)
             coordinates = (
-                element.metadata.coordinates.points if element.metadata.coordinates else None
+                element.metadata.coordinates.points
+                if element.metadata.coordinates
+                else None
             )
             _add_element_metadata(
                 element,

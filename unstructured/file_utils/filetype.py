@@ -15,6 +15,7 @@ from unstructured.partition.common import (
     _add_element_metadata,
     _remove_element_metadata,
     exactly_one,
+    set_element_hierarchy,
 )
 
 try:
@@ -145,7 +146,9 @@ MIMETYPES_TO_EXCLUDE = [
     "text/x-comma-separated-values",
 ]
 
-FILETYPE_TO_MIMETYPE = {v: k for k, v in STR_TO_FILETYPE.items() if k not in MIMETYPES_TO_EXCLUDE}
+FILETYPE_TO_MIMETYPE = {
+    v: k for k, v in STR_TO_FILETYPE.items() if k not in MIMETYPES_TO_EXCLUDE
+}
 
 EXT_TO_FILETYPE = {
     ".pdf": FileType.PDF,
@@ -435,7 +438,9 @@ def _is_text_file_a_json(
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a JSON file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+    file_text = _read_file_start_for_type_check(
+        file=file, filename=filename, encoding=encoding
+    )
     try:
         json.loads(file_text)
         return True
@@ -451,7 +456,9 @@ def is_json_processable(
 ) -> bool:
     exactly_one(filename=filename, file=file, file_text=file_text)
     if file_text is None:
-        file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+        file_text = _read_file_start_for_type_check(
+            file=file, filename=filename, encoding=encoding
+        )
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
 
 
@@ -537,8 +544,10 @@ def add_metadata_with_filetype(filetype: FileType):
                     params["filename"] = params.get("metadata_filename")
 
                 metadata_kwargs = {
-                    kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
+                    kwarg: params.get(kwarg)
+                    for kwarg in ("filename", "url", "text_as_html")
                 }
+                elements = set_element_hierarchy(elements)
 
                 for element in elements:
                     # NOTE(robinson) - Attached files have already run through this logic
