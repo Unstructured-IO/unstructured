@@ -174,94 +174,23 @@ def partition_docx(
     file
         A file-like object using "rb" mode --> open(filename, "rb").
     metadata_filename
-        The filename to use for the metadata. Relevant because partition_doc converts the
-        document to .docx before partition. We want the original source filename in the
-        metadata.
+        The filename to use for the metadata. Relevant because partition_doc converts the document
+        to .docx before partition. We want the original source filename in the metadata.
     metadata_last_modified
         The last modified date for the document.
     """
-
-    # Verify that only one of the arguments was provided
+    # -- verify that only one file-specifier argument was provided --
     exactly_one(filename=filename, file=file)
 
-    last_modification_date = None
-    if filename is not None:
-        if not filename.startswith("/tmp"):
-            last_modification_date = get_last_modified_date(filename)
-
-        document = docx.Document(filename)
-    else:
-        assert file is not None
-        last_modification_date = get_last_modified_date_from_file(file)
-
-        document = docx.Document(cast(BinaryIO, spooled_to_bytes_io_if_needed(file)))
-
-    elements: List[Element] = []
-    table_index = 0
-
-    headers_and_footers = _get_headers_and_footers(document, metadata_filename)
-    if len(headers_and_footers) > 0:
-        elements.extend(headers_and_footers[0][0])
-
-    document_contains_pagebreaks = _element_contains_pagebreak(document._element)
-    page_number = 1 if document_contains_pagebreaks else None
-    section = 0
-    is_list = False
-    for element_item in document.element.body:
-        if element_item.tag.endswith("tbl"):
-            table = document.tables[table_index]
-            emphasized_texts = _get_emphasized_texts_from_table(table)
-            emphasized_text_contents, emphasized_text_tags = _extract_contents_and_tags(
-                emphasized_texts,
-            )
-            html_table = convert_ms_office_table_to_text(table, as_html=True)
-            text_table = convert_ms_office_table_to_text(table, as_html=False)
-            element = Table(text_table)
-            element.metadata = ElementMetadata(
-                text_as_html=html_table,
-                filename=metadata_filename,
-                page_number=page_number,
-                last_modified=metadata_last_modified or last_modification_date,
-                emphasized_text_contents=emphasized_text_contents,
-                emphasized_text_tags=emphasized_text_tags,
-            )
-            elements.append(element)
-            table_index += 1
-        elif element_item.tag.endswith("p"):
-            if "<w:numPr>" in element_item.xml:
-                is_list = True
-            paragraph = Paragraph(element_item, document)
-            emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
-            emphasized_text_contents, emphasized_text_tags = _extract_contents_and_tags(
-                emphasized_texts,
-            )
-            para_element: Optional[Text] = _paragraph_to_element(paragraph, is_list)
-            if para_element is not None:
-                para_element.metadata = ElementMetadata(
-                    filename=metadata_filename,
-                    page_number=page_number,
-                    last_modified=metadata_last_modified or last_modification_date,
-                    emphasized_text_contents=emphasized_text_contents,
-                    emphasized_text_tags=emphasized_text_tags,
-                )
-                elements.append(para_element)
-            is_list = False
-        elif element_item.tag.endswith("sectPr"):
-            if len(headers_and_footers) > section:
-                footers = headers_and_footers[section][1]
-                elements.extend(footers)
-
-            section += 1
-            if len(headers_and_footers) > section:
-                headers = headers_and_footers[section][0]
-                elements.extend(headers)
-
-        if page_number is not None and _element_contains_pagebreak(element_item):
-            page_number += 1
-            if include_page_breaks:
-                elements.append(PageBreak(text=""))
-
-    return elements
+    return list(
+        _DocxPartitioner.iter_document_elements(
+            filename,
+            file,
+            metadata_filename,
+            include_page_breaks,
+            metadata_last_modified,
+        )
+    )
 
 
 class _DocxPartitioner:
