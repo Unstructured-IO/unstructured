@@ -164,37 +164,6 @@ STYLE_TO_ELEMENT_MAPPING = {
 }
 
 
-def _get_paragraph_runs(paragraph: Paragraph) -> Sequence[Run]:
-    """
-    Get hyperlink text from a paragraph object.
-    Without this, the default runs function skips over hyperlinks.
-
-    Args:
-        paragraph (Paragraph): A Paragraph object.
-
-    Returns:
-        list: A list of Run objects.
-    """
-
-    # Recursively get runs.
-    def _get_runs(node: BaseOxmlElement, parent: Paragraph) -> Iterator[Run]:
-        for child in node:
-            # If the child is a run, yield a Run object
-            if child.tag == qn("w:r"):
-                yield Run(cast(CT_R, child), parent)
-            # If the child is a hyperlink, search for runs within it recursively
-            if child.tag == qn("w:hyperlink"):
-                yield from _get_runs(child, parent)
-
-    return list(_get_runs(paragraph._element, paragraph))
-
-
-# Add the runs property to the Paragraph class
-Paragraph.runs = property(  # pyright: ignore[reportGeneralTypeIssues]
-    lambda self: _get_paragraph_runs(self)
-)
-
-
 @process_metadata()
 @add_metadata_with_filetype(FileType.DOCX)
 @add_chunking_strategy()
@@ -458,3 +427,40 @@ def _extract_contents_and_tags(
     )
 
     return emphasized_text_contents, emphasized_text_tags
+
+
+# == monkey-patch docx.text.Paragraph.runs ===========================================
+
+
+def _get_paragraph_runs(paragraph: Paragraph) -> Sequence[Run]:
+    """Gets all runs in paragraph, including hyperlinks python-docx skips.
+
+    Without this, the default runs function skips over hyperlinks.
+
+    Args:
+        paragraph (Paragraph): A Paragraph object.
+
+    Returns:
+        list: A list of Run objects.
+    """
+
+    def _get_runs(node: BaseOxmlElement, parent: Paragraph) -> Iterator[Run]:
+        """Recursively get runs."""
+        for child in node:
+            # -- the Paragraph has runs as direct children --
+            if child.tag == qn("w:r"):
+                yield Run(cast(CT_R, child), parent)
+                continue
+            # -- but it also has hyperlink children that themselves contain runs, so
+            # -- recurse into those
+            if child.tag == qn("w:hyperlink"):
+                yield from _get_runs(child, parent)
+
+    return list(_get_runs(paragraph._element, paragraph))
+
+
+Paragraph.runs = property(  # pyright: ignore[reportGeneralTypeIssues]
+    lambda self: _get_paragraph_runs(self)
+)
+
+# ====================================================================================
