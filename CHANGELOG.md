@@ -1,4 +1,16 @@
-## 0.10.13-dev7
+## 0.10.14-dev0
+
+### Enhancements
+
+* Create and add `add_chunking_strategy` decorator to partition functions
+
+### Features
+
+
+### Fixes
+
+
+## 0.10.13
 
 ### Enhancements
 
@@ -9,13 +21,13 @@
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization
-* Create and add `add_chunking_strategy` decorator to partition functions
 * Add `clean_ligatures` function to expand ligatures in text
 
 ### Fixes
 
 * `partition_html` breaks on `<br>` elements.
 * Ingest error handling to properly raise errors when wrapped
+* GH issue 1361: fixes a sortig error that prevented some PDF's from being parsed
 * Bump unstructured-inference
   * Brings back embedded images in PDF's (0.5.23)
 
