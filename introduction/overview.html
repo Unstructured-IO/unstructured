@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Key Concepts" href="key_concepts.html" /><link rel="prev" title="Introduction" href="../introduction.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Overview - Unstructured 0.10.12 documentation</title>
+  <title>Overview - Unstructured 0.10.13 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -342,6 +342,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../upstream_connectors/gitlab.html">Gitlab</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../upstream_connectors/google_cloud_storage.html">Google Cloud Storage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../upstream_connectors/google_drive.html">Google Drive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../upstream_connectors/jira.html">Jira</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../upstream_connectors/local_connector.html">Local</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../upstream_connectors/notion.html">Notion</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../upstream_connectors/onedrive.html">One Drive</a></li>
@@ -357,6 +358,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../metadata.html">Metadata</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../integrations.html">Integrations</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../best_practices.html">Best Practices</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Best Practices</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices/strategies.html">Strategies</a></li>
+</ul>
+</li>
 </ul>
 
 </div>
@@ -419,6 +424,14 @@
 <p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library aims to simplify and streamline the preprocessing of structured and unstructured documents for downstream tasks. And what that means is no matter where your data is
 and no matter what format that data is in, Unstructured’s toolkit will transform and preprocess that data into an easily digestable and usable format.</p>
 </section>
+<section id="product-offerings">
+<h2>Product Offerings<a class="headerlink" href="#product-offerings" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Python Library</strong>: Unstructured’s open source software <a class="reference external" href="https://github.com/Unstructured-IO/unstructured">(library)</a>.</p></li>
+<li><p><strong>Hosted API</strong>: Easiest and most scalable way to process large documents in quantity <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-api">(library)</a>.</p></li>
+<li><p><strong>Enterprise Product</strong>: In development with the hopes of launching late 2023.</p></li>
+</ul>
+</section>
 <section id="key-features">
 <h2>Key Features<a class="headerlink" href="#key-features" title="Permalink to this heading"></a></h2>
 <ul class="simple">
@@ -428,12 +441,13 @@ and no matter what format that data is in, Unstructured’s toolkit will transfo
 <li><p><strong>Customizability</strong>: Easily extend and customize the library to fit specific requirements or unique use cases.</p></li>
 </ul>
 </section>
-<section id="key-concepts">
-<h2>Key Concepts<a class="headerlink" href="#key-concepts" title="Permalink to this heading"></a></h2>
+<section id="common-use-cases">
+<h2>Common Use Cases<a class="headerlink" href="#common-use-cases" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p><strong>Connectors</strong>: Interfaces that enable the library to interact with different data sources and sinks, like cloud storage or databases.</p></li>
-<li><p><strong>Bricks</strong>: Modular units of the library that allow users to partition, clean, and stage data efficiently.</p></li>
-<li><p><strong>Metadata</strong>: Data about data. In <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>, metadata helps in keeping track of the source, type, and other essential attributes of the data.</p></li>
+<li><p><strong>Pretraining Models</strong></p></li>
+<li><p><strong>Fine-tuning Models</strong></p></li>
+<li><p><strong>Retrieval Augmented Generation (RAG)</strong></p></li>
+<li><p><strong>Traditional ETL</strong></p></li>
 </ul>
 </section>
 <section id="quickstart-tutorial">
@@ -500,8 +514,9 @@ and no matter what format that data is in, Unstructured’s toolkit will transfo
             <ul>
 <li><a class="reference internal" href="#">Overview</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#product-offerings">Product Offerings</a></li>
 <li><a class="reference internal" href="#key-features">Key Features</a></li>
-<li><a class="reference internal" href="#key-concepts">Key Concepts</a></li>
+<li><a class="reference internal" href="#common-use-cases">Common Use Cases</a></li>
 <li><a class="reference internal" href="#quickstart-tutorial">Quickstart Tutorial</a></li>
 </ul>
 </li>

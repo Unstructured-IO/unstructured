@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Overview" href="introduction/overview.html" /><link rel="prev" title="Unstructured Core Library" href="index.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Introduction - Unstructured 0.10.12 documentation</title>
+  <title>Introduction - Unstructured 0.10.13 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
@@ -342,6 +342,7 @@
 <li class="toctree-l2"><a class="reference internal" href="upstream_connectors/gitlab.html">Gitlab</a></li>
 <li class="toctree-l2"><a class="reference internal" href="upstream_connectors/google_cloud_storage.html">Google Cloud Storage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="upstream_connectors/google_drive.html">Google Drive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upstream_connectors/jira.html">Jira</a></li>
 <li class="toctree-l2"><a class="reference internal" href="upstream_connectors/local_connector.html">Local</a></li>
 <li class="toctree-l2"><a class="reference internal" href="upstream_connectors/notion.html">Notion</a></li>
 <li class="toctree-l2"><a class="reference internal" href="upstream_connectors/onedrive.html">One Drive</a></li>
@@ -357,6 +358,10 @@
 <li class="toctree-l1"><a class="reference internal" href="metadata.html">Metadata</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integrations.html">Integrations</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="best_practices.html">Best Practices</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Best Practices</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="best_practices/strategies.html">Strategies</a></li>
+</ul>
+</li>
 </ul>
 
 </div>
@@ -421,6 +426,14 @@
 <p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library aims to simplify and streamline the preprocessing of structured and unstructured documents for downstream tasks. And what that means is no matter where your data is
 and no matter what format that data is in, Unstructured’s toolkit will transform and preprocess that data into an easily digestable and usable format.</p>
 </section>
+<section id="product-offerings">
+<h3>Product Offerings<a class="headerlink" href="#product-offerings" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Python Library</strong>: Unstructured’s open source software <a class="reference external" href="https://github.com/Unstructured-IO/unstructured">(library)</a>.</p></li>
+<li><p><strong>Hosted API</strong>: Easiest and most scalable way to process large documents in quantity <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-api">(library)</a>.</p></li>
+<li><p><strong>Enterprise Product</strong>: In development with the hopes of launching late 2023.</p></li>
+</ul>
+</section>
 <section id="key-features">
 <h3>Key Features<a class="headerlink" href="#key-features" title="Permalink to this heading"></a></h3>
 <ul class="simple">
@@ -430,12 +443,13 @@ and no matter what format that data is in, Unstructured’s toolkit will transfo
 <li><p><strong>Customizability</strong>: Easily extend and customize the library to fit specific requirements or unique use cases.</p></li>
 </ul>
 </section>
-<section id="key-concepts">
-<h3>Key Concepts<a class="headerlink" href="#key-concepts" title="Permalink to this heading"></a></h3>
+<section id="common-use-cases">
+<h3>Common Use Cases<a class="headerlink" href="#common-use-cases" title="Permalink to this heading"></a></h3>
 <ul class="simple">
-<li><p><strong>Connectors</strong>: Interfaces that enable the library to interact with different data sources and sinks, like cloud storage or databases.</p></li>
-<li><p><strong>Bricks</strong>: Modular units of the library that allow users to partition, clean, and stage data efficiently.</p></li>
-<li><p><strong>Metadata</strong>: Data about data. In <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>, metadata helps in keeping track of the source, type, and other essential attributes of the data.</p></li>
+<li><p><strong>Pretraining Models</strong></p></li>
+<li><p><strong>Fine-tuning Models</strong></p></li>
+<li><p><strong>Retrieval Augmented Generation (RAG)</strong></p></li>
+<li><p><strong>Traditional ETL</strong></p></li>
 </ul>
 </section>
 <section id="quickstart-tutorial">
@@ -444,12 +458,12 @@ and no matter what format that data is in, Unstructured’s toolkit will transfo
 <p>For more detailed information about specific components or advanced features, explore the rest of the documentation.</p>
 </section>
 </section>
-<section id="id2">
-<h2>Key Concepts<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
-<p>Natural Language Processing (NLP) encompasses a broad spectrum of tasks and methodologies. This section introduces some fundamental concepts crucial for most NLP projects.</p>
+<section id="key-concepts">
+<h2>Key Concepts<a class="headerlink" href="#key-concepts" title="Permalink to this heading"></a></h2>
+<p>Natural Language Processing (NLP) encompasses a broad spectrum of tasks and methodologies. This section introduces some fundamental concepts crucial for most NLP projects that involve Unstructured’s products.</p>
 <section id="data-ingestion">
 <h3>Data Ingestion<a class="headerlink" href="#data-ingestion" title="Permalink to this heading"></a></h3>
-<p>The initial step in any NLP task involves ingesting data from varied sources. This might include reading texts from files, scraping websites, listening to speech, or tapping into databases. Efficient data ingestion is vital to ensure that data is accessible and usable for downstream tasks.</p>
+<p>Unstructured’s <code class="docutils literal notranslate"><span class="pre">upstream</span> <span class="pre">connectors</span></code> make data ingestion easy. They ensure that your data is accessible, up to date, and usable for any downstream task. If you’d like to read more on our upstream connectors, you can find details <a class="reference external" href="../upstream_connectors.html">here</a>.</p>
 </section>
 <section id="data-preprocessing">
 <h3>Data Preprocessing<a class="headerlink" href="#data-preprocessing" title="Permalink to this heading"></a></h3>
@@ -480,6 +494,27 @@ and no matter what format that data is in, Unstructured’s toolkit will transfo
 <section id="large-language-models-llms">
 <h3>Large Language Models (LLMs)<a class="headerlink" href="#large-language-models-llms" title="Permalink to this heading"></a></h3>
 <p>LLMs, like GPT, are trained on vast amounts of data and have the capacity to comprehend and generate human-like text. They have achieved state-of-the-art results across a multitude of NLP tasks and can be fine-tuned to cater to specific domains or requirements.</p>
+</section>
+<section id="retrieval-augmented-generation">
+<h3>Retrieval Augmented Generation<a class="headerlink" href="#retrieval-augmented-generation" title="Permalink to this heading"></a></h3>
+<p>Large Language Models (LLMs) like OpenAI’s ChatGPT and Anthropic’s Claude have revolutionized the AI landscape with their prowess. However, they inherently suffer from significant drawbacks. One major issue is their static nature, which means they’re “frozen in time”.
+For instance, ChatGPT’s knowledge is limited up to September 2021, leaving it blind to any developments or information post that period. Despite this, LLMs might often respond to newer queries with unwarranted confidence, a phenomenon known as “hallucination”.
+Such errors can be highly detrimental, especially when these models serve critical real-world applications.</p>
+<p>Retrieval Augmented Generation (RAG) is a groundbreaking technique designed to counteract the limitations of foundational LLMs. By pairing an LLM with a RAG pipeline, we can enable users to access the underlying data sources that the model uses. This transparent approach not
+only ensures that an LLM’s claims can be verified for accuracy but also builds a trust factor among users.</p>
+<p>Moreover, RAG offers a cost-effective solution. Instead of bearing the extensive computational and financial burdens of training custom models or finetuning existing ones, RAG can, in many situations, serve as a sufficient alternative. This reduction in resource consumption
+is particularly beneficial for organizations that lack the means to develop and deploy foundational models from scratch.</p>
+<p>A RAG workflow can be broken down into the following steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Data ingestion</strong>: The first step is acquiring data from your relevant sources. At Unstructured we make this super easy with our <a class="reference external" href="https://unstructured-io.github.io/unstructured/upstream_connectors.html">data connectors</a>.</p></li>
+<li><p><strong>Data preprocessing and cleaning</strong>: Once you’ve identified and collected your data sources a good practice is to remove any unnecessary artifacts within the dataset. At Unstructured we have a variety of different tools to remove unneccesary elements. Found <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html">here</a></p></li>
+<li><p><strong>Chunking</strong>: The next step is to break your text down into digestable pieces for your LLM to be able to consume. LangChain, Llama Index and Haystack offer chunking funcionalities.</p></li>
+<li><p><strong>Embedding</strong>: After chunking, you will need to convert the text into a numerical representation (vector embedding) that a LLM can understand. OpenAI, Cohere, and Hugging Face all offer embedding models.</p></li>
+<li><p><strong>Vector Database</strong>: The next step is to choose a location for storing your chunked embeddings. There are lots of options to choose from for your vector database (Pinecone, Milvus, ChromaDD, Weaviate and more).</p></li>
+<li><p><strong>User Prompt</strong>: Take the user prompt and grab the most relevant chunks of information in the vector database via similarity search.</p></li>
+<li><p><strong>LLM Generation</strong>: Once you’ve retrieved your relevant chunks you pass the prompt + the context to the LLM for the LLM to generate a more accurate response.</p></li>
+</ol>
+<p>For a full guide on how to implement RAG check out this <a class="reference external" href="https://medium.com/unstructured-io/effortless-document-extraction-a-guide-to-using-unstructured-api-and-data-connectors-6c2659eda4af">blog post</a></p>
 </section>
 </section>
 <section id="getting-started">
@@ -731,12 +766,13 @@ looks like the following:</p>
 <li><a class="reference internal" href="#">Introduction</a><ul>
 <li><a class="reference internal" href="#overview">Overview</a><ul>
 <li><a class="reference internal" href="#id1">Introduction</a></li>
+<li><a class="reference internal" href="#product-offerings">Product Offerings</a></li>
 <li><a class="reference internal" href="#key-features">Key Features</a></li>
-<li><a class="reference internal" href="#key-concepts">Key Concepts</a></li>
+<li><a class="reference internal" href="#common-use-cases">Common Use Cases</a></li>
 <li><a class="reference internal" href="#quickstart-tutorial">Quickstart Tutorial</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id2">Key Concepts</a><ul>
+<li><a class="reference internal" href="#key-concepts">Key Concepts</a><ul>
 <li><a class="reference internal" href="#data-ingestion">Data Ingestion</a></li>
 <li><a class="reference internal" href="#data-preprocessing">Data Preprocessing</a></li>
 <li><a class="reference internal" href="#chunking-text-for-vector-databases">Chunking Text for Vector Databases</a></li>
@@ -744,6 +780,7 @@ looks like the following:</p>
 <li><a class="reference internal" href="#vector-databases">Vector Databases</a></li>
 <li><a class="reference internal" href="#tokens">Tokens</a></li>
 <li><a class="reference internal" href="#large-language-models-llms">Large Language Models (LLMs)</a></li>
+<li><a class="reference internal" href="#retrieval-augmented-generation">Retrieval Augmented Generation</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#getting-started">Getting Started</a></li>

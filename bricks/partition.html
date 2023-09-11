@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Cleaning" href="cleaning.html" /><link rel="prev" title="Bricks" href="../bricks.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Partitioning - Unstructured 0.10.12 documentation</title>
+  <title>Partitioning - Unstructured 0.10.13 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -342,6 +342,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../upstream_connectors/gitlab.html">Gitlab</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../upstream_connectors/google_cloud_storage.html">Google Cloud Storage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../upstream_connectors/google_drive.html">Google Drive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../upstream_connectors/jira.html">Jira</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../upstream_connectors/local_connector.html">Local</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../upstream_connectors/notion.html">Notion</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../upstream_connectors/onedrive.html">One Drive</a></li>
@@ -357,6 +358,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../metadata.html">Metadata</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../integrations.html">Integrations</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../best_practices.html">Best Practices</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Best Practices</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices/strategies.html">Strategies</a></li>
+</ul>
+</li>
 </ul>
 
 </div>
@@ -421,6 +426,140 @@ If you’re training a summarization model, for example, you may only be interes
 <p>The easiest way to partition documents in unstructured is to use the <code class="docutils literal notranslate"><span class="pre">partition</span></code> brick.
 If you call the <code class="docutils literal notranslate"><span class="pre">partition</span></code> brick, <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> will use <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> to automatically determine the file type and invoke the appropriate partition function.
 In cases where <code class="docutils literal notranslate"><span class="pre">libmagic</span></code> is not available, filetype detection will fall back to using the file extension.</p>
+<p>The following table shows the document types the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library currently supports. <code class="docutils literal notranslate"><span class="pre">partition</span></code> will recognize each of these document types and route the document
+to the appropriate partitioning function. If you already know your document type, you can use the partitioning function listed in the table directly.</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Document Type</p></td>
+<td><p>Partition Function</p></td>
+<td><p>Strategies</p></td>
+<td><p>Table Support</p></td>
+<td><p>Options</p></td>
+</tr>
+<tr class="row-even"><td><p>CSV Files (<cite>.csv</cite>)</p></td>
+<td><p><cite>partition_csv</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p>E-mails (<cite>.eml</cite>)</p></td>
+<td><p><cite>partition_eml</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>No</p></td>
+<td><p>Encoding; Max Partition; Process Attachments</p></td>
+</tr>
+<tr class="row-even"><td><p>E-mails (<cite>.msg</cite>)</p></td>
+<td><p><cite>partition_msg</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>No</p></td>
+<td><p>Encoding; Max Partition; Process Attachments</p></td>
+</tr>
+<tr class="row-odd"><td><p>EPubs (<cite>.epub</cite>)</p></td>
+<td><p><cite>partition_epub</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-even"><td><p>Excel Documents (<cite>.xlsx</cite>/<cite>.xls</cite>)</p></td>
+<td><p><cite>partition_xlsx</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p>HTML Pages (<cite>.html</cite>)</p></td>
+<td><p><cite>partition_html</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>No</p></td>
+<td><p>Encoding; Include Page Breaks</p></td>
+</tr>
+<tr class="row-even"><td><p>Images (<cite>.png</cite>/<cite>.jpg</cite>)</p></td>
+<td><p><cite>partition_image</cite></p></td>
+<td><p>“auto”, “hi_res”, “ocr_only”</p></td>
+<td><p>Yes</p></td>
+<td><p>Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy</p></td>
+</tr>
+<tr class="row-odd"><td><p>Markdown (<cite>.md</cite>)</p></td>
+<td><p><cite>partition_md</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-even"><td><p>Org Mode (<cite>.org</cite>)</p></td>
+<td><p><cite>partition_org</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-odd"><td><p>Open Office Documents (<cite>.odt</cite>)</p></td>
+<td><p><cite>partition_odt</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-even"><td><p>PDFs (<cite>.pdf</cite>)</p></td>
+<td><p><cite>partition_pdf</cite></p></td>
+<td><p>“auto”, “fast”, “hi_res”, “ocr_only”</p></td>
+<td><p>Yes</p></td>
+<td><p>Encoding; Include Page Breaks; Infer Table Structure; Max Partition; OCR Languages, Strategy</p></td>
+</tr>
+<tr class="row-odd"><td><p>Plain Text (<cite>.txt</cite>)</p></td>
+<td><p><cite>partition_text</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>No</p></td>
+<td><p>Encoding; Max Partition; Paragraph Grouper</p></td>
+</tr>
+<tr class="row-even"><td><p>Power Points (<cite>.ppt</cite>)</p></td>
+<td><p><cite>partition_ppt</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-odd"><td><p>Power Points (<cite>.pptx</cite>)</p></td>
+<td><p><cite>partition_pptx</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-even"><td><p>ReStructured Text (<cite>.rst</cite>)</p></td>
+<td><p><cite>partition_rst</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-odd"><td><p>Rich Text Files (<cite>.rtf</cite>)</p></td>
+<td><p><cite>partition_rtf</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-even"><td><p>TSV Files (<cite>.tsv</cite>)</p></td>
+<td><p><cite>partition_tsv</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p>Word Documents (<cite>.doc</cite>)</p></td>
+<td><p><cite>partition_doc</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-even"><td><p>Word Documents (<cite>.docx</cite>)</p></td>
+<td><p><cite>partition_docx</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>Yes</p></td>
+<td><p>Include Page Breaks</p></td>
+</tr>
+<tr class="row-odd"><td><p>XML Documents (<cite>.xml</cite>)</p></td>
+<td><p><cite>partition_xml</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>No</p></td>
+<td><p>Encoding; Max Partition; XML Keep Tags</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>As shown in the examples below, the <code class="docutils literal notranslate"><span class="pre">partition</span></code> function accepts both filenames and file-like objects as input.
 <code class="docutils literal notranslate"><span class="pre">partition</span></code> also has some optional kwargs.
 For example, if you set <code class="docutils literal notranslate"><span class="pre">include_page_breaks=True</span></code>, the output will include <code class="docutils literal notranslate"><span class="pre">PageBreak</span></code> elements if the filetype supports it.
