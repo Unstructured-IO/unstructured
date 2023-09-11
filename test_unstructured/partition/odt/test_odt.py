@@ -1,8 +1,8 @@
 import os
 import pathlib
 
-from unstructured.documents.elements import Text
 from unstructured.chunking.title import chunk_by_title
+from unstructured.documents.elements import Text
 from unstructured.partition.json import partition_json
 from unstructured.partition.odt import partition_odt
 from unstructured.staging.base import elements_to_json
