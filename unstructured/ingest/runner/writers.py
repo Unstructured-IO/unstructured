@@ -68,4 +68,41 @@ def dropbox_writer(
     )
 
 
-writer_map = {"s3": s3_writer, "delta_table": delta_table_writer, "dropbox": dropbox_writer}
+@requires_dependencies(["adlfs", "fsspec"], extras="azure")
+def azure_writer(
+    remote_url: str,
+    account_name: t.Optional[str],
+    account_key: t.Optional[str],
+    connection_string: t.Optional[str],
+    verbose: bool = False,
+):
+    from unstructured.ingest.connector.azure import (
+        AzureBlobStorageDestinationConnector,
+        SimpleAzureBlobStorageConfig,
+    )
+
+    if account_name:
+        access_kwargs = {
+            "account_name": account_name,
+            "account_key": account_key,
+        }
+    elif connection_string:
+        access_kwargs = {"connection_string": connection_string}
+    else:
+        access_kwargs = {}
+
+    return AzureBlobStorageDestinationConnector(
+        write_config=WriteConfig(),
+        connector_config=SimpleAzureBlobStorageConfig(
+            path=remote_url,
+            access_kwargs=access_kwargs,
+        ),
+    )
+
+
+writer_map = {
+    "s3": s3_writer,
+    "delta_table": delta_table_writer,
+    "dropbox": dropbox_writer,
+    "azure": azure_writer,
+}

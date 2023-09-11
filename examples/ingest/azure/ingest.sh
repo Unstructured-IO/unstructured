@@ -13,4 +13,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --remote-url abfs://container1/ \
         --account-name azureunstructured1 \
         --output-dir azure-ingest-output \
-        --num-processes 2
+        --num-processes 2 \
+        azure \
+        --remote-url abfs://utic-ingest-test-fixtures-output/ \
+        --account-name azureunstructured1 \
