@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.cmds.utils import (
-    CommaDelimitedString,
+    DelimitedString,
     Group,
     conform_click_options,
 )
@@ -42,7 +42,7 @@ class SlackCliConfig(BaseConfig, CliMixin):
             click.Option(
                 ["--channels"],
                 required=True,
-                type=CommaDelimitedString(),
+                type=DelimitedString(),
                 help="Comma-delimited list of Slack channel IDs to pull messages from, "
                 "can be a public or private channel",
             ),

@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.cmds.utils import (
-    CommaDelimitedString,
+    DelimitedString,
     Group,
     conform_click_options,
 )
@@ -55,7 +55,7 @@ class OutlookCliConfig(BaseConfig, CliMixin):
             click.Option(
                 ["--outlook-folders"],
                 default=None,
-                type=CommaDelimitedString(),
+                type=DelimitedString(),
                 help="Folders to download email messages from. "
                 "Do not specify subfolders. Use quotes if spaces in folder names.",
             ),

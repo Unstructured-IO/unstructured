@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.cmds.utils import (
-    CommaDelimitedString,
+    DelimitedString,
     Group,
     conform_click_options,
 )
@@ -40,7 +40,7 @@ class DiscordCliConfig(BaseConfig, CliMixin):
             click.Option(
                 ["--channels"],
                 required=True,
-                type=CommaDelimitedString(),
+                type=DelimitedString(),
                 help="Comma-delimited list of discord channel ids to ingest from.",
             ),
             click.Option(

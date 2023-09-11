@@ -11,7 +11,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
     --output-dir "$OUTPUT_DIR" \
-    --partition-encoding cp1252 \
+    --encoding cp1252 \
     --verbose \
     --reprocess \
     --input-path example-docs/fake-html-cp1252.html

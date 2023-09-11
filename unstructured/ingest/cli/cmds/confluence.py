@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.cmds.utils import (
-    CommaDelimitedString,
+    DelimitedString,
     Group,
     conform_click_options,
 )
@@ -55,7 +55,7 @@ class ConfluenceCliConfig(BaseConfig, CliMixin):
             click.Option(
                 ["--spaces"],
                 default=None,
-                type=CommaDelimitedString(),
+                type=DelimitedString(),
                 help="A list of confluence space ids to be fetched. From each fetched space, "
                 "--num-of-docs-from-each-space number of docs will be ingested. "
                 "--spaces and --num-of-spaces cannot be used at the same time",

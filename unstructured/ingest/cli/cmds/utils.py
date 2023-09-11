@@ -12,11 +12,12 @@ def conform_click_options(options: dict):
             options[k] = list(v)
 
 
-class CommaDelimitedString(click.ParamType):
-    name = "comma-delimited-string"
+class DelimitedString(click.ParamType):
+    name = "delimited-string"
 
-    def __init__(self, choices: t.Optional[t.List[str]] = None):
+    def __init__(self, delimiter: str = ",", choices: t.Optional[t.List[str]] = None):
         self.choices = choices if choices else []
+        self.delimiter = delimiter
 
     def convert(
         self,
@@ -26,8 +27,9 @@ class CommaDelimitedString(click.ParamType):
     ) -> t.Any:
         # In case a list is provided as the default, will not break
         if isinstance(value, list):
-            return [str(v).strip() for v in value]
-        split = [v.strip() for v in value.split(",")]
+            split = [str(v).strip() for v in value]
+        else:
+            split = [v.strip() for v in value.split(self.delimiter)]
         if not self.choices:
             return split
         choices_str = ", ".join(map(repr, self.choices))

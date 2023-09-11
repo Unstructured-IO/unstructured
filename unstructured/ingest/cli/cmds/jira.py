@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.cmds.utils import (
-    CommaDelimitedString,
+    DelimitedString,
     Group,
     conform_click_options,
 )
@@ -59,21 +59,21 @@ class JiraCliConfig(BaseConfig, CliMixin):
             click.Option(
                 ["--projects"],
                 default=None,
-                type=CommaDelimitedString(),
+                type=DelimitedString(),
                 help="Comma-delimited Project ids or keys. Use Jira UI or the "
                 "API to find or obtain keys. Alternatively, use API to obtain ids.",
             ),
             click.Option(
                 ["--boards"],
                 default=None,
-                type=CommaDelimitedString(),
+                type=DelimitedString(),
                 help="Comma-delimited Board ids. Check board URL, or use the "
                 "API to find the board ids.",
             ),
             click.Option(
                 ["--issues"],
                 default=None,
-                type=CommaDelimitedString(),
+                type=DelimitedString(),
                 help="Comma-delimited Issue ids or keys. Use Jira UI or the API to "
                 "find or obtain keys. Alternatively, use API to obtain ids.",
             ),
