@@ -167,6 +167,9 @@ def test_process_file_fields_include_default(mocker, partition_test_results):
     assert len(isd_elems)
     assert mock_partition.call_count == 1
     for elem in isd_elems:
+        # Parent IDs are non-deterministic - remove them from the test
+        elem["metadata"].pop("parent_id", None)
+
         assert {"element_id", "text", "type", "metadata"} == set(elem.keys())
         data_source_metadata = elem["metadata"]["data_source"]
         assert data_source_metadata["url"] == TEST_SOURCE_URL
@@ -198,6 +201,9 @@ def test_process_file_metadata_includes_filename_and_filetype(
     isd_elems = test_ingest_doc.process_file()
     assert len(isd_elems)
     for elem in isd_elems:
+        # Parent IDs are non-deterministic - remove them from the test
+        elem["metadata"].pop("parent_id", None)
+
         assert set(elem["metadata"].keys()) == {"filename", "filetype"}
 
 
