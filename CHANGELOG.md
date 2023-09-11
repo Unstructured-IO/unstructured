@@ -1,8 +1,14 @@
-## 0.10.15-dev0
+## 0.10.15-dev2
+
+### Enhancements
+
+* Updated HTML Partitioning to extract tables
 
 ### Features
 
 * Adds a naive hierarchy for elements via a `parent_id` on the element's metadata
+
+### Fixes
 
 ## 0.10.14
 

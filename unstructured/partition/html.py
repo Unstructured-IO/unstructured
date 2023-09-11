@@ -77,7 +77,6 @@ def partition_html(
         return []
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
-
     last_modification_date = None
     if filename is not None:
         last_modification_date = get_last_modified_date(filename)
@@ -118,7 +117,6 @@ def partition_html(
 
     if skip_headers_and_footers:
         document = filter_footer_and_header(document)
-
     return document_to_element_list(
         document,
         sortable=False,
