@@ -1,3 +1,14 @@
+## 0.10.14-dev0
+
+### Enhancements
+
+*  Adds data source properties (date_created, date_modified, version, exists, source_url, record_locator) to Onedrive, Slack and Reddit connectors
+
+### Features
+
+### Fixes
+
+
 ## 0.10.14
 
 ### Enhancements
