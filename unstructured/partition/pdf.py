@@ -10,6 +10,7 @@ from pdfminer.high_level import extract_pages
 from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.utils import open_filename
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.coordinates import PixelSpace, PointSpace
 from unstructured.documents.elements import (
@@ -45,6 +46,7 @@ RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.PDF)
+@add_chunking_strategy()
 def partition_pdf(
     filename: str = "",
     file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
@@ -57,6 +59,7 @@ def partition_pdf(
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -418,9 +421,12 @@ def _process_pdfminer_pages(
                     )
                     page_elements.append(element)
 
+        # NOTE(crag, christine): always do the basic sort first for determinsitic order across
+        # python versions.
         sorted_page_elements = sort_page_elements(page_elements, SORT_MODE_BASIC)
         if sort_mode != SORT_MODE_BASIC:
             sorted_page_elements = sort_page_elements(sorted_page_elements, sort_mode)
+
         elements += sorted_page_elements
 
         if include_page_breaks:

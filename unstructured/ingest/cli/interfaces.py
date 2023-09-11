@@ -2,7 +2,8 @@ from abc import abstractmethod
 
 import click
 
-from unstructured.ingest.interfaces2 import BaseConfig, PartitionConfig, ReadConfig
+from unstructured.ingest.cli.cmds.utils import DelimitedString
+from unstructured.ingest.interfaces import BaseConfig, PartitionConfig, ReadConfig
 
 
 class CliMixin:
@@ -104,9 +105,10 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
             ),
             click.Option(
                 ["--fields-include"],
-                multiple=True,
+                type=DelimitedString(),
                 default=["element_id", "text", "type", "metadata"],
-                help="If set, include the specified top-level fields in an element. ",
+                help="Comma-delimited list. If set, include the specified top-level "
+                "fields in an element.",
             ),
             click.Option(
                 ["--flatten-metadata"],
@@ -119,20 +121,29 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
             click.Option(
                 ["--metadata-include"],
                 default=[],
-                multiple=True,
-                help="If set, include the specified metadata fields if they exist "
-                "and drop all other fields. ",
+                type=DelimitedString(),
+                help="Comma-delimited list. If set, include the specified metadata "
+                "fields if they exist and drop all other fields. ",
             ),
             click.Option(
                 ["--metadata-exclude"],
                 default=[],
-                multiple=True,
-                help="If set, drop the specified metadata fields if they exist. ",
+                type=DelimitedString(),
+                help="Comma-delimited list. If set, drop the specified metadata "
+                "fields if they exist.",
+            ),
+            click.Option(
+                ["--partition-by-api"],
+                is_flag=True,
+                default=False,
+                help="Use a remote API to partition the files."
+                " Otherwise, use the function from partition.auto",
             ),
             click.Option(
                 ["--partition-endpoint"],
-                default=None,
-                help="If provided, will use api to run partition",
+                default="https://api.unstructured.io/general/v0/general",
+                help="If partitioning via api, use the following host. "
+                "Default: https://api.unstructured.io/general/v0/general",
             ),
             click.Option(
                 ["--api-key"],

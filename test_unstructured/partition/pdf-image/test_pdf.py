@@ -6,6 +6,7 @@ import pytest
 from PIL import Image
 from unstructured_inference.inference import layout
 
+from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
@@ -801,3 +802,13 @@ def test_partition_pdf_with_ocr_has_coordinates_from_file(
         (1043.0, 2106.0),
         (1043.0, 2144.0),
     )
+
+
+def test_add_chunking_strategy_on_partition_pdf(
+    filename="example-docs/layout-parser-paper-fast.pdf",
+):
+    elements = pdf.partition_pdf(filename=filename)
+    chunk_elements = pdf.partition_pdf(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
