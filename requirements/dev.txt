@@ -391,7 +391,7 @@ urllib3==1.26.16
     #   -c requirements/constraints.in
     #   -c requirements/test.txt
     #   requests
-virtualenv==20.24.4
+virtualenv==20.24.5
     # via pre-commit
 wcwidth==0.2.6
     # via prompt-toolkit
@@ -401,7 +401,7 @@ webencodings==0.5.1
     # via
     #   bleach
     #   tinycss2
-websocket-client==1.6.2
+websocket-client==1.6.3
     # via jupyter-server
 wheel==0.41.2
     # via
