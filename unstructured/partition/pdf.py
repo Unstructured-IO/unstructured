@@ -90,9 +90,9 @@ def partition_pdf(
         I.e., rows and cells are preserved.
         Whether True or False, the "text" field is always present in any Table element
         and is the text content of the table (no structure).
-    ocr_languages
-        The languages to use for the Tesseract agent. To use a language, you'll first need
-        to isntall the appropriate Tesseract language pack.
+    languages 
+        The languages present in the document, for use in partitioning and/or OCR. To use a language
+        with Tesseract, you'll first need to install the appropriate Tesseract language pack.
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied. Only applies to the "ocr_only" strategy.
