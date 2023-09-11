@@ -9,7 +9,7 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
 if [ -z "$SHAREPOINT_CLIENT_ID" ] || [ -z "$SHAREPOINT_CRED" ]; then
-   echo "Skipping Sharepoint ingest test because the MS_CLIENT_ID or MS_CLIENT_CRED env var is not set."
+   echo "Skipping Sharepoint ingest test because the SHAREPOINT_CLIENT_ID or SHAREPOINT_CRED env var is not set."
    exit 0
 fi
 # excluding metadata.last_modified since this will always update as date processed because the Sharepoint connector creates documents on the fly

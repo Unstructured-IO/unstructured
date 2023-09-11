@@ -25,6 +25,7 @@ class SharepointCliConfig(BaseConfig, CliMixin):
     client_cred: t.Optional[str] = None
     site: t.Optional[str] = None
     path: str = "Shared Documents"
+    files_only: bool = False
 
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:
@@ -59,6 +60,12 @@ class SharepointCliConfig(BaseConfig, CliMixin):
                 help="Path from which to start parsing files. If the connector is to \
                 process all sites  within the tenant this filter will be applied to \
                 all sites document libraries. Default 'Shared Documents'",
+            ),
+            click.Option(
+                ["--files-only"],
+                is_flag=True,
+                default=False,
+                help="Process only files.",
             ),
         ]
         cmd.params.extend(options)
