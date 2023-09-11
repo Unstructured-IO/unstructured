@@ -6,4 +6,4 @@ if [ "${ARCH}" = "aarch64" ]; then
 else
 		python3 -m pip install paddlepaddle;
 fi
-python3 -m pip install paddleocr
+python3 -m pip install unstructured.paddleocr

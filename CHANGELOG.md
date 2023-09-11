@@ -4,7 +4,7 @@
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
-* Installs PaddleOCR in Docker images including support for aarch64 architecture
+* Add paddleocr extra and makefile command to install
 * Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
 * Updated the `_detect_filetype_from_octet_stream()` function to use libmagic to infer the content type of file when it is not a zip file.
 ### Features
