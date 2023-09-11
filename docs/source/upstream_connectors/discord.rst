@@ -22,7 +22,7 @@ Run Locally
           --channels 12345678 \
           --token "$DISCORD_TOKEN" \
           --download-dir discord-ingest-download \
-          --structured-output-dir discord-example \
+          --output-dir discord-example \
           --preserve-downloads \
           --verbose
 
@@ -38,7 +38,7 @@ Run Locally
             "--channels", "12345678",
             "--token", "$DISCORD_TOKEN",
             "--download-dir", "discord-ingest-download",
-            "--structured-output-dir", "discord-example",
+            "--output-dir", "discord-example",
             "--preserve-downloads",
             "--verbose",
         ]
@@ -71,7 +71,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
           --channels 12345678 \
           --token "$DISCORD_TOKEN" \
           --download-dir discord-ingest-download \
-          --structured-output-dir discord-example \
+          --output-dir discord-example \
           --preserve-downloads \
           --verbose \
           --partition-by-api \
@@ -89,7 +89,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
           "--channels", "12345678",
           "--token", "$DISCORD_TOKEN",
           "--download-dir", "discord-ingest-download",
-          "--structured-output-dir", "discord-example",
+          "--output-dir", "discord-example",
           "--preserve-downloads",
           "--verbose",
           "--partition-by-api",
@@ -108,7 +108,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
             print('Command failed. Error:')
             print(error.decode())
 
-Additionaly, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
+Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 
 For a full list of the options the CLI accepts check ``unstructured-ingest discord --help``.
 

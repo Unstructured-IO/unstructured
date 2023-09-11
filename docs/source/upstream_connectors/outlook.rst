@@ -1,6 +1,6 @@
 Outlook
 ==========
-Connect Outlook to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem. 
+Connect Outlook to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
 
 First you'll need to install the Outlook dependencies as shown here.
 
@@ -24,7 +24,7 @@ Run Locally
             --tenant "$MS_TENANT_ID" \
             --user-email "$MS_USER_EMAIL" \
             --outlook-folders Inbox,"Sent Items" \
-            --structured-output-dir outlook-output \
+            --output-dir outlook-output \
             --num-processes 2 \
             --recursive \
             --verbose
@@ -43,7 +43,7 @@ Run Locally
             "--tenant", "<Azure AD tenant_id, default is 'common'>",
             "--user-email", "$MS_USER_EMAIL",
             "--outlook-folders", "Inbox,Sent Items",
-            "--structured-output-dir", "onedrive-ingest-output",
+            "--output-dir", "onedrive-ingest-output",
             "--num-processes", "2",
             "--recursive",
             "--verbose",
@@ -64,7 +64,7 @@ Run Locally
 Run via the API
 ---------------
 
-You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``. 
+You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``.
 
 .. tabs::
 
@@ -76,9 +76,9 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
           airtable \
           --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
           --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
-          --structured-output-dir airtable-ingest-output \
+          --output-dir airtable-ingest-output \
           --num-processes 2 \
-          --reprocess \ 
+          --reprocess \
           --partition-by-api \
           --api-key "<UNSTRUCTURED-API-KEY>"
 
@@ -93,7 +93,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
           "airtable",
           "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
           "--personal-access-token", "$AIRTABLE_PERSONAL_ACCESS_TOKEN",
-          "--structured-output-dir", "airtable-ingest-output"
+          "--output-dir", "airtable-ingest-output"
           "--num-processes", "2",
           "--reprocess",
           "--partition-by-api",
@@ -112,7 +112,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
             print('Command failed. Error:')
             print(error.decode())
 
-Additionaly, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
+Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 
 For a full list of the options the CLI accepts check ``unstructured-ingest outlook --help``.
 
