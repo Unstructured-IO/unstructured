@@ -41,14 +41,14 @@ pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
     # via msal
-pytz==2023.3
+pytz==2023.3.post1
     # via office365-rest-python-client
 requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   msal
     #   office365-rest-python-client
-soupsieve==2.4.1
+soupsieve==2.5
     # via
     #   -c requirements/base.txt
     #   beautifulsoup4

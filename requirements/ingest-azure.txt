@@ -14,7 +14,7 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
-azure-core==1.29.3
+azure-core==1.29.4
     # via
     #   adlfs
     #   azure-identity
@@ -49,7 +49,7 @@ frozenlist==1.4.0
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2023.6.0
+fsspec==2023.9.0
     # via
     #   -r requirements/ingest-azure.in
     #   adlfs

@@ -6,6 +6,7 @@ from typing import Any, Dict, Optional
 
 import pytz
 
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -80,6 +81,7 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             post.permalink,
         )
 
+    @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""

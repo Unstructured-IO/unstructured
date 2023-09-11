@@ -6,6 +6,7 @@ from unstructured.ingest.connector.fsspec import (
     FsspecIngestDoc,
     SimpleFsspecConfig,
 )
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import StandardConnectorConfig
 from unstructured.utils import requires_dependencies
 
@@ -20,6 +21,7 @@ class S3IngestDoc(FsspecIngestDoc):
     remote_file_path: str
     registry_name: str = "s3"
 
+    @SourceConnectionError.wrap
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
     def get_file(self):
         super().get_file()

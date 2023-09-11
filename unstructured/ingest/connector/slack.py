@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -156,6 +157,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             modified.isoformat(),
         )
 
+    @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
     def get_file(self):

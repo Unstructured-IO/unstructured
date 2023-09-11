@@ -36,11 +36,11 @@ frozenlist==1.4.0
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2023.6.0
+fsspec==2023.9.0
     # via
     #   -r requirements/ingest-gcs.in
     #   gcsfs
-gcsfs==2023.6.0
+gcsfs==2023.9.0
     # via -r requirements/ingest-gcs.in
 google-api-core==2.11.1
     # via
@@ -61,7 +61,7 @@ google-cloud-storage==2.10.0
     # via gcsfs
 google-crc32c==1.5.0
     # via google-resumable-media
-google-resumable-media==2.5.0
+google-resumable-media==2.6.0
     # via google-cloud-storage
 googleapis-common-protos==1.60.0
     # via google-api-core
@@ -100,7 +100,7 @@ rsa==4.9
     # via google-auth
 six==1.16.0
     # via google-auth
-soupsieve==2.4.1
+soupsieve==2.5
     # via
     #   -c requirements/base.txt
     #   beautifulsoup4

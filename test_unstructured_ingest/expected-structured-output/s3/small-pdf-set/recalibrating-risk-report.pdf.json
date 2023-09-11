@@ -571,43 +571,23 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "64aeb9975f234becd55bb4635e6e2f2d",
+    "element_id": "786a068208b19d214a1e80ef16958645",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "25"
+    "text": "r e p s e i t i l"
   },
   {
     "type": "UncategorizedText",
-    "element_id": "75112d758c2551d782aaad167b590b1b",
+    "element_id": "497cd82cc3e05a43ac050df1935d3b10",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "24.6"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "5378796307535df3ec8d8b15a2e2dc56",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "20"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ad83c9c095995f98f5b31a246f106182",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "18.4"
+    "text": "W T"
   },
   {
     "type": "UncategorizedText",
@@ -618,6 +598,16 @@
       "page_number": 5
     },
     "text": "r a e y"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "fb67f6e44a2659caaa0e28f08280eb3c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "a t a F"
   },
   {
     "type": "UncategorizedText",
@@ -651,33 +641,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "497cd82cc3e05a43ac050df1935d3b10",
+    "element_id": "64aeb9975f234becd55bb4635e6e2f2d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "W T"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "786a068208b19d214a1e80ef16958645",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "r e p s e i t i l"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "fb67f6e44a2659caaa0e28f08280eb3c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "a t a F"
+    "text": "25"
   },
   {
     "type": "UncategorizedText",
@@ -688,6 +658,16 @@
       "page_number": 5
     },
     "text": "10"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "5378796307535df3ec8d8b15a2e2dc56",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "20"
   },
   {
     "type": "UncategorizedText",
@@ -711,16 +691,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "8048d1e7e392843de42064d4c1ae5988",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "4.6"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "02a238b618a70acd5d23e30a37662ca6",
     "metadata": {
       "data_source": {},
@@ -741,6 +711,26 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "75112d758c2551d782aaad167b590b1b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "24.6"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ad83c9c095995f98f5b31a246f106182",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "18.4"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "4de0cf52492346845f7e8abfe590f19a",
     "metadata": {
       "data_source": {},
@@ -758,6 +748,16 @@
       "page_number": 5
     },
     "text": "Bio m ass"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "8048d1e7e392843de42064d4c1ae5988",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "4.6"
   },
   {
     "type": "UncategorizedText",
@@ -1020,14 +1020,24 @@
     "text": "If the potential of nuclear energy is to be fully realized, public health and safety approaches must be recalibrated to consider a wider range of factors when considering radiation, adopting an “all-hazards” approach. Such an approach must ensure that risks are placed within a proper perspective and context, rather than looking at them in isolation. We therefore must not look at the costs – be they economic, environmental, or public health – associated with an individual power plant in isolation, but rather the costs associated with it (and its alternatives) at a societal level (Figure 4). This would entail looking at the potential risks arising from the use of nuclear power and comparing these with the risks associated with not adopting nuclear power."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "921f9c7e9e48ae6e68c4a600c65cc6d9",
+    "type": "Image",
+    "element_id": "c9889d326ca46635644c051ced3cdde5",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "ae) flea"
+    "text": "Plant-levelproduction costsat market prices Grid-level costsof the electricitysystem ber Jest—"
+  },
+  {
+    "type": "Image",
+    "element_id": "2550e9a8245a64cdb4de02c91133865a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Plant-levelproduction costsat market prices"
   },
   {
     "type": "UncategorizedText",
@@ -1178,16 +1188,6 @@
       "page_number": 9
     },
     "text": "Clearly, we have reached a point where we must establish a new conversation about the relative risks of using nuclear, especially when risks created by other energy sources are considered. We cannot address many of the global challenges we face without a significant increase in the use of nuclear energy. The detrimental effects of decades of looking at nuclear risks in isolation highlights just how crucial it is that regulators and policymakers change the way they view nuclear energy, and transition towards an all-hazards approach, ensuring that actions taken to mitigate risks do not result in creating more severe risks."
-  },
-  {
-    "type": "FigureCaption",
-    "element_id": "59a569516614e7fbdefa6a2aef6f50a7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "yeee PALEESO OOcrane a 72."
   },
   {
     "type": "UncategorizedText",
@@ -1460,24 +1460,14 @@
     "text": "8"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "c48603fd38d3449d3afcd2dc18903083",
+    "type": "Image",
+    "element_id": "6d647fc38c561c01f7859e019345d367",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 12
     },
-    "text": "World Nuclear Association Tower House 10 Southampton Street London WC2E 7HA United Kingdom"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "fc5faebaec5a1349ce932f1863bdd842",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 12
-    },
-    "text": "Recalibrating risk © 2021 World Nuclear Association. Registered in England and Wales, company number 01215741"
+    "text": "+44 (0)20 7451 1520www.world-nuclear.orginfo@world-nuclear.org World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate."
   },
   {
     "type": "UncategorizedText",
@@ -1491,6 +1481,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "c48603fd38d3449d3afcd2dc18903083",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "World Nuclear Association Tower House 10 Southampton Street London WC2E 7HA United Kingdom"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "705da4db5e220010ddfd03d9452855e4",
     "metadata": {
       "data_source": {},
@@ -1498,5 +1498,15 @@
       "page_number": 12
     },
     "text": "World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "fc5faebaec5a1349ce932f1863bdd842",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "Recalibrating risk © 2021 World Nuclear Association. Registered in England and Wales, company number 01215741"
   }
 ]

@@ -65,6 +65,32 @@ def test_clean_ordered_bullets(text, expected):
 @pytest.mark.parametrize(
     ("text", "expected"),
     [
+        ("The æther is a classic element.", "The aether is a classic element."),
+        ("In old texts, Æsop's fables are", "In old texts, AEsop's fables are"),
+        ("The buﬀer zone is there.", "The buffer zone is there."),
+        ("The ﬁle was found in the system.", "The file was found in the system."),
+        ("She had a ﬂower in her hair.", "She had a flower in her hair."),
+        ("The coﬃn was placed in the grave.", "The coffin was placed in the grave."),
+        ("The buﬄe zone was clearly marked.", "The buffle zone was clearly marked."),
+        ("The craﬅsman worked with dedication.", "The craftsman worked with dedication."),
+        ("The symbol ʪ is very rare.", "The symbol ls is very rare."),
+        ("The word 'cœur' means 'heart' in French.", "The word 'coeur' means 'heart' in French."),
+        ("The word 'Œuvre' refers to the works", "The word 'OEuvre' refers to the works"),
+        ("The ȹ symbol is used in some contexts.", "The qp symbol is used in some contexts."),
+        ("The poﬆman delivers mail daily.", "The postman delivers mail daily."),
+        (
+            "The symbol ʦ can be found in certain alphabets.",
+            "The symbol ts can be found in certain alphabets.",
+        ),
+    ],
+)
+def test_clean_ligatures(text, expected):
+    assert core.clean_ligatures(text=text) == expected
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
         ("\x93A lovely quote!\x94", "“A lovely quote!”"),
         ("\x91A lovely quote!\x92", "‘A lovely quote!’"),
         ("Our dog&apos;s bowl.", "Our dog's bowl."),

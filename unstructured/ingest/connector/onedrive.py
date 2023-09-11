@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnector,
     BaseConnectorConfig,
@@ -39,6 +40,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
             )
         self.token_factory = self._acquire_token
 
+    @SourceConnectionError.wrap
     @requires_dependencies(["msal"])
     def _acquire_token(self):
         from msal import ConfidentialClientApplication
@@ -174,6 +176,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             version,
         )
 
+    @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         file = self._fetch_file()

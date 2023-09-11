@@ -167,6 +167,9 @@ class ElementMetadata:
     # Metadata extracted via regex
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
 
+    # Detection Model Class Probabilities from Unstructured-Inference Hi-Res
+    detection_class_prob: Optional[float] = None
+
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
             self.filename = str(self.filename)
@@ -381,6 +384,14 @@ class CheckBox(Element):
         return out
 
 
+class Formula(Element):
+    "An element containing formulas in a document"
+
+    category = "Formula"
+
+    pass
+
+
 class Text(Element):
     """Base element for capturing free text from within document."""
 
@@ -553,4 +564,12 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "Table": Table,
     "Header": Header,
     "Footer": Footer,
+    "Caption": FigureCaption,
+    "Footnote": Footer,
+    "Formula": Formula,
+    "List-item": ListItem,
+    "Page-footer": Footer,
+    "Page-header": Header,  # Title?
+    "Picture": Image,
+    "Section-header": Header,
 }

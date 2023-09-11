@@ -16,6 +16,7 @@ from .gcs import get_cmd as gcs
 from .github import get_cmd as github
 from .gitlab import get_cmd as gitlab
 from .google_drive import get_cmd as gdrive
+from .jira import get_cmd as jira
 from .local import get_cmd as local
 from .notion import get_cmd as notion
 from .onedrive import get_cmd as onedrive
@@ -23,6 +24,7 @@ from .outlook import get_cmd as outlook
 from .reddit import get_cmd as reddit
 from .s3_2 import get_dest_cmd as s3_dest
 from .s3_2 import get_source_cmd as s3
+from .salesforce import get_cmd as salesforce
 from .sharepoint import get_cmd as sharepoint
 from .slack import get_cmd as slack
 from .wikipedia import get_cmd as wikipedia
@@ -46,12 +48,14 @@ __all__ = [
     "gdrive",
     "github",
     "gitlab",
+    "jira",
     "local",
     "notion",
     "onedrive",
     "outlook",
     "reddit",
     "s3",
+    "salesforce",
     "sharepoint",
     "slack",
     "wikipedia",
