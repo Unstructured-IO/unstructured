@@ -1,10 +1,15 @@
 import os
 import tempfile
 from tempfile import SpooledTemporaryFile
-from typing import IO, BinaryIO, List, Optional, Tuple, Union, cast
+from typing import Any, BinaryIO, Dict, IO, Iterator, List, Optional, Sequence
+from typing import Tuple, Union, cast
 
+# -- CT_* stands for "complex-type", an XML element type in docx parlance --
 import docx
-from docx.oxml.shared import qn
+from docx.document import Document
+from docx.oxml.ns import qn
+from docx.oxml.text.run import CT_R
+from docx.oxml.xmlchemy import BaseOxmlElement
 from docx.table import Table as DocxTable
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
@@ -82,7 +87,7 @@ STYLE_TO_ELEMENT_MAPPING = {
 }
 
 
-def _get_paragraph_runs(paragraph):
+def _get_paragraph_runs(paragraph: Paragraph) -> Sequence[Run]:
     """
     Get hyperlink text from a paragraph object.
     Without this, the default runs function skips over hyperlinks.
@@ -95,11 +100,11 @@ def _get_paragraph_runs(paragraph):
     """
 
     # Recursively get runs.
-    def _get_runs(node, parent):
+    def _get_runs(node: BaseOxmlElement, parent: Paragraph) -> Iterator[Run]:
         for child in node:
             # If the child is a run, yield a Run object
             if child.tag == qn("w:r"):
-                yield Run(child, parent)
+                yield Run(cast(CT_R, child), parent)
             # If the child is a hyperlink, search for runs within it recursively
             if child.tag == qn("w:hyperlink"):
                 yield from _get_runs(child, parent)
@@ -108,19 +113,21 @@ def _get_paragraph_runs(paragraph):
 
 
 # Add the runs property to the Paragraph class
-Paragraph.runs = property(lambda self: _get_paragraph_runs(self))
+Paragraph.runs = property(  # pyright: ignore[reportGeneralTypeIssues]
+    lambda self: _get_paragraph_runs(self)
+)
 
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.DOCX)
 def partition_docx(
     filename: Optional[str] = None,
-    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
+    file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]] = None,
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
     include_metadata: bool = True,
     metadata_last_modified: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
 
@@ -147,14 +154,11 @@ def partition_docx(
             last_modification_date = get_last_modified_date(filename)
 
         document = docx.Document(filename)
-    elif file is not None:
+    else:
+        assert file is not None
         last_modification_date = get_last_modified_date_from_file(file)
 
-        document = docx.Document(
-            spooled_to_bytes_io_if_needed(
-                cast(Union[BinaryIO, SpooledTemporaryFile], file),
-            ),
-        )
+        document = docx.Document(cast(BinaryIO, spooled_to_bytes_io_if_needed(file)))
 
     elements: List[Element] = []
     table_index = 0
@@ -177,21 +181,20 @@ def partition_docx(
             html_table = convert_ms_office_table_to_text(table, as_html=True)
             text_table = convert_ms_office_table_to_text(table, as_html=False)
             element = Table(text_table)
-            if element is not None:
-                element.metadata = ElementMetadata(
-                    text_as_html=html_table,
-                    filename=metadata_filename,
-                    page_number=page_number,
-                    last_modified=metadata_last_modified or last_modification_date,
-                    emphasized_text_contents=emphasized_text_contents,
-                    emphasized_text_tags=emphasized_text_tags,
-                )
-                elements.append(element)
+            element.metadata = ElementMetadata(
+                text_as_html=html_table,
+                filename=metadata_filename,
+                page_number=page_number,
+                last_modified=metadata_last_modified or last_modification_date,
+                emphasized_text_contents=emphasized_text_contents,
+                emphasized_text_tags=emphasized_text_tags,
+            )
+            elements.append(element)
             table_index += 1
         elif element_item.tag.endswith("p"):
             if "<w:numPr>" in element_item.xml:
                 is_list = True
-            paragraph = docx.text.paragraph.Paragraph(element_item, document)
+            paragraph = Paragraph(element_item, document)
             emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
             emphasized_text_contents, emphasized_text_tags = _extract_contents_and_tags(
                 emphasized_texts,
@@ -226,14 +229,16 @@ def partition_docx(
 
 
 def _paragraph_to_element(
-    paragraph: docx.text.paragraph.Paragraph,
-    is_list=False,
+    paragraph: Paragraph,
+    is_list: bool = False,
 ) -> Optional[Text]:
     """Converts a docx Paragraph object into the appropriate unstructured document element.
     If the paragraph style is "Normal" or unknown, we try to predict the element type from the
     raw text."""
     text = paragraph.text
-    style_name = paragraph.style and paragraph.style.name  # .style can be None
+    # -- paragraph.style can be None in rare cases, so can style.name. That's going to mean default
+    # -- style which is equivalent to "Normal" for our purposes.
+    style_name = (paragraph.style and paragraph.style.name) or "Normal"
 
     if len(text.strip()) == 0:
         return None
@@ -250,7 +255,7 @@ def _paragraph_to_element(
         return element_class(text)
 
 
-def _element_contains_pagebreak(element) -> bool:
+def _element_contains_pagebreak(element: BaseOxmlElement) -> bool:
     """Detects if an element contains a page break. Checks for both "hard" page breaks
     (page breaks inserted by the user) and "soft" page breaks, which are sometimes
     inserted by the MS Word renderer. Note that soft page breaks aren't always present.
@@ -266,7 +271,7 @@ def _element_contains_pagebreak(element) -> bool:
     return False
 
 
-def _text_to_element(text: str, is_list=False) -> Optional[Text]:
+def _text_to_element(text: str, is_list: bool = False) -> Optional[Text]:
     """Converts raw text into an unstructured Text element."""
     if is_bulleted_text(text) or is_list:
         clean_text = clean_bullets(text).strip()
@@ -286,20 +291,20 @@ def _text_to_element(text: str, is_list=False) -> Optional[Text]:
         return Text(text)
 
 
-def _join_paragraphs(paragraphs: List[docx.text.paragraph.Paragraph]) -> Optional[str]:
+def _join_paragraphs(paragraphs: List[Paragraph]) -> Optional[str]:
     return "\n".join([paragraph.text for paragraph in paragraphs])
 
 
 def _get_headers_and_footers(
-    document: docx.document.Document,
+    document: Document,
     metadata_filename: Optional[str],
 ) -> List[Tuple[List[Header], List[Footer]]]:
-    headers_and_footers = []
+    headers_and_footers: List[Tuple[List[Header], List[Footer]]] = []
     attr_prefixes = ["", "first_page_", "even_page_"]
 
     for section in document.sections:
-        headers = []
-        footers = []
+        headers: List[Header] = []
+        footers: List[Footer] = []
 
         for _type in ["header", "footer"]:
             for prefix in attr_prefixes:
@@ -352,6 +357,7 @@ def convert_and_partition_docx(
         filename = ""
     exactly_one(filename=filename, file=file)
 
+    filename_no_path = ""
     if len(filename) > 0:
         _, filename_no_path = os.path.split(os.path.abspath(filename))
         base_filename, _ = os.path.splitext(filename_no_path)
@@ -368,7 +374,7 @@ def convert_and_partition_docx(
 
     with tempfile.TemporaryDirectory() as tmpdir:
         docx_filename = os.path.join(tmpdir, f"{base_filename}.docx")
-        pypandoc.convert_file(
+        pypandoc.convert_file(  # pyright: ignore
             filename,
             "docx",
             format=source_format,
@@ -384,9 +390,9 @@ def convert_and_partition_docx(
     return elements
 
 
-def _get_emphasized_texts_from_paragraph(paragraph: Paragraph) -> List[dict]:
+def _get_emphasized_texts_from_paragraph(paragraph: Paragraph) -> List[Dict[str, str]]:
     """Get emphasized texts with bold/italic formatting from a paragraph in MS Word"""
-    emphasized_texts = []
+    emphasized_texts: List[Dict[str, str]] = []
     for run in paragraph.runs:
         text = run.text.strip() if run.text else None
         if not text:
@@ -398,8 +404,8 @@ def _get_emphasized_texts_from_paragraph(paragraph: Paragraph) -> List[dict]:
     return emphasized_texts
 
 
-def _get_emphasized_texts_from_table(table: DocxTable) -> List[dict]:
-    emphasized_texts = []
+def _get_emphasized_texts_from_table(table: DocxTable) -> List[Dict[str, str]]:
+    emphasized_texts: List[Dict[str, str]] = []
     for row in table.rows:
         for cell in row.cells:
             for paragraph in cell.paragraphs:
@@ -409,7 +415,7 @@ def _get_emphasized_texts_from_table(table: DocxTable) -> List[dict]:
 
 
 def _extract_contents_and_tags(
-    emphasized_texts: List[dict],
+    emphasized_texts: List[Dict[str, str]],
 ) -> Tuple[Optional[List[str]], Optional[List[str]]]:
     """
     Extract the text contents and tags from a list of dictionaries containing emphasized texts.
