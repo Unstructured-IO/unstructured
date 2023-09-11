@@ -1,22 +1,21 @@
 import os
+import typing as t
 from dataclasses import dataclass, field
 from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
     from wikipedia import WikipediaPage
 
 
@@ -28,14 +27,14 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
 
 @dataclass
 class WikipediaFileMeta:
-    version: Optional[str] = None
-    source_url: Optional[str] = None
-    exists: Optional[bool] = None
+    version: t.Optional[str] = None
+    source_url: t.Optional[str] = None
+    exists: t.Optional[bool] = None
 
 
 @dataclass
 class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
-    config: SimpleWikipediaConfig = field(repr=False)
+    connector_config: SimpleWikipediaConfig = field(repr=False)
 
     @property
     @requires_dependencies(["wikipedia"], extras="wikipedia")
@@ -43,8 +42,8 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         import wikipedia
 
         return wikipedia.page(
-            self.config.title,
-            auto_suggest=self.config.auto_suggest,
+            self.connector_config.title,
+            auto_suggest=self.connector_config.auto_suggest,
         )
 
     @cached_property
@@ -93,22 +92,22 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             f.write(self.text)
 
     @property
-    def exists(self) -> Optional[bool]:
+    def exists(self) -> t.Optional[bool]:
         return self.file_metadata.exists
 
     @property
-    def record_locator(self) -> Optional[Dict[str, Any]]:
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
             "page_title": self.config.title,
             "page_url": self.file_metadata.source_url,
         }
 
     @property
-    def version(self) -> Optional[str]:
+    def version(self) -> t.Optional[str]:
         return self.file_metadata.version
 
     @property
-    def source_url(self) -> Optional[str]:
+    def source_url(self) -> t.Optional[str]:
         return self.file_metadata.source_url
 
 
@@ -119,8 +118,7 @@ class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
     @property
     def filename(self) -> Path:
         return (
-            Path(self.standard_config.download_dir)
-            / f"{self.page.title}-{self.page.revision_id}.html"
+            Path(self.read_config.download_dir) / f"{self.page.title}-{self.page.revision_id}.html"
         ).resolve()
 
     @property
@@ -130,7 +128,7 @@ class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
     @property
     def _output_filename(self):
         return (
-            Path(self.standard_config.output_dir)
+            Path(self.partition_config.output_dir)
             / f"{self.page.title}-{self.page.revision_id}-html.json"
         )
 
@@ -142,8 +140,7 @@ class WikipediaIngestTextDoc(WikipediaIngestDoc):
     @property
     def filename(self) -> Path:
         return (
-            Path(self.standard_config.download_dir)
-            / f"{self.page.title}-{self.page.revision_id}.txt"
+            Path(self.read_config.download_dir) / f"{self.page.title}-{self.page.revision_id}.txt"
         ).resolve()
 
     @property
@@ -153,7 +150,7 @@ class WikipediaIngestTextDoc(WikipediaIngestDoc):
     @property
     def _output_filename(self):
         return (
-            Path(self.standard_config.output_dir)
+            Path(self.partition_config.output_dir)
             / f"{self.page.title}-{self.page.revision_id}-txt.json"
         )
 
@@ -165,7 +162,7 @@ class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
     @property
     def filename(self) -> Path:
         return (
-            Path(self.standard_config.download_dir)
+            Path(self.read_config.download_dir)
             / f"{self.page.title}-{self.page.revision_id}-summary.txt"
         ).resolve()
 
@@ -176,23 +173,33 @@ class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
     @property
     def _output_filename(self):
         return (
-            Path(self.standard_config.output_dir)
+            Path(self.partition_config.output_dir)
             / f"{self.page.title}-{self.page.revision_id}-summary.json"
         )
 
 
-class WikipediaConnector(ConnectorCleanupMixin, BaseConnector):
-    config: SimpleWikipediaConfig
-
-    def __init__(self, config: SimpleWikipediaConfig, standard_config: StandardConnectorConfig):
-        super().__init__(standard_config, config)
+@dataclass
+class WikipediaSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
+    connector_config: SimpleWikipediaConfig
 
     def initialize(self):
         pass
 
     def get_ingest_docs(self):
         return [
-            WikipediaIngestTextDoc(self.standard_config, self.config),
-            WikipediaIngestHTMLDoc(self.standard_config, self.config),
-            WikipediaIngestSummaryDoc(self.standard_config, self.config),
+            WikipediaIngestTextDoc(
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                read_config=self.read_config,
+            ),
+            WikipediaIngestHTMLDoc(
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                read_config=self.read_config,
+            ),
+            WikipediaIngestSummaryDoc(
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                read_config=self.read_config,
+            ),
         ]

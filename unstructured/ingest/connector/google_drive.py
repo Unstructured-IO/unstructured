@@ -1,31 +1,30 @@
 import io
 import json
 import os
+import typing as t
 from dataclasses import dataclass
 from datetime import datetime
 from functools import cached_property
 from mimetypes import guess_extension
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSessionHandle,
+    BaseSourceConnector,
     ConfigSessionHandleMixin,
-    ConnectorCleanupMixin,
     IngestDocCleanupMixin,
     IngestDocSessionHandleMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
     from googleapiclient.discovery import Resource as GoogleAPIResource
 
 FILE_FORMAT = "{id}-{name}{ext}"
@@ -86,7 +85,7 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     # Google Drive Specific Options
     drive_id: str
     service_account_key: str
-    extension: Optional[str]
+    extension: t.Optional[str]
     recursive: bool = False
 
     def __post_init__(self):
@@ -105,18 +104,17 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 
 @dataclass
 class GoogleDriveFileMeta:
-    date_created: Optional[str] = None
-    date_modified: Optional[str] = None
-    version: Optional[str] = None
-    source_url: Optional[str] = None
-    exists: Optional[bool] = None
+    date_created: t.Optional[str] = None
+    date_modified: t.Optional[str] = None
+    version: t.Optional[str] = None
+    source_url: t.Optional[str] = None
+    exists: t.Optional[bool] = None
 
 
 @dataclass
 class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
-    config: SimpleGoogleDriveConfig
-    meta: Dict[str, str]
-    file_exists: Optional[bool] = None
+    connector_config: SimpleGoogleDriveConfig
+    meta: t.Dict[str, str]
     registry_name: str = "google_drive"
 
     @property
@@ -128,30 +126,30 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
         return Path(f"{self.meta.get('output_filepath')}.json").resolve()
 
     @property
-    def date_created(self) -> Optional[str]:
+    def date_created(self) -> t.Optional[str]:
         return self.file_metadata.date_created
 
     @property
-    def date_modified(self) -> Optional[str]:
+    def date_modified(self) -> t.Optional[str]:
         return self.file_metadata.date_modified
 
     @property
-    def exists(self) -> Optional[bool]:
+    def exists(self) -> t.Optional[bool]:
         return self.file_metadata.exists
 
     @property
-    def record_locator(self) -> Optional[Dict[str, Any]]:
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
             "drive_id": self.config.drive_id,
             "file_id": self.meta["id"],
         }
 
     @property
-    def version(self) -> Optional[str]:
+    def version(self) -> t.Optional[str]:
         return self.file_metadata.version
 
     @property
-    def source_url(self) -> Optional[str]:
+    def source_url(self) -> t.Optional[str]:
         return self.file_metadata.source_url
 
     @cached_property
@@ -252,7 +250,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
 
     def write_result(self):
         """Write the structured json result for this doc. result must be json serializable."""
-        if self.standard_config.download_only:
+        if self.read_config.download_only:
             return
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self._output_filename, "w") as output_f:
@@ -260,17 +258,15 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
         logger.info(f"Wrote {self._output_filename}")
 
 
-class GoogleDriveConnector(ConnectorCleanupMixin, BaseConnector):
+@dataclass
+class GoogleDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching documents from Google Drive"""
 
-    config: SimpleGoogleDriveConfig
-
-    def __init__(self, standard_config: StandardConnectorConfig, config: SimpleGoogleDriveConfig):
-        super().__init__(standard_config, config)
+    connector_config: SimpleGoogleDriveConfig
 
     def _list_objects(self, drive_id, recursive=False):
         files = []
-        service = self.config.create_session_handle().service
+        service = self.connector_config.create_session_handle().service
 
         def traverse(drive_id, download_dir, output_dir, recursive=False):
             page_token = None
@@ -314,10 +310,13 @@ class GoogleDriveConnector(ConnectorCleanupMixin, BaseConnector):
                                 ext = guess if guess else ext
 
                         # TODO (Habeeb): Consider filtering at the query level.
-                        if self.config.extension and self.config.extension != ext:  # noqa: SIM102
+                        if (
+                            self.connector_config.extension
+                            and self.connector_config.extension != ext
+                        ):  # noqa: SIM102
                             logger.debug(
                                 f"File {meta.get('name')} does not match "
-                                f"the file type {self.config.extension}",
+                                f"the file type {self.connector_config.extension}",
                             )
                             continue
 
@@ -334,8 +333,8 @@ class GoogleDriveConnector(ConnectorCleanupMixin, BaseConnector):
 
         traverse(
             drive_id,
-            Path(self.standard_config.download_dir),
-            Path(self.standard_config.output_dir),
+            Path(self.read_config.download_dir),
+            Path(self.partition_config.output_dir),
             recursive,
         )
         return files
@@ -344,5 +343,13 @@ class GoogleDriveConnector(ConnectorCleanupMixin, BaseConnector):
         pass
 
     def get_ingest_docs(self):
-        files = self._list_objects(self.config.drive_id, self.config.recursive)
-        return [GoogleDriveIngestDoc(self.standard_config, self.config, file) for file in files]
+        files = self._list_objects(self.connector_config.drive_id, self.connector_config.recursive)
+        return [
+            GoogleDriveIngestDoc(
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                read_config=self.read_config,
+                file_meta=file,
+            )
+            for file in files
+        ]

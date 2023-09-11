@@ -1,13 +1,21 @@
-## 0.10.14-dev0
-
-* Adds data source properties (date_created, date_modified, version, exists, source_url, record_locator) to Elasticsearch, Google Drive and Wikipedia connectors
+## 0.10.15-dev0
 
 ### Enhancements
 
-* Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
-* Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
-* Updated the `_detect_filetype_from_octet_stream()` function to use libmagic to infer the content type of file when it is not a zip file.
-* Tesseract minor version bump to 5.3.2
+* Adds data source properties (date_created, date_modified, version, exists, source_url, record_locator) to Elasticsearch, Google Drive and Wikipedia connectors
+
+### Features
+
+### Fixes
+
+## 0.10.14
+
+### Enhancements
+
+* Update all connectors to use new downstream architecture
+  * New click type added to parse comma-delimited string inputs
+  * Some CLI options renamed
+
 ### Features
 
 ### Fixes
@@ -20,6 +28,7 @@
 * Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
 * Updated the `_detect_filetype_from_octet_stream()` function to use libmagic to infer the content type of file when it is not a zip file.
 * Tesseract minor version bump to 5.3.2
+
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization

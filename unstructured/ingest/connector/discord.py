@@ -1,17 +1,16 @@
 import datetime as dt
 import os
+import typing as t
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
 
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import (
@@ -26,9 +25,9 @@ class SimpleDiscordConfig(BaseConnectorConfig):
     """
 
     # Discord Specific Options
-    channels: List[str]
+    channels: t.List[str]
     token: str
-    days: Optional[int]
+    days: t.Optional[int]
     verbose: bool = False
 
     def __post_init__(self):
@@ -40,11 +39,6 @@ class SimpleDiscordConfig(BaseConnectorConfig):
 
         pass
 
-    @staticmethod
-    def parse_channels(channel_str: str) -> List[str]:
-        """Parses a comma separated list of channels into a list."""
-        return [x.strip() for x in channel_str.split(",")]
-
 
 @dataclass
 class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -54,9 +48,9 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     method is not called, the file is left behind on the filesystem to assist debugging.
     """
 
-    config: SimpleDiscordConfig
+    connector_config: SimpleDiscordConfig
     channel: str
-    days: Optional[int]
+    days: t.Optional[int]
     token: str
     registry_name: str = "discord"
 
@@ -65,12 +59,12 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     # instantiated object)
     def _tmp_download_file(self):
         channel_file = self.channel + ".txt"
-        return Path(self.standard_config.download_dir) / channel_file
+        return Path(self.read_config.download_dir) / channel_file
 
     @property
     def _output_filename(self):
         output_file = self.channel + ".json"
-        return Path(self.standard_config.output_dir) / output_file
+        return Path(self.partition_config.output_dir) / output_file
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
@@ -85,9 +79,9 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         from discord.ext import commands
 
         self._create_full_tmp_dir_path()
-        if self.config.verbose:
+        if self.connector_config.verbose:
             logger.debug(f"fetching {self} - PID: {os.getpid()}")
-        messages: List[discord.Message] = []
+        messages: t.List[discord.Message] = []
         intents = discord.Intents.default()
         intents.message_content = True
         bot = commands.Bot(command_prefix=">", intents=intents)
@@ -121,17 +115,10 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self._tmp_download_file()
 
 
-class DiscordConnector(ConnectorCleanupMixin, BaseConnector):
+class DiscordSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching document(s) from"""
 
-    config: SimpleDiscordConfig
-
-    def __init__(
-        self,
-        standard_config: StandardConnectorConfig,
-        config: SimpleDiscordConfig,
-    ):
-        super().__init__(standard_config, config)
+    connector_config: SimpleDiscordConfig
 
     def initialize(self):
         pass
@@ -139,11 +126,12 @@ class DiscordConnector(ConnectorCleanupMixin, BaseConnector):
     def get_ingest_docs(self):
         return [
             DiscordIngestDoc(
-                self.standard_config,
-                self.config,
-                channel,
-                self.config.days,
-                self.config.token,
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                read_config=self.read_config,
+                channel=channel,
+                days=self.connector_config.days,
+                token=self.connector_config.token,
             )
-            for channel in self.config.channels
+            for channel in self.connector_config.channels
         ]

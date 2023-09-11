@@ -1,19 +1,18 @@
 import hashlib
 import json
 import os
+import typing as t
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Dict, Optional
 
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -31,7 +30,7 @@ class SimpleElasticsearchConfig(BaseConnectorConfig):
 
     url: str
     index_name: str
-    jq_query: Optional[str]
+    jq_query: t.t.Optional[str]
 
 
 @dataclass
@@ -52,8 +51,8 @@ class ElasticsearchFileMeta:
     exists, whether if the document exists or not
     """
 
-    version: Optional[str] = None
-    exists: Optional[bool] = None
+    version: t.Optional[str] = None
+    exists: t.Optional[bool] = None
 
 
 @dataclass
@@ -65,7 +64,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     rather than creating a client for each thread.
     """
 
-    config: SimpleElasticsearchConfig
+    connector_config: SimpleElasticsearchConfig
     document_meta: ElasticsearchDocumentMeta
     registry_name: str = "elasticsearch"
 
@@ -73,9 +72,9 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def filename(self):
         return (
-            Path(self.standard_config.download_dir)
-            / self.document_meta.index_name
-            / f"{self.document_meta.document_id}.txt"
+            Path(self.read_config.download_dir)
+            / self.file_meta.index_name
+            / f"{self.file_meta.document_id}.txt"
         ).resolve()
 
     @property
@@ -83,9 +82,11 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Create filename document id combined with a hash of the query to uniquely identify
         the output file."""
         # Generate SHA256 hash and take the first 8 characters
-        query_hash = hashlib.sha256((self.config.jq_query or "").encode()).hexdigest()[:8]
-        output_file = f"{self.document_meta.document_id}-{query_hash}.json"
-        return Path(self.standard_config.output_dir) / self.config.index_name / output_file
+        query_hash = hashlib.sha256((self.connector_config.jq_query or "").encode()).hexdigest()[:8]
+        output_file = f"{self.file_meta.document_id}-{query_hash}.json"
+        return (
+            Path(self.partition_config.output_dir) / self.connector_config.index_name / output_file
+        )
 
     # TODO: change test fixtures such that examples with
     # nested dictionaries are included in test documents
@@ -122,9 +123,9 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         try:
             # TODO: instead of having a separate client for each doc,
             # have a separate client for each process
-            es = Elasticsearch(self.config.url)
+            es = Elasticsearch(self.connector_config.url)
             document = es.get(
-                index=self.config.index_name,
+                index=self.connector_config.index_name,
                 id=self.document_meta.document_id,
             )
         except NotFoundError:
@@ -162,50 +163,43 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             )
 
         document_dict = document.body["_source"]
-        if self.config.jq_query:
-            document_dict = json.loads(jq.compile(self.config.jq_query).input(document_dict).text())
+        if self.connector_config.jq_query:
+            document_dict = json.loads(jq.compile(self.connector_config.jq_query).input(document_dict).text())
         self.document = self._concatenate_dict_fields(document_dict)
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
 
     @property
-    def exists(self) -> Optional[bool]:
+    def exists(self) -> t.Optional[bool]:
         return self.file_metadata.exists
 
     @property
-    def record_locator(self) -> Optional[Dict[str, Any]]:
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
-            "index_name": self.config.index_name,
+            "index_name": self.connector_config.index_name,
             "document_id": self.document_meta.document_id,
         }
 
     @property
-    def version(self) -> Optional[str]:
+    def version(self) -> t.Optional[str]:
         return self.file_metadata.version
 
 
 @dataclass
-class ElasticsearchConnector(ConnectorCleanupMixin, BaseConnector):
+class ElasticsearchSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Fetches particular fields from all documents in a given elasticsearch cluster and index"""
 
-    config: SimpleElasticsearchConfig
-
-    def __init__(
-        self,
-        standard_config: StandardConnectorConfig,
-        config: SimpleElasticsearchConfig,
-    ):
-        super().__init__(standard_config, config)
+    connector_config: SimpleElasticsearchConfig
 
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def initialize(self):
         from elasticsearch import Elasticsearch
 
-        self.es = Elasticsearch(self.config.url)
+        self.es = Elasticsearch(self.connector_config.url)
         self.scan_query: dict = {"query": {"match_all": {}}}
         self.search_query: dict = {"match_all": {}}
-        self.es.search(index=self.config.index_name, query=self.search_query, size=1)
+        self.es.search(index=self.connector_config.index_name, query=self.search_query, size=1)
 
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def _get_doc_ids(self):
@@ -216,7 +210,7 @@ class ElasticsearchConnector(ConnectorCleanupMixin, BaseConnector):
             self.es,
             query=self.scan_query,
             scroll="1m",
-            index=self.config.index_name,
+            index=self.connector_config.index_name,
         )
 
         return [hit["_id"] for hit in hits]
@@ -226,9 +220,10 @@ class ElasticsearchConnector(ConnectorCleanupMixin, BaseConnector):
         ids = self._get_doc_ids()
         return [
             ElasticsearchIngestDoc(
-                self.standard_config,
-                self.config,
-                ElasticsearchDocumentMeta(self.config.index_name, id),
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                read_config=self.read_config,
+                file_meta=ElasticsearchDocumentMeta(self.connector_config.index_name, id),
             )
             for id in ids
         ]
