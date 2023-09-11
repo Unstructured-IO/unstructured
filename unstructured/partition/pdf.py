@@ -285,17 +285,17 @@ def _partition_pdf_or_image_local(
         infer_list_items=False,
         **kwargs,
     )
-    out_elements = []
 
+    out_elements = []
     for el in elements:
-        if (isinstance(el, PageBreak) and not include_page_breaks) or (
-            # NOTE(crag): small chunks of text from Image elements tend to be garbage
-            isinstance(el, Image)
-            and (el.text is None or len(el.text) < 24 or el.text.find(" ") == -1)
-        ):
+        if isinstance(el, PageBreak) and not include_page_breaks:
             continue
+
+        # NOTE(christine): preserve image elements for other downstream use cases
+        if isinstance(el, Image):
+            out_elements.append(el)
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
-        if isinstance(el, Text):
+        elif isinstance(el, Text):
             el.text = re.sub(
                 RE_MULTISPACE_INCLUDING_NEWLINES,
                 " ",
