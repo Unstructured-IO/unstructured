@@ -140,7 +140,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
     @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
-            "drive_id": self.config.drive_id,
+            "drive_id": self.connector_config.drive_id,
             "file_id": self.meta["id"],
         }
 
@@ -349,7 +349,7 @@ class GoogleDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnecto
                 connector_config=self.connector_config,
                 partition_config=self.partition_config,
                 read_config=self.read_config,
-                file_meta=file,
+                meta=file,
             )
             for file in files
         ]

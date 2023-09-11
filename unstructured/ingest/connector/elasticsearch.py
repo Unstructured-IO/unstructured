@@ -30,7 +30,7 @@ class SimpleElasticsearchConfig(BaseConnectorConfig):
 
     url: str
     index_name: str
-    jq_query: t.t.Optional[str]
+    jq_query: t.Optional[str]
 
 
 @dataclass
@@ -73,8 +73,8 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def filename(self):
         return (
             Path(self.read_config.download_dir)
-            / self.file_meta.index_name
-            / f"{self.file_meta.document_id}.txt"
+            / self.document_meta.index_name
+            / f"{self.document_meta.document_id}.txt"
         ).resolve()
 
     @property
@@ -83,7 +83,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         the output file."""
         # Generate SHA256 hash and take the first 8 characters
         query_hash = hashlib.sha256((self.connector_config.jq_query or "").encode()).hexdigest()[:8]
-        output_file = f"{self.file_meta.document_id}-{query_hash}.json"
+        output_file = f"{self.document_meta.document_id}-{query_hash}.json"
         return (
             Path(self.partition_config.output_dir) / self.connector_config.index_name / output_file
         )
@@ -164,7 +164,9 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         document_dict = document.body["_source"]
         if self.connector_config.jq_query:
-            document_dict = json.loads(jq.compile(self.connector_config.jq_query).input(document_dict).text())
+            document_dict = json.loads(
+                jq.compile(self.connector_config.jq_query).input(document_dict).text(),
+            )
         self.document = self._concatenate_dict_fields(document_dict)
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
@@ -223,7 +225,7 @@ class ElasticsearchSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnec
                 connector_config=self.connector_config,
                 partition_config=self.partition_config,
                 read_config=self.read_config,
-                file_meta=ElasticsearchDocumentMeta(self.connector_config.index_name, id),
+                document_meta=ElasticsearchDocumentMeta(self.connector_config.index_name, id),
             )
             for id in ids
         ]

@@ -54,8 +54,8 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         try:
             page = wikipedia.page(
-                self.config.title,
-                auto_suggest=self.config.auto_suggest,
+                self.connector_config.title,
+                auto_suggest=self.connector_config.auto_suggest,
             )
         except PageError:
             return WikipediaFileMeta(
@@ -98,7 +98,7 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
-            "page_title": self.config.title,
+            "page_title": self.connector_config.title,
             "page_url": self.file_metadata.source_url,
         }
 
