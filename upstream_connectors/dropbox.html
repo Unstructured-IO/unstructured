@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Elastic Search" href="elastic_search.html" /><link rel="prev" title="Discord" href="discord.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Github" href="github.html" /><link rel="prev" title="Discord" href="discord.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Dropbox - Unstructured 0.10.13 documentation</title>
+  <title>Dropbox - Unstructured 0.10.14 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -338,7 +338,6 @@
 <li class="toctree-l2"><a class="reference internal" href="delta_table.html">Delta Table</a></li>
 <li class="toctree-l2"><a class="reference internal" href="discord.html">Discord</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Dropbox</a></li>
-<li class="toctree-l2"><a class="reference internal" href="elastic_search.html">Elastic Search</a></li>
 <li class="toctree-l2"><a class="reference internal" href="github.html">Github</a></li>
 <li class="toctree-l2"><a class="reference internal" href="gitlab.html">Gitlab</a></li>
 <li class="toctree-l2"><a class="reference internal" href="google_cloud_storage.html">Google Cloud Storage</a></li>
@@ -431,7 +430,7 @@
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>unstructured-ingest<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>dropbox<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--remote-url<span class="w"> </span><span class="s2">&quot;dropbox:// /&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--structured-output-dir<span class="w"> </span>dropbox-output<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-dir<span class="w"> </span>dropbox-output<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--token<span class="w">  </span><span class="s2">&quot;</span><span class="nv">$DROPBOX_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--recursive<span class="w"> </span><span class="se">\</span>
@@ -444,7 +443,7 @@
   <span class="s2">&quot;unstructured-ingest&quot;</span><span class="p">,</span>
   <span class="s2">&quot;dropbox&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--remote-url&quot;</span><span class="p">,</span> <span class="s2">&quot;dropbox:// /&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;--structured-output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;dropbox-output&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;dropbox-output&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--token&quot;</span><span class="p">,</span>  <span class="s2">&quot;$DROPBOX_TOKEN&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--num-processes&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--recursive&quot;</span><span class="p">,</span>
@@ -473,7 +472,7 @@
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-1-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-1-1-0" name="1-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-1-1-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-1-1-1" name="1-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-1-1-0" class="sphinx-tabs-panel" id="panel-1-1-0" name="1-0" role="tabpanel" tabindex="0"><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>unstructured-ingest<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>dropbox<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--remote-url<span class="w"> </span><span class="s2">&quot;dropbox:// /&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--structured-output-dir<span class="w"> </span>dropbox-output<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-dir<span class="w"> </span>dropbox-output<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--token<span class="w">  </span><span class="s2">&quot;</span><span class="nv">$DROPBOX_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--recursive<span class="w"> </span><span class="se">\</span>
@@ -488,7 +487,7 @@
   <span class="s2">&quot;unstructured-ingest&quot;</span><span class="p">,</span>
   <span class="s2">&quot;dropbox&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--remote-url&quot;</span><span class="p">,</span> <span class="s2">&quot;dropbox:// /&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;--structured-output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;dropbox-output&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;dropbox-output&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--token&quot;</span><span class="p">,</span>  <span class="s2">&quot;$DROPBOX_TOKEN&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--num-processes&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--recursive&quot;</span><span class="p">,</span>
@@ -511,7 +510,7 @@
 </pre></div>
 </div>
 </div></div>
-<p>Additionaly, you will need to pass the <code class="docutils literal notranslate"><span class="pre">--partition-endpoint</span></code> if you’re running the API locally. You can find more information about the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> API <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-api">here</a>.</p>
+<p>Additionally, you will need to pass the <code class="docutils literal notranslate"><span class="pre">--partition-endpoint</span></code> if you’re running the API locally. You can find more information about the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> API <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-api">here</a>.</p>
 <p>For a full list of the options the CLI accepts check <code class="docutils literal notranslate"><span class="pre">unstructured-ingest</span> <span class="pre">dropbox</span> <span class="pre">--help</span></code>.</p>
 <p>NOTE: Keep in mind that you will need to have all the appropriate extras and dependencies for the file types of the documents contained in your data storage platform if you’re running this locally. You can find more information about this in the <a class="reference external" href="https://unstructured-io.github.io/unstructured/installing.html">installation guide</a>.</p>
 </section>
@@ -522,12 +521,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="elastic_search.html">
+          <a class="next-page" href="github.html">
             <div class="page-info">
               <div class="context">
                 <span>Next</span>
               </div>
-              <div class="title">Elastic Search</div>
+              <div class="title">Github</div>
             </div>
           </a>
           <a class="prev-page" href="discord.html">

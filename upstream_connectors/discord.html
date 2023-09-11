@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Dropbox" href="dropbox.html" /><link rel="prev" title="Delta Table" href="delta_table.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Discord - Unstructured 0.10.13 documentation</title>
+  <title>Discord - Unstructured 0.10.14 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -338,7 +338,6 @@
 <li class="toctree-l2"><a class="reference internal" href="delta_table.html">Delta Table</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Discord</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dropbox.html">Dropbox</a></li>
-<li class="toctree-l2"><a class="reference internal" href="elastic_search.html">Elastic Search</a></li>
 <li class="toctree-l2"><a class="reference internal" href="github.html">Github</a></li>
 <li class="toctree-l2"><a class="reference internal" href="gitlab.html">Gitlab</a></li>
 <li class="toctree-l2"><a class="reference internal" href="google_cloud_storage.html">Google Cloud Storage</a></li>
@@ -433,7 +432,7 @@
 <span class="w">  </span>--channels<span class="w"> </span><span class="m">12345678</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--token<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DISCORD_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--download-dir<span class="w"> </span>discord-ingest-download<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--structured-output-dir<span class="w"> </span>discord-example<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-dir<span class="w"> </span>discord-example<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--preserve-downloads<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--verbose
 </pre></div>
@@ -446,7 +445,7 @@
     <span class="s2">&quot;--channels&quot;</span><span class="p">,</span> <span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
     <span class="s2">&quot;--token&quot;</span><span class="p">,</span> <span class="s2">&quot;$DISCORD_TOKEN&quot;</span><span class="p">,</span>
     <span class="s2">&quot;--download-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;discord-ingest-download&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--structured-output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;discord-example&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;discord-example&quot;</span><span class="p">,</span>
     <span class="s2">&quot;--preserve-downloads&quot;</span><span class="p">,</span>
     <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
 <span class="p">]</span>
@@ -475,7 +474,7 @@
 <span class="w">  </span>--channels<span class="w"> </span><span class="m">12345678</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--token<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DISCORD_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--download-dir<span class="w"> </span>discord-ingest-download<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--structured-output-dir<span class="w"> </span>discord-example<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-dir<span class="w"> </span>discord-example<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--preserve-downloads<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--verbose<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--partition-by-api<span class="w"> </span><span class="se">\</span>
@@ -490,7 +489,7 @@
   <span class="s2">&quot;--channels&quot;</span><span class="p">,</span> <span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--token&quot;</span><span class="p">,</span> <span class="s2">&quot;$DISCORD_TOKEN&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--download-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;discord-ingest-download&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;--structured-output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;discord-example&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;discord-example&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--preserve-downloads&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--partition-by-api&quot;</span><span class="p">,</span>
@@ -511,7 +510,7 @@
 </pre></div>
 </div>
 </div></div>
-<p>Additionaly, you will need to pass the <code class="docutils literal notranslate"><span class="pre">--partition-endpoint</span></code> if you’re running the API locally. You can find more information about the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> API <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-api">here</a>.</p>
+<p>Additionally, you will need to pass the <code class="docutils literal notranslate"><span class="pre">--partition-endpoint</span></code> if you’re running the API locally. You can find more information about the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> API <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-api">here</a>.</p>
 <p>For a full list of the options the CLI accepts check <code class="docutils literal notranslate"><span class="pre">unstructured-ingest</span> <span class="pre">discord</span> <span class="pre">--help</span></code>.</p>
 <p>NOTE: Keep in mind that you will need to have all the appropriate extras and dependencies for the file types of the documents contained in your data storage platform if you’re running this locally. You can find more information about this in the <a class="reference external" href="https://unstructured-io.github.io/unstructured/installing.html">installation guide</a>.</p>
 </section>

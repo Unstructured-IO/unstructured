@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Github" href="github.html" /><link rel="prev" title="Dropbox" href="dropbox.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Elastic Search - Unstructured 0.10.13 documentation</title>
+  <title>Elasticsearch - Unstructured 0.10.14 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -308,7 +308,7 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Introduction</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../introduction/overview.html">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../introduction/key_concepts.html">Key Concepts</a></li>
@@ -329,7 +329,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../bricks/chunking.html">Chunking</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../upstream_connectors.html">Upstream Connectors</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Upstream Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../upstream_connectors.html">Upstream Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Upstream Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="airtable.html">Airtable</a></li>
 <li class="toctree-l2"><a class="reference internal" href="azure.html">Azure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="biomed.html">Biomed</a></li>
@@ -338,7 +338,6 @@
 <li class="toctree-l2"><a class="reference internal" href="delta_table.html">Delta Table</a></li>
 <li class="toctree-l2"><a class="reference internal" href="discord.html">Discord</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dropbox.html">Dropbox</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Elastic Search</a></li>
 <li class="toctree-l2"><a class="reference internal" href="github.html">Github</a></li>
 <li class="toctree-l2"><a class="reference internal" href="gitlab.html">Gitlab</a></li>
 <li class="toctree-l2"><a class="reference internal" href="google_cloud_storage.html">Google Cloud Storage</a></li>
@@ -418,10 +417,10 @@
             <div class="github-stars github-stars--top-page"></div>
             <!-- Calendly badge widget begin -->
           </div>
-          <section id="elastic-search">
-<h1>Elastic Search<a class="headerlink" href="#elastic-search" title="Permalink to this heading"></a></h1>
-<p>Connect Elastic Search to your preprocessing pipeline, and batch process all your documents using <code class="docutils literal notranslate"><span class="pre">unstructured-ingest</span></code> to store structured outputs locally on your filesystem.</p>
-<p>First you’ll need to install the Elastic Search dependencies as shown here.</p>
+          <section id="elasticsearch">
+<h1>Elasticsearch<a class="headerlink" href="#elasticsearch" title="Permalink to this heading"></a></h1>
+<p>Connect Elasticsearch to your preprocessing pipeline, and batch process all your documents using <code class="docutils literal notranslate"><span class="pre">unstructured-ingest</span></code> to store structured outputs locally on your filesystem.</p>
+<p>First you’ll need to install the Elasticsearch dependencies as shown here.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;unstructured[elasticsearch]&quot;</span>
 </pre></div>
 </div>
@@ -434,7 +433,7 @@
 <span class="w">  </span>--url<span class="w"> </span>http://localhost:9200<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--index-name<span class="w"> </span>movies<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--jq-query<span class="w"> </span><span class="s1">&#39;{ethnicity, director, plot}&#39;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--structured-output-dir<span class="w"> </span>elasticsearch-ingest-output<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-dir<span class="w"> </span>elasticsearch-ingest-output<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span>
 </pre></div>
 </div>
@@ -447,7 +446,7 @@
   <span class="s2">&quot;--url&quot;</span><span class="p">,</span> <span class="s2">&quot;http://localhost:9200&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--index-name&quot;</span><span class="p">,</span> <span class="s2">&quot;movies&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--jq-query&quot;</span><span class="p">,</span> <span class="s2">&quot;{ethnicity, director, plot}&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;--structured-output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;elasticsearch-ingest-output&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;elasticsearch-ingest-output&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--num-processes&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span>
 <span class="p">]</span>
 
@@ -476,7 +475,7 @@
 <span class="w">  </span>--url<span class="w"> </span>http://localhost:9200<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--index-name<span class="w"> </span>movies<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--jq-query<span class="w"> </span><span class="s1">&#39;{ethnicity, director, plot}&#39;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--structured-output-dir<span class="w"> </span>elasticsearch-ingest-output<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-dir<span class="w"> </span>elasticsearch-ingest-output<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span>
 <span class="w">  </span>--partition-by-api<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--api-key<span class="w"> </span><span class="s2">&quot;&lt;UNSTRUCTURED-API-KEY&gt;&quot;</span>
@@ -491,7 +490,7 @@
   <span class="s2">&quot;--url&quot;</span><span class="p">,</span> <span class="s2">&quot;http://localhost:9200&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--index-name&quot;</span><span class="p">,</span> <span class="s2">&quot;movies&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--jq-query&quot;</span><span class="p">,</span> <span class="s2">&quot;{ethnicity, director, plot}&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;--structured-output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;elasticsearch-ingest-output&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;elasticsearch-ingest-output&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--num-processes&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--partition-by-api&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--api-key&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;UNSTRUCTURED-API-KEY&gt;&quot;</span><span class="p">,</span>
@@ -511,7 +510,7 @@
 </pre></div>
 </div>
 </div></div>
-<p>Additionaly, you will need to pass the <code class="docutils literal notranslate"><span class="pre">--partition-endpoint</span></code> if you’re running the API locally. You can find more information about the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> API <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-api">here</a>.</p>
+<p>Additionally, you will need to pass the <code class="docutils literal notranslate"><span class="pre">--partition-endpoint</span></code> if you’re running the API locally. You can find more information about the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> API <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-api">here</a>.</p>
 <p>For a full list of the options the CLI accepts check <code class="docutils literal notranslate"><span class="pre">unstructured-ingest</span> <span class="pre">elasticsearch</span> <span class="pre">--help</span></code>.</p>
 <p>NOTE: Keep in mind that you will need to have all the appropriate extras and dependencies for the file types of the documents contained in your data storage platform if you’re running this locally. You can find more information about this in the <a class="reference external" href="https://unstructured-io.github.io/unstructured/installing.html">installation guide</a>.</p>
 </section>
@@ -522,24 +521,8 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="github.html">
-            <div class="page-info">
-              <div class="context">
-                <span>Next</span>
-              </div>
-              <div class="title">Github</div>
-            </div>
-          </a>
-          <a class="prev-page" href="dropbox.html">
-            <div class="page-info">
-              <div class="context">
-                <span>Previous</span>
-              </div>
-              
-              <div class="title">Dropbox</div>
-              
-            </div>
-          </a>
+          
+          
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -572,7 +555,7 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Elastic Search</a><ul>
+<li><a class="reference internal" href="#">Elasticsearch</a><ul>
 <li><a class="reference internal" href="#run-locally">Run Locally</a></li>
 <li><a class="reference internal" href="#run-via-the-api">Run via the API</a></li>
 </ul>

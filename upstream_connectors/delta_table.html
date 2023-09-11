@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Discord" href="discord.html" /><link rel="prev" title="Confluence" href="confluence.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Delta Table - Unstructured 0.10.13 documentation</title>
+  <title>Delta Table - Unstructured 0.10.14 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -338,7 +338,6 @@
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Delta Table</a></li>
 <li class="toctree-l2"><a class="reference internal" href="discord.html">Discord</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dropbox.html">Dropbox</a></li>
-<li class="toctree-l2"><a class="reference internal" href="elastic_search.html">Elastic Search</a></li>
 <li class="toctree-l2"><a class="reference internal" href="github.html">Github</a></li>
 <li class="toctree-l2"><a class="reference internal" href="gitlab.html">Gitlab</a></li>
 <li class="toctree-l2"><a class="reference internal" href="google_cloud_storage.html">Google Cloud Storage</a></li>
@@ -431,7 +430,7 @@
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>unstructured-ingest<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>delta-table<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--table-uri<span class="w"> </span>s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--structured-output-dir<span class="w"> </span>delta-table-example<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output-dir<span class="w"> </span>delta-table-example<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--storage_options<span class="w"> </span><span class="s2">&quot;AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=</span><span class="nv">$AWS_ACCESS_KEY_ID</span><span class="s2">,AWS_SECRET_ACCESS_KEY=</span><span class="nv">$AWS_SECRET_ACCESS_KEY</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--verbose
 </pre></div>
@@ -443,7 +442,7 @@
   <span class="s2">&quot;delta-table&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--table-uri&quot;</span><span class="p">,</span> <span class="s2">&quot;s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--download-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;delta-table-ingest-download&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;--structured-output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;delta-table-example&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;delta-table-example&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--preserve-downloads&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--storage_options&quot;</span><span class="p">,</span> <span class="s2">&quot;AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
@@ -471,7 +470,7 @@
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-1-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-1-1-0" name="1-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-1-1-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-1-1-1" name="1-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-1-1-0" class="sphinx-tabs-panel" id="panel-1-1-0" name="1-0" role="tabpanel" tabindex="0"><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>unstructured-ingest<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>delta-table<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--table-uri<span class="w"> </span>s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--structured-output-dir<span class="w"> </span>delta-table-example<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-dir<span class="w"> </span>delta-table-example<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--storage_options<span class="w"> </span><span class="s2">&quot;AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=</span><span class="nv">$AWS_ACCESS_KEY_ID</span><span class="s2">,AWS_SECRET_ACCESS_KEY=</span><span class="nv">$AWS_SECRET_ACCESS_KEY</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--verbose
 <span class="w">  </span>--partition-by-api<span class="w"> </span><span class="se">\</span>
@@ -485,7 +484,7 @@
   <span class="s2">&quot;delta-table&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--table-uri&quot;</span><span class="p">,</span> <span class="s2">&quot;s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--download-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;delta-table-ingest-download&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;--structured-output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;delta-table-example&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;delta-table-example&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--preserve-downloads&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--storage_options&quot;</span><span class="p">,</span> <span class="s2">&quot;AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY&quot;</span><span class="p">,</span>
   <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
