@@ -1,3 +1,15 @@
+## 0.10.14
+
+### Enhancements
+
+* Update all connectors to use new downstream architecture
+  * New click type added to parse comma-delimited string inputs
+  * Some CLI options renamed
+
+### Features
+
+### Fixes
+
 ## 0.10.13
 
 ### Enhancements
@@ -6,9 +18,6 @@
 * Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
 * Updated the `_detect_filetype_from_octet_stream()` function to use libmagic to infer the content type of file when it is not a zip file.
 * Tesseract minor version bump to 5.3.2
-* Update all connectors to use new downstream architecture
-  * All comma-delimited string inputs refactored to use Click multiple option flag.
-  * Some CLI options renamed
 
 ### Features
 
