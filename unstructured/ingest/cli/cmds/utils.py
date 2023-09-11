@@ -44,6 +44,7 @@ class DelimitedString(click.ParamType):
                     param,
                     ctx,
                 )
+        return split
 
 
 class Group(click.Group):
