@@ -1,13 +1,17 @@
-## 0.10.14
+## 0.10.14-dev0
 
 ### Enhancements
 
 * Update all connectors to use new downstream architecture
   * New click type added to parse comma-delimited string inputs
   * Some CLI options renamed
+* Integrates Chipper types: 
+  * Headline,Subheadline -> Title
+  * Abstract -> NarrativeText
 
 ### Features
 
+* New element metadata `title_depth`
 ### Fixes
 
 ## 0.10.13
