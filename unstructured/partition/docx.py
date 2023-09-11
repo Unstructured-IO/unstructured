@@ -170,15 +170,23 @@ def partition_docx(
 class _DocxPartitioner:
     """Provides `.partition()` for MS-Word 2007+ (.docx) files."""
 
+    # TODO: Add a test with a real-life multi-page document with hard page-breaks, odd-to-odd and
+    #       even-to-even section breaks and enough text to run to a few pages and make sure we're on
+    #       the right page all the time.
+    # TODO: Get rid of `._element_contains_pagebreak()`. Use XPath to implement a separate
+    #       `._document_contains_pagebreaks()` so there's no caller for the old version anymore. I
+    #       think that should be looking for `w:lastRenderedPageBreak` only btw. It looks like
+    #       `w:lastRenderedPageBreak` is the most reliable page-break indicator and better than I
+    #       thought. It indicates all page-breaks on my most recent test. A problem is that a hard
+    #       page-break produces a `w:lastRenderedPageBreak` in the following paragraph, so if we
+    #       trigger on both then we double-count that page-break. Section-start triggered
+    #       page-breaks also give rise to a `w:lastRenderedPageBreak` element so probably don't need
+    #       to be counted separately.
     # TODO: I think we can do better on metadata.filename. Should that only be populated when a
     #       `metadata_filename` argument was provided to `partition_docx()`? What about when not but
     #       we do get a `filename` arg or a `file` arg that has a `.name` attribute?
     # TODO: get last-modified date from document-properties (stored in docx package) rather than
     #       relying on last filesystem-write date; maybe fall-back to filesystem-date.
-    # TODO: improve `._element_contains_pagebreak()`. It uses substring matching on the rendered
-    #       XML text which is error-prone and not performant. Use XPath instead with the specific
-    #       locations a page-break can be located. Also, there can be more than one, so return a
-    #       count instead of a boolean.
     # TODO: Improve ._is_list_item() to detect manually-applied bullets (which do not appear in the
     #       paragraph text so are missed by `is_bulleted_text()`) using XPath.
     # TODO: Improve ._is_list_item() to include list-styles such that telling whether a paragraph is
@@ -189,6 +197,14 @@ class _DocxPartitioner:
     # TODO: Move _SectBlockIterator upstream into `python-docx`. It requires too much
     #       domain-specific knowledge to comfortable here and is of general use so welcome in the
     #       library.
+    # TODO: Move Paragraph._get_paragraph_runs() monkey-patch upstream to `python-docx`.
+
+    # DONE: detect mid-document sections. Current code only detects the last (default) section (the
+    #       one at w:body/w:sectPr) and misses all others that are located at w:p/w:pPr/w:sectPr.
+    # DONE: Implement a local `Section.iter_block_items()` to use instead of traversing
+    #       block-items (paragraph, table) using XML. That avoids docx XML internals in
+    #       main loop, can be moved upstream, allows getting rid of table_idx counter,
+    #       etc.
     # DONE: A section can give rise to one or two page breaks, like an "odd-page" section start
     #       from an odd current-page produces two. Add page-break detection on section as well.
     # DONE: Improve Header/Footer behavior to account for "is-linked-to-previous" condition which

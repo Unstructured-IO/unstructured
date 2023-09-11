@@ -1,6 +1,6 @@
 import os
 import tempfile
-from typing import IO, List, Optional
+from typing import Any, IO, List, Optional
 
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
@@ -23,7 +23,7 @@ def partition_doc(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     libre_office_filter: Optional[str] = "MS Word 2007 XML",
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
 

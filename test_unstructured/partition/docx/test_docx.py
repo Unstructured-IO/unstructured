@@ -1,18 +1,22 @@
 # pyright: reportPrivateUsage=false
 
 import os
+import pathlib
 from tempfile import SpooledTemporaryFile
 from typing import Dict, List
 
 import docx
+from docx.document import Document
 import pytest
 
 from unstructured.documents.elements import (
     Address,
+    Element,
     Footer,
     Header,
     ListItem,
     NarrativeText,
+    PageBreak,
     Table,
     Text,
     Title,
@@ -51,6 +55,14 @@ def mock_document():
 
 
 @pytest.fixture()
+def mock_document_filename(mock_document: Document, tmp_path: pathlib.Path) -> str:
+    filename = str(tmp_path / "mock_document.docx")
+    print(f"filename = {filename}")
+    mock_document.save(filename)
+    return filename
+
+
+@pytest.fixture()
 def expected_elements():
     return [
         Title("These are a few of my favorite things:"),
@@ -84,11 +96,11 @@ def expected_emphasized_text_tags():
     return ["b", "i", "b", "i"]
 
 
-def test_partition_docx_from_filename(mock_document, expected_elements, tmpdir):
-    filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    mock_document.save(filename)
+def test_partition_docx_from_filename(
+    mock_document_filename: str, expected_elements: List[Element]
+):
+    elements = partition_docx(filename=mock_document_filename)
 
-    elements = partition_docx(filename=filename)
     assert elements == expected_elements
     assert elements[0].metadata.page_number is None
     for element in elements:
