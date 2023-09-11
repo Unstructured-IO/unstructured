@@ -70,68 +70,15 @@
     "text": "\\uD83D\\uDDE3 Discussion topics"
   },
   {
-    "type": "Title",
-    "element_id": "33b93476cf597a3330653b66a658983d",
+    "type": "Table",
+    "element_id": "37af06e8e75d96a448a00026754b7942",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_text_contents": [
-        "Time"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      "text_as_html": "<table><br><tbody><br><tr><td>Time</td><td>Item</td><td>Presenter</td><td>Notes</td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br></tbody><br></table>"
     },
-    "text": "Time"
-  },
-  {
-    "type": "Title",
-    "element_id": "652bcc3a478428893cc505ae19f847b4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Item"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
-    },
-    "text": "Item"
-  },
-  {
-    "type": "Title",
-    "element_id": "9ef077a1231ea3b71df182b87db1cb7f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Presenter"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
-    },
-    "text": "Presenter"
-  },
-  {
-    "type": "Title",
-    "element_id": "8a7525b1492fb84833f5c4a69b30f4bf",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Notes"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
-    },
-    "text": "Notes"
+    "text": "Time Item Presenter Notes"
   },
   {
     "type": "Title",

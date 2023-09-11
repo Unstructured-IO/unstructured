@@ -1,3 +1,13 @@
+## 0.10.15-dev1
+
+### Enhancements
+
+* Updated HTML Partitioning to extract tables
+
+### Features
+
+### Fixes
+
 ## 0.10.14
 
 ### Enhancements
