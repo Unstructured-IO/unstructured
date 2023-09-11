@@ -6,6 +6,7 @@ import pytest
 import requests
 from requests.models import Response
 
+from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import ListItem, NarrativeText, Table, Title
 from unstructured.partition.html import partition_html
@@ -627,3 +628,13 @@ def test_pre_tag_parsing_respects_order():
         NarrativeText("The big brown bear is sleeping."),
         Title("The Big Blue Bear"),
     ]
+
+
+def test_add_chunking_strategy_on_partition_html(
+    filename="example-docs/example-10k.html",
+):
+    elements = partition_html(filename=filename)
+    chunk_elements = partition_html(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
