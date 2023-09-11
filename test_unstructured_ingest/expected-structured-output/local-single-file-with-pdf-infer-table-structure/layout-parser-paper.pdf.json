@@ -651,6 +651,16 @@
     "text": "Z. Shen et al."
   },
   {
+    "type": "FigureCaption",
+    "element_id": "185e67615d123b35d38ea72e0cdb6d99",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "- ° . 3 a a 4 a 3 oo er ‘ 2 § 8 a 8 3 3 ‘ £ 4 A g a 9 ‘ 3 ¥ Coordinate g 4 5 3 + § 3 H Extra Features [O=\") [Bo] eaing i Text | | Type | | ower ° & a ¢ o [ coordinatel textblock1, 3 3 ’ g Q 3 , textblock2 , layoutl ] 4 q ® A list of the layout elements Ff"
+  },
+  {
     "type": "NarrativeText",
     "element_id": "cafae07120d714f0822e89865adf62da",
     "metadata": {
@@ -689,16 +699,6 @@
       "page_number": 6
     },
     "text": "A critical feature of LayoutParser is the implementation of a series of data structures and operations that can be used to eﬃciently process and manipulate the layout elements. In document image analysis pipelines, various post-processing on the layout analysis model outputs is usually required to obtain the ﬁnal outputs. Traditionally, this requires exporting DL model outputs and then loading the results into other pipelines. All model outputs from LayoutParser will be stored in carefully engineered data types optimized for further processing, which makes it possible to build an end-to-end document digitization pipeline within LayoutParser. There are three key components in the data structure, namely the Coordinate system, the TextBlock, and the Layout. They provide diﬀerent levels of abstraction for the layout data, and a set of APIs are supported for transformations or operations on these classes."
-  },
-  {
-    "type": "FigureCaption",
-    "element_id": "d21661161ae2c8dc39e96ee5c660704b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6
-    },
-    "text": "- ° . 3 a a 4 a 3 oo er ‘ 2 § 8 a 8 3 3 ‘ £ 4 A g a 9 ‘ 3 ¥ Coordinate g 4 5 3 + § 3 H Extra Features [O=\") [Bo] eaing i Text | | Type | | ower ° & a ¢ o [ coordinatel textblock1, 3 3 ’ g Q 3 , textblock2 , layoutl ] 4 q ® A list of the layout elements Ff"
   },
   {
     "type": "UncategorizedText",
@@ -769,6 +769,16 @@
       "page_number": 7
     },
     "text": "1 ocr_agent = lp . TesseractAgent () 2 # Can be easily switched to other OCR software 3 tokens = ocr_agent . detect ( image )"
+  },
+  {
+    "type": "Image",
+    "element_id": "65ac0f9ae348b12ed9484b8af7296617",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "ocr_agent = lp.TesseractAgent ()pOi"
   },
   {
     "type": "NarrativeText",
@@ -1113,26 +1123,6 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "aed1b21a388cefaa841f20f48d19ca98",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "Mode I: Showing Layout on the Original Image"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "915bc5f1403e01b56e77300d9354fded",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "Mode Il: Drawing OCR'd Text at the Correspoding Position"
-  },
-  {
-    "type": "NarrativeText",
     "element_id": "cc8ad6e0f933633a37b82200e6724f9e",
     "metadata": {
       "data_source": {},
@@ -1322,16 +1312,6 @@
     "text": "The digitization of historical documents can unlock valuable data that can shed light on many important social, economic, and historical questions. Yet due to scan noises, page wearing, and the prevalence of complicated layout structures, ob- taining a structured representation of historical document scans is often extremely complicated. In this example, LayoutParser was used to develop a comprehensive pipeline, shown in Figure 5, to gener- ate high-quality structured data from historical Japanese ﬁrm ﬁnancial ta- bles with complicated layouts. The pipeline applies two layout models to identify diﬀerent levels of document structures and two customized OCR engines for optimized character recog- nition accuracy."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "3cbd8234ac0c6d29feb24e6202144aa8",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "Fig. 5: Illustration of how LayoutParser helps with the historical document digi- tization pipeline."
-  },
-  {
     "type": "FigureCaption",
     "element_id": "b33b2bc3b9c416673c7f74c6a00c49d8",
     "metadata": {
@@ -1340,6 +1320,16 @@
       "page_number": 11
     },
     "text": "(spe peepee, ‘Active Learning Layout Annotate Layout Dataset | + ‘Annotation Toolkit ¥ a Deep Leaming Layout Model Training & Inference, ¥ ; Handy Data Structures & Post-processing El Apis for Layout Det a LAR ror tye eats) 4 Text Recognition | <—— Default ane Customized ¥ ee Layout Structure Visualization & Export | <—— | visualization & Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "3cbd8234ac0c6d29feb24e6202144aa8",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "Fig. 5: Illustration of how LayoutParser helps with the historical document digi- tization pipeline."
   },
   {
     "type": "UncategorizedText",

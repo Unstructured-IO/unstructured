@@ -1,25 +1,24 @@
+import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
 from functools import cached_property
 from html import unescape
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 from urllib.parse import urlparse
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
     from office365.sharepoint.client_context import ClientContext
     from office365.sharepoint.files.file import File
     from office365.sharepoint.publishing.pages.page import SitePage
@@ -61,16 +60,16 @@ class SimpleSharepointConfig(BaseConnectorConfig):
 
 @dataclass
 class SharepointFileMeta:
-    date_created: Optional[str] = None
-    date_modified: Optional[str] = None
-    version: Optional[str] = None
-    source_url: Optional[str] = None
-    exists: Optional[bool] = None
+    date_created: t.Optional[str] = None
+    date_modified: t.Optional[str] = None
+    version: t.Optional[str] = None
+    source_url: t.Optional[str] = None
+    exists: t.Optional[bool] = None
 
 
 @dataclass
 class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
-    config: SimpleSharepointConfig
+    connector_config: SimpleSharepointConfig
     site_url: str
     server_path: str
     is_page: bool
@@ -92,8 +91,8 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def _set_download_paths(self) -> None:
         """Parses the folder structure from the source and creates the download and output paths"""
-        download_path = Path(f"{self.standard_config.download_dir}")
-        output_path = Path(f"{self.standard_config.output_dir}")
+        download_path = Path(f"{self.read_config.download_dir}")
+        output_path = Path(f"{self.partition_config.output_dir}")
         parent = Path(self.file_path).with_suffix(self.extension)
         self.download_dir = (download_path / parent.parent).resolve()
         self.download_filepath = (download_path / parent).resolve()
@@ -110,30 +109,30 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.output_filepath).resolve()
 
     @property
-    def date_created(self) -> Optional[str]:
+    def date_created(self) -> t.Optional[str]:
         return self.file_metadata.date_created  # type: ignore
 
     @property
-    def date_modified(self) -> Optional[str]:
+    def date_modified(self) -> t.Optional[str]:
         return self.file_metadata.date_modified  # type: ignore
 
     @property
-    def exists(self) -> Optional[bool]:
+    def exists(self) -> t.Optional[bool]:
         return self.file_metadata.exists
 
     @property
-    def record_locator(self) -> Optional[Dict[str, Any]]:
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
             "server_path": self.server_path,
             "site_url": self.site_url,
         }
 
     @property
-    def version(self) -> Optional[str]:
+    def version(self) -> t.Optional[str]:
         return self.file_metadata.version  # type: ignore
 
     @property
-    def source_url(self) -> Optional[str]:
+    def source_url(self) -> t.Optional[str]:
         return self.file_metadata.source_url  # type: ignore
 
     @SourceConnectionError.wrap
@@ -142,7 +141,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Retrieves the actual page/file from the Sharepoint instance"""
         from office365.runtime.client_request_exception import ClientRequestException
 
-        site_client = self.config.get_site_client(self.site_url)
+        site_client = self.connector_config.get_site_client(self.site_url)
 
         try:
             if self.is_page:
@@ -160,7 +159,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return file
 
     def _fetch_page(self):
-        site_client = self.config.get_site_client(self.site_url)
+        site_client = self.connector_config.get_site_client(self.site_url)
         try:
             page = (
                 site_client.site_pages.pages.get_by_url(self.server_path)
@@ -254,15 +253,12 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return
 
 
-class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
-    config: SimpleSharepointConfig
-    tenant: None
-
-    def __init__(self, standard_config: StandardConnectorConfig, config: SimpleSharepointConfig):
-        super().__init__(standard_config, config)
+@dataclass
+class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
+    connector_config: SimpleSharepointConfig
 
     @requires_dependencies(["office365"], extras="sharepoint")
-    def _list_files(self, folder, recursive) -> List["File"]:
+    def _list_files(self, folder, recursive) -> t.List["File"]:
         from office365.runtime.client_request_exception import ClientRequestException
 
         try:
@@ -280,7 +276,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
                 logger.info("Caught an error while processing documents %s", e.response.text)
             return []
 
-    def _prepare_ingest_doc(self, obj: Union["File", "SitePage"], base_url, is_page=False):
+    def _prepare_ingest_doc(self, obj: t.Union["File", "SitePage"], base_url, is_page=False):
         if is_page:
             file_path = obj.get_property("Url", "")
             server_path = f"/{file_path}" if file_path[0] != "/" else file_path
@@ -292,7 +288,7 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
 
         return SharepointIngestDoc(
             self.standard_config,
-            self.config,
+            self.connector_config,
             base_url,
             server_path,
             is_page,
@@ -315,16 +311,16 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
 
         return [self._prepare_ingest_doc(page, site_client.base_url, True) for page in site_pages]
 
-    def _ingest_site_docs(self, site_client) -> List["SharepointIngestDoc"]:
-        root_folder = site_client.web.get_folder_by_server_relative_path(self.config.path)
-        files = self._list_files(root_folder, self.config.recursive)
+    def _ingest_site_docs(self, site_client) -> t.List["SharepointIngestDoc"]:
+        root_folder = site_client.web.get_folder_by_server_relative_path(self.connector_config.path)
+        files = self._list_files(root_folder, self.connector_config.recursive)
         if not files:
             logger.info(
-                f"Couldn't process files in path {self.config.path}\
+                f"Couldn't process files in path {self.connector_config.path}\
                 for site {site_client.base_url}",
             )
         output = [self._prepare_ingest_doc(file, site_client.base_url) for file in files]
-        if self.config.process_pages:
+        if self.connector_config.process_pages:
             page_output = self._list_pages(site_client)
             if not page_output:
                 logger.info(f"Couldn't process pages for site {site_client.base_url}")
@@ -335,15 +331,15 @@ class SharepointConnector(ConnectorCleanupMixin, BaseConnector):
         pass
 
     def get_ingest_docs(self):
-        base_site_client = self.config.get_site_client()
+        base_site_client = self.connector_config.get_site_client()
         if not base_site_client.is_tenant:
             return self._ingest_site_docs(base_site_client)
         tenant = base_site_client.tenant
         tenant_sites = tenant.get_site_properties_from_sharepoint_by_filters().execute_query()
         tenant_sites = {s.url for s in tenant_sites if (s.url is not None)}
-        ingest_docs: List[SharepointIngestDoc] = []
+        ingest_docs: t.List[SharepointIngestDoc] = []
         for site_url in tenant_sites:
             logger.info(f"Processing docs for site: {site_url}")
-            site_client = self.config.get_site_client(site_url)
+            site_client = self.connector_config.get_site_client(site_url)
             ingest_docs = ingest_docs + self._ingest_site_docs(site_client)
         return ingest_docs
