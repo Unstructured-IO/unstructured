@@ -1,6 +1,6 @@
 Salesforce
 ==========
-Connect Salesforce to your preprocessing pipeline, and batch process Salesforce data using ``unstructured-ingest`` to store structured outputs locally on your filesystem. 
+Connect Salesforce to your preprocessing pipeline, and batch process Salesforce data using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
 
 First you'll need to install the Salesforce dependencies as shown here.
 
@@ -19,14 +19,14 @@ Run Locally
 
         unstructured-ingest \
           salesforce \
-          --salesforce-username "$SALESFORCE_USERNAME" \
-          --salesforce-consumer-key "$SALESFORCE_CONSUMER_KEY" \
-          --salesforce-private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
-          --salesforce-categories "EmailMessage,Account,Lead,Case,Campaign" \
-          --structured-output-dir salesforce-output \
+          --username "$SALESFORCE_USERNAME" \
+          --consumer-key "$SALESFORCE_CONSUMER_KEY" \
+          --private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
+          --categories "EmailMessage,Account,Lead,Case,Campaign" \
+          --output-dir salesforce-output \
           --num-processes 2 \
           --recursive \
-          --verbose 
+          --verbose
 
    .. tab:: Python
 
@@ -37,14 +37,11 @@ Run Locally
         command = [
           "unstructured-ingest",
           "salesforce",
-          "--salesforce-username" "$SALESFORCE_USERNAME"
-          "--salesforce-consumer-key" "$SALESFORCE_CONSUMER_KEY"
-          "--salesforce-private-key-path" "$SALESFORCE_PRIVATE_KEY_PATH"
-          "--salesforce-categories" "EmailMessage,Account,Lead,Case,Campaign"
-          "--structured-output-dir" "salesforce-output"
-          "--box_app_config", "$BOX_APP_CONFIG_PATH"
-          "--remote-url", "box://utic-test-ingest-fixtures"
-          "--structured-output-dir", "box-output"
+          "--username" "$SALESFORCE_USERNAME"
+          "--consumer-key" "$SALESFORCE_CONSUMER_KEY"
+          "--private-key-path" "$SALESFORCE_PRIVATE_KEY_PATH"
+          "--categories" "EmailMessage,Account,Lead,Case,Campaign"
+          "--output-dir" "salesforce-output"
           "--num-processes", "2"
           "--recursive",
           "--verbose",
@@ -65,7 +62,7 @@ Run Locally
 Run via the API
 ---------------
 
-You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``. 
+You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``.
 
 .. tabs::
 
@@ -75,14 +72,14 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         unstructured-ingest \
           salesforce \
-          --salesforce-username "$SALESFORCE_USERNAME" \
-          --salesforce-consumer-key "$SALESFORCE_CONSUMER_KEY" \
-          --salesforce-private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
-          --salesforce-categories "EmailMessage,Account,Lead,Case,Campaign" \
-          --structured-output-dir salesforce-output \
+          --username "$SALESFORCE_USERNAME" \
+          --consumer-key "$SALESFORCE_CONSUMER_KEY" \
+          --private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
+          --categories "EmailMessage,Account,Lead,Case,Campaign" \
+          --output-dir salesforce-output \
           --num-processes 2 \
           --recursive \
-          --verbose 
+          --verbose
           --partition-by-api \
           --api-key "<UNSTRUCTURED-API-KEY>"
 
@@ -95,14 +92,11 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
         command = [
           "unstructured-ingest",
           "salesforce",
-          "--salesforce-username" "$SALESFORCE_USERNAME"
-          "--salesforce-consumer-key" "$SALESFORCE_CONSUMER_KEY"
-          "--salesforce-private-key-path" "$SALESFORCE_PRIVATE_KEY_PATH"
-          "--salesforce-categories" "EmailMessage,Account,Lead,Case,Campaign"
-          "--structured-output-dir" "salesforce-output"
-          "--box_app_config", "$BOX_APP_CONFIG_PATH"
-          "--remote-url", "box://utic-test-ingest-fixtures"
-          "--structured-output-dir", "box-output"
+          "--username" "$SALESFORCE_USERNAME"
+          "--consumer-key" "$SALESFORCE_CONSUMER_KEY"
+          "--private-key-path" "$SALESFORCE_PRIVATE_KEY_PATH"
+          "--categories" "EmailMessage,Account,Lead,Case,Campaign"
+          "--output-dir" "salesforce-output"
           "--num-processes", "2"
           "--recursive",
           "--verbose",
@@ -122,7 +116,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
             print('Command failed. Error:')
             print(error.decode())
 
-Additionaly, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
+Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 
 For a full list of the options the CLI accepts check ``unstructured-ingest salesforce --help``.
 

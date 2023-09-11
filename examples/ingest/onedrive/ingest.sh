@@ -27,6 +27,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --tenant "<Azure AD tenant_id, default is 'common'>" \
     --user-pname "<Azure AD principal name, in most cases is the email linked to the drive>" \
     --path "<Path to start parsing files from>" \
-    --structured-output-dir onedrive-ingest-output \
+    --output-dir onedrive-ingest-output \
     --num-processes 2 \
     --verbose

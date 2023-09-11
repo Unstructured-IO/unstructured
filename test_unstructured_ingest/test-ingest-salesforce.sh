@@ -34,7 +34,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --preserve-downloads \
     --recursive \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

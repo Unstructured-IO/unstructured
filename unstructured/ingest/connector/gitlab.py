@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from unstructured.ingest.connector.git import (
-    GitConnector,
     GitFileMeta,
     GitIngestDoc,
+    GitSourceConnector,
     SimpleGitConfig,
 )
 from unstructured.ingest.error import SourceConnectionError
@@ -32,7 +32,7 @@ class SimpleGitLabConfig(SimpleGitConfig):
 
     @SourceConnectionError.wrap
     @requires_dependencies(["gitlab"], extras="gitlab")
-    def _get_project(self) -> "Project":
+    def get_project(self) -> "Project":
         from gitlab import Gitlab
 
         gitlab = Gitlab(self.base_url, private_token=self.access_token)
@@ -41,7 +41,7 @@ class SimpleGitLabConfig(SimpleGitConfig):
 
 @dataclass
 class GitLabIngestDoc(GitIngestDoc):
-    config: SimpleGitLabConfig
+    connector_config: SimpleGitLabConfig
     registry_name: str = "gitlab"
 
     @requires_dependencies(["gitlab"], extras="gitlab")
@@ -49,14 +49,14 @@ class GitLabIngestDoc(GitIngestDoc):
         from gitlab.exceptions import GitlabHttpError
 
         try:
-            project = self.config._get_project()
+            project = self.connector_config._get_project()
             content_file = project.files.get(
                 self.path,
-                ref=self.config.branch or project.default_branch,
+                ref=self.connector_config.branch or project.default_branch,
             )
         except GitlabHttpError as e:
             if e.response_code == 404:
-                logger.error(f"File doesn't exists {self.config.url}/{self.path}")
+                logger.error(f"File doesn't exists {self.connector_config.url}/{self.path}")
                 return None
             raise
         return content_file
@@ -65,7 +65,7 @@ class GitLabIngestDoc(GitIngestDoc):
         content_file = self._fetch_content()
         if content_file is None:
             raise ValueError(
-                f"Failed to retrieve file from repo " f"{self.config.url}/{self.path}. Check logs.",
+                f"Failed to retrieve file from repo " f"{self.connector_config.url}/{self.path}. Check logs.",
             )
         contents = content_file.decode()
         with open(self.filename, "wb") as f:
@@ -86,14 +86,14 @@ class GitLabIngestDoc(GitIngestDoc):
 
 @requires_dependencies(["gitlab"], extras="gitlab")
 @dataclass
-class GitLabConnector(GitConnector):
-    config: SimpleGitLabConfig
+class GitLabSourceConnector(GitSourceConnector):
+    connector_config: SimpleGitLabConfig
 
     def get_ingest_docs(self):
         # Load the Git tree with all files, and then create Ingest docs
         # for all blobs, i.e. all files, ignoring directories
-        project = self.config._get_project()
-        ref = self.config.branch or project.default_branch
+        project = self.connector_config.get_project()
+        ref = self.connector_config.branch or project.default_branch
         git_tree = project.repository_tree(
             ref=ref,
             recursive=True,
@@ -101,9 +101,14 @@ class GitLabConnector(GitConnector):
             all=True,
         )
         return [
-            GitLabIngestDoc(self.standard_config, self.config, element["path"])
+            GitLabIngestDoc(
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                read_config=self.read_config,
+                path=element["path"],
+            )
             for element in git_tree
             if element["type"] == "blob"
             and self.is_file_type_supported(element["path"])
-            and (not self.config.file_glob or self.does_path_match_glob(element["path"]))
+            and (not self.connector_config.file_glob or self.does_path_match_glob(element["path"]))
         ]

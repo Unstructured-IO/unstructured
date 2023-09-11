@@ -1,18 +1,17 @@
 import os
+import typing as t
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
 
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import (
@@ -27,10 +26,10 @@ DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 class SimpleSlackConfig(BaseConnectorConfig):
     """Connector config to process all messages by channel id's."""
 
-    channels: List[str]
+    channels: t.List[str]
     token: str
-    oldest: Optional[str]
-    latest: Optional[str]
+    oldest: t.Optional[str]
+    latest: t.Optional[str]
     verbose: bool = False
 
     def validate_inputs(self):
@@ -52,11 +51,6 @@ class SimpleSlackConfig(BaseConnectorConfig):
                 "Start and/or End dates are not valid. ",
             )
 
-    @staticmethod
-    def parse_channels(channel_str: str) -> List[str]:
-        """Parses a comma separated list of channels into a list."""
-        return [x.strip() for x in channel_str.split(",")]
-
 
 @dataclass
 class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -67,11 +61,11 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     method is not called, the file is left behind on the filesystem to assist debugging.
     """
 
-    config: SimpleSlackConfig
+    connector_config: SimpleSlackConfig
     channel: str
     token: str
-    oldest: Optional[str]
-    latest: Optional[str]
+    oldest: t.Optional[str]
+    latest: t.Optional[str]
     registry_name: str = "slack"
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
@@ -79,12 +73,12 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     # instantiated object)
     def _tmp_download_file(self):
         channel_file = self.channel + ".xml"
-        return Path(self.standard_config.download_dir) / channel_file
+        return Path(self.read_config.download_dir) / channel_file
 
     @property
     def _output_filename(self):
         output_file = self.channel + ".json"
-        return Path(self.standard_config.output_dir) / output_file
+        return Path(self.partition_config.output_dir) / output_file
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
@@ -100,7 +94,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         self._create_full_tmp_dir_path()
 
-        if self.config.verbose:
+        if self.connector_config.verbose:
             logger.debug(f"fetching channel {self.channel} - PID: {os.getpid()}")
 
         self.client = WebClient(token=self.token)
@@ -167,13 +161,10 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
 
 @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
-class SlackConnector(ConnectorCleanupMixin, BaseConnector):
+class SlackSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching document(s) from"""
 
-    config: SimpleSlackConfig
-
-    def __init__(self, standard_config: StandardConnectorConfig, config: SimpleSlackConfig):
-        super().__init__(standard_config, config)
+    connector_config: SimpleSlackConfig
 
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""
@@ -182,12 +173,13 @@ class SlackConnector(ConnectorCleanupMixin, BaseConnector):
     def get_ingest_docs(self):
         return [
             SlackIngestDoc(
-                self.standard_config,
-                self.config,
-                channel,
-                self.config.token,
-                self.config.oldest,
-                self.config.latest,
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                read_config=self.read_config,
+                channel=channel,
+                token=self.connector_config.token,
+                oldest=self.connector_config.oldest,
+                latest=self.connector_config.latest,
             )
-            for channel in self.config.channels
+            for channel in self.connector_config.channels
         ]

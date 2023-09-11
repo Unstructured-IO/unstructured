@@ -1,22 +1,22 @@
+import typing as t
 from dataclasses import dataclass
 from datetime import datetime
 from functools import cached_property
-from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 import requests
 
 from unstructured.ingest.connector.git import (
-    GitConnector,
     GitFileMeta,
     GitIngestDoc,
+    GitSourceConnector,
     SimpleGitConfig,
 )
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
     from github.Repository import Repository
 
 
@@ -43,7 +43,7 @@ class SimpleGitHubConfig(SimpleGitConfig):
 
     @SourceConnectionError.wrap
     @requires_dependencies(["github"], extras="github")
-    def _get_repo(self) -> "Repository":
+    def get_repo(self) -> "Repository":
         from github import Github
 
         github = Github(self.access_token)
@@ -52,7 +52,7 @@ class SimpleGitHubConfig(SimpleGitConfig):
 
 @dataclass
 class GitHubIngestDoc(GitIngestDoc):
-    config: SimpleGitHubConfig
+    connector_config: SimpleGitHubConfig
     registry_name: str = "github"
 
     @requires_dependencies(["github"], extras="github")
@@ -60,12 +60,12 @@ class GitHubIngestDoc(GitIngestDoc):
         from github.GithubException import UnknownObjectException
 
         try:
-            content_file = self.config._get_repo().get_contents(self.path)
+            content_file = self.connector_config._get_repo().get_contents(self.path)
         except UnknownObjectException:
-            logger.error(f"File doesn't exists {self.config.url}/{self.path}")
+            logger.error(f"File doesn't exists {self.connector_config.url}/{self.path}")
             return None
         except Exception:
-            logger.error(f"Error processing {self.config.url}/{self.path}")
+            logger.error(f"Error processing {self.connector_config.url}/{self.path}")
             raise
 
         if is_content_file:
@@ -108,7 +108,7 @@ class GitHubIngestDoc(GitIngestDoc):
         contents = self._fetch_content()
         if contents is None:
             raise ValueError(
-                f"Failed to retrieve file from repo " f"{self.config.url}/{self.path}. Check logs",
+                f"Failed to retrieve file from repo " f"{self.connector_config.url}/{self.path}. Check logs",
             )
         with open(self.filename, "wb") as f:
             f.write(contents)
@@ -116,25 +116,30 @@ class GitHubIngestDoc(GitIngestDoc):
 
 @requires_dependencies(["github"], extras="github")
 @dataclass
-class GitHubConnector(GitConnector):
-    config: SimpleGitHubConfig
+class GitHubSourceConnector(GitSourceConnector):
+    connector_config: SimpleGitHubConfig
 
     def get_ingest_docs(self):
         from github.GithubException import UnknownObjectException
 
         try:
-            repo = self.config._get_repo()
+            repo = self.connector_config._get_repo()
         except UnknownObjectException:
-            logger.error(f"Repository {self.config.repo_path} does not exist.")
+            logger.error(f"Repository {self.connector_config.repo_path} does not exist.")
             return []
         # Load the Git tree with all files, and then create Ingest docs
         # for all blobs, i.e. all files, ignoring directories
-        sha = self.config.branch or repo.default_branch
+        sha = self.connector_config.branch or repo.default_branch
         git_tree = repo.get_git_tree(sha, recursive=True)
         return [
-            GitHubIngestDoc(self.standard_config, self.config, element.path)
+            GitHubIngestDoc(
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                read_config=self.read_config,
+                path=element.path,
+            )
             for element in git_tree.tree
             if element.type == "blob"
             and self.is_file_type_supported(element.path)
-            and (not self.config.file_glob or self.does_path_match_glob(element.path))
+            and (not self.connector_config.file_glob or self.does_path_match_glob(element.path))
         ]
