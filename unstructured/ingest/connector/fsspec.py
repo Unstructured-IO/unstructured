@@ -1,7 +1,7 @@
 import os
 import re
-from contextlib import suppress
 import typing as t
+from contextlib import suppress
 from dataclasses import dataclass, field
 from functools import cached_property
 from pathlib import Path
