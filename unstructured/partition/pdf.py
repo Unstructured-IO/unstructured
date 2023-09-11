@@ -249,29 +249,30 @@ def _partition_pdf_or_image_local(
     )
 
     model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
+    pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
+    extract_images_in_pdf = kwargs.get("extract_images_in_pdf", False)
+    image_output_dir_path = kwargs.get("image_output_dir_path", None)
+
+    process_with_model_kwargs = {
+        "is_image": is_image,
+        "ocr_languages": ocr_languages,
+        "ocr_mode": ocr_mode,
+        "extract_tables": infer_table_structure,
+        "model_name": model_name,
+        "pdf_image_dpi": pdf_image_dpi,
+        "extract_images_in_pdf": extract_images_in_pdf,
+        "image_output_dir_path": image_output_dir_path,
+    }
+
     if file is None:
-        pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
-        process_file_with_model_kwargs = {
-            "is_image": is_image,
-            "ocr_languages": ocr_languages,
-            "ocr_mode": ocr_mode,
-            "extract_tables": infer_table_structure,
-            "model_name": model_name,
-        }
-        if pdf_image_dpi:
-            process_file_with_model_kwargs["pdf_image_dpi"] = pdf_image_dpi
         layout = process_file_with_model(
             filename,
-            **process_file_with_model_kwargs,
+            **process_with_model_kwargs,
         )
     else:
         layout = process_data_with_model(
             file,
-            is_image=is_image,
-            ocr_languages=ocr_languages,
-            ocr_mode=ocr_mode,
-            extract_tables=infer_table_structure,
-            model_name=model_name,
+            **process_with_model_kwargs,
         )
     elements = document_to_element_list(
         layout,
