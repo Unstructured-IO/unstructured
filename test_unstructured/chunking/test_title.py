@@ -2,9 +2,11 @@ from unstructured.chunking.title import (
     _split_elements_by_title_and_table,
     chunk_by_title,
 )
+from unstructured.documents.coordinates import CoordinateSystem
 from unstructured.documents.elements import (
     CheckBox,
     CompositeElement,
+    CoordinatesMetadata,
     ElementMetadata,
     Table,
     Text,
@@ -190,3 +192,86 @@ def test_chunk_by_title_groups_across_pages():
         ),
         CheckBox(),
     ]
+
+
+def test_chunk_by_title_drops_extra_metadata():
+    elements = [
+        Title(
+            "A Great Day",
+            metadata=ElementMetadata(
+                coordinates=CoordinatesMetadata(
+                    points=(
+                        (0.1, 0.1),
+                        (0.2, 0.1),
+                        (0.1, 0.2),
+                        (0.2, 0.2),
+                    ),
+                    system=CoordinateSystem(width=0.1, height=0.1),
+                ),
+            ),
+        ),
+        Text(
+            "Today is a great day.",
+            metadata=ElementMetadata(
+                coordinates=CoordinatesMetadata(
+                    points=(
+                        (0.2, 0.2),
+                        (0.3, 0.2),
+                        (0.2, 0.3),
+                        (0.3, 0.3),
+                    ),
+                    system=CoordinateSystem(width=0.2, height=0.2),
+                ),
+            ),
+        ),
+        Text(
+            "It is sunny outside.",
+            metadata=ElementMetadata(
+                coordinates=CoordinatesMetadata(
+                    points=(
+                        (0.3, 0.3),
+                        (0.4, 0.3),
+                        (0.3, 0.4),
+                        (0.4, 0.4),
+                    ),
+                    system=CoordinateSystem(width=0.3, height=0.3),
+                ),
+            ),
+        ),
+        Title(
+            "An Okay Day",
+            metadata=ElementMetadata(
+                coordinates=CoordinatesMetadata(
+                    points=(
+                        (0.3, 0.3),
+                        (0.4, 0.3),
+                        (0.3, 0.4),
+                        (0.4, 0.4),
+                    ),
+                    system=CoordinateSystem(width=0.3, height=0.3),
+                ),
+            ),
+        ),
+        Text(
+            "Today is an okay day.",
+            metadata=ElementMetadata(
+                coordinates=CoordinatesMetadata(
+                    points=(
+                        (0.4, 0.4),
+                        (0.5, 0.4),
+                        (0.4, 0.5),
+                        (0.5, 0.5),
+                    ),
+                    system=CoordinateSystem(width=0.4, height=0.4),
+                ),
+            ),
+        ),
+    ]
+
+    chunks = chunk_by_title(elements, combine_under_n_chars=0)
+
+    assert str(chunks[0]) == str(
+        CompositeElement("A Great Day\n\nToday is a great day.\n\nIt is sunny outside."),
+    )
+
+    assert str(chunks[1]) == str(CompositeElement("An Okay Day\n\nToday is an okay day."))
