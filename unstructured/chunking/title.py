@@ -55,6 +55,8 @@ def chunk_by_title(
     )
 
     for section in sections:
+        if not section:
+            continue
         if not isinstance(section[0], Text) or isinstance(section[0], Table):
             chunked_elements.extend(section)
 
