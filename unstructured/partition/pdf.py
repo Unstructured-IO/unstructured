@@ -419,9 +419,12 @@ def _process_pdfminer_pages(
                     )
                     page_elements.append(element)
 
+        # NOTE(crag, christine): always do the basic sort first for determinsitic order across
+        # python versions.
         sorted_page_elements = sort_page_elements(page_elements, SORT_MODE_BASIC)
         if sort_mode != SORT_MODE_BASIC:
             sorted_page_elements = sort_page_elements(sorted_page_elements, sort_mode)
+
         elements += sorted_page_elements
 
         if include_page_breaks:

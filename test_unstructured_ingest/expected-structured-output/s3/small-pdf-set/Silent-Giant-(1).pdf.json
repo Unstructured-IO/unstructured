@@ -2398,15 +2398,15 @@
     "text": "8"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "c48603fd38d3449d3afcd2dc18903083",
+    "type": "Image",
+    "element_id": "6d647fc38c561c01f7859e019345d367",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 12,
       "category_depth": 0
     },
-    "text": "World Nuclear Association Tower House 10 Southampton Street London WC2E 7HA United Kingdom"
+    "text": "+44 (0)20 7451 1520www.world-nuclear.orginfo@world-nuclear.org World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate."
   },
   {
     "type": "UncategorizedText",
@@ -2421,14 +2421,14 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "de49f1c955d7c8a4d1d6d261c1cf21ba",
+    "element_id": "c48603fd38d3449d3afcd2dc18903083",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 12,
       "category_depth": 0
     },
-    "text": "The Silent Giant © 2019 World Nuclear Association. Registered in England and Wales, company number 01215741"
+    "text": "World Nuclear Association Tower House 10 Southampton Street London WC2E 7HA United Kingdom"
   },
   {
     "type": "UncategorizedText",
@@ -2440,5 +2440,15 @@
       "category_depth": 0
     },
     "text": "World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "de49f1c955d7c8a4d1d6d261c1cf21ba",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "The Silent Giant © 2019 World Nuclear Association. Registered in England and Wales, company number 01215741"
   }
 ]
