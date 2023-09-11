@@ -401,7 +401,7 @@ webencodings==0.5.1
     # via
     #   bleach
     #   tinycss2
-websocket-client==1.6.2
+websocket-client==1.6.3
     # via jupyter-server
 wheel==0.41.2
     # via

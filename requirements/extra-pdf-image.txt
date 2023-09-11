@@ -39,7 +39,7 @@ fonttools==4.42.1
     # via matplotlib
 fsspec==2023.9.0
     # via huggingface-hub
-huggingface-hub==0.16.4
+huggingface-hub==0.17.1
     # via
     #   timm
     #   transformers
@@ -135,7 +135,7 @@ pyparsing==3.0.9
     # via
     #   -c requirements/constraints.in
     #   matplotlib
-pypdfium2==4.19.0
+pypdfium2==4.20.0
     # via pdfplumber
 pytesseract==0.3.10
     # via layoutparser
