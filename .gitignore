@@ -132,6 +132,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# pyright config
+/pyrightconfig.json
+
 # ingest outputs
 /structured-output
 
