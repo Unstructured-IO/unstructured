@@ -2,6 +2,7 @@ import os
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import datetime
+from functools import cached_property
 from pathlib import Path
 from typing import List, Optional
 
@@ -60,8 +61,9 @@ class SimpleSlackConfig(BaseConnectorConfig):
 
 @dataclass
 class SlackFileMeta:
-    date_created: str
-    date_modified: str
+    date_created: Optional[str] = None
+    date_modified: Optional[str] = None
+    exists: Optional[bool] = None
 
 
 @dataclass
@@ -78,8 +80,6 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     token: str
     oldest: Optional[str]
     latest: Optional[str]
-    file_exists: Optional[bool] = False
-    file_meta: Optional[SlackFileMeta] = None
     registry_name: str = "slack"
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
@@ -96,21 +96,15 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def date_created(self) -> Optional[str]:
-        if self.file_meta is None:
-            self.get_file_metadata()
-        return self.file_meta.date_created
+        return self.file_metadata.date_created
 
     @property
     def date_modified(self) -> Optional[str]:
-        if self.file_meta is None:
-            self.get_file_metadata()
-        return self.file_meta.date_modified
+        return self.file_metadata.date_modified
 
     @property
     def exists(self) -> Optional[bool]:
-        if self.file_exists is None:
-            self.get_file_metadata()
-        return self.file_exists
+        return self.file_metadata.exists
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
@@ -136,25 +130,32 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 latest=latest,
             )
         except SlackApiError as e:
-            logger.error(f"Error: {e}")
-            self.file_exists = False
-            raise
-        self.file_exists = True
+            logger.error(e)
+            return None
         return result
 
-    def get_file_metadata(self, messages=None):
-        if messages is None:
-            messages = self._fetch_messages()
+    @cached_property
+    def file_metadata(self):
+        result = self._fetch_messages()
+        if result is None:
+            return SlackFileMeta(
+                exists=True,
+            )
 
-        timestamps = [m["ts"] for m in messages]
+        timestamps = [m["ts"] for m in result["messages"]]
         timestamps.sort()
+        date_created = None
+        date_modified = None
         if len(timestamps) > 0:
-            created = datetime.fromtimestamp(float(timestamps[0]))
-            modified = datetime.fromtimestamp(float(timestamps[len(timestamps) - 1]))
+            date_created = datetime.fromtimestamp(float(timestamps[0])).isoformat()
+            date_modified = datetime.fromtimestamp(
+                float(timestamps[len(timestamps) - 1]),
+            ).isoformat()
 
-        self.file_meta = SlackFileMeta(
-            created.isoformat(),
-            modified.isoformat(),
+        return SlackFileMeta(
+            date_created,
+            date_modified,
+            True,
         )
 
     @SourceConnectionError.wrap
@@ -196,8 +197,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                     cursor = response["response_metadata"]["next_cursor"]
 
                 except SlackApiError as e:
-                    print(f"Error retrieving replies: {e.response['error']}")
-        self.get_file_metadata(result["messages"])
+                    logger.error(f"Error retrieving replies: {e.response['error']}")
         tree = ET.ElementTree(root)
         tree.write(self._tmp_download_file(), encoding="utf-8", xml_declaration=True)
 

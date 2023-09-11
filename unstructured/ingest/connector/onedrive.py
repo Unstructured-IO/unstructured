@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
+from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
@@ -60,9 +61,11 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
 
 @dataclass
 class OneDriveFileMeta:
-    date_created: str
-    date_modified: str
-    version: str
+    date_created: Optional[str] = None
+    date_modified: Optional[str] = None
+    version: Optional[str] = None
+    source_url: Optional[str] = None
+    exists: Optional[bool] = None
 
 
 @dataclass
@@ -70,8 +73,6 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     config: SimpleOneDriveConfig
     file_name: str
     file_path: str
-    file_exists: Optional[bool] = None
-    file_meta: Optional[OneDriveFileMeta] = None
     registry_name: str = "onedrive"
 
     def __post_init__(self):
@@ -117,21 +118,15 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def date_created(self) -> Optional[str]:
-        if self.file_meta is None:
-            self.get_file_metadata()
-        return self.file_meta.date_created
+        return self.file_metadata.date_created
 
     @property
     def date_modified(self) -> Optional[str]:
-        if self.file_meta is None:
-            self.get_file_metadata()
-        return self.file_meta.date_modified
+        return self.file_metadata.date_modified
 
     @property
     def exists(self) -> Optional[bool]:
-        if self.file_exists is None:
-            self.get_file_metadata()
-        return self.file_exists
+        return self.file_metadata.exists
 
     @property
     def record_locator(self) -> Optional[Dict[str, Any]]:
@@ -142,9 +137,11 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def version(self) -> Optional[str]:
-        if self.file_meta is None:
-            self.get_file_metadata()
-        return self.file_meta.version
+        return self.file_metadata.version
+
+    @property
+    def source_url(self) -> Optional[str]:
+        return self.file_metadata.source_url
 
     @requires_dependencies(["office365"], extras="onedrive")
     def _fetch_file(self):
@@ -157,30 +154,40 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             file = root.get_by_path(self.server_relative_path).get().execute_query()
         except ClientRequestException as e:
             if e.response.status_code == 404:
-                self.file_exists = False
+                return None
             raise
-        self.file_exists = True
         return file
 
-    def get_file_metadata(self, file: "DriveItem" = None):
+    @cached_property
+    def file_metadata(self, file: "DriveItem" = None) -> OneDriveFileMeta:
+        file = self._fetch_file()
         if file is None:
-            file = self._fetch_file()
+            return OneDriveFileMeta(
+                exists=False,
+            )
 
         version = None
         if (n_versions := len(file.versions)) > 0:
             version = file.versions[n_versions - 1].properties.get("id", None)
 
-        self.file_meta = OneDriveFileMeta(
+        return OneDriveFileMeta(
             datetime.strptime(file.created_datetime, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
             datetime.strptime(file.last_modified_datetime, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
             version,
+            file.parent_reference.path + "/" + self.file_name,
+            True,
         )
 
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         file = self._fetch_file()
-        self.get_file_metadata(file)
+
+        if file is None:
+            raise ValueError(
+                f"Failed to retrieve file {self.file_path}/{self.file_name}",
+            )
+
         fsize = file.get_property("size", 0)
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
