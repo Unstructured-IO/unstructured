@@ -63,7 +63,7 @@ def partition_html(
     headers
         The headers to be used in conjunction with the HTTP request if URL is set.
     ssl_verify
-        If the URL parameter is set, determines weather or not partition uses SSL verification
+        If the URL parameter is set, determines whether or not partition uses SSL verification
         in the HTTP request.
     parser
         The parser to use for parsing the HTML document. If None, default parser will be used.
