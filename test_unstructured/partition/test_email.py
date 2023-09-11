@@ -252,7 +252,9 @@ def test_partition_email_from_text_file_max():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.txt")
     with open(filename) as f:
         elements = partition_email(
-            file=f, content_source="text/plain", max_partition=20
+            file=f,
+            content_source="text/plain",
+            max_partition=20,
         )
     assert len(elements) == 6
 
@@ -521,7 +523,8 @@ def test_partition_email_from_file_custom_metadata_date(
 
     with open(filename) as f:
         elements = partition_email(
-            file=f, metadata_last_modified=expected_last_modification_date
+            file=f,
+            metadata_last_modified=expected_last_modification_date,
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date

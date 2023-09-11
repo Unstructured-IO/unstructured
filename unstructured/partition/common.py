@@ -123,7 +123,9 @@ def normalize_layout_element(
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
     if layout_dict.get("prob"):
-        class_prob_metadata = ElementMetadata(detection_class_prob=float(layout_dict.get("prob")))
+        class_prob_metadata = ElementMetadata(
+            detection_class_prob=float(layout_dict.get("prob")),
+        )
     else:
         class_prob_metadata = ElementMetadata()
     if element_type == "List":
@@ -206,7 +208,10 @@ def set_element_hierarchy(
     elements: List[Element],
     ruleset: Dict[str, List[str]] = HIERARCHY_RULE_SET,
 ) -> List[Element]:
-    """Sets the parent_id for each element in the list of elements based on the element's category, depth and a ruleset"""
+    """Sets the parent_id for each element in the list of elements
+    based on the element's category, depth and a ruleset
+
+    """
     stack: List[Element] = []
     for element in elements:
         parent_id = None
@@ -220,13 +225,15 @@ def set_element_hierarchy(
             top_element: Element = stack[-1]
             top_element_category = getattr(top_element, "category")
             top_element_category_depth = getattr(
-                top_element.metadata, "category_depth", 0
+                top_element.metadata,
+                "category_depth",
+                0,
             )
 
             if (
                 top_element_category == element_category and top_element_category_depth
                 if top_element_category_depth
-                else 0 < element_category_depth
+                else element_category_depth > 0
                 if element_category_depth
                 else 0
             ) or (
@@ -266,9 +273,7 @@ def _add_element_metadata(
         if coordinates is not None and coordinate_system is not None
         else None
     )
-    links = (
-        element.links if hasattr(element, "links") and len(element.links) > 0 else None
-    )
+    links = element.links if hasattr(element, "links") and len(element.links) > 0 else None
     link_urls = [link.get("url") for link in links] if links else None
     link_texts = [link.get("text") for link in links] if links else None
     emphasized_texts = (
@@ -551,15 +556,11 @@ def document_to_element_list(
                 if last_modification_date:
                     element.metadata.last_modified = last_modification_date
                 element.metadata.text_as_html = (
-                    layout_element.text_as_html
-                    if hasattr(layout_element, "text_as_html")
-                    else None
+                    layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
                 )
                 page_elements.append(element)
             coordinates = (
-                element.metadata.coordinates.points
-                if element.metadata.coordinates
-                else None
+                element.metadata.coordinates.points if element.metadata.coordinates else None
             )
             _add_element_metadata(
                 element,

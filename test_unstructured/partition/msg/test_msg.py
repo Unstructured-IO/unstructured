@@ -236,7 +236,8 @@ def test_partition_msg_from_file_custom_metadata_date(
 
     with open(filename, "rb") as f:
         elements = partition_msg(
-            file=f, metadata_last_modified=expected_last_modification_date
+            file=f,
+            metadata_last_modified=expected_last_modification_date,
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
