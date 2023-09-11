@@ -13,9 +13,9 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.detection_class_prob \
     --num-processes 2 \
-    --partition-strategy hi_res \
+    --strategy hi_res \
     --preserve-downloads \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --page-title "Open Source Software"
 

@@ -1,23 +1,21 @@
+import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
 from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
-
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
     from office365.onedrive.driveitems.driveItem import DriveItem
 
 MAX_MB_SIZE = 512_000_000
@@ -29,8 +27,8 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
     client_credential: str = field(repr=False)
     user_pname: str
     tenant: str = field(repr=False)
-    authority_url: Optional[str] = field(repr=False)
-    path: Optional[str] = field(default="")
+    authority_url: t.Optional[str] = field(repr=False)
+    path: t.Optional[str] = field(default="")
     recursive: bool = False
 
     def __post_init__(self):
@@ -61,16 +59,16 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
 
 @dataclass
 class OneDriveFileMeta:
-    date_created: Optional[str] = None
-    date_modified: Optional[str] = None
-    version: Optional[str] = None
-    source_url: Optional[str] = None
-    exists: Optional[bool] = None
+    date_created: t.Optional[str] = None
+    date_modified: t.Optional[str] = None
+    version: t.Optional[str] = None
+    source_url: t.Optional[str] = None
+    exists: t.Optional[bool] = None
 
 
 @dataclass
 class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
-    config: SimpleOneDriveConfig
+    connector_config: SimpleOneDriveConfig
     file_name: str
     file_path: str
     registry_name: str = "onedrive"
@@ -91,8 +89,8 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def _set_download_paths(self) -> None:
         """Parses the folder structure from the source and creates the download and output paths"""
-        download_path = Path(f"{self.standard_config.download_dir}")
-        output_path = Path(f"{self.standard_config.output_dir}")
+        download_path = Path(f"{self.read_config.download_dir}")
+        output_path = Path(f"{self.partition_config.output_dir}")
 
         if parent_path := self.file_path:
             download_path = (
@@ -117,30 +115,30 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.output_filepath).resolve()
 
     @property
-    def date_created(self) -> Optional[str]:
+    def date_created(self) -> t.Optional[str]:
         return self.file_metadata.date_created
 
     @property
-    def date_modified(self) -> Optional[str]:
+    def date_modified(self) -> t.Optional[str]:
         return self.file_metadata.date_modified
 
     @property
-    def exists(self) -> Optional[bool]:
+    def exists(self) -> t.Optional[bool]:
         return self.file_metadata.exists
 
     @property
-    def record_locator(self) -> Optional[Dict[str, Any]]:
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
             "user_pname": self.config.user_pname,
             "server_relative_path": self.server_relative_path,
         }
 
     @property
-    def version(self) -> Optional[str]:
+    def version(self) -> t.Optional[str]:
         return self.file_metadata.version
 
     @property
-    def source_url(self) -> Optional[str]:
+    def source_url(self) -> t.Optional[str]:
         return self.file_metadata.source_url
 
     @requires_dependencies(["office365"], extras="onedrive")
@@ -206,20 +204,17 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return
 
 
-class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
-    config: SimpleOneDriveConfig
-
-    def __init__(self, standard_config: StandardConnectorConfig, config: SimpleOneDriveConfig):
-        super().__init__(standard_config, config)
-        self._set_client()
+@dataclass
+class OneDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
+    connector_config: SimpleOneDriveConfig
 
     @requires_dependencies(["office365"], extras="onedrive")
     def _set_client(self):
         from office365.graph_client import GraphClient
 
-        self.client = GraphClient(self.config.token_factory)
+        self.client = GraphClient(self.connector_config.token_factory)
 
-    def _list_objects(self, folder, recursive) -> List["DriveItem"]:
+    def _list_objects(self, folder, recursive) -> t.List["DriveItem"]:
         drive_items = folder.children.get().execute_query()
         files = [d for d in drive_items if d.is_file]
         if not recursive:
@@ -233,20 +228,21 @@ class OneDriveConnector(ConnectorCleanupMixin, BaseConnector):
         file_path = file.parent_reference.path.split(":")[-1]
         file_path = file_path[1:] if file_path[0] == "/" else file_path
         return OneDriveIngestDoc(
-            self.standard_config,
-            self.config,
-            file.name,
-            file_path,
+            connector_config=self.connector_config,
+            partition_config=self.partition_config,
+            read_config=self.read_config,
+            file_name=file.name,
+            file_path=file_path,
         )
 
     def initialize(self):
-        pass
+        self._set_client()
 
     def get_ingest_docs(self):
-        root = self.client.users[self.config.user_pname].drive.get().execute_query().root
-        if fpath := self.config.path:
+        root = self.client.users[self.connector_config.user_pname].drive.get().execute_query().root
+        if fpath := self.connector_config.path:
             root = root.get_by_path(fpath).get().execute_query()
             if root is None or not root.is_folder:
                 raise ValueError(f"Unable to find directory, given: {fpath}")
-        files = self._list_objects(root, self.config.recursive)
+        files = self._list_objects(root, self.connector_config.recursive)
         return [self._gen_ingest_doc(f) for f in files]

@@ -1,4 +1,5 @@
 import os
+import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
 from functools import cached_property
@@ -9,12 +10,11 @@ import pytz
 
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -23,10 +23,10 @@ from unstructured.utils import requires_dependencies
 @dataclass
 class SimpleRedditConfig(BaseConnectorConfig):
     subreddit_name: str
-    client_id: Optional[str]
-    client_secret: Optional[str]
+    client_id: t.Optional[str]
+    client_secret: t.Optional[str]
     user_agent: str
-    search_query: Optional[str]
+    search_query: t.Optional[str]
     num_posts: int
 
     def __post_init__(self):
@@ -132,27 +132,35 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self.file_metadata.source_url
 
 
-@requires_dependencies(["praw"], extras="reddit")
-class RedditConnector(ConnectorCleanupMixin, BaseConnector):
-    config: SimpleRedditConfig
+@dataclass
+class RedditSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
+    connector_config: SimpleRedditConfig
 
-    def __init__(self, standard_config: StandardConnectorConfig, config: SimpleRedditConfig):
+    @requires_dependencies(["praw"], extras="reddit")
+    def initialize(self):
         from praw import Reddit
 
-        super().__init__(standard_config, config)
         self.reddit = Reddit(
-            client_id=config.client_id,
-            client_secret=config.client_secret,
-            user_agent=config.user_agent,
+            client_id=self.connector_config.client_id,
+            client_secret=self.connector_config.client_secret,
+            user_agent=self.connector_config.user_agent,
         )
 
-    def initialize(self):
-        pass
-
     def get_ingest_docs(self):
-        subreddit = self.reddit.subreddit(self.config.subreddit_name)
-        if self.config.search_query:
-            posts = subreddit.search(self.config.search_query, limit=self.config.num_posts)
+        subreddit = self.reddit.subreddit(self.connector_config.subreddit_name)
+        if self.connector_config.search_query:
+            posts = subreddit.search(
+                self.connector_config.search_query,
+                limit=self.connector_config.num_posts,
+            )
         else:
-            posts = subreddit.hot(limit=self.config.num_posts)
-        return [RedditIngestDoc(self.standard_config, self.config, post.id) for post in posts]
+            posts = subreddit.hot(limit=self.connector_config.num_posts)
+        return [
+            RedditIngestDoc(
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                read_config=self.read_config,
+                post=post,
+            )
+            for post in posts
+        ]
