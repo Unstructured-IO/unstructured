@@ -815,13 +815,11 @@ def test_add_chunking_strategy_on_partition_pdf(
 
 def test_partition_pdf_warns_with_ocr_languages(caplog):
     filename = "example-docs/chevron-page.pdf"
-    with open(filename) as f:
-        _ = pdf.partition_pdf(filename=filename, strategy="hi_res", ocr_languages="eng")
+    pdf.partition_pdf(filename=filename, strategy="hi_res", ocr_languages="eng")
     assert "The ocr_languages kwarg will be deprecated" in caplog.text
 
 
 def test_partition_pdf_or_image_warns_with_ocr_languages(caplog):
     filename = "example-docs/DA-1p.pdf"
-    with open(filename) as f:
-        _ = pdf.partition_pdf_or_image(filename=filename, strategy="hi_res", ocr_languages="eng")
+    pdf.partition_pdf_or_image(filename=filename, strategy="hi_res", ocr_languages="eng")
     assert "The ocr_languages kwarg will be deprecated" in caplog.text
