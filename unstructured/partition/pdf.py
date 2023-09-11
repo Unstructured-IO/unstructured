@@ -90,7 +90,7 @@ def partition_pdf(
         I.e., rows and cells are preserved.
         Whether True or False, the "text" field is always present in any Table element
         and is the text content of the table (no structure).
-    languages 
+    languages
         The languages present in the document, for use in partitioning and/or OCR. To use a language
         with Tesseract, you'll first need to install the appropriate Tesseract language pack.
     max_partition
