@@ -11,7 +11,8 @@ from abc import ABC
 from copy import deepcopy
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
+from typing_extensions import TypedDict
 
 from unstructured.documents.coordinates import (
     TYPE_TO_COORDINATE_SYSTEM_MAP,
