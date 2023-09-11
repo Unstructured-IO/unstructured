@@ -50,6 +50,68 @@ from unstructured.utils import dependency_exists
 if dependency_exists("pypandoc"):
     import pypandoc
 
+
+def convert_and_partition_docx(
+    source_format: str,
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
+) -> List[Element]:
+    """Converts a document to DOCX and then partitions it using partition_docx.
+
+    Works with any file format support by pandoc.
+
+    Parameters
+    ----------
+    source_format
+        The format of the source document, .e.g. odt
+    filename
+        A string defining the target filename path.
+    file
+        A file-like object using "rb" mode --> open(filename, "rb").
+    include_metadata
+        Determines whether or not metadata is included in the metadata attribute on the elements in
+        the output.
+    """
+    if filename is None:
+        filename = ""
+    exactly_one(filename=filename, file=file)
+
+    filename_no_path = ""
+    if len(filename) > 0:
+        _, filename_no_path = os.path.split(os.path.abspath(filename))
+        base_filename, _ = os.path.splitext(filename_no_path)
+        if not os.path.exists(filename):
+            raise ValueError(f"The file {filename} does not exist.")
+    elif file is not None:
+        tmp = tempfile.NamedTemporaryFile(delete=False)
+        tmp.write(file.read())
+        tmp.close()
+        filename = tmp.name
+        _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
+
+    base_filename, _ = os.path.splitext(filename_no_path)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        docx_filename = os.path.join(tmpdir, f"{base_filename}.docx")
+        pypandoc.convert_file(  # pyright: ignore
+            filename,
+            "docx",
+            format=source_format,
+            outputfile=docx_filename,
+        )
+        elements = partition_docx(
+            filename=docx_filename,
+            metadata_filename=metadata_filename,
+            include_metadata=include_metadata,
+            metadata_last_modified=metadata_last_modified,
+        )
+
+    return elements
+
+
 # NOTE(robinson) - documentation on built in styles can be found at the link below
 # ref: https://python-docx.readthedocs.io/en/latest/user/
 #   styles-understanding.html#paragraph-styles-in-default-template
@@ -328,66 +390,6 @@ def _get_headers_and_footers(
         headers_and_footers.append((headers, footers))
 
     return headers_and_footers
-
-
-def convert_and_partition_docx(
-    source_format: str,
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    include_metadata: bool = True,
-    metadata_filename: Optional[str] = None,
-    metadata_last_modified: Optional[str] = None,
-) -> List[Element]:
-    """Converts a document to DOCX and then partitions it using partition_docx. Works with
-    any file format support by pandoc.
-
-    Parameters
-    ----------
-    source_format
-        The format of the source document, .e.g. odt
-    filename
-        A string defining the target filename path.
-    file
-        A file-like object using "rb" mode --> open(filename, "rb").
-    include_metadata
-        Determines whether or not metadata is included in the metadata attribute on the
-        elements in the output.
-    """
-    if filename is None:
-        filename = ""
-    exactly_one(filename=filename, file=file)
-
-    filename_no_path = ""
-    if len(filename) > 0:
-        _, filename_no_path = os.path.split(os.path.abspath(filename))
-        base_filename, _ = os.path.splitext(filename_no_path)
-        if not os.path.exists(filename):
-            raise ValueError(f"The file {filename} does not exist.")
-    elif file is not None:
-        tmp = tempfile.NamedTemporaryFile(delete=False)
-        tmp.write(file.read())
-        tmp.close()
-        filename = tmp.name
-        _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
-
-    base_filename, _ = os.path.splitext(filename_no_path)
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        docx_filename = os.path.join(tmpdir, f"{base_filename}.docx")
-        pypandoc.convert_file(  # pyright: ignore
-            filename,
-            "docx",
-            format=source_format,
-            outputfile=docx_filename,
-        )
-        elements = partition_docx(
-            filename=docx_filename,
-            metadata_filename=metadata_filename,
-            include_metadata=include_metadata,
-            metadata_last_modified=metadata_last_modified,
-        )
-
-    return elements
 
 
 def _get_emphasized_texts_from_paragraph(paragraph: Paragraph) -> List[Dict[str, str]]:
