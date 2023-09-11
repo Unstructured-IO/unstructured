@@ -48,7 +48,24 @@ def delta_table_writer(
     )
 
 
-writer_map: t.Dict[str, t.Callable] = {
-    "s3": s3_writer,
-    "delta_table": delta_table_writer,
-}
+@requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
+def dropbox_writer(
+    remote_url: str,
+    token: t.Optional[str],
+    verbose: bool = False,
+):
+    from unstructured.ingest.connector.dropbox import (
+        DropboxDestinationConnector,
+        SimpleDropboxConfig,
+    )
+
+    return DropboxDestinationConnector(
+        write_config=WriteConfig(),
+        connector_config=SimpleDropboxConfig(
+            path=remote_url,
+            access_kwargs={"token": token},
+        ),
+    )
+
+
+writer_map = {"s3": s3_writer, "delta_table": delta_table_writer, "dropbox": dropbox_writer}

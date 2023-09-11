@@ -22,4 +22,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
    --token  "$DROPBOX_TOKEN" \
    --num-processes 2 \
    --recursive \
-   --verbose
+   --verbose \
+   dropbox \
+   --remote-url "dropbox://utic-ingest-test-fixtures-output/" \
+   --token "$DROPBOX_TOKEN"

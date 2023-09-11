@@ -10,6 +10,7 @@ from .confluence import get_source_cmd as confluence_src
 from .delta_table import get_dest_cmd as delta_table_dest
 from .delta_table import get_source_cmd as delta_table_src
 from .discord import get_source_cmd as discord_src
+from .dropbox import get_dest_cmd as dropbox_dest
 from .dropbox import get_source_cmd as dropbox_src
 from .elasticsearch import get_source_cmd as elasticsearch_src
 from .fsspec import get_source_cmd as fsspec_src
@@ -58,7 +59,7 @@ src: t.List[click.Group] = [
     wikipedia_src(),
 ]
 
-dest: t.List[click.Command] = [s3_dest(), delta_table_dest()]
+dest: t.List[click.Command] = [s3_dest(), delta_table_dest(), dropbox_dest()]
 
 __all__ = [
     "src",
