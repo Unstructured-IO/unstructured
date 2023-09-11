@@ -287,7 +287,8 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
             file_path = obj.serverRelativeUrl[1:]
 
         return SharepointIngestDoc(
-            self.standard_config,
+            self.read_config,
+            self.partition_config,
             self.connector_config,
             base_url,
             server_path,
