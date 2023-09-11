@@ -216,7 +216,7 @@ def set_element_hierarchy(
     for element in elements:
         parent_id = None
         element_category = getattr(element, "category", None)
-        element_category_depth = getattr(element.metadata, "category_depth", 0)
+        element_category_depth = getattr(element.metadata, "category_depth", 0) or 0
 
         if not element_category:
             continue
@@ -224,18 +224,18 @@ def set_element_hierarchy(
         while stack:
             top_element: Element = stack[-1]
             top_element_category = getattr(top_element, "category")
-            top_element_category_depth = getattr(
-                top_element.metadata,
-                "category_depth",
-                0,
+            top_element_category_depth = (
+                getattr(
+                    top_element.metadata,
+                    "category_depth",
+                    0,
+                )
+                or 0
             )
 
             if (
-                top_element_category == element_category and top_element_category_depth
-                if top_element_category_depth
-                else element_category_depth > 0
-                if element_category_depth
-                else 0
+                top_element_category == element_category
+                and top_element_category_depth < element_category_depth
             ) or (
                 top_element_category != element_category
                 and element_category in ruleset.get(top_element_category, [])

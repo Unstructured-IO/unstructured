@@ -7,6 +7,7 @@ from unstructured_inference.inference.layoutelement import LocationlessLayoutEle
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CheckBox,
+    ElementMetadata,
     FigureCaption,
     Header,
     ListItem,
@@ -324,8 +325,8 @@ def test_set_element_hierarchy():
         NarrativeText(text="NarrativeText"),  # 1
         FigureCaption(text="FigureCaption"),  # 2
         ListItem(text="ListItem"),  # 3
-        ListItem(text="ListItem"),  # 4
-        ListItem(text="ListItem"),  # 5
+        ListItem(text="ListItem", metadata=ElementMetadata(category_depth=1)),  # 4
+        ListItem(text="ListItem", metadata=ElementMetadata(category_depth=1)),  # 5
         ListItem(text="ListItem"),  # 6
         CheckBox(element_id="some-id-1", checked=True),  # 7
         Title(text="Title 2"),  # 8
@@ -334,6 +335,7 @@ def test_set_element_hierarchy():
         Text(text="Text"),  # 11
     ]
     elements = common.set_element_hierarchy(elements_to_set)
+
     assert (
         elements[1].metadata.parent_id == elements[0].id
     ), "NarrativeText should be child of Title"
@@ -341,8 +343,8 @@ def test_set_element_hierarchy():
         elements[2].metadata.parent_id == elements[0].id
     ), "FigureCaption should be child of Title"
     assert elements[3].metadata.parent_id == elements[0].id, "ListItem should be child of Title"
-    assert elements[4].metadata.parent_id == elements[0].id, "ListItem should be child of Title"
-    assert elements[5].metadata.parent_id == elements[0].id, "ListItem should be child of Title"
+    assert elements[4].metadata.parent_id == elements[3].id, "ListItem should be child of Title"
+    assert elements[5].metadata.parent_id == elements[3].id, "ListItem should be child of Title"
     assert elements[6].metadata.parent_id == elements[0].id, "ListItem should be child of Title"
     assert (
         elements[7].metadata.parent_id is None
