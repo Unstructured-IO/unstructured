@@ -177,6 +177,9 @@ class ElementMetadata:
     # Metadata extracted via regex
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
 
+    # Detection Model Class Probabilities from Unstructured-Inference Hi-Res
+    detection_class_prob: Optional[float] = None
+
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
             self.filename = str(self.filename)

@@ -1,18 +1,42 @@
-## 0.10.13-dev3
+## 0.10.15-dev0
+
+### Features
+
+* Adds a naive hierarchy for elements via a `parent_id` on the element's metadata
+
+## 0.10.14
+
+### Enhancements
+
+* Update all connectors to use new downstream architecture
+  * New click type added to parse comma-delimited string inputs
+  * Some CLI options renamed
+
+### Features
+
+### Fixes
+
+## 0.10.13
 
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+* Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
+* Updated the `_detect_filetype_from_octet_stream()` function to use libmagic to infer the content type of file when it is not a zip file.
+* Tesseract minor version bump to 5.3.2
 
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization
-* Adds a naive hierarchy for elements via a `parent_id` on the element's metadata
+* Add `clean_ligatures` function to expand ligatures in text
 
 ### Fixes
 
 * `partition_html` breaks on `<br>` elements.
 * Ingest error handling to properly raise errors when wrapped
+* GH issue 1361: fixes a sortig error that prevented some PDF's from being parsed
+* Bump unstructured-inference
+  * Brings back embedded images in PDF's (0.5.23)
 
 ## 0.10.12
 

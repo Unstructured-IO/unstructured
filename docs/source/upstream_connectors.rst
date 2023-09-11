@@ -21,6 +21,7 @@ in our community `Slack. <https://join.slack.com/t/unstructuredw-kbe4326/shared_
    upstream_connectors/gitlab
    upstream_connectors/google_cloud_storage
    upstream_connectors/google_drive
+   upstream_connectors/jira
    upstream_connectors/local_connector
    upstream_connectors/notion
    upstream_connectors/onedrive

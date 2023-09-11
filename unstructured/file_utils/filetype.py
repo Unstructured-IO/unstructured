@@ -400,6 +400,10 @@ def _detect_filetype_from_octet_stream(file: IO) -> FileType:
         elif all(f in archive_filenames for f in EXPECTED_PPTX_FILES):
             return FileType.PPTX
 
+    if LIBMAGIC_AVAILABLE:
+        # Infer mime type using magic if octet-stream is not zip file
+        mime_type = magic.from_buffer(file.read(4096), mime=True)
+        return STR_TO_FILETYPE.get(mime_type, FileType.UNK)
     logger.warning(
         "Could not detect the filetype from application/octet-stream MIME type.",
     )

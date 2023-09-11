@@ -14,13 +14,13 @@ sh "$SCRIPT_DIR"/check-num-files-expected-output.sh 2 $OUTPUT_FOLDER_NAME 10k
 PYTHONPATH=. ./unstructured/ingest/main.py \
     biomed \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.data_source.date_processed \
+    --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.data_source.date_processed,metadata.detection_class_prob \
     --num-processes 2 \
-    --partition-strategy hi_res \
+    --strategy hi_res \
     --preserve-downloads \
     --re-download \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --api-from "2019-01-02" \
     --api-until "2019-01-02+00:03:10" \
