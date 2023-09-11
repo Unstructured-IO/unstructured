@@ -7,6 +7,7 @@ from PIL import Image
 from pytesseract import TesseractError
 from unstructured_inference.inference import layout
 
+from unstructured.chunking.title import chunk_by_title
 from unstructured.partition import image, pdf
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
@@ -409,3 +410,13 @@ def test_partition_image_with_ocr_has_coordinates_from_file(
     elements = image.partition_image(filename=filename, strategy="ocr_only")
     int_coordinates = [(int(x), int(y)) for x, y in elements[0].metadata.coordinates.points]
     assert int_coordinates == [(14, 36), (14, 16), (381, 16), (381, 36)]
+
+
+def test_add_chunking_strategy_on_partition_image(
+    filename="example-docs/layout-parser-paper-fast.jpg",
+):
+    elements = image.partition_image(filename=filename)
+    chunk_elements = image.partition_image(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks

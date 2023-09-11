@@ -3,6 +3,7 @@ import pathlib
 
 import pytest
 
+from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import NarrativeText, Title
 from unstructured.partition.json import partition_json
 from unstructured.partition.xml import partition_xml
@@ -277,3 +278,13 @@ def test_partition_xml_with_narrative_line_breaks():
     assert isinstance(elements[1], NarrativeText)
     assert str(elements[1]).startswith("A conure is a very friendly bird.")
     assert str(elements[1]).strip().endswith("Conures are feathery and like to dance.")
+
+
+def test_add_chunking_strategy_on_partition_xml(
+    filename="example-docs/factbook.xml",
+):
+    elements = partition_xml(filename=filename)
+    chunk_elements = partition_xml(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks

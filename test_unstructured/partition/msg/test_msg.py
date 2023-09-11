@@ -4,6 +4,7 @@ import pathlib
 import msg_parser
 import pytest
 
+from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     ElementMetadata,
     ListItem,
@@ -276,3 +277,13 @@ def test_partition_msg_with_pgp_encrypted_message(
     assert elements == []
     assert "WARNING" in caplog.text
     assert "Encrypted email detected" in caplog.text
+
+
+def test_add_chunking_strategy_on_partition_msg(
+    filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg"),
+):
+    elements = partition_msg(filename=filename)
+    chunk_elements = partition_msg(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
