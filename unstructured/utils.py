@@ -47,7 +47,7 @@ def requires_dependencies(
     return decorator
 
 
-def dependency_exists(dependency):
+def dependency_exists(dependency: str):
     try:
         importlib.import_module(dependency)
     except ImportError as e:
