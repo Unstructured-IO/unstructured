@@ -1,7 +1,7 @@
 import typing as t
 from pathlib import Path
 
-from unstructured.ingest.interfaces import WriteConfig
+from unstructured.ingest.interfaces import BaseDestinationConnector
 from unstructured.utils import requires_dependencies
 
 
@@ -10,14 +10,15 @@ def s3_writer(
     remote_url: str,
     anonymous: bool,
     verbose: bool = False,
-):
+) -> BaseDestinationConnector:
+    from unstructured.ingest.connector.fsspec import FsspecWriteConfig
     from unstructured.ingest.connector.s3 import (
         S3DestinationConnector,
         SimpleS3Config,
     )
 
     return S3DestinationConnector(
-        write_config=WriteConfig(),
+        write_config=FsspecWriteConfig(),
         connector_config=SimpleS3Config(
             path=remote_url,
             access_kwargs={"anon": anonymous},
@@ -53,14 +54,15 @@ def dropbox_writer(
     remote_url: str,
     token: t.Optional[str],
     verbose: bool = False,
-):
+) -> BaseDestinationConnector:
     from unstructured.ingest.connector.dropbox import (
         DropboxDestinationConnector,
         SimpleDropboxConfig,
     )
+    from unstructured.ingest.connector.fsspec import FsspecWriteConfig
 
     return DropboxDestinationConnector(
-        write_config=WriteConfig(),
+        write_config=FsspecWriteConfig(),
         connector_config=SimpleDropboxConfig(
             path=remote_url,
             access_kwargs={"token": token},
@@ -74,12 +76,14 @@ def azure_writer(
     account_name: t.Optional[str],
     account_key: t.Optional[str],
     connection_string: t.Optional[str],
+    overwrite: bool = False,
     verbose: bool = False,
-):
+) -> BaseDestinationConnector:
     from unstructured.ingest.connector.azure import (
         AzureBlobStorageDestinationConnector,
         SimpleAzureBlobStorageConfig,
     )
+    from unstructured.ingest.connector.fsspec import FsspecWriteConfig
 
     if account_name:
         access_kwargs = {
@@ -92,7 +96,7 @@ def azure_writer(
         access_kwargs = {}
 
     return AzureBlobStorageDestinationConnector(
-        write_config=WriteConfig(),
+        write_config=FsspecWriteConfig(put_kwargs={"overwrite": overwrite}),
         connector_config=SimpleAzureBlobStorageConfig(
             path=remote_url,
             access_kwargs=access_kwargs,
@@ -100,7 +104,7 @@ def azure_writer(
     )
 
 
-writer_map = {
+writer_map: t.Dict[str, t.Callable] = {
     "s3": s3_writer,
     "delta_table": delta_table_writer,
     "dropbox": dropbox_writer,

@@ -49,6 +49,23 @@ class AzureCliConfig(BaseConfig, CliMixin):
         cmd.params.extend(options)
 
 
+@dataclass
+class AzureWriteConfig(BaseConfig, CliMixin):
+    overwrite: bool = False
+
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--overwrite"],
+                is_flag=True,
+                default=False,
+                help="If the content already exists, should new uploads overwrite.",
+            ),
+        ]
+        cmd.params.extend(options)
+
+
 @click.group(name="azure", invoke_without_command=True, cls=Group)
 @click.pass_context
 def azure_source(ctx: click.Context, **options):
@@ -107,6 +124,7 @@ def azure_dest(ctx: click.Context, **options):
 def get_dest_cmd() -> click.Command:
     cmd = azure_dest
     AzureCliConfig.add_cli_options(cmd)
+    AzureWriteConfig.add_cli_options(cmd)
     CliRemoteUrlConfig.add_cli_options(cmd)
     return cmd
 

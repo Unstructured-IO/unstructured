@@ -14,6 +14,7 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
     SourceMetadata,
+    WriteConfig,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import (
@@ -222,8 +223,14 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
 
 @dataclass
+class FsspecWriteConfig(WriteConfig):
+    put_kwargs: t.Dict[str, t.Any] = field(default_factory=dict)
+
+
+@dataclass
 class FsspecDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleFsspecConfig
+    write_config: FsspecWriteConfig
 
     def initialize(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
@@ -239,19 +246,26 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             **self.connector_config.get_access_kwargs(),
         )
 
-        logger.info(f"Writing content using filesystem: {type(fs).__name__}")
+        logger.info(
+            f"Writing content using filesystem: {type(fs).__name__} "
+            f"with kwargs: {self.write_config.put_kwargs}",
+        )
 
         for doc in docs:
-            s3_file_path = str(doc._output_filename).replace(
+            file_path = str(doc._output_filename).replace(
                 doc.partition_config.output_dir,
-                self.connector_config.path,
+                "",
             )
-            s3_folder = self.connector_config.path
-            if s3_folder[-1] != "/":
-                s3_folder = f"{s3_file_path}/"
-            if s3_file_path[0] == "/":
-                s3_file_path = s3_file_path[1:]
+            folder = self.connector_config.path
+            if folder[-1] != "/":
+                folder = f"{folder}/"
+            if file_path[0] == "/":
+                file_path = file_path[1:]
 
-            s3_output_path = s3_folder + s3_file_path
-            logger.debug(f"Uploading {doc._output_filename} -> {s3_output_path}")
-            fs.put_file(lpath=doc._output_filename, rpath=s3_output_path)
+            output_path = folder + file_path
+            logger.debug(f"Uploading {doc._output_filename} -> {output_path}")
+            fs.put_file(
+                lpath=doc._output_filename,
+                rpath=output_path,
+                **self.write_config.put_kwargs,
+            )
