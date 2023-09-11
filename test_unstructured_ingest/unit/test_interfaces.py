@@ -135,6 +135,7 @@ def test_partition_file():
         "file_directory",
         "filetype",
         "last_modified",
+        "parent_id",  # TODO: Remove this key
     }
     for elem in isd_elems:
         assert expected_keys == set(elem.keys())
@@ -174,7 +175,10 @@ def test_process_file_fields_include_default(mocker, partition_test_results):
         assert data_source_metadata["date_processed"] == TEST_DATE_PROCESSSED
 
 
-def test_process_file_metadata_includes_filename_and_filetype(mocker, partition_test_results):
+def test_process_file_metadata_includes_filename_and_filetype(
+    mocker,
+    partition_test_results,
+):
     """Validate when metadata_include is set to "filename,filetype",
     only filename is included in metadata"""
     mocker.patch(
