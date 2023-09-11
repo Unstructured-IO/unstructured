@@ -1,8 +1,18 @@
-## 0.10.14-dev0
+## 0.10.15-dev2
 
 ### Enhancements
 
+* Updated HTML Partitioning to extract tables
 * Create and add `add_chunking_strategy` decorator to partition functions
+
+### Features
+
+### Fixes
+
+## 0.10.14
+
+### Enhancements
+
 * Update all connectors to use new downstream architecture
   * New click type added to parse comma-delimited string inputs
   * Some CLI options renamed

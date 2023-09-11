@@ -8,7 +8,7 @@ from requests.models import Response
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import ListItem, NarrativeText, Title
+from unstructured.documents.elements import ListItem, NarrativeText, Table, Title
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
@@ -268,26 +268,25 @@ def test_partition_html_raises_with_too_many_specified():
 
 def test_partition_html_on_ideas_page(filename="example-docs/ideas-page.html"):
     elements = partition_html(filename=filename)
-    assert len(elements) == 4
+    assert len(elements) == 1
+    assert elements[0] == Table(
+        text="January 2023 ( Someone  fed my essays into GPT to make something "
+        "that could answer\nquestions based on them, then asked it where good "
+        "ideas come from.  The\nanswer was ok, but not what I would have said. "
+        "This is what I would have said.) The way to get new ideas is to notice "
+        "anomalies: what seems strange,\nor missing, or broken? You can see anomalies"
+        " in everyday life (much\nof standup comedy is based on this), but the best "
+        "place to look for\nthem is at the frontiers of knowledge. Knowledge grows "
+        "fractally.\nFrom a distance its edges look smooth, but when you learn "
+        "enough\nto get close to one, you'll notice it's full of gaps. These "
+        "gaps\nwill seem obvious; it will seem inexplicable that no one has tried\nx "
+        "or wondered about y. In the best case, exploring such gaps yields\nwhole "
+        "new fractal buds.",
+    )
 
-    assert elements[0] == Title("January 2023")
     assert elements[0].metadata.emphasized_text_contents is None
     assert elements[0].metadata.link_urls is None
-
-    assert elements[1].text.startswith("(Someone fed my essays")
-    assert elements[1].text.endswith("I would have said.)")
-    assert len(elements[1].metadata.emphasized_text_contents) == 1
-    assert len(elements[1].metadata.link_urls) == 1
-
-    assert elements[2].text.startswith("The way to get new ideas")
-    assert elements[2].text.endswith("the frontiers of knowledge.")
-    assert elements[2].metadata.emphasized_text_contents is None
-    assert elements[2].metadata.link_urls is None
-
-    assert elements[3].text.startswith("Knowledge grows fractally")
-    assert elements[3].text.endswith("whole new fractal buds.")
-    assert elements[3].metadata.emphasized_text_contents is None
-    assert elements[3].metadata.link_urls is None
+    assert elements[0].metadata.text_as_html is not None
 
 
 def test_user_without_file_write_permission_can_partition_html(tmp_path, monkeypatch):
