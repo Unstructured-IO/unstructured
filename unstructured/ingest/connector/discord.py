@@ -130,7 +130,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         self._create_full_tmp_dir_path()
-        if self.config.verbose:
+        if self.connector_config.verbose:
             logger.debug(f"fetching {self} - PID: {os.getpid()}")
 
         messages, _ = self._get_messages()

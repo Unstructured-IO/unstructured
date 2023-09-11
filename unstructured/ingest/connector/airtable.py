@@ -66,8 +66,8 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def filename(self):
         return (
             Path(self.read_config.download_dir)
-            / self.file_meta.base_id
-            / f"{self.file_meta.table_id}.csv"
+            / self.table_meta.base_id
+            / f"{self.table_meta.table_id}.csv"
         ).resolve()
 
     @property
@@ -104,7 +104,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _get_table_rows(self):
         from pyairtable import Api
 
-        api = Api(self.config.personal_access_token)
+        api = Api(self.connector_config.personal_access_token)
         try:
             table = api.table(self.table_meta.base_id, self.table_meta.table_id)
             table_url = table.url

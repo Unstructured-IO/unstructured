@@ -1,9 +1,9 @@
 import math
 import os
-from datetime import datetime
-from functools import cached_property
 import typing as t
 from dataclasses import dataclass, field
+from datetime import datetime
+from functools import cached_property
 from pathlib import Path
 
 from unstructured.ingest.error import SourceConnectionError
@@ -110,8 +110,8 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         """Create output file path based on output directory, space id and document id."""
-        output_file = f"{self.file_meta.document_id}.json"
-        return Path(self.partition_config.output_dir) / self.file_meta.space_id / output_file
+        output_file = f"{self.document_meta.document_id}.json"
+        return Path(self.partition_config.output_dir) / self.document_meta.space_id / output_file
 
     @property
     def date_created(self) -> t.Optional[str]:
@@ -146,9 +146,9 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         try:
             confluence = Confluence(
-                self.config.url,
-                username=self.config.user_email,
-                password=self.config.api_token,
+                self.connector_config.url,
+                username=self.connector_config.user_email,
+                password=self.connector_config.api_token,
             )
             result = confluence.get_page_by_id(
                 page_id=self.document_meta.document_id,
