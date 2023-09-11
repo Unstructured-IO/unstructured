@@ -60,7 +60,7 @@ class GitHubIngestDoc(GitIngestDoc):
         from github.GithubException import UnknownObjectException
 
         try:
-            content_file = self.connector_config._get_repo().get_contents(self.path)
+            content_file = self.connector_config.get_repo().get_contents(self.path)
         except UnknownObjectException:
             logger.error(f"File doesn't exists {self.connector_config.url}/{self.path}")
             return None
@@ -108,7 +108,8 @@ class GitHubIngestDoc(GitIngestDoc):
         contents = self._fetch_content()
         if contents is None:
             raise ValueError(
-                f"Failed to retrieve file from repo " f"{self.connector_config.url}/{self.path}. Check logs",
+                f"Failed to retrieve file from repo "
+                f"{self.connector_config.url}/{self.path}. Check logs",
             )
         with open(self.filename, "wb") as f:
             f.write(contents)
@@ -123,7 +124,7 @@ class GitHubSourceConnector(GitSourceConnector):
         from github.GithubException import UnknownObjectException
 
         try:
-            repo = self.connector_config._get_repo()
+            repo = self.connector_config.get_repo()
         except UnknownObjectException:
             logger.error(f"Repository {self.connector_config.repo_path} does not exist.")
             return []

@@ -49,7 +49,7 @@ class GitLabIngestDoc(GitIngestDoc):
         from gitlab.exceptions import GitlabHttpError
 
         try:
-            project = self.connector_config._get_project()
+            project = self.connector_config.get_project()
             content_file = project.files.get(
                 self.path,
                 ref=self.connector_config.branch or project.default_branch,
@@ -65,7 +65,8 @@ class GitLabIngestDoc(GitIngestDoc):
         content_file = self._fetch_content()
         if content_file is None:
             raise ValueError(
-                f"Failed to retrieve file from repo " f"{self.connector_config.url}/{self.path}. Check logs.",
+                f"Failed to retrieve file from repo "
+                f"{self.connector_config.url}/{self.path}. Check logs.",
             )
         contents = content_file.decode()
         with open(self.filename, "wb") as f:

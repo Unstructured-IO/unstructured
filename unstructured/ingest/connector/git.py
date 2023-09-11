@@ -66,8 +66,8 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def record_locator(self) -> t.Dict[str, t.Any]:
         return {
-            "url": self.config.url,
-            "repo_path": self.config.repo_path,
+            "url": self.connector_config.url,
+            "repo_path": self.connector_config.repo_path,
             "file_path": self.path,
         }
 
