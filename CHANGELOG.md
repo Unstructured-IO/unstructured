@@ -1,11 +1,11 @@
-## 0.10.15-dev2
+## 0.10.15-dev0
 
 ### Enhancements
 
 * Updated HTML Partitioning to extract tables
 * Create and add `add_chunking_strategy` decorator to partition functions
 * Integrates Chipper types: 
-  * Headline,Subheadline -> Title
+  * Headline, Subheadline -> Title
   * Abstract -> NarrativeText
 
 ### Features
