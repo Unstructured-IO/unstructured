@@ -1,7 +1,7 @@
 [
   {
-    "type": "Title",
-    "element_id": "9fe4c68ec20dda7c6b1d3f760e5e6af6",
+    "type": "Table",
+    "element_id": "10b5ef18a3c7fb1d7436b2e1b256e5b9",
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1540126",
@@ -14,12 +14,7 @@
       },
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_text_contents": [
-        "Driver"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      "text_as_html": "<table><br><tbody><br><tr><td>Driver      </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Approver    </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Contributors</td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Informed    </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Objective   </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Due date    </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Key outcomes</td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Status      </td><td>NOT STARTED</td><td>/</td><td>IN PROGRESS</td><td>/</td><td>COMPLETE</td></tr><br></tbody><br></table>"
     },
     "text": "Driver"
   },
@@ -256,8 +251,8 @@
     "text": "🎯 Scope"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "0e5c4ed000097332e1e1b29a96fefd56",
+    "type": "Table",
+    "element_id": "f1f364fbde77afa0e99e8ea7ab4f7c3f",
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1540126",
@@ -270,12 +265,7 @@
       },
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_text_contents": [
-        "Must have:"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      "text_as_html": "<table><br><tbody><br><tr><td>Must have:   </td></tr><br><tr><td>Nice to have:</td></tr><br><tr><td>Not in scope:</td></tr><br></tbody><br></table>"
     },
     "text": "Must have:"
   },
@@ -544,8 +534,8 @@
     "text": "\\uD83D\\uDEA9 Milestones and deadlines"
   },
   {
-    "type": "Title",
-    "element_id": "9e86248cf2351e388065b80307b7ac00",
+    "type": "Table",
+    "element_id": "3f4ea3840d79521680c89a91dcd883cf",
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1540126",
@@ -558,12 +548,7 @@
       },
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_text_contents": [
-        "Milestone"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      "text_as_html": "<table><br><tbody><br><tr><td>Milestone</td><td>Owner</td><td>Deadline</td><td>Status</td></tr><br><tr><td>         </td><td>     </td><td>        </td><td>      </td></tr><br><tr><td>         </td><td>     </td><td>        </td><td>      </td></tr><br><tr><td>         </td><td>     </td><td>        </td><td>      </td></tr><br></tbody><br></table>"
     },
     "text": "Milestone"
   },

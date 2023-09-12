@@ -234,8 +234,8 @@
     "text": ""
   },
   {
-    "type": "Title",
-    "element_id": "8a7525b1492fb84833f5c4a69b30f4bf",
+    "type": "Table",
+    "element_id": "a240e43c0ae70731c65ae5430d2dab7f",
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
@@ -248,12 +248,7 @@
       },
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_text_contents": [
-        "Notes"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      "text_as_html": "<table><br><tbody><br><tr><td>Notes          </td></tr><br><tr><td>Important Links</td></tr><br></tbody><br></table>"
     },
     "text": "Notes"
   },

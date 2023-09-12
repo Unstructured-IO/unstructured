@@ -594,8 +594,8 @@
     "text": "Testdoc3 Heading 5 Sized Text"
   },
   {
-    "type": "Title",
-    "element_id": "a980779f0a4dcb2fbf46641f3d55fbf8",
+    "type": "Table",
+    "element_id": "5abf3e1bbc85012fe9e1d25966e00f5e",
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605989",
@@ -608,12 +608,7 @@
       },
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_text_contents": [
-        "Testdoc3 Table: Column 1 Row 0"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      "text_as_html": "<table><br><tbody><br><tr><td>Testdoc3 Table: Column 1 Row 0</td><td>Testdoc3 Table: Column 2 Row 0</td><td>Testdoc3 Table: Column 3 Row 0</td></tr><br><tr><td>Testdoc3 Table: Column 1 Row 1</td><td>Testdoc3 Table: Column 2 Row 1</td><td>Testdoc3 Table: Column 3 Row 1</td></tr><br><tr><td>Testdoc3 Table: Column 1 Row 2</td><td>Testdoc3 Table: Column 2 Row 2</td><td>Testdoc3 Table: Column 3 Row 2</td></tr><br></tbody><br></table>"
     },
     "text": "Testdoc3 Table: Column 1 Row 0"
   },

@@ -2,6 +2,7 @@ from typing import IO, TYPE_CHECKING, Dict, List, Optional
 
 import requests
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.documents.html import HTMLDocument
 from unstructured.documents.xml import VALID_PARSERS
@@ -24,6 +25,7 @@ if TYPE_CHECKING:
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.HTML)
+@add_chunking_strategy()
 def partition_html(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -39,6 +41,7 @@ def partition_html(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     skip_headers_and_footers: bool = False,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -77,7 +80,6 @@ def partition_html(
         return []
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
-
     last_modification_date = None
     if filename is not None:
         last_modification_date = get_last_modified_date(filename)
@@ -118,7 +120,6 @@ def partition_html(
 
     if skip_headers_and_footers:
         document = filter_footer_and_header(document)
-
     return document_to_element_list(
         document,
         sortable=False,
