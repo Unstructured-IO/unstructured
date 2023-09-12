@@ -238,10 +238,7 @@ class _DocxPartitioner:
         for element_item in self._document.element.body:
             if element_item.tag.endswith("tbl"):
                 table = self._document.tables[table_index]
-                emphasized_texts = _get_emphasized_texts_from_table(table)
-                emphasized_text_contents, emphasized_text_tags = _extract_contents_and_tags(
-                    emphasized_texts,
-                )
+                emphasized_text_contents, emphasized_text_tags = self._table_emphasis(table)
                 html_table = convert_ms_office_table_to_text(table, as_html=True)
                 text_table = convert_ms_office_table_to_text(table, as_html=False)
                 element = Table(text_table)
@@ -370,6 +367,13 @@ class _DocxPartitioner:
             if run.italic:
                 yield {"text": text, "tag": "i"}
 
+    def _iter_table_emphasis(self, table: DocxTable) -> Iterator[Dict[str, str]]:
+        """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`."""
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    yield from self._iter_paragraph_emphasis(paragraph)
+
     @lazyproperty
     def _last_modified(self) -> Optional[str]:
         """Last-modified date suitable for use in element metadata."""
@@ -483,6 +487,11 @@ class _DocxPartitioner:
         # in the mapping. Unknown style names will also return None.
         return STYLE_TO_ELEMENT_MAPPING.get(style_name)
 
+    def _table_emphasis(self, table: DocxTable) -> Tuple[List[str], List[str]]:
+        """[contents, tags] pair describing emphasized text in `table`."""
+        iter_tbl_emph, iter_tbl_emph_2 = itertools.tee(self._iter_table_emphasis(table))
+        return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])
+
 
 def _join_paragraphs(paragraphs: List[Paragraph]) -> Optional[str]:
     return "\n".join([paragraph.text for paragraph in paragraphs])
@@ -521,57 +530,6 @@ def _get_headers_and_footers(
         headers_and_footers.append((headers, footers))
 
     return headers_and_footers
-
-
-def _get_emphasized_texts_from_paragraph(paragraph: Paragraph) -> List[Dict[str, str]]:
-    """Get emphasized texts with bold/italic formatting from a paragraph in MS Word"""
-    emphasized_texts: List[Dict[str, str]] = []
-    for run in paragraph.runs:
-        text = run.text.strip() if run.text else None
-        if not text:
-            continue
-        if run.bold:
-            emphasized_texts.append({"text": text, "tag": "b"})
-        if run.italic:
-            emphasized_texts.append({"text": text, "tag": "i"})
-    return emphasized_texts
-
-
-def _get_emphasized_texts_from_table(table: DocxTable) -> List[Dict[str, str]]:
-    emphasized_texts: List[Dict[str, str]] = []
-    for row in table.rows:
-        for cell in row.cells:
-            for paragraph in cell.paragraphs:
-                _emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
-                emphasized_texts += _emphasized_texts
-    return emphasized_texts
-
-
-def _extract_contents_and_tags(
-    emphasized_texts: List[Dict[str, str]],
-) -> Tuple[Optional[List[str]], Optional[List[str]]]:
-    """
-    Extract the text contents and tags from a list of dictionaries containing emphasized texts.
-
-    Args:
-    - emphasized_texts (List[dict]): A list containing dictionaries with keys "text" and "tag".
-
-    Returns:
-    - Tuple[List[str], List[str]]: A tuple containing two lists -
-                                   one for text contents and one for tags extracted from the input.
-    """
-    emphasized_text_contents = (
-        [emphasized_text["text"] for emphasized_text in emphasized_texts]
-        if emphasized_texts
-        else None
-    )
-    emphasized_text_tags = (
-        [emphasized_text["tag"] for emphasized_text in emphasized_texts]
-        if emphasized_texts
-        else None
-    )
-
-    return emphasized_text_contents, emphasized_text_tags
 
 
 # == monkey-patch docx.text.Paragraph.runs ===========================================
