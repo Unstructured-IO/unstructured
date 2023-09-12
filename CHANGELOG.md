@@ -1,9 +1,10 @@
-## 0.10.15-dev2
+## 0.10.15-dev3
 
 ### Enhancements
 
 * Updated HTML Partitioning to extract tables
 * Create and add `add_chunking_strategy` decorator to partition functions
+* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf partitioning functions
 
 ### Features
 
