@@ -220,32 +220,16 @@ class _DocxPartitioner:
         metadata_last_modified: Optional[str] = None,
     ) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
-        return iter(
-            cls(
-                filename,
-                file,
-                metadata_filename,
-                include_page_breaks,
-                metadata_last_modified,
-            )._partition_docx()
-        )
+        return cls(
+            filename,
+            file,
+            metadata_filename,
+            include_page_breaks,
+            metadata_last_modified,
+        )._iter_document_elements()
 
-    def _partition_docx(self) -> List[Element]:
-        """Partitions Microsoft Word Documents in .docx format into its document elements.
-
-        Parameters
-        ----------
-        filename
-            A string defining the target filename path.
-        file
-            A file-like object using "rb" mode --> open(filename, "rb").
-        metadata_filename
-            The filename to use for the metadata. Relevant because partition_doc converts the
-            document to .docx before partition. We want the original source filename in the
-            metadata.
-        metadata_last_modified
-            The last modified date for the document.
-        """
+    def _iter_document_elements(self) -> Iterator[Element]:
+        """Generate each document-element in (docx) `document` in document order."""
 
         # Verify that only one of the arguments was provided
         exactly_one(filename=self._filename, file=self._file)
@@ -262,12 +246,11 @@ class _DocxPartitioner:
 
             document = docx.Document(cast(BinaryIO, spooled_to_bytes_io_if_needed(self._file)))
 
-        elements: List[Element] = []
         table_index = 0
 
         headers_and_footers = _get_headers_and_footers(document, self._metadata_filename)
         if len(headers_and_footers) > 0:
-            elements.extend(headers_and_footers[0][0])
+            yield from headers_and_footers[0][0]
 
         document_contains_pagebreaks = _element_contains_pagebreak(document._element)
         page_number = 1 if document_contains_pagebreaks else None
@@ -291,7 +274,7 @@ class _DocxPartitioner:
                     emphasized_text_contents=emphasized_text_contents,
                     emphasized_text_tags=emphasized_text_tags,
                 )
-                elements.append(element)
+                yield element
                 table_index += 1
             elif element_item.tag.endswith("p"):
                 if "<w:numPr>" in element_item.xml:
@@ -310,24 +293,22 @@ class _DocxPartitioner:
                         emphasized_text_contents=emphasized_text_contents,
                         emphasized_text_tags=emphasized_text_tags,
                     )
-                    elements.append(para_element)
+                    yield para_element
                 is_list = False
             elif element_item.tag.endswith("sectPr"):
                 if len(headers_and_footers) > section:
                     footers = headers_and_footers[section][1]
-                    elements.extend(footers)
+                    yield from footers
 
                 section += 1
                 if len(headers_and_footers) > section:
                     headers = headers_and_footers[section][0]
-                    elements.extend(headers)
+                    yield from headers
 
             if page_number is not None and _element_contains_pagebreak(element_item):
                 page_number += 1
                 if self._include_page_breaks:
-                    elements.append(PageBreak(text=""))
-
-        return elements
+                    yield PageBreak(text="")
 
 
 def _paragraph_to_element(
