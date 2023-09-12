@@ -340,9 +340,14 @@ def _partition_pdf_or_image_local(
         if isinstance(el, PageBreak) and not include_page_breaks:
             continue
 
-        # NOTE(christine): preserve image elements for other downstream use cases
         if isinstance(el, Image):
-            out_elements.append(cast(Element, el))
+            # NOTE(crag): small chunks of text from Image elements tend to be garbage
+            if not el.metadata.image_path and (
+                el.text is None or len(el.text) < 24 or el.text.find(" ") == -1
+            ):
+                continue
+            else:
+                out_elements.append(cast(Element, el))
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
         elif isinstance(el, Text):
             el.text = re.sub(
