@@ -1,10 +1,13 @@
-## 0.10.15-dev3
+## 0.10.15-dev5
+
 
 ### Enhancements
 
+* Use text-based classification hen elements come back uncategorized from PDF/Image partitioning
 * Updated HTML Partitioning to extract tables
 * Add paddleocr extra and makefile command to install
 * Create and add `add_chunking_strategy` decorator to partition functions
+* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf partitioning functions
 
 ### Features
 
@@ -64,7 +67,7 @@
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
-
+  
 ## 0.10.11
 
 ### Enhancements
