@@ -223,34 +223,23 @@ class _DocxPartitioner:
     def _iter_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in (docx) `document` in document order."""
 
-        table_index = 0
-
         headers_and_footers = _get_headers_and_footers(self._document, self._metadata_filename)
-        if len(headers_and_footers) > 0:
-            yield from headers_and_footers[0][0]
 
-        section = 0
-        for element_item in self._document.element.body:
-            if element_item.tag.endswith("tbl"):
-                yield from self._iter_table_element(self._document.tables[table_index])
-                table_index += 1
-            elif element_item.tag.endswith("p"):
-                paragraph = Paragraph(element_item, self._document)
-                yield from self._iter_maybe_paragraph_element(paragraph)
-            elif element_item.tag.endswith("sectPr"):
-                if len(headers_and_footers) > section:
-                    footers = headers_and_footers[section][1]
-                    yield from footers
-
-                section += 1
-                if len(headers_and_footers) > section:
-                    headers = headers_and_footers[section][0]
-                    yield from headers
-
-            if self._element_contains_pagebreak(element_item):
-                self._increment_page_number(1)
-                if self._include_page_breaks:
-                    yield PageBreak(text="")
+        for section_idx, section in enumerate(self._document.sections):
+            if len(headers_and_footers) > section_idx:
+                yield from headers_and_footers[section_idx][0]
+            for block_item in _SectBlockItemIterator.iter_sect_block_items(section, self._document):
+                if isinstance(block_item, Paragraph):
+                    yield from self._iter_maybe_paragraph_element(block_item)
+                    if self._element_contains_pagebreak(block_item._element):
+                        self._increment_page_number(1)
+                        if self._include_page_breaks:
+                            yield PageBreak(text="")
+                else:  # -- it's a Table object --
+                    yield from self._iter_table_element(block_item)
+            if len(headers_and_footers) > section_idx:
+                footers = headers_and_footers[section_idx][1]
+                yield from footers
 
     @lazyproperty
     def _document(self) -> Document:
@@ -534,7 +523,7 @@ def _get_headers_and_footers(
     return headers_and_footers
 
 
-class _SectBlockItemIterator:  # pyright: ignore[reportUnusedClass]
+class _SectBlockItemIterator:
     """Generates the block-items in a section.
 
     A block item is a docx Paragraph or Table. This small class is separated from
