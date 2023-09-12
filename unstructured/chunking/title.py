@@ -44,7 +44,9 @@ def chunk_by_title(
             or new_after_n_chars < 0
         )
     ):
-        raise ValueError("Invalid values for combine_under_n_chars and/or new_after_n_chars.")
+        raise ValueError(
+            "Invalid values for combine_under_n_chars and/or new_after_n_chars.",
+        )
 
     chunked_elements: List[Element] = []
     sections = _split_elements_by_title_and_table(
@@ -150,7 +152,7 @@ def _drop_extra_metadata(
     metadata_dict: dict,
     include_pages: bool = True,
 ) -> dict:
-    keys_to_drop = ["element_id", "type"]
+    keys_to_drop = ["element_id", "type", "parent_id", "category_depth"]
     if not include_pages and "page_number" in metadata_dict:
         keys_to_drop.append("page_number")
 
