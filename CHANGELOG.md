@@ -1,4 +1,4 @@
-## 0.10.15-dev0
+## 0.10.15-dev4
 
 ### Enhancements
 
@@ -11,8 +11,7 @@
 ### Features
 
 * New element metadata `category_depth`
-
-### Features
+* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf partitioning functions
 
 ### Fixes
 

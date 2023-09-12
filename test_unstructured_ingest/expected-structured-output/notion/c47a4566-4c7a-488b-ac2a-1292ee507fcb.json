@@ -102,8 +102,8 @@
     "text": "text\n      \n       with other"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "8864784f943d9f832a3dce22ef8bcf01",
+    "type": "Table",
+    "element_id": "8298c3f1d0016deb9cbf44832c33480c",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
