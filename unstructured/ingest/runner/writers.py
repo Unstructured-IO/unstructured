@@ -2,8 +2,10 @@ import typing as t
 from pathlib import Path
 
 from unstructured.ingest.interfaces import WriteConfig
+from unstructured.utils import requires_dependencies
 
 
+@requires_dependencies(["s3fs", "fsspec"], extras="s3")
 def s3_writer(
     remote_url: str,
     anonymous: bool,
@@ -23,6 +25,7 @@ def s3_writer(
     )
 
 
+@requires_dependencies(["deltalake"], extras="delta-table")
 def delta_table_writer(
     table_uri: t.Union[str, Path],
     write_column: str,
@@ -45,7 +48,7 @@ def delta_table_writer(
     )
 
 
-writer_map = {
+writer_map: t.Dict[str, t.Callable] = {
     "s3": s3_writer,
     "delta_table": delta_table_writer,
 }
