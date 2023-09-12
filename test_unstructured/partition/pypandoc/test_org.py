@@ -1,3 +1,4 @@
+from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Title
 from unstructured.partition.json import partition_json
 from unstructured.partition.org import partition_org
@@ -133,3 +134,13 @@ def test_partition_org_with_json(filename="example-docs/README.org"):
 
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+
+
+def test_add_chunking_strategy_on_partition_org(
+    filename="example-docs/README.org",
+):
+    elements = partition_org(filename=filename)
+    chunk_elements = partition_org(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
