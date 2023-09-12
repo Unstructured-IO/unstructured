@@ -292,9 +292,8 @@ class _DocxPartitioner:
                 table_index += 1
             elif element_item.tag.endswith("p"):
                 paragraph = Paragraph(element_item, self._document)
-                emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
                 emphasized_text_contents, emphasized_text_tags = _extract_contents_and_tags(
-                    emphasized_texts,
+                    list(self._iter_paragraph_emphasis(paragraph))
                 )
                 para_element: Optional[Text] = _paragraph_to_element(
                     paragraph, self._is_list_item(paragraph)
@@ -370,6 +369,17 @@ class _DocxPartitioner:
             return True
 
         return "<w:numPr>" in paragraph._p.xml
+
+    def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[Dict[str, str]]:
+        """Generate e.g. {"text": "MUST", "tag": "b"} for each emphasis in `paragraph`."""
+        for run in paragraph.runs:
+            text = run.text.strip() if run.text else ""
+            if not text:
+                continue
+            if run.bold:
+                yield {"text": text, "tag": "b"}
+            if run.italic:
+                yield {"text": text, "tag": "i"}
 
     @lazyproperty
     def _last_modified(self) -> Optional[str]:
