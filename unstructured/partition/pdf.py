@@ -184,7 +184,6 @@ def partition_pdf_or_image(
     # route. Decoding the routing should probably be handled by a single function designed for
     # that task so as routing design changes, those changes are implemented in a single
     # function.
-
     if not isinstance(languages, list):
         raise TypeError("The language parameter must be a list of language codes as strings.")
 
@@ -201,7 +200,6 @@ def partition_pdf_or_image(
                 "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
                 "Please use languages instead.",
             )
-
     last_modification_date = get_the_last_modification_date_pdf_or_img(
         file=file,
         filename=filename,
