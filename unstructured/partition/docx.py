@@ -16,6 +16,7 @@ from typing import (
     Optional,
     Sequence,
     Tuple,
+    Type,
     Union,
     cast,
 )
@@ -416,6 +417,56 @@ class _DocxPartitioner:
         """[contents, tags] pair describing emphasized text in `paragraph`."""
         iter_p_emph, iter_p_emph_2 = itertools.tee(self._iter_paragraph_emphasis(paragraph))
         return ([e["text"] for e in iter_p_emph], [e["tag"] for e in iter_p_emph_2])
+
+    def _style_based_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
+        """Element-type for `paragraph` based on its paragraph-style.
+
+        Returns `None` when the style doesn't tell us anything useful, including when it
+        is the default "Normal" style.
+        """
+        # NOTE(robinson) - documentation on built-in styles at the link below:
+        # https://python-docx.readthedocs.io/en/latest/user/styles-understanding.html \
+        # #paragraph-styles-in-default-template
+        STYLE_TO_ELEMENT_MAPPING = {
+            "Caption": Text,  # TODO(robinson) - add caption element type
+            "Heading 1": Title,
+            "Heading 2": Title,
+            "Heading 3": Title,
+            "Heading 4": Title,
+            "Heading 5": Title,
+            "Heading 6": Title,
+            "Heading 7": Title,
+            "Heading 8": Title,
+            "Heading 9": Title,
+            "Intense Quote": Text,  # TODO(robinson) - add quote element type
+            "List": ListItem,
+            "List 2": ListItem,
+            "List 3": ListItem,
+            "List Bullet": ListItem,
+            "List Bullet 2": ListItem,
+            "List Bullet 3": ListItem,
+            "List Continue": ListItem,
+            "List Continue 2": ListItem,
+            "List Continue 3": ListItem,
+            "List Number": ListItem,
+            "List Number 2": ListItem,
+            "List Number 3": ListItem,
+            "List Paragraph": ListItem,
+            "Macro Text": Text,
+            "No Spacing": Text,
+            "Quote": Text,  # TODO(robinson) - add quote element type
+            "Subtitle": Title,
+            "TOCHeading": Title,
+            "Title": Title,
+        }
+
+        # -- paragraph.style can be None in rare cases, so can style.name. That's going
+        # -- to mean default style which is equivalent to "Normal" for our purposes.
+        style_name = (paragraph.style and paragraph.style.name) or "Normal"
+
+        # NOTE(robinson) - The "Normal" style name will return None since it's not
+        # in the mapping. Unknown style names will also return None.
+        return STYLE_TO_ELEMENT_MAPPING.get(style_name)
 
 
 def _paragraph_to_element(
