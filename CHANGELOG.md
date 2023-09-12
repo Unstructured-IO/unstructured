@@ -1,7 +1,8 @@
-## 0.10.15-dev4
+## 0.10.15-dev6
 
 ### Enhancements
 
+* Use text-based classification hen elements come back uncategorized from PDF/Image partitioning
 * Updated HTML Partitioning to extract tables
 * Create and add `add_chunking_strategy` decorator to partition functions
 * Integrates Chipper types: 
@@ -70,7 +71,7 @@
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
-
+  
 ## 0.10.11
 
 ### Enhancements
