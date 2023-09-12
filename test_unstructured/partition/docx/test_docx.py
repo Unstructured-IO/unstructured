@@ -320,7 +320,7 @@ def test_partition_docx_from_file_without_metadata_date(
 
 def test_get_emphasized_texts_from_paragraph(
     expected_emphasized_texts,
-    filename: str="example-docs/fake-doc-emphasized-text.docx",
+    filename: str = "example-docs/fake-doc-emphasized-text.docx",
 ):
     partitioner = _DocxPartitioner(filename, None, None, False, None)
     paragraph = partitioner._document.paragraphs[1]

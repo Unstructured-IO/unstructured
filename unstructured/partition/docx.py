@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import itertools
 import os
 import tempfile
 from tempfile import SpooledTemporaryFile
@@ -280,8 +281,8 @@ class _DocxPartitioner:
                 table_index += 1
             elif element_item.tag.endswith("p"):
                 paragraph = Paragraph(element_item, self._document)
-                emphasized_text_contents, emphasized_text_tags = _extract_contents_and_tags(
-                    list(self._iter_paragraph_emphasis(paragraph))
+                (emphasized_text_contents, emphasized_text_tags) = self._paragraph_emphasis(
+                    paragraph
                 )
                 para_element: Optional[Text] = _paragraph_to_element(
                     paragraph, self._is_list_item(paragraph)
@@ -291,8 +292,8 @@ class _DocxPartitioner:
                         filename=self._metadata_filename,
                         page_number=self._page_number,
                         last_modified=self._last_modified,
-                        emphasized_text_contents=emphasized_text_contents,
-                        emphasized_text_tags=emphasized_text_tags,
+                        emphasized_text_contents=emphasized_text_contents or None,
+                        emphasized_text_tags=emphasized_text_tags or None,
                     )
                     yield para_element
             elif element_item.tag.endswith("sectPr"):
@@ -398,6 +399,11 @@ class _DocxPartitioner:
         in the document.
         """
         return self._page_counter if self._document_contains_pagebreaks else None
+
+    def _paragraph_emphasis(self, paragraph: Paragraph) -> Tuple[List[str], List[str]]:
+        """[contents, tags] pair describing emphasized text in `paragraph`."""
+        iter_p_emph, iter_p_emph_2 = itertools.tee(self._iter_paragraph_emphasis(paragraph))
+        return ([e["text"] for e in iter_p_emph], [e["tag"] for e in iter_p_emph_2])
 
 
 def _paragraph_to_element(
