@@ -14,11 +14,11 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
     --api-key "$UNS_API_KEY" \
-    --metadata-exclude coordinates,metadata.last_modified \
+    --metadata-exclude coordinates,metadata.last_modified,metadata.detection_class_prob \
     --partition-by-api \
-    --partition-strategy hi_res \
+    --strategy hi_res \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --num-processes 1 \
     --file-glob "*1p.txt" \

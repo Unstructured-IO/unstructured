@@ -9,6 +9,7 @@ else:
     from typing import Final
 
 from lxml import etree
+from tabulate import tabulate
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.base import Page
@@ -19,6 +20,7 @@ from unstructured.documents.elements import (
     Link,
     ListItem,
     NarrativeText,
+    Table,
     Text,
     Title,
 )
@@ -53,6 +55,7 @@ class TagsMixin:
         ancestortags: Sequence[str] = (),
         links: Sequence[Link] = [],
         emphasized_texts: Sequence[dict] = [],
+        text_as_html: Optional[str] = None,
         **kwargs,
     ):
         if tag is None:
@@ -62,6 +65,7 @@ class TagsMixin:
         self.ancestortags = ancestortags
         self.links = links
         self.emphasized_texts = emphasized_texts
+        self.text_as_html = text_as_html
         super().__init__(*args, **kwargs)
 
 
@@ -97,6 +101,12 @@ class HTMLNarrativeText(TagsMixin, NarrativeText):
 
 class HTMLListItem(TagsMixin, ListItem):
     """NarrativeText with tag information."""
+
+    pass
+
+
+class HTMLTable(TagsMixin, Table):
+    """NarrativeText with tag information"""
 
     pass
 
@@ -168,6 +178,12 @@ class HTMLDocument(XMLDocument):
                         page.elements.append(element)
                         descendanttag_elems = _get_bullet_descendants(tag_elem, next_element)
 
+                elif _is_table_item(tag_elem):
+                    element, next_element = _process_leaf_table_item(tag_elem)
+                    if element is not None:
+                        page.elements.append(element)
+                        descendanttag_elems = tuple(tag_elem.iterdescendants())
+
                 elif tag_elem.tag in PAGEBREAK_TAGS and len(page.elements) > 0:
                     pages.append(page)
                     page_number += 1
@@ -183,7 +199,7 @@ class HTMLDocument(XMLDocument):
     def doc_after_cleaners(
         self,
         skip_headers_and_footers=False,
-        skip_table_text=False,
+        skip_table=False,
         inplace=False,
     ) -> HTMLDocument:
         """Filters the elements and returns a new instance of the class based on the criteria
@@ -191,8 +207,8 @@ class HTMLDocument(XMLDocument):
         page are filtered out.
         Parameters
         ----------
-        skip_table_text:
-            If True, skips text that is contained within a table element
+        skip_table:
+            If True, skips table element
         skip_headers_and_footers:
             If True, ignores any content that is within <header> or <footer> tags
         inplace:
@@ -202,8 +218,8 @@ class HTMLDocument(XMLDocument):
         excluders = []
         if skip_headers_and_footers:
             excluders.append(in_header_or_footer)
-        if skip_table_text:
-            excluders.append(has_table_ancestor)
+        if skip_table:
+            excluders.append(is_table)
 
         pages = []
         page_number = 0
@@ -245,7 +261,6 @@ def _get_links_from_tag(tag_elem: etree.Element) -> List[Link]:
     href = tag_elem.get("href")
     if href:
         links.append({"text": tag_elem.text, "url": href})
-
     for tag in tag_elem.iterdescendants():
         href = tag.get("href")
         if href:
@@ -441,6 +456,36 @@ def _is_text_tag(tag_elem: etree.Element, max_predecessor_len: int = 5) -> bool:
     return False
 
 
+def _process_leaf_table_item(
+    tag_elem: etree.Element,
+) -> Tuple[Optional[Element], etree.Element]:
+    if tag_elem.tag in TABLE_TAGS:
+        nested_table = tag_elem.findall("table")
+        if not nested_table:
+            rows = tag_elem.findall("tr")
+            if not rows:
+                body = tag_elem.find("tbody")
+                rows = body.findall("tr")
+            if len(rows) > 0:
+                table_data = [list(row.itertext()) for row in rows]
+                html_table = tabulate(table_data, tablefmt="html")
+                table_text = " ".join(" ".join(row) for row in table_data).strip()
+            else:
+                table_text = ""
+                html_table = ""
+            return (
+                HTMLTable(
+                    text=table_text,
+                    text_as_html=html_table.replace("\n", "<br>"),
+                    tag=tag_elem.tag,
+                    ancestortags=tuple(el.tag for el in tag_elem.iterancestors())[::-1],
+                ),
+                tag_elem,
+            )
+
+    return None, None
+
+
 def _process_list_item(
     tag_elem: etree.Element,
     max_predecessor_len: int = 5,
@@ -496,6 +541,13 @@ def is_list_item_tag(tag_elem: etree.Element) -> bool:
     return False
 
 
+def _is_table_item(tag_elem: etree.Element) -> bool:
+    """Checks to see if a tag contains table item"""
+    if tag_elem.tag in TABLE_TAGS:
+        return True
+    return False
+
+
 def _bulleted_text_from_table(table) -> List[Element]:
     """Extracts bulletized narrative text from a table.
     NOTE: if a table has mixed bullets and non-bullets, only bullets are extracted.
@@ -539,6 +591,11 @@ def has_table_ancestor(element: TagsMixin) -> bool:
     """Checks to see if an element has ancestors that are table elements. If so, we consider
     it to be a table element rather than a section of narrative text."""
     return any(ancestor in TABLE_TAGS for ancestor in element.ancestortags)
+
+
+def is_table(element: TagsMixin) -> bool:
+    """Checks to see if an element is a table"""
+    return element.tag in TABLE_TAGS
 
 
 def in_header_or_footer(element: TagsMixin) -> bool:

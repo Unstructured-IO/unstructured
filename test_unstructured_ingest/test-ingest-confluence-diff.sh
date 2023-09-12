@@ -18,15 +18,15 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
     confluence \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --url https://unstructured-ingest-test.atlassian.net \
     --user-email "$CONFLUENCE_USER_EMAIL" \
     --api-token "$CONFLUENCE_API_TOKEN" \
-    --list-of-spaces testteamsp,MFS \
+    --spaces testteamsp,MFS
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

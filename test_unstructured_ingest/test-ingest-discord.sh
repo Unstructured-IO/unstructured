@@ -15,11 +15,11 @@ fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     discord \
-   --download-dir "$DOWNLOAD_DIR" \
-   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.last_modified \
-   --preserve-downloads \
-   --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
+    --download-dir "$DOWNLOAD_DIR" \
+    --preserve-downloads \
+    --reprocess \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --channels 1099442333440802930,1099601456321003600 \
     --token "$DISCORD_TOKEN" \

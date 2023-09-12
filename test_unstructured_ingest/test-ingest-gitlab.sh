@@ -11,11 +11,11 @@ DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 PYTHONPATH=. ./unstructured/ingest/main.py \
     gitlab \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
-    --partition-strategy hi_res \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
+    --strategy hi_res \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --git-branch 'v0.0.7' \
     --git-file-glob '*.md,*.txt' \
