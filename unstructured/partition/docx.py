@@ -397,6 +397,23 @@ class _DocxPartitioner:
         iter_p_emph, iter_p_emph_2 = itertools.tee(self._iter_paragraph_emphasis(paragraph))
         return ([e["text"] for e in iter_p_emph], [e["tag"] for e in iter_p_emph_2])
 
+    def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
+        """Attempt to differentiate the element-type by inspecting the raw text."""
+        text = paragraph.text.strip()
+
+        if len(text) < 2:
+            return None
+        if is_us_city_state_zip(text):
+            return Address
+        if is_email_address(text):
+            return EmailAddress
+        if is_possible_narrative_text(text):
+            return NarrativeText
+        if is_possible_title(text):
+            return Title
+
+        return None
+
     def _style_based_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
         """Element-type for `paragraph` based on its paragraph-style.
 
