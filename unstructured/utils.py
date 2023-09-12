@@ -1,7 +1,6 @@
 import functools
 import importlib
 import json
-import types
 import typing as t
 from datetime import datetime
 from functools import wraps
@@ -155,19 +154,10 @@ def requires_dependencies(
             )
 
     def decorator(to_wrap):
-        if isinstance(to_wrap, types.FunctionType):
-
-            @wraps(to_wrap)
-            def wrapper(*args, **kwargs):
-                check_deps()
-                return to_wrap(*args, **kwargs)
-
-        else:
-
-            @wraps(to_wrap)
-            def wrapper():
-                check_deps()
-                return to_wrap
+        @wraps(to_wrap)
+        def wrapper(*args, **kwargs):
+            check_deps()
+            return to_wrap(*args, **kwargs)
 
         return wrapper
 
