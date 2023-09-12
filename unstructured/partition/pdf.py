@@ -572,7 +572,7 @@ def _add_pytesseract_bboxes_to_elements(
     boxes = bboxes_string.strip().split("\n")
     box_idx = 0
     for element in elements:
-        if not element.text:
+        if not element.text or boxes[box_idx][0]:
             box_idx += 1
             continue
         while boxes[box_idx][0] != element.text[0]:

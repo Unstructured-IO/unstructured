@@ -822,7 +822,7 @@ def test_partition_pdf_with_ocr_coordinates_are_not_nan_from_file(
             strategy="ocr_only",
         )
     for element in elements:
-        if element.metadata.coordinates.points:
+        if element.metadata.coordinates:
             for point in element.metadata.coordinates.points:
                 if point[0] and point[1]:
                     assert point[0] is not math.nan
