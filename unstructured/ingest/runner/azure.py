@@ -1,23 +1,27 @@
 import logging
-from typing import Optional
+import typing as t
 
-from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
+from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.processor import process_documents
 from unstructured.ingest.runner.utils import update_download_dir_remote_url
+from unstructured.ingest.runner.writers import writer_map
 
 
 def azure(
     verbose: bool,
-    connector_config: StandardConnectorConfig,
-    processor_config: ProcessorConfigs,
-    account_name: Optional[str],
-    account_key: Optional[str],
-    connection_string: Optional[str],
+    read_config: ReadConfig,
+    partition_config: PartitionConfig,
+    account_name: t.Optional[str],
+    account_key: t.Optional[str],
+    connection_string: t.Optional[str],
     remote_url: str,
     recursive: bool,
+    writer_type: t.Optional[str] = None,
+    writer_kwargs: t.Optional[dict] = None,
     **kwargs,
 ):
+    writer_kwargs = writer_kwargs if writer_kwargs else {}
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
 
     if not account_name and not connection_string:
@@ -25,15 +29,15 @@ def azure(
             "missing either account-name or connection-string",
         )
 
-    connector_config.download_dir = update_download_dir_remote_url(
+    read_config.download_dir = update_download_dir_remote_url(
         connector_name="azure",
-        connector_config=connector_config,
+        read_config=read_config,
         remote_url=remote_url,
         logger=logger,
     )
 
     from unstructured.ingest.connector.azure import (
-        AzureBlobStorageConnector,
+        AzureBlobStorageSourceConnector,
         SimpleAzureBlobStorageConfig,
     )
 
@@ -46,13 +50,24 @@ def azure(
         access_kwargs = {"connection_string": connection_string}
     else:
         access_kwargs = {}
-    doc_connector = AzureBlobStorageConnector(  # type: ignore
-        standard_config=connector_config,
-        config=SimpleAzureBlobStorageConfig(
+    source_doc_connector = AzureBlobStorageSourceConnector(  # type: ignore
+        connector_config=SimpleAzureBlobStorageConfig(
             path=remote_url,
             recursive=recursive,
             access_kwargs=access_kwargs,
         ),
+        read_config=read_config,
+        partition_config=partition_config,
     )
 
-    process_documents(doc_connector=doc_connector, processor_config=processor_config)
+    dest_doc_connector = None
+    if writer_type:
+        writer = writer_map[writer_type]
+        dest_doc_connector = writer(**writer_kwargs)
+
+    process_documents(
+        source_doc_connector=source_doc_connector,
+        partition_config=partition_config,
+        verbose=verbose,
+        dest_doc_connector=dest_doc_connector,
+    )

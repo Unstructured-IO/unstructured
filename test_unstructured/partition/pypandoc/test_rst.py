@@ -1,3 +1,4 @@
+from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Title
 from unstructured.partition.json import partition_json
@@ -141,3 +142,11 @@ def test_partition_rst_with_json(filename="example-docs/README.rst"):
 
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+
+
+def test_add_chunking_strategy_on_partition_rst(filename="example-docs/README.rst"):
+    elements = partition_rst(filename=filename)
+    chunk_elements = partition_rst(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
