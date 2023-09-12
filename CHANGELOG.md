@@ -1,7 +1,9 @@
-## 0.10.15-dev0
+## 0.10.15-dev3
 
 ### Enhancements
 
+* Updated HTML Partitioning to extract tables
+* Create and add `add_chunking_strategy` decorator to partition functions
 * Adds data source properties (date_created, date_modified, version, exists, source_url, record_locator) to the git base interface.
 
 ### Features
