@@ -173,15 +173,18 @@ def partition_docx(
 class _DocxPartitioner:
     """Provides `.partition()` for MS-Word 2007+ (.docx) files."""
 
-    # TODO: Improve document-contains-pagebreaks algorithm to use XPath and to search for
-    #       `w:lastRenderedPageBreak` alone. Make it independent and don't rely on anything like
-    #        the "_element_contains_pagebreak()" function.
+    # TODO: I think we can do better on metadata.filename. Should that only be populated when a
+    #       `metadata_filename` argument was provided to `partition_docx()`? What about when not but
+    #       we do get a `filename` arg or a `file` arg that has a `.name` attribute?
     # TODO: get last-modified date from document-properties (stored in docx package) rather than
     #       relying on last filesystem-write date; maybe fall-back to filesystem-date.
     # TODO: improve `._element_contains_pagebreak()`. It uses substring matching on the rendered
     #       XML text which is error-prone and not performant. Use XPath instead with the specific
     #       locations a page-break can be located. Also, there can be more than one, so return a
     #       count instead of a boolean.
+    # TODO: Improve document-contains-pagebreaks algorithm to use XPath and to search for
+    #       `w:lastRenderedPageBreak` alone. Make it independent and don't rely on anything like
+    #        the "_element_contains_pagebreak()" function.
     # TODO: A section can give rise to one or two page breaks, like an "odd-page" section start
     #       from an odd current-page produces two. Add page-break detection on section as well.
     # TODO: Improve ._is_list_item() to detect manually-applied bullets (which do not appear in the
@@ -237,20 +240,7 @@ class _DocxPartitioner:
         section = 0
         for element_item in self._document.element.body:
             if element_item.tag.endswith("tbl"):
-                table = self._document.tables[table_index]
-                emphasized_text_contents, emphasized_text_tags = self._table_emphasis(table)
-                html_table = convert_ms_office_table_to_text(table, as_html=True)
-                text_table = convert_ms_office_table_to_text(table, as_html=False)
-                element = Table(text_table)
-                element.metadata = ElementMetadata(
-                    text_as_html=html_table,
-                    filename=self._metadata_filename,
-                    page_number=self._page_number,
-                    last_modified=self._last_modified,
-                    emphasized_text_contents=emphasized_text_contents,
-                    emphasized_text_tags=emphasized_text_tags,
-                )
-                yield element
+                yield from self._iter_table_element(self._document.tables[table_index])
                 table_index += 1
             elif element_item.tag.endswith("p"):
                 paragraph = Paragraph(element_item, self._document)
@@ -367,6 +357,27 @@ class _DocxPartitioner:
             if run.italic:
                 yield {"text": text, "tag": "i"}
 
+    def _iter_table_element(self, table: DocxTable) -> Iterator[Table]:
+        """Generate zero-or-one Table element for a DOCX `w:tbl` XML element."""
+        # -- at present, we always generate exactly one Table element, but we might want
+        # -- to skip, for example, an empty table, or accommodate nested tables.
+
+        html_table = convert_ms_office_table_to_text(table, as_html=True)
+        text_table = convert_ms_office_table_to_text(table, as_html=False)
+        emphasized_text_contents, emphasized_text_tags = self._table_emphasis(table)
+
+        yield Table(
+            text_table,
+            metadata=ElementMetadata(
+                text_as_html=html_table,
+                filename=self._metadata_filename,
+                page_number=self._page_number,
+                last_modified=self._last_modified,
+                emphasized_text_contents=emphasized_text_contents or None,
+                emphasized_text_tags=emphasized_text_tags or None,
+            ),
+        )
+
     def _iter_table_emphasis(self, table: DocxTable) -> Iterator[Dict[str, str]]:
         """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`."""
         for row in table.rows:
@@ -411,7 +422,7 @@ class _DocxPartitioner:
 
     def _paragraph_metadata(self, paragraph: Paragraph) -> ElementMetadata:
         """ElementMetadata object describing `paragraph`."""
-        (emphasized_text_contents, emphasized_text_tags) = self._paragraph_emphasis(paragraph)
+        emphasized_text_contents, emphasized_text_tags = self._paragraph_emphasis(paragraph)
         return ElementMetadata(
             filename=self._metadata_filename,
             page_number=self._page_number,
