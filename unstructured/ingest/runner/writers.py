@@ -130,10 +130,31 @@ def azure_writer(
     )
 
 
+def gcs_writer(
+    remote_url: str,
+    token: t.Optional[str],
+    verbose: bool = False,
+):
+    from unstructured.ingest.connector.fsspec import FsspecWriteConfig
+    from unstructured.ingest.connector.gcs import (
+        GcsDestinationConnector,
+        SimpleGcsConfig,
+    )
+
+    return GcsDestinationConnector(
+        write_config=FsspecWriteConfig(),
+        connector_config=SimpleGcsConfig(
+            path=remote_url,
+            access_kwargs={"token": token},
+        ),
+    )
+
+
 writer_map: t.Dict[str, t.Callable] = {
     "s3": s3_writer,
     "delta_table": delta_table_writer,
     "box": box_writer,
     "dropbox": dropbox_writer,
     "azure": azure_writer,
+    "gcs": gcs_writer,
 }

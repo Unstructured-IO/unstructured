@@ -16,6 +16,7 @@ from .dropbox import get_dest_cmd as dropbox_dest
 from .dropbox import get_source_cmd as dropbox_src
 from .elasticsearch import get_source_cmd as elasticsearch_src
 from .fsspec import get_source_cmd as fsspec_src
+from .gcs import get_dest_cmd as gcs_dest
 from .gcs import get_source_cmd as gcs_src
 from .github import get_source_cmd as github_src
 from .gitlab import get_source_cmd as gitlab_src
@@ -67,7 +68,9 @@ dest: t.List[click.Command] = [
     dropbox_dest(),
     azure_dest(),
     box_dest(),
+    gcs_dest(),
 ]
+
 
 __all__ = [
     "src",
