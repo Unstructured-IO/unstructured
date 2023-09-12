@@ -1,9 +1,11 @@
 import functools
 import importlib
 import json
+import types
+import typing as t
 from datetime import datetime
 from functools import wraps
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, cast
+from typing import Any, Callable, Dict, Generic, List, TypeVar, cast
 
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
@@ -125,35 +127,47 @@ def save_as_jsonl(data: List[Dict], filename: str) -> None:
         output_file.writelines(json.dumps(datum) + "\n" for datum in data)
 
 
-def read_from_jsonl(filename: str) -> List[Dict]:
+def read_from_jsonl(filename: str) -> t.List[t.Dict]:
     with open(filename) as input_file:
         return [json.loads(line) for line in input_file]
 
 
 def requires_dependencies(
-    dependencies: Union[str, List[str]],
-    extras: Optional[str] = None,
+    dependencies: t.Union[str, t.List[str]],
+    extras: t.Optional[str] = None,
 ):
     if isinstance(dependencies, str):
         dependencies = [dependencies]
 
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            missing_deps = []
-            for dep in dependencies:
-                if not dependency_exists(dep):
-                    missing_deps.append(dep)
-            if len(missing_deps) > 0:
-                raise ImportError(
-                    f"Following dependencies are missing: {', '.join(missing_deps)}. "
-                    + (
-                        f"""Please install them using `pip install "unstructured[{extras}]"`."""
-                        if extras
-                        else f"Please install them using `pip install {' '.join(missing_deps)}`."
-                    ),
-                )
-            return func(*args, **kwargs)
+    def check_deps():
+        missing_deps = []
+        for dep in dependencies:
+            if not dependency_exists(dep):
+                missing_deps.append(dep)
+        if len(missing_deps) > 0:
+            raise ImportError(
+                f"Following dependencies are missing: {', '.join(missing_deps)}. "
+                + (
+                    f"""Please install them using `pip install "unstructured[{extras}]"`."""
+                    if extras
+                    else f"Please install them using `pip install {' '.join(missing_deps)}`."
+                ),
+            )
+
+    def decorator(to_wrap):
+        if isinstance(to_wrap, types.FunctionType):
+
+            @wraps(to_wrap)
+            def wrapper(*args, **kwargs):
+                check_deps()
+                return to_wrap(*args, **kwargs)
+
+        else:
+
+            @wraps(to_wrap)
+            def wrapper():
+                check_deps()
+                return to_wrap
 
         return wrapper
 
@@ -171,7 +185,7 @@ def dependency_exists(dependency: str):
 
 
 # Copied from unstructured/ingest/connector/biomed.py
-def validate_date_args(date: Optional[str] = None):
+def validate_date_args(date: t.Optional[str] = None):
     if not date:
         raise ValueError("The argument date is None.")
 

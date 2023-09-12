@@ -29,4 +29,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
    --output-dir box-output \
    --num-processes 2 \
    --recursive \
-   --verbose
+   --verbose \
+   box \
+   --remote-url box://utic-test-ingest-fixtures-output \
+   --box-app-config "$BOX_APP_CONFIG_PATH"

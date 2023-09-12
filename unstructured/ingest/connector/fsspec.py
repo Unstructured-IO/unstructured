@@ -38,7 +38,7 @@ class SimpleFsspecConfig(BaseConnectorConfig):
     # fsspec specific options
     path: str
     recursive: bool = False
-    access_kwargs: dict = field(default_factory=dict)
+    access_kwargs: t.Dict[str, t.Any] = field(default_factory=dict)
     protocol: str = field(init=False)
     path_without_protocol: str = field(init=False)
     dir_path: str = field(init=False)
