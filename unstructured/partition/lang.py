@@ -1,5 +1,4 @@
 from typing import List
-from unstructured.utils import requires_dependencies
 
 import iso639
 
