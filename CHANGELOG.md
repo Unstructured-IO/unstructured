@@ -1,8 +1,13 @@
-## 0.10.17-dev2
+## 0.10.17-dev3
 
 ### Enhancements
 
 * **Adds data source properties to SharePoint, Outlook, Onedrive, Reddit, and Slack connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+* **Fsspec downstream connectors** New destination connector added to ingest CLI, users may now use `unstructured-ingest` to write to any of the following:
+  * Azure
+  * Box
+  * Dropbox
+  * Google Cloud Service
 
 ### Features
 
