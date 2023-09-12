@@ -196,6 +196,20 @@ def partition_docx(
 class _DocxPartitioner:
     """Provides `.partition()` for MS-Word 2007+ (.docx) files."""
 
+    def __init__(
+        self,
+        filename: Optional[str],
+        file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]],
+        metadata_filename: Optional[str],
+        include_page_breaks: bool,
+        metadata_last_modified: Optional[str],
+    ) -> None:
+        self._filename = filename
+        self._file = file
+        self._metadata_filename = metadata_filename
+        self._include_page_breaks = include_page_breaks
+        self._metadata_last_modified = metadata_last_modified
+
     @classmethod
     def iter_document_elements(
         cls,
@@ -207,23 +221,16 @@ class _DocxPartitioner:
     ) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
         return iter(
-            cls()._partition_docx(
+            cls(
                 filename,
                 file,
                 metadata_filename,
                 include_page_breaks,
                 metadata_last_modified,
-            )
+            )._partition_docx()
         )
 
-    def _partition_docx(
-        self,
-        filename: Optional[str] = None,
-        file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]] = None,
-        metadata_filename: Optional[str] = None,
-        include_page_breaks: bool = True,
-        metadata_last_modified: Optional[str] = None,
-    ) -> List[Element]:
+    def _partition_docx(self) -> List[Element]:
         """Partitions Microsoft Word Documents in .docx format into its document elements.
 
         Parameters
@@ -241,24 +248,24 @@ class _DocxPartitioner:
         """
 
         # Verify that only one of the arguments was provided
-        exactly_one(filename=filename, file=file)
+        exactly_one(filename=self._filename, file=self._file)
 
         last_modification_date = None
-        if filename is not None:
-            if not filename.startswith("/tmp"):
-                last_modification_date = get_last_modified_date(filename)
+        if self._filename is not None:
+            if not self._filename.startswith("/tmp"):
+                last_modification_date = get_last_modified_date(self._filename)
 
-            document = docx.Document(filename)
+            document = docx.Document(self._filename)
         else:
-            assert file is not None
-            last_modification_date = get_last_modified_date_from_file(file)
+            assert self._file is not None
+            last_modification_date = get_last_modified_date_from_file(self._file)
 
-            document = docx.Document(cast(BinaryIO, spooled_to_bytes_io_if_needed(file)))
+            document = docx.Document(cast(BinaryIO, spooled_to_bytes_io_if_needed(self._file)))
 
         elements: List[Element] = []
         table_index = 0
 
-        headers_and_footers = _get_headers_and_footers(document, metadata_filename)
+        headers_and_footers = _get_headers_and_footers(document, self._metadata_filename)
         if len(headers_and_footers) > 0:
             elements.extend(headers_and_footers[0][0])
 
@@ -278,9 +285,9 @@ class _DocxPartitioner:
                 element = Table(text_table)
                 element.metadata = ElementMetadata(
                     text_as_html=html_table,
-                    filename=metadata_filename,
+                    filename=self._metadata_filename,
                     page_number=page_number,
-                    last_modified=metadata_last_modified or last_modification_date,
+                    last_modified=self._metadata_last_modified or last_modification_date,
                     emphasized_text_contents=emphasized_text_contents,
                     emphasized_text_tags=emphasized_text_tags,
                 )
@@ -297,9 +304,9 @@ class _DocxPartitioner:
                 para_element: Optional[Text] = _paragraph_to_element(paragraph, is_list)
                 if para_element is not None:
                     para_element.metadata = ElementMetadata(
-                        filename=metadata_filename,
+                        filename=self._metadata_filename,
                         page_number=page_number,
-                        last_modified=metadata_last_modified or last_modification_date,
+                        last_modified=self._metadata_last_modified or last_modification_date,
                         emphasized_text_contents=emphasized_text_contents,
                         emphasized_text_tags=emphasized_text_tags,
                     )
@@ -317,7 +324,7 @@ class _DocxPartitioner:
 
             if page_number is not None and _element_contains_pagebreak(element_item):
                 page_number += 1
-                if include_page_breaks:
+                if self._include_page_breaks:
                     elements.append(PageBreak(text=""))
 
         return elements
