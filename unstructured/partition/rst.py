@@ -4,6 +4,7 @@ from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.html import convert_and_partition_html
+from unstructured.documents.html import TagsMixin
 
 
 @process_metadata()
@@ -33,7 +34,7 @@ def partition_rst(
     metadata_last_modified
         The last modified date for the document.
     """
-    return convert_and_partition_html(
+    html_elements = convert_and_partition_html(
         source_format="rst",
         filename=filename,
         file=file,
@@ -41,3 +42,19 @@ def partition_rst(
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified,
     )
+    import pdb; pdb.set_trace()
+
+
+
+    return html_elements
+    #
+    # return html_elements_to_uns_elements(
+    #
+    # )
+
+
+def html_to_uns(elements):
+    uns_elements = []
+    for html_element in html_elements:
+
+

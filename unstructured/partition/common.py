@@ -588,3 +588,8 @@ def document_to_element_list(
         elements.extend(sorted_page_elements)
 
     return elements
+
+
+def html_element_to_uns_element(
+
+)
