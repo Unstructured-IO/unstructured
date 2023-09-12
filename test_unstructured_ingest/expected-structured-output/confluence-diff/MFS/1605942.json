@@ -156,29 +156,7 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "emphasized_text_contents": [
-        "Notes"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ],
-      "category_depth": 0
-    },
-    "text": "Notes"
-  },
-  {
-    "type": "Title",
-    "element_id": "98e38cd6c5f88330322de759657563f9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Important Links"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ],
+      "text_as_html": "<table><br><tbody><br><tr><td>Notes          </td></tr><br><tr><td>Important Links</td></tr><br></tbody><br></table>",
       "category_depth": 0
     },
     "text": "Notes Important Links"
