@@ -1,8 +1,10 @@
 from typing import List
+from unstructured.utils import requires_dependencies
 
 import iso639
 
 from unstructured.logger import logger
+
 
 # pytesseract.get_languages(config="") only shows user installed language packs,
 # so manually include the list of all currently supported Tesseract languages
