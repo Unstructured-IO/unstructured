@@ -1,3 +1,4 @@
+import io
 import os
 import tempfile
 from tempfile import SpooledTemporaryFile
@@ -36,7 +37,6 @@ from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
-    spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -45,7 +45,7 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
-from unstructured.utils import dependency_exists
+from unstructured.utils import dependency_exists, lazyproperty
 
 if dependency_exists("pypandoc"):
     import pypandoc
@@ -191,6 +191,9 @@ def partition_docx(
 class _DocxPartitioner:
     """Provides `.partition()` for MS-Word 2007+ (.docx) files."""
 
+    # TODO: get last-modified date from document-properties (stored in docx package) rather than
+    #       relying on last filesystem-write date; maybe fall-back to filesystem-date.
+
     def __init__(
         self,
         filename: Optional[str],
@@ -226,34 +229,27 @@ class _DocxPartitioner:
     def _iter_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in (docx) `document` in document order."""
 
-        # Verify that only one of the arguments was provided
-        exactly_one(filename=self._filename, file=self._file)
-
         last_modification_date = None
         if self._filename is not None:
             if not self._filename.startswith("/tmp"):
                 last_modification_date = get_last_modified_date(self._filename)
-
-            document = docx.Document(self._filename)
         else:
             assert self._file is not None
             last_modification_date = get_last_modified_date_from_file(self._file)
 
-            document = docx.Document(cast(BinaryIO, spooled_to_bytes_io_if_needed(self._file)))
-
         table_index = 0
 
-        headers_and_footers = _get_headers_and_footers(document, self._metadata_filename)
+        headers_and_footers = _get_headers_and_footers(self._document, self._metadata_filename)
         if len(headers_and_footers) > 0:
             yield from headers_and_footers[0][0]
 
-        document_contains_pagebreaks = _element_contains_pagebreak(document._element)
+        document_contains_pagebreaks = _element_contains_pagebreak(self._document._element)
         page_number = 1 if document_contains_pagebreaks else None
         section = 0
         is_list = False
-        for element_item in document.element.body:
+        for element_item in self._document.element.body:
             if element_item.tag.endswith("tbl"):
-                table = document.tables[table_index]
+                table = self._document.tables[table_index]
                 emphasized_texts = _get_emphasized_texts_from_table(table)
                 emphasized_text_contents, emphasized_text_tags = _extract_contents_and_tags(
                     emphasized_texts,
@@ -274,7 +270,7 @@ class _DocxPartitioner:
             elif element_item.tag.endswith("p"):
                 if "<w:numPr>" in element_item.xml:
                     is_list = True
-                paragraph = Paragraph(element_item, document)
+                paragraph = Paragraph(element_item, self._document)
                 emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
                 emphasized_text_contents, emphasized_text_tags = _extract_contents_and_tags(
                     emphasized_texts,
@@ -304,6 +300,20 @@ class _DocxPartitioner:
                 page_number += 1
                 if self._include_page_breaks:
                     yield PageBreak(text="")
+
+    @lazyproperty
+    def _document(self) -> Document:
+        """The python-docx `Document` object loaded from file or filename."""
+        filename, file = self._filename, self._file
+
+        if filename is not None:
+            return docx.Document(filename)
+
+        assert file is not None
+        if isinstance(file, SpooledTemporaryFile):
+            file.seek(0)
+            file = io.BytesIO(file.read())
+        return docx.Document(file)
 
 
 def _paragraph_to_element(
