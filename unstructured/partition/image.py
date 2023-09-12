@@ -1,11 +1,13 @@
 from typing import List, Optional
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.partition.common import exactly_one
 from unstructured.partition.pdf import partition_pdf_or_image
 
 
 @process_metadata()
+@add_chunking_strategy()
 def partition_image(
     filename: str = "",
     file: Optional[bytes] = None,
@@ -14,6 +16,7 @@ def partition_image(
     ocr_languages: str = "eng",
     strategy: str = "hi_res",
     metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
@@ -44,8 +47,6 @@ def partition_image(
         The default strategy is `hi_res`.
     metadata_last_modified
         The last modified date for the document.
-
-
     """
     exactly_one(filename=filename, file=file)
 

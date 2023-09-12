@@ -5,6 +5,7 @@ from unittest.mock import patch
 import pytest
 import requests
 
+from unstructured.chunking.title import chunk_by_title
 from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
 from unstructured.staging.base import elements_to_json
@@ -267,3 +268,13 @@ def test_partition_md_with_json(
     assert elements[0].metadata.filename == test_elements[0].metadata.filename
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+
+
+def test_add_chunking_strategy_on_partition_md(
+    filename="example-docs/README.md",
+):
+    elements = partition_md(filename=filename)
+    chunk_elements = partition_md(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
