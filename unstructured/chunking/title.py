@@ -1,4 +1,6 @@
-from typing import List
+import inspect
+from functools import wraps
+from typing import Callable, List
 
 from unstructured.documents.elements import (
     CompositeElement,
@@ -17,7 +19,7 @@ def chunk_by_title(
     new_after_n_chars: int = 1500,
 ) -> List[Element]:
     """Uses title elements to identify sections within the document for chunking. Splits
-    off into a new section when a title is detection or if metadata changes, which happens
+    off into a new section when a title is detected or if metadata changes, which happens
     when page numbers or sections change. Cuts off sections once they have exceeded
     a character length of new_after_n_chars.
 
@@ -33,6 +35,17 @@ def chunk_by_title(
     new_after_n_chars
         Cuts off new sections once they reach a length of n characters
     """
+    if (
+        combine_under_n_chars is not None
+        and new_after_n_chars is not None
+        and (
+            combine_under_n_chars > new_after_n_chars
+            or combine_under_n_chars < 0
+            or new_after_n_chars < 0
+        )
+    ):
+        raise ValueError("Invalid values for combine_under_n_chars and/or new_after_n_chars.")
+
     chunked_elements: List[Element] = []
     sections = _split_elements_by_title_and_table(
         elements,
@@ -42,6 +55,8 @@ def chunk_by_title(
     )
 
     for section in sections:
+        if not section:
+            continue
         if not isinstance(section[0], Text) or isinstance(section[0], Table):
             chunked_elements.extend(section)
 
@@ -148,3 +163,50 @@ def _drop_extra_metadata(
             del metadata_dict[key]
 
     return metadata_dict
+
+
+def add_chunking_strategy():
+    """Decorator for chuncking text. Uses title elements to identify sections within the document
+    for chunking. Splits off a new section when a title is detected or if metadata changes,
+    which happens when page numbers or sections change. Cuts off sections once they have exceeded
+    a character length of new_after_n_chars."""
+
+    def decorator(func: Callable):
+        if func.__doc__ and (
+            "chunking_strategy" in func.__code__.co_varnames
+            and "chunking_strategy" not in func.__doc__
+        ):
+            func.__doc__ += (
+                "\nchunking_strategy"
+                + "\n\tStrategy used for chunking text into larger or smaller elements."
+                + "\n\tDefaluts to `None` withoptional arg of 'by_title'."
+                + "\n\tAdditional Parameters:"
+                + "\n\t\tmultipage_sections"
+                + "\n\t\t\tIf True, sections can span multiple pages. Defaults to True."
+                + "\n\t\tcombine_under_n_chars"
+                + "\n\t\t\tCombines elements (for example a series of titles) until a section"
+                + "\n\t\t\treaches a length of n characters."
+                + "\n\t\tnew_after_n_chars"
+                + "\n\t\t\tCuts off new sections once they reach a length of n characters"
+            )
+
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            elements = func(*args, **kwargs)
+            sig = inspect.signature(func)
+            params = dict(**dict(zip(sig.parameters, args)), **kwargs)
+            for param in sig.parameters.values():
+                if param.name not in params and param.default is not param.empty:
+                    params[param.name] = param.default
+            if params.get("chunking_strategy") == "by_title":
+                elements = chunk_by_title(
+                    elements,
+                    multipage_sections=params.get("multipage_sections", True),
+                    combine_under_n_chars=params.get("combine_under_n_chars", 500),
+                    new_after_n_chars=params.get("new_after_n_chars", 1500),
+                )
+            return elements
+
+        return wrapper
+
+    return decorator
