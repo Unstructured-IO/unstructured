@@ -233,6 +233,7 @@ class _DocxPartitioner:
         self._metadata_filename = metadata_filename
         self._include_page_breaks = include_page_breaks
         self._metadata_last_modified = metadata_last_modified
+        self._page_counter: int = 1
 
     @classmethod
     def iter_document_elements(
@@ -261,7 +262,6 @@ class _DocxPartitioner:
         if len(headers_and_footers) > 0:
             yield from headers_and_footers[0][0]
 
-        page_number = 1 if self._document_contains_pagebreaks else None
         section = 0
         is_list = False
         for element_item in self._document.element.body:
@@ -277,7 +277,7 @@ class _DocxPartitioner:
                 element.metadata = ElementMetadata(
                     text_as_html=html_table,
                     filename=self._metadata_filename,
-                    page_number=page_number,
+                    page_number=self._page_number,
                     last_modified=self._last_modified,
                     emphasized_text_contents=emphasized_text_contents,
                     emphasized_text_tags=emphasized_text_tags,
@@ -296,7 +296,7 @@ class _DocxPartitioner:
                 if para_element is not None:
                     para_element.metadata = ElementMetadata(
                         filename=self._metadata_filename,
-                        page_number=page_number,
+                        page_number=self._page_number,
                         last_modified=self._last_modified,
                         emphasized_text_contents=emphasized_text_contents,
                         emphasized_text_tags=emphasized_text_tags,
@@ -313,10 +313,8 @@ class _DocxPartitioner:
                     headers = headers_and_footers[section][0]
                     yield from headers
 
-            if page_number is not None and self._element_contains_pagebreak(element_item):
-                page_number += 1
-                if self._include_page_breaks:
-                    yield PageBreak(text="")
+            if self._element_contains_pagebreak(element_item):
+                yield from self._increment_page_number()
 
     @lazyproperty
     def _document(self) -> Document:
@@ -355,6 +353,12 @@ class _DocxPartitioner:
                     return True
         return False
 
+    def _increment_page_number(self) -> Iterator[PageBreak]:
+        """Increment page-number by 1 and generate a PageBreak element if enabled."""
+        self._page_counter += 1
+        if self._include_page_breaks:
+            yield PageBreak("")
+
     @lazyproperty
     def _last_modified(self) -> Optional[str]:
         """Last-modified date suitable for use in element metadata."""
@@ -373,6 +377,17 @@ class _DocxPartitioner:
         # -- brethren have no such metadata).
         assert file is not None
         return get_last_modified_date_from_file(file)
+
+    @property
+    def _page_number(self) -> Optional[int]:
+        """The current page number, or None if we can't really tell.
+
+        In the DOCX format, this is strictly a best-efforts attempt since actual
+        page-breaks are determined at rendering time (e.g. printing) based on the
+        fontmetrics of the target device. The page-breaks are not explicitly specified
+        in the document.
+        """
+        return self._page_counter if self._document_contains_pagebreaks else None
 
 
 def _paragraph_to_element(
