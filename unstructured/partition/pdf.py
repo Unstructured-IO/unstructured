@@ -342,7 +342,7 @@ def _partition_pdf_or_image_local(
 
         # NOTE(christine): preserve image elements for other downstream use cases
         if isinstance(el, Image):
-            out_elements.append(el)
+            out_elements.append(cast(Element, el))
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
         elif isinstance(el, Text):
             el.text = re.sub(
