@@ -244,7 +244,7 @@ def partition_pdf_or_image(
         # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            layout_elements = _partition_pdf_or_image_local(
+            _layout_elements = _partition_pdf_or_image_local(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
                 is_image=is_image,
@@ -255,6 +255,14 @@ def partition_pdf_or_image(
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 **kwargs,
             )
+            layout_elements = []
+            for el in _layout_elements:
+                if hasattr(el, "category") and el.category == "UncategorizedText":
+                    new_el = element_from_text(el.text)
+                    new_el.metadata = el.metadata
+                else:
+                    new_el = el
+                layout_elements.append(new_el)
 
     elif strategy == "fast":
         return extracted_elements
