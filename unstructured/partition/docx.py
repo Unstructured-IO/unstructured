@@ -198,6 +198,12 @@ class _DocxPartitioner:
 
     # TODO: get last-modified date from document-properties (stored in docx package) rather than
     #       relying on last filesystem-write date; maybe fall-back to filesystem-date.
+    # TODO: improve `._element_contains_pagebreak()`. It uses substring matching on the rendered
+    #       XML text which is error-prone and not performant. Use XPath instead with the specific
+    #       locations a page-break can be located. Also, there can be more than one, so return a
+    #       count instead of a boolean.
+    # TODO: A section can give rise to one or two page breaks, like an "odd-page" section start
+    #       from an odd current-page produces two. Add page-break detection on section as well.
 
     def __init__(
         self,
@@ -248,7 +254,7 @@ class _DocxPartitioner:
         if len(headers_and_footers) > 0:
             yield from headers_and_footers[0][0]
 
-        document_contains_pagebreaks = _element_contains_pagebreak(self._document._element)
+        document_contains_pagebreaks = self._element_contains_pagebreak(self._document._element)
         page_number = 1 if document_contains_pagebreaks else None
         section = 0
         is_list = False
@@ -301,7 +307,7 @@ class _DocxPartitioner:
                     headers = headers_and_footers[section][0]
                     yield from headers
 
-            if page_number is not None and _element_contains_pagebreak(element_item):
+            if page_number is not None and self._element_contains_pagebreak(element_item):
                 page_number += 1
                 if self._include_page_breaks:
                     yield PageBreak(text="")
@@ -319,6 +325,24 @@ class _DocxPartitioner:
             file.seek(0)
             file = io.BytesIO(file.read())
         return docx.Document(file)
+
+    def _element_contains_pagebreak(self, element: BaseOxmlElement) -> bool:
+        """True when `element` contains a page break.
+
+        Checks for both "hard" page breaks (page breaks explicitly inserted by the user)
+        and "soft" page breaks, which are sometimes inserted by the MS Word renderer.
+        Note that soft page breaks aren't always present. Whether or not pages are
+        tracked may depend on your Word renderer.
+        """
+        page_break_indicators = [
+            ["w:br", 'type="page"'],  # "Hard" page break inserted by user
+            ["lastRenderedPageBreak"],  # "Soft" page break inserted by renderer
+        ]
+        if hasattr(element, "xml"):
+            for indicators in page_break_indicators:
+                if all(indicator in element.xml for indicator in indicators):
+                    return True
+        return False
 
 
 def _paragraph_to_element(
@@ -346,22 +370,6 @@ def _paragraph_to_element(
         return _text_to_element(text)
     else:
         return element_class(text)
-
-
-def _element_contains_pagebreak(element: BaseOxmlElement) -> bool:
-    """Detects if an element contains a page break. Checks for both "hard" page breaks
-    (page breaks inserted by the user) and "soft" page breaks, which are sometimes
-    inserted by the MS Word renderer. Note that soft page breaks aren't always present.
-    Whether or not pages are tracked may depend on your Word renderer."""
-    page_break_indicators = [
-        ["w:br", 'type="page"'],  # "Hard" page break inserted by user
-        ["lastRenderedPageBreak"],  # "Soft" page break inserted by renderer
-    ]
-    if hasattr(element, "xml"):
-        for indicators in page_break_indicators:
-            if all(indicator in element.xml for indicator in indicators):
-                return True
-    return False
 
 
 def _text_to_element(text: str, is_list: bool = False) -> Optional[Text]:
