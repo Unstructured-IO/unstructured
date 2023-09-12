@@ -166,6 +166,9 @@ def test_partition_pdf_with_model_name_env_var(
             ocr_mode="entire_page",
             extract_tables=False,
             model_name="checkbox",
+            pdf_image_dpi=None,
+            extract_images_in_pdf=False,
+            image_output_dir_path=None,
         )
 
 
@@ -187,6 +190,9 @@ def test_partition_pdf_with_model_name(
             ocr_mode="entire_page",
             extract_tables=False,
             model_name="checkbox",
+            pdf_image_dpi=None,
+            extract_images_in_pdf=False,
+            image_output_dir_path=None,
         )
 
 
@@ -400,6 +406,8 @@ def test_partition_pdf_with_dpi():
             extract_tables=False,
             model_name=None,
             pdf_image_dpi=100,
+            extract_images_in_pdf=False,
+            image_output_dir_path=None,
         )
 
 
