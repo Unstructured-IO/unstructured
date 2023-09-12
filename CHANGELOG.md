@@ -1,4 +1,4 @@
-## 0.10.15-dev3
+## 0.10.15-dev4
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 * Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf partitioning functions
 
 ### Features
+
+* Add functionality to save embedded images in PDF separately as images
 
 ### Fixes
 
