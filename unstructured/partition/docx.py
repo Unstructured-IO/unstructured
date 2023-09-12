@@ -235,14 +235,6 @@ class _DocxPartitioner:
     def _iter_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in (docx) `document` in document order."""
 
-        last_modification_date = None
-        if self._filename is not None:
-            if not self._filename.startswith("/tmp"):
-                last_modification_date = get_last_modified_date(self._filename)
-        else:
-            assert self._file is not None
-            last_modification_date = get_last_modified_date_from_file(self._file)
-
         table_index = 0
 
         headers_and_footers = _get_headers_and_footers(self._document, self._metadata_filename)
@@ -266,7 +258,7 @@ class _DocxPartitioner:
                     text_as_html=html_table,
                     filename=self._metadata_filename,
                     page_number=page_number,
-                    last_modified=self._metadata_last_modified or last_modification_date,
+                    last_modified=self._last_modified,
                     emphasized_text_contents=emphasized_text_contents,
                     emphasized_text_tags=emphasized_text_tags,
                 )
@@ -285,7 +277,7 @@ class _DocxPartitioner:
                     para_element.metadata = ElementMetadata(
                         filename=self._metadata_filename,
                         page_number=page_number,
-                        last_modified=self._metadata_last_modified or last_modification_date,
+                        last_modified=self._last_modified,
                         emphasized_text_contents=emphasized_text_contents,
                         emphasized_text_tags=emphasized_text_tags,
                     )
@@ -342,6 +334,25 @@ class _DocxPartitioner:
                 if all(indicator in element.xml for indicator in indicators):
                     return True
         return False
+
+    @lazyproperty
+    def _last_modified(self) -> Optional[str]:
+        """Last-modified date suitable for use in element metadata."""
+        # -- if this file was converted from another format, any last-modified date for the file
+        # -- will be today, so we get it from the conversion step in `._metadata_last_modified`.
+        if self._metadata_last_modified:
+            return self._metadata_last_modified
+
+        filename, file = self._filename, self._file
+
+        # -- if the file is on the filesystem, get its date from there --
+        if filename is not None:
+            return None if filename.startswith("/tmp") else get_last_modified_date(filename)
+
+        # -- otherwise try getting it from the file-like object (unlikely since BytesIO and its
+        # -- brethren have no such metadata).
+        assert file is not None
+        return get_last_modified_date_from_file(file)
 
 
 def _paragraph_to_element(
