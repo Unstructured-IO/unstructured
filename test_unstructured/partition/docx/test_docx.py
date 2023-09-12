@@ -1,3 +1,5 @@
+# pyright: reportPrivateUsage=false
+
 import os
 from tempfile import SpooledTemporaryFile
 
@@ -17,8 +19,8 @@ from unstructured.documents.elements import (
 )
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import (
+    _DocxPartitioner,
     _extract_contents_and_tags,
-    _get_emphasized_texts_from_paragraph,
     _get_emphasized_texts_from_table,
     partition_docx,
 )
@@ -318,21 +320,21 @@ def test_partition_docx_from_file_without_metadata_date(
 
 def test_get_emphasized_texts_from_paragraph(
     expected_emphasized_texts,
-    filename="example-docs/fake-doc-emphasized-text.docx",
+    filename: str="example-docs/fake-doc-emphasized-text.docx",
 ):
-    document = docx.Document(filename)
-    paragraph = document.paragraphs[1]
-    emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+    partitioner = _DocxPartitioner(filename, None, None, False, None)
+    paragraph = partitioner._document.paragraphs[1]
+    emphasized_texts = list(partitioner._iter_paragraph_emphasis(paragraph))
     assert paragraph.text == "I am a bold italic bold-italic text."
     assert emphasized_texts == expected_emphasized_texts
 
-    paragraph = document.paragraphs[2]
-    emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+    paragraph = partitioner._document.paragraphs[2]
+    emphasized_texts = list(partitioner._iter_paragraph_emphasis(paragraph))
     assert paragraph.text == ""
     assert emphasized_texts == []
 
-    paragraph = document.paragraphs[3]
-    emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+    paragraph = partitioner._document.paragraphs[3]
+    emphasized_texts = list(partitioner._iter_paragraph_emphasis(paragraph))
     assert paragraph.text == "I am a normal text."
     assert emphasized_texts == []
 
