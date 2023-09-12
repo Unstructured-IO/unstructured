@@ -4,8 +4,7 @@ from unstructured.embed.embedder.open_ai import OpenAIEmbedder, OpenAIEmbedderCo
 
 config = OpenAIEmbedderConfig(
     api_key=os.environ["OPENAI_API_KEY"],
-    list_of_elements_json_paths="""/Users/ahmet/elements_results/1.docx.json
-                                   /Users/ahmet/elements_results/2.pdf.json""",
+    list_of_elements_json_paths="Path1 Path2",
     output_dir="embedding_outputs",
 )
 embedder = OpenAIEmbedder(config)
