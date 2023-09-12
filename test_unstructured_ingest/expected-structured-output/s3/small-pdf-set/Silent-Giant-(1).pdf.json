@@ -2180,8 +2180,8 @@
     "text": "8"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "481e5a54650b0a4ac7bc2568ddad436d",
+    "type": "Image",
+    "element_id": "6d647fc38c561c01f7859e019345d367",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -2200,8 +2200,8 @@
     "text": "+44 (0)20 7451 1520 www.world-nuclear.org info@world-nuclear.org"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "cff66c7267104eeade830b3dc8675acd",
+    "type": "UncategorizedText",
+    "element_id": "481e5a54650b0a4ac7bc2568ddad436d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -2220,8 +2220,8 @@
     "text": "World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "de49f1c955d7c8a4d1d6d261c1cf21ba",
+    "type": "NarrativeText",
+    "element_id": "cff66c7267104eeade830b3dc8675acd",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
