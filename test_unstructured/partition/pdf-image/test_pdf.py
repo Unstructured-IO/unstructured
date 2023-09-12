@@ -828,7 +828,7 @@ def test_partition_pdf_with_ocr_coordinates_are_not_nan_from_file(
                     assert point[0] is not math.nan
                     assert point[1] is not math.nan
 
-                    
+
 def test_add_chunking_strategy_on_partition_pdf(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):

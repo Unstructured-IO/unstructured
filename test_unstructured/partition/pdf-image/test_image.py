@@ -421,15 +421,15 @@ def test_partition_image_with_ocr_coordinates_are_not_nan_from_filename(
 
     elements = image.partition_image(filename=filename, strategy="ocr_only")
     for element in elements:
-        # TODO (jennings) One or multiple elements is an empty string without coordinates.
-        # This should be fixed in a new issue
+        # TODO (jennings) One or multiple elements is an empty string
+        # without coordinates. This should be fixed in a new issue
         if element.text:
             box = element.metadata.coordinates.points
             for point in box:
                 assert point[0] is not math.nan
                 assert point[1] is not math.nan
 
-                
+
 def test_add_chunking_strategy_on_partition_image(
     filename="example-docs/layout-parser-paper-fast.jpg",
 ):
