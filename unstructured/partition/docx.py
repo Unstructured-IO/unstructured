@@ -280,13 +280,7 @@ class _DocxPartitioner:
                     paragraph, self._is_list_item(paragraph)
                 )
                 if para_element is not None:
-                    para_element.metadata = ElementMetadata(
-                        filename=self._metadata_filename,
-                        page_number=self._page_number,
-                        last_modified=self._last_modified,
-                        emphasized_text_contents=emphasized_text_contents or None,
-                        emphasized_text_tags=emphasized_text_tags or None,
-                    )
+                    para_element.metadata = self._paragraph_metadata(paragraph)
                     yield para_element
             elif element_item.tag.endswith("sectPr"):
                 if len(headers_and_footers) > section:
@@ -396,6 +390,17 @@ class _DocxPartitioner:
         """[contents, tags] pair describing emphasized text in `paragraph`."""
         iter_p_emph, iter_p_emph_2 = itertools.tee(self._iter_paragraph_emphasis(paragraph))
         return ([e["text"] for e in iter_p_emph], [e["tag"] for e in iter_p_emph_2])
+
+    def _paragraph_metadata(self, paragraph: Paragraph) -> ElementMetadata:
+        """ElementMetadata object describing `paragraph`."""
+        (emphasized_text_contents, emphasized_text_tags) = self._paragraph_emphasis(paragraph)
+        return ElementMetadata(
+            filename=self._metadata_filename,
+            page_number=self._page_number,
+            last_modified=self._last_modified,
+            emphasized_text_contents=emphasized_text_contents or None,
+            emphasized_text_tags=emphasized_text_tags or None,
+        )
 
     def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
         """Attempt to differentiate the element-type by inspecting the raw text."""
