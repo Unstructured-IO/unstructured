@@ -196,6 +196,9 @@ def partition_docx(
 class _DocxPartitioner:
     """Provides `.partition()` for MS-Word 2007+ (.docx) files."""
 
+    # TODO: Improve document-contains-pagebreaks algorithm to use XPath and to search for
+    #       `w:lastRenderedPageBreak` alone. Make it independent and don't rely on anything like
+    #        the "_element_contains_pagebreak()" function.
     # TODO: get last-modified date from document-properties (stored in docx package) rather than
     #       relying on last filesystem-write date; maybe fall-back to filesystem-date.
     # TODO: improve `._element_contains_pagebreak()`. It uses substring matching on the rendered
@@ -254,8 +257,7 @@ class _DocxPartitioner:
         if len(headers_and_footers) > 0:
             yield from headers_and_footers[0][0]
 
-        document_contains_pagebreaks = self._element_contains_pagebreak(self._document._element)
-        page_number = 1 if document_contains_pagebreaks else None
+        page_number = 1 if self._document_contains_pagebreaks else None
         section = 0
         is_list = False
         for element_item in self._document.element.body:
@@ -325,6 +327,11 @@ class _DocxPartitioner:
             file.seek(0)
             file = io.BytesIO(file.read())
         return docx.Document(file)
+
+    @lazyproperty
+    def _document_contains_pagebreaks(self) -> bool:
+        """True when there is at least one page-break detected in the document."""
+        return self._element_contains_pagebreak(self._document._element)
 
     def _element_contains_pagebreak(self, element: BaseOxmlElement) -> bool:
         """True when `element` contains a page break.
