@@ -9,6 +9,7 @@ import docx
 import pytest
 
 from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT
+from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
@@ -904,3 +905,50 @@ def test_get_partition_with_extras_prompts_for_install_if_missing():
 
     msg = str(exception_info.value)
     assert 'Install the pdf dependencies with pip install "unstructured[pdf]"' in msg
+
+
+def test_add_chunking_strategy_on_partition_auto():
+    filename = "example-docs/example-10k-1p.html"
+    chunk_elements = partition(filename, chunking_strategy="by_title")
+    elements = partition(filename)
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_add_chunking_strategy_on_partition_auto_respects_multipage():
+    filename = "example-docs/example-10k-1p.html"
+    partitioned_elements_multipage_false_combine_chars_0 = partition(
+        filename,
+        chunking_strategy="by_title",
+        multipage_sections=False,
+        combine_under_n_chars=0,
+    )
+    partitioned_elements_multipage_true_combine_chars_0 = partition(
+        filename,
+        chunking_strategy="by_title",
+        multipage_sections=True,
+        combine_under_n_chars=0,
+    )
+    elements = partition(filename)
+    cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(
+        elements,
+        multipage_sections=False,
+        combine_under_n_chars=0,
+    )
+    cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(
+        elements,
+        multipage_sections=True,
+        combine_under_n_chars=0,
+    )
+    assert (
+        partitioned_elements_multipage_false_combine_chars_0
+        == cleaned_elements_multipage_false_combine_chars_0
+    )
+    assert (
+        partitioned_elements_multipage_true_combine_chars_0
+        == cleaned_elements_multipage_true_combine_chars_0
+    )
+    assert len(partitioned_elements_multipage_true_combine_chars_0) != len(
+        partitioned_elements_multipage_false_combine_chars_0,
+    )

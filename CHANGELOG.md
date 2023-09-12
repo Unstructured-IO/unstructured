@@ -1,8 +1,9 @@
-## 0.10.15-dev1
+## 0.10.15-dev2
 
 ### Enhancements
 
 * Updated HTML Partitioning to extract tables
+* Create and add `add_chunking_strategy` decorator to partition functions
 
 ### Features
 

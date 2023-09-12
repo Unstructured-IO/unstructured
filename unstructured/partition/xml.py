@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -58,6 +59,7 @@ def get_leaf_elements(
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.XML)
+@add_chunking_strategy()
 def partition_xml(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
@@ -68,6 +70,7 @@ def partition_xml(
     include_metadata: bool = True,
     encoding: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an XML document into its document elements.
