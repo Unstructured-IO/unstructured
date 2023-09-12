@@ -219,6 +219,13 @@ class _DocxPartitioner:
     #       count instead of a boolean.
     # TODO: A section can give rise to one or two page breaks, like an "odd-page" section start
     #       from an odd current-page produces two. Add page-break detection on section as well.
+    # TODO: Improve ._is_list_item() to detect manually-applied bullets (which do not appear in the
+    #       paragraph text so are missed by `is_bulleted_text()`) using XPath.
+    # TODO: Improve ._is_list_item() to include list-styles such that telling whether a paragraph is
+    #       a list-item is encapsulated in a single place rather than distributed around the code.
+    # TODO: Improve ._is_list_item() method of detecting a numbered-list-item to use XPath instead
+    #       of a substring match on the rendered XML. Include all permutations of how a numbered
+    #       list can be manually applied (as opposed to by using a style).
 
     def __init__(
         self,
@@ -263,7 +270,6 @@ class _DocxPartitioner:
             yield from headers_and_footers[0][0]
 
         section = 0
-        is_list = False
         for element_item in self._document.element.body:
             if element_item.tag.endswith("tbl"):
                 table = self._document.tables[table_index]
@@ -285,14 +291,14 @@ class _DocxPartitioner:
                 yield element
                 table_index += 1
             elif element_item.tag.endswith("p"):
-                if "<w:numPr>" in element_item.xml:
-                    is_list = True
                 paragraph = Paragraph(element_item, self._document)
                 emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
                 emphasized_text_contents, emphasized_text_tags = _extract_contents_and_tags(
                     emphasized_texts,
                 )
-                para_element: Optional[Text] = _paragraph_to_element(paragraph, is_list)
+                para_element: Optional[Text] = _paragraph_to_element(
+                    paragraph, self._is_list_item(paragraph)
+                )
                 if para_element is not None:
                     para_element.metadata = ElementMetadata(
                         filename=self._metadata_filename,
@@ -302,7 +308,6 @@ class _DocxPartitioner:
                         emphasized_text_tags=emphasized_text_tags,
                     )
                     yield para_element
-                is_list = False
             elif element_item.tag.endswith("sectPr"):
                 if len(headers_and_footers) > section:
                     footers = headers_and_footers[section][1]
@@ -358,6 +363,13 @@ class _DocxPartitioner:
         self._page_counter += 1
         if self._include_page_breaks:
             yield PageBreak("")
+
+    def _is_list_item(self, paragraph: Paragraph) -> bool:
+        """True when `paragraph` can be identified as a list-item."""
+        if is_bulleted_text(paragraph.text):
+            return True
+
+        return "<w:numPr>" in paragraph._p.xml
 
     @lazyproperty
     def _last_modified(self) -> Optional[str]:
