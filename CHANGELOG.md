@@ -1,17 +1,31 @@
-## 0.10.14-dev0
+## 0.10.15-dev2
 
 ### Enhancements
 
-* Update all connectors to use new downstream architecture
-  * New click type added to parse comma-delimited string inputs
-  * Some CLI options renamed
+* Updated HTML Partitioning to extract tables
+* Create and add `add_chunking_strategy` decorator to partition functions
 * Integrates Chipper types: 
   * Headline,Subheadline -> Title
   * Abstract -> NarrativeText
 
 ### Features
 
-* New element metadata `title_depth`
+* New element metadata `category_depth`
+
+### Features
+
+### Fixes
+
+## 0.10.14
+
+### Enhancements
+
+* Update all connectors to use new downstream architecture
+  * New click type added to parse comma-delimited string inputs
+  * Some CLI options renamed
+ 
+### Features
+
 ### Fixes
 
 ## 0.10.13
