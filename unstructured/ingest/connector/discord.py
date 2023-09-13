@@ -99,7 +99,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         jump_url = bot.get_channel(int(self.channel)).jump_url  # type: ignore
         return messages, jump_url
 
-    def set_source_metadata(self, **kwargs):
+    def update_source_metadata(self, **kwargs):
         messages, jump_url = kwargs.get("messages"), kwargs.get("jump_url")
         if messages is None:
             messages, jump_url = self._get_messages()
@@ -132,7 +132,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         with open(self._tmp_download_file(), "w") as f:
             for m in messages:
                 f.write(m.content + "\n")
-        self.set_source_metadata(messages=messages, jump_url=jump_url)
+        self.update_source_metadata(messages=messages, jump_url=jump_url)
 
     @property
     def filename(self):

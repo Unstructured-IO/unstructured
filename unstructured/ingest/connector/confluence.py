@@ -107,6 +107,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
+            "url": self.connector_config.url,
             "page_id": self.document_meta.document_id,
         }
 
@@ -130,7 +131,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return None
         return result
 
-    def set_source_metadata(self, **kwargs):
+    def update_source_metadata(self, **kwargs):
         """Fetches file metadata from the current page."""
         page = kwargs.get("page", self._get_page())
         if page is None:
@@ -175,7 +176,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
-        self.set_source_metadata(page=result)
+        self.update_source_metadata(page=result)
 
 
 @dataclass

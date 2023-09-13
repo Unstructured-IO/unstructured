@@ -99,7 +99,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             logger.info("Empty document, retrieved table but it has no rows.")
         return rows, table_url
 
-    def set_source_metadata(self, **kwargs):
+    def update_source_metadata(self, **kwargs):
         """Gets file metadata from the current table."""
 
         rows, table_url = kwargs.get("rows"), kwargs.get("table_url")
@@ -154,7 +154,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
-        self.set_source_metadata(rows=rows, table_url=table_url)
+        self.update_source_metadata(rows=rows, table_url=table_url)
 
 
 airtable_id_prefixes = ["app", "tbl", "viw"]

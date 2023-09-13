@@ -102,14 +102,14 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     def date_created(self) -> t.Optional[str]:
         """The date the document was created on the source system."""
         if self.source_metadata is None:
-            self.set_source_metadata()
+            self.update_source_metadata()
         return self.source_metadata.date_created  # type: ignore
 
     @property
     def date_modified(self) -> t.Optional[str]:
         """The date the document was last modified on the source system."""
         if self.source_metadata is None:
-            self.set_source_metadata()
+            self.update_source_metadata()
         return self.source_metadata.date_modified  # type: ignore
 
     @property
@@ -122,7 +122,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     def exists(self) -> t.Optional[bool]:
         """Whether the document exists on the remote source."""
         if self.source_metadata is None:
-            self.set_source_metadata()
+            self.update_source_metadata()
         return self.source_metadata.exists  # type: ignore
 
     @property
@@ -145,7 +145,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     def source_url(self) -> t.Optional[str]:
         """The url of the source document."""
         if self.source_metadata is None:
-            self.set_source_metadata()
+            self.update_source_metadata()
         return self.source_metadata.source_url  # type: ignore
 
     @property
@@ -154,7 +154,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         explicit version number, or anything else that can be used to uniquely identify
         the version of the document."""
         if self.source_metadata is None:
-            self.set_source_metadata()
+            self.update_source_metadata()
         return self.source_metadata.version  # type: ignore
 
     @abstractmethod
@@ -180,7 +180,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
 
         return wrapper
 
-    def set_source_metadata(self, **kwargs) -> None:
+    def update_source_metadata(self, **kwargs) -> None:
         """Sets the SourceMetadata and the  properties for the doc"""
         pass
 
