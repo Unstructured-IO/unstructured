@@ -580,11 +580,14 @@ def _add_pytesseract_bboxes_to_elements(
     boxes = bboxes_string.strip().split("\n")
     box_idx = 0
     for element in elements:
-        if not element.text or boxes[box_idx][0]:
+        if not element.text:
             box_idx += 1
             continue
-        while boxes[box_idx][0] != element.text[0]:
-            box_idx += 1
+        try:       
+            while boxes[box_idx][0] != element.text[0]:
+                box_idx += 1
+        except IndexError:
+            break
         char_count = len(element.text.replace(" ", ""))
         if box_idx + char_count > len(boxes):
             break
