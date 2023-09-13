@@ -53,25 +53,6 @@ Run Locally
             print('Command failed. Error:')
             print(error.decode())
 
-With Delta Table as destination
----------------
-This will write a new table to a local directory. If the table already exists, an error will be raised.
-
-.. tabs::
-
-   .. tab:: Shell
-
-      .. code:: shell
-
-        unstructured-ingest \
-            delta-table \
-            --table-uri s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/ \
-            --output-dir delta-table-example \
-            --storage_options "AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
-            --verbose \
-            delta-table \
-            --write-column json_data \
-            --table-uri delta-table-dest
 
 Run via the API
 ---------------
