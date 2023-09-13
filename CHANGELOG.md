@@ -1,4 +1,4 @@
-## 0.10.15-dev7
+## 0.10.15
 
 ### Enhancements
 
@@ -8,6 +8,11 @@
 * Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf partitioning functions
 * Adds `xlsx` and `xls` to `skip_infer_table_types` default list in `partition`
 * Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in image partitioning functions
+* Bump unstructured-inference to 0.5.27
+  * table structure detection now pads the input image by 25 pixels in all 4 directions to improve its recall (0.5.27)
+  * support paddle with both cpu and gpu and assumed it is pre-installed (0.5.26)
+  * fix a bug where `cells_to_html` doesn't handle cells spanning multiple rows properly (0.5.25)
+  * remove `cv2` preprocessing step before OCR step in table transformer (0.5.24)
 
 ### Features
 
@@ -66,7 +71,7 @@
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
-  
+
 ## 0.10.11
 
 ### Enhancements
