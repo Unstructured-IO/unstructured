@@ -32,9 +32,9 @@ from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
     is_possible_narrative_text,
+    is_possible_numbered_list,
     is_possible_title,
     is_us_city_state_zip,
-    is_possible_numbered_list,
 )
 
 
@@ -280,7 +280,7 @@ def element_from_text(
         )
     elif is_possible_numbered_list(text):
         return ListItem(
-            text=text, 
+            text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )

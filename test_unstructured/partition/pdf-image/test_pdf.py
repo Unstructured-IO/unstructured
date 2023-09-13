@@ -11,10 +11,10 @@ from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
     ElementMetadata,
+    ListItem,
     NarrativeText,
     Text,
     Title,
-    ListItem,
 )
 from unstructured.partition import pdf, strategies
 from unstructured.partition.json import partition_json
@@ -849,6 +849,5 @@ def test_combine_numbered_list(filename):
         if isinstance(element, ListItem):
             first_list_element = element
             break
-    assert len(elements) < 28 
+    assert len(elements) < 28
     assert first_list_element.text.endswith("(Section 3)")
-    

@@ -15,10 +15,10 @@ from unstructured.nlp.english_words import ENGLISH_WORDS
 from unstructured.nlp.patterns import (
     EMAIL_ADDRESS_PATTERN_RE,
     ENDS_IN_PUNCT_RE,
+    NUMBERED_LIST_RE,
     UNICODE_BULLETS_RE,
     US_CITY_STATE_ZIP_RE,
     US_PHONE_NUMBERS_RE,
-    NUMBERED_LIST_RE,
 )
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 
