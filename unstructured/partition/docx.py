@@ -31,7 +31,7 @@ from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.oxml.xmlchemy import BaseOxmlElement
-from docx.section import Section
+from docx.section import Section, _Header
 from docx.table import Table as DocxTable
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
@@ -249,8 +249,8 @@ class _DocxPartitioner:
 
         for section_idx, section in enumerate(self._document.sections):
             yield from self._iter_section_page_breaks(section_idx, section)
-            if len(headers_and_footers) > section_idx:
-                yield from headers_and_footers[section_idx][0]
+            yield from self._iter_section_headers(section)
+
             for block_item in _SectBlockItemIterator.iter_sect_block_items(section, self._document):
                 if isinstance(block_item, Paragraph):
                     yield from self._iter_paragraph_elements(block_item)
@@ -360,6 +360,33 @@ class _DocxPartitioner:
                 yield {"text": text, "tag": "b"}
             if run.italic:
                 yield {"text": text, "tag": "i"}
+
+    def _iter_section_headers(self, section: Section) -> Iterator[Header]:
+        """Generate `Header` elements for this section if it has them.
+
+        See `._iter_section_footers()` docstring for more on docx headers and footers.
+        """
+
+        def iter_header(header: _Header, header_footer_type: str) -> Iterator[Header]:
+            """Generate zero-or-one Header elements for `header`."""
+            if header.is_linked_to_previous:
+                return
+            text = "\n".join([p.text for p in header.paragraphs])
+            if not text:
+                return
+            yield Header(
+                text=text,
+                metadata=ElementMetadata(
+                    filename=self._metadata_filename,
+                    header_footer_type=header_footer_type,
+                ),
+            )
+
+        yield from iter_header(section.header, "primary")
+        if section.different_first_page_header_footer:
+            yield from iter_header(section.first_page_header, "first_page")
+        if self._document.settings.odd_and_even_pages_header_footer:
+            yield from iter_header(section.even_page_header, "even_page")
 
     def _iter_section_page_breaks(self, section_idx: int, section: Section) -> Iterator[PageBreak]:
         """Generate zero-or-one `PageBreak` document elements for `section`.
