@@ -4,6 +4,14 @@ import iso639
 
 from unstructured.utils import requires_dependencies
 
+# TODO(shreya): make the call below and use regex to format it into list of strings instead of hardcoding it here
+# print(pytesseract.get_languages(config=''))
+
+# TODO(shreya): decide if these tesseract langs should be stored as a list or a mapping
+# mapping ideas: 
+# standard language code -> tess lang (many to 1), 
+# standard code to list of tess langs in the same language (1 to list)
+# language name -> tess lang or list of tess langs
 PYTESSERACT_LANGS = [
     "afr",
     "amh",
@@ -152,17 +160,10 @@ def convert_old_ocr_languages_to_languages(ocr_languages: str):
     return ocr_languages.split("+")
 
 
-# TODO(shreya): make list or dict of tesseract langs
-# dict language name -> lang code, or std lang to lang code
-# SOLUTION print(pytesseract.get_languages(config=''))
-# no still need a mapping from some standard language code (anything found in the lang object) to these codes
-# for now adding list to top of this file
-
-
-# convert a language to its tesseract recognized langcode(s), if supported
+# convert a language to its tesseract formatted and recognized langcode(s), if supported
 @requires_dependencies("pytesseract")
-def convert_language_to_tesseract(lang: str):
-    # if language is already tesseract langcode, return it
+def convert_language_to_tesseract(lang: str) -> str:
+    # if language is already tesseract langcode, return it immediately
     # NOTE: this may catch some of the cases of choosing between a plain vs suffixed tesseract code
     if lang in PYTESSERACT_LANGS:
         return lang
@@ -175,65 +176,42 @@ def convert_language_to_tesseract(lang: str):
         print(f"{lang} Language Object: {lang_iso639}")
     except:
         # not a valid language
-        print(f"{lang} is not a valid language code")
+        # TODO(shreya): warn or raise? or proceed somehow?
+        print(f"{lang} is not a valid language code.")
         return ""
 
-    # TODO(shreya): catch if lang_iso639 not found/valid
-
-    # match to closest (?) tesseract code
-    # NOTE(shreya): what about the special nonstandard cases (ex. chi_tra? there is no chi in tesseract)
-    # solution, put both and let it trickle down through language options
-
-    # match to first 3 letters
+    # match to first 3 letters of tesseract codes
     pytesseract_langs_3 = [lang[:3] for lang in PYTESSERACT_LANGS]
 
     # try to match 639-3 (part3)
     if lang_iso639.part3 in pytesseract_langs_3:
         print("match in part3")
-        # get all tess langs with this prefix
+        # get all tess langs with this prefix (can be one or multiple_)
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part3)
-        if lang_iso639.part3 in matched_langcodes:  # exact match
-            return lang_iso639.part3
-        else:
-            # return all? check performance
-            return prepare_languages_for_tesseract(matched_langcodes)
+        return prepare_languages_for_tesseract(matched_langcodes)
 
     # try to match 639-2b (part2b)
     elif lang_iso639.part2b in pytesseract_langs_3:
         print("match in part2b")
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part2b)
-        if lang_iso639.part3 in matched_langcodes:  # exact match
-            return lang_iso639.part3
-        else:
-            # return all? check performance
-            return prepare_languages_for_tesseract(matched_langcodes)
+        return prepare_languages_for_tesseract(matched_langcodes)
+
     # try to match 639-2t
     elif lang_iso639.part2t in pytesseract_langs_3:
         print("match in part2t")
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part2t)
-        if lang_iso639.part3 in matched_langcodes:  # exact match
-            return lang_iso639.part3
-        else:
-            # return all? check performance
-            return prepare_languages_for_tesseract(matched_langcodes)
+        return prepare_languages_for_tesseract(matched_langcodes)
 
     else:
-        # warning of no match?
-        print("no match to tesseract")
+        # no match from the standard language code to a tesseract lang
+        # warning/error if not found: lang not supported by tesseract. link to full list of supported langs
+        # https://tesseract-ocr.github.io/tessdoc/Data-Files-in-different-versions.html ?
+        # TODO(shreya): warn or raise? or proceed somehow?
+        print(f"{lang} is not a language supported by Tesseract.")
+        
         # run with no lang, or err?
         return ""
 
-    # warning/error if not found: lang not supported by tesseract. link to full list of supported langs
-    # https://tesseract-ocr.github.io/tessdoc/Data-Files-in-different-versions.html
-
 
 def _get_all_tesseract_langcodes_with_prefix(prefix: str):
-    matched_langcodes = [langcode for langcode in PYTESSERACT_LANGS if langcode.startswith(prefix)]
-
-    # add this check here instead of outside in each case?
-    # if prefix in matched_langcodes: #exact match
-    #     return prefix
-    # else:
-    #     return prepare_languages_for_tesseract(matched_langcodes)
-
-    return matched_langcodes
+    return [langcode for langcode in PYTESSERACT_LANGS if langcode.startswith(prefix)]
