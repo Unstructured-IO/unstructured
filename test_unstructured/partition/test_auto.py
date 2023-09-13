@@ -339,7 +339,7 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         include_page_breaks=False,
         infer_table_structure=False,
         strategy="fast",
-        ocr_languages="eng",
+        languages=["eng"],
     )
 
 
@@ -367,6 +367,12 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
 
     assert isinstance(elements[1], NarrativeText)
     assert elements[1].text.startswith("Zejiang Shen")
+
+
+def test_auto_partition_warns_with_ocr_languages(caplog):
+    filename = "example-docs/chevron-page.pdf"
+    partition(filename=filename, strategy="hi_res", ocr_languages="eng")
+    assert "The ocr_languages kwarg will be deprecated" in caplog.text
 
 
 def test_partition_pdf_doesnt_raise_warning():
