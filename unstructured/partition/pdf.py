@@ -479,44 +479,44 @@ def _process_pdfminer_pages(
                         last_modified=metadata_last_modified,
                     )
                     page_elements.append(element)
-        numbered_item = 0
+        list_item = 0
         updated_page_elements = []  # type: ignore
         coordinate_system = PixelSpace(width=width, height=height)
         for page_element in page_elements:
             if isinstance(page_element, ListItem):
-                numbered_item += 1
-                numbered_page_element = page_element
-                numbered_item_text = page_element.text
-                numbered_item_coords = page_element.metadata.coordinates
-            elif numbered_item > 0 and check_coords_within_boundary(
+                list_item += 1
+                list_page_element = page_element
+                list_item_text = page_element.text
+                list_item_coords = page_element.metadata.coordinates
+            elif list_item > 0 and check_coords_within_boundary(
                 page_element.metadata.coordinates,
-                numbered_item_coords,
+                list_item_coords,
             ):
                 text = page_element.text  # type: ignore
-                numbered_item_text = numbered_item_text + " " + text
+                list_item_text = list_item_text + " " + text
                 x1 = min(
-                    numbered_page_element.metadata.coordinates.points[0][0],
+                    list_page_element.metadata.coordinates.points[0][0],
                     page_element.metadata.coordinates.points[0][0],
                 )
                 x2 = max(
-                    numbered_page_element.metadata.coordinates.points[2][0],
+                    list_page_element.metadata.coordinates.points[2][0],
                     page_element.metadata.coordinates.points[2][0],
                 )
                 y1 = min(
-                    numbered_page_element.metadata.coordinates.points[0][1],
+                    list_page_element.metadata.coordinates.points[0][1],
                     page_element.metadata.coordinates.points[0][1],
                 )
                 y2 = max(
-                    numbered_page_element.metadata.coordinates.points[1][1],
+                    list_page_element.metadata.coordinates.points[1][1],
                     page_element.metadata.coordinates.points[1][1],
                 )
                 points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-                numbered_page_element.text = numbered_item_text
-                numbered_page_element.metadata.coordinates = CoordinatesMetadata(
+                list_page_element.text = list_item_text
+                list_page_element.metadata.coordinates = CoordinatesMetadata(
                     points=points,
                     system=coordinate_system,
                 )
-                page_element = numbered_page_element
+                page_element = list_page_element
                 updated_page_elements.pop()
 
             updated_page_elements.append(page_element)
