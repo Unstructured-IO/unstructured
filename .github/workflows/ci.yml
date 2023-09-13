@@ -145,10 +145,6 @@ jobs:
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        # NOTE(robinson) - Installing weaviate-client separately here because the requests
-        # version conflicts with label_studio_sdk
-        pip install weaviate-client
-        pip install argilla
         make test CI=true
         make check-coverage
 
@@ -227,10 +223,6 @@ jobs:
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        # NOTE(robinson) - Installing weaviate-client separately here because the requests
-        # version conflicts with label_studio_sdk
-        pip install weaviate-client
-        pip install argilla
         make test-extra-${{ matrix.extra }} CI=true
 
   test_ingest:

@@ -46,8 +46,8 @@ install-test:
 	python3 -m pip install -r requirements/test.txt
 	# NOTE(robinson) - Installing weaviate-client separately here because the requests
 	# version conflicts with label_studio_sdk
-	python3 -m pip install weaviate-client
-	python3 -m pip install argilla
+	python3 -m pip install weaviate-client -c requirements/constraints.in
+	python3 -m pip install argilla -c requirements/constraints.in
 
 .PHONY: install-dev
 install-dev:
