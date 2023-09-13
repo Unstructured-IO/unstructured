@@ -87,22 +87,26 @@ def convert_and_partition_docx(
         Determines whether or not metadata is included in the metadata attribute on the elements in
         the output.
     """
-    if filename is None:
-        filename = ""
+    if "pypandoc" not in globals():
+        raise ImportError("package 'pypandoc' required for this operation but not installed")
+
     exactly_one(filename=filename, file=file)
 
-    filename_no_path = ""
-    if len(filename) > 0:
-        _, filename_no_path = os.path.split(os.path.abspath(filename))
-        base_filename, _ = os.path.splitext(filename_no_path)
+    def validate_filename(filename: str) -> str:
         if not os.path.exists(filename):
             raise ValueError(f"The file {filename} does not exist.")
-    elif file is not None:
-        tmp = tempfile.NamedTemporaryFile(delete=False)
-        tmp.write(file.read())
-        tmp.close()
-        filename = tmp.name
-        _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
+        _, filename_no_path = os.path.split(os.path.abspath(filename))
+        return filename_no_path
+
+    def write_to_tempfile(file: BinaryIO) -> str:
+        with tempfile.NamedTemporaryFile(delete=False) as tmp:
+            tmp.write(file.read())
+            _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
+        return filename_no_path
+
+    filename_no_path = (
+        validate_filename(filename) if filename else write_to_tempfile(cast(BinaryIO, file))
+    )
 
     base_filename, _ = os.path.splitext(filename_no_path)
 
