@@ -1,4 +1,4 @@
-## 0.10.15-dev9
+## 0.10.15-dev10
 
 ### Enhancements
 
@@ -15,6 +15,9 @@
 ### Features
 
 ### Fixes
+
+* `add_pytesseract_bboxes_to_elements` no longer returns `nan` values and logic is broken into new methods
+  `_get_element_box` and `convert_multiple_coordinates_to_new_system`
 
 ## 0.10.14
 
@@ -43,8 +46,6 @@
 * Add `clean_ligatures` function to expand ligatures in text
 
 ### Fixes
-* `add_pytesseract_bboxes_to_elements` no longer returns `nan` values and logic is broken into new methods
-  `_get_element_box` and `convert_multiple_coordinates_to_new_system`
 
 * `partition_html` breaks on `<br>` elements.
 * Ingest error handling to properly raise errors when wrapped
