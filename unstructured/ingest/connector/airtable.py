@@ -154,7 +154,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
-        self.get_source_metadata(rows=rows)
+        self.set_source_metadata(rows=rows, table_url=table_url)
 
 
 airtable_id_prefixes = ["app", "tbl", "viw"]

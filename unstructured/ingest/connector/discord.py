@@ -109,7 +109,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             )
         dates = [m.created_at for m in messages if m.created_at]
         dates.sort()
-        return SourceMetadata(
+        self.source_metadata = SourceMetadata(
             date_created=dates[0].isoformat(),
             date_modified=dates[-1].isoformat(),
             source_url=jump_url,

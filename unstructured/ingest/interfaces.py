@@ -103,27 +103,27 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         """The date the document was created on the source system."""
         if self.source_metadata is None:
             self.set_source_metadata()
-        return self.source_metadata.date_created
+        return self.source_metadata.date_created  # type: ignore
 
     @property
     def date_modified(self) -> t.Optional[str]:
         """The date the document was last modified on the source system."""
         if self.source_metadata is None:
             self.set_source_metadata()
-        return self.source_metadata.date_modified
+        return self.source_metadata.date_modified  # type: ignore
 
     @property
     def date_processed(self) -> t.Optional[str]:
         """The date the document was last processed by Unstructured.
         self._date_processed is assigned internally in self.partition_file()"""
-        return self._date_processed
+        return self._date_processed  # type: ignore
 
     @property
     def exists(self) -> t.Optional[bool]:
         """Whether the document exists on the remote source."""
         if self.source_metadata is None:
             self.set_source_metadata()
-        return self.source_metadata.exists
+        return self.source_metadata.exists  # type: ignore
 
     @property
     @abstractmethod
@@ -146,7 +146,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         """The url of the source document."""
         if self.source_metadata is None:
             self.set_source_metadata()
-        return self.source_metadata.source_url
+        return self.source_metadata.source_url  # type: ignore
 
     @property
     def version(self) -> t.Optional[str]:
@@ -155,7 +155,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         the version of the document."""
         if self.source_metadata is None:
             self.set_source_metadata()
-        return self.source_metadata.version
+        return self.source_metadata.version  # type: ignore
 
     @abstractmethod
     def cleanup_file(self):
@@ -180,7 +180,6 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
 
         return wrapper
 
-    @abstractmethod
     def set_source_metadata(self, **kwargs) -> None:
         """Sets the SourceMetadata and the  properties for the doc"""
         pass
