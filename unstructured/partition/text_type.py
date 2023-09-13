@@ -4,6 +4,8 @@ import re
 import sys
 from typing import List, Optional
 
+import numpy as np
+
 if sys.version_info < (3, 8):
     from typing_extensions import Final  # pragma: nocover
 else:
@@ -19,7 +21,7 @@ from unstructured.nlp.patterns import (
     US_CITY_STATE_ZIP_RE,
     US_PHONE_NUMBERS_RE,
 )
-from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
+from unstructured.nlp.tokenize import ne_chunk, pos_tag, sent_tokenize, word_tokenize
 
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
 ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s\-,.!?_\/]+")
@@ -74,7 +76,7 @@ def is_possible_narrative_text(
     cap_threshold = float(
         os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold),
     )
-    if exceeds_cap_ratio(text, threshold=cap_threshold):
+    if exceeds_cap_ratio(text, threshold=cap_threshold, language=language):
         trace_logger.detail(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")  # type: ignore # noqa: E501
         return False
 
@@ -126,6 +128,9 @@ def is_possible_title(
         return False
 
     if text.isupper() and ENDS_IN_PUNCT_RE.search(text) is not None:
+        return False
+
+    if text.endswith(".") and not text.endswith("..."):
         return False
 
     title_max_word_length = int(
@@ -257,7 +262,7 @@ def under_non_alpha_ratio(text: str, threshold: float = 0.5):
     return ratio < threshold
 
 
-def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
+def exceeds_cap_ratio(text: str, threshold: float = 0.5, language: str = "en") -> bool:
     """Checks the title ratio in a section of text. If a sufficient proportion of the words
     are capitalized, that can be indicated on non-narrative text (i.e. "1A. Risk Factors").
 
@@ -268,6 +273,9 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     threshold
         If the percentage of words beginning with a capital letter exceeds this threshold,
         the function returns True
+    language
+        Specify the language of the text. Default to "en" (English). The nltk corpus
+        only supports English language for now
     """
     # NOTE(robinson) - Currently limiting this to only sections of text with one sentence.
     # The assumption is that sections with multiple sentences are not titles.
@@ -277,22 +285,34 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     if text.isupper():
         return True
 
-    # NOTE(jay-ylee) - The word_tokenize function also recognizes and separates special characters
-    # into one word, causing problems with ratio measurement.
-    # Therefore, only words consisting of alphabets are used to measure the ratio.
-    # ex. world_tokenize("ITEM 1. Financial Statements (Unaudited)")
-    #     = ['ITEM', '1', '.', 'Financial', 'Statements', '(', 'Unaudited', ')'],
-    # however, "ITEM 1. Financial Statements (Unaudited)" is Title, not NarrativeText
-    tokens = [tk for tk in word_tokenize(text) if tk.isalpha()]
+    tokens = word_tokenize(text)
+    is_alpha = np.array([token.isalpha() for token in tokens])
+    alpha_token = sum(is_alpha)
 
-    # NOTE(jay-ylee) - If word_tokenize(text) is empty, return must be True to
-    # avoid being misclassified as Narrative Text.
-    if len(tokens) == 0:
+    # NOTE(klaijan) - If all alphas in word_tokenize(text) is empty
+    # return must be True to avoid being misclassified as Narrative Text.
+    if alpha_token == 0:
         return True
 
-    capitalized = sum([word.istitle() or word.isupper() for word in tokens])
-    ratio = capitalized / len(tokens)
-    return ratio > threshold
+    is_capitalized = np.array([word.istitle() or word.isupper() for word in tokens])
+    is_ne = np.zeros(len(tokens))
+    if language == "en":
+        i = 0
+        for chunk in ne_chunk(text):
+            if hasattr(chunk, "label"):
+                for word in range(len(chunk)):
+                    is_ne[word + i] = 1
+            i += 1
+
+    unrequisite_capitalized = sum(
+        np.logical_and(
+            is_alpha,
+            np.logical_and(np.logical_xor(is_capitalized, is_ne), np.logical_not(is_ne)),
+        ),
+    )
+
+    ratio = unrequisite_capitalized / alpha_token
+    return bool(ratio > threshold)
 
 
 def is_us_city_state_zip(text) -> bool:
