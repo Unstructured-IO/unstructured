@@ -2,7 +2,6 @@ import datetime as dt
 import os
 import typing as t
 from dataclasses import dataclass
-from functools import cached_property
 from pathlib import Path
 
 from unstructured.ingest.error import SourceConnectionError
@@ -12,6 +11,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import (
@@ -39,14 +39,6 @@ class SimpleDiscordConfig(BaseConnectorConfig):
                 raise ValueError("--discord-period must be an integer")
 
         pass
-
-
-@dataclass
-class DiscordFileMeta:
-    date_created: t.Optional[str]
-    date_modified: t.Optional[str]
-    source_url: t.Optional[str]
-    exists: t.Optional[bool]
 
 
 @dataclass
@@ -107,22 +99,20 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         jump_url = bot.get_channel(int(self.channel)).jump_url  # type: ignore
         return messages, jump_url
 
-    @cached_property
-    def file_metadata(self):
-        messages, source_url = self._get_messages()
+    def set_source_metadata(self, **kwargs):
+        messages, jump_url = kwargs.get("messages"), kwargs.get("jump_url")
+        if messages is None:
+            messages, jump_url = self._get_messages()
         if messages == []:
-            return DiscordFileMeta(
-                None,
-                None,
-                None,
-                False,
+            self.source_metadata = SourceMetadata(
+                exists=False,
             )
         dates = [m.created_at for m in messages if m.created_at]
         dates.sort()
-        return DiscordFileMeta(
+        return SourceMetadata(
             date_created=dates[0].isoformat(),
             date_modified=dates[-1].isoformat(),
-            source_url=source_url,
+            source_url=jump_url,
             exists=True,
         )
 
@@ -133,7 +123,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         if self.connector_config.verbose:
             logger.debug(f"fetching {self} - PID: {os.getpid()}")
 
-        messages, _ = self._get_messages()
+        messages, jump_url = self._get_messages()
         if messages == []:
             raise ValueError(f"Failed to retrieve messages from Discord channel {self.channel}")
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
@@ -142,6 +132,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         with open(self._tmp_download_file(), "w") as f:
             for m in messages:
                 f.write(m.content + "\n")
+        self.set_source_metadata(messages=messages, jump_url=jump_url)
 
     @property
     def filename(self):
@@ -149,26 +140,14 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self._tmp_download_file()
 
     @property
-    def date_created(self) -> t.Optional[str]:
-        return self.file_metadata.date_created
-
-    @property
-    def date_modified(self) -> t.Optional[str]:
-        return self.file_metadata.date_modified
-
-    @property
-    def exists(self) -> t.Optional[bool]:
-        return self.file_metadata.exists
+    def version(self) -> t.Optional[str]:
+        return None
 
     @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
             "channel": self.channel,
         }
-
-    @property
-    def source_url(self) -> t.Optional[str]:
-        return self.file_metadata.source_url
 
 
 class DiscordSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):

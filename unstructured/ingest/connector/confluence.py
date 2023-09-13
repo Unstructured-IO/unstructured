@@ -3,7 +3,6 @@ import os
 import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
-from functools import cached_property
 from pathlib import Path
 
 from unstructured.ingest.error import SourceConnectionError
@@ -13,6 +12,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -75,15 +75,6 @@ def scroll_wrapper(func):
 
 
 @dataclass
-class ConfuenceFileMeta:
-    date_created: t.Optional[str]
-    date_modified: t.Optional[str]
-    version: t.Optional[str]
-    source_url: t.Optional[str]
-    exists: t.Optional[bool]
-
-
-@dataclass
 class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing).
@@ -114,30 +105,10 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.partition_config.output_dir) / self.document_meta.space_id / output_file
 
     @property
-    def date_created(self) -> t.Optional[str]:
-        return self.file_metadata.date_created
-
-    @property
-    def date_modified(self) -> t.Optional[str]:
-        return self.file_metadata.date_modified
-
-    @property
-    def exists(self) -> t.Optional[bool]:
-        return self.file_metadata.exists
-
-    @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
             "page_id": self.document_meta.document_id,
         }
-
-    @property
-    def version(self) -> t.Optional[str]:
-        return self.file_metadata.version
-
-    @property
-    def source_url(self) -> t.Optional[str]:
-        return self.file_metadata.source_url
 
     @requires_dependencies(["atlassian"], extras="Confluence")
     def _get_page(self):
@@ -159,17 +130,12 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return None
         return result
 
-    @cached_property
-    def file_metadata(self):
+    def set_source_metadata(self, **kwargs):
         """Fetches file metadata from the current page."""
-        page = self._get_page()
+        page = kwargs.get("page", self._get_page())
         if page is None:
-            return ConfuenceFileMeta(
-                None,
-                None,
-                None,
-                None,
-                False,
+            self.source_metadata = SourceMetadata(
+                exists=False,
             )
         document_history = page["history"]
         date_created = datetime.strptime(
@@ -184,12 +150,12 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         else:
             date_modified = date_created
         version = page["version"]["number"]
-        return ConfuenceFileMeta(
-            date_created,
-            date_modified,
-            version,
-            page["_links"].get("self", None),
-            True,
+        self.source_metadata = SourceMetadata(
+            date_created=date_created,
+            date_modified=date_modified,
+            version=version,
+            source_url=page["_links"].get("self", None),
+            exists=True,
         )
 
     @SourceConnectionError.wrap
@@ -209,6 +175,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
+        self.set_source_metadata(page=result)
 
 
 @dataclass

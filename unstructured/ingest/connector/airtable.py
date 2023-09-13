@@ -2,7 +2,6 @@ import os
 import typing as t
 from dataclasses import dataclass
 from datetime import datetime
-from functools import cached_property
 from pathlib import Path
 
 from unstructured.ingest.error import SourceConnectionError
@@ -12,6 +11,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -38,15 +38,6 @@ class AirtableTableMeta:
     base_id: str
     table_id: str
     view_id: t.Optional[str] = None
-
-
-@dataclass
-class AirtableFileMeta:
-    date_created: t.Optional[str]
-    date_modified: t.Optional[str]
-    version: t.Optional[str]
-    source_url: t.Optional[str]
-    exists: t.Optional[bool]
 
 
 @dataclass
@@ -77,18 +68,6 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.partition_config.output_dir) / self.table_meta.base_id / output_file
 
     @property
-    def date_created(self) -> t.Optional[str]:
-        return self.file_metadata.date_created
-
-    @property
-    def date_modified(self) -> t.Optional[str]:
-        return self.file_metadata.date_modified
-
-    @property
-    def exists(self) -> t.Optional[bool]:
-        return self.file_metadata.exists
-
-    @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
             "base_id": self.table_meta.base_id,
@@ -97,8 +76,8 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         }
 
     @property
-    def source_url(self) -> t.Optional[str]:
-        return self.file_metadata.source_url
+    def version(self) -> t.Optional[str]:
+        return None
 
     @requires_dependencies(["pyairtable"], extras="airtable")
     def _get_table_rows(self):
@@ -120,17 +99,16 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             logger.info("Empty document, retrieved table but it has no rows.")
         return rows, table_url
 
-    @cached_property
-    def file_metadata(self):
+    def set_source_metadata(self, **kwargs):
         """Gets file metadata from the current table."""
-        rows, table_url = self._get_table_rows()
+
+        rows, table_url = kwargs.get("rows"), kwargs.get("table_url")
+        if rows is None:
+            rows, table_url = self._get_table_rows()
+
         if rows is None or len(rows) < 1:
-            return AirtableFileMeta(
-                None,
-                None,
-                None,
-                None,
-                False,
+            self.source_metadata = SourceMetadata(
+                exists=False,
             )
         dates = [r.get("createdTime", "") for r in rows]
         dates.sort()
@@ -145,12 +123,11 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             "%Y-%m-%dT%H:%M:%S.%fZ",
         ).isoformat()
 
-        return AirtableFileMeta(
-            date_created,
-            date_modified,
-            None,
-            table_url,
-            True,
+        self.source_metadata = SourceMetadata(
+            date_created=date_created,
+            date_modified=date_modified,
+            source_url=table_url,
+            exists=True,
         )
 
     @SourceConnectionError.wrap
@@ -160,7 +137,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         import pandas as pd
 
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-        rows, _ = self._get_table_rows()
+        rows, table_url = self._get_table_rows()
 
         if rows is None:
             raise ValueError(
@@ -177,6 +154,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
+        self.get_source_metadata(rows=rows)
 
 
 airtable_id_prefixes = ["app", "tbl", "viw"]
