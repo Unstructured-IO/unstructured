@@ -811,3 +811,27 @@ def test_add_chunking_strategy_on_partition_pdf(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_pdf_warns_with_ocr_languages(caplog):
+    filename = "example-docs/chevron-page.pdf"
+    pdf.partition_pdf(filename=filename, strategy="hi_res", ocr_languages="eng")
+    assert "The ocr_languages kwarg will be deprecated" in caplog.text
+
+
+def test_partition_pdf_or_image_warns_with_ocr_languages(caplog):
+    filename = "example-docs/DA-1p.pdf"
+    pdf.partition_pdf_or_image(filename=filename, strategy="hi_res", ocr_languages="eng")
+    assert "The ocr_languages kwarg will be deprecated" in caplog.text
+
+
+def test_partition_categorization_backup():
+    text = "This is Clearly a Title."
+    with mock.patch.object(pdf, "_partition_pdf_or_image_local", return_value=[Text(text)]):
+        elements = pdf.partition_pdf_or_image(
+            "example-docs/layout-parser-paper-fast.pdf",
+            strategy="hi_res",
+        )
+        # Should have changed the element class from Text to Title
+        assert isinstance(elements[0], Title)
+        assert elements[0].text == text

@@ -1,6 +1,6 @@
 [
   {
-    "type": "UncategorizedText",
+    "type": "Title",
     "element_id": "9e4a454d91ac1f220324c6d1a0377093",
     "metadata": {
       "data_source": {
@@ -38,8 +38,8 @@
     "text": "Instructions for Form 3115 (Rev. November 1987)"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "36f63dab0fb1dd098d45e0aa89fa4dd2",
+    "type": "Title",
+    "element_id": "f91d5fcc0fb964060b132e98f23cf182",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -209,7 +209,7 @@
     "text": "Generally, applicants must complete Section ‘A. In addition, complete the appropriate sections (B:1 through H) for which a change is desired."
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "bf2a070cb9d03d056e70b26bebf1ef79",
     "metadata": {
       "data_source": {
@@ -266,7 +266,7 @@
     "text": "Changes to Accounting Methods Required Under the Tax Reform Act of 1986"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "b07efea243933525e9ec04a90622508d",
     "metadata": {
       "data_source": {
@@ -323,7 +323,7 @@
     "text": "Disregard the instructions under Time and Place for Filing and Late Applications. instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(2) adjustment will be taken into account and"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "663dd3791cc24190a45998ca7914f88e",
     "metadata": {
       "data_source": {
@@ -399,8 +399,8 @@
     "text": "Time and Place for Filing"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "7a23bee70d81f8f49b74c5a359c1cbf3",
+    "type": "NarrativeText",
+    "element_id": "83042962477fa38e403e861f8edfdd4b",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -418,7 +418,7 @@
     "text": "Generally, applicants must file this form within the first 180 days of the tax year in which itis desired to make the change. Taxpayers, other than exempt organizations, should file Form 3115 with the Commissioner of Internal Revenue, Attention: CC:C:4, 1111 Constitution Avenue, NW, Washington, DC 20224, Exempt organizations should file with the Assistant Commissioner (Employee Plans and Exempt Organizations), 1111 Constitution Avenue, NW, Washington, DC 20224. You should normally receive an acknowledgment of receipt of your application within 30 days. If you do not hear from IRS within 30 days of submitting your completed Form 3115, you may inquire as to the receipt of your application by writing to: Control Clerk, CC:C:4, Internal Revenue Service, Room 5040, 1111 Constitution Avenue, NW, Washington, DC 20224."
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "df0e66d1a434e95e4051ddcb968c94c9",
     "metadata": {
       "data_source": {
@@ -456,7 +456,7 @@
     "text": "Late Applications"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "8474975a0cd563b9feee81d0e540ffd3",
     "metadata": {
       "data_source": {
@@ -475,7 +475,7 @@
     "text": "If your application is filed after the 180-day period, itis late. The application will be considered for processing only upon a showing of “good cause” and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev. Proc. 79-63."
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "ec3c2d03b846d2a186fc9a8f318f688b",
     "metadata": {
       "data_source": {
@@ -570,7 +570,7 @@
     "text": "Signature tea"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "35f1273e073cf159019550bc35b6692c",
     "metadata": {
       "data_source": {
@@ -608,7 +608,7 @@
     "text": "Affiliated Groups"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "762e2a39ed1a3ef5d3d4c83dd5dcc0e8",
     "metadata": {
       "data_source": {
@@ -646,7 +646,7 @@
     "text": "Specific Instructions Section A"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "5e7793489f88d7c9187dad66e787898f",
     "metadata": {
       "data_source": {

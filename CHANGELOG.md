@@ -1,10 +1,15 @@
-## 0.10.15-dev3
+## 0.10.15-dev9
 
 ### Enhancements
 
+* Use text-based classification hen elements come back uncategorized from PDF/Image partitioning
 * Updated HTML Partitioning to extract tables
 * Create and add `add_chunking_strategy` decorator to partition functions
-* Adds data source properties (date_created, date_modified, version, exists, source_url, record_locator) to the fsspec base interface.
+* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf partitioning functions
+* Adds `xlsx` and `xls` to `skip_infer_table_types` default list in `partition`
+* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in image partitioning functions
+* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in auto partition
+* Adds data source properties (date_created, date_modified, version, exists, source_url, record_locator) to the fsspec base interface. Defines `update_source_metadata` method for the fsspec connector.
 
 ### Features
 
@@ -63,7 +68,7 @@
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
-
+  
 ## 0.10.11
 
 ### Enhancements
