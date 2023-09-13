@@ -583,7 +583,7 @@ def _add_pytesseract_bboxes_to_elements(
         if not element.text:
             box_idx += 1
             continue
-        try:       
+        try:
             while boxes[box_idx][0] != element.text[0]:
                 box_idx += 1
         except IndexError:
