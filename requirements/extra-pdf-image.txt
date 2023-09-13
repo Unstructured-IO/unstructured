@@ -28,7 +28,7 @@ cycler==0.11.0
     # via matplotlib
 effdet==0.4.1
     # via layoutparser
-filelock==3.12.3
+filelock==3.12.4
     # via
     #   huggingface-hub
     #   torch
@@ -207,7 +207,6 @@ transformers==4.33.1
 typing-extensions==4.7.1
     # via
     #   -c requirements/base.txt
-    #   filelock
     #   huggingface-hub
     #   iopath
     #   onnx
@@ -219,7 +218,9 @@ unstructured-inference==0.5.23
     #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in
 unstructured-pytesseract==0.3.12
-    # via -r requirements/extra-pdf-image.in
+    # via
+    #   -c requirements/constraints.in
+    #   -r requirements/extra-pdf-image.in
 urllib3==1.26.16
     # via
     #   -c requirements/base.txt
