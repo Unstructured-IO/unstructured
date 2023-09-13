@@ -2,11 +2,7 @@ import os
 import pathlib
 
 from unstructured.chunking.title import chunk_by_title
-<<<<<<< HEAD
-from unstructured.documents.elements import Table
-=======
-from unstructured.documents.elements import Text
->>>>>>> fbf863e2 (adding new param to other types that use html)
+from unstructured.documents.elements import Table, Text
 from unstructured.partition.epub import partition_epub
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
