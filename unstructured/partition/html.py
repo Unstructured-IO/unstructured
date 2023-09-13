@@ -38,6 +38,7 @@ def partition_html(
     ssl_verify: bool = True,
     parser: VALID_PARSERS = None,
     html_assemble_articles: bool = False,
+    languages: List[str] = ["eng"],
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     skip_headers_and_footers: bool = False,
@@ -70,12 +71,17 @@ def partition_html(
         in the HTTP request.
     parser
         The parser to use for parsing the HTML document. If None, default parser will be used.
+    languages
+        The list of languages present in the document.
     metadata_last_modified
         The last modified date for the document.
     skip_headers_and_footers
         If True, ignores any content that is within <header> or <footer> tags
 
     """
+    if not isinstance(languages, list):
+        raise TypeError("The language parameter must be a list of language codes as strings.")
+
     if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
     # Verify that only one of the arguments was provided
@@ -134,6 +140,7 @@ def convert_and_partition_html(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
+    languages: List[str] = ["eng"],
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
 ) -> List[Element]:
@@ -150,11 +157,16 @@ def convert_and_partition_html(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it.
+    languages
+        The list of languages present in the document.
     metadata_filename
         The filename to use in element metadata.
     metadata_last_modified
         The last modified date for the document.
     """
+
+    if not isinstance(languages, list):
+        raise TypeError("The language parameter must be a list of language codes as strings.")
 
     last_modification_date = None
     if filename:
@@ -172,6 +184,7 @@ def convert_and_partition_html(
         text=html_text,
         include_page_breaks=include_page_breaks,
         encoding="unicode",
+        languages=languages,
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified or last_modification_date,
     )
