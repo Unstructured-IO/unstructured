@@ -2,6 +2,7 @@ import os
 import pathlib
 
 from unstructured.chunking.title import chunk_by_title
+from unstructured.documents.elements import Table
 from unstructured.partition.epub import partition_epub
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
@@ -32,6 +33,19 @@ def test_partition_epub_from_filename():
         assert element.metadata.section is not None
         all_sections.add(element.metadata.section)
     assert all_sections == expected_sections
+
+
+def test_partition_epub_from_filename_returns_table_in_elements():
+    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub")
+    elements = partition_epub(filename=filename)
+    assert len(elements) > 0
+    assert elements[14].text_as_html is not None
+    assert elements[14] == Table(
+        text="Contents. \n List of Illustrations   "
+        "(In certain versions of this etext [in certain browsers]"
+        "\nclicking on the image will bring up a larger version.) "
+        "\n (etext transcriber's note)",
+    )
 
 
 def test_partition_epub_from_filename_with_metadata_filename():
