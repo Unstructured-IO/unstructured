@@ -14,6 +14,7 @@ from unstructured.documents.elements import (
     NarrativeText,
     Text,
     Title,
+    ListItem,
 )
 from unstructured.partition import pdf, strategies
 from unstructured.partition.json import partition_json
@@ -835,3 +836,19 @@ def test_partition_categorization_backup():
         # Should have changed the element class from Text to Title
         assert isinstance(elements[0], Title)
         assert elements[0].text == text
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-docs/layout-parser-paper-fast.pdf"],
+)
+def test_combine_numbered_list(filename):
+    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    first_list_element = None
+    for element in elements:
+        if isinstance(element, ListItem):
+            first_list_element = element
+            break
+    assert len(elements) < 28 
+    assert first_list_element.text.endswith("(Section 3)")
+    

@@ -34,6 +34,7 @@ from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_possible_title,
     is_us_city_state_zip,
+    is_possible_numbered_list,
 )
 
 
@@ -274,6 +275,12 @@ def element_from_text(
     elif is_us_city_state_zip(text):
         return Address(
             text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
+    elif is_possible_numbered_list(text):
+        return ListItem(
+            text=text, 
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )

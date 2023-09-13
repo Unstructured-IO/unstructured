@@ -18,6 +18,7 @@ from unstructured.nlp.patterns import (
     UNICODE_BULLETS_RE,
     US_CITY_STATE_ZIP_RE,
     US_PHONE_NUMBERS_RE,
+    NUMBERED_LIST_RE,
 )
 from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 
@@ -310,3 +311,8 @@ def is_us_city_state_zip(text) -> bool:
 def is_email_address(text) -> bool:
     """Check if the given text is the email address"""
     return EMAIL_ADDRESS_PATTERN_RE.match(text.strip()) is not None
+
+
+def is_possible_numbered_list(text) -> bool:
+    """Checks to see if the text is a potential numbered list."""
+    return NUMBERED_LIST_RE.match(text.strip()) is not None
