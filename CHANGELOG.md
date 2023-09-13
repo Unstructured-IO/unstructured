@@ -1,8 +1,9 @@
-## 0.10.15-dev7
+## 0.10.15-dev8
 
 ### Enhancements
 
-* Use text-based classification hen elements come back uncategorized from PDF/Image partitioning
+* Clarify message when sentence is not counted toward sentence count b/c there aren't enough words
+* Use text-based classification when elements come back uncategorized from PDF/Image partitioning
 * Updated HTML Partitioning to extract tables
 * Create and add `add_chunking_strategy` decorator to partition functions
 * Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf partitioning functions
