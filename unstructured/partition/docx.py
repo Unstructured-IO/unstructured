@@ -31,7 +31,7 @@ from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.oxml.xmlchemy import BaseOxmlElement
-from docx.section import Section, _Header
+from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
@@ -244,9 +244,6 @@ class _DocxPartitioner:
 
     def _iter_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in (docx) `document` in document order."""
-
-        headers_and_footers = _get_headers_and_footers(self._document, self._metadata_filename)
-
         for section_idx, section in enumerate(self._document.sections):
             yield from self._iter_section_page_breaks(section_idx, section)
             yield from self._iter_section_headers(section)
@@ -258,9 +255,8 @@ class _DocxPartitioner:
                         yield from self._increment_page_number()
                 else:  # -- it's a Table object --
                     yield from self._iter_table_element(block_item)
-            if len(headers_and_footers) > section_idx:
-                footers = headers_and_footers[section_idx][1]
-                yield from footers
+
+            yield from self._iter_section_footers(section)
 
     @lazyproperty
     def _document(self) -> Document:
@@ -360,6 +356,38 @@ class _DocxPartitioner:
                 yield {"text": text, "tag": "b"}
             if run.italic:
                 yield {"text": text, "tag": "i"}
+
+    def _iter_section_footers(self, section: Section) -> Iterator[Footer]:
+        """Generate any `Footer` elements defined for this section.
+
+        A Word document has up to three header and footer definition pairs for each document
+        section, a primary, first-page, and even-page header and footer. The first-page pair
+        applies only to the first page of the section (perhaps a title page or chapter start). The
+        even-page pair is used in book-bound documents where there are both recto and verso pages
+        (it is applied to verso (even-numbered) pages). A page where neither more specialized
+        footer applies uses the primary footer.
+        """
+
+        def iter_footer(footer: _Footer, header_footer_type: str) -> Iterator[Footer]:
+            """Generate zero-or-one Footer elements for `footer`."""
+            if footer.is_linked_to_previous:
+                return
+            text = "\n".join([p.text for p in footer.paragraphs])
+            if not text:
+                return
+            yield Footer(
+                text=text,
+                metadata=ElementMetadata(
+                    filename=self._metadata_filename,
+                    header_footer_type=header_footer_type,
+                ),
+            )
+
+        yield from iter_footer(section.footer, "primary")
+        if section.different_first_page_header_footer:
+            yield from iter_footer(section.first_page_footer, "first_page")
+        if self._document.settings.odd_and_even_pages_header_footer:
+            yield from iter_footer(section.even_page_footer, "even_page")
 
     def _iter_section_headers(self, section: Section) -> Iterator[Header]:
         """Generate `Header` elements for this section if it has them.
@@ -574,45 +602,6 @@ class _DocxPartitioner:
         """[contents, tags] pair describing emphasized text in `table`."""
         iter_tbl_emph, iter_tbl_emph_2 = itertools.tee(self._iter_table_emphasis(table))
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])
-
-
-def _join_paragraphs(paragraphs: List[Paragraph]) -> Optional[str]:
-    return "\n".join([paragraph.text for paragraph in paragraphs])
-
-
-def _get_headers_and_footers(
-    document: Document,
-    metadata_filename: Optional[str],
-) -> List[Tuple[List[Header], List[Footer]]]:
-    headers_and_footers: List[Tuple[List[Header], List[Footer]]] = []
-    attr_prefixes = ["", "first_page_", "even_page_"]
-
-    for section in document.sections:
-        headers: List[Header] = []
-        footers: List[Footer] = []
-
-        for _type in ["header", "footer"]:
-            for prefix in attr_prefixes:
-                _elem = getattr(section, f"{prefix}{_type}", None)
-                if _elem is None:
-                    continue
-
-                text = _join_paragraphs(_elem.paragraphs)
-                if text:
-                    header_footer_type = prefix[:-1] or "primary"
-                    metadata = ElementMetadata(
-                        filename=metadata_filename,
-                        header_footer_type=header_footer_type,
-                    )
-
-                    if _type == "header":
-                        headers.append(Header(text=text, metadata=metadata))
-                    elif _type == "footer":
-                        footers.append(Footer(text=text, metadata=metadata))
-
-        headers_and_footers.append((headers, footers))
-
-    return headers_and_footers
 
 
 class _SectBlockItemIterator:
