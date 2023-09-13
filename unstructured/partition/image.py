@@ -13,7 +13,8 @@ def partition_image(
     file: Optional[bytes] = None,
     include_page_breaks: bool = False,
     infer_table_structure: bool = False,
-    ocr_languages: str = "eng",
+    ocr_languages: Optional[str] = None,
+    languages: List[str] = ["eng"],
     strategy: str = "hi_res",
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
@@ -36,9 +37,9 @@ def partition_image(
         I.e., rows and cells are preserved.
         Whether True or False, the "text" field is always present in any Table element
         and is the text content of the table (no structure).
-    ocr_languages
-        The languages to use for the Tesseract agent. To use a language, you'll first need
-        to install the appropriate Tesseract language pack.
+    languages
+        The languages present in the document, for use in partitioning and/or OCR. To use a language
+        with Tesseract, you'll first need to install the appropriate Tesseract language pack.
     strategy
         The strategy to use for partitioning the image. Valid strategies are "hi_res" and
         "ocr_only". When using the "hi_res" strategy, the function uses a layout detection
@@ -50,13 +51,30 @@ def partition_image(
     """
     exactly_one(filename=filename, file=file)
 
+    if not isinstance(languages, list):
+        raise TypeError("The language parameter must be a list of language codes as strings.")
+
+    if ocr_languages is not None:
+        if languages != ["eng"]:
+            raise ValueError(
+                "Only one of languages and ocr_languages should be specified. "
+                "languages is preferred. ocr_languages is marked for deprecation.",
+            )
+
+        else:
+            languages = convert_old_ocr_languages_to_languages(ocr_languages)
+            logger.warning(
+                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
+                "Please use languages instead.",
+            )
+
     return partition_pdf_or_image(
         filename=filename,
         file=file,
         is_image=True,
         include_page_breaks=include_page_breaks,
         infer_table_structure=infer_table_structure,
-        ocr_languages=ocr_languages,
+        languages=languages,
         strategy=strategy,
         metadata_last_modified=metadata_last_modified,
     )
