@@ -250,30 +250,6 @@
       "page_number": 1,
       "text_as_html": "<table><br><tbody><br><tr><td>Notes          </td></tr><br><tr><td>Important Links</td></tr><br></tbody><br></table>"
     },
-    "text": "Notes"
-  },
-  {
-    "type": "Title",
-    "element_id": "98e38cd6c5f88330322de759657563f9",
-    "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": 1,
-        "record_locator": {
-          "page_id": "1605942"
-        },
-        "date_created": "2023-07-09T12:54:45.226000",
-        "date_modified": "2023-07-09T12:54:45.226000"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Important Links"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
-    },
-    "text": "Important Links"
+    "text": "Notes Important Links"
   }
 ]
