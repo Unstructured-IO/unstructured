@@ -80,16 +80,18 @@ def test_text_type_handles_non_english_examples(monkeypatch):
 def test_text_type_handles_multi_language_examples(monkeypatch):
     monkeypatch.setenv("UNSTRUCTURED_LANGUAGE_CHECKS", "true")
     narrative_text = "Я говорю по-русски. Вы тоже? 不，我不会说俄语。"
-    title = "Риски"
+    title = "Риски (Riesgos)"
 
     assert text_type.is_possible_narrative_text(narrative_text, languages=["eng"]) is False
     assert text_type.is_possible_narrative_text(narrative_text, languages=["chi", "rus"]) is True
     assert text_type.is_possible_narrative_text(narrative_text, languages=[]) is True
 
     assert text_type.is_possible_narrative_text(title, languages=["eng"]) is False
+    assert text_type.is_possible_narrative_text(title, languages=["spa", "rus"]) is False
     assert text_type.is_possible_narrative_text(title, languages=[]) is False
 
     assert text_type.is_possible_title(title, languages=["eng"]) is False
+    assert text_type.is_possible_title(title, languages=["spa", "rus"]) is True
     assert text_type.is_possible_title(title, languages=[]) is True
 
 
