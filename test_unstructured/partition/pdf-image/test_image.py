@@ -412,6 +412,12 @@ def test_partition_image_with_ocr_has_coordinates_from_file(
     assert int_coordinates == [(14, 36), (14, 16), (381, 16), (381, 36)]
 
 
+def test_partition_image_warns_with_ocr_languages(caplog):
+    filename = "example-docs/layout-parser-paper-fast.jpg"
+    image.partition_image(filename=filename, strategy="hi_res", ocr_languages="eng")
+    assert "The ocr_languages kwarg will be deprecated" in caplog.text
+
+
 def test_add_chunking_strategy_on_partition_image(
     filename="example-docs/layout-parser-paper-fast.jpg",
 ):
