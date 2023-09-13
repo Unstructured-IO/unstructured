@@ -429,7 +429,7 @@ def test_partition_image_with_ocr_coordinates_are_not_nan_from_filename(
                 assert point[0] is not math.nan
                 assert point[1] is not math.nan
 
-                
+
 def test_partition_image_warns_with_ocr_languages(caplog):
     filename = "example-docs/layout-parser-paper-fast.jpg"
     image.partition_image(filename=filename, strategy="hi_res", ocr_languages="eng")
