@@ -1,4 +1,4 @@
-## 0.10.15-dev7
+## 0.10.15-dev8
 
 ### Enhancements
 
@@ -12,6 +12,8 @@
 ### Features
 
 ### Fixes
+
+* Fixes an issue where each element was being assigned to a separate chunk in chunk_by_title, by dropping the coordinates metadata field
 
 ## 0.10.14
 
@@ -66,7 +68,7 @@
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
-  
+
 ## 0.10.11
 
 ### Enhancements
