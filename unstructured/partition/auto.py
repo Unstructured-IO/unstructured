@@ -128,7 +128,8 @@ def partition(
     headers: Dict[str, str] = {},
     skip_infer_table_types: List[str] = ["pdf", "jpg", "png", "xls", "xlsx"],
     ssl_verify: bool = True,
-    ocr_languages: str = "eng",
+    ocr_languages: Optional[str] = None,  # changing to optional for deprecation
+    languages: List[str] = ["eng"],
     pdf_infer_table_structure: bool = False,
     xml_keep_tags: bool = False,
     data_source_metadata: Optional[DataSourceMetadata] = None,
@@ -168,9 +169,9 @@ def partition(
     ssl_verify
         If the URL parameter is set, determines whether or not partition uses SSL verification
         in the HTTP request.
-    ocr_languages
-        The languages to use for the Tesseract agent. To use a language, you'll first need
-        to isntall the appropriate Tesseract language pack.
+    languages
+        The languages present in the document, for use in partitioning and/or OCR. To use a language
+        with Tesseract, you'll first need to install the appropriate Tesseract language pack.
     pdf_infer_table_structure
         If True and strategy=hi_res, any Table Elements extracted from a PDF will include an
         additional metadata field, "text_as_html," where the value (string) is a just a
@@ -195,6 +196,25 @@ def partition(
             "Please use metadata_filename instead.",
         )
     kwargs.setdefault("metadata_filename", metadata_filename)
+
+    if not isinstance(languages, list):
+        raise TypeError("The language parameter must be a list of language codes as strings.")
+
+    if ocr_languages is not None:
+        # check if languages was set to anything not the default value
+        # languages and ocr_languages were therefore both provided - raise error
+        if languages != ["eng"]:
+            raise ValueError(
+                "Only one of languages and ocr_languages should be specified. "
+                "languages is preferred. ocr_languages is marked for deprecation.",
+            )
+
+        else:
+            languages = convert_old_ocr_languages_to_languages(ocr_languages)
+            logger.warning(
+                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
+                "Please use languages instead.",
+            )
 
     if url is not None:
         file, filetype = file_and_type_from_url(
@@ -297,7 +317,7 @@ def partition(
             include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             strategy=strategy,
-            ocr_languages=ocr_languages,
+            languages=languages,
             **kwargs,
         )
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG) or (filetype == FileType.TIFF):
@@ -308,7 +328,7 @@ def partition(
             include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             strategy=strategy,
-            ocr_languages=ocr_languages,
+            languages=languages,
             **kwargs,
         )
     elif filetype == FileType.TXT:
