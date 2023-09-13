@@ -125,10 +125,9 @@ def normalize_layout_element(
     # in order to add coordinates metadata to the element.
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
-    if layout_dict.get("prob"):
-        class_prob_metadata = ElementMetadata(
-            detection_class_prob=float(layout_dict.get("prob")),
-        )
+    prob = layout_dict.get("prob")
+    if prob and isinstance(prob, (int, str, float)):
+        class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))
     else:
         class_prob_metadata = ElementMetadata()
     if element_type == "List":
@@ -141,7 +140,7 @@ def normalize_layout_element(
             )
         else:
             return ListItem(
-                text=text,
+                text=text if text else "",
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=class_prob_metadata,
@@ -176,7 +175,7 @@ def normalize_layout_element(
         )
     else:
         return Text(
-            text=text,
+            text=text if text else "",
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
@@ -184,16 +183,16 @@ def normalize_layout_element(
 
 
 def layout_list_to_list_items(
-    text: str,
-    coordinates: Tuple[Tuple[float, float], ...],
+    text: Optional[str],
+    coordinates: Optional[Tuple[Tuple[float, float], ...]],
     coordinate_system: Optional[CoordinateSystem],
     metadata=Optional[ElementMetadata],
 ) -> List[Element]:
     """Converts a list LayoutElement to a list of ListItem elements."""
-    split_items = ENUMERATED_BULLETS_RE.split(text)
+    split_items = ENUMERATED_BULLETS_RE.split(text) if text else []
     # NOTE(robinson) - this means there wasn't a match for the enumerated bullets
     if len(split_items) == 1:
-        split_items = UNICODE_BULLETS_RE.split(text)
+        split_items = UNICODE_BULLETS_RE.split(text) if text else []
 
     list_items: List[Element] = []
     for text_segment in split_items:

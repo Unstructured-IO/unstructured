@@ -16,7 +16,7 @@ def test_partition_rst_from_filename(filename="example-docs/README.rst"):
 
 def test_partition_rst_from_filename_returns_uns_elements(filename="example-docs/README.rst"):
     elements = partition_rst(filename=filename)
-    assert type(elements[0]) == Title
+    assert isinstance(elements[0], Title)
 
 
 def test_partition_rst_from_filename_with_metadata_filename(

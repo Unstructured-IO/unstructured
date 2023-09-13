@@ -27,7 +27,7 @@ def test_partition_md_from_filename_returns_uns_elements():
     filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
     elements = partition_md(filename=filename)
     assert len(elements) > 0
-    assert type(elements[0]) == Title
+    assert isinstance(elements[0], Title)
 
 
 def test_partition_md_from_filename_with_metadata_filename():

@@ -9,6 +9,7 @@ from requests.models import Response
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import ListItem, NarrativeText, Table, Title
+from unstructured.documents.html import HTMLTitle
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
@@ -35,10 +36,7 @@ def test_partition_html_from_filename_returns_html_elements():
     filename = os.path.join(directory, "example-10k.html")
     elements = partition_html(filename=filename)
     assert len(elements) > 0
-    import pdb
-
-    pdb.set_trace()
-    assert type(elements[0]) == HTMLTitle
+    assert isinstance(elements[0], HTMLTitle)
 
 
 def test_partition_html_from_filename_with_metadata_filename():

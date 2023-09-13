@@ -52,7 +52,7 @@ def test_partition_epub_from_filename_returns_uns_elements():
     filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub")
     elements = partition_epub(filename=filename)
     assert len(elements) > 0
-    assert type(elements[0]) == Text
+    assert isinstance(elements[0], Text)
 
 
 def test_partition_epub_from_filename_with_metadata_filename():
