@@ -1,4 +1,4 @@
-## 0.10.15-dev5
+## 0.10.15-dev7
 
 ### Enhancements
 
@@ -6,7 +6,9 @@
 * Updated HTML Partitioning to extract tables
 * Create and add `add_chunking_strategy` decorator to partition functions
 * Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf partitioning functions
-- Use `unstructured.pytesseract.run_and_get_multiple_output` function to reduce the number of calls to `tesseract` by half when partitioning pdf or image with `tesseract`
+* Adds `xlsx` and `xls` to `skip_infer_table_types` default list in `partition`
+* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in image partitioning functions
+* Use `unstructured.pytesseract.run_and_get_multiple_output` function to reduce the number of calls to `tesseract` by half when partitioning pdf or image with `tesseract`
 
 ### Features
 
