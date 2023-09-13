@@ -9,6 +9,7 @@
 * Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf partitioning functions
 * Adds `xlsx` and `xls` to `skip_infer_table_types` default list in `partition`
 * Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in image partitioning functions
+* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in auto partition
 
 ### Features
 
