@@ -12,6 +12,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --channels 12345678 \
         --token "$DISCORD_TOKEN" \
         --download-dir discord-ingest-download \
-        --structured-output-dir discord-example \
+        --output-dir discord-example \
         --preserve-downloads \
         --verbose

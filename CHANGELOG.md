@@ -1,10 +1,39 @@
-## 0.10.13-dev5
+## 0.10.15-dev7
+
+### Enhancements
+
+* Use text-based classification hen elements come back uncategorized from PDF/Image partitioning
+* Updated HTML Partitioning to extract tables
+* Create and add `add_chunking_strategy` decorator to partition functions
+* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf partitioning functions
+* Adds `xlsx` and `xls` to `skip_infer_table_types` default list in `partition`
+* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in image partitioning functions
+
+### Features
+
+### Fixes
+
+## 0.10.14
+
+### Enhancements
+
+* Update all connectors to use new downstream architecture
+  * New click type added to parse comma-delimited string inputs
+  * Some CLI options renamed
+
+### Features
+
+### Fixes
+
+## 0.10.13
 
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
 * Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
 * Updated the `_detect_filetype_from_octet_stream()` function to use libmagic to infer the content type of file when it is not a zip file.
+* Tesseract minor version bump to 5.3.2
+
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization
@@ -14,6 +43,7 @@
 
 * `partition_html` breaks on `<br>` elements.
 * Ingest error handling to properly raise errors when wrapped
+* GH issue 1361: fixes a sortig error that prevented some PDF's from being parsed
 * Bump unstructured-inference
   * Brings back embedded images in PDF's (0.5.23)
 
@@ -36,7 +66,7 @@
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
-
+  
 ## 0.10.11
 
 ### Enhancements
