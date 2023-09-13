@@ -48,7 +48,7 @@ def is_possible_narrative_text(
         The minimum proportion of alpha characters the text needs to be considered
         narrative text
     languages
-        The list of languages present in the document. Defaults to "eng" for English
+        The list of languages present in the document. Defaults to ["eng"] for English
     language_checks
         If True, conducts checks that are specific to the chosen language. Turn on for more
         accurate partitioning and off for faster processing.
@@ -111,7 +111,7 @@ def is_possible_title(
     non_alpha_threshold
         The minimum number of alpha characters the text needs to be considered a title
     languages
-        The list of languages present in the document. Defaults to "eng" for English
+        The list of languages present in the document. Defaults to ["eng"] for English
     language_checks
         If True, conducts checks that are specific to the chosen language. Turn on for more
         accurate partitioning and off for faster processing.

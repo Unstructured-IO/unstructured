@@ -10,6 +10,7 @@
 * Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in image partitioning functions
 * Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in auto partition
 * Replaces `language` with `languages` as an input parameter to unstructured-partition-text_type functions
+* Removes `UNSTRUCTURED_LANGUAGE` env var. To skip English specific checks, set the `languages` parameter to non-English language(s).
 
 ### Features
 
