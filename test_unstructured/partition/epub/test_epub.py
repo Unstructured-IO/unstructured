@@ -39,7 +39,6 @@ def test_partition_epub_from_filename_returns_table_in_elements():
     filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub")
     elements = partition_epub(filename=filename)
     assert len(elements) > 0
-    assert elements[14].text_as_html is not None
     assert elements[14] == Table(
         text="Contents. \n List of Illustrations   "
         "(In certain versions of this etext [in certain browsers]"
