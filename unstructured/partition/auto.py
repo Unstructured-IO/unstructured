@@ -16,6 +16,9 @@ from unstructured.partition.common import exactly_one
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
+from unstructured.partition.lang import (
+    convert_old_ocr_languages_to_languages,
+)
 from unstructured.partition.text import partition_text
 from unstructured.partition.xml import partition_xml
 from unstructured.utils import dependency_exists
