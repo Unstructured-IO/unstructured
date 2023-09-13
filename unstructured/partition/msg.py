@@ -79,7 +79,7 @@ def partition_msg(
     elif text is None:
         pass
     elif "<html>" in text or "</div>" in text:
-        elements = partition_html(text=text)
+        elements = partition_html(text=text, source_format="msg")
     else:
         elements = partition_text(
             text=text,

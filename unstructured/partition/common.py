@@ -104,10 +104,11 @@ def normalize_layout_element(
     ],
     coordinate_system: Optional[CoordinateSystem] = None,
     infer_list_items: bool = True,
+    source_format: Optional[str] = "html",
 ) -> Union[Element, List[Element]]:
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
 
-    if isinstance(layout_element, Element):
+    if isinstance(layout_element, Element) and source_format == "html":
         return layout_element
 
     # NOTE(alan): Won't the lines above ensure this never runs (PageBreak is a subclass of Element)?
@@ -526,11 +527,13 @@ def document_to_element_list(
     include_page_breaks: bool = False,
     last_modification_date: Optional[str] = None,
     infer_list_items: bool = True,
+    source_format: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
     sort_mode = kwargs.get("sort_mode", SORT_MODE_XY_CUT)
+
     num_pages = len(document.pages)
     for i, page in enumerate(document.pages):
         page_elements: List[Element] = []
@@ -550,6 +553,7 @@ def document_to_element_list(
                 layout_element,
                 coordinate_system=coordinate_system,
                 infer_list_items=infer_list_items,
+                source_format=source_format if source_format else "html",
             )
 
             if isinstance(element, List):
@@ -588,8 +592,3 @@ def document_to_element_list(
         elements.extend(sorted_page_elements)
 
     return elements
-
-
-def html_element_to_uns_element(
-
-)

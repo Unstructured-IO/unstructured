@@ -8,11 +8,15 @@ from unstructured.staging.base import elements_to_json
 
 def test_partition_rst_from_filename(filename="example-docs/README.rst"):
     elements = partition_rst(filename=filename)
-    import pdb; pdb.set_trace()
     assert elements[0] == Title("Example Docs")
     assert elements[0].metadata.filetype == "text/x-rst"
     for element in elements:
         assert element.metadata.filename == "README.rst"
+
+
+def test_partition_rst_from_filename_returns_uns_elements(filename="example-docs/README.rst"):
+    elements = partition_rst(filename=filename)
+    assert type(elements[0]) == Title
 
 
 def test_partition_rst_from_filename_with_metadata_filename(

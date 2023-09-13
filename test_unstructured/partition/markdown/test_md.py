@@ -6,6 +6,7 @@ import pytest
 import requests
 
 from unstructured.chunking.title import chunk_by_title
+from unstructured.documents.elements import Title
 from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
 from unstructured.staging.base import elements_to_json
@@ -20,6 +21,13 @@ def test_partition_md_from_filename():
     assert len(elements) > 0
     for element in elements:
         assert element.metadata.filename == "README.md"
+
+
+def test_partition_md_from_filename_returns_uns_elements():
+    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    elements = partition_md(filename=filename)
+    assert len(elements) > 0
+    assert type(elements[0]) == Title
 
 
 def test_partition_md_from_filename_with_metadata_filename():

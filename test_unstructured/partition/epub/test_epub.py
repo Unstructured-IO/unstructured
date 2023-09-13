@@ -2,7 +2,11 @@ import os
 import pathlib
 
 from unstructured.chunking.title import chunk_by_title
+<<<<<<< HEAD
 from unstructured.documents.elements import Table
+=======
+from unstructured.documents.elements import Text
+>>>>>>> fbf863e2 (adding new param to other types that use html)
 from unstructured.partition.epub import partition_epub
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
@@ -46,6 +50,13 @@ def test_partition_epub_from_filename_returns_table_in_elements():
         "\nclicking on the image will bring up a larger version.) "
         "\n (etext transcriber's note)",
     )
+
+
+def test_partition_epub_from_filename_returns_uns_elements():
+    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub")
+    elements = partition_epub(filename=filename)
+    assert len(elements) > 0
+    assert type(elements[0]) == Text
 
 
 def test_partition_epub_from_filename_with_metadata_filename():

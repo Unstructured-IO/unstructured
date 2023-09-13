@@ -30,6 +30,17 @@ def test_partition_html_from_filename():
     assert elements[0].metadata.file_directory == directory
 
 
+def test_partition_html_from_filename_returns_html_elements():
+    directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
+    filename = os.path.join(directory, "example-10k.html")
+    elements = partition_html(filename=filename)
+    assert len(elements) > 0
+    import pdb
+
+    pdb.set_trace()
+    assert type(elements[0]) == HTMLTitle
+
+
 def test_partition_html_from_filename_with_metadata_filename():
     directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
     filename = os.path.join(directory, "example-10k.html")
