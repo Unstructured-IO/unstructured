@@ -3,7 +3,6 @@ import re
 import typing as t
 from contextlib import suppress
 from dataclasses import dataclass, field
-from functools import cached_property
 from pathlib import Path
 
 from unstructured.ingest.error import SourceConnectionError
@@ -14,6 +13,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import (
@@ -79,15 +79,6 @@ class SimpleFsspecConfig(BaseConnectorConfig):
 
 
 @dataclass
-class FsspecFileMeta:
-    date_created: t.Optional[str]
-    date_modified: t.Optional[str]
-    version: t.Optional[str]
-    source_url: t.Optional[str]
-    exists: t.Optional[bool]
-
-
-@dataclass
 class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
@@ -129,11 +120,10 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
+        self.set_source_metadata()
 
-    @cached_property
     @requires_dependencies(["fsspec"])
-    def file_metadata(self):
-        """Fetches file metadata from the current filesystem."""
+    def set_source_metadata(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
@@ -154,12 +144,12 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             else fs.info(self.remote_file_path).get("etag", "")
         )
         file_exists = fs.exists(self.remote_file_path)
-        return FsspecFileMeta(
-            date_created,
-            date_modified,
-            version,
-            f"{self.connector_config.protocol}://{self.remote_file_path}",
-            file_exists,
+        self.source_metadata = SourceMetadata(
+            date_created=date_created,
+            date_modified=date_modified,
+            version=version,
+            source_url=f"{self.connector_config.protocol}://{self.remote_file_path}",
+            exists=file_exists,
         )
 
     @property
@@ -168,32 +158,12 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self._tmp_download_file()
 
     @property
-    def date_created(self) -> t.Optional[str]:
-        return self.file_metadata.date_created  # type: ignore
-
-    @property
-    def date_modified(self) -> t.Optional[str]:
-        return self.file_metadata.date_modified  # type: ignore
-
-    @property
-    def exists(self) -> t.Optional[bool]:
-        return self.file_metadata.exists  # type: ignore
-
-    @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         """Returns the equivalent of ls in dict"""
         return {
             "protocol": self.connector_config.protocol,
             "remote_file_path": self.remote_file_path,
         }
-
-    @property
-    def version(self) -> t.Optional[str]:
-        return self.file_metadata.version  # type: ignore
-
-    @property
-    def source_url(self) -> t.Optional[str]:
-        return self.file_metadata.source_url
 
 
 @dataclass
