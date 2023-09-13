@@ -24,6 +24,7 @@ from typing import (
 # -- CT_* stands for "complex-type", an XML element type in docx parlance --
 import docx
 from docx.document import Document
+from docx.enum.section import WD_SECTION_START
 from docx.oxml.ns import nsmap, qn
 from docx.oxml.section import CT_SectPr
 from docx.oxml.table import CT_Tbl
@@ -195,8 +196,6 @@ class _DocxPartitioner:
     # TODO: Improve document-contains-pagebreaks algorithm to use XPath and to search for
     #       `w:lastRenderedPageBreak` alone. Make it independent and don't rely on anything like
     #        the "_element_contains_pagebreak()" function.
-    # TODO: A section can give rise to one or two page breaks, like an "odd-page" section start
-    #       from an odd current-page produces two. Add page-break detection on section as well.
     # TODO: Improve ._is_list_item() to detect manually-applied bullets (which do not appear in the
     #       paragraph text so are missed by `is_bulleted_text()`) using XPath.
     # TODO: Improve ._is_list_item() to include list-styles such that telling whether a paragraph is
@@ -207,6 +206,8 @@ class _DocxPartitioner:
     # TODO: Move _SectBlockIterator upstream into `python-docx`. It requires too much
     #       domain-specific knowledge to comfortable here and is of general use so welcome in the
     #       library.
+    # DONE: A section can give rise to one or two page breaks, like an "odd-page" section start
+    #       from an odd current-page produces two. Add page-break detection on section as well.
 
     def __init__(
         self,
@@ -247,6 +248,7 @@ class _DocxPartitioner:
         headers_and_footers = _get_headers_and_footers(self._document, self._metadata_filename)
 
         for section_idx, section in enumerate(self._document.sections):
+            yield from self._iter_section_page_breaks(section_idx, section)
             if len(headers_and_footers) > section_idx:
                 yield from headers_and_footers[section_idx][0]
             for block_item in _SectBlockItemIterator.iter_sect_block_items(section, self._document):
@@ -359,6 +361,44 @@ class _DocxPartitioner:
             if run.italic:
                 yield {"text": text, "tag": "i"}
 
+    def _iter_section_page_breaks(self, section_idx: int, section: Section) -> Iterator[PageBreak]:
+        """Generate zero-or-one `PageBreak` document elements for `section`.
+
+        A docx section has a "start" type which can be "continuous" (no page-break), "nextPage",
+        "evenPage", or "oddPage". For the next, even, and odd varieties, a `w:renderedPageBreak`
+        element signals one page break. Here we only need to handle the case where we need to add
+        another, for example to go from one odd page to another odd page and we need a total of
+        two page-breaks.
+        """
+
+        def page_is_odd() -> bool:
+            return self._page_counter % 2 == 1
+
+        start_type = section.start_type
+
+        # -- This method is called upon entering a new section, which happens before any paragraphs
+        # -- in that section are partitioned. A rendered page-break due to a section-start occurs
+        # -- in the first paragraph of the section and so occurs _later_ in the proces. Here we
+        # -- predict when two page breaks will be needed and emit one of them. The second will be
+        # -- emitted by the rendered page-break to follow.
+
+        if start_type == WD_SECTION_START.EVEN_PAGE:
+            # -- on an even page we need two total, add one to supplement the rendered page break
+            # -- to follow. There is no "first-document-page" special case because 1 is odd.
+            if not page_is_odd():
+                yield from self._increment_page_number()
+
+        elif start_type == WD_SECTION_START.ODD_PAGE:
+            # -- the first page of the document is an implicit "new" odd-page, so no page-break --
+            if section_idx == 0:
+                return
+            if page_is_odd():
+                yield from self._increment_page_number()
+
+        # -- otherwise, start-type is one of "continuous", "new-column", or "next-page", none of
+        # -- which need our help to get the page-breaks right.
+        return
+
     def _iter_table_element(self, table: DocxTable) -> Iterator[Table]:
         """Generate zero-or-one Table element for a DOCX `w:tbl` XML element."""
         # -- at present, we always generate exactly one Table element, but we might want
@@ -410,10 +450,13 @@ class _DocxPartitioner:
     def _page_number(self) -> Optional[int]:
         """The current page number, or None if we can't really tell.
 
-        In the DOCX format, this is strictly a best-efforts attempt since actual
-        page-breaks are determined at rendering time (e.g. printing) based on the
-        fontmetrics of the target device. The page-breaks are not explicitly specified
-        in the document.
+        Page numbers are not added to element metadata if we can't find any page-breaks in the
+        document (which may be a common case).
+
+        In the DOCX format, determining page numbers is strictly a best-efforts attempt since actual
+        page-breaks are determined at rendering time (e.g. printing) based on the fontmetrics of the
+        target device. Explicit (hard) page-breaks are always recorded in the docx file but the
+        rendered page-breaks are only added optionally.
         """
         return self._page_counter if self._document_contains_pagebreaks else None
 
