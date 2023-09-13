@@ -60,7 +60,7 @@
     "text": "This report provides recommendations for a minimal set of core skills for biomedical data scientists based on analysis that draws on opinions of data scientists, curricula for existing biomedical data science programs, and requirements for biomedical data science jobs. Suggested high-level core skills include:"
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "8f90f5970c85f335b1bf50af611ce5c5",
     "metadata": {
       "data_source": {},
@@ -70,7 +70,7 @@
     "text": "1. General biomedical subject matter knowledge: biomedical data scientists should have a general working knowledge of the principles of biology, bioinformatics, and basic clinical science;"
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "d1a5bb898aee8de0fbdf048c7a9fb01d",
     "metadata": {
       "data_source": {},
@@ -90,7 +90,7 @@
     "text": "least one programming language (typically R and/or Python);"
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "c6be5389b7bd00746d39b7bac468dea0",
     "metadata": {
       "data_source": {},
@@ -100,7 +100,7 @@
     "text": "3. Predictive analytics, modeling, and machine learning: while a range of statistical methods may be useful, predictive analytics, modeling, and machine learning emerged as especially important skills in biomedical data science;"
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "1b8039583cbc15f654c89f2141eb6e10",
     "metadata": {
       "data_source": {},
@@ -110,7 +110,7 @@
     "text": "4. Team science and scientific communication: “soft” skills, like the ability to work well on teams and communicate effectively in both verbal and written venues, may be as important as the more technical skills typically associated with data science."
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "2f87757b1d497a32c077be543632ed7d",
     "metadata": {
       "data_source": {},
