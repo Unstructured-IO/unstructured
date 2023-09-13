@@ -2,6 +2,7 @@
 
 ### Enhancements
 
+* Adds numbered ListItem grouping when pdfminer broke down by line-by-line using coordinates
 * Use text-based classification hen elements come back uncategorized from PDF/Image partitioning
 * Updated HTML Partitioning to extract tables
 * Create and add `add_chunking_strategy` decorator to partition functions
