@@ -1,27 +1,29 @@
+# pyright: reportPrivateUsage=false
+
 import os
+import pathlib
 from tempfile import SpooledTemporaryFile
+from typing import Dict, List
 
 import docx
+from docx.document import Document
 import pytest
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     Address,
+    Element,
     Footer,
     Header,
     ListItem,
     NarrativeText,
+    PageBreak,
     Table,
     Text,
     Title,
 )
 from unstructured.partition.doc import partition_doc
-from unstructured.partition.docx import (
-    _extract_contents_and_tags,
-    _get_emphasized_texts_from_paragraph,
-    _get_emphasized_texts_from_table,
-    partition_docx,
-)
+from unstructured.partition.docx import _DocxPartitioner, partition_docx
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
 
@@ -51,6 +53,14 @@ def mock_document():
     document.add_paragraph("DOYLESTOWN, PA 18901")
 
     return document
+
+
+@pytest.fixture()
+def mock_document_filename(mock_document: Document, tmp_path: pathlib.Path) -> str:
+    filename = str(tmp_path / "mock_document.docx")
+    print(f"filename = {filename}")
+    mock_document.save(filename)
+    return filename
 
 
 @pytest.fixture()
@@ -87,11 +97,11 @@ def expected_emphasized_text_tags():
     return ["b", "i", "b", "i"]
 
 
-def test_partition_docx_from_filename(mock_document, expected_elements, tmpdir):
-    filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    mock_document.save(filename)
+def test_partition_docx_from_filename(
+    mock_document_filename: str, expected_elements: List[Element]
+):
+    elements = partition_docx(filename=mock_document_filename)
 
-    elements = partition_docx(filename=filename)
     assert elements == expected_elements
     assert elements[0].metadata.page_number is None
     for element in elements:
@@ -316,51 +326,45 @@ def test_partition_docx_from_file_without_metadata_date(
     assert elements[0].metadata.last_modified is None
 
 
-def test_get_emphasized_texts_from_paragraph(
-    expected_emphasized_texts,
-    filename="example-docs/fake-doc-emphasized-text.docx",
-):
-    document = docx.Document(filename)
-    paragraph = document.paragraphs[1]
-    emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+def test_get_emphasized_texts_from_paragraph(expected_emphasized_texts: List[Dict[str, str]]):
+    partitioner = _DocxPartitioner(
+        "example-docs/fake-doc-emphasized-text.docx", None, None, False, None
+    )
+    paragraph = partitioner._document.paragraphs[1]
+    emphasized_texts = list(partitioner._iter_paragraph_emphasis(paragraph))
     assert paragraph.text == "I am a bold italic bold-italic text."
     assert emphasized_texts == expected_emphasized_texts
 
-    paragraph = document.paragraphs[2]
-    emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+    paragraph = partitioner._document.paragraphs[2]
+    emphasized_texts = list(partitioner._iter_paragraph_emphasis(paragraph))
     assert paragraph.text == ""
     assert emphasized_texts == []
 
-    paragraph = document.paragraphs[3]
-    emphasized_texts = _get_emphasized_texts_from_paragraph(paragraph)
+    paragraph = partitioner._document.paragraphs[3]
+    emphasized_texts = list(partitioner._iter_paragraph_emphasis(paragraph))
     assert paragraph.text == "I am a normal text."
     assert emphasized_texts == []
 
 
-def test_get_emphasized_texts_from_table(
-    expected_emphasized_texts,
-    filename="example-docs/fake-doc-emphasized-text.docx",
-):
-    document = docx.Document(filename)
-    table = document.tables[0]
-    emphasized_texts = _get_emphasized_texts_from_table(table)
+def test_iter_table_emphasis(expected_emphasized_texts: List[Dict[str, str]]):
+    partitioner = _DocxPartitioner(
+        "example-docs/fake-doc-emphasized-text.docx", None, None, False, None
+    )
+    table = partitioner._document.tables[0]
+    emphasized_texts = list(partitioner._iter_table_emphasis(table))
     assert emphasized_texts == expected_emphasized_texts
 
 
-def test_extract_contents_and_tags(
-    expected_emphasized_texts,
-    expected_emphasized_text_contents,
-    expected_emphasized_text_tags,
+def test_table_emphasis(
+    expected_emphasized_text_contents: List[str], expected_emphasized_text_tags: List[str]
 ):
-    emphasized_text_contents, emphasized_text_tags = _extract_contents_and_tags(
-        expected_emphasized_texts,
+    partitioner = _DocxPartitioner(
+        "example-docs/fake-doc-emphasized-text.docx", None, None, False, None
     )
+    table = partitioner._document.tables[0]
+    emphasized_text_contents, emphasized_text_tags = partitioner._table_emphasis(table)
     assert emphasized_text_contents == expected_emphasized_text_contents
     assert emphasized_text_tags == expected_emphasized_text_tags
-
-    emphasized_text_contents, emphasized_text_tags = _extract_contents_and_tags([])
-    assert emphasized_text_contents is None
-    assert emphasized_text_tags is None
 
 
 @pytest.mark.parametrize(

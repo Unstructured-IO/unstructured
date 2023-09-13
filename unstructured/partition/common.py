@@ -82,7 +82,7 @@ def get_last_modified_date(filename: str) -> Union[str, None]:
 
 
 def get_last_modified_date_from_file(
-    file: Union[IO[bytes], SpooledTemporaryFile, BinaryIO, bytes],
+    file: Union[IO[bytes], SpooledTemporaryFile[bytes], BinaryIO, bytes],
 ) -> Union[str, None]:
     filename = None
     if hasattr(file, "name"):
@@ -399,7 +399,7 @@ on your system and try again.
         logger.error(error.decode().strip())
 
 
-def exactly_one(**kwargs) -> None:
+def exactly_one(**kwargs: Any) -> None:
     """
     Verify arguments; exactly one of all keyword arguments must not be None.
 
@@ -416,7 +416,7 @@ def exactly_one(**kwargs) -> None:
 
 
 def spooled_to_bytes_io_if_needed(
-    file_obj: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]],
+    file_obj: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile[bytes]]],
 ) -> Optional[Union[bytes, BinaryIO]]:
     if isinstance(file_obj, SpooledTemporaryFile):
         file_obj.seek(0)
