@@ -200,7 +200,7 @@
     "text": "LayoutParser provides a uniﬁed toolkit to support DL-based document image analysis and processing. To address the aforementioned challenges, LayoutParser is built with the following components:"
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "074b2bd4ba1bf0caf3dbf1973217416a",
     "metadata": {
       "data_source": {},
@@ -210,7 +210,7 @@
     "text": "1. An oﬀ-the-shelf toolkit for applying DL models for layout detection, character"
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "569ce8891b02bc38f50a0cde0039e951",
     "metadata": {
       "data_source": {},
@@ -220,7 +220,7 @@
     "text": "2. A rich repository of pre-trained neural network models (Model Zoo) that"
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "18dcbc2839f9783d2c91cbce75d3e685",
     "metadata": {
       "data_source": {},
@@ -230,7 +230,7 @@
     "text": "3. Comprehensive tools for eﬃcient document image data annotation and model"
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "efe6ba3afae54e3c7a05d81583543296",
     "metadata": {
       "data_source": {},
