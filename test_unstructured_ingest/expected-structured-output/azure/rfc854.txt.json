@@ -351,7 +351,7 @@
     "text": "options are negotiated to the contrary, the following default conditions pertain to the transmission of data over the TELNET connection:"
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "8aa60fbfa7fdb5de8d562608d3ccb069",
     "metadata": {
       "data_source": {},
@@ -369,7 +369,7 @@
     "text": "The motivation for this rule is the high cost, to some hosts, of processing network input interrupts, coupled with the default NVT specification that \"echoes\" do not traverse the network. Thus, it is reasonable to buffer some amount of data at its source. Many systems take some processing action at the end of each input line (even line printers or card punches frequently tend to work this way), so the transmission should be triggered at the end of a line. On the other hand, a user or process may sometimes find it necessary or desirable to provide data which does not terminate at the end of a line; therefore implementers are cautioned to provide methods of locally signaling that all buffered data should be transmitted immediately."
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "24c6236ce1666a2ef74bd5883a9d95d5",
     "metadata": {
       "data_source": {},
