@@ -227,7 +227,8 @@ def sentence_count(text: str, min_length: Optional[int] = None) -> int:
         words = [word for word in word_tokenize(sentence) if word != "."]
         if min_length and len(words) < min_length:
             trace_logger.detail(  # type: ignore
-                f"Skipping sentence because does not exceed {min_length} word tokens\n"
+                f"Sentence does not exceed {min_length} word tokens, it will not count toward "
+                "sentence count.\n"
                 f"{sentence}",
             )
             continue
