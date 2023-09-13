@@ -38,4 +38,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
 
-python "$SCRIPT_DIR"/python/test-ingest-delta-table.py
+python "$SCRIPT_DIR"/python/test-ingest-delta-table-output.py
