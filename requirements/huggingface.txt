@@ -24,7 +24,7 @@ filelock==3.12.3
     #   transformers
 fsspec==2023.9.0
     # via huggingface-hub
-huggingface-hub==0.16.4
+huggingface-hub==0.17.1
     # via transformers
 idna==3.4
     # via
@@ -46,6 +46,7 @@ networkx==3.1
     # via torch
 numpy==1.24.4
     # via
+    #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   transformers
 packaging==23.1

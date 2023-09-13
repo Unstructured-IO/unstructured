@@ -34,6 +34,10 @@ mypy-extensions==1.0.0
     # via typing-inspect
 nltk==3.8.1
     # via -r requirements/base.in
+numpy==1.24.4
+    # via
+    #   -c requirements/constraints.in
+    #   -r requirements/base.in
 packaging==23.1
     # via marshmallow
 python-magic==0.4.27

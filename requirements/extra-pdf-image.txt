@@ -39,7 +39,7 @@ fonttools==4.42.1
     # via matplotlib
 fsspec==2023.9.0
     # via huggingface-hub
-huggingface-hub==0.16.4
+huggingface-hub==0.17.1
     # via
     #   timm
     #   transformers
@@ -62,7 +62,7 @@ layoutparser[layoutmodels,tesseract]==0.3.4
     # via unstructured-inference
 markupsafe==2.1.3
     # via jinja2
-matplotlib==3.7.2
+matplotlib==3.7.3
     # via pycocotools
 mpmath==1.3.0
     # via sympy
@@ -70,6 +70,7 @@ networkx==3.1
     # via torch
 numpy==1.24.4
     # via
+    #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   contourpy
     #   layoutparser
@@ -135,7 +136,7 @@ pyparsing==3.0.9
     # via
     #   -c requirements/constraints.in
     #   matplotlib
-pypdfium2==4.19.0
+pypdfium2==4.20.0
     # via pdfplumber
 pytesseract==0.3.10
     # via layoutparser
