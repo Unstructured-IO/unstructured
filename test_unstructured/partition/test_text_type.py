@@ -67,25 +67,14 @@ def test_text_type_handles_non_english_examples(monkeypatch):
     narrative_text = "Я говорю по-русски. Вы тоже?"
     title = "Риски"
 
-    assert text_type.is_possible_narrative_text(narrative_text, language="en") is False
-    assert text_type.is_possible_narrative_text(narrative_text, language="") is True
+    assert text_type.is_possible_narrative_text(narrative_text, languages=["eng"]) is False
+    assert text_type.is_possible_narrative_text(narrative_text, languages=[]) is True
 
-    assert text_type.is_possible_narrative_text(title, language="en") is False
-    assert text_type.is_possible_narrative_text(title, language="") is False
+    assert text_type.is_possible_narrative_text(title, languages=["eng"]) is False
+    assert text_type.is_possible_narrative_text(title, languages=[]) is False
 
-    assert text_type.is_possible_title(title, language="en") is False
-    assert text_type.is_possible_title(title, language="") is True
-
-
-def test_text_type_handles_non_english_examples_with_env_var(monkeypatch):
-    monkeypatch.setenv("UNSTRUCTURED_LANGUAGE", "")
-
-    narrative_text = "Я говорю по-русски. Вы тоже?"
-    title = "Риски"
-
-    assert text_type.is_possible_narrative_text(narrative_text) is True
-    assert text_type.is_possible_narrative_text(title) is False
-    assert text_type.is_possible_title(title) is True
+    assert text_type.is_possible_title(title, languages=["eng"]) is False
+    assert text_type.is_possible_title(title, languages=[]) is True
 
 
 @pytest.mark.parametrize(
