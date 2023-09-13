@@ -30,7 +30,7 @@ def is_possible_narrative_text(
     text: str,
     cap_threshold: float = 0.5,
     non_alpha_threshold: float = 0.5,
-    language: str = "en",
+    languages: List[str] = ["eng"],
     language_checks: bool = False,
 ) -> bool:
     """Checks to see if the text passes all of the checks for a narrative text section.
@@ -47,8 +47,8 @@ def is_possible_narrative_text(
     non_alpha_threshold
         The minimum proportion of alpha characters the text needs to be considered
         narrative text
-    language
-        The two letter language code for the text. defaults to "en" for English
+    languages
+        The list of languages present in the document. Defaults to ["eng"] for English
     language_checks
         If True, conducts checks that are specific to the chosen language. Turn on for more
         accurate partitioning and off for faster processing.
@@ -65,8 +65,7 @@ def is_possible_narrative_text(
         trace_logger.detail(f"Not narrative. Text is all numeric:\n\n{text}")  # type: ignore
         return False
 
-    language = os.environ.get("UNSTRUCTURED_LANGUAGE", language)
-    if language == "en" and language_checks and not contains_english_word(text):
+    if "eng" in languages and language_checks and not contains_english_word(text):
         return False
 
     # NOTE(robinson): it gets read in from the environment as a string so we need to
@@ -84,7 +83,7 @@ def is_possible_narrative_text(
     if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
         return False
 
-    if (sentence_count(text, 3) < 2) and (not contains_verb(text)) and language == "en":
+    if "eng" in languages and (sentence_count(text, 3) < 2) and (not contains_verb(text)):
         trace_logger.detail(f"Not narrative. Text does not contain a verb:\n\n{text}")  # type: ignore # noqa: E501
         return False
 
@@ -96,7 +95,7 @@ def is_possible_title(
     sentence_min_length: int = 5,
     title_max_word_length: int = 12,
     non_alpha_threshold: float = 0.5,
-    language: str = "en",
+    languages: List[str] = ["eng"],
     language_checks: bool = False,
 ) -> bool:
     """Checks to see if the text passes all of the checks for a valid title.
@@ -111,8 +110,8 @@ def is_possible_title(
         The maximum number of words a title can contain
     non_alpha_threshold
         The minimum number of alpha characters the text needs to be considered a title
-    language
-        The two letter language code for the text. defaults to "en" for English
+    languages
+        The list of languages present in the document. Defaults to ["eng"] for English
     language_checks
         If True, conducts checks that are specific to the chosen language. Turn on for more
         accurate partitioning and off for faster processing.
@@ -146,8 +145,7 @@ def is_possible_title(
     if text.endswith(","):
         return False
 
-    language = os.environ.get("UNSTRUCTURED_LANGUAGE", language)
-    if language == "en" and not contains_english_word(text) and language_checks:
+    if "eng" in languages and not contains_english_word(text) and language_checks:
         return False
 
     if text.isnumeric():
