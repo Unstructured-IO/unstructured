@@ -90,35 +90,44 @@ def convert_and_partition_docx(
         Determines whether or not metadata is included in the metadata attribute on the elements in
         the output.
     """
-    if filename is None:
-        filename = ""
+    if "pypandoc" not in globals():
+        raise ImportError("package 'pypandoc' required for this operation but not installed")
+
     exactly_one(filename=filename, file=file)
 
-    filename_no_path = ""
-    if len(filename) > 0:
-        _, filename_no_path = os.path.split(os.path.abspath(filename))
-        base_filename, _ = os.path.splitext(filename_no_path)
+    def validate_filename(filename: str) -> str:
+        """Return path to a file confirmed to exist on the filesystem."""
         if not os.path.exists(filename):
             raise ValueError(f"The file {filename} does not exist.")
-    elif file is not None:
-        tmp = tempfile.NamedTemporaryFile(delete=False)
-        tmp.write(file.read())
-        tmp.close()
-        filename = tmp.name
-        _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
+        return filename
 
-    base_filename, _ = os.path.splitext(filename_no_path)
+    def copy_to_tempfile(file: BinaryIO) -> str:
+        """Return path to temporary copy of file to be converted."""
+        with tempfile.NamedTemporaryFile(delete=False) as tmp:
+            tmp.write(file.read())
+            return tmp.name
+
+    def extract_docx_filename(file_path: str) -> str:
+        """Return a filename like "foo.docx" from a path like "a/b/foo.odt" """
+        # -- a/b/foo.odt -> foo.odt --
+        filename = os.path.basename(file_path)
+        # -- foo.odt -> foo --
+        root_name, _ = os.path.splitext(filename)
+        # -- foo -> foo.docx --
+        return f"{root_name}.docx"
+
+    file_path = validate_filename(filename) if filename else copy_to_tempfile(cast(BinaryIO, file))
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        docx_filename = os.path.join(tmpdir, f"{base_filename}.docx")
+        docx_path = os.path.join(tmpdir, extract_docx_filename(file_path))
         pypandoc.convert_file(  # pyright: ignore
-            filename,
+            file_path,
             "docx",
             format=source_format,
-            outputfile=docx_filename,
+            outputfile=docx_path,
         )
         elements = partition_docx(
-            filename=docx_filename,
+            filename=docx_path,
             metadata_filename=metadata_filename,
             include_metadata=include_metadata,
             metadata_last_modified=metadata_last_modified,
@@ -183,8 +192,6 @@ class _DocxPartitioner:
     # TODO: Improve document-contains-pagebreaks algorithm to use XPath and to search for
     #       `w:lastRenderedPageBreak` alone. Make it independent and don't rely on anything like
     #        the "_element_contains_pagebreak()" function.
-    # TODO: Improve ._is_list_item() to detect manually-applied bullets (which do not appear in the
-    #       paragraph text so are missed by `is_bulleted_text()`) using XPath.
     # TODO: Improve ._is_list_item() to include list-styles such that telling whether a paragraph is
     #       a list-item is encapsulated in a single place rather than distributed around the code.
     # TODO: Improve ._is_list_item() method of detecting a numbered-list-item to use XPath instead
@@ -193,8 +200,7 @@ class _DocxPartitioner:
     # TODO: Move _SectBlockIterator upstream into `python-docx`. It requires too much
     #       domain-specific knowledge to comfortable here and is of general use so welcome in the
     #       library.
-    # DONE: A section can give rise to one or two page breaks, like an "odd-page" section start
-    #       from an odd current-page produces two. Add page-break detection on section as well.
+    # TODO: Move Paragraph._get_paragraph_runs() monkey-patch upstream to `python-docx`.
 
     def __init__(
         self,
