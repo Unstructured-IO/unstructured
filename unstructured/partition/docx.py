@@ -233,13 +233,13 @@ class _DocxPartitioner:
             yield from self._iter_section_headers(section)
 
             for block_item in _SectBlockItemIterator.iter_sect_block_items(section, self._document):
+                # -- a block-item can only be a Paragraph ... --
                 if isinstance(block_item, Paragraph):
                     yield from self._iter_maybe_paragraph_element(block_item)
-                    if self._element_contains_pagebreak(block_item._element):
-                        self._increment_page_number(1)
-                        if self._include_page_breaks:
-                            yield PageBreak(text="")
-                else:  # -- it's a Table object --
+                    # -- a paragraph can contain a page-break --
+                    yield from self._iter_maybe_paragraph_page_breaks(block_item)
+                # -- ... or a Table --
+                else:
                     yield from self._iter_table_element(block_item)
 
             yield from self._iter_section_footers(section)
@@ -328,6 +328,33 @@ class _DocxPartitioner:
 
         # -- if all that fails we give it the default `Text` element-type --
         yield Text(text, metadata=metadata)
+
+    def _iter_maybe_paragraph_page_breaks(self, paragraph: Paragraph) -> Iterator[PageBreak]:
+        """Generate a `PageBreak` document element for each page-break in `paragraph`.
+
+        Checks for both "hard" page breaks (page breaks explicitly inserted by the user)
+        and "soft" page breaks, which are sometimes inserted by the MS Word renderer.
+        Note that soft page breaks aren't always present. Whether or not pages are
+        tracked may depend on your Word renderer.
+        """
+
+        def has_page_break_implementation_we_have_so_far() -> bool:
+            """Needs to become more sophisticated."""
+            page_break_indicators = [
+                ["w:br", 'type="page"'],  # "Hard" page break inserted by user
+                ["lastRenderedPageBreak"],  # "Soft" page break inserted by renderer
+            ]
+            for indicators in page_break_indicators:
+                if all(indicator in paragraph._p.xml for indicator in indicators):
+                    return True
+            return False
+
+        if not has_page_break_implementation_we_have_so_far():
+            return
+
+        self._increment_page_number()
+        if self._include_page_breaks:
+            yield PageBreak(text="")
 
     def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[Dict[str, str]]:
         """Generate e.g. {"text": "MUST", "tag": "b"} for each emphasis in `paragraph`."""
