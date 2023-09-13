@@ -1,4 +1,4 @@
-## 0.10.15-dev8
+## 0.10.15-dev9
 
 ### Enhancements
 
@@ -9,6 +9,8 @@
 * Adds `xlsx` and `xls` to `skip_infer_table_types` default list in `partition`
 * Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in image partitioning functions
 * Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in auto partition
+* Replaces `language` with `languages` as an input parameter to unstructured-partition-text_type functions
+* Removes `UNSTRUCTURED_LANGUAGE` env var. To skip English specific checks, set the `languages` parameter to non-English language(s).
 
 ### Features
 
