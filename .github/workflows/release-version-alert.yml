@@ -35,7 +35,7 @@ jobs:
       - name: Generate Message Hash
         id: generate-hash
         run: |
-          MESSAGE_HASH=$(echo "${env.SLACK_MESSAGE}" | sha256sum | cut -d ' ' -f1)
+          MESSAGE_HASH=$(echo "${{env.SLACK_MESSAGE}}" | sha256sum | cut -d ' ' -f1)
           echo "MESSAGE_HASH=$MESSAGE_HASH" >> $GITHUB_ENV
 
       - name: Retrieve Messages from Cache
@@ -49,7 +49,7 @@ jobs:
 
       - name: Check for Duplicates
         run: |
-          DUPLICATE_CHECK=$(grep -Fx "${env.SLACK_MESSAGE}" $HOME/messages_cache.txt || true)
+          DUPLICATE_CHECK=$(grep -Fx "${{env.SLACK_MESSAGE}}" $HOME/messages_cache.txt || true)
           if [ -n "$DUPLICATE_CHECK" ]; then
             echo "Message already posted. Skipping duplicate Slack notification."
             exit 0  # Exit without posting a message
@@ -57,7 +57,7 @@ jobs:
 
       - name: Write Message to Cache File
         run: |
-          echo "${env.SLACK_MESSAGE}" >> $HOME/messages_cache.txt
+          echo "${{env.SLACK_MESSAGE}}" >> $HOME/messages_cache.txt
             
       - name: Store Messages in Cache
         uses: actions/cache@v2
