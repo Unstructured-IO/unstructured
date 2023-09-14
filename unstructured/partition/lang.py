@@ -1,14 +1,20 @@
 from typing import List
 
 import iso639
+import pytesseract
 
-PYTESSERACT_LANGS = pytesseract.get_languages(config='')
+from unstructured.logger import logger
+
+PYTESSERACT_LANGS = pytesseract.get_languages(config="")
+
 
 def prepare_languages_for_tesseract(languages: List[str] = ["eng"]):
     """
     Entry point: convert the languages param (list of strings) into tesseract ocr langcode format (uses +) string
     """
-    converted_languages = list(filter(None, [convert_language_to_tesseract(lang) for lang in languages]))
+    converted_languages = list(
+        filter(None, [convert_language_to_tesseract(lang) for lang in languages])
+    )
     return "+".join(converted_languages)
 
 
@@ -33,30 +39,27 @@ def convert_language_to_tesseract(lang: str) -> str:
 
     # get iso639 language object
     try:
-        lang_iso639 = iso639.Language.match(lang)
-    except:
+        lang_iso639 = iso639.Language.match(lang.lower())
+    except iso639.LanguageNotFoundError:
         logger.warning(f"{lang} is not a valid standard language code.")
         return ""
 
     # tesseract uses 3 digit codes (639-3, 639-2b, etc) as code prefix, with suffixes for orthography
     # use first 3 letters of tesseract codes for matching to standard codes
-    pytesseract_langs_3 = set([lang[:3] for lang in PYTESSERACT_LANGS])
+    pytesseract_langs_3 = {lang[:3] for lang in PYTESSERACT_LANGS}
 
     # try to match ISO 639-3 code
     if lang_iso639.part3 in pytesseract_langs_3:
-        print("match in part3")
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part3)
         return "+".join(matched_langcodes)
 
     # try to match ISO 639-2b
     elif lang_iso639.part2b in pytesseract_langs_3:
-        print("match in part2b")
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part2b)
         return "+".join(matched_langcodes)
 
     # try to match ISO 639-2t
     elif lang_iso639.part2t in pytesseract_langs_3:
-        print("match in part2t")
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part2t)
         return "+".join(matched_langcodes)
 
