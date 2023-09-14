@@ -1,4 +1,4 @@
-## 0.10.15-dev10
+## 0.10.15-dev11
 
 ### Enhancements
 
@@ -19,7 +19,9 @@
 ### Features
 
 * New element metadata `category_depth`
-* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf partitioning functions
+* Adds a naive hierarchy for elements via a `parent_id` on the element's metadata
+  * Users will now have more metadata for implementing vectordb/LLM chunking strategies. For example, text elements could be queried by their preceding title element.
+  * Title elements created from HTML headings will properly nest
 
 ### Fixes
 
@@ -42,8 +44,6 @@
 ### Enhancements
 
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
-* Add to mapping from `chipper` to `unstructured` element types: `Headline`, `Subheadline` and `Abstract`.
-* New optional metadata for the depth relative to the element's category. Name: `cagegory_depth`.
 * Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
 * Updated the `_detect_filetype_from_octet_stream()` function to use libmagic to infer the content type of file when it is not a zip file.
 * Tesseract minor version bump to 5.3.2
