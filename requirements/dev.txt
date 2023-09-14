@@ -60,7 +60,7 @@ comm==0.1.4
     # via
     #   ipykernel
     #   ipywidgets
-debugpy==1.7.0
+debugpy==1.8.0
     # via ipykernel
 decorator==5.1.1
     # via ipython
@@ -76,11 +76,11 @@ executing==1.2.0
     # via stack-data
 fastjsonschema==2.18.0
     # via nbformat
-filelock==3.12.3
+filelock==3.12.4
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
-identify==2.5.27
+identify==2.5.28
     # via pre-commit
 idna==3.4
     # via
@@ -117,7 +117,7 @@ ipython==8.12.2
     #   jupyter-console
 ipython-genutils==0.2.0
     # via qtconsole
-ipywidgets==8.1.0
+ipywidgets==8.1.1
     # via jupyter
 isoduration==20.11.0
     # via jsonschema
@@ -180,11 +180,11 @@ jupyterlab==4.0.5
     # via notebook
 jupyterlab-pygments==0.2.2
     # via nbconvert
-jupyterlab-server==2.24.0
+jupyterlab-server==2.25.0
     # via
     #   jupyterlab
     #   notebook
-jupyterlab-widgets==3.0.8
+jupyterlab-widgets==3.0.9
     # via ipywidgets
 markupsafe==2.1.3
     # via
@@ -317,7 +317,7 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
-rpds-py==0.10.2
+rpds-py==0.10.3
     # via
     #   jsonschema
     #   referencing
@@ -359,7 +359,7 @@ tornado==6.3.3
     #   jupyterlab
     #   notebook
     #   terminado
-traitlets==5.9.0
+traitlets==5.10.0
     # via
     #   comm
     #   ipykernel
@@ -381,7 +381,6 @@ typing-extensions==4.7.1
     #   -c requirements/base.txt
     #   -c requirements/test.txt
     #   async-lru
-    #   filelock
     #   ipython
 uri-template==1.3.0
     # via jsonschema
@@ -401,13 +400,13 @@ webencodings==0.5.1
     # via
     #   bleach
     #   tinycss2
-websocket-client==1.6.2
+websocket-client==1.6.3
     # via jupyter-server
 wheel==0.41.2
     # via
     #   -c requirements/constraints.in
     #   pip-tools
-widgetsnbextension==4.0.8
+widgetsnbextension==4.0.9
     # via ipywidgets
 zipp==3.16.2
     # via
