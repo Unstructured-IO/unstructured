@@ -128,7 +128,7 @@ def normalize_layout_element(
     element_type = layout_dict.get("type")
     prob = layout_dict.get("prob")
     if prob and isinstance(prob, (int, str, float, numbers.Number)):
-        class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))
+        class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))  # type: ignore
     else:
         class_prob_metadata = ElementMetadata()
     if element_type == "List":
