@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import os
 import numbers
+import os
 import subprocess
 from datetime import datetime
 from io import BufferedReader, BytesIO, TextIOWrapper
