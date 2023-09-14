@@ -21,7 +21,7 @@ function cleanup() {
     rm -rf "$OUTPUT_DIR"
   fi
 
-  if aws s3 ls "$DESTINATION_S3"; then
+  if aws s3 ls "$DESTINATION_S3" --region us-east-2; then
     echo "deleting destination s3 location: $DESTINATION_S3"
     aws s3 rm "$DESTINATION_S3" --recursive --region us-east-2
   fi
@@ -51,10 +51,11 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --anonymous \
     --remote-url "$DESTINATION_S3"
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
-
-# Check against content uploaded to s3
-
-aws s3 cp "$DESTINATION_S3" "$OUTPUT_DIR_DEST" --recursive --no-sign-request --region us-east-2
-
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME_DEST
+if sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME; then
+  # Check against content uploaded to s3
+  aws s3 cp "$DESTINATION_S3" "$OUTPUT_DIR_DEST" --recursive --no-sign-request --region us-east-2
+  if ! diff -ru "$OUTPUT_DIR" "$OUTPUT_DIR_DEST" ; then
+    echo "Downloaded content from s3 doesn't match the output json files from $OUTPUT_FOLDER_NAME"
+    exit 1
+  fi
+fi
