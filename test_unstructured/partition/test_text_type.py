@@ -243,7 +243,7 @@ def test_set_caps_ratio_with_environment_variable(monkeypatch):
     with patch.object(text_type, "exceeds_cap_ratio", return_value=False) as mock_exceeds:
         text_type.is_possible_narrative_text(text)
 
-    mock_exceeds.assert_called_once_with(text, threshold=0.8, language="en")
+    mock_exceeds.assert_called_once_with(text, threshold=0.8, languages=["eng"])
 
 
 def test_set_title_non_alpha_threshold_with_environment_variable(monkeypatch):

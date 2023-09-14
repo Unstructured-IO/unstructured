@@ -76,7 +76,7 @@ def is_possible_narrative_text(
     cap_threshold = float(
         os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold),
     )
-    if exceeds_cap_ratio(text, threshold=cap_threshold, language=language):
+    if exceeds_cap_ratio(text, threshold=cap_threshold, languages=languages):
         trace_logger.detail(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")  # type: ignore # noqa: E501
         return False
 
@@ -261,7 +261,7 @@ def under_non_alpha_ratio(text: str, threshold: float = 0.5):
     return ratio < threshold
 
 
-def exceeds_cap_ratio(text: str, threshold: float = 0.5, language: str = "en") -> bool:
+def exceeds_cap_ratio(text: str, threshold: float = 0.5, languages: List[str] = ["eng"]) -> bool:
     """Checks the title ratio in a section of text. If a sufficient proportion of the words
     are capitalized, that can be indicated on non-narrative text (i.e. "1A. Risk Factors").
 
@@ -272,9 +272,9 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5, language: str = "en") -
     threshold
         If the percentage of words beginning with a capital letter exceeds this threshold,
         the function returns True
-    language
-        Specify the language of the text. Default to "en" (English). The nltk corpus
-        only supports English language for now
+    languages
+        A list that specify the language(s) of the text. Default to ["eng"] (English).
+        The nltk corpus only supports English language for now
     """
     # NOTE(robinson) - Currently limiting this to only sections of text with one sentence.
     # The assumption is that sections with multiple sentences are not titles.
@@ -295,7 +295,7 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5, language: str = "en") -
 
     is_capitalized = np.array([word.istitle() or word.isupper() for word in tokens])
     is_ne = np.zeros(len(tokens))
-    if language == "en":
+    if "eng" in languages:
         i = 0
         for chunk in ne_chunk(text):
             if hasattr(chunk, "label"):

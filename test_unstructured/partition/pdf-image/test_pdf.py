@@ -226,21 +226,23 @@ def test_partition_pdf_with_fast_strategy(
         assert element.metadata.filename == "layout-parser-paper-fast.pdf"
 
 
-@pytest.mark.skip("Needs fix ListItem extraction from pdf")
 def test_partition_pdf_with_fast_groups_text(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
 
-    first_narrative_element = None
+    second_narrative_element = None
+    narrative_element = 0
     for element in elements:
         if isinstance(element, NarrativeText):
-            first_narrative_element = element
+            narrative_element += 1
+        if narrative_element == 2:
+            second_narrative_element = element
             break
-    assert len(first_narrative_element.text) > 1000
-    assert first_narrative_element.text.startswith("Abstract. Recent advances")
-    assert first_narrative_element.text.endswith("https://layout-parser.github.io.")
-    assert first_narrative_element.metadata.filename == "layout-parser-paper-fast.pdf"
+    assert len(second_narrative_element.text) > 1000
+    assert second_narrative_element.text.startswith("Abstract. Recent advances")
+    assert second_narrative_element.text.endswith("https://layout-parser.github.io.")
+    assert second_narrative_element.metadata.filename == "layout-parser-paper-fast.pdf"
 
 
 def test_partition_pdf_with_fast_strategy_from_file(
@@ -851,4 +853,6 @@ def test_combine_numbered_list(filename):
             first_list_element = element
             break
     assert len(elements) < 28
-    assert first_list_element.text.endswith("(Section 3)")
+    assert first_list_element.text.endswith(
+        "character recognition, and other DIA tasks (Section 3)"
+    )
