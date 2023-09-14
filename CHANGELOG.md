@@ -1,7 +1,8 @@
-## 0.10.15-dev11
+## 0.10.15-dev12
 
 ### Enhancements
 
+* Clarify message when sentence is not counted toward sentence count b/c there aren't enough words
 * Adds numbered ListItem grouping when pdfminer broke down by line-by-line using coordinates
 * Use text-based classification hen elements come back uncategorized from PDF/Image partitioning
 * Updated HTML Partitioning to extract tables
