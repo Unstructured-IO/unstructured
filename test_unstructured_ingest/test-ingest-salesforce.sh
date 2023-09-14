@@ -29,12 +29,12 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --username "$SALESFORCE_USERNAME" \
     --consumer-key "$SALESFORCE_CONSUMER_KEY" \
     --private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --num-processes 2 \
     --preserve-downloads \
     --recursive \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

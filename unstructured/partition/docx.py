@@ -9,6 +9,7 @@ from docx.table import Table as DocxTable
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
 from unstructured.documents.elements import (
     Address,
@@ -113,6 +114,7 @@ Paragraph.runs = property(lambda self: _get_paragraph_runs(self))
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.DOCX)
+@add_chunking_strategy()
 def partition_docx(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
@@ -120,6 +122,7 @@ def partition_docx(
     include_page_breaks: bool = True,
     include_metadata: bool = True,
     metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.

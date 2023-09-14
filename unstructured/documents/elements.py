@@ -138,6 +138,8 @@ class ElementMetadata:
     last_modified: Optional[str] = None
     filetype: Optional[str] = None
     attached_to_filename: Optional[str] = None
+    parent_id: Optional[Union[str, uuid.UUID, NoID, UUID]] = None
+    category_depth: Optional[int] = None
 
     # Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None
@@ -170,6 +172,9 @@ class ElementMetadata:
 
     # Metadata extracted via regex
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
+
+    # Detection Model Class Probabilities from Unstructured-Inference Hi-Res
+    detection_class_prob: Optional[float] = None
 
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
@@ -251,7 +256,6 @@ def process_metadata():
 
             regex_metadata: Dict["str", "str"] = params.get("regex_metadata", {})
             elements = _add_regex_metadata(elements, regex_metadata)
-
             unique_element_ids: bool = params.get("unique_element_ids", False)
             if unique_element_ids:
                 for element in elements:
@@ -320,7 +324,9 @@ class Element(ABC):
                 )
             )
         )
-        self.metadata = metadata.merge(ElementMetadata(coordinates=coordinates_metadata))
+        self.metadata = metadata.merge(
+            ElementMetadata(coordinates=coordinates_metadata),
+        )
 
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())

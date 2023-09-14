@@ -16,12 +16,12 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
     onedrive \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified \
+    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --num-processes 2 \
-    --partition-strategy hi_res \
+    --strategy hi_res \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --client-cred "$MS_CLIENT_CRED" \
     --client-id "$MS_CLIENT_ID" \

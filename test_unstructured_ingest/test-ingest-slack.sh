@@ -16,11 +16,11 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
    slack \
    --download-dir "$DOWNLOAD_DIR" \
-   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.last_modified \
-   --partition-strategy hi_res \
+   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+   --strategy hi_res \
    --preserve-downloads \
    --reprocess \
-   --structured-output-dir "$OUTPUT_DIR" \
+   --output-dir "$OUTPUT_DIR" \
    --verbose \
    --channels C052BGT7718 \
    --token "${SLACK_TOKEN}" \

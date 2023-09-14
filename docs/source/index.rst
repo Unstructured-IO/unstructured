@@ -29,6 +29,9 @@ Library Documentation
 :doc:`integrations`
   We make it easy for you to connect your output with other popular ML services.
 
+:doc:`best_practices`
+  Learn best practices to optimize document information extraction using ``unstructured`` library.
+
 .. Hidden TOCs
 
 .. toctree::
@@ -43,5 +46,5 @@ Library Documentation
    upstream_connectors
    metadata
    examples
-   strategies
    integrations
+   best_practices

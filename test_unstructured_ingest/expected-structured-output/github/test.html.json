@@ -36,14 +36,24 @@
     "text": "Filename"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "43f65b1c5bd47774b25c72e2f96de300",
+    "type": "Title",
+    "element_id": "4112a488690bdbc1d39d5b78068eae9f",
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1
     },
-    "text": "File Contents\n\nWhatever you put in this text box will be downloaded and saved in the file. If you leave it blank, no file will be downloaded"
+    "text": "File Contents"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f89c9cf63bd2e72f560ee043d942a1e7",
+    "metadata": {
+      "data_source": {},
+      "filetype": "text/html",
+      "page_number": 1
+    },
+    "text": "Whatever you put in this text box will be downloaded and saved in the file. If you leave it blank, no file will be downloaded"
   },
   {
     "type": "NarrativeText",

@@ -25,11 +25,11 @@ fi
 
 # Optional arguments:
 # --list-of-projects
-#     --> Space separated project ids or keys
+#     --> Comma separated project ids or keys
 # --list-of-boards
-#     --> Space separated board ids or keys
+#     --> Comma separated board ids or keys
 # --list-of-issues
-#     --> Space separated issue ids or keys
+#     --> Comma separated issue ids or keys
 
 # Note: When any of the optional arguments are provided, connector will ingest only those components, and nothing else.
 #       When none of the optional arguments are provided, all issues in all projects will be ingested.
@@ -37,18 +37,18 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
         jira \
         --download-dir "$DOWNLOAD_DIR" \
-        --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
+        --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
         --num-processes 2 \
         --preserve-downloads \
         --reprocess \
-        --structured-output-dir "$OUTPUT_DIR" \
+        --output-dir "$OUTPUT_DIR" \
         --verbose \
         --url https://unstructured-jira-connector-test.atlassian.net \
         --user-email "$JIRA_INGEST_USER_EMAIL" \
         --api-token "$JIRA_INGEST_API_TOKEN" \
-        --list-of-projects "JCTP3" \
-        --list-of-boards "1" \
-        --list-of-issues "JCTP2-4 JCTP2-7 JCTP2-8 10012 JCTP2-11" \
+        --projects "JCTP3" \
+        --boards "1" \
+        --issues "JCTP2-4,JCTP2-7,JCTP2-8,10012,JCTP2-11"
 
 
 

@@ -1,8 +1,9 @@
 import os
 import pathlib
 
+from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import Title
+from unstructured.documents.elements import Table, Title
 from unstructured.partition.json import partition_json
 from unstructured.partition.rtf import partition_rtf
 from unstructured.staging.base import elements_to_json
@@ -15,6 +16,10 @@ def test_partition_rtf_from_filename():
     elements = partition_rtf(filename=filename)
     assert len(elements) > 0
     assert elements[0] == Title("My First Heading")
+    assert elements[-1] == Table(
+        text="Column 1 \n Column 2 \n Row 1, Cell 1 \n Row 1, "
+        "Cell 2 \n Row 2, Cell 1 \n Row 2, Cell 2",
+    )
     for element in elements:
         assert element.metadata.filename == "fake-doc.rtf"
 
@@ -135,8 +140,9 @@ def test_partition_rtf_from_file_with_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_rtf_with_json():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "fake-doc.rtf")
+def test_partition_rtf_with_json(
+    filename=os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "fake-doc.rtf"),
+):
     elements = partition_rtf(filename=filename)
 
     test_elements = partition_json(text=elements_to_json(elements))
@@ -147,3 +153,11 @@ def test_partition_rtf_with_json():
 
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+
+
+def test_add_chunking_strategy_on_partition_rtf(filename="example-docs/fake-doc.rtf"):
+    elements = partition_rtf(filename=filename)
+    chunk_elements = partition_rtf(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks

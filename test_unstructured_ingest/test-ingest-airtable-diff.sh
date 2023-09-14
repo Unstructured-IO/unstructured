@@ -24,10 +24,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
     --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
     --list-of-paths "$VARIED_DATA_BASE_ID $VARIED_DATA_BASE_ID_2" \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date,metadata.last_modified \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR"
+    --output-dir "$OUTPUT_DIR"
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

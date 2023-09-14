@@ -27,11 +27,11 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
     --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
     --list-of-paths "$LARGE_TEST_LIST_OF_PATHS" \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR"
+    --output-dir "$OUTPUT_DIR"
 
 
 # We are expecting fifteen directories: fourteen bases and the parent directory
