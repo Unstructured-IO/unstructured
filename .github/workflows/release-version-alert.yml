@@ -62,7 +62,7 @@ jobs:
 
       - name: Test exists
         run: |
-          cat messages_cache.txt
+          cat messages_cache.txt 
             
       - name: Store Messages in Cache
         uses: actions/cache/save@v3
