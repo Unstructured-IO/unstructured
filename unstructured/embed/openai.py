@@ -1,5 +1,7 @@
 from typing import List, Optional
 
+import numpy as np
+
 from unstructured.documents.elements import (
     Element,
 )
@@ -17,7 +19,16 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
     def initialize(self):
         self.openai_client = self.get_openai_client()
 
-    def embed(self, elements: Optional[List[Element]]) -> List[Element]:
+    def num_of_dimensions(self):
+        return np.shape(self.examplary_embedding)
+
+    def is_unit_vector(self):
+        return np.isclose(np.linalg.norm(self.examplary_embedding), 1.0)
+
+    def embed_query(self, query):
+        return self.openai_client.embed_documents(str(query))
+
+    def embed_documents(self, elements: Optional[List[Element]]) -> List[Element]:
         embeddings = self.openai_client.embed_documents([str(e) for e in elements])
         elements_with_embeddings = self._add_embeddings_to_elements(elements, embeddings)
         return elements_with_embeddings
@@ -42,5 +53,5 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
                 model=self.model_name,
             )
 
-            _ = openai_client.embed_query("We are testing authentication")
+            self.examplary_embedding = openai_client.embed_query("Q")
             return openai_client

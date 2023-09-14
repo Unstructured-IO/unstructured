@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List
 
 from unstructured.documents.elements import Element
 
@@ -12,15 +12,21 @@ class BaseEmbeddingEncoder(ABC):
         pass
 
     @property
+    @abstractmethod
     def num_of_dimensions(self) -> int:
         """Number of dimensions for the embedding vector."""
         return None
 
     @property
+    @abstractmethod
     def is_unit_vector(self) -> bool:
         """Denotes if the embedding vector is a unit vector."""
         return None
 
     @abstractmethod
-    def embed(self, filename: Optional[str], elements: Optional[List[Element]]) -> List[Element]:
+    def embed_documents(self, elements: List[Element]) -> List[Element]:
+        pass
+
+    @abstractmethod
+    def embed_query(self, query: str) -> List[float]:
         pass
