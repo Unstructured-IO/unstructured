@@ -127,8 +127,6 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         if messages == []:
             raise ValueError(f"Failed to retrieve messages from Discord channel {self.channel}")
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
-        # self._output_filename.parent.mkdir(parents=True, exist_ok=True)
-
         with open(self._tmp_download_file(), "w") as f:
             for m in messages:
                 f.write(m.content + "\n")
