@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ## 0.10.16-dev0
+=======
+## 0.10.15-dev14
+>>>>>>> cbd99dec (bump changelog)
 
 ### Enhancements
 
