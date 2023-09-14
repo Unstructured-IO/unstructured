@@ -1,7 +1,8 @@
-## 0.10.15-dev9
+## 0.10.15-dev12
 
 ### Enhancements
 
+* Clarify message when sentence is not counted toward sentence count b/c there aren't enough words
 * Adds numbered ListItem grouping when pdfminer broke down by line-by-line using coordinates
 * Use text-based classification hen elements come back uncategorized from PDF/Image partitioning
 * Updated HTML Partitioning to extract tables
@@ -15,7 +16,13 @@
 
 ### Features
 
+* Adds a naive hierarchy for elements via a `parent_id` on the element's metadata
+  * Users will now have more metadata for implementing vectordb/LLM chunking strategies. For example, text elements could be queried by their preceding title element.
+  * Title elements created from HTML headings will properly nest
+
 ### Fixes
+
+* Fixes a chunking issue via dropping the field "coordinates". Problem: chunk_by_title function was chunking each element to its own individual chunk while it needed to group elements into a fewer number of chunks. We've discovered that this happens due to a metadata matching logic in chunk_by_title function, and discovered that elements with different metadata can't be put into the same chunk. At the same time, any element with "coordinates" essentially had different metadata than other elements, due each element locating in different places and having different coordinates. Fix: That is why we have included the key "coordinates" inside a list of excluded metadata keys, while doing this "metadata_matches" comparision. Importance: This change is crucial to be able to chunk by title for documents which include "coordinates" metadata in their elements.
 
 ## 0.10.14
 
@@ -72,7 +79,7 @@
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
-  
+
 ## 0.10.11
 
 ### Enhancements

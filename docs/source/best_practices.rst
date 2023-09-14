@@ -13,3 +13,4 @@ High-level overview of available strategies and models in ``Unstructured`` libra
    :maxdepth: 1
 
    best_practices/strategies
+   best_practices/models
