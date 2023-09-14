@@ -3,8 +3,6 @@ name: Release Version Alert
 on:
   pull_request:
     branches: [main]
-    paths:
-      - 'unstructured/__version__.py'  # Specify the path to your __version__.py file
 
 jobs:
   check-version:
@@ -20,8 +18,21 @@ jobs:
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
 
+      - name: Check for __version__.py changes
+        id: version-changes
+        run: |
+          CHANGED_FILES=$(git --no-pager diff --name-only ${{ github.base_ref }}...${{ github.head_ref }})
+
+          if echo "$CHANGED_FILES" | grep -q '__version__.py'; then
+            echo "Detected __version__.py changes. Proceeding..."
+          else
+            echo "No __version__.py changes detected. Skipping workflow..."
+            echo "SKIP_STEPS=true" >> $GITHUB_ENV  # Set an environment variable to indicate skipping steps
+          fi 
+
       - name: Check versions
         id: check-versions
+        if: env.SKIP_STEPS != 'true'
         run: |
           CHECK_NEW_VERSION_RESPONSE=$(bash scripts/check-new-release-version.sh)
           if [[ "$CHECK_NEW_VERSION_RESPONSE" == "New release version"* ]]; then
@@ -30,11 +41,11 @@ jobs:
             echo "SLACK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
           else
             echo "No new non-dev version found. Skipping Slack notification."
-            echo "SKIP_NOTIFICATION=true" >> $GITHUB_ENV  # Set an environment variable to indicate skipping steps
+            echo "SKIP_STEPS=true" >> $GITHUB_ENV  # Set an environment variable to indicate skipping steps
           fi 
 
       - name: Slack Notification
-        if: env.SKIP_NOTIFICATION != 'true'
+        if: env.SKIP_STEPS != 'true'
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: 'C05RVKRFCCF'
