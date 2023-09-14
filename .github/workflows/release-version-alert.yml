@@ -20,6 +20,12 @@ jobs:
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
           echo "PR_HASH=$PR_HASH" >> $GITHUB_ENV
 
+      - name: Download posted-messages artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: posted-messages
+          path: .  # Download the artifact to the current directory
+          
       - name: Check versions
         id: check-versions
         run: |
