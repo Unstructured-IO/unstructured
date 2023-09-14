@@ -252,7 +252,11 @@ def test_partition_email_from_text_file_with_headers():
 def test_partition_email_from_text_file_max():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.txt")
     with open(filename) as f:
-        elements = partition_email(file=f, content_source="text/plain", max_partition=20)
+        elements = partition_email(
+            file=f,
+            content_source="text/plain",
+            max_partition=20,
+        )
     assert len(elements) == 6
 
 
@@ -300,6 +304,8 @@ def test_partition_email_from_file_with_header():
 def test_partition_email_from_filename_has_metadata():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     elements = partition_email(filename=filename)
+    parent_id = elements[0].metadata.parent_id
+
     assert len(elements) > 0
     assert (
         elements[0].metadata.to_dict()
@@ -313,6 +319,7 @@ def test_partition_email_from_filename_has_metadata():
             sent_to=["NotMatthew <NotMatthew@notunstructured.com>"],
             subject="Test Email",
             filetype="message/rfc822",
+            parent_id=parent_id,
         ).to_dict()
     )
     expected_dt = datetime.datetime.fromisoformat("2022-12-16T17:04:16-05:00")
@@ -452,6 +459,11 @@ def test_partition_email_can_process_attachments(
         metadata_last_modified=mocked_last_modification_date,
     )
 
+    # This test does not need to validate if hierarchy is working
+    # Patch to nullify parent_id
+    expected_metadata.parent_id = None
+    elements[-1].metadata.parent_id = None
+
     assert elements[0].text.startswith("Hello!")
 
     for element in elements[:-1]:
@@ -511,7 +523,10 @@ def test_partition_email_from_file_custom_metadata_date(
     expected_last_modification_date = "2020-07-05T09:24:28"
 
     with open(filename) as f:
-        elements = partition_email(file=f, metadata_last_modified=expected_last_modification_date)
+        elements = partition_email(
+            file=f,
+            metadata_last_modified=expected_last_modification_date,
+        )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
