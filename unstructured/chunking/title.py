@@ -150,7 +150,7 @@ def _drop_extra_metadata(
     metadata_dict: dict,
     include_pages: bool = True,
 ) -> dict:
-    keys_to_drop = ["element_id", "type"]
+    keys_to_drop = ["element_id", "type", "coordinates"]
     if not include_pages and "page_number" in metadata_dict:
         keys_to_drop.append("page_number")
 
