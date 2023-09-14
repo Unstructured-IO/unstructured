@@ -25,7 +25,6 @@ CURRENT_VERSION=$(grep -o -m 1 -E "(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-
 if is_non_dev_version "$CURRENT_VERSION"; then
     MAIN_VERSION=$(get_main_branch_version)
     if [ "$MAIN_VERSION" != "$CURRENT_VERSION" ]; then
-        echo "Current version $CURRENT_VERSION is a non-dev version and does not match the version in the main branch ($MAIN_VERSION)."
-        exit 1  # Exit with a non-zero status code
+        echo "Found new non-dev version: $CURRENT_VERSION"
     fi
 fi

@@ -11,16 +11,19 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
     - name: Check versions
+      id: check-versions
       run: |
-        bash scripts/check-new-release-version.sh
-        if [ $? -eq 1 ]; then
+        if [[ "$(bash scripts/check-new-release-version.sh)" == "Found new non-dev version"* ]]; then
           echo "Sending Slack notification..."
-          MESSAGE="Current version $CURRENT_VERSION is a non-dev version and does not match the version in the main branch ($MAIN_VERSION). :rocket:"
+          MESSAGE="Current version $CURRENT_VERSION does not match the version in the main branch ($MAIN_VERSION). :rocket:"
           echo "::set-output name=message::$MESSAGE"  # Set an output variable to pass the message to the next step
+        else
+          echo "No new non-dev version found. Skipping Slack notification."
+          echo "::set-output name=message::"  # Set an empty output variable to ensure no message is passed to the next step
 
     - name: Slack Notification
+      if: steps.check-versions.outputs.message != ''
       uses: rtCamp/action-slack-notify@v2
       env:
         SLACK_WEBHOOK: ${{ secrets.SLACK_BOT_TOKEN }}
