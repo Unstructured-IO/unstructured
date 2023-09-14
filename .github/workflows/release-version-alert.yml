@@ -2,41 +2,55 @@ name: Release Version Alert
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   check-version:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Get PR information
-      id: pr-info
-      run: |
-        PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-        PR_HASH=$(git rev-parse HEAD)
-        echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
-        echo "PR_HASH=$PR_HASH" >> $GITHUB_ENV
+      - name: Get PR information
+        id: pr-info
+        run: |
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          PR_HASH=$(git rev-parse HEAD)
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "PR_HASH=$PR_HASH" >> $GITHUB_ENV
 
-    - name: Check versions
-      id: check-versions
-      run: |
-        CHECK_NEW_VERSION_RESPONSE=$(bash scripts/check-new-release-version.sh)
-        if [[ "$(bash scripts/check-new-release-version.sh)" == "New release version"* ]]; then
-          echo "Sending Slack notification..."
-          MESSAGE="$CHECK_NEW_VERSION_RESPONSE :rocket: PR: https://github.com/$GITHUB_REPOSITORY/pull/$PR_NUMBER "
-          echo "SLACK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
-        else
-          echo "No new non-dev version found. Skipping Slack notification."
-        fi
+      - name: Check versions
+        id: check-versions
+        run: |
+          CHECK_NEW_VERSION_RESPONSE=$(bash scripts/check-new-release-version.sh)
+          if [[ "$CHECK_NEW_VERSION_RESPONSE" == "New release version"* ]]; then
+            echo "Sending Slack notification..."
+            MESSAGE="$CHECK_NEW_VERSION_RESPONSE :rocket: Coming soon in PR: https://github.com/$GITHUB_REPOSITORY/pull/$PR_NUMBER "
+            echo "SLACK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
+            # Check for duplicates in posted_messages.txt
+            DUPLICATE_CHECK=$(grep -Fx "${MESSAGE}" posted_messages.txt || true)
+            if [ -z "$DUPLICATE_CHECK" ]; then
+              echo "${MESSAGE}" >> posted_messages.txt  # Store the entire message in a file
+            else
+              echo "Message already posted. Skipping duplicate Slack notification."
+              exit 0  # Exit without posting a message
+            fi
+          else
+            echo "No new non-dev version found. Skipping Slack notification."
+          fi
 
-    - name: Slack Notification
-      if: env.SLACK_MESSAGE != ''
-      uses: slackapi/slack-github-action@v1.24.0
-      with:
-        channel-id: 'C05RVKRFCCF'
-        slack-message: ${{ env.SLACK_MESSAGE }}
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Store Posted Messages as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: posted-messages
+          path: posted_messages.txt  # Upload the file containing entire messages
+
+      - name: Slack Notification
+        if: env.SLACK_MESSAGE != ''
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: 'C05RVKRFCCF'
+          slack-message: ${{ env.SLACK_MESSAGE }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
