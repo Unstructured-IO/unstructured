@@ -25,8 +25,9 @@ jobs:
 
     - name: Slack Notification
       if: steps.check-versions.outputs.message != ''
-      uses: rtCamp/action-slack-notify@v2
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        channel-name: 'gh-new-version-alert'
+        slack-message: ${{ steps.check-versions.outputs.message }}
       env:
-        SLACK_WEBHOOK: ${{ secrets.SLACK_BOT_TOKEN }}
-        SLACK_CHANNEL: gh-new-version-alert
-        SLACK_MESSAGE: ${{ steps.check-versions.outputs.message }}
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
