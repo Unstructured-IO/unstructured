@@ -58,6 +58,11 @@ jobs:
       - name: Write Message to Cache File
         run: |
           echo "${{env.SLACK_MESSAGE}}" >> $HOME/messages_cache.txt
+          cat $HOME/messages_cache.txt
+
+      - name: Test exists
+        run: |
+          cat $HOME/messages_cache.txt
             
       - name: Store Messages in Cache
         uses: actions/cache/save@v3
