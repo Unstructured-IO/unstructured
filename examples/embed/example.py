@@ -1,13 +1,11 @@
 import os
 
-from unstructured.embed.embedder.open_ai import OpenAIEmbedder, OpenAIEmbedderConfig
+from unstructured.documents.elements import Text
+from unstructured.embed.openai import OpenAIEmbeddingEncoder
 
-config = OpenAIEmbedderConfig(
-    api_key=os.environ["OPENAI_API_KEY"],
-    list_of_elements_json_paths="Path1 Path2",
-    output_dir="embedding_outputs",
+embedding_encoder = OpenAIEmbeddingEncoder(api_key=os.environ["OPENAI_API_KEY"])
+elements = embedding_encoder.embed(
+    elements=[Text("This is sentence 1"), Text("This is sentence 2")],
 )
-embedder = OpenAIEmbedder(config)
-docs = embedder.get_embed_docs()
-for doc in docs:
-    doc.embed_and_write_result()
+
+[print(e.embeddings, e) for e in elements]
