@@ -300,10 +300,9 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install -y diffstat
         sudo apt-get install -y unzip
-        sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        sudo unzip awscliv2.zip
-        sudo ./aws/install
         tesseract --version
+        which aws
+        aws --version
         make install-ingest-s3
         make install-ingest-airtable
         make install-ingest-azure
