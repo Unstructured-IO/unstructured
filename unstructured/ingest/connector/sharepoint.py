@@ -1,7 +1,6 @@
 import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
-from functools import cached_property
 from html import unescape
 from pathlib import Path
 from urllib.parse import urlparse
@@ -14,6 +13,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -59,15 +59,6 @@ class SimpleSharepointConfig(BaseConnectorConfig):
 
 
 @dataclass
-class SharepointFileMeta:
-    date_created: t.Optional[str] = None
-    date_modified: t.Optional[str] = None
-    version: t.Optional[str] = None
-    source_url: t.Optional[str] = None
-    exists: t.Optional[bool] = None
-
-
-@dataclass
 class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     connector_config: SimpleSharepointConfig
     site_url: str
@@ -109,31 +100,11 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.output_filepath).resolve()
 
     @property
-    def date_created(self) -> t.Optional[str]:
-        return self.file_metadata.date_created  # type: ignore
-
-    @property
-    def date_modified(self) -> t.Optional[str]:
-        return self.file_metadata.date_modified  # type: ignore
-
-    @property
-    def exists(self) -> t.Optional[bool]:
-        return self.file_metadata.exists
-
-    @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
             "server_path": self.server_path,
             "site_url": self.site_url,
         }
-
-    @property
-    def version(self) -> t.Optional[str]:
-        return self.file_metadata.version  # type: ignore
-
-    @property
-    def source_url(self) -> t.Optional[str]:
-        return self.file_metadata.source_url  # type: ignore
 
     @SourceConnectionError.wrap
     @requires_dependencies(["office365"], extras="sharepoint")
@@ -173,38 +144,44 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return None
         return page
 
-    @cached_property
-    def file_metadata(self) -> SharepointFileMeta:
+    def update_source_metadata(self, **kwargs):
         if self.is_page:
             page = self._fetch_page()
             if page is None:
-                return SharepointFileMeta(
+                self.source_metadata = SourceMetadata(
                     exists=False,
                 )
-            return SharepointFileMeta(
-                page.get_property("FirstPublished", None),
-                page.get_property("Modified", None),
-                page.get_property("Version", ""),
-                page.absolute_url,
-                True,
+                return
+            self.source_metadata = SourceMetadata(
+                date_created=page.get_property("FirstPublished", None),
+                date_modified=page.get_property("Modified", None),
+                version=page.get_property("Version", ""),
+                source_url=page.absolute_url,
+                exists=True,
             )
+            return
 
         file = self._fetch_file(True)
         if file is None:
-            return SharepointFileMeta(
+            self.source_metadata = SourceMetadata(
                 exists=False,
             )
-        return SharepointFileMeta(
-            datetime.strptime(file.time_created, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
-            datetime.strptime(file.time_last_modified, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
-            file.major_version,
-            file.properties.get("LinkingUrl", None),
-            True,
+            return
+        self.source_metadata = SourceMetadata(
+            date_created=datetime.strptime(file.time_created, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
+            date_modified=datetime.strptime(
+                file.time_last_modified,
+                "%Y-%m-%dT%H:%M:%SZ",
+            ).isoformat(),
+            version=file.major_version,
+            source_url=file.properties.get("LinkingUrl", None),
+            exists=True,
         )
 
     def _download_page(self):
         """Formats and saves locally page content"""
         content = self._fetch_file()
+        self.update_source_metadata()
         pld = (content.properties.get("LayoutWebpartsContent1", "") or "") + (
             content.properties.get("CanvasContent1", "") or ""
         )
@@ -227,6 +204,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def _download_file(self):
         file = self._fetch_file()
+        self.update_source_metadata()
         fsize = file.length
         self.output_dir.mkdir(parents=True, exist_ok=True)
 

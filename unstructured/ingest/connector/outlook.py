@@ -3,7 +3,6 @@ import os
 import typing as t
 from collections import defaultdict
 from dataclasses import dataclass, field
-from functools import cached_property
 from itertools import chain
 from pathlib import Path
 
@@ -14,6 +13,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -72,15 +72,6 @@ class SimpleOutlookConfig(BaseConnectorConfig):
 
 
 @dataclass
-class OutlookFileMeta:
-    date_created: t.Optional[str] = None
-    date_modified: t.Optional[str] = None
-    version: t.Optional[str] = None
-    source_url: t.Optional[str] = None
-    exists: t.Optional[bool] = None
-
-
-@dataclass
 class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     connector_config: SimpleOutlookConfig
     message_id: str
@@ -115,35 +106,14 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.output_filepath).resolve()
 
     @property
-    def date_created(self) -> t.Optional[str]:
-        return self.file_metadata.date_created  # type: ignore
-
-    @property
-    def date_modified(self) -> t.Optional[str]:
-        return self.file_metadata.date_modified  # type: ignore
-
-    @property
-    def exists(self) -> t.Optional[bool]:
-        return self.file_metadata.exists
-
-    @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
             "message_id": self.message_id,
             "user_email": self.connector_config.user_email,
         }
 
-    @property
-    def version(self) -> t.Optional[str]:
-        return self.file_metadata.version  # type: ignore
-
-    @property
-    def source_url(self) -> t.Optional[str]:
-        return self.file_metadata.source_url  # type: ignore
-
-    @cached_property
     @requires_dependencies(["office365"], extras="outlook")
-    def file_metadata(self) -> OutlookFileMeta:
+    def update_source_metadata(self, **kwargs):
         from office365.runtime.client_request_exception import ClientRequestException
 
         try:
@@ -156,16 +126,17 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             )
         except ClientRequestException as e:
             if e.response.status_code == 404:
-                return OutlookFileMeta(
+                self.source_metadata = SourceMetadata(
                     exists=False,
                 )
+                return
             raise
-        return OutlookFileMeta(
-            msg.created_datetime.isoformat(),
-            msg.last_modified_datetime.isoformat(),
-            msg.get_property("changeKey"),
-            msg.get_property("webLink"),
-            True,
+        self.source_metadata = SourceMetadata(
+            date_created=msg.created_datetime.isoformat(),
+            date_modified=msg.last_modified_datetime.isoformat(),
+            version=msg.get_property("changeKey"),
+            source_url=msg.get_property("webLink"),
+            exists=True,
         )
 
     @SourceConnectionError.wrap
@@ -175,6 +146,7 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Relies on Office365 python sdk message object to do the download."""
         try:
             client = self.connector_config._get_client()
+            self.update_source_metadata()
             if not self.download_dir.is_dir():
                 logger.debug(f"Creating directory: {self.download_dir}")
                 self.download_dir.mkdir(parents=True, exist_ok=True)
