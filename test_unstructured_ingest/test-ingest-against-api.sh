@@ -14,7 +14,7 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
     --api-key "$UNS_API_KEY" \
-    --metadata-exclude coordinates,metadata.last_modified,metadata.detection_class_prob \
+    --metadata-exclude coordinates,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --partition-by-api \
     --strategy hi_res \
     --reprocess \
