@@ -120,10 +120,10 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
-        self.set_source_metadata()
+        self.update_source_metadata_metadata()
 
     @requires_dependencies(["fsspec"])
-    def set_source_metadata(self):
+    def update_source_metadata_metadata(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
