@@ -1,7 +1,6 @@
 import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
-from functools import cached_property
 from pathlib import Path
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
@@ -12,6 +11,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -56,16 +56,6 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
             logger.error("Couldn't set up credentials for OneDrive")
             raise exc
         return token
-
-
-@dataclass
-class OneDriveFileMeta:
-    date_created: t.Optional[str] = None
-    date_modified: t.Optional[str] = None
-    version: t.Optional[str] = None
-    source_url: t.Optional[str] = None
-    exists: t.Optional[bool] = None
-
 
 @dataclass
 class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -116,31 +106,11 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.output_filepath).resolve()
 
     @property
-    def date_created(self) -> t.Optional[str]:
-        return self.file_metadata.date_created
-
-    @property
-    def date_modified(self) -> t.Optional[str]:
-        return self.file_metadata.date_modified
-
-    @property
-    def exists(self) -> t.Optional[bool]:
-        return self.file_metadata.exists
-
-    @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
             "user_pname": self.connector_config.user_pname,
             "server_relative_path": self.server_relative_path,
         }
-
-    @property
-    def version(self) -> t.Optional[str]:
-        return self.file_metadata.version
-
-    @property
-    def source_url(self) -> t.Optional[str]:
-        return self.file_metadata.source_url
 
     @requires_dependencies(["office365"], extras="onedrive")
     def _fetch_file(self):
@@ -157,31 +127,31 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             raise
         return file
 
-    @cached_property
-    def file_metadata(self, file: "DriveItem" = None) -> OneDriveFileMeta:
-        file = self._fetch_file()
+    def update_source_metadata(self, **kwargs):
+        file = kwargs.get('file', self._fetch_file())
         if file is None:
-            return OneDriveFileMeta(
+            self.source_metadata = SourceMetadata(
                 exists=False,
             )
+            return
 
         version = None
         if (n_versions := len(file.versions)) > 0:
             version = file.versions[n_versions - 1].properties.get("id", None)
 
-        return OneDriveFileMeta(
-            datetime.strptime(file.created_datetime, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
-            datetime.strptime(file.last_modified_datetime, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
-            version,
-            file.parent_reference.path + "/" + self.file_name,
-            True,
+        self.source_metadata = SourceMetadata(
+            date_created=datetime.strptime(file.created_datetime, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
+            date_modified=datetime.strptime(file.last_modified_datetime, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
+            version=version,
+            source_url=file.parent_reference.path + "/" + self.file_name,
+            exists=True,
         )
 
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         file = self._fetch_file()
-
+        self.update_source_metadata(file=file)
         if file is None:
             raise ValueError(
                 f"Failed to retrieve file {self.file_path}/{self.file_name}",

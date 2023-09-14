@@ -2,9 +2,7 @@ import os
 import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
-from functools import cached_property
 from pathlib import Path
-from typing import Any, Dict, Optional
 
 import pytz
 
@@ -15,6 +13,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -32,15 +31,6 @@ class SimpleRedditConfig(BaseConnectorConfig):
     def __post_init__(self):
         if self.num_posts <= 0:
             raise ValueError("The number of Reddit posts to fetch must be positive.")
-
-
-@dataclass
-class RedditFileMeta:
-    date_created: Optional[str] = None
-    date_modified: Optional[str] = None
-    source_url: Optional[str] = None
-    exists: Optional[bool] = None
-
 
 @dataclass
 class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -68,23 +58,22 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return None
         return post
 
-    @cached_property
-    def file_metadata(self) -> RedditFileMeta:
-        post = self.get_post()
+    def update_source_metadata(self, **kwargs):
+        post = kwargs.get('post', self.get_post())
         if post is None:
-            return RedditFileMeta(
+            self.source_metadata = SourceMetadata(
                 exists=False,
             )
+            return
 
         file_exists = (post.author != "[deleted]" or post.auth is not None) and (
             post.selftext != "[deleted]" or post.selftext != "[removed]"
         )
 
-        return RedditFileMeta(
-            datetime.fromtimestamp(post.created_utc, pytz.utc).isoformat(),
-            None,
-            post.permalink,
-            file_exists,
+        self.source_metadata = SourceMetadata(
+            date_created=datetime.fromtimestamp(post.created_utc, pytz.utc).isoformat(),
+            source_url=post.permalink,
+            exists=file_exists,
         )
 
     @SourceConnectionError.wrap
@@ -95,6 +84,7 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         # Write the title plus the body, if any
         post = self.get_post()
+        self.update_source_metadata(post=post)
         if post is None:
             raise ValueError(
                 f"Failed to retrieve post {self.post_id}",
@@ -111,25 +101,14 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         return Path(self.partition_config.output_dir) / f"{self.post_id}.json"
+    
+    @property
+    def date_modified(self) -> t.Optional[str]:
+        return None
 
     @property
-    def date_created(self) -> Optional[str]:
-        return self.file_metadata.date_created
-
-    @property
-    def exists(self) -> Optional[bool]:
-        return self.file_metadata.exists
-
-    @property
-    def record_locator(self) -> Optional[Dict[str, Any]]:
-        return {
-            "subreddit_name": self.connector_config.subreddit_name,
-            "id": self.post_id,
-        }
-
-    @property
-    def source_url(self) -> Optional[str]:
-        return self.file_metadata.source_url
+    def version(self) -> t.Optional[str]:
+        return None
 
 
 @dataclass

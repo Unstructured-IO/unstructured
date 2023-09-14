@@ -13,6 +13,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import (
@@ -52,14 +53,6 @@ class SimpleSlackConfig(BaseConnectorConfig):
                 "Start and/or End dates are not valid. ",
             )
 
-
-@dataclass
-class SlackFileMeta:
-    date_created: t.Optional[str] = None
-    date_modified: t.Optional[str] = None
-    exists: t.Optional[bool] = None
-
-
 @dataclass
 class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
@@ -89,16 +82,12 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.partition_config.output_dir) / output_file
 
     @property
-    def date_created(self) -> t.Optional[str]:
-        return self.file_metadata.date_created
+    def version(self) -> t.Optional[str]:
+        return None
 
     @property
-    def date_modified(self) -> t.Optional[str]:
-        return self.file_metadata.date_modified
-
-    @property
-    def exists(self) -> t.Optional[bool]:
-        return self.file_metadata.exists
+    def source_url(self) -> t.Optional[str]:
+        return None
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
@@ -128,14 +117,14 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return None
         return result
 
-    @cached_property
-    def file_metadata(self):
-        result = self._fetch_messages()
+    def update_source_metadata(self, **kwargs):
+
+        result = kwargs.get('result', self._fetch_messages())
         if result is None:
-            return SlackFileMeta(
+            self.source_metadata = SourceMetadata(
                 exists=True,
             )
-
+            return
         timestamps = [m["ts"] for m in result["messages"]]
         timestamps.sort()
         date_created = None
@@ -146,10 +135,10 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 float(timestamps[len(timestamps) - 1]),
             ).isoformat()
 
-        return SlackFileMeta(
-            date_created,
-            date_modified,
-            True,
+        self.source_metadata = SourceMetadata(
+            date_created=date_created,
+            date_modified=date_modified,
+            exists=True,
         )
 
     @SourceConnectionError.wrap
@@ -166,6 +155,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             logger.debug(f"fetching channel {self.channel} - PID: {os.getpid()}")
 
         result = self._fetch_messages()
+        self.update_source_metadata(result=result)
         root = ET.Element("messages")
         for message in result["messages"]:
             message_elem = ET.SubElement(root, "message")
