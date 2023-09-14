@@ -27,7 +27,7 @@ jobs:
       if: steps.check-versions.outputs.message != ''
       uses: slackapi/slack-github-action@v1.24.0
       with:
-        channel-name: 'gh-new-version-alert'
+        channel-id: 'C05RVKRFCCF'
         slack-message: ${{ steps.check-versions.outputs.message }}
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
