@@ -1,0 +1,38 @@
+name: Check Versions
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  check-versions:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.10
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt  # Replace with your project's requirements
+
+    - name: Check versions
+      run: |
+        bash scripts/check-new-release-version.sh
+        if [ $? -eq 1 ]; then
+          echo "Sending Slack notification..."
+          MESSAGE="Current version $CURRENT_VERSION is a non-dev version and does not match the version in the main branch ($MAIN_VERSION)."
+          echo "::set-output name=message::$MESSAGE"  # Set an output variable to pass the message to the next step
+
+    - name: Send Slack notification
+      if: steps.check-versions.outputs.message
+      uses: rtCamp/action-slack@v5
+      with:
+        slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+        channel: "#gh-new-version-alert"  # Replace with your Slack channel
+        text: ${{ steps.check-versions.outputs.message }}
