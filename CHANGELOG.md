@@ -1,4 +1,4 @@
-## 0.10.15-dev10
+## 0.10.15-dev11
 
 ### Enhancements
 
@@ -14,6 +14,10 @@
 * Removes `UNSTRUCTURED_LANGUAGE` env var. To skip English specific checks, set the `languages` parameter to non-English language(s).
 
 ### Features
+
+* Adds a naive hierarchy for elements via a `parent_id` on the element's metadata
+  * Users will now have more metadata for implementing vectordb/LLM chunking strategies. For example, text elements could be queried by their preceding title element.
+  * Title elements created from HTML headings will properly nest
 
 ### Fixes
 
