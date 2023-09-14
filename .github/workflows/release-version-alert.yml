@@ -1,9 +1,8 @@
-name: Check Versions
+name: Release Version Alert
 
 on:
-  push:
-    branches:
-      - '*'
+  pull_request:
+    branches: [ main ]
 
 jobs:
   check-versions:
