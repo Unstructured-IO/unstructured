@@ -359,7 +359,7 @@ tornado==6.3.3
     #   jupyterlab
     #   notebook
     #   terminado
-traitlets==5.9.0
+traitlets==5.10.0
     # via
     #   comm
     #   ipykernel
