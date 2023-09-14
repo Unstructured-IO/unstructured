@@ -138,6 +138,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             self.source_metadata = SourceMetadata(
                 exists=False,
             )
+            return
         document_history = page["history"]
         date_created = datetime.strptime(
             document_history["createdDate"],
@@ -169,14 +170,13 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         # have a separate connection object for each process
 
         result = self._get_page()
+        self.update_source_metadata(page=result)
         if result is None:
             raise ValueError(f"Failed to retrieve page with ID {self.document_meta.document_id}")
-
         self.document = result["body"]["view"]["value"]
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
-        self.update_source_metadata(page=result)
 
 
 @dataclass

@@ -100,13 +100,12 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return messages, jump_url
 
     def update_source_metadata(self, **kwargs):
-        messages, jump_url = kwargs.get("messages"), kwargs.get("jump_url")
-        if messages is None:
-            messages, jump_url = self._get_messages()
+        messages, jump_url = kwargs.get("messages_tuple", self._get_messages())
         if messages == []:
             self.source_metadata = SourceMetadata(
                 exists=False,
             )
+            return
         dates = [m.created_at for m in messages if m.created_at]
         dates.sort()
         self.source_metadata = SourceMetadata(
@@ -124,6 +123,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             logger.debug(f"fetching {self} - PID: {os.getpid()}")
 
         messages, jump_url = self._get_messages()
+        self.update_source_metadata(messages_tuple=(messages, jump_url))
         if messages == []:
             raise ValueError(f"Failed to retrieve messages from Discord channel {self.channel}")
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
@@ -132,7 +132,6 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         with open(self._tmp_download_file(), "w") as f:
             for m in messages:
                 f.write(m.content + "\n")
-        self.update_source_metadata(messages=messages, jump_url=jump_url)
 
     @property
     def filename(self):

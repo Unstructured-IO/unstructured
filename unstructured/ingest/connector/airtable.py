@@ -102,14 +102,12 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def update_source_metadata(self, **kwargs):
         """Gets file metadata from the current table."""
 
-        rows, table_url = kwargs.get("rows"), kwargs.get("table_url")
-        if rows is None:
-            rows, table_url = self._get_table_rows()
-
+        rows, table_url = kwargs.get("rows_tuple", self._get_table_rows())
         if rows is None or len(rows) < 1:
             self.source_metadata = SourceMetadata(
                 exists=False,
             )
+            return
         dates = [r.get("createdTime", "") for r in rows]
         dates.sort()
 
@@ -138,7 +136,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         rows, table_url = self._get_table_rows()
-
+        self.update_source_metadata(rows_tuple=(rows, table_url))
         if rows is None:
             raise ValueError(
                 f"Failed to retrieve rows from table\
@@ -154,7 +152,6 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
-        self.update_source_metadata(rows=rows, table_url=table_url)
 
 
 airtable_id_prefixes = ["app", "tbl", "viw"]

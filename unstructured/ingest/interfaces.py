@@ -180,6 +180,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
 
         return wrapper
 
+    # TODO: add @abstractmethod decorator
     def update_source_metadata(self, **kwargs) -> None:
         """Sets the SourceMetadata and the  properties for the doc"""
         pass
