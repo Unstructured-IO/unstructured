@@ -130,7 +130,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             self.source_metadata = SourceMetadata(
                 exists=False,
             )
-
+            return
         self.source_metadata = SourceMetadata(
             version=document["_version"],
             exists=document["found"],

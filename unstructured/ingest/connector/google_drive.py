@@ -142,6 +142,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
                 self.source_metadata = SourceMetadata(
                     exists=True,
                 )
+                return
             raise
 
         date_created = None
