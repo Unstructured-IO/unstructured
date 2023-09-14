@@ -33,10 +33,10 @@ jobs:
         fi
 
     - name: Slack Notification
-      if: steps.check-versions.outputs.message != ''
+      if: env.SLACK_MESSAGE != ''
       uses: slackapi/slack-github-action@v1.24.0
       with:
         channel-id: 'C05RVKRFCCF'
-        slack-message: ${{ steps.check-versions.outputs.message }}
+        slack-message: ${{ env.SLACK_MESSAGE }}
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
