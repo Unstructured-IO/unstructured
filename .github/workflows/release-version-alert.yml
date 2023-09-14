@@ -20,12 +20,14 @@ jobs:
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
           echo "PR_HASH=$PR_HASH" >> $GITHUB_ENV
 
-      - name: Download posted-messages artifact
-        uses: actions/download-artifact@v2
+      - name: Retrieve Messages from Cache
+        uses: actions/cache@v2
         with:
-          name: posted-messages
-          path: .  # Download the artifact to the current directory
-          
+          path: $HOME/messages_cache.txt
+          key: messages-cache-${{ runner.os }}-${{ hashFiles('**/messages_cache.txt') }}
+          restore-keys: |
+            messages-cache-${{ runner.os }}-
+
       - name: Check versions
         id: check-versions
         run: |
@@ -34,15 +36,10 @@ jobs:
             echo "Sending Slack notification..."
             MESSAGE="$CHECK_NEW_VERSION_RESPONSE :rocket: Coming soon in PR: https://github.com/$GITHUB_REPOSITORY/pull/$PR_NUMBER "
             echo "SLACK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
-            # Check for duplicates in posted_messages.txt
-            DUPLICATE_CHECK=$(grep -Fx "${MESSAGE}" posted_messages.txt || true)
-            # print the posted_messages content
-            echo "posted_messages.txt contents:"
-            cat posted_messages.txt
-            echo "MESSAGE: $MESSAGE"
+            # Check for duplicates in cache
+            DUPLICATE_CHECK=$(grep -Fx "${MESSAGE}" $HOME/messages_cache.txt || true)
             if [ -z "$DUPLICATE_CHECK" ]; then
-              echo "No duplicate found. Posting Slack notification."
-              echo "${MESSAGE}" >> posted_messages.txt  # Store the entire message in a file
+              echo "${MESSAGE}" >> $HOME/messages_cache.txt  # Store the entire message in the cache
             else
               echo "Message already posted. Skipping duplicate Slack notification."
               exit 0  # Exit without posting a message
@@ -51,11 +48,11 @@ jobs:
             echo "No new non-dev version found. Skipping Slack notification."
           fi
 
-      - name: Store Posted Messages as Artifact
-        uses: actions/upload-artifact@v2
+      - name: Store Messages in Cache
+        uses: actions/cache@v2
         with:
-          name: posted-messages
-          path: posted_messages.txt  # Upload the file containing entire messages
+          path: $HOME/messages_cache.txt
+          key: messages-cache-${{ runner.os }}-${{ hashFiles('**/messages_cache.txt') }}
 
       - name: Slack Notification
         if: env.SLACK_MESSAGE != ''
@@ -64,4 +61,4 @@ jobs:
           channel-id: 'C05RVKRFCCF'
           slack-message: ${{ env.SLACK_MESSAGE }}
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }} 
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
