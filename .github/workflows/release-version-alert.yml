@@ -17,8 +17,8 @@ jobs:
       run: |
         PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
         PR_HASH=$(git rev-parse HEAD)
-        echo "::set-output name=pr_number::$PR_NUMBER"
-        echo "::set-output name=pr_hash::$PR_HASH"
+        echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+        echo "PR_HASH=$PR_HASH" >> $GITHUB_ENV
 
     - name: Check versions
       id: check-versions
@@ -27,10 +27,9 @@ jobs:
         if [[ "$(bash scripts/check-new-release-version.sh)" == "Found new non-dev version"* ]]; then
           echo "Sending Slack notification..."
           MESSAGE="$CHECK_NEW_VERSION_RESPONSE \nPR: https://github.com/$GITHUB_REPOSITORY/pull/$PR_NUMBER\nHash: $PR_HASH :rocket:"
-          echo "::set-output name=message::$MESSAGE"  # Set an output variable to pass the message to the next step
+          echo "SLACK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
         else
           echo "No new non-dev version found. Skipping Slack notification."
-          echo "::set-output name=message::"  # Set an empty output variable to ensure no message is passed to the next step
         fi
 
     - name: Slack Notification
