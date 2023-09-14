@@ -182,9 +182,15 @@ def convert_language_to_tesseract(lang: str) -> str:
         logger.warning(f"{lang} is not a valid standard language code.")
         return ""
 
+<<<<<<< HEAD
     # tesseract uses 3 digit codes (639-3, 639-2b, etc) as prefixes, with suffixes for orthography
     # use first 3 letters of tesseract codes for matching to standard codes
     pytesseract_langs_3 = {lang[:3] for lang in PYTESSERACT_LANGS}
+=======
+    # tesseract uses 3 digit codes (639-3, 639-2b, etc) as code prefix, with suffixes for orthography
+    # use first 3 letters of tesseract codes for matching to standard codes
+    pytesseract_langs_3 = set([lang[:3] for lang in PYTESSERACT_LANGS])
+>>>>>>> 66edc77f (filter out empty return values, clarify comments)
 
     # try to match ISO 639-3 code
     if lang_iso639.part3 in pytesseract_langs_3:
