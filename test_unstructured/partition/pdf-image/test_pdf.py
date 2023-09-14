@@ -851,3 +851,17 @@ def test_combine_numbered_list(filename):
             break
     assert len(elements) < 28
     assert first_list_element.text.endswith("(Section 3)")
+
+
+def test_partition_pdf_uses_model_name():
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_or_image_local",
+    ) as mockpartition:
+        pdf.partition_pdf(
+            "example-docs/layout-parser-paper-fast.pdf", model_name="test", strategy="hi_res"
+        )
+
+        mockpartition.assert_called_once()
+        assert "model_name" in mockpartition.call_args.kwargs
+        assert mockpartition.call_args.kwargs["model_name"]
