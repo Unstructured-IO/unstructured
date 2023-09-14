@@ -146,9 +146,7 @@ def prepare_languages_for_tesseract(languages: List[str] = ["eng"]):
     """
     Convert the languages param (list of strings) into tesseract ocr langcode format (uses +) string
     """
-    # NOTE(Shreya): assumes language codes are already in tesseract format (will be updated later)
-
-    return "+".join(languages)
+    return "+".join([convert_language_to_tesseract(lang) for lang in languages])
 
 
 def convert_old_ocr_languages_to_languages(ocr_languages: str):
@@ -164,7 +162,7 @@ def convert_old_ocr_languages_to_languages(ocr_languages: str):
 @requires_dependencies("pytesseract")
 def convert_language_to_tesseract(lang: str) -> str:
     # if language is already tesseract langcode, return it immediately
-    # NOTE: this may catch some of the cases of choosing between a plain vs suffixed tesseract code
+    # NOTE(shreya): this may catch some of the cases of choosing between a plain vs suffixed tesseract code
     if lang in PYTESSERACT_LANGS:
         return lang
 
