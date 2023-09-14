@@ -4,8 +4,7 @@
     "element_id": "153e1fa63953e7e19f9004e0253eab68",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Id: 701Hu000001eX9GIAU"
   },
@@ -14,8 +13,7 @@
     "element_id": "9b9c5e71eff6a483e85da52d1a1f1005",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Name: DM Campaign to Top Customers - Nov 12-23, 2001"
   },
@@ -24,8 +22,7 @@
     "element_id": "28fa7658294d152358d23d8bde3c9e56",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Type: Direct Mail"
   },
@@ -34,8 +31,7 @@
     "element_id": "ad1b8a8ebbde05c57a773f60045de6f6",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Status: Completed"
   },
@@ -44,8 +40,7 @@
     "element_id": "59b06bd535fc60e446ce4f6db6392a8d",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "StartDate: 2022-12-04"
   },
@@ -54,8 +49,7 @@
     "element_id": "a7caa29a82d158a422b901babed10321",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "EndDate: 2022-12-15"
   },
@@ -64,8 +58,7 @@
     "element_id": "a830028696ccdc6c73f26e2f5f0b3e0d",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "BudgetedCost: 25000.0"
   },
@@ -74,8 +67,7 @@
     "element_id": "f393ef1a67e6b638d6825e00ffa85b5e",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "ActualCost: 23500.0"
   },
@@ -84,8 +76,7 @@
     "element_id": "8750ec1f6f59b282d104b919c7ffab0f",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Description: None"
   },
@@ -94,8 +85,7 @@
     "element_id": "54e16b100bf2118d4c7c18c3f93e2223",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "NumberOfLeads: 0"
   },
@@ -104,8 +94,7 @@
     "element_id": "db1ed63f2ed83e51f75619047c417e49",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "NumberOfConvertedLeads: 0"
   }

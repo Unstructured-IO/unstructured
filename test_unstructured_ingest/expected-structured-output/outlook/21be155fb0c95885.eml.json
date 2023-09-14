@@ -13,8 +13,7 @@
       "sent_to": [
         "devops@unstructuredio.onmicrosoft.com"
       ],
-      "subject": "integration test email 1",
-      "category_depth": 0
+      "subject": "integration test email 1"
     },
     "text": "integration test email"
   }

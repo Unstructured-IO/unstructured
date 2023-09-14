@@ -5,8 +5,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "\\uD83D\\uDDD3 Date"
   },
@@ -16,8 +15,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "\\uD83D\\uDC65 Participants"
   },
@@ -27,8 +25,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": ""
   },
@@ -38,8 +35,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": ""
   },
@@ -49,8 +45,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "\\uD83E\\uDD45 Goals"
   },
@@ -60,8 +55,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": ""
   },
@@ -71,8 +65,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "\\uD83D\\uDDE3 Discussion topics"
   },
@@ -83,8 +76,7 @@
       "data_source": {},
       "filetype": "text/html",
       "page_number": 1,
-      "text_as_html": "<table><br><tbody><br><tr><td>Time</td><td>Item</td><td>Presenter</td><td>Notes</td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br></tbody><br></table>",
-      "category_depth": 0
+      "text_as_html": "<table><br><tbody><br><tr><td>Time</td><td>Item</td><td>Presenter</td><td>Notes</td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br></tbody><br></table>"
     },
     "text": "Time Item Presenter Notes"
   },
@@ -94,8 +86,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "✅ Action items"
   },
@@ -105,8 +96,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": ""
   },
@@ -116,8 +106,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "⤴ Decisions"
   }

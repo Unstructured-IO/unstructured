@@ -12,8 +12,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "IssueID_IssueKey:10000     JCTP1-1"
   },
@@ -30,8 +29,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "ProjectID_Key:JCTP1     Jira Connector Test Project 1"
   },
@@ -48,8 +46,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "IssueType:Task"
   },
@@ -66,8 +63,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Status:In Progress"
   },
@@ -84,8 +80,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Priority:{'self': 'https://unstructured-jira-connector-test.atlassian.net/rest/api/2/priority/3', 'iconUrl': 'https://unstructured-jira-connector-test.atlassian.net/images/icons/priorities/medium.svg', 'name': 'Medium', 'id': '3'}"
   },
@@ -102,8 +97,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "AssigneeID_Name:712020:7bc7fdcb-67e7-435d-b4a2-128aee12820c     Unstructured Devops"
   },
@@ -120,8 +114,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "ReporterAdr_Name:devops+jira-connector@unstructured.io     Unstructured Devops"
   },
@@ -138,8 +131,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Labels:Label1     Label2"
   },
@@ -156,8 +148,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Components:"
   },
@@ -174,8 +165,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Unstructured Devops     My comment 1 Unstructured Devops     My attachment image lorem ipsum:"
   },
@@ -192,8 +182,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "!image"
   },
@@ -210,8 +199,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": ""
   },
@@ -228,8 +216,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "20230823"
   },
@@ -246,8 +233,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": ""
   },
@@ -264,8 +250,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "143650.png|width=83.33333333333333%!"
   },
@@ -282,8 +267,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Test todo 1"
   },
@@ -300,8 +284,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. [Nam quid possumus facere melius?|http://loripsum.net/] Ita relinquet duas, de quibus etiam atque etiam consideret. Quo modo autem philosophus loquitur? Quid est enim aliud esse versutum? His enim rebus detractis negat se reperire in asotorum vita quod reprehendat. Non est ista, inquam, Piso, magna dissensio. Duo Reges: constructio interrete. In eo enim positum est id, quod dicimus esse expetendum. Traditur, inquit, ab Epicuro ratio neglegendi doloris. Negat enim summo bono afferre incrementum diem. Aberat omnis dolor, qui si adesset, nec molliter ferret et tamen medicis plus quam philosophis uteretur."
   },
@@ -318,8 +301,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Sedulo, inquam, faciam. Ergo, si semel tristior effectus est, hilara vita amissa est? Quamquam tu hanc copiosiorem etiam soles dicere. An eum locum libenter invisit, ubi Demosthenes et Aeschines inter se decertare soliti sunt? _Quippe: habes enim a rhetoribus;_ Non minor, inquit, voluptas percipitur ex vilissimis rebus quam ex pretiosissimis. Ut in geometria, prima si dederis, danda sunt omnia. Negat enim summo bono afferre incrementum diem."
   },
@@ -336,8 +318,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "[Et nemo nimium beatus est;|http://loripsum.net/] Nam et complectitur verbis, quod vult, et dicit plane, quod intellegam; Ab his oratores, ab his imperatores ac rerum publicarum principes extiterunt. Ergo adhuc, quantum equidem intellego, causa non videtur fuisse mutandi nominis. Quis enim redargueret? Ita fit cum gravior, tum etiam splendidior oratio. Sed ut iis bonis erigimur, quae expectamus, sic laetamur iis, quae recordamur. _Bork_ Tubulum fuisse, qua illum, cuius is condemnatus est rogatione, P. [Eiuro, inquit adridens, iniquum, hac quidem de re;|http://loripsum.net/] Si quae forte-possumus."
   },
@@ -354,8 +335,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "https://unstructured"
   },
@@ -372,8 +352,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": ""
   },
@@ -390,8 +369,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "jira"
   },
@@ -408,8 +386,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": ""
   },
@@ -426,8 +403,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "connector"
   },
@@ -444,8 +420,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": ""
   },
@@ -462,8 +437,7 @@
         "date_created": "2023-08-22T11:29:37.774+0000",
         "date_modified": "2023-08-24T12:05:04.690+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "test.atlassian.net/rest/api/2/attachment/10000"
   }

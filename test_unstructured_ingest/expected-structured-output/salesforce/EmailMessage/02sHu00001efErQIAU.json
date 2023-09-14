@@ -11,8 +11,7 @@
       "sent_to": [
         "sean@edge.com"
       ],
-      "subject": "Test of Salesforce 2",
-      "category_depth": 0
+      "subject": "Test of Salesforce 2"
     },
     "text": "Hey Sean.\n\nTesting email parsing here.\nType: email\n\nJust testing the email system\n\n_____________________________________________________________________\nPowered by Salesforce\nhttp://www.salesforce.com/"
   }
