@@ -99,6 +99,6 @@ You can format your JSON or CSV outputs for use with `Prodigy <https://prodi.gy/
 `Weaviate <https://weaviate.io/>`_ is an open-source vector database that allows you to store data objects and vector embeddings
 from a variety of ML models. Storing text and embeddings in a vector database such as Weaviate is a key component of the
 `emerging LLM tech stack <https://medium.com/@unstructured-io/llms-and-the-emerging-ml-tech-stack-bdb189c8be5c>`_.
-See the `stage_for_weaviate <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-weaviate>`_ docs for details
+See the `stage_for_weaviate <https://unstructured-io.github.io/unstructured/bricks/staging.html#stage-for-weaviate>`_ docs for details
 on how to upload ``unstructured`` outputs to Weaviate. An example notebook is also available
-`here <https://unstructured-io.github.io/unstructured/bricks/staging.html#stage-for-weaviate>`_.
+`here <https://github.com/Unstructured-IO/unstructured/tree/main/examples/weaviate>`_.
