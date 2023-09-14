@@ -24,8 +24,6 @@ filetype==1.2.0
     # via -r requirements/base.in
 idna==3.4
     # via requests
-iso639==0.1.4
-    # via -r requirements/base.in
 joblib==1.3.2
     # via nltk
 lxml==4.9.3
