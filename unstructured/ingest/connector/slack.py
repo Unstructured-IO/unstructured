@@ -3,7 +3,6 @@ import typing as t
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import datetime
-from functools import cached_property
 from pathlib import Path
 
 from unstructured.ingest.error import SourceConnectionError
@@ -13,7 +12,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
-    SourceMetadata
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import (
@@ -52,6 +51,7 @@ class SimpleSlackConfig(BaseConnectorConfig):
             raise ValueError(
                 "Start and/or End dates are not valid. ",
             )
+
 
 @dataclass
 class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -118,8 +118,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return result
 
     def update_source_metadata(self, **kwargs):
-
-        result = kwargs.get('result', self._fetch_messages())
+        result = kwargs.get("result", self._fetch_messages())
         if result is None:
             self.source_metadata = SourceMetadata(
                 exists=True,

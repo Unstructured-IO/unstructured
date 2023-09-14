@@ -13,7 +13,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
-    SourceMetadata
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -31,6 +31,7 @@ class SimpleRedditConfig(BaseConnectorConfig):
     def __post_init__(self):
         if self.num_posts <= 0:
             raise ValueError("The number of Reddit posts to fetch must be positive.")
+
 
 @dataclass
 class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -59,7 +60,7 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return post
 
     def update_source_metadata(self, **kwargs):
-        post = kwargs.get('post', self.get_post())
+        post = kwargs.get("post", self.get_post())
         if post is None:
             self.source_metadata = SourceMetadata(
                 exists=False,
@@ -101,7 +102,7 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         return Path(self.partition_config.output_dir) / f"{self.post_id}.json"
-    
+
     @property
     def date_modified(self) -> t.Optional[str]:
         return None

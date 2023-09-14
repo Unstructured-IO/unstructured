@@ -11,7 +11,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
-    SourceMetadata
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -56,6 +56,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
             logger.error("Couldn't set up credentials for OneDrive")
             raise exc
         return token
+
 
 @dataclass
 class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -128,7 +129,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return file
 
     def update_source_metadata(self, **kwargs):
-        file = kwargs.get('file', self._fetch_file())
+        file = kwargs.get("file", self._fetch_file())
         if file is None:
             self.source_metadata = SourceMetadata(
                 exists=False,
@@ -141,7 +142,10 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         self.source_metadata = SourceMetadata(
             date_created=datetime.strptime(file.created_datetime, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
-            date_modified=datetime.strptime(file.last_modified_datetime, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
+            date_modified=datetime.strptime(
+                file.last_modified_datetime,
+                "%Y-%m-%dT%H:%M:%SZ",
+            ).isoformat(),
             version=version,
             source_url=file.parent_reference.path + "/" + self.file_name,
             exists=True,
