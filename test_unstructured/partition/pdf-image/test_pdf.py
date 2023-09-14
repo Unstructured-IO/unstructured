@@ -11,6 +11,7 @@ from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
     ElementMetadata,
+    ListItem,
     NarrativeText,
     Text,
     Title,
@@ -811,3 +812,42 @@ def test_add_chunking_strategy_on_partition_pdf(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_pdf_warns_with_ocr_languages(caplog):
+    filename = "example-docs/chevron-page.pdf"
+    pdf.partition_pdf(filename=filename, strategy="hi_res", ocr_languages="eng")
+    assert "The ocr_languages kwarg will be deprecated" in caplog.text
+
+
+def test_partition_pdf_or_image_warns_with_ocr_languages(caplog):
+    filename = "example-docs/DA-1p.pdf"
+    pdf.partition_pdf_or_image(filename=filename, strategy="hi_res", ocr_languages="eng")
+    assert "The ocr_languages kwarg will be deprecated" in caplog.text
+
+
+def test_partition_categorization_backup():
+    text = "This is Clearly a Title."
+    with mock.patch.object(pdf, "_partition_pdf_or_image_local", return_value=[Text(text)]):
+        elements = pdf.partition_pdf_or_image(
+            "example-docs/layout-parser-paper-fast.pdf",
+            strategy="hi_res",
+        )
+        # Should have changed the element class from Text to Title
+        assert isinstance(elements[0], Title)
+        assert elements[0].text == text
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-docs/layout-parser-paper-fast.pdf"],
+)
+def test_combine_numbered_list(filename):
+    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    first_list_element = None
+    for element in elements:
+        if isinstance(element, ListItem):
+            first_list_element = element
+            break
+    assert len(elements) < 28
+    assert first_list_element.text.endswith("(Section 3)")

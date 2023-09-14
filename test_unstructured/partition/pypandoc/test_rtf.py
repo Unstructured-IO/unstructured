@@ -3,7 +3,7 @@ import pathlib
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import Title
+from unstructured.documents.elements import Table, Title
 from unstructured.partition.json import partition_json
 from unstructured.partition.rtf import partition_rtf
 from unstructured.staging.base import elements_to_json
@@ -16,6 +16,10 @@ def test_partition_rtf_from_filename():
     elements = partition_rtf(filename=filename)
     assert len(elements) > 0
     assert elements[0] == Title("My First Heading")
+    assert elements[-1] == Table(
+        text="Column 1 \n Column 2 \n Row 1, Cell 1 \n Row 1, "
+        "Cell 2 \n Row 2, Cell 1 \n Row 2, Cell 2",
+    )
     for element in elements:
         assert element.metadata.filename == "fake-doc.rtf"
 
