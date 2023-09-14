@@ -854,5 +854,5 @@ def test_combine_numbered_list(filename):
             break
     assert len(elements) < 28
     assert first_list_element.text.endswith(
-        "character recognition, and other DIA tasks (Section 3)"
+        "character recognition, and other DIA tasks (Section 3)",
     )

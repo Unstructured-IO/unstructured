@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Update `is_possible_title` detection rule by adding condition that title does not end with period, but can end with 3 dots.** The function previously captures short sentence, line, or text chunk as title in `.txt` file as `Title`. Adding a rule can avoid a faulty element extraction.
+* **Update `exceeds_cap_ratio` calculation by ignoring name-entity and first-word capitalized.** Capitalized words do not always imply a title text. This added functionality leverages the NER knowledge to help justify a legitimate capitalized words. Currently supperts English language only.
 * Clarify message when sentence is not counted toward sentence count b/c there aren't enough words
 * Adds numbered ListItem grouping when pdfminer broke down by line-by-line using coordinates
 * Use text-based classification hen elements come back uncategorized from PDF/Image partitioning
@@ -40,8 +42,6 @@
 
 ### Enhancements
 
-* Updated `is_possible_title` detection rule by adding condition that title does not end with period, but can end with 3 dots
-* Updated `exceeds_cap_ratio` calculation by ignoring name-entity and first-word capitalized
 * Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
 * Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
 * Updated the `_detect_filetype_from_octet_stream()` function to use libmagic to infer the content type of file when it is not a zip file.
