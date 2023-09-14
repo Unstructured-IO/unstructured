@@ -341,7 +341,7 @@
     "text": "be used for the comparison."
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "c2b2b778d53cc9a1cb4dc340476bc5aa",
     "metadata": {
       "data_source": {},
@@ -616,7 +616,7 @@
     "text": "a ls"
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "2d6b506bd58a7dd7bbf1c8599ef630c8",
     "metadata": {
       "data_source": {},
@@ -990,7 +990,7 @@
     "text": "i , the start"
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "764eef872135149aaf95224bab69c844",
     "metadata": {
       "data_source": {},
