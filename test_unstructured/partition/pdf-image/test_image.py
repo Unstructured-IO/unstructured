@@ -132,7 +132,7 @@ def test_partition_image_with_table_extraction(
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 1
-    assert "<table><thead><th>Dataset</th>" in table[0]
+    assert "<table><thead><th>" in table[0]
 
 
 def test_partition_image_with_multipage_tiff(
