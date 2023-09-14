@@ -82,6 +82,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @requires_dependencies(["pyairtable"], extras="airtable")
     def _get_table_rows(self):
         from pyairtable import Api
+        from requests.exceptions import HTTPError
 
         api = Api(self.connector_config.personal_access_token)
         try:
@@ -90,10 +91,11 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             rows = table.all(
                 view=self.table_meta.view_id,
             )
-        except Exception as e:
+        except HTTPError as e:
             # TODO: more specific error handling?
-            logger.error(e)
-            return None, None
+            if e.response.status_code >= 400 and e.response.status_code < 500:
+                return None, None
+            raise
 
         if len(rows) == 0:
             logger.info("Empty document, retrieved table but it has no rows.")
@@ -139,8 +141,8 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self.update_source_metadata(rows_tuple=(rows, table_url))
         if rows is None:
             raise ValueError(
-                f"Failed to retrieve rows from table\
-                {self.table_meta.base_id}/{self.table_meta.table_id}. Check logs",
+                "Failed to retrieve rows from table "
+                f"{self.table_meta.base_id}/{self.table_meta.table_id}. Check logs",
             )
         # NOTE: Might be a good idea to add pagination for large tables
         df = pd.DataFrame.from_dict(
