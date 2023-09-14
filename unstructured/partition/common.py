@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import numbers
 import subprocess
 from datetime import datetime
 from io import BufferedReader, BytesIO, TextIOWrapper
@@ -126,7 +127,7 @@ def normalize_layout_element(
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
     prob = layout_dict.get("prob")
-    if prob and isinstance(prob, (int, str, float)):
+    if prob and isinstance(prob, (int, str, float, numbers.Number)):
         class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))
     else:
         class_prob_metadata = ElementMetadata()
