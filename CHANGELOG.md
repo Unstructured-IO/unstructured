@@ -1,19 +1,23 @@
-## 0.10.15-dev8
+## 0.10.15-dev10
 
 ### Enhancements
 
+* Adds numbered ListItem grouping when pdfminer broke down by line-by-line using coordinates
 * Use text-based classification hen elements come back uncategorized from PDF/Image partitioning
 * Updated HTML Partitioning to extract tables
 * Create and add `add_chunking_strategy` decorator to partition functions
 * Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf partitioning functions
 * Adds `xlsx` and `xls` to `skip_infer_table_types` default list in `partition`
 * Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in image partitioning functions
+* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in auto partition
+* Replaces `language` with `languages` as an input parameter to unstructured-partition-text_type functions
+* Removes `UNSTRUCTURED_LANGUAGE` env var. To skip English specific checks, set the `languages` parameter to non-English language(s).
 
 ### Features
 
 ### Fixes
 
-* Fixes an issue where each element was being assigned to a separate chunk in chunk_by_title, by dropping the coordinates metadata field
+* Fixes a chunking issue via dropping the field "coordinates". Problem: chunk_by_title function was chunking each element to its own individual chunk while it needed to group elements into a fewer number of chunks. We've discovered that this happens due to a metadata matching logic in chunk_by_title function, and discovered that elements with different metadata can't be put into the same chunk. At the same time, any element with "coordinates" essentially had different metadata than other elements, due each element locating in different places and having different coordinates. Fix: That is why we have included the key "coordinates" inside a list of excluded metadata keys, while doing this "metadata_matches" comparision. Importance: This change is crucial to be able to chunk by title for documents which include "coordinates" metadata in their elements.
 
 ## 0.10.14
 
