@@ -8,8 +8,8 @@ from unstructured.utils import requires_dependencies
 # print(pytesseract.get_languages(config=''))
 
 # TODO(shreya): decide if these tesseract langs should be stored as a list or a mapping
-# mapping ideas: 
-# standard language code -> tess lang (many to 1), 
+# mapping ideas:
+# standard language code -> tess lang (many to 1),
 # standard code to list of tess langs in the same language (1 to list)
 # language name -> tess lang or list of tess langs
 PYTESSERACT_LANGS = [
@@ -144,7 +144,7 @@ PYTESSERACT_LANGS = [
 
 def prepare_languages_for_tesseract(languages: List[str] = ["eng"]):
     """
-    Convert the languages param (list of strings) into tesseract ocr langcode format (uses +) string
+    Entry point: convert the languages param (list of strings) into tesseract ocr langcode format (uses +) string
     """
     return "+".join([convert_language_to_tesseract(lang) for lang in languages])
 
@@ -186,19 +186,19 @@ def convert_language_to_tesseract(lang: str) -> str:
         print("match in part3")
         # get all tess langs with this prefix (can be one or multiple_)
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part3)
-        return prepare_languages_for_tesseract(matched_langcodes)
+        return "+".join(matched_langcodes)
 
     # try to match 639-2b (part2b)
     elif lang_iso639.part2b in pytesseract_langs_3:
         print("match in part2b")
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part2b)
-        return prepare_languages_for_tesseract(matched_langcodes)
+        return "+".join(matched_langcodes)
 
     # try to match 639-2t
     elif lang_iso639.part2t in pytesseract_langs_3:
         print("match in part2t")
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part2t)
-        return prepare_languages_for_tesseract(matched_langcodes)
+        return "+".join(matched_langcodes)
 
     else:
         # no match from the standard language code to a tesseract lang
@@ -206,7 +206,7 @@ def convert_language_to_tesseract(lang: str) -> str:
         # https://tesseract-ocr.github.io/tessdoc/Data-Files-in-different-versions.html ?
         # TODO(shreya): warn or raise? or proceed somehow?
         print(f"{lang} is not a language supported by Tesseract.")
-        
+
         # run with no lang, or err?
         return ""
 
