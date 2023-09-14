@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  check-versions:
+  check-version:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,13 +25,12 @@ jobs:
         bash scripts/check-new-release-version.sh
         if [ $? -eq 1 ]; then
           echo "Sending Slack notification..."
-          MESSAGE="Current version $CURRENT_VERSION is a non-dev version and does not match the version in the main branch ($MAIN_VERSION)."
+          MESSAGE="Current version $CURRENT_VERSION is a non-dev version and does not match the version in the main branch ($MAIN_VERSION). :rocket:"
           echo "::set-output name=message::$MESSAGE"  # Set an output variable to pass the message to the next step
 
-    - name: Send Slack notification
-      if: steps.check-versions.outputs.message
-      uses: rtCamp/action-slack@v5
-      with:
-        slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
-        channel: "#gh-new-version-alert"  # Replace with your Slack channel
-        text: ${{ steps.check-versions.outputs.message }}
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_BOT_TOKEN }}
+        SLACK_CHANNEL: gh-new-version-alert
+        SLACK_MESSAGE: ${{ steps.check-versions.outputs.message }}
