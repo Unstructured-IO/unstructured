@@ -21,6 +21,7 @@ jobs:
         else
           echo "No new non-dev version found. Skipping Slack notification."
           echo "::set-output name=message::"  # Set an empty output variable to ensure no message is passed to the next step
+        fi
 
     - name: Slack Notification
       if: steps.check-versions.outputs.message != ''
