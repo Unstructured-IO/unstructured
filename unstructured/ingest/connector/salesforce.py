@@ -8,22 +8,21 @@ https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_de
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_connected_app.htm
 """
 import os
+import typing as t
 from dataclasses import dataclass
 from email.utils import formatdate
 from pathlib import Path
 from string import Template
 from textwrap import dedent
-from typing import Any, Dict, List, Type
 
 from dateutil import parser  # type: ignore
 
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -121,19 +120,14 @@ NumberOfConvertedLeads: $number_of_converted_leads
 class SimpleSalesforceConfig(BaseConnectorConfig):
     """Connector specific attributes"""
 
-    categories: List[str]
+    categories: t.List[str]
     username: str
     consumer_key: str
     private_key_path: str
     recursive: bool = False
 
-    @staticmethod
-    def parse_folders(folder_str: str) -> List[str]:
-        """Parses a comma separated string of Outlook folders into a list."""
-        return [x.strip() for x in folder_str.split(",")]
-
     @requires_dependencies(["simple_salesforce"], extras="salesforce")
-    def _get_client(self):
+    def get_client(self):
         from simple_salesforce import Salesforce
 
         return Salesforce(
@@ -145,9 +139,9 @@ class SimpleSalesforceConfig(BaseConnectorConfig):
 
 @dataclass
 class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+    connector_config: SimpleSalesforceConfig
     record_type: str
     record_id: str
-    config: SimpleSalesforceConfig
     registry_name: str = "salesforce"
 
     def _tmp_download_file(self) -> Path:
@@ -159,17 +153,17 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             raise MissingCategoryError(
                 f"There are no categories with the name: {self.record_type}",
             )
-        return Path(self.standard_config.download_dir) / self.record_type / record_file
+        return Path(self.read_config.download_dir) / self.record_type / record_file
 
     @property
     def _output_filename(self) -> Path:
         record_file = self.record_id + ".json"
-        return Path(self.standard_config.output_dir) / self.record_type / record_file
+        return Path(self.partition_config.output_dir) / self.record_type / record_file
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
-    def create_account(self, account_json: Dict[str, Any]) -> str:
+    def create_account(self, account_json: t.Dict[str, t.Any]) -> str:
         """Creates partitionable account file"""
         account = ACCOUNT_TEMPLATE.substitute(
             id=account_json.get("Id"),
@@ -189,7 +183,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return dedent(account)
 
-    def create_lead(self, lead_json: Dict[str, Any]) -> str:
+    def create_lead(self, lead_json: t.Dict[str, t.Any]) -> str:
         """Creates partitionable lead file"""
         lead = LEAD_TEMPLATE.substitute(
             id=lead_json.get("Id"),
@@ -207,7 +201,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return dedent(lead)
 
-    def create_case(self, case_json: Dict[str, Any]) -> str:
+    def create_case(self, case_json: t.Dict[str, t.Any]) -> str:
         """Creates partitionable case file"""
         case = CASE_TEMPLATE.substitute(
             id=case_json.get("Id"),
@@ -222,7 +216,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return dedent(case)
 
-    def create_campaign(self, campaign_json: Dict[str, Any]) -> str:
+    def create_campaign(self, campaign_json: t.Dict[str, t.Any]) -> str:
         """Creates partitionable campaign file"""
         campaign = CAMPAIGN_TEMPLATE.substitute(
             id=campaign_json.get("Id"),
@@ -239,7 +233,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return dedent(campaign)
 
-    def create_eml(self, email_json: Dict[str, Any]) -> str:
+    def create_eml(self, email_json: t.Dict[str, t.Any]) -> str:
         """Recreates standard expected .eml format using template."""
         eml = EMAIL_TEMPLATE.substitute(
             date=formatdate(parser.parse(email_json.get("MessageDate")).timestamp()),
@@ -257,7 +251,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._create_full_tmp_dir_path()
         logger.debug(f"Writing file {self.record_id} - PID: {os.getpid()}")
 
-        client = self.config._get_client()
+        client = self.connector_config.get_client()
 
         # Get record from Salesforce based on id
         record = client.query_all(
@@ -275,6 +269,8 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 formatted_record = self.create_case(record)
             elif self.record_type == "Campaign":
                 formatted_record = self.create_campaign(record)
+            else:
+                raise ValueError(f"record type not recognized: {self.record_type}")
 
             with open(self._tmp_download_file(), "w") as page_file:
                 page_file.write(formatted_record)
@@ -291,32 +287,26 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self._tmp_download_file()
 
 
-class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
-    ingest_doc_cls: Type[SalesforceIngestDoc] = SalesforceIngestDoc
-    config: SimpleSalesforceConfig
-
-    def __init__(
-        self,
-        config: SimpleSalesforceConfig,
-        standard_config: StandardConnectorConfig,
-    ) -> None:
-        super().__init__(standard_config, config)
+@dataclass
+class SalesforceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
+    connector_config: SimpleSalesforceConfig
+    ingest_doc_cls: t.Type[SalesforceIngestDoc] = SalesforceIngestDoc
 
     def initialize(self):
         pass
 
     @requires_dependencies(["simple_salesforce"], extras="salesforce")
-    def get_ingest_docs(self) -> List[SalesforceIngestDoc]:
+    def get_ingest_docs(self) -> t.List[SalesforceIngestDoc]:
         """Get Salesforce Ids for the records.
         Send them to next phase where each doc gets downloaded into the
         appropriate format for partitioning.
         """
         from simple_salesforce.exceptions import SalesforceMalformedRequest
 
-        client = self.config._get_client()
+        client = self.connector_config.get_client()
 
         ingest_docs = []
-        for record_type in self.config.categories:
+        for record_type in self.connector_config.categories:
             if record_type not in ACCEPTED_CATEGORIES:
                 raise ValueError(f"{record_type} not currently an accepted Salesforce category")
 
@@ -328,10 +318,11 @@ class SalesforceConnector(ConnectorCleanupMixin, BaseConnector):
                 for record in records["records"]:
                     ingest_docs.append(
                         SalesforceIngestDoc(
-                            self.standard_config,
-                            self.config,
-                            record_type,
-                            record["Id"],
+                            connector_config=self.connector_config,
+                            partition_config=self.partition_config,
+                            read_config=self.read_config,
+                            record_type=record_type,
+                            record_id=record["Id"],
                         ),
                     )
             except SalesforceMalformedRequest as e:

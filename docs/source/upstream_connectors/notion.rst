@@ -1,6 +1,6 @@
 Notion
 ==========
-Connect Airtable to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem. 
+Connect Airtable to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
 
 First you'll need to install the Notion dependencies as shown here.
 
@@ -20,7 +20,7 @@ Run Locally
         unstructured-ingest \
             notion \
             --api-key "<Notion api key>" \
-            --structured-output-dir notion-ingest-output \
+            --output-dir notion-ingest-output \
             --page-ids "<Comma delimited list of page ids to process>" \
             --database-ids "<Comma delimited list of database ids to process>" \
             --num-processes 2 \
@@ -36,7 +36,7 @@ Run Locally
           "unstructured-ingest",
             "notion",
                 "--api-key", "<Notion api key>",
-                "--structured-output-dir", "notion-ingest-output",
+                "--output-dir", "notion-ingest-output",
                 "--page-ids",  "<Comma delimited list of page ids to process>",
                 "--database-ids", ""<Comma delimited list of database ids to process>"",
                 "--num-processes", "2",
@@ -58,7 +58,7 @@ Run Locally
 Run via the API
 ---------------
 
-You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``. 
+You can also use upstream connectors with the ``unstructured`` API. For this you'll need to use the ``--partition-by-api`` flag and pass in your API key with ``--api-key``.
 
 .. tabs::
 
@@ -69,7 +69,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
         unstructured-ingest \
             notion \
             --api-key "<Notion api key>" \
-            --structured-output-dir notion-ingest-output \
+            --output-dir notion-ingest-output \
             --page-ids "<Comma delimited list of page ids to process>" \
             --database-ids "<Comma delimited list of database ids to process>" \
             --num-processes 2 \
@@ -87,7 +87,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
           "unstructured-ingest",
             "notion",
             "--api-key", "<Notion api key>",
-            "--structured-output-dir", "notion-ingest-output",
+            "--output-dir", "notion-ingest-output",
             "--page-ids",  "<Comma delimited list of page ids to process>",
             "--database-ids", ""<Comma delimited list of database ids to process>"",
             "--num-processes", "2",
@@ -108,7 +108,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
             print('Command failed. Error:')
             print(error.decode())
 
-Additionaly, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
+Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 
 For a full list of the options the CLI accepts check ``unstructured-ingest notion --help``.
 

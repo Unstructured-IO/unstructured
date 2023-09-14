@@ -7,11 +7,6 @@ from unstructured.ingest.connector.dropbox import (
 from unstructured.ingest.connector.fsspec import (
     FsspecIngestDoc,
 )
-from unstructured.ingest.interfaces import (
-    BaseConnectorConfig,
-    BaseIngestDoc,
-    StandardConnectorConfig,
-)
 
 
 @dataclass
@@ -29,10 +24,14 @@ class FakeConfigFolder:
 
 
 def test_dropbox_root_succeeds():
-    """Test that path joining method works for Dropbox root folder. Note slash in front of remote_file_path."""
+    """
+    Test that path joining method works for Dropbox root folder.
+    Note slash in front of remote_file_path.
+    """
     dbox = DropboxIngestDoc(
-        config=FakeConfigDropboxRoot,
-        standard_config=FakeConfigDropboxRoot,
+        connector_config=FakeConfigDropboxRoot,
+        read_config=FakeConfigDropboxRoot,
+        partition_config=FakeConfigDropboxRoot,
         remote_file_path="/fake_file.txt",
     )
     output_filename = dbox._output_filename
@@ -43,11 +42,14 @@ def test_dropbox_root_succeeds():
 
 
 def test_dropbox_root_succeeds2():
-    """Test that path joining method works for Dropbox root folder. Note lack of slash in front of remote_file_path.
-    This still works."""
+    """
+    Test that path joining method works for Dropbox root folder.
+    Note lack of slash in front of remote_file_path. This still works.
+    """
     dbox = DropboxIngestDoc(
-        config=FakeConfigDropboxRoot,
-        standard_config=FakeConfigDropboxRoot,
+        connector_config=FakeConfigDropboxRoot,
+        read_config=FakeConfigDropboxRoot,
+        partition_config=FakeConfigDropboxRoot,
         remote_file_path="fake_file.txt",
     )
     output_filename = dbox._output_filename
@@ -58,10 +60,14 @@ def test_dropbox_root_succeeds2():
 
 
 def test_dropbox_folder_succeeds():
-    """Test that path joining method works for Dropbox root folder. Note no slash in front of remote_file_path."""
+    """
+    Test that path joining method works for Dropbox root folder.
+    Note no slash in front of remote_file_path.
+    """
     dbox = DropboxIngestDoc(
-        config=FakeConfigFolder,
-        standard_config=FakeConfigFolder,
+        connector_config=FakeConfigFolder,
+        read_config=FakeConfigFolder,
+        partition_config=FakeConfigFolder,
         remote_file_path="fake_file2.txt",
     )
     output_filename = dbox._output_filename
@@ -72,11 +78,12 @@ def test_dropbox_folder_succeeds():
 
 
 def test_dropbox_folder_fails():
-    """Test that path joining method gives WRONG path. Note slash in front of remote_file_path. 
+    """Test that path joining method gives WRONG path. Note slash in front of remote_file_path.
     Path joining is sensitive. Note that the path is MISSING the folders."""
     dbox = DropboxIngestDoc(
-        config=FakeConfigFolder,
-        standard_config=FakeConfigFolder,
+        connector_config=FakeConfigFolder,
+        read_config=FakeConfigFolder,
+        partition_config=FakeConfigFolder,
         remote_file_path="/fake_file2.txt",
     )
     output_filename = dbox._output_filename
@@ -87,10 +94,14 @@ def test_dropbox_folder_fails():
 
 
 def test_fsspec_folder_succeeds():
-    """Test that path joining method works for root folder. Note no slash in front of remote_file_path."""
+    """
+    Test that path joining method works for root folder.
+    Note no slash in front of remote_file_path.
+    """
     dbox = FsspecIngestDoc(
-        config=FakeConfigFolder,
-        standard_config=FakeConfigFolder,
+        connector_config=FakeConfigFolder,
+        read_config=FakeConfigFolder,
+        partition_config=FakeConfigFolder,
         remote_file_path="fake_file2.txt",
     )
     output_filename = dbox._output_filename
@@ -101,11 +112,12 @@ def test_fsspec_folder_succeeds():
 
 
 def test_fsspec_folder_fails():
-    """Test that path joining method gives WRONG path. Note slash in front of remote_file_path. 
+    """Test that path joining method gives WRONG path. Note slash in front of remote_file_path.
     Path joining is sensitive. Note that the path is MISSING the folders."""
     fstest = FsspecIngestDoc(
-        config=FakeConfigFolder,
-        standard_config=FakeConfigFolder,
+        connector_config=FakeConfigFolder,
+        read_config=FakeConfigFolder,
+        partition_config=FakeConfigFolder,
         remote_file_path="/fake_file2.txt",
     )
     output_filename = fstest._output_filename

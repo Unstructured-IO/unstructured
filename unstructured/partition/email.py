@@ -25,6 +25,7 @@ if sys.version_info < (3, 8):
 else:
     from typing import Final
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import clean_extra_whitespace, replace_mime_encodings
 from unstructured.cleaners.extract import (
     extract_datetimetz,
@@ -241,6 +242,7 @@ def parse_email(
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.EML)
+@add_chunking_strategy()
 def partition_email(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
@@ -255,6 +257,7 @@ def partition_email(
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
     min_partition: Optional[int] = 0,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.

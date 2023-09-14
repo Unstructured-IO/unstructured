@@ -2,6 +2,7 @@ import re
 import textwrap
 from typing import IO, Callable, List, Optional, Tuple
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import (
     auto_paragraph_grouper,
     clean_bullets,
@@ -31,6 +32,7 @@ from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
     is_possible_narrative_text,
+    is_possible_numbered_list,
     is_possible_title,
     is_us_city_state_zip,
 )
@@ -155,6 +157,7 @@ def combine_paragraphs_less_than_min(
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.TXT)
+@add_chunking_strategy()
 def partition_text(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -166,6 +169,7 @@ def partition_text(
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.
@@ -270,6 +274,12 @@ def element_from_text(
         return EmailAddress(text=text)
     elif is_us_city_state_zip(text):
         return Address(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
+    elif is_possible_numbered_list(text):
+        return ListItem(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,

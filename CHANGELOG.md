@@ -1,3 +1,34 @@
+## 0.10.15-dev9
+
+### Enhancements
+
+* Adds numbered ListItem grouping when pdfminer broke down by line-by-line using coordinates
+* Use text-based classification hen elements come back uncategorized from PDF/Image partitioning
+* Updated HTML Partitioning to extract tables
+* Create and add `add_chunking_strategy` decorator to partition functions
+* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf partitioning functions
+* Adds `xlsx` and `xls` to `skip_infer_table_types` default list in `partition`
+* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in image partitioning functions
+* Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in auto partition
+* Replaces `language` with `languages` as an input parameter to unstructured-partition-text_type functions
+* Removes `UNSTRUCTURED_LANGUAGE` env var. To skip English specific checks, set the `languages` parameter to non-English language(s).
+
+### Features
+
+### Fixes
+
+## 0.10.14
+
+### Enhancements
+
+* Update all connectors to use new downstream architecture
+  * New click type added to parse comma-delimited string inputs
+  * Some CLI options renamed
+
+### Features
+
+### Fixes
+
 ## 0.10.13
 
 ### Enhancements
@@ -6,6 +37,7 @@
 * Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
 * Updated the `_detect_filetype_from_octet_stream()` function to use libmagic to infer the content type of file when it is not a zip file.
 * Tesseract minor version bump to 5.3.2
+
 ### Features
 
 * Add Jira Connector to be able to pull issues from a Jira organization
@@ -38,7 +70,7 @@
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
-
+  
 ## 0.10.11
 
 ### Enhancements

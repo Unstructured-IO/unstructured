@@ -3,6 +3,7 @@ from typing import IO, List, Optional, Union
 import markdown
 import requests
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.documents.xml import VALID_PARSERS
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
@@ -22,6 +23,7 @@ def optional_decode(contents: Union[str, bytes]) -> str:
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.MD)
+@add_chunking_strategy()
 def partition_md(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -32,6 +34,7 @@ def partition_md(
     parser: VALID_PARSERS = None,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions a markdown file into its constituent elements

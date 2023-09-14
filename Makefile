@@ -46,7 +46,9 @@ install-test:
 	python3 -m pip install -r requirements/test.txt
 	# NOTE(robinson) - Installing weaviate-client separately here because the requests
 	# version conflicts with label_studio_sdk
-	python3 -m pip install weaviate-client
+	python3 -m pip install weaviate-client -c requirements/constraints.in
+	# TODO (yao): find out if how to constrain argilla properly without causing conflicts
+	python3 -m pip install argilla
 
 .PHONY: install-dev
 install-dev:
@@ -323,7 +325,9 @@ check-src:
 .PHONY: check-tests
 check-tests:
 	black --line-length 100 test_${PACKAGE_NAME} --check
+	black --line-length 100 test_${PACKAGE_NAME}_ingest --check
 	flake8 test_${PACKAGE_NAME}
+	flake8 test_${PACKAGE_NAME}_ingest
 
 ## check-scripts:           run shellcheck
 .PHONY: check-scripts
@@ -344,6 +348,7 @@ tidy:
 	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --fix-only || true
 	black --line-length 100 ${PACKAGE_NAME}
 	black --line-length 100 test_${PACKAGE_NAME}
+	black --line-length 100 test_${PACKAGE_NAME}_ingest
 
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync

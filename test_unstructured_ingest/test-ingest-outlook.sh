@@ -20,7 +20,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --client-cred "$MS_CLIENT_CRED" \
     --client-id "$MS_CLIENT_ID" \
