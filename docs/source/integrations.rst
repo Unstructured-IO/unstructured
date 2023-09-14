@@ -30,7 +30,7 @@ You can format a list of ``Text`` elements as input to token based tasks in `Dat
 You can prepare ``Text`` elements for processing in Hugging Face `Transformers <https://huggingface.co/docs/transformers/index>`_
 pipelines by splitting the elements into chunks that fit into the model's attention window using the `stage_for_transformers <https://unstructured-io.github.io/unstructured/bricks/staging.html#stage-for-transformers>`_ staging brick. You can customise the transformation by defining
 the ``buffer`` and ``window_size``, the ``split_function`` and the ``chunk_separator``. if you need to operate on
-text directly instead of ``unstructured`` ``Text`` objects, use the `chunk_by_attention_window <https://unstructured-io.github.io/unstructured/bricks.html#stage-for-transformers>`_ helper function. Follow the links for more details on usage.
+text directly instead of ``unstructured`` ``Text`` objects, use the `chunk_by_attention_window <https://unstructured-io.github.io/unstructured/bricks/staging.html#stage-for-transformers>`_ helper function. Follow the links for more details on usage.
 
 
 ``Integration with Labelbox``
@@ -90,7 +90,7 @@ the text from each element and their types such as ``NarrativeText`` or ``Title`
 
 ``Integration with Prodigy``
 -----------------------------
-You can format your JSON or CSV outputs for use with `Prodigy <https://prodi.gy/docs/api-loaders>`_ using the `stage_for_prodigy <https://unstructured-io.github.io/unstructured/bricks/staging.html#stage-for-prodigy>`_ and `stage_csv_for_prodigy <https://unstructured-io.github.io/unstructured/bricks.html#stage-csv-for-prodigy>`_ staging bricks. After running ``stage_for_prodigy`` |
+You can format your JSON or CSV outputs for use with `Prodigy <https://prodi.gy/docs/api-loaders>`_ using the `stage_for_prodigy <https://unstructured-io.github.io/unstructured/bricks/staging.html#stage-for-prodigy>`_ and `stage_csv_for_prodigy <https://unstructured-io.github.io/unstructured/bricks/staging.html#stage-csv-for-prodigy>`_ staging bricks. After running ``stage_for_prodigy`` |
 ``stage_csv_for_prodigy``, you can write the results to a ``.json`` | ``.jsonl`` or a ``.csv`` file that is ready to be used with Prodigy. Follow the links for more details on usage.
 
 
