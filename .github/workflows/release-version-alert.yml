@@ -61,4 +61,4 @@ jobs:
           channel-id: 'C05RVKRFCCF'
           slack-message: ${{ env.SLACK_MESSAGE }}
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }} 
