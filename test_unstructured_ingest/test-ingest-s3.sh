@@ -23,7 +23,7 @@ function cleanup() {
 
   if aws s3 ls "$DESTINATION_S3"; then
     echo "deleting destination s3 location: $DESTINATION_S3"
-    aws s3 rm "$DESTINATION_S3" --recursive
+    aws s3 rm "$DESTINATION_S3" --recursive --region us-east-2
   fi
 
   if [ -d "$OUTPUT_DIR_DEST" ]; then
@@ -55,6 +55,6 @@ sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
 
 # Check against content uploaded to s3
 
-aws s3 cp "$DESTINATION_S3" "$OUTPUT_DIR_DEST" --recursive --no-sign-request
+aws s3 cp "$DESTINATION_S3" "$OUTPUT_DIR_DEST" --recursive --no-sign-request --region us-east-2
 
 sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME_DEST
