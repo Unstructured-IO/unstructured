@@ -10,7 +10,7 @@ Depending on your need, ``Unstructured`` provides OCR-based and Transformer-base
 
 .. code:: python
 
-    elements = partition(filename=filename, strategy='hi_res', model_name='detectron2_onnx')
+    elements = partition(filename=filename, strategy='hi_res', model_name='chipper')
 
 Notes:
 
@@ -18,22 +18,10 @@ Notes:
 * When ``model_name`` is not defined, the inferences will fall back to the default model.
 
 :raw-html:`<br />`
-**Tables Extraction**
+**List of Available Models in the Partitions:**
 
-You can leverage the models to extract **tables** from the following file types by setting ``infer_table_structure=True`` and ``strategy='hi_res'``.
-
-+-------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
-| Document Type                             | Partition Function             | Strategies                             | Table Support  | Options                                                                                                          |
-+-------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
-| Images (`.png`/`.jpg`)                    | `partition_image`              | "auto", "hi_res", "ocr_only"           | Yes            | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy                                    |
-+-------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
-| PDFs (`.pdf`)                             | `partition_pdf`                | "auto", "fast", "hi_res", "ocr_only"   | Yes            | Encoding; Include Page Breaks; Infer Table Structure; Max Partition; OCR Languages, Strategy                     |
-+-------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
-:raw-html:`<br />`
-**List of Available Models:**
-
-* ``detectron2_onnx`` (*default model*): The Detectron2 model is part of Facebook AI Research’s next generation library. It is the fastest ``hi_res`` strategy.
-* ``yolox``: The YoloX model tends to outperform the Detectron2 model in table extraction.
+* ``detectron2_onnx`` is a Computer Vision model by Facebook AI that provides object detection and segmentation algorithms with ONNX Runtime. It is the fastest model with the ``hi_res`` strategy.
+* ``yolox`` is a single-stage real-time object detector that modifies YOLOv3 with a DarkNet53 backbone.
 * ``yolox_quantized``: runs faster than YoloX and its speed is closer to Detectron2.
 * ``chipper`` (beta version): the Chipper model is Unstructured’s in-house image-to-text model based on transformer-based Visual Document Understanding (VDU) models.
 
@@ -63,7 +51,7 @@ There are three ways you can use the non-default model as follows:
     filename = "example-docs/layout-parser-paper-fast.pdf"
     elements = partition(filename=filename, strategy='hi_res', model_name='yolox')
 
-3. Use `"unstructured-inference" <url_>`_ library.
+3. Use `unstructured-inference <url_>`_ library.
 
 .. _url: https://github.com/Unstructured-IO/unstructured-inference
 
@@ -77,8 +65,27 @@ There are three ways you can use the non-default model as follows:
 
 
 
-Bring Your Own Model
-^^^^^^^^^^^^^^^^^^^^
+Bring Your Own Models
+^^^^^^^^^^^^^^^^^^^^^
 
+**Utilizing Layout Detection Model Zoo**
 
+In the `LayoutParser <layout_>`_ library, you can use various pre-trained models available in the `model zoo <modelzoo_>`_ for document layout analysis. Here's a guide on leveraging this feature using the ``UnstructuredDetectronModel`` class in ``unstructured-inference`` library.
+
+The ``UnstructuredDetectronModel`` class in ``unstructured_inference.models.detectron2`` uses the ``faster_rcnn_R_50_FPN_3x`` model pretrained on ``DocLayNet``. But any model in the model zoo can be used by using different construction parameters. ``UnstructuredDetectronModel`` is a light wrapper around the LayoutParser's ``Detectron2LayoutModel`` object, and accepts the same arguments.
+
+.. _modelzoo: https://layout-parser.readthedocs.io/en/latest/notes/modelzoo.html
+
+.. _layout: https://layout-parser.readthedocs.io/en/latest/api_doc/models.html#layoutparser.models.Detectron2LayoutModel
+
+**Using Your Own Object Detection Model**
+
+To seamlessly integrate your custom detection and extraction models into ``unstructured_inference`` pipeline, start by wrapping your model within the ``UnstructuredObjectDetectionModel`` class. This class acts as an intermediary between your detection model and Unstructured workflow.
+
+Ensure your ``UnstructuredObjectDetectionModel`` subclass incorporates two vital methods:
+
+1. The ``predict`` method, which should be designed to accept a ``PIL.Image.Image`` type and return a list of ``LayoutElements``, facilitating the communication of your model's results.
+2. The ``initialize`` method is essential for loading and prepping your model for inference, guaranteeing its readiness for any incoming tasks.
+
+It's important that your model's outputs, specifically from the predict method, integrate smoothly with the DocumentLayout class for optimal performance.
 
