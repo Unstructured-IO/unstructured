@@ -52,26 +52,24 @@ jobs:
           DUPLICATE_CHECK=$(grep -Fx "${{env.SLACK_MESSAGE}}" messages_cache.txt || true)
           if [ -n "$DUPLICATE_CHECK" ]; then
             echo "Message already posted. Skipping duplicate Slack notification."
-            exit 0  # Exit without posting a message
+            echo "SKIP_STEPS=true" >> $GITHUB_ENV  # Set an environment variable to indicate skipping steps
           fi
 
       - name: Write Message to Cache File
         run: |
+          if: env.SKIP_STEPS != 'true'
           echo "${{env.SLACK_MESSAGE}}" >> messages_cache.txt
           cat messages_cache.txt
-
-      - name: Test exists
-        run: |
-          cat messages_cache.txt 
             
       - name: Store Messages in Cache
+        if: env.SKIP_STEPS != 'true'
         uses: actions/cache/save@v3
         with:
           path: messages_cache.txt
           key: messages-cache-${{ runner.os }}-${{ env.MESSAGE_HASH }}
 
       - name: Slack Notification
-        if: env.SLACK_MESSAGE != ''
+        if: env.SLACK_MESSAGE != '' && env.SKIP_STEPS != 'true'
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: 'C05RVKRFCCF'
