@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Add a function to map between Tesseract and standard language codes.** This allows users to input language information to the `languages` param in any Tesseract-supported langcode or any ISO 639 standard language code.
+
 ### Features
 
 ### Fixes
