@@ -30,7 +30,7 @@ jobs:
             echo "SLACK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
           else
             echo "No new non-dev version found. Skipping Slack notification."
-          fi
+          fi 
 
       - name: Generate Message Hash
         id: generate-hash
