@@ -8,8 +8,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "Page with every block"
   },
@@ -22,8 +21,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "💡\n      \n      Notion Tip: Tag pages to let collaborators know what they can expect to use the page for. You can add one or many tags to any page in a wiki."
   },
@@ -36,8 +34,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "Heading 2"
   },
@@ -50,8 +47,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "This is some new text"
   },
@@ -76,8 +72,7 @@
       ],
       "emphasized_text_tags": [
         "b"
-      ],
-      "category_depth": 0
+      ]
     },
     "text": "\n      Some/less → \n      more\n       \n      "
   },
@@ -96,8 +91,7 @@
       ],
       "link_texts": [
         "\n        text\n      "
-      ],
-      "category_depth": 0
+      ]
     },
     "text": "text\n      \n       with other"
   },
@@ -111,8 +105,7 @@
       },
       "filetype": "text/html",
       "page_number": 1,
-      "text_as_html": "<table><br><tbody><br><tr><td></td><td>column 1               </td><td>       </td><td>column 2      </td><td>  </td><td>pages                                                               </td><td>        </td><td></td><td>                     </td><td></td><td>        </td><td></td><td></td></tr><br><tr><td></td><td>c1r1                   </td><td>content</td><td>              </td><td>  </td><td>c2r1 table <br>          2023-08-08T09:00:00.000-04:00<br>            cell</td><td>        </td><td></td><td>Page with every block</td><td></td><td>        </td><td></td><td></td></tr><br><tr><td></td><td>c1r2 more              </td><td>content</td><td>              </td><td>  </td><td>c2r2 table                                                          </td><td>cell    </td><td></td><td>                     </td><td></td><td>Untitled</td><td></td><td></td></tr><br><tr><td></td><td>this is some green text</td><td>       </td><td>this is       </td><td>an</td><td>                                                                    </td><td>equation</td><td></td><td>                     </td><td></td><td>Untitled</td><td></td><td></td></tr><br><tr><td></td><td>text1                  </td><td>text2  </td><td>Multiline cell</td><td>  </td><td>Another cell                                                        </td><td>        </td><td></td><td>Untitled             </td><td></td><td>        </td><td></td><td></td></tr><br></tbody><br></table>",
-      "category_depth": 0
+      "text_as_html": "<table><br><tbody><br><tr><td></td><td>column 1               </td><td>       </td><td>column 2      </td><td>  </td><td>pages                                                               </td><td>        </td><td></td><td>                     </td><td></td><td>        </td><td></td><td></td></tr><br><tr><td></td><td>c1r1                   </td><td>content</td><td>              </td><td>  </td><td>c2r1 table <br>          2023-08-08T09:00:00.000-04:00<br>            cell</td><td>        </td><td></td><td>Page with every block</td><td></td><td>        </td><td></td><td></td></tr><br><tr><td></td><td>c1r2 more              </td><td>content</td><td>              </td><td>  </td><td>c2r2 table                                                          </td><td>cell    </td><td></td><td>                     </td><td></td><td>Untitled</td><td></td><td></td></tr><br><tr><td></td><td>this is some green text</td><td>       </td><td>this is       </td><td>an</td><td>                                                                    </td><td>equation</td><td></td><td>                     </td><td></td><td>Untitled</td><td></td><td></td></tr><br><tr><td></td><td>text1                  </td><td>text2  </td><td>Multiline cell</td><td>  </td><td>Another cell                                                        </td><td>        </td><td></td><td>Untitled             </td><td></td><td>        </td><td></td><td></td></tr><br></tbody><br></table>"
     },
     "text": "column 1\n         \n         \n          column 2\n         \n         \n          pages\n         \n       \n         \n          c1r1 \n           \n            content \n           \n         \n         \n          c2r1 table \n          2023-08-08T09:00:00.000-04:00\n            cell\n         \n         \n           \n            Page with every block \n           \n           \n         \n       \n         \n          c1r2 more \n           \n            content\n           \n         \n         \n          c2r2 table \n           \n            cell\n           \n         \n         \n           \n            Untitled\n           \n           \n         \n       \n         \n          this is some green text\n         \n         \n          this is \n           \n            an \n           \n           \n            equation\n           \n         \n         \n           \n            Untitled\n           \n           \n         \n       \n         \n          text1\n\n\n           \n            text2\n           \n          \n\nMultiline cell\n         \n         \n          Another cell  \n         \n         \n           \n            Untitled"
   },
@@ -125,8 +118,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "E = {mc^2}"
   },
@@ -139,8 +131,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "Numbered list"
   },
@@ -153,8 +144,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "A number child"
   },
@@ -167,8 +157,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "A number grandchild"
   },
@@ -181,8 +170,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "great"
   },
@@ -195,8 +183,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "super great"
   },
@@ -209,8 +196,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": ""
   },
@@ -223,8 +209,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "with test text"
   },
@@ -237,8 +222,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "Bullet one"
   },
@@ -251,8 +235,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "A child bullet"
   },
@@ -265,8 +248,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "A grandchild bullet"
   },
@@ -279,8 +261,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "great"
   },
@@ -293,8 +274,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "super great"
   },
@@ -307,8 +287,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "Bullet two"
   },
@@ -321,8 +300,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "category_depth": 0
+      "page_number": 1
     },
     "text": "I quote myself testings Notion"
   },
@@ -341,8 +319,7 @@
       ],
       "link_texts": [
         "\n        https://www.notion.so/icons/airplane_brown.svg\n      "
-      ],
-      "category_depth": 0
+      ]
     },
     "text": "https://www.notion.so/icons/airplane_brown.svg\n      \n      I call this out"
   },
@@ -361,8 +338,7 @@
       ],
       "link_texts": [
         "\n        https://www.wikipedia.org/\n      "
-      ],
-      "category_depth": 0
+      ]
     },
     "text": "https://www.wikipedia.org/"
   },
@@ -381,8 +357,7 @@
       ],
       "link_texts": [
         "\n        https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG2tV4mrh1z3kXi5z_warlk\n      "
-      ],
-      "category_depth": 0
+      ]
     },
     "text": "https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG2tV4mrh1z3kXi5z_warlk"
   },
@@ -395,8 +370,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2,
-      "category_depth": 0
+      "page_number": 2
     },
     "text": "Child Database:"
   },
@@ -415,8 +389,7 @@
       ],
       "link_texts": [
         "\n        Analytics\n      "
-      ],
-      "category_depth": 0
+      ]
     },
     "text": "Analytics"
   },
@@ -429,8 +402,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2,
-      "category_depth": 0
+      "page_number": 2
     },
     "text": "Child Page:"
   },
@@ -449,8 +421,7 @@
       ],
       "link_texts": [
         "\n        Untitled\n      "
-      ],
-      "category_depth": 0
+      ]
     },
     "text": "Untitled"
   },
@@ -463,8 +434,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2,
-      "category_depth": 0
+      "page_number": 2
     },
     "text": "This is my code caption"
   },
@@ -477,8 +447,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2,
-      "category_depth": 0
+      "page_number": 2
     },
     "text": "This is some text"
   },
@@ -491,8 +460,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2,
-      "category_depth": 0
+      "page_number": 2
     },
     "text": "This is text in next column"
   },
@@ -505,8 +473,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2,
-      "category_depth": 0
+      "page_number": 2
     },
     "text": "Final text in column"
   },
@@ -519,8 +486,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2,
-      "category_depth": 0
+      "page_number": 2
     },
     "text": "Heading 1 content"
   },
@@ -533,8 +499,7 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 2,
-      "category_depth": 0
+      "page_number": 2
     },
     "text": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526"
   }

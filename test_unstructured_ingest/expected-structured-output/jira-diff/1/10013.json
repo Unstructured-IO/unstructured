@@ -12,8 +12,7 @@
         "date_created": "2023-08-24T12:04:35.328+0000",
         "date_modified": "2023-08-24T12:04:47.543+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "IssueID_IssueKey:10013     JCTP1-4"
   },
@@ -30,8 +29,7 @@
         "date_created": "2023-08-24T12:04:35.328+0000",
         "date_modified": "2023-08-24T12:04:47.543+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "ProjectID_Key:JCTP1     Jira Connector Test Project 1"
   },
@@ -48,8 +46,7 @@
         "date_created": "2023-08-24T12:04:35.328+0000",
         "date_modified": "2023-08-24T12:04:47.543+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "IssueType:Subtask"
   },
@@ -66,8 +63,7 @@
         "date_created": "2023-08-24T12:04:35.328+0000",
         "date_modified": "2023-08-24T12:04:47.543+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Status:To Do"
   },
@@ -84,8 +80,7 @@
         "date_created": "2023-08-24T12:04:35.328+0000",
         "date_modified": "2023-08-24T12:04:47.543+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Priority:{'self': 'https://unstructured-jira-connector-test.atlassian.net/rest/api/2/priority/3', 'iconUrl': 'https://unstructured-jira-connector-test.atlassian.net/images/icons/priorities/medium.svg', 'name': 'Medium', 'id': '3'}"
   },
@@ -102,8 +97,7 @@
         "date_created": "2023-08-24T12:04:35.328+0000",
         "date_modified": "2023-08-24T12:04:47.543+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "AssigneeID_Name:{}     {}"
   },
@@ -120,8 +114,7 @@
         "date_created": "2023-08-24T12:04:35.328+0000",
         "date_modified": "2023-08-24T12:04:47.543+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "ReporterAdr_Name:devops+jira-connector@unstructured.io     Unstructured Devops"
   },
@@ -138,8 +131,7 @@
         "date_created": "2023-08-24T12:04:35.328+0000",
         "date_modified": "2023-08-24T12:04:47.543+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Labels:"
   },
@@ -156,8 +148,7 @@
         "date_created": "2023-08-24T12:04:35.328+0000",
         "date_modified": "2023-08-24T12:04:47.543+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Components:"
   },
@@ -174,8 +165,7 @@
         "date_created": "2023-08-24T12:04:35.328+0000",
         "date_modified": "2023-08-24T12:04:47.543+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "Unstructured Devops     This is a Child Issue"
   },
@@ -192,8 +182,7 @@
         "date_created": "2023-08-24T12:04:35.328+0000",
         "date_modified": "2023-08-24T12:04:47.543+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "ChildIssue1"
   },
@@ -210,8 +199,7 @@
         "date_created": "2023-08-24T12:04:35.328+0000",
         "date_modified": "2023-08-24T12:04:47.543+0000"
       },
-      "filetype": "text/plain",
-      "category_depth": 0
+      "filetype": "text/plain"
     },
     "text": "{}"
   }
