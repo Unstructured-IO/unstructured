@@ -146,7 +146,8 @@ def prepare_languages_for_tesseract(languages: List[str] = ["eng"]):
     """
     Entry point: convert the languages param (list of strings) into tesseract ocr langcode format (uses +) string
     """
-    return "+".join([convert_language_to_tesseract(lang) for lang in languages])
+    converted_languages = list(filter(None, [convert_language_to_tesseract(lang) for lang in languages]))
+    return "+".join(converted_languages)
 
 
 def convert_old_ocr_languages_to_languages(ocr_languages: str):
@@ -176,23 +177,23 @@ def convert_language_to_tesseract(lang: str) -> str:
         logger.warning(f"{lang} is not a valid standard language code.")
         return ""
 
-    # tesseract uses 3 digit codes as prefix, with suffixes for orthography
-    # match to first 3 letters of tesseract codes
-    pytesseract_langs_3 = [lang[:3] for lang in PYTESSERACT_LANGS]
+    # tesseract uses 3 digit codes (639-3, 639-2b, etc) as code prefix, with suffixes for orthography
+    # use first 3 letters of tesseract codes for matching to standard codes
+    pytesseract_langs_3 = set([lang[:3] for lang in PYTESSERACT_LANGS])
 
-    # try to match 639-3 (part3)
+    # try to match ISO 639-3 code
     if lang_iso639.part3 in pytesseract_langs_3:
         print("match in part3")
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part3)
         return "+".join(matched_langcodes)
 
-    # try to match 639-2b (part2b)
+    # try to match ISO 639-2b
     elif lang_iso639.part2b in pytesseract_langs_3:
         print("match in part2b")
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part2b)
         return "+".join(matched_langcodes)
 
-    # try to match 639-2t
+    # try to match ISO 639-2t
     elif lang_iso639.part2t in pytesseract_langs_3:
         print("match in part2t")
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part2t)
