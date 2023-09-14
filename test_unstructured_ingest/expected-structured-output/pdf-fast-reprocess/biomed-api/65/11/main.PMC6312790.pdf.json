@@ -330,7 +330,7 @@
     "text": "nature of inhibition of metals."
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "c2b2b778d53cc9a1cb4dc340476bc5aa",
     "metadata": {
       "data_source": {},
@@ -1430,7 +1430,7 @@
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "a80826543c9e0d0e9f6c2108ae3c3f73",
     "metadata": {
       "data_source": {},

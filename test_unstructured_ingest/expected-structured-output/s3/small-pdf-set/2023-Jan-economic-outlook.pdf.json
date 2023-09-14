@@ -432,7 +432,7 @@
     "text": "Jan. 2019"
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "63e35649dd179389ecc7251e1503489a",
     "metadata": {
       "data_source": {
@@ -450,7 +450,7 @@
     "text": "1. Headline Inflation"
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "b790ab5fcad28bbedb50b568b3adeca2",
     "metadata": {
       "data_source": {
@@ -5274,7 +5274,7 @@
     "text": "Apr. 23"
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "7d4f55875c970d850a152ba1d5ba02a5",
     "metadata": {
       "data_source": {
@@ -5472,7 +5472,7 @@
     "text": "October 2022 GFSR"
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "8e655408cf212df5f74df13e05cdf02c",
     "metadata": {
       "data_source": {

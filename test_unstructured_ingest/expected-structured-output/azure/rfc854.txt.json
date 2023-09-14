@@ -144,7 +144,7 @@
     "text": "The TELNET Protocol is built upon three main ideas:  first, the concept of a \"Network Virtual Terminal\"; second, the principle of negotiated options; and third, a symmetric view of terminals and processes."
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "f2612ca5f313c20b7f83b278ae4a7f8c",
     "metadata": {
       "data_source": {
@@ -234,7 +234,7 @@
     "text": "applicable even in terminal-to-terminal or process-to-process communications, the \"user\" host is the host which initiated the communication."
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "319d6358cf6e682f16e83ac6d588a9bc",
     "metadata": {
       "data_source": {
@@ -288,7 +288,7 @@
     "text": "The syntax of option negotiation has been set up so that if both parties request an option simultaneously, each will see the other's request as the positive acknowledgment of its own."
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "d38748f70330c37b70fa1dc04cf1a3a1",
     "metadata": {
       "data_source": {
@@ -702,7 +702,7 @@
     "text": "options are negotiated to the contrary, the following default conditions pertain to the transmission of data over the TELNET connection:"
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "8aa60fbfa7fdb5de8d562608d3ccb069",
     "metadata": {
       "data_source": {
@@ -738,7 +738,7 @@
     "text": "The motivation for this rule is the high cost, to some hosts, of processing network input interrupts, coupled with the default NVT specification that \"echoes\" do not traverse the network. Thus, it is reasonable to buffer some amount of data at its source. Many systems take some processing action at the end of each input line (even line printers or card punches frequently tend to work this way), so the transmission should be triggered at the end of a line. On the other hand, a user or process may sometimes find it necessary or desirable to provide data which does not terminate at the end of a line; therefore implementers are cautioned to provide methods of locally signaling that all buffered data should be transmitted immediately."
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "24c6236ce1666a2ef74bd5883a9d95d5",
     "metadata": {
       "data_source": {
@@ -1530,7 +1530,7 @@
     "text": "By convention the sequence [IP, Synch] is to be used as such a signal. For example, suppose that some other protocol, which uses TELNET, defines the character string STOP analogously to the TELNET command AO. Imagine that a user of this protocol wishes a server to process the STOP string, but the connection is blocked because the server is processing other commands. The user should instruct his system to:"
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "8459ff8791582f54cd1435d6b9d770db",
     "metadata": {
       "data_source": {
@@ -1548,7 +1548,7 @@
     "text": "1. Send the TELNET IP character;"
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "e0bfbeb5fb2c2920562cfd6eace856e5",
     "metadata": {
       "data_source": {
@@ -1584,7 +1584,7 @@
     "text": "Send the Data Mark (DM) as the only character in a TCP urgent mode send operation."
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "82bd9d7fe0aa06d113db3be28abbda8e",
     "metadata": {
       "data_source": {
@@ -1602,7 +1602,7 @@
     "text": "3. Send the character string STOP; and"
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "618808c48ecd9bdc1ac5a97e633131b9",
     "metadata": {
       "data_source": {
