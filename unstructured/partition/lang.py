@@ -10,10 +10,10 @@ PYTESSERACT_LANGS = pytesseract.get_languages(config="")
 
 def prepare_languages_for_tesseract(languages: List[str] = ["eng"]):
     """
-    Entry point: convert the languages param (list of strings) into tesseract ocr langcode format (uses +) string
+    Entry point: convert languages (list of strings) into tesseract ocr langcode format (uses +)
     """
     converted_languages = list(
-        filter(None, [convert_language_to_tesseract(lang) for lang in languages])
+        filter(None, [convert_language_to_tesseract(lang) for lang in languages]),
     )
     return "+".join(converted_languages)
 
@@ -33,7 +33,7 @@ def convert_language_to_tesseract(lang: str) -> str:
     """
     # if language is already tesseract langcode, return it immediately
     # this will catch the tesseract special cases equ and osd
-    # NOTE(shreya): this may catch some of the cases of choosing between a plain vs suffixed tesseract code
+    # NOTE(shreya): this may catch some cases of choosing between tesseract code variants for a lang
     if lang in PYTESSERACT_LANGS:
         return lang
 
@@ -44,7 +44,7 @@ def convert_language_to_tesseract(lang: str) -> str:
         logger.warning(f"{lang} is not a valid standard language code.")
         return ""
 
-    # tesseract uses 3 digit codes (639-3, 639-2b, etc) as code prefix, with suffixes for orthography
+    # tesseract uses 3 digit codes (639-3, 639-2b, etc) as prefixes, with suffixes for orthography
     # use first 3 letters of tesseract codes for matching to standard codes
     pytesseract_langs_3 = {lang[:3] for lang in PYTESSERACT_LANGS}
 
