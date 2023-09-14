@@ -169,9 +169,6 @@ class ElementMetadata:
     # Metadata extracted via regex
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
 
-    # Depth relative to the element's category
-    category_depth: Optional[int] = None
-
     # Detection Model Class Probabilities from Unstructured-Inference Hi-Res
     detection_class_prob: Optional[float] = None
 
