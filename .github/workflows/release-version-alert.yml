@@ -24,7 +24,7 @@ jobs:
       id: check-versions
       run: |
         CHECK_NEW_VERSION_RESPONSE=$(bash scripts/check-new-release-version.sh)
-        if [[ "$(bash scripts/check-new-release-version.sh)" == "Found new non-dev version"* ]]; then
+        if [[ "$(bash scripts/check-new-release-version.sh)" == "New release version"* ]]; then
           echo "Sending Slack notification..."
           MESSAGE="$CHECK_NEW_VERSION_RESPONSE \nPR: https://github.com/$GITHUB_REPOSITORY/pull/$PR_NUMBER\nHash: $PR_HASH :rocket:"
           echo "SLACK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
