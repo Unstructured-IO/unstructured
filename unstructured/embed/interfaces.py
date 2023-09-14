@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Tuple
 
 from unstructured.documents.elements import Element
 
@@ -13,7 +13,7 @@ class BaseEmbeddingEncoder(ABC):
 
     @property
     @abstractmethod
-    def num_of_dimensions(self) -> int:
+    def num_of_dimensions(self) -> Tuple[int]:
         """Number of dimensions for the embedding vector."""
         return None
 
