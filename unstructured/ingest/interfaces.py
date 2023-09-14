@@ -180,10 +180,10 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
 
         return wrapper
 
-    # TODO: add @abstractmethod decorator
+    #TODO: set as @abstractmethod and pass or raise NotImplementedError
     def update_source_metadata(self, **kwargs) -> None:
         """Sets the SourceMetadata and the  properties for the doc"""
-        pass
+        self.source_metadata = SourceMetadata()
 
     # NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
     # in addition to or instead of get_file()
