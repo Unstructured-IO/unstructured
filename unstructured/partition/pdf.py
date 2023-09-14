@@ -18,6 +18,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     Image,
+    ListItem,
     PageBreak,
     Text,
     process_metadata,
@@ -43,7 +44,10 @@ from unstructured.partition.lang import (
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
-from unstructured.partition.utils.sorting import sort_page_elements
+from unstructured.partition.utils.sorting import (
+    coord_has_valid_points,
+    sort_page_elements,
+)
 from unstructured.utils import requires_dependencies
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
@@ -475,6 +479,50 @@ def _process_pdfminer_pages(
                         last_modified=metadata_last_modified,
                     )
                     page_elements.append(element)
+        list_item = 0
+        updated_page_elements = []  # type: ignore
+        coordinate_system = PixelSpace(width=width, height=height)
+        for page_element in page_elements:
+            if isinstance(page_element, ListItem):
+                list_item += 1
+                list_page_element = page_element
+                list_item_text = page_element.text
+                list_item_coords = page_element.metadata.coordinates
+            elif list_item > 0 and check_coords_within_boundary(
+                page_element.metadata.coordinates,
+                list_item_coords,
+            ):
+                text = page_element.text  # type: ignore
+                list_item_text = list_item_text + " " + text
+                x1 = min(
+                    list_page_element.metadata.coordinates.points[0][0],
+                    page_element.metadata.coordinates.points[0][0],
+                )
+                x2 = max(
+                    list_page_element.metadata.coordinates.points[2][0],
+                    page_element.metadata.coordinates.points[2][0],
+                )
+                y1 = min(
+                    list_page_element.metadata.coordinates.points[0][1],
+                    page_element.metadata.coordinates.points[0][1],
+                )
+                y2 = max(
+                    list_page_element.metadata.coordinates.points[1][1],
+                    page_element.metadata.coordinates.points[1][1],
+                )
+                points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+                list_page_element.text = list_item_text
+                list_page_element.metadata.coordinates = CoordinatesMetadata(
+                    points=points,
+                    system=coordinate_system,
+                )
+                page_element = list_page_element
+                updated_page_elements.pop()
+
+            updated_page_elements.append(page_element)
+
+        page_elements = updated_page_elements
+        del updated_page_elements
 
         # NOTE(crag, christine): always do the basic sort first for determinsitic order across
         # python versions.
@@ -683,3 +731,44 @@ def _partition_pdf_or_image_with_ocr(
             if include_page_breaks:
                 elements.append(PageBreak(text=""))
     return elements
+
+
+def check_coords_within_boundary(
+    coordinates: CoordinatesMetadata,
+    boundary: CoordinatesMetadata,
+    horizontal_threshold: float = 0.2,
+    vertical_threshold: float = 0.3,
+) -> bool:
+    """Checks if the coordinates are within boundary thresholds.
+    Parameters
+    ----------
+    coordinates
+        a CoordinatesMetadata input
+    boundary
+        a CoordinatesMetadata to compare against
+    vertical_threshold
+        a float ranges from [0,1] to scale the vertical (y-axis) boundary
+    horizontal_threshold
+        a float ranges from [0,1] to scale the horizontal (x-axis) boundary
+    """
+    if not coord_has_valid_points(coordinates) and not coord_has_valid_points(boundary):
+        raise ValueError("Invalid coordinates.")
+
+    boundary_x_min = boundary.points[0][0]
+    boundary_x_max = boundary.points[2][0]
+    boundary_y_min = boundary.points[0][1]
+    boundary_y_max = boundary.points[1][1]
+
+    line_width = boundary_x_max - boundary_x_min
+    line_height = boundary_y_max - boundary_y_min
+
+    x_within_boundary = (
+        (coordinates.points[0][0] < boundary_x_min + (horizontal_threshold * line_width))
+        and (coordinates.points[2][0] < boundary_x_max + (horizontal_threshold * line_width))
+        and (coordinates.points[0][0] >= boundary_x_min)
+    )
+    y_within_boundary = (
+        coordinates.points[0][1] < boundary_y_max + (vertical_threshold * line_height)
+    ) and (coordinates.points[0][1] > boundary_y_min)
+
+    return x_within_boundary and y_within_boundary
