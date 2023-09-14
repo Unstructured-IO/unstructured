@@ -30,7 +30,12 @@ jobs:
             echo "SLACK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
             # Check for duplicates in posted_messages.txt
             DUPLICATE_CHECK=$(grep -Fx "${MESSAGE}" posted_messages.txt || true)
+            # print the posted_messages content
+            echo "posted_messages.txt contents:"
+            cat posted_messages.txt
+            echo "MESSAGE: $MESSAGE"
             if [ -z "$DUPLICATE_CHECK" ]; then
+              echo "No duplicate found. Posting Slack notification."
               echo "${MESSAGE}" >> posted_messages.txt  # Store the entire message in a file
             else
               echo "Message already posted. Skipping duplicate Slack notification."
