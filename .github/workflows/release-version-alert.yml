@@ -42,14 +42,14 @@ jobs:
         id: retrieve-cache
         uses: actions/cache@v2
         with:
-          path: $HOME/messages_cache.txt
+          path: messages_cache.txt
           key: messages-cache-${{ runner.os }}-${{ env.MESSAGE_HASH  }}
           restore-keys: |
             messages-cache-${{ runner.os }}-${{ env.MESSAGE_HASH }}
 
       - name: Check for Duplicates
         run: |
-          DUPLICATE_CHECK=$(grep -Fx "${{env.SLACK_MESSAGE}}" $HOME/messages_cache.txt || true)
+          DUPLICATE_CHECK=$(grep -Fx "${{env.SLACK_MESSAGE}}" messages_cache.txt || true)
           if [ -n "$DUPLICATE_CHECK" ]; then
             echo "Message already posted. Skipping duplicate Slack notification."
             exit 0  # Exit without posting a message
@@ -57,17 +57,17 @@ jobs:
 
       - name: Write Message to Cache File
         run: |
-          echo "${{env.SLACK_MESSAGE}}" >> $HOME/messages_cache.txt
-          cat $HOME/messages_cache.txt
+          echo "${{env.SLACK_MESSAGE}}" >> messages_cache.txt
+          cat messages_cache.txt
 
       - name: Test exists
         run: |
-          cat $HOME/messages_cache.txt
+          cat messages_cache.txt
             
       - name: Store Messages in Cache
         uses: actions/cache/save@v3
         with:
-          path: $HOME/messages_cache.txt
+          path: messages_cache.txt
           key: messages-cache-${{ runner.os }}-${{ env.MESSAGE_HASH }}
 
       - name: Slack Notification
