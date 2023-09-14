@@ -145,10 +145,8 @@ jobs:
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        # NOTE(robinson) - Installing weaviate-client separately here because the requests
-        # version conflicts with label_studio_sdk
-        pip install weaviate-client
-        pip install argilla
+        # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
+        make install-ci
         make test CI=true
         make check-coverage
 
@@ -227,10 +225,6 @@ jobs:
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        # NOTE(robinson) - Installing weaviate-client separately here because the requests
-        # version conflicts with label_studio_sdk
-        pip install weaviate-client
-        pip install argilla
         make test-extra-${{ matrix.extra }} CI=true
 
   test_ingest:
@@ -365,6 +359,8 @@ jobs:
       if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
       run: |
         source .venv/bin/activate
+        # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
+        make install-ci
         sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
         make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5

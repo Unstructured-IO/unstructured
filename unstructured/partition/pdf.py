@@ -18,6 +18,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     Image,
+    ListItem,
     PageBreak,
     Text,
     process_metadata,
@@ -26,6 +27,7 @@ from unstructured.file_utils.filetype import (
     FileType,
     add_metadata_with_filetype,
 )
+from unstructured.logger import logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
     convert_to_bytes,
@@ -35,10 +37,17 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
+from unstructured.partition.lang import (
+    convert_old_ocr_languages_to_languages,
+    prepare_languages_for_tesseract,
+)
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
-from unstructured.partition.utils.sorting import sort_page_elements
+from unstructured.partition.utils.sorting import (
+    coord_has_valid_points,
+    sort_page_elements,
+)
 from unstructured.utils import requires_dependencies
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
@@ -53,7 +62,8 @@ def partition_pdf(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    ocr_languages: str = "eng",
+    ocr_languages: Optional[str] = None,  # changing to optional for deprecation
+    languages: List[str] = ["eng"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     include_metadata: bool = True,
@@ -84,9 +94,9 @@ def partition_pdf(
         I.e., rows and cells are preserved.
         Whether True or False, the "text" field is always present in any Table element
         and is the text content of the table (no structure).
-    ocr_languages
-        The languages to use for the Tesseract agent. To use a language, you'll first need
-        to isntall the appropriate Tesseract language pack.
+    languages
+        The languages present in the document, for use in partitioning and/or OCR. To use a language
+        with Tesseract, you'll first need to install the appropriate Tesseract language pack.
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied. Only applies to the "ocr_only" strategy.
@@ -97,13 +107,33 @@ def partition_pdf(
         The last modified date for the document.
     """
     exactly_one(filename=filename, file=file)
+
+    if not isinstance(languages, list):
+        raise TypeError("The language parameter must be a list of language codes as strings.")
+
+    if ocr_languages is not None:
+        # check if languages was set to anything not the default value
+        # languages and ocr_languages were therefore both provided - raise error
+        if languages != ["eng"]:
+            raise ValueError(
+                "Only one of languages and ocr_languages should be specified. "
+                "languages is preferred. ocr_languages is marked for deprecation.",
+            )
+
+        else:
+            languages = convert_old_ocr_languages_to_languages(ocr_languages)
+            logger.warning(
+                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
+                "Please use languages instead.",
+            )
+
     return partition_pdf_or_image(
         filename=filename,
         file=file,
         include_page_breaks=include_page_breaks,
         strategy=strategy,
         infer_table_structure=infer_table_structure,
-        ocr_languages=ocr_languages,
+        languages=languages,
         max_partition=max_partition,
         min_partition=min_partition,
         metadata_last_modified=metadata_last_modified,
@@ -146,7 +176,8 @@ def partition_pdf_or_image(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    ocr_languages: str = "eng",
+    ocr_languages: Optional[str] = None,
+    languages: List[str] = ["eng"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
@@ -157,6 +188,23 @@ def partition_pdf_or_image(
     # route. Decoding the routing should probably be handled by a single function designed for
     # that task so as routing design changes, those changes are implemented in a single
     # function.
+
+    if not isinstance(languages, list):
+        raise TypeError("The language parameter must be a list of language codes as strings.")
+
+    if ocr_languages is not None:
+        if languages != ["eng"]:
+            raise ValueError(
+                "Only one of languages and ocr_languages should be specified. "
+                "languages is preferred. ocr_languages is marked for deprecation.",
+            )
+
+        else:
+            languages = convert_old_ocr_languages_to_languages(ocr_languages)
+            logger.warning(
+                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
+                "Please use languages instead.",
+            )
 
     last_modification_date = get_the_last_modification_date_pdf_or_img(
         file=file,
@@ -200,17 +248,25 @@ def partition_pdf_or_image(
         # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            layout_elements = _partition_pdf_or_image_local(
+            _layout_elements = _partition_pdf_or_image_local(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
-                ocr_languages=ocr_languages,
+                languages=languages,
                 ocr_mode="entire_page",
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 **kwargs,
             )
+            layout_elements = []
+            for el in _layout_elements:
+                if hasattr(el, "category") and el.category == "UncategorizedText":
+                    new_el = element_from_text(el.text)
+                    new_el.metadata = el.metadata
+                else:
+                    new_el = el
+                layout_elements.append(new_el)
 
     elif strategy == "fast":
         return extracted_elements
@@ -222,7 +278,7 @@ def partition_pdf_or_image(
                 filename=filename,
                 file=file,
                 include_page_breaks=include_page_breaks,
-                ocr_languages=ocr_languages,
+                languages=languages,
                 is_image=is_image,
                 max_partition=max_partition,
                 min_partition=min_partition,
@@ -239,7 +295,7 @@ def _partition_pdf_or_image_local(
     is_image: bool = False,
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
-    ocr_languages: str = "eng",
+    languages: List[str] = ["eng"],
     ocr_mode: str = "entire_page",
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
@@ -250,6 +306,8 @@ def _partition_pdf_or_image_local(
         process_data_with_model,
         process_file_with_model,
     )
+
+    ocr_languages = prepare_languages_for_tesseract(languages)
 
     model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
     if file is None:
@@ -421,6 +479,50 @@ def _process_pdfminer_pages(
                         last_modified=metadata_last_modified,
                     )
                     page_elements.append(element)
+        list_item = 0
+        updated_page_elements = []  # type: ignore
+        coordinate_system = PixelSpace(width=width, height=height)
+        for page_element in page_elements:
+            if isinstance(page_element, ListItem):
+                list_item += 1
+                list_page_element = page_element
+                list_item_text = page_element.text
+                list_item_coords = page_element.metadata.coordinates
+            elif list_item > 0 and check_coords_within_boundary(
+                page_element.metadata.coordinates,
+                list_item_coords,
+            ):
+                text = page_element.text  # type: ignore
+                list_item_text = list_item_text + " " + text
+                x1 = min(
+                    list_page_element.metadata.coordinates.points[0][0],
+                    page_element.metadata.coordinates.points[0][0],
+                )
+                x2 = max(
+                    list_page_element.metadata.coordinates.points[2][0],
+                    page_element.metadata.coordinates.points[2][0],
+                )
+                y1 = min(
+                    list_page_element.metadata.coordinates.points[0][1],
+                    page_element.metadata.coordinates.points[0][1],
+                )
+                y2 = max(
+                    list_page_element.metadata.coordinates.points[1][1],
+                    page_element.metadata.coordinates.points[1][1],
+                )
+                points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+                list_page_element.text = list_item_text
+                list_page_element.metadata.coordinates = CoordinatesMetadata(
+                    points=points,
+                    system=coordinate_system,
+                )
+                page_element = list_page_element
+                updated_page_elements.pop()
+
+            updated_page_elements.append(page_element)
+
+        page_elements = updated_page_elements
+        del updated_page_elements
 
         # NOTE(crag, christine): always do the basic sort first for determinsitic order across
         # python versions.
@@ -536,7 +638,7 @@ def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = False,
-    ocr_languages: str = "eng",
+    languages: List[str] = ["eng"],
     is_image: bool = False,
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
@@ -545,6 +647,8 @@ def _partition_pdf_or_image_with_ocr(
     """Partitions an image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
     import pytesseract
+
+    ocr_languages = prepare_languages_for_tesseract(languages)
 
     if is_image:
         if file is not None:
@@ -594,3 +698,44 @@ def _partition_pdf_or_image_with_ocr(
             if include_page_breaks:
                 elements.append(PageBreak(text=""))
     return elements
+
+
+def check_coords_within_boundary(
+    coordinates: CoordinatesMetadata,
+    boundary: CoordinatesMetadata,
+    horizontal_threshold: float = 0.2,
+    vertical_threshold: float = 0.3,
+) -> bool:
+    """Checks if the coordinates are within boundary thresholds.
+    Parameters
+    ----------
+    coordinates
+        a CoordinatesMetadata input
+    boundary
+        a CoordinatesMetadata to compare against
+    vertical_threshold
+        a float ranges from [0,1] to scale the vertical (y-axis) boundary
+    horizontal_threshold
+        a float ranges from [0,1] to scale the horizontal (x-axis) boundary
+    """
+    if not coord_has_valid_points(coordinates) and not coord_has_valid_points(boundary):
+        raise ValueError("Invalid coordinates.")
+
+    boundary_x_min = boundary.points[0][0]
+    boundary_x_max = boundary.points[2][0]
+    boundary_y_min = boundary.points[0][1]
+    boundary_y_max = boundary.points[1][1]
+
+    line_width = boundary_x_max - boundary_x_min
+    line_height = boundary_y_max - boundary_y_min
+
+    x_within_boundary = (
+        (coordinates.points[0][0] < boundary_x_min + (horizontal_threshold * line_width))
+        and (coordinates.points[2][0] < boundary_x_max + (horizontal_threshold * line_width))
+        and (coordinates.points[0][0] >= boundary_x_min)
+    )
+    y_within_boundary = (
+        coordinates.points[0][1] < boundary_y_max + (vertical_threshold * line_height)
+    ) and (coordinates.points[0][1] > boundary_y_min)
+
+    return x_within_boundary and y_within_boundary

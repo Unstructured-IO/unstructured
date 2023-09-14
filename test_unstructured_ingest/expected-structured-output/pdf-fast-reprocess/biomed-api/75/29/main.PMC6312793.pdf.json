@@ -310,7 +310,7 @@
     "text": "be used for the comparison."
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "c2b2b778d53cc9a1cb4dc340476bc5aa",
     "metadata": {
       "data_source": {},
@@ -560,24 +560,14 @@
     "text": "a ls"
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "2d6b506bd58a7dd7bbf1c8599ef630c8",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "1. Each schedule should start and end at the same depot. 2. Each trip should be covered by only one vehicle. 3. The number of schedules that start from a depot should not exceed the number of vehicles at"
-  },
-  {
-    "type": "Title",
-    "element_id": "e46a5a30f05d06e82d8b7d10448de683",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "the depot."
+    "text": "1. Each schedule should start and end at the same depot. 2. Each trip should be covered by only one vehicle. 3. The number of schedules that start from a depot should not exceed the number of vehicles at the depot."
   },
   {
     "type": "NarrativeText",
@@ -900,7 +890,7 @@
     "text": "i , the start"
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "764eef872135149aaf95224bab69c844",
     "metadata": {
       "data_source": {},
