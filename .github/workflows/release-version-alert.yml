@@ -12,9 +12,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install dependencies
-      run: pip install -r requirements.txt  # Replace with your project's requirements
-
     - name: Check versions
       run: |
         bash scripts/check-new-release-version.sh
