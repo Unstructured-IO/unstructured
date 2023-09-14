@@ -2,7 +2,6 @@ import fnmatch
 import os
 import typing as t
 from dataclasses import dataclass, field
-from functools import cached_property
 from pathlib import Path
 
 from unstructured.ingest.error import SourceConnectionError
@@ -26,15 +25,6 @@ class SimpleGitConfig(BaseConnectorConfig):
 
 
 @dataclass
-class GitFileMeta:
-    date_created: t.Optional[str] = None
-    date_modified: t.Optional[str] = None
-    version: t.Optional[str] = None
-    source_url: t.Optional[str] = None
-    exists: t.Optional[bool] = None
-
-
-@dataclass
 class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     connector_config: SimpleGitConfig = field(repr=False)
     path: str
@@ -48,22 +38,6 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return Path(self.partition_config.output_dir) / f"{self.path}.json"
 
     @property
-    def date_modified(self) -> t.Optional[str]:
-        return self.file_metadata.date_modified
-
-    @property
-    def exists(self) -> t.Optional[bool]:
-        return self.file_metadata.exists
-
-    @property
-    def version(self) -> t.Optional[str]:
-        return self.file_metadata.version
-
-    @property
-    def source_url(self) -> t.Optional[str]:
-        return self.file_metadata.source_url
-
-    @property
     def record_locator(self) -> t.Dict[str, t.Any]:
         return {
             "url": self.connector_config.url,
@@ -74,6 +48,9 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _create_full_tmp_dir_path(self):
         """includes directories in in the gitlab repository"""
         self.filename.parent.mkdir(parents=True, exist_ok=True)
+
+    def update_source_metadata(self, **kwargs):
+        raise NotImplementedError()
 
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
@@ -87,10 +64,6 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         raise NotImplementedError()
 
     def _fetch_and_write(self) -> None:
-        raise NotImplementedError()
-
-    @cached_property
-    def file_metadata(self) -> GitFileMeta:
         raise NotImplementedError()
 
 

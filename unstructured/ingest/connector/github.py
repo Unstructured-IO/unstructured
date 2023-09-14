@@ -1,18 +1,17 @@
 import typing as t
 from dataclasses import dataclass
 from datetime import datetime
-from functools import cached_property
 from urllib.parse import urlparse
 
 import requests
 
 from unstructured.ingest.connector.git import (
-    GitFileMeta,
     GitIngestDoc,
     GitSourceConnector,
     SimpleGitConfig,
 )
 from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.interfaces import SourceMetadata
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
@@ -55,6 +54,10 @@ class GitHubIngestDoc(GitIngestDoc):
     connector_config: SimpleGitHubConfig
     registry_name: str = "github"
 
+    @property
+    def date_created(self) -> t.Optional[str]:
+        return None
+
     @requires_dependencies(["github"], extras="github")
     def _fetch_content(self, is_content_file=False):
         from github.GithubException import UnknownObjectException
@@ -89,23 +92,28 @@ class GitHubIngestDoc(GitIngestDoc):
             contents = content_file.decoded_content  # type: ignore
         return contents
 
-    @cached_property
-    def file_metadata(self) -> GitFileMeta:
+    def update_source_metadata(self, **kwargs):
         content_file = self._fetch_content(True)
         if content_file is None:
-            return GitFileMeta(
+            self.source_metadata = SourceMetadata(
                 exists=False,
             )
-        return GitFileMeta(
-            None,
-            datetime.strptime(content_file.last_modified, "%a, %d %b %Y %H:%M:%S %Z").isoformat(),
-            content_file.etag,
-            content_file.download_url,
-            True,
+            return
+
+        date_modified = datetime.strptime(
+            content_file.last_modified,
+            "%a, %d %b %Y %H:%M:%S %Z",
+        ).isoformat()
+        self.source_metadata = SourceMetadata(
+            date_modified=date_modified,
+            version=content_file.etag,
+            source_url=content_file.download_url,
+            exists=True,
         )
 
     def _fetch_and_write(self) -> None:
         contents = self._fetch_content()
+        self.update_source_metadata()
         if contents is None:
             raise ValueError(
                 f"Failed to retrieve file from repo "
