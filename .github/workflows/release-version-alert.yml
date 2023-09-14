@@ -32,7 +32,7 @@ jobs:
           fi 
 
       - name: Generate Message Hash
-        if: env.SKIP_STEPS != 'true'
+        if: env.SKIP_STEPS != 'true' 
         id: generate-hash
         run: |
           MESSAGE_HASH=$(echo "${{env.SLACK_MESSAGE}}" | sha256sum | cut -d ' ' -f1)
