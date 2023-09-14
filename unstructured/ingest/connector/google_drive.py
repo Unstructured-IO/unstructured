@@ -4,7 +4,6 @@ import os
 import typing as t
 from dataclasses import dataclass
 from datetime import datetime
-from functools import cached_property
 from mimetypes import guess_extension
 from pathlib import Path
 
@@ -20,6 +19,7 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     IngestDocSessionHandleMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -103,15 +103,6 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 
 
 @dataclass
-class GoogleDriveFileMeta:
-    date_created: t.Optional[str] = None
-    date_modified: t.Optional[str] = None
-    version: t.Optional[str] = None
-    source_url: t.Optional[str] = None
-    exists: t.Optional[bool] = None
-
-
-@dataclass
 class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
     connector_config: SimpleGoogleDriveConfig
     meta: t.Dict[str, str]
@@ -126,35 +117,14 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
         return Path(f"{self.meta.get('output_filepath')}.json").resolve()
 
     @property
-    def date_created(self) -> t.Optional[str]:
-        return self.file_metadata.date_created
-
-    @property
-    def date_modified(self) -> t.Optional[str]:
-        return self.file_metadata.date_modified
-
-    @property
-    def exists(self) -> t.Optional[bool]:
-        return self.file_metadata.exists
-
-    @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
             "drive_id": self.connector_config.drive_id,
             "file_id": self.meta["id"],
         }
 
-    @property
-    def version(self) -> t.Optional[str]:
-        return self.file_metadata.version
-
-    @property
-    def source_url(self) -> t.Optional[str]:
-        return self.file_metadata.source_url
-
-    @cached_property
     @requires_dependencies(["googleapiclient"], extras="google-drive")
-    def file_metadata(self):
+    def update_source_metadata(self):
         from googleapiclient.errors import HttpError
 
         try:
@@ -169,7 +139,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
         except HttpError as e:
             if e.status_code == 404:
                 logger.error(f"File {self.meta['name']} not found")
-                return GoogleDriveFileMeta(
+                self.source_metadata = SourceMetadata(
                     exists=True,
                 )
             raise
@@ -188,12 +158,12 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
                 "%Y-%m-%dT%H:%M:%S.%fZ",
             ).isoformat()
 
-        return GoogleDriveFileMeta(
-            date_created,
-            date_modified,
-            file_obj.get("version", ""),
-            file_obj.get("webContentLink", ""),
-            True,
+        self.source_metadata = SourceMetadata(
+            date_created=date_created,
+            date_modified=date_modified,
+            version=file_obj.get("version", ""),
+            source_url=file_obj.get("webContentLink", ""),
+            exists=True,
         )
 
     @requires_dependencies(["googleapiclient"], extras="google-drive")
@@ -223,6 +193,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
             request = self.session_handle.service.files().get_media(fileId=self.meta.get("id"))
         file = io.BytesIO()
         downloader = MediaIoBaseDownload(file, request)
+        self.update_source_metadata()
         downloaded = False
         try:
             while downloaded is False:
@@ -244,7 +215,6 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
                     handler.write(file.getbuffer())
                     saved = True
                     logger.debug(f"File downloaded: {self.filename}.")
-
         if not saved:
             logger.error(f"Error while downloading and saving file: {self.filename}.")
 

@@ -3,7 +3,6 @@ import json
 import os
 import typing as t
 from dataclasses import dataclass
-from functools import cached_property
 from pathlib import Path
 
 from unstructured.ingest.error import SourceConnectionError
@@ -13,6 +12,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -42,17 +42,6 @@ class ElasticsearchDocumentMeta:
 
     index_name: str
     document_id: str
-
-
-@dataclass
-class ElasticsearchFileMeta:
-    """Metadata specifying:
-    version of the document as a str
-    exists, whether if the document exists or not
-    """
-
-    version: t.Optional[str] = None
-    exists: t.Optional[bool] = None
 
 
 @dataclass
@@ -135,17 +124,16 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             raise
         return document
 
-    @cached_property
-    def file_metadata(self):
-        document = self._get_document()
+    def update_source_metadata(self, **kwargs):
+        document = kwargs.get("document", self._get_document())
         if document is None:
-            return ElasticsearchFileMeta(
+            self.source_metadata = SourceMetadata(
                 exists=False,
             )
 
-        return ElasticsearchFileMeta(
-            document["_version"],
-            document["found"],
+        self.source_metadata = SourceMetadata(
+            version=document["_version"],
+            exists=document["found"],
         )
 
     @SourceConnectionError.wrap
@@ -155,8 +143,8 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         import jq
 
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-        # NOTE: rename variable?
         document = self._get_document()
+        self.update_source_metadata(document=document)
         if document is None:
             raise ValueError(
                 f"Failed to get document {self.document_meta.document_id}",
@@ -173,19 +161,24 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             f.write(self.document)
 
     @property
-    def exists(self) -> t.Optional[bool]:
-        return self.file_metadata.exists
+    def date_created(self) -> t.Optional[str]:
+        return None
+
+    @property
+    def date_modified(self) -> t.Optional[str]:
+        return None
+
+    @property
+    def source_url(self) -> t.Optional[str]:
+        return None
 
     @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
+            "url": self.connector_config.url,
             "index_name": self.connector_config.index_name,
             "document_id": self.document_meta.document_id,
         }
-
-    @property
-    def version(self) -> t.Optional[str]:
-        return self.file_metadata.version
 
 
 @dataclass
