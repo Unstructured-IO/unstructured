@@ -9,3 +9,4 @@ in our community `Slack. <https://join.slack.com/t/unstructuredw-kbe4326/shared_
    :maxdepth: 1
 
    downstream_connectors/delta_table
+   downstream_connectors/s3
