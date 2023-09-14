@@ -60,7 +60,7 @@ jobs:
           echo "${{env.SLACK_MESSAGE}}" >> $HOME/messages_cache.txt
             
       - name: Store Messages in Cache
-        uses: actions/cache@v2
+        uses: actions/cache/save@v3
         with:
           path: $HOME/messages_cache.txt
           key: messages-cache-${{ runner.os }}-${{ env.MESSAGE_HASH }}
