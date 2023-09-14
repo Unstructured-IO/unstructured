@@ -237,7 +237,7 @@ def test_set_caps_ratio_with_environment_variable(monkeypatch):
     monkeypatch.setattr(text_type, "word_tokenize", mock_word_tokenize)
     monkeypatch.setattr(text_type, "sent_tokenize", mock_sent_tokenize)
     monkeypatch.setenv("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", 0.8)
-    monkeypatch.setenv("UNSTRUCTURED_LANGUAGE", "en")
+    monkeypatch.setenv("UNSTRUCTURED_LANGUAGE", ["eng"])
 
     text = "All The King's Horses. And All The King's Men."
     with patch.object(text_type, "exceeds_cap_ratio", return_value=False) as mock_exceeds:
