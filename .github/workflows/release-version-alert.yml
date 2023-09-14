@@ -20,14 +20,6 @@ jobs:
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
           echo "PR_HASH=$PR_HASH" >> $GITHUB_ENV
 
-      - name: Retrieve Messages from Cache
-        uses: actions/cache@v2
-        with:
-          path: $HOME/messages_cache.txt
-          key: messages-cache-${{ runner.os }}-${{ hashFiles('**/messages_cache.txt') }}
-          restore-keys: |
-            messages-cache-${{ runner.os }}-
-
       - name: Check versions
         id: check-versions
         run: |
@@ -36,23 +28,38 @@ jobs:
             echo "Sending Slack notification..."
             MESSAGE="$CHECK_NEW_VERSION_RESPONSE :rocket: Coming soon in PR: https://github.com/$GITHUB_REPOSITORY/pull/$PR_NUMBER "
             echo "SLACK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
-            # Check for duplicates in cache
-            DUPLICATE_CHECK=$(grep -Fx "${MESSAGE}" $HOME/messages_cache.txt || true)
-            if [ -z "$DUPLICATE_CHECK" ]; then
-              echo "${MESSAGE}" >> $HOME/messages_cache.txt  # Store the entire message in the cache
-            else
-              echo "Message already posted. Skipping duplicate Slack notification."
-              exit 0  # Exit without posting a message
-            fi
           else
             echo "No new non-dev version found. Skipping Slack notification."
+          fi
+
+      - name: Generate Message Hash
+        id: generate-hash
+        run: |
+          MESSAGE_HASH=$(echo "${MESSAGE}" | sha256sum | cut -d ' ' -f1)
+          echo "MESSAGE_HASH=$MESSAGE_HASH" >> $GITHUB_ENV
+
+      - name: Retrieve Messages from Cache
+        id: retrieve-cache
+        uses: actions/cache@v2
+        with:
+          path: $HOME/messages_cache.txt
+          key: messages-cache-${{ runner.os }}-${{ env.MESSAGE_HASH  }}
+          restore-keys: |
+            messages-cache-${{ runner.os }}-${{ env.MESSAGE_HASH }}
+
+      - name: Check for Duplicates
+        run: |
+          DUPLICATE_CHECK=$(grep -Fx "${MESSAGE}" $HOME/messages_cache.txt || true)
+          if [ -n "$DUPLICATE_CHECK" ]; then
+            echo "Message already posted. Skipping duplicate Slack notification."
+            exit 0  # Exit without posting a message
           fi
 
       - name: Store Messages in Cache
         uses: actions/cache@v2
         with:
           path: $HOME/messages_cache.txt
-          key: messages-cache-${{ runner.os }}-${{ hashFiles('**/messages_cache.txt') }}
+          key: messages-cache-${{ runner.os }}-${{ env.MESSAGE_HASH }}
 
       - name: Slack Notification
         if: env.SLACK_MESSAGE != ''
@@ -61,4 +68,4 @@ jobs:
           channel-id: 'C05RVKRFCCF'
           slack-message: ${{ env.SLACK_MESSAGE }}
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }} 
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
