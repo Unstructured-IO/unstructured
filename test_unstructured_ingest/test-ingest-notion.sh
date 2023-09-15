@@ -15,7 +15,7 @@ fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     notion \
-    --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.data_source.date_processed,metadata.detection_class_prob \
+    --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.data_source.date_processed,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --download-dir "$DOWNLOAD_DIR" \
     --api-key "$NOTION_API_KEY" \
     --output-dir "$OUTPUT_DIR" \
