@@ -12,8 +12,7 @@ jobs:
       - name: Checkout codes
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
-      - run: git checkout HEAD^
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Get PR information
         id: pr-info
