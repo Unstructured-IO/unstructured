@@ -1,6 +1,7 @@
 import os
 import re
 import typing as t
+from contextlib import suppress
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -12,8 +13,12 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
+from unstructured.utils import (
+    requires_dependencies,
+)
 
 SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "s3",
@@ -115,11 +120,50 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
+        self.update_source_metadata_metadata()
+
+    @requires_dependencies(["fsspec"])
+    def update_source_metadata_metadata(self):
+        from fsspec import AbstractFileSystem, get_filesystem_class
+
+        fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
+            **self.connector_config.get_access_kwargs(),
+        )
+
+        date_created = None
+        with suppress(NotImplementedError):
+            date_created = fs.created(self.remote_file_path).isoformat()
+
+        date_modified = None
+        with suppress(NotImplementedError):
+            date_modified = fs.modified(self.remote_file_path).isoformat()
+
+        version = (
+            fs.checksum(self.remote_file_path)
+            if self.connector_config.protocol != "gs"
+            else fs.info(self.remote_file_path).get("etag", "")
+        )
+        file_exists = fs.exists(self.remote_file_path)
+        self.source_metadata = SourceMetadata(
+            date_created=date_created,
+            date_modified=date_modified,
+            version=version,
+            source_url=f"{self.connector_config.protocol}://{self.remote_file_path}",
+            exists=file_exists,
+        )
 
     @property
     def filename(self):
         """The filename of the file after downloading from cloud"""
         return self._tmp_download_file()
+
+    @property
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
+        """Returns the equivalent of ls in dict"""
+        return {
+            "protocol": self.connector_config.protocol,
+            "remote_file_path": self.remote_file_path,
+        }
 
 
 @dataclass
