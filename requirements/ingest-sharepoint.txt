@@ -23,7 +23,7 @@ idna==3.4
     # via
     #   -c requirements/base.txt
     #   requests
-msal==1.23.0
+msal==1.24.0
     # via
     #   -r requirements/ingest-sharepoint.in
     #   office365-rest-python-client
