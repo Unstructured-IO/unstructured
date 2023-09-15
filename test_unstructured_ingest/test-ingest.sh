@@ -53,10 +53,10 @@ function print_last_run() {
 
 trap print_last_run EXIT
 
-for script in ${scripts[@]}; do
+for script in "${scripts[@]}"; do
   CURRENT_SCRIPT=$script
   echo "--------- RUNNING SCRIPT $script ---------"
   echo "Running ./test_unstructured_ingest/$script"
-  ./test_unstructured_ingest/$script
+  ./test_unstructured_ingest/"$script"
   echo "--------- FINISHED SCRIPT $script ---------"
 done
