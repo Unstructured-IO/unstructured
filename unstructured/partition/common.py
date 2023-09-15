@@ -148,12 +148,17 @@ def normalize_layout_element(
 
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
         _element_class = TYPE_TO_TEXT_ELEMENT_MAP[element_type]
-        return _element_class(
+        _element_class = _element_class(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
         )
+        if element_type == "Headline":
+            _element_class.metadata.category_depth = 1
+        elif element_type == "Subheadline":
+            _element_class.metadata.category_depth = 2
+        return _element_class
     elif element_type == "Checked":
         return CheckBox(
             checked=True,
