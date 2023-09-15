@@ -18,9 +18,9 @@ h11==0.14.0
     # via httpcore
 htmlbuilder==1.0.0
     # via -r requirements/ingest-notion.in
-httpcore==0.17.3
+httpcore==0.18.0
     # via httpx
-httpx==0.24.1
+httpx==0.25.0
     # via notion-client
 idna==3.4
     # via
