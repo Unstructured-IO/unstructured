@@ -1,4 +1,4 @@
-## 0.10.15-dev14
+## 0.10.15-dev15
 
 ### Enhancements
 
@@ -13,7 +13,7 @@
 * **Faster ocr_only speed for partitioning PDF and images.** Use `unstructured_pytesseract.run_and_get_multiple_output` function to reduce the number of calls to `tesseract` by half when partitioning pdf or image with `tesseract`
 * **Adds SourceMetadata to base classes and `update_source_metadata` to` base interface.**
 * **Adds data source properties (date_created, date_modified, version, exists, source_url, record_locator) to Airtable, Confluence and Discord connectors.** Implements `update_source_metadata` function to fetch properties from files/objects on Airtable, Confluence and Discord connectors.
-
+* **Adds data source properties to fsspec connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive.
 
 ### Features
 
