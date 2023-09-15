@@ -9,8 +9,8 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 DESTINATION_TABLE=/tmp/delta-table-dest
 
+# shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-
 trap 'cleanup "$OUTPUT_DIR"' EXIT
 
 if [ -z "$AWS_ACCESS_KEY_ID" ] && [ -z "$AWS_SECRET_ACCESS_KEY" ]; then

@@ -9,8 +9,8 @@ OUTPUT_FOLDER_NAME=pdf-fast-reprocess
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 INPUT_PATH=$SCRIPT_DIR/download
 
+# shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-
 trap 'cleanup "$OUTPUT_DIR"' EXIT
 
 echo "REPROCESS INPUT PATH"

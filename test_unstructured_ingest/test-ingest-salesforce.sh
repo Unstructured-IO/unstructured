@@ -11,8 +11,8 @@ OUTPUT_FOLDER_NAME=salesforce
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
+# shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-
 trap 'cleanup "$OUTPUT_DIR"' EXIT
 
 if [ -z "$SALESFORCE_PRIVATE_KEY" ] && [ -z "$SALESFORCE_PRIVATE_KEY_PATH" ]; then

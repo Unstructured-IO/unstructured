@@ -9,8 +9,8 @@ OUTPUT_FOLDER_NAME=biomed-api
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
+# shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-
 trap 'cleanup "$OUTPUT_DIR"' EXIT
 
 sh "$SCRIPT_DIR"/check-num-files-expected-output.sh 2 $OUTPUT_FOLDER_NAME 10k

@@ -9,8 +9,8 @@ OUTPUT_FOLDER_NAME=jira-diff
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
+# shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-
 trap 'cleanup "$OUTPUT_DIR"' EXIT
 
 if [ -z "$JIRA_INGEST_USER_EMAIL" ] || [ -z "$JIRA_INGEST_API_TOKEN" ]; then
