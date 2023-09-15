@@ -280,7 +280,7 @@
     "text": "data"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "18f107bf25f694db07b6aba0a5aaf321",
     "metadata": {
       "data_source": {},
@@ -440,7 +440,7 @@
     "text": "The"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "cdc3773cb12cf99d302b9f00c48ae1e8",
     "metadata": {
       "data_source": {},
@@ -460,7 +460,7 @@
     "text": "Workforce"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "b72b62f1295c66f199256c1190177ce6",
     "metadata": {
       "data_source": {},
@@ -490,7 +490,7 @@
     "text": "team"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "e0a6230e370d20dece7ca96c77611cb0",
     "metadata": {
       "data_source": {},
@@ -520,7 +520,7 @@
     "text": "to"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "a5bed2020bd1f4ea3eca933398c4f0d0",
     "metadata": {
       "data_source": {},
@@ -590,7 +590,7 @@
     "text": "into"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "b63b99f6383ba713b57ddfc77737c5f7",
     "metadata": {
       "data_source": {},
@@ -640,7 +640,7 @@
     "text": "job job government (8.5%), (42.4%), industry (83.9%), and nonprofit (15.3%) were sampled from websites like Glassdoor, Linkedin, and Ziprecruiter. The content analysis methodology and coding schema in analyzing the training programs were applied to the job descriptions. Because many job ads mentioned the same skill more than once, each occurrence of the skill was coded, therefore weighting single ad."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "f9c94ebffe2ab721a096cf42b7a9cff9",
     "metadata": {
       "data_source": {},
@@ -670,7 +670,7 @@
     "text": "skills"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "a486fbc90cd5a32fe44275f5948b2066",
     "metadata": {
       "data_source": {},
@@ -730,7 +730,7 @@
     "text": "utilized"
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "b510c96f289ebcf388da7d2dea6a1e73",
     "metadata": {
       "data_source": {},

@@ -1160,7 +1160,7 @@
     "text": "4.1 4.9 4.1 7.1 2.8 2.0 1.9 2.2 1.9 . . . 3.5 . . . 2.9 1.8"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "9e5246f529e197f84af65bbcd8e0d2a4",
     "metadata": {
       "data_source": {},
@@ -1360,7 +1360,7 @@
     "text": ". . . . . . . . ."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "3c0578f4d944258ffa4ffac7615f1ff9",
     "metadata": {
       "data_source": {},
