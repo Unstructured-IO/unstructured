@@ -14,6 +14,11 @@ def test_partition_rst_from_filename(filename="example-docs/README.rst"):
         assert element.metadata.filename == "README.rst"
 
 
+def test_partition_rst_from_filename_returns_uns_elements(filename="example-docs/README.rst"):
+    elements = partition_rst(filename=filename)
+    assert isinstance(elements[0], Title)
+
+
 def test_partition_rst_from_filename_with_metadata_filename(
     filename="example-docs/README.rst",
 ):
