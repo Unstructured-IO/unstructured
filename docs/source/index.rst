@@ -17,11 +17,11 @@ Library Documentation
 :doc:`bricks`
   Learn more about partitioning, cleaning, and staging bricks, including advanced usage patterns.
 
-:doc:`upstream_connectors`
+:doc:`source_connectors`
   Connect to your favorite data storage platforms for an effortless batch processing of your files.
 
-:doc:`downstream_connectors`
-  Connect to your favorite data storage platforms to write you ingest results to..
+:doc:`destination_connectors`
+  Connect to your favorite data storage platforms to write you ingest results to.
 
 :doc:`metadata`
   Learn more about how metadata is tracked in the ``unstructured`` library.
@@ -46,8 +46,8 @@ Library Documentation
    installing
    api
    bricks
-   upstream_connectors
-   downstream_connectors
+   source_connectors
+   destination_connectors
    metadata
    examples
    integrations
