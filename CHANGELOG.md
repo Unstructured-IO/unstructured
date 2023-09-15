@@ -25,7 +25,7 @@
 * **Add delta table destination connector** New delta table destination connector added to ingest CLI.
 * **Rename to Source and Destination Connectors in the Documentation.** Maintain naming consistency between Connectors codebase and documentation with the first addition to a destination connector.
 * **Non-HTML text files now return unstructured-elements as opposed to HTML-elements.** Previously the text based files that went through `partition_html` would return HTML-elements but now we preserve the format from the input using `source_format` argument in the partition call.
-* **Adds `PaddleOCR` as an optional alternative to `Tesseract` for processing PDF's, it is installable via `makefile` command `install-paddleocr`
+* **Adds `PaddleOCR` as an optional alternative to `Tesseract`** for OCR in processing PDF or Image files, it is installable via `makefile` command `install-paddleocr`
 
 ### Features
 
@@ -49,7 +49,7 @@
 * Update all connectors to use new downstream architecture
   * New click type added to parse comma-delimited string inputs
   * Some CLI options renamed
- 
+
 ### Features
 
 ### Fixes
