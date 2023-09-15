@@ -28,12 +28,12 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
     def embed_query(self, query):
         return self.openai_client.embed_documents(str(query))
 
-    def embed_documents(self, elements: Optional[List[Element]]) -> List[Element]:
+    def embed_documents(self, elements: List[Element]) -> List[Element]:
         embeddings = self.openai_client.embed_documents([str(e) for e in elements])
         elements_with_embeddings = self._add_embeddings_to_elements(elements, embeddings)
         return elements_with_embeddings
 
-    def _add_embeddings_to_elements(self, elements, embeddings) -> List[Element]:
+    def _add_embeddings_to_elements(self, elements: List[Element], embeddings) -> List[Element]:
         assert len(elements) == len(embeddings)
         for i in range(len(elements)):
             elements[i].embeddings = embeddings[i]
