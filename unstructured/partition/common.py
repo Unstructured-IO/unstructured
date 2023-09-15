@@ -219,8 +219,7 @@ def set_hierarchy_by_indentation(
     for ele, col in right:
         if prev_ele:
             if (
-                ele.metadata.coordinates.points[0][0]
-                - prev_ele.metadata.coorpage4dinates.points[0][0]
+                ele.metadata.coordinates.points[0][0] - prev_ele.metadata.coordinates.points[0][0]
             ) > 100 and type(ele) != Title:
                 ele.metadata.parent_id = prev_ele.id
         right[i] = (ele, col)
