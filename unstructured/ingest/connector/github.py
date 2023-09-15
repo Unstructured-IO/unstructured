@@ -67,9 +67,6 @@ class GitHubIngestDoc(GitIngestDoc):
         except UnknownObjectException:
             logger.error(f"File doesn't exists {self.connector_config.url}/{self.path}")
             return None
-        except Exception:
-            logger.error(f"Error processing {self.connector_config.url}/{self.path}")
-            raise
 
         if is_content_file:
             return content_file
@@ -129,13 +126,7 @@ class GitHubSourceConnector(GitSourceConnector):
     connector_config: SimpleGitHubConfig
 
     def get_ingest_docs(self):
-        from github.GithubException import UnknownObjectException
-
-        try:
-            repo = self.connector_config.get_repo()
-        except UnknownObjectException:
-            logger.error(f"Repository {self.connector_config.repo_path} does not exist.")
-            return []
+        repo = self.connector_config.get_repo()
         # Load the Git tree with all files, and then create Ingest docs
         # for all blobs, i.e. all files, ignoring directories
         sha = self.connector_config.branch or repo.default_branch
