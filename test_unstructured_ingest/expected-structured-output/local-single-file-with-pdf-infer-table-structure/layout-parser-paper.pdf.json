@@ -260,7 +260,7 @@
     "text": "underlies the oﬀ-the-shelf usage"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "9a576fe6eb4355cdf1e772cf462a9eb7",
     "metadata": {
       "data_source": {},
@@ -481,7 +481,7 @@
     "text": "Dataset | Base Model'| Large Model | Notes PubLayNet B8]| F/M M Layouts of modern scientific documents PRImA M - nned modern magazines and scientific reports Newspapei F - canned US newspapers from the 20th century TableBank F F Table region on modern scientific and business document HJDataset F/M - Layouts of history Japanese documents"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "ec22445e13875ab6bbce602dd7f07c99",
     "metadata": {
       "data_source": {},
@@ -922,7 +922,7 @@
     "text": "block.scale(fx, fy)"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "f60c4482bfe6a1b0eb9095bb8cf21e64",
     "metadata": {
       "data_source": {},
@@ -952,7 +952,7 @@
     "text": "block.crop image(image)"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "6bd7ba22b5bc477ef4c291a10f4745bc",
     "metadata": {
       "data_source": {},
@@ -982,7 +982,7 @@
     "text": "Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "494d23eb529015f662df16e6da39f810",
     "metadata": {
       "data_source": {},
@@ -1002,7 +1002,7 @@
     "text": "Return the union region of block1 and block2. Coordinate type to be determined based on the inputs."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "d3b069f9dcc24bfac92a6de9e26f2501",
     "metadata": {
       "data_source": {},
@@ -1022,7 +1022,7 @@
     "text": "Description"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "bb15ecc186d598c93a1cffa30e9e1b6e",
     "metadata": {
       "data_source": {},
@@ -1342,7 +1342,7 @@
     "text": "15 A document page consists of eight rows like this. For simplicity we skip the row"
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "5d0786de7b188a10caffb32c951327a2",
     "metadata": {
       "data_source": {},
@@ -1382,7 +1382,7 @@
     "text": "structure, two object detection models have been trained to recognize individual columns and tokens, respectively. A small training set (400 images with approxi- mately 100 annotations each) is curated via the active learning based annotation tool [32] in LayoutParser. The models learn to identify both the categories and regions for each token or column via their distinct visual features. The layout data structure enables easy grouping of the tokens within each column, and rearranging columns to achieve the correct reading orders based on the horizontal position. Errors are identiﬁed and rectiﬁed via checking the consistency of the model predictions. Therefore, though trained on a small dataset, the pipeline achieves a high level of layout detection accuracy: it achieves a 96.97 AP [19] score across 5 categories for the column detection model, and a 89.23 AP across 4 categories for the token detection model."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "164904dc2ff256763b3e64f1b56a784e",
     "metadata": {
       "data_source": {},
@@ -1412,7 +1412,7 @@
     "text": "Overall, it is possible to create an intricate and highly accurate digitization pipeline for large-scale digitization using LayoutParser. The pipeline avoids specifying the complicated rules used in traditional methods, is straightforward to develop, and is robust to outliers. The DL models also generate ﬁne-grained results that enable creative approaches like page reorganization for OCR."
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "d11adbfd88959ce24fbfdc7f8155e777",
     "metadata": {
       "data_source": {},
@@ -1602,7 +1602,7 @@
     "text": "References"
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "b5bf13691648f2be7e686436513a7366",
     "metadata": {
       "data_source": {},
@@ -1672,7 +1672,7 @@
     "text": "[7] Ganin, Y., Lempitsky, V.: Unsupervised domain adaptation by backpropagation. In: International conference on machine learning. pp. 1180–1189. PMLR (2015)"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "44c5093519506610b07942b24d966d77",
     "metadata": {
       "data_source": {},
@@ -1702,7 +1702,7 @@
     "text": "15"
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "9b9688203e9cdea89ded788342be4032",
     "metadata": {
       "data_source": {},
@@ -2012,7 +2012,7 @@
     "text": "text and layout for document image understanding (2019)"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "9dce913bddaa63724f5de64e539b7016",
     "metadata": {
       "data_source": {},
@@ -2042,7 +2042,7 @@
     "text": "Z. Shen et al."
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "c7fc0ade487926854bb602bca85fad60",
     "metadata": {
       "data_source": {},

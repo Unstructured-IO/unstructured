@@ -900,7 +900,7 @@
     "text": "0"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "4b5ebf5890b9c61b43c5daf4c40cbab0",
     "metadata": {
       "data_source": {},
@@ -1060,7 +1060,7 @@
     "text": "140"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "f9bb49945b60897227abdd75b5f8d39b",
     "metadata": {
       "data_source": {},
@@ -1070,7 +1070,7 @@
     "text": "r e p s e i t i l"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "e11247712b3df61756970b45f019ad68",
     "metadata": {
       "data_source": {},
@@ -1370,7 +1370,7 @@
     "text": "8.5"
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "50a78acc78a3c5b4acc8c439af743a0a",
     "metadata": {
       "data_source": {},
