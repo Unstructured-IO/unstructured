@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 ## 0.10.16-dev0
-=======
-## 0.10.15-dev14
->>>>>>> cbd99dec (bump changelog)
 
 ### Enhancements
 
+* **Adds `chipper` element types to mapping: `Headline`, `Subheadline` and `Abstract`.** Mapped respectevely to `Title` (with `category_depth=1`), `Title` (with `category_depth=2`), and `NarrativeText`.
 * **Add a function to map between Tesseract and standard language codes.** This allows users to input language information to the `languages` param in any Tesseract-supported langcode or any ISO 639 standard language code.
 
 ### Features
