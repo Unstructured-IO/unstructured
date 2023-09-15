@@ -21,14 +21,14 @@ jobs:
       - name: Check for __version__.py changes
         id: version-changes
         run: |
-          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
           echo "CHANGED_FILES=$CHANGED_FILES"
           if echo "$CHANGED_FILES" | grep '__version__.py'; then
             echo "Detected __version__.py changes. Proceeding..."
           else
             echo "No __version__.py changes detected. Skipping workflow..."
             echo "SKIP_STEPS=true" >> $GITHUB_ENV  # Set an environment variable to indicate skipping steps
-          fi 
+          fi
 
       - name: Check versions
         id: check-versions
