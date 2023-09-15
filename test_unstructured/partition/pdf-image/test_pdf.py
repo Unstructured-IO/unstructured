@@ -859,7 +859,9 @@ def test_partition_pdf_uses_model_name():
         "_partition_pdf_or_image_local",
     ) as mockpartition:
         pdf.partition_pdf(
-            "example-docs/layout-parser-paper-fast.pdf", model_name="test", strategy="hi_res"
+            "example-docs/layout-parser-paper-fast.pdf",
+            model_name="test",
+            strategy="hi_res",
         )
 
         mockpartition.assert_called_once()
