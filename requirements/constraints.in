@@ -29,5 +29,6 @@ unstructured-inference==0.5.23
 pydantic<2
 # unable to build wheel for arm on 0.3.3+
 safetensors<=0.3.2
-# use the known compatible version of weaviate
+# use the known compatible version of weaviate and unstructured.pytesseract
+unstructured.pytesseract>=0.3.12
 weaviate-client==3.23.2
