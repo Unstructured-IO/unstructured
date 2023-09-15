@@ -1,7 +1,8 @@
-## 0.10.15-dev14
+## 0.10.15-dev15
 
 ### Enhancements
 
+* **Adds `chipper` element types to mapping: `Threading`, `Form`, `Field-Name`, `Value`, and `Link`.** Mapped to `NarrativeText` except by `Field-Name` which is mapped to `Title`.
 * **Adds `chipper` element types to mapping: `Headline`, `Subheadline` and `Abstract`.** Mapped respectevely to `Title` (with `category_depth=1`), `Title` (with `category_depth=2`), and `NarrativeText`.
 * **Better ListItem grouping for PDF's (fast strategy).** The `partition_pdf` with `fast` strategy previously broke down some numbered list item lines as separate elements. This enhancement leverages the x,y coordinates and bbox sizes to help decide whether the following chunk of text is a continuation of the immediate previous detected ListItem element or not, and not detect it as its own non-ListItem element.
 * **Fall back to text-based classification for uncategorized Layout elements for Images and PDF's**. Improves element classification by running existing text-based rules on previously UncategorizedText elements
