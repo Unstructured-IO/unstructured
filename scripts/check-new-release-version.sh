@@ -16,16 +16,10 @@ function get_main_branch_version {
     echo "$VERSION"
 }
 
-# Get the current branch name
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-
 # Get the current version from the file
 CURRENT_VERSION=$(grep -o -m 1 -E "(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-dev[0-9]+)?" "unstructured/__version__.py")
 
 # Check if the current version is a non-dev version and not matching the main version
-if is_non_dev_version "$CURRENT_VERSION"; then
-    MAIN_VERSION=$(get_main_branch_version)
-    if [ "$MAIN_VERSION" != "$CURRENT_VERSION" ]; then
-        echo "New release version: $CURRENT_VERSION"
-    fi
+if is_non_dev_version "$CURRENT_VERSION" && [ "$(get_main_branch_version)" != "$CURRENT_VERSION" ]; then
+    echo "New release version: $CURRENT_VERSION"
 fi
