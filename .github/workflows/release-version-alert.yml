@@ -21,6 +21,7 @@ jobs:
       - name: Check for __version__.py changes
         id: version-changes
         run: |
+          git fetch origin
           CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
           echo "CHANGED_FILES=$CHANGED_FILES"
           if echo "$CHANGED_FILES" | grep '__version__.py'; then
