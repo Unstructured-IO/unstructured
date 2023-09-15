@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import numbers
 import numpy as np
 import os
 import subprocess
@@ -107,10 +108,11 @@ def normalize_layout_element(
     ],
     coordinate_system: Optional[CoordinateSystem] = None,
     infer_list_items: bool = True,
+    source_format: Optional[str] = "html",
 ) -> Union[Element, List[Element]]:
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
 
-    if isinstance(layout_element, Element):
+    if isinstance(layout_element, Element) and source_format == "html":
         return layout_element
 
     # NOTE(alan): Won't the lines above ensure this never runs (PageBreak is a subclass of Element)?
@@ -127,10 +129,9 @@ def normalize_layout_element(
     # in order to add coordinates metadata to the element.
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
-    if layout_dict.get("prob"):
-        class_prob_metadata = ElementMetadata(
-            detection_class_prob=float(layout_dict.get("prob")),
-        )
+    prob = layout_dict.get("prob")
+    if prob and isinstance(prob, (int, str, float, numbers.Number)):
+        class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))  # type: ignore
     else:
         class_prob_metadata = ElementMetadata()
     if element_type == "List":
@@ -143,7 +144,7 @@ def normalize_layout_element(
             )
         else:
             return ListItem(
-                text=text,
+                text=text if text else "",
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=class_prob_metadata,
@@ -151,12 +152,17 @@ def normalize_layout_element(
 
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
         _element_class = TYPE_TO_TEXT_ELEMENT_MAP[element_type]
-        return _element_class(
+        _element_class = _element_class(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
         )
+        if element_type == "Headline":
+            _element_class.metadata.category_depth = 1
+        elif element_type == "Subheadline":
+            _element_class.metadata.category_depth = 2
+        return _element_class
     elif element_type == "Checked":
         return CheckBox(
             checked=True,
@@ -173,7 +179,7 @@ def normalize_layout_element(
         )
     else:
         return Text(
-            text=text,
+            text=text if text else "",
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
@@ -242,16 +248,16 @@ def set_hierarchy_by_indentation(
 
 
 def layout_list_to_list_items(
-    text: str,
-    coordinates: Tuple[Tuple[float, float], ...],
+    text: Optional[str],
+    coordinates: Optional[Tuple[Tuple[float, float], ...]],
     coordinate_system: Optional[CoordinateSystem],
     metadata=Optional[ElementMetadata],
 ) -> List[Element]:
     """Converts a list LayoutElement to a list of ListItem elements."""
-    split_items = ENUMERATED_BULLETS_RE.split(text)
+    split_items = ENUMERATED_BULLETS_RE.split(text) if text else []
     # NOTE(robinson) - this means there wasn't a match for the enumerated bullets
     if len(split_items) == 1:
-        split_items = UNICODE_BULLETS_RE.split(text)
+        split_items = UNICODE_BULLETS_RE.split(text) if text else []
 
     list_items: List[Element] = []
     for text_segment in split_items:
@@ -585,11 +591,13 @@ def document_to_element_list(
     include_page_breaks: bool = False,
     last_modification_date: Optional[str] = None,
     infer_list_items: bool = True,
+    source_format: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
     sort_mode = kwargs.get("sort_mode", SORT_MODE_XY_CUT)
+
     num_pages = len(document.pages)
     for i, page in enumerate(document.pages):
         page_elements: List[Element] = []
@@ -609,6 +617,7 @@ def document_to_element_list(
                 layout_element,
                 coordinate_system=coordinate_system,
                 infer_list_items=infer_list_items,
+                source_format=source_format if source_format else "html",
             )
 
             if isinstance(element, List):

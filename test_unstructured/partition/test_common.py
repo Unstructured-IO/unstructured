@@ -83,6 +83,27 @@ def test_normalize_layout_element_dict_caption():
     )
 
 
+@pytest.mark.parametrize(
+    ("element_type", "expected_type", "expected_depth"),
+    [
+        ("Title", Title, None),
+        ("Headline", Title, 1),
+        ("Subheadline", Title, 2),
+        ("Header", Header, None),
+    ],
+)
+def test_normalize_layout_element_headline(element_type, expected_type, expected_depth):
+    layout_element = {
+        "type": element_type,
+        "coordinates": [[1, 2], [3, 4], [5, 6], [7, 8]],
+        "text": "Some lovely text",
+    }
+    coordinate_system = PixelSpace(width=10, height=20)
+    element = common.normalize_layout_element(layout_element, coordinate_system=coordinate_system)
+    assert element.metadata.category_depth == expected_depth
+    assert isinstance(element, expected_type)
+
+
 def test_normalize_layout_element_dict_figure_caption():
     layout_element = {
         "type": "FigureCaption",
