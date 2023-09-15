@@ -21,9 +21,9 @@ jobs:
       - name: Check for __version__.py changes
         id: version-changes
         run: |
-          CHANGED_FILES=$(git --no-pager diff --name-only ${{ github.base_sha }} ${{ github.sha }})
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
           echo "CHANGED_FILES=$CHANGED_FILES"
-          if echo "$CHANGED_FILES" | grep -q '__version__.py'; then
+          if echo "$CHANGED_FILES" | grep '__version__.py'; then
             echo "Detected __version__.py changes. Proceeding..."
           else
             echo "No __version__.py changes detected. Skipping workflow..."
