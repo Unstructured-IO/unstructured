@@ -635,7 +635,7 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
     return elements
 
 
-@requires_dependencies("pytesseract")
+@requires_dependencies("unstructured_pytesseract")
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
@@ -648,20 +648,24 @@ def _partition_pdf_or_image_with_ocr(
 ):
     """Partitions an image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
-    import pytesseract
+    import unstructured_pytesseract
 
     ocr_languages = "+".join(languages)
 
     if is_image:
         if file is not None:
             image = PIL.Image.open(file)
-            text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
-            bboxes = pytesseract.image_to_boxes(image, config=f"-l '{ocr_languages}'")
+            text, bboxes = unstructured_pytesseract.run_and_get_multiple_output(
+                image,
+                extensions=["txt", "box"],
+                lang=ocr_languages,
+            )
         else:
             image = PIL.Image.open(filename)
-            text = pytesseract.image_to_string(filename, config=f"-l '{ocr_languages}'")
-            bboxes = pytesseract.image_to_boxes(
-                filename, config=f"-l '{ocr_languages}'"
+            text, bboxes = unstructured_pytesseract.run_and_get_multiple_output(
+                image,
+                extensions=["txt", "box"],
+                lang=ocr_languages,
             )
         elements = partition_text(
             text=text,
@@ -682,8 +686,11 @@ def _partition_pdf_or_image_with_ocr(
                 page_number=page_number,
                 last_modified=metadata_last_modified,
             )
-            _text = pytesseract.image_to_string(image, config=f"-l '{ocr_languages}'")
-            _bboxes = pytesseract.image_to_boxes(image, config=f"-l '{ocr_languages}'")
+            _text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
+                image,
+                extensions=["txt", "box"],
+                lang=ocr_languages,
+            )
             width, height = image.size
 
             _elements = partition_text(
