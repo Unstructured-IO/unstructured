@@ -8,18 +8,9 @@ OUTPUT_FOLDER_NAME=google-drive
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-function cleanup() {
-  echo "--- Running cleanup ---"
+source "$SCRIPT_DIR"/cleanup.sh
 
-  if [ -d "$OUTPUT_DIR" ]; then
-    echo "cleaning up tmp directory: $OUTPUT_DIR"
-    rm -rf "$OUTPUT_DIR"
-  fi
-
-  echo "--- Cleanup done ---"
-}
-
-trap cleanup EXIT
+trap 'cleanup "$OUTPUT_DIR"' EXIT
 
 if [ -z "$GCP_INGEST_SERVICE_KEY" ]; then
     echo "Skipping Google Drive ingest test because the GCP_INGEST_SERVICE_KEY env var is not set."

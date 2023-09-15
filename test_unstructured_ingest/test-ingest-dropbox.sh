@@ -8,18 +8,9 @@ OUTPUT_FOLDER_NAME=dropbox
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-function cleanup() {
-  echo "--- Running cleanup ---"
+source "$SCRIPT_DIR"/cleanup.sh
 
-  if [ -d "$OUTPUT_DIR" ]; then
-    echo "cleaning up tmp directory: $OUTPUT_DIR"
-    rm -rf "$OUTPUT_DIR"
-  fi
-
-  echo "--- Cleanup done ---"
-}
-
-trap cleanup EXIT
+trap 'cleanup "$OUTPUT_DIR"' EXIT
 
 if [ -z "$DROPBOX_APP_KEY" ] || [ -z "$DROPBOX_APP_SECRET" ] || [ -z "$DROPBOX_REFRESH_TOKEN" ]; then
    echo "Skipping Dropbox ingest test because one or more of these env vars is not set:"

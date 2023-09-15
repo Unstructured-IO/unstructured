@@ -11,18 +11,9 @@ OUTPUT_FOLDER_NAME=salesforce
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-function cleanup() {
-  echo "--- Running cleanup ---"
+source "$SCRIPT_DIR"/cleanup.sh
 
-  if [ -d "$OUTPUT_DIR" ]; then
-    echo "cleaning up tmp directory: $OUTPUT_DIR"
-    rm -rf "$OUTPUT_DIR"
-  fi
-
-  echo "--- Cleanup done ---"
-}
-
-trap cleanup EXIT
+trap 'cleanup "$OUTPUT_DIR"' EXIT
 
 if [ -z "$SALESFORCE_PRIVATE_KEY" ] && [ -z "$SALESFORCE_PRIVATE_KEY_PATH" ]; then
    echo "Skipping Salesforce ingest test because neither SALESFORCE_PRIVATE_KEY nor SALESFORCE_PRIVATE_KEY_PATH env vars are set."

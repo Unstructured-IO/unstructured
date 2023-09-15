@@ -7,18 +7,9 @@ cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=local
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
-function cleanup() {
-  echo "--- Running cleanup ---"
+source "$SCRIPT_DIR"/cleanup.sh
 
-  if [ -d "$OUTPUT_DIR" ]; then
-    echo "cleaning up tmp directory: $OUTPUT_DIR"
-    rm -rf "$OUTPUT_DIR"
-  fi
-
-  echo "--- Cleanup done ---"
-}
-
-trap cleanup EXIT
+trap 'cleanup "$OUTPUT_DIR"' EXIT
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
