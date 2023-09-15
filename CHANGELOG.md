@@ -32,6 +32,7 @@
   * support paddle with both cpu and gpu and assumed it is pre-installed (0.5.26)
   * fix a bug where `cells_to_html` doesn't handle cells spanning multiple rows properly (0.5.25)
   * remove `cv2` preprocessing step before OCR step in table transformer (0.5.24)
+* **DOCX partitioner refactored in preparation for enhancement.** Behavior should be unchanged except in multi-section documents containing different headers/footers for different sections. These will now emit all distinct headers and footers encountered instead of just those for the last section.
 
 ### Features
 
