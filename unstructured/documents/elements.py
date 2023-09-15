@@ -56,7 +56,9 @@ class CoordinatesMetadata:
 
     def __init__(self, points, system):
         # Both `points` and `system` must be present; one is not meaningful without the other.
-        if (points is None and system is not None) or (points is not None and system is None):
+        if (points is None and system is not None) or (
+            points is not None and system is None
+        ):
             raise ValueError(
                 "Coordinates points should not exist without coordinates system and vice versa.",
             )
@@ -76,7 +78,9 @@ class CoordinatesMetadata:
     def to_dict(self):
         return {
             "points": self.points,
-            "system": None if self.system is None else str(self.system.__class__.__name__),
+            "system": None
+            if self.system is None
+            else str(self.system.__class__.__name__),
             "layout_width": None if self.system is None else self.system.width,
             "layout_height": None if self.system is None else self.system.height,
         }
@@ -94,7 +98,11 @@ class CoordinatesMetadata:
             return tuple(subsequences)
 
         input_points = input_dict.get("points", None)
-        points = convert_to_tuple_of_tuples(input_points) if input_points is not None else None
+        points = (
+            convert_to_tuple_of_tuples(input_points)
+            if input_points is not None
+            else None
+        )
         width = input_dict.get("layout_width", None)
         height = input_dict.get("layout_height", None)
         system = None
@@ -136,6 +144,9 @@ class ElementMetadata:
     attached_to_filename: Optional[str] = None
     parent_id: Optional[Union[str, uuid.UUID, NoID, UUID]] = None
     category_depth: Optional[int] = None
+
+    # Languages in element. TODO(newelh) - More strongly type languages
+    languages: Optional[str] = None
 
     # Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None
@@ -182,7 +193,9 @@ class ElementMetadata:
             self.filename = filename
 
     def to_dict(self):
-        _dict = {key: value for key, value in self.__dict__.items() if value is not None}
+        _dict = {
+            key: value for key, value in self.__dict__.items() if value is not None
+        }
         if "regex_metadata" in _dict and not _dict["regex_metadata"]:
             _dict.pop("regex_metadata")
         if self.data_source:
