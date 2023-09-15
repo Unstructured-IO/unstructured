@@ -1,8 +1,16 @@
-## 0.10.15-dev16
+## 0.10.15-dev17
 
 ### Enhancements
 
-* **Adds `chipper` element types to mapping: `Headline`, `Subheadline` and `Abstract`.** Mapped respectevely to `Title` (with `category_depth=1`), `Title` (with `category_depth=2`), and `NarrativeText`.
+* **Suport for better element categories from the next-generation image-to-text model ("chipper").**. Previously, not all of the classifications from Chipper were being mapped to proper `unstructured` element categories so the consumer of the library would see many `UncategorizedText` elements. This fixes the issue, improving the granularity of the element categories outputs for better downstream processing and chunking. The mapping update is:
+  * "Threading": `NarrativeText`
+  * "Form": `NarrativeText`
+  * "Field-Name": `Title`
+  * "Value": `NarrativeText`
+  * "Link": `NarrativeText`
+  * "Headline": `Title` (with `category_depth=1`)
+  * "Subheadline": `Title` (with `category_depth=2`)
+  * "Abstract": `NarrativeText`
 * **Better ListItem grouping for PDF's (fast strategy).** The `partition_pdf` with `fast` strategy previously broke down some numbered list item lines as separate elements. This enhancement leverages the x,y coordinates and bbox sizes to help decide whether the following chunk of text is a continuation of the immediate previous detected ListItem element or not, and not detect it as its own non-ListItem element.
 * **Fall back to text-based classification for uncategorized Layout elements for Images and PDF's**. Improves element classification by running existing text-based rules on previously UncategorizedText elements
 * **Adds table partitioning for Partitioning for many doc types including: .html, .epub., .md, .rst, .odt, and .msg.** At the core of this change is the .html partition functionality, which is leveraged by the other effected doc types. This impacts many scenarios where `Table` Elements are now propery extracted.
@@ -12,9 +20,10 @@
 * **Adds `xlsx` and `xls` filetype extensions to the `skip_infer_table_types` default list in `partition`.** By adding these file types to the input parameter these files should not go through table extraction. Users can still specify if they would like to extract tables from these filetypes, but will have to set the `skip_infer_table_types` to exclude the desired filetype extension. This avoids mis-representing complex spreadsheets where there may be multiple sub-tables and other content.
 * **Better debug output related to sentence counting internals**. Clarify message when sentence is not counted toward sentence count because there aren't enough words, relevant for developers focused on `unstructured`s NLP internals.
 * **Faster ocr_only speed for partitioning PDF and images.** Use `unstructured_pytesseract.run_and_get_multiple_output` function to reduce the number of calls to `tesseract` by half when partitioning pdf or image with `tesseract`
-* **Adds data source properties to connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive.
+* **Adds data source properties to fsspec connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive.
+* **Add delta table destination connector** New delta table destination connector added to ingest CLI.
+* **Rename to Source and Destination Connectors in the Documentation.** Maintain naming consistency between Connectors codebase and documentation with the first addition to a destination connector.
 * **Non-HTML text files now return unstructured-elements as opposed to HTML-elements.** Previously the text based files that went through `partition_html` would return HTML-elements but now we preserve the format from the input using `source_format` argument in the partition call.
-
 
 ### Features
 
@@ -26,6 +35,9 @@
 
 ### Fixes
 
+* **`add_pytesseract_bboxes_to_elements` no longer returns `nan` values**. The function logic is now broken into new methods
+  `_get_element_box` and `convert_multiple_coordinates_to_new_system`
+* **Selecting a different model wasn't being respected when calling `partition_image`.** Problem: `partition_pdf` allows for passing a `model_name` parameter. Given the similarity between the image and PDF pipelines, the expected behavior is that `partition_image` should support the same parameter, but `partition_image` was unintentionally not passing along its `kwargs`. This was corrected by adding the kwargs to the downstream call.
 * **Fixes a chunking issue via dropping the field "coordinates".** Problem: chunk_by_title function was chunking each element to its own individual chunk while it needed to group elements into a fewer number of chunks. We've discovered that this happens due to a metadata matching logic in chunk_by_title function, and discovered that elements with different metadata can't be put into the same chunk. At the same time, any element with "coordinates" essentially had different metadata than other elements, due each element locating in different places and having different coordinates. Fix: That is why we have included the key "coordinates" inside a list of excluded metadata keys, while doing this "metadata_matches" comparision. Importance: This change is crucial to be able to chunk by title for documents which include "coordinates" metadata in their elements.
 
 ## 0.10.14
