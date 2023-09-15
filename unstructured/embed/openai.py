@@ -33,7 +33,7 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
         elements_with_embeddings = self._add_embeddings_to_elements(elements, embeddings)
         return elements_with_embeddings
 
-    def _add_embeddings_to_elements(self, elements: List[Element], embeddings) -> List[Element]:
+    def _add_embeddings_to_elements(self, elements, embeddings) -> List[Element]:
         assert len(elements) == len(embeddings)
         for i in range(len(elements)):
             elements[i].embeddings = embeddings[i]
