@@ -12,7 +12,12 @@
 * **Adds `xlsx` and `xls` filetype extensions to the `skip_infer_table_types` default list in `partition`.** By adding these file types to the input parameter these files should not go through table extraction. Users can still specify if they would like to extract tables from these filetypes, but will have to set the `skip_infer_table_types` to exclude the desired filetype extension. This avoids mis-representing complex spreadsheets where there may be multiple sub-tables and other content.
 * **Better debug output related to sentence counting internals**. Clarify message when sentence is not counted toward sentence count because there aren't enough words, relevant for developers focused on `unstructured`s NLP internals.
 * **Faster ocr_only speed for partitioning PDF and images.** Use `unstructured_pytesseract.run_and_get_multiple_output` function to reduce the number of calls to `tesseract` by half when partitioning pdf or image with `tesseract`
-
+* **Bump unstructured-inference** to 0.5.28
+  * add env variable `ENTIRE_PAGE_OCR` to specify using paddle or tesseract on entire page OCR
+  * table structure detection now pads the input image by 25 pixels in all 4 directions to improve its recall (0.5.27)
+  * support paddle with both cpu and gpu and assumed it is pre-installed (0.5.26)
+  * fix a bug where `cells_to_html` doesn't handle cells spanning multiple rows properly (0.5.25)
+  * remove `cv2` preprocessing step before OCR step in table transformer (0.5.24)
 ### Features
 
 * **Adds a naive hierarchy for elements via a `parent_id` on the element's metadata**
