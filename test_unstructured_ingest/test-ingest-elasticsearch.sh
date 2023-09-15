@@ -9,12 +9,28 @@ OUTPUT_FOLDER_NAME=elasticsearch
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
+function cleanup() {
+  echo "--- Running cleanup ---"
+
+  # Kill the container so the script can be repeatedly run using the same ports
+  if docker ps --filter "name=es-test"; then
+    echo "Stopping Elasticsearch Docker container"
+    docker stop es-test
+  fi
+
+  if [ -d "$OUTPUT_DIR" ]; then
+    echo "cleaning up tmp directory: $OUTPUT_DIR"
+    rm -rf "$OUTPUT_DIR"
+  fi
+
+  echo "--- Cleanup done ---"
+}
+
+trap cleanup EXIT
+
 # shellcheck source=/dev/null
 sh scripts/elasticsearch-test-helpers/create-and-check-es.sh
 wait
-
-# Kill the container so the script can be repeatedly run using the same ports
-trap 'echo "Stopping Elasticsearch Docker container"; docker stop es-test' EXIT
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     elasticsearch \

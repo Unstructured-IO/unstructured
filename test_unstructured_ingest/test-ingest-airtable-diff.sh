@@ -11,6 +11,19 @@ OUTPUT_FOLDER_NAME=airtable-diff
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
+function cleanup() {
+  echo "--- Running cleanup ---"
+
+  if [ -d "$OUTPUT_DIR" ]; then
+    echo "cleaning up tmp directory: $OUTPUT_DIR"
+    rm -rf "$OUTPUT_DIR"
+  fi
+
+  echo "--- Cleanup done ---"
+}
+
+trap cleanup EXIT
+
 VARIED_DATA_BASE_ID="app5YQxSfp220fWtm"
 VARIED_DATA_BASE_ID_2="appJ43QmP8I17zu88"
 

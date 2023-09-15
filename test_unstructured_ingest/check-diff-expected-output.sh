@@ -34,7 +34,6 @@ function cleanup() {
   else
     echo "skipping tmp directory cleanup"
   fi
-
 }
 
 trap cleanup EXIT

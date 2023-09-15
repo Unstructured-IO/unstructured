@@ -9,6 +9,19 @@ OUTPUT_FOLDER_NAME=pdf-fast-reprocess
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 INPUT_PATH=$SCRIPT_DIR/download
 
+function cleanup() {
+  echo "--- Running cleanup ---"
+
+  if [ -d "$OUTPUT_DIR" ]; then
+    echo "cleaning up tmp directory: $OUTPUT_DIR"
+    rm -rf "$OUTPUT_DIR"
+  fi
+
+  echo "--- Cleanup done ---"
+}
+
+trap cleanup EXIT
+
 echo "REPROCESS INPUT PATH"
 ls "$INPUT_PATH"
 

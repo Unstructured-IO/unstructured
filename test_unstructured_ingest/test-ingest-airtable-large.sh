@@ -12,6 +12,19 @@ OUTPUT_FOLDER_NAME=airtable-large
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
+function cleanup() {
+  echo "--- Running cleanup ---"
+
+  if [ -d "$OUTPUT_DIR" ]; then
+    echo "cleaning up tmp directory: $OUTPUT_DIR"
+    rm -rf "$OUTPUT_DIR"
+  fi
+
+  echo "--- Cleanup done ---"
+}
+
+trap cleanup EXIT
+
 if [ -z "$AIRTABLE_PERSONAL_ACCESS_TOKEN" ]; then
    echo "Skipping Airtable ingest test because the AIRTABLE_PERSONAL_ACCESS_TOKEN is not set."
    exit 0

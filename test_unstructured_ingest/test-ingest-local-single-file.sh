@@ -7,6 +7,19 @@ cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=local-single-file
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
+function cleanup() {
+  echo "--- Running cleanup ---"
+
+  if [ -d "$OUTPUT_DIR" ]; then
+    echo "cleaning up tmp directory: $OUTPUT_DIR"
+    rm -rf "$OUTPUT_DIR"
+  fi
+
+  echo "--- Cleanup done ---"
+}
+
+trap cleanup EXIT
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
