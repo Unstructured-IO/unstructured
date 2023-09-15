@@ -1,0 +1,55 @@
+name: Release Version Alert
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout codes
+        uses: actions/checkout@v4
+
+      - name: Check for __version__.py changes
+        id: version-changes
+        run: |
+          git fetch
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo "CHANGED_FILES=$CHANGED_FILES"
+          if echo "$CHANGED_FILES" | grep '__version__.py'; then
+            echo "Detected __version__.py changes. Proceeding..."
+          else
+            echo "No __version__.py changes detected. Skipping workflow..."
+            echo "SKIP_STEPS=true" >> $GITHUB_ENV  # Set an environment variable to indicate skipping steps
+          fi
+
+      - name: Get PR information
+        id: pr-info
+        run: |
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+
+      - name: Check versions
+        id: check-versions
+        if: env.SKIP_STEPS != 'true'
+        run: |
+          CHECK_NEW_VERSION_RESPONSE=$(bash scripts/check-new-release-version.sh)
+          if [[ "$CHECK_NEW_VERSION_RESPONSE" == "New release version"* ]]; then
+            echo "Sending Slack notification..."
+            MESSAGE="$CHECK_NEW_VERSION_RESPONSE :rocket: Coming soon in PR: https://github.com/$GITHUB_REPOSITORY/pull/$PR_NUMBER "
+            echo "SLACK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
+          else
+            echo "No new non-dev version found. Skipping Slack notification."
+            echo "SKIP_STEPS=true" >> $GITHUB_ENV  # Set an environment variable to indicate skipping steps
+          fi 
+
+      - name: Slack Notification
+        if: env.SKIP_STEPS != 'true'
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: 'C05S1QMKL5D'
+          slack-message: ${{ env.SLACK_MESSAGE }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
