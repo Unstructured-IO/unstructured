@@ -12,12 +12,6 @@ jobs:
       - name: Checkout codes
         uses: actions/checkout@v4
 
-      - name: Get PR information
-        id: pr-info
-        run: |
-          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
-
       - name: Check for __version__.py changes
         id: version-changes
         run: |
@@ -30,6 +24,12 @@ jobs:
             echo "No __version__.py changes detected. Skipping workflow..."
             echo "SKIP_STEPS=true" >> $GITHUB_ENV  # Set an environment variable to indicate skipping steps
           fi
+
+      - name: Get PR information
+        id: pr-info
+        run: |
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
 
       - name: Check versions
         id: check-versions
