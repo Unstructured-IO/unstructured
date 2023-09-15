@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-      - uses: actions/checkout@v4
+      - name: Checkout codes
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
       - run: git checkout HEAD^
