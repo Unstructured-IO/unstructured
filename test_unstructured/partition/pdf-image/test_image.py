@@ -444,3 +444,14 @@ def test_add_chunking_strategy_on_partition_image(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_image_uses_model_name():
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_or_image_local",
+    ) as mockpartition:
+        image.partition_image("example-docs/layout-parser-paper-fast.jpg", model_name="test")
+        print(mockpartition.call_args)
+        assert "model_name" in mockpartition.call_args.kwargs
+        assert mockpartition.call_args.kwargs["model_name"]
