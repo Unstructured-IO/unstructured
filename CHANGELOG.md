@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-* **Adds `chipper` element types to mapping:**
+* **Suport for better element categories from the next-generation image-to-text model ("chipper").**. Previously, not all of the classifications from Chipper were being mapped to proper `unstructured` element categories so the consumer of the library would see many `UncategorizedText` elements. This fixes the issue, improving the granularity of the element categories outputs for better downstream processing and chunking. The mapping update is:
   * "Threading": `NarrativeText`
   * "Form": `NarrativeText`
   * "Field-Name": `Title`
