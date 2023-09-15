@@ -45,6 +45,10 @@ install-nltk-models:
 .PHONY: install-test
 install-test:
 	python3 -m pip install -r requirements/test.txt
+	# NOTE(yao) - CI seem to always install tesseract to test so it would make sense to also require
+	# pytesseract installation into the virtual env for testing
+	python3 -m pip install unstructured.pytesseract -c requirements/constraints.in
+	python3 -m pip install argilla -c requirements/constraints.in
 	# NOTE(robinson) - Installing weaviate-client separately here because the requests
 	# version conflicts with label_studio_sdk
 	python3 -m pip install weaviate-client -c requirements/constraints.in

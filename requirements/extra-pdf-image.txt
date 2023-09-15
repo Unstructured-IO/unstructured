@@ -28,7 +28,7 @@ cycler==0.11.0
     # via matplotlib
 effdet==0.4.1
     # via layoutparser
-filelock==3.12.3
+filelock==3.12.4
     # via
     #   huggingface-hub
     #   torch
@@ -101,6 +101,7 @@ packaging==23.1
     #   onnxruntime
     #   pytesseract
     #   transformers
+    #   unstructured-pytesseract
 pandas==2.0.3
     # via layoutparser
 pdf2image==1.16.3
@@ -121,6 +122,7 @@ pillow==10.0.0
     #   pdfplumber
     #   pytesseract
     #   torchvision
+    #   unstructured-pytesseract
 portalocker==2.7.0
     # via iopath
 protobuf==4.23.4
@@ -206,7 +208,6 @@ transformers==4.33.1
 typing-extensions==4.7.1
     # via
     #   -c requirements/base.txt
-    #   filelock
     #   huggingface-hub
     #   iopath
     #   onnx
@@ -214,6 +215,10 @@ typing-extensions==4.7.1
 tzdata==2023.3
     # via pandas
 unstructured-inference==0.5.23
+    # via
+    #   -c requirements/constraints.in
+    #   -r requirements/extra-pdf-image.in
+unstructured-pytesseract==0.3.12
     # via
     #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in

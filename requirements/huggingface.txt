@@ -17,7 +17,7 @@ click==8.1.7
     # via
     #   -c requirements/base.txt
     #   sacremoses
-filelock==3.12.3
+filelock==3.12.4
     # via
     #   huggingface-hub
     #   torch
@@ -97,7 +97,6 @@ transformers==4.33.1
 typing-extensions==4.7.1
     # via
     #   -c requirements/base.txt
-    #   filelock
     #   huggingface-hub
     #   torch
 urllib3==1.26.16
