@@ -2,7 +2,15 @@
 
 ### Enhancements
 
-* **Adds `chipper` element types to mapping: `Headline`, `Subheadline` and `Abstract`.** Mapped respectevely to `Title` (with `category_depth=1`), `Title` (with `category_depth=2`), and `NarrativeText`.
+* **Adds `chipper` element types to mapping:**
+  * "Threading": `NarrativeText`
+  * "Form": `NarrativeText`
+  * "Field-Name": `Title`
+  * "Value": `NarrativeText`
+  * "Link": `NarrativeText`
+  * "Headline": `Title` (with `category_depth=1`)
+  * "Subheadline": `Title` (with `category_depth=2`)
+  * "Abstract": `NarrativeText`
 * **Better ListItem grouping for PDF's (fast strategy).** The `partition_pdf` with `fast` strategy previously broke down some numbered list item lines as separate elements. This enhancement leverages the x,y coordinates and bbox sizes to help decide whether the following chunk of text is a continuation of the immediate previous detected ListItem element or not, and not detect it as its own non-ListItem element.
 * **Fall back to text-based classification for uncategorized Layout elements for Images and PDF's**. Improves element classification by running existing text-based rules on previously UncategorizedText elements
 * **Adds table partitioning for Partitioning for many doc types including: .html, .epub., .md, .rst, .odt, and .msg.** At the core of this change is the .html partition functionality, which is leveraged by the other effected doc types. This impacts many scenarios where `Table` Elements are now propery extracted.
