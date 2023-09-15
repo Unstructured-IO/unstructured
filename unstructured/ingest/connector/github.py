@@ -59,7 +59,7 @@ class GitHubIngestDoc(GitIngestDoc):
         return None
 
     @requires_dependencies(["github"], extras="github")
-    def _fetch_content(self, is_content_file=False):
+    def _fetch_file(self):
         from github.GithubException import UnknownObjectException
 
         try:
@@ -68,9 +68,9 @@ class GitHubIngestDoc(GitIngestDoc):
             logger.error(f"File doesn't exists {self.connector_config.url}/{self.path}")
             return None
 
-        if is_content_file:
-            return content_file
+        return content_file
 
+    def _fetch_content(self, content_file):
         contents = b""
         if (
             not content_file.content  # type: ignore
@@ -90,7 +90,7 @@ class GitHubIngestDoc(GitIngestDoc):
         return contents
 
     def update_source_metadata(self, **kwargs):
-        content_file = self._fetch_content(True)
+        content_file = kwargs.get("content_file", self._fetch_file())
         if content_file is None:
             self.source_metadata = SourceMetadata(
                 exists=False,
@@ -109,8 +109,9 @@ class GitHubIngestDoc(GitIngestDoc):
         )
 
     def _fetch_and_write(self) -> None:
-        contents = self._fetch_content()
-        self.update_source_metadata()
+        content_file = self._fetch_file()
+        self.update_source_metadata(content_file=content_file)
+        contents = self._fetch_content(content_file)
         if contents is None:
             raise ValueError(
                 f"Failed to retrieve file from repo "
