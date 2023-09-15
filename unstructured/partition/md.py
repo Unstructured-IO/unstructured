@@ -93,6 +93,7 @@ def partition_md(
         include_page_breaks=include_page_breaks,
         include_metadata=include_metadata,
         parser=parser,
+        source_format="md",
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified or last_modification_date,
     )
