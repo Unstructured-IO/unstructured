@@ -21,6 +21,7 @@ jobs:
       - name: Check for __version__.py changes
         id: version-changes
         run: |
+          git fetch --all
           CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
           echo "CHANGED_FILES=$CHANGED_FILES"
           if echo "$CHANGED_FILES" | grep '__version__.py'; then
