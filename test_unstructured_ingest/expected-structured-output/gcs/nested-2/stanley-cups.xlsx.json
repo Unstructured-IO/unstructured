@@ -3,7 +3,16 @@
     "type": "Table",
     "element_id": "3e65b02bec20bb1056bd23a3b4ecd0f6",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
+        "version": "COul9MuE0/8CEAE=",
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx"
+        },
+        "date_created": "2023-06-20T23:48:24.973000+00:00",
+        "date_modified": "2023-06-20T23:48:24.973000+00:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "page_number": 1,
       "page_name": "Stanley Cups",
@@ -15,7 +24,16 @@
     "type": "Table",
     "element_id": "0699dddf33814117e04654068f5182f6",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
+        "version": "COul9MuE0/8CEAE=",
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx"
+        },
+        "date_created": "2023-06-20T23:48:24.973000+00:00",
+        "date_modified": "2023-06-20T23:48:24.973000+00:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "page_number": 2,
       "page_name": "Stanley Cups Since 67",
