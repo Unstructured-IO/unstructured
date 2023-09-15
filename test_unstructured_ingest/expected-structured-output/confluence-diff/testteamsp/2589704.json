@@ -7,6 +7,7 @@
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/2589704",
         "version": 3,
         "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "2589704"
         },
         "date_created": "2023-07-13T14:28:06.310000",
