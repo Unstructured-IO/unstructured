@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Checkout codes
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Get PR information
         id: pr-info
@@ -23,7 +21,7 @@ jobs:
       - name: Check for __version__.py changes
         id: version-changes
         run: |
-          CHANGED_FILES=$(git diff --name-only  HEAD^ HEAD)
+          CHANGED_FILES=$(git diff --name-only HEAD^1 HEAD)
           echo "CHANGED_FILES=$CHANGED_FILES"
           if echo "$CHANGED_FILES" | grep '__version__.py'; then
             echo "Detected __version__.py changes. Proceeding..."
