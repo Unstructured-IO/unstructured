@@ -1,5 +1,6 @@
 Delta Table
-==========
+===========
+
 Connect delta tables to your preprocessing pipeline, and batch process all your records using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
 
 First you'll need to install the delta table dependencies as shown here.
