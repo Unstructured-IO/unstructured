@@ -1,4 +1,4 @@
-## 0.10.15-dev14
+## 0.10.15-dev15
 
 ### Enhancements
 
@@ -18,10 +18,18 @@
 * **Adds a naive hierarchy for elements via a `parent_id` on the element's metadata**
   * Users will now have more metadata for implementing vectordb/LLM chunking strategies. For example, text elements could be queried by their preceding title element.
   * Title elements created from HTML headings will properly nest
+* **Adds the embedding module to be able to embed Elements**
+  * Problem: Many NLP applications require the ability to represent parts of documents in a semantic way. Unstructured does not yet have text embedding ability included within the core library
+  * Feature: This embedding module is able to track embeddings related data with a class, is able to embed a list of elements, and is able to embed query strings.
+  * Importance: Ability to embed documents, or parts of documents will enable users to make use of these semantic representations in different NLP applications, such as search, retrieval, and retrieval augmented generation.
+
 
 ### Fixes
 
-* **Fixes a chunking issue via dropping the field "coordinates".** Problem: chunk_by_title function was chunking each element to its own individual chunk while it needed to group elements into a fewer number of chunks. We've discovered that this happens due to a metadata matching logic in chunk_by_title function, and discovered that elements with different metadata can't be put into the same chunk. At the same time, any element with "coordinates" essentially had different metadata than other elements, due each element locating in different places and having different coordinates. Fix: That is why we have included the key "coordinates" inside a list of excluded metadata keys, while doing this "metadata_matches" comparision. Importance: This change is crucial to be able to chunk by title for documents which include "coordinates" metadata in their elements.
+* **Fixes a chunking issue via dropping the field "coordinates".**
+  * Problem: chunk_by_title function was chunking each element to its own individual chunk while it needed to group elements into a fewer number of chunks. We've discovered that this happens due to a metadata matching logic in chunk_by_title function, and discovered that elements with different metadata can't be put into the same chunk. At the same time, any element with "coordinates" essentially had different metadata than other elements, due each element locating in different places and having different coordinates.
+  * Fix: That is why we have included the key "coordinates" inside a list of excluded metadata keys, while doing this "metadata_matches" comparision.
+  * Importance: This change is crucial to be able to chunk by title for documents which include "coordinates" metadata in their elements.
 
 ## 0.10.14
 
