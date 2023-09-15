@@ -80,7 +80,7 @@ filelock==3.12.4
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
-identify==2.5.28
+identify==2.5.29
     # via pre-commit
 idna==3.4
     # via
