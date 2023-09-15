@@ -20,7 +20,7 @@
   * Title elements created from HTML headings will properly nest
 * **Adds the embedding module to be able to embed Elements**
   * Problem: Many NLP applications require the ability to represent parts of documents in a semantic way. Unstructured does not yet have text embedding ability included within the core library
-  * Feature: This embedding module is able to track embeddings related data with a class, is able to embed a list of elements, and is able to embed query strings.
+  * Feature: This embedding module is able to track embeddings related data with a class, embed a list of elements, and return an updated list of Elements with the *embeddings* property. The module is also able to embed query strings.
   * Importance: Ability to embed documents, or parts of documents will enable users to make use of these semantic representations in different NLP applications, such as search, retrieval, and retrieval augmented generation.
 
 
