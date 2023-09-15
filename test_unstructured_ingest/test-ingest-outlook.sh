@@ -16,7 +16,7 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
     outlook \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.detection_class_prob \
+    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \
