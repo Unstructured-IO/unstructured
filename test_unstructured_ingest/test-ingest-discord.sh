@@ -15,7 +15,7 @@ fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     discord \
-    --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob \
+    --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --download-dir "$DOWNLOAD_DIR" \
     --preserve-downloads \
     --reprocess \
