@@ -23,7 +23,7 @@ azure-datalake-store==0.0.53
     # via adlfs
 azure-identity==1.14.0
     # via adlfs
-azure-storage-blob==12.17.0
+azure-storage-blob==12.18.1
     # via adlfs
 certifi==2023.7.22
     # via
@@ -60,7 +60,7 @@ idna==3.4
     #   yarl
 isodate==0.6.1
     # via azure-storage-blob
-msal==1.23.0
+msal==1.24.0
     # via
     #   azure-datalake-store
     #   azure-identity

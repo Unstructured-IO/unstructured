@@ -71,6 +71,15 @@ class BaseConnectorConfig(ABC):
 
 
 @dataclass
+class SourceMetadata(DataClassJsonMixin, ABC):
+    date_created: t.Optional[str] = None
+    date_modified: t.Optional[str] = None
+    version: t.Optional[str] = None
+    source_url: t.Optional[str] = None
+    exists: t.Optional[bool] = None
+
+
+@dataclass
 class BaseIngestDoc(DataClassJsonMixin, ABC):
     """An "ingest document" is specific to a connector, and provides
     methods to fetch a single raw document, store it locally for processing, any cleanup
@@ -83,6 +92,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     read_config: ReadConfig
     partition_config: PartitionConfig
     connector_config: BaseConnectorConfig
+    source_metadata: t.Optional[SourceMetadata] = field(init=False, default=None)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -91,23 +101,29 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     @property
     def date_created(self) -> t.Optional[str]:
         """The date the document was created on the source system."""
-        return None
+        if self.source_metadata is None:
+            self.update_source_metadata()
+        return self.source_metadata.date_created  # type: ignore
 
     @property
     def date_modified(self) -> t.Optional[str]:
         """The date the document was last modified on the source system."""
-        return None
+        if self.source_metadata is None:
+            self.update_source_metadata()
+        return self.source_metadata.date_modified  # type: ignore
 
     @property
     def date_processed(self) -> t.Optional[str]:
         """The date the document was last processed by Unstructured.
         self._date_processed is assigned internally in self.partition_file()"""
-        return self._date_processed
+        return self._date_processed  # type: ignore
 
     @property
     def exists(self) -> t.Optional[bool]:
         """Whether the document exists on the remote source."""
-        return None
+        if self.source_metadata is None:
+            self.update_source_metadata()
+        return self.source_metadata.exists  # type: ignore
 
     @property
     @abstractmethod
@@ -128,14 +144,18 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     @property
     def source_url(self) -> t.Optional[str]:
         """The url of the source document."""
-        return None
+        if self.source_metadata is None:
+            self.update_source_metadata()
+        return self.source_metadata.source_url  # type: ignore
 
     @property
     def version(self) -> t.Optional[str]:
         """The version of the source document, this could be the last modified date, an
         explicit version number, or anything else that can be used to uniquely identify
         the version of the document."""
-        return None
+        if self.source_metadata is None:
+            self.update_source_metadata()
+        return self.source_metadata.version  # type: ignore
 
     @abstractmethod
     def cleanup_file(self):
@@ -159,6 +179,11 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
             return func(self, *args, **kwargs)
 
         return wrapper
+
+    # TODO: set as @abstractmethod and pass or raise NotImplementedError
+    def update_source_metadata(self, **kwargs) -> None:
+        """Sets the SourceMetadata and the  properties for the doc"""
+        self.source_metadata = SourceMetadata()
 
     # NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
     # in addition to or instead of get_file()
