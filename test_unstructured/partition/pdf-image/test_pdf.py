@@ -804,6 +804,32 @@ def test_partition_pdf_with_ocr_has_coordinates_from_file(
     )
 
 
+@pytest.mark.parametrize(
+    ("filename"),
+    [
+        ("example-docs/multi-column-2p.pdf"),
+        ("example-docs/layout-parser-paper-fast.pdf"),
+        ("example-docs/list-item-example.pdf"),
+    ],
+)
+def test_partition_pdf_with_ocr_coordinates_are_not_nan_from_file(
+    filename,
+):
+    import math
+
+    with open(filename, "rb") as f:
+        elements = pdf.partition_pdf(
+            file=f,
+            strategy="ocr_only",
+        )
+    for element in elements:
+        if element.metadata.coordinates:
+            for point in element.metadata.coordinates.points:
+                if point[0] and point[1]:
+                    assert point[0] is not math.nan
+                    assert point[1] is not math.nan
+
+
 def test_add_chunking_strategy_on_partition_pdf(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
@@ -851,3 +877,19 @@ def test_combine_numbered_list(filename):
             break
     assert len(elements) < 28
     assert first_list_element.text.endswith("(Section 3)")
+
+
+def test_partition_pdf_uses_model_name():
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_or_image_local",
+    ) as mockpartition:
+        pdf.partition_pdf(
+            "example-docs/layout-parser-paper-fast.pdf",
+            model_name="test",
+            strategy="hi_res",
+        )
+
+        mockpartition.assert_called_once()
+        assert "model_name" in mockpartition.call_args.kwargs
+        assert mockpartition.call_args.kwargs["model_name"]
