@@ -2,6 +2,7 @@
 
 ### Enhancements
 
+=======
 * **Better ListItem grouping for PDF's (fast strategy).** The `partition_pdf` with `fast` strategy previously broke down some numbered list item lines as separate elements. This enhancement leverages the x,y coordinates and bbox sizes to help decide whether the following chunk of text is a continuation of the immediate previous detected ListItem element or not, and not detect it as its own non-ListItem element.
 * **Fall back to text-based classification for uncategorized Layout elements for Images and PDF's**. Improves element classification by running existing text-based rules on previously UncategorizedText elements
 * **Adds table partitioning for Partitioning for many doc types including: .html, .epub., .md, .rst, .odt, and .msg.** At the core of this change is the .html partition functionality, which is leveraged by the other effected doc types. This impacts many scenarios where `Table` Elements are now propery extracted.
@@ -10,6 +11,7 @@
 * **Removes `UNSTRUCTURED_LANGUAGE` env var usage and replaces `language` with `languages` as an input parameter to unstructured-partition-text_type functions.** The previous parameter/input setup was not user-friendly or scalable to the variety of elements being processed. By refactoring the inputted language information into a list of standard language codes, we can support future applications of the element language such as detection, metadata, and multi-language elements. Now, to skip English specific checks, set the `languages` parameter to any non-English language(s).
 * **Adds `xlsx` and `xls` filetype extensions to the `skip_infer_table_types` default list in `partition`.** By adding these file types to the input parameter these files should not go through table extraction. Users can still specify if they would like to extract tables from these filetypes, but will have to set the `skip_infer_table_types` to exclude the desired filetype extension. This avoids mis-representing complex spreadsheets where there may be multiple sub-tables and other content.
 * **Better debug output related to sentence counting internals**. Clarify message when sentence is not counted toward sentence count because there aren't enough words, relevant for developers focused on `unstructured`s NLP internals.
+* **Faster ocr_only speed for partitioning PDF and images.** Use `unstructured_pytesseract.run_and_get_multiple_output` function to reduce the number of calls to `tesseract` by half when partitioning pdf or image with `tesseract`
 
 ### Features
 
