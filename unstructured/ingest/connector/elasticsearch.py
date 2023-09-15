@@ -120,8 +120,6 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         except NotFoundError:
             logger.error("Couldn't find document with ID: %s", self.document_meta.document_id)
             return None
-        except Exception:
-            raise
         return document
 
     def update_source_metadata(self, **kwargs):
