@@ -49,7 +49,7 @@ jobs:
         if: env.SKIP_STEPS != 'true'
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: 'C05RVKRFCCF'
+          channel-id: 'C05S1QMKL5D'
           slack-message: ${{ env.SLACK_MESSAGE }}
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
