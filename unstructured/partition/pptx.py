@@ -115,6 +115,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         self._include_slide_notes = include_slide_notes
         self._metadata_filename = metadata_filename
         self._metadata_last_modified = metadata_last_modified
+        self._page_counter = 0
 
     @classmethod
     def iter_presentation_elements(
@@ -139,8 +140,10 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         filename = self._file if isinstance(self._file, str) else None
 
         metadata = ElementMetadata(filename=self._metadata_filename or filename)
-        num_slides = len(self._presentation.slides)
+
         for i, slide in enumerate(self._presentation.slides):
+            yield from self._increment_page_number()
+
             metadata = ElementMetadata.from_dict(metadata.to_dict())
             metadata.last_modified = self._last_modified
             metadata.page_number = i + 1
@@ -189,8 +192,15 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                     else:
                         yield Text(text=text, metadata=metadata)
 
-            if self._include_page_breaks and i < num_slides - 1:
-                yield PageBreak(text="")
+    def _increment_page_number(self) -> Iterator[PageBreak]:
+        """Increment page-number by 1 and generate a PageBreak element if enabled."""
+        self._page_counter += 1
+        # -- no page-break before first page --
+        if self._page_counter < 2:
+            return
+        # -- only emit page-breaks when enabled --
+        if self._include_page_breaks:
+            yield PageBreak("")
 
     @lazyproperty
     def _last_modified(self) -> Optional[str]:
@@ -210,6 +220,11 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         # -- `with open(abc.pptx, "rb") as file:`, but I can't see folks doing that much when they
         # -- can just send us "abc.pptx" instead.
         return get_last_modified_date_from_file(file)
+
+    @property
+    def _page_number(self) -> Optional[int]:
+        """The current page (slide) number."""
+        return self._page_counter
 
     @lazyproperty
     def _presentation(self) -> Presentation:
