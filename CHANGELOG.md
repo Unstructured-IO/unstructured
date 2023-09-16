@@ -1,5 +1,6 @@
 ## 0.10.15-dev15
 
+
 ### Enhancements
 
 * **Suport for better element categories from the next-generation image-to-text model ("chipper").**. Previously, not all of the classifications from Chipper were being mapped to proper `unstructured` element categories so the consumer of the library would see many `UncategorizedText` elements. This fixes the issue, improving the granularity of the element categories outputs for better downstream processing and chunking. The mapping update is:
@@ -24,6 +25,7 @@
 * **Add delta table destination connector** New delta table destination connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Delta Table.
 * **Rename to Source and Destination Connectors in the Documentation.** Maintain naming consistency between Connectors codebase and documentation with the first addition to a destination connector.
 * **Non-HTML text files now return unstructured-elements as opposed to HTML-elements.** Previously the text based files that went through `partition_html` would return HTML-elements but now we preserve the format from the input using `source_format` argument in the partition call.
+* **Adds `PaddleOCR` as an optional alternative to `Tesseract`** for OCR in processing of PDF or Image files, it is installable via the `makefile` command `install-paddleocr`. For experimental purposes only.
 
 ### Features
 
@@ -47,7 +49,7 @@
 * Update all connectors to use new downstream architecture
   * New click type added to parse comma-delimited string inputs
   * Some CLI options renamed
- 
+
 ### Features
 
 ### Fixes
@@ -65,6 +67,7 @@
 
 * Add Jira Connector to be able to pull issues from a Jira organization
 * Add `clean_ligatures` function to expand ligatures in text
+
 
 ### Fixes
 
