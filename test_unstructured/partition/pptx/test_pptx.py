@@ -34,6 +34,9 @@ EXPECTED_PPTX_OUTPUT = [
 ]
 
 
+# == DescribePptxPartitionerSourceFileBehaviors ==================================================
+
+
 def test_partition_pptx_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
     elements = partition_pptx(filename=filename)
@@ -92,6 +95,9 @@ def test_partition_pptx_raises_with_both_specified():
 def test_partition_pptx_raises_with_neither():
     with pytest.raises(ValueError):
         partition_pptx()
+
+
+# == DescribePptxPartitionerPageBreakBehaviors ===================================================
 
 
 def test_partition_pptx_adds_page_breaks(tmp_path: pathlib.Path):
@@ -155,9 +161,21 @@ def test_partition_pptx_page_breaks_toggle_off(tmp_path: pathlib.Path):
         assert element.metadata.filename == "test-page-breaks.pptx"
 
 
+def test_partition_pptx_many_pages():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-many-pages.pptx")
+    elements = partition_pptx(filename=filename)
+
+    # The page_number of PageBreak is None
+    assert set(filter(None, (elt.metadata.page_number for elt in elements))) == {1, 2}
+    for element in elements:
+        assert element.metadata.filename == "fake-power-point-many-pages.pptx"
+
+
+# == DescribePptxPartitionerMiscellaneousBehaviors ===============================================
+
+
 def test_partition_pptx_orders_elements(tmp_path: pathlib.Path):
     filename = str(tmp_path / "test-ordering.pptx")
-
     presentation = pptx.Presentation()
     blank_slide_layout = presentation.slide_layouts[6]
     slide = presentation.slides.add_slide(blank_slide_layout)
@@ -223,16 +241,6 @@ def test_partition_pptx_grabs_tables():
     assert elements[1].metadata.filename == "fake-power-point-table.pptx"
 
 
-def test_partition_pptx_many_pages():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-many-pages.pptx")
-    elements = partition_pptx(filename=filename)
-
-    # The page_number of PageBreak is None
-    assert set(filter(None, (elt.metadata.page_number for elt in elements))) == {1, 2}
-    for element in elements:
-        assert element.metadata.filename == "fake-power-point-many-pages.pptx"
-
-
 def test_partition_pptx_malformed():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-malformed.pptx")
     elements = cast(Sequence[Text], partition_pptx(filename=filename))
@@ -241,6 +249,9 @@ def test_partition_pptx_malformed():
     assert elements[1].text == "Test Slide"
     for element in elements:
         assert element.metadata.filename == "fake-power-point-malformed.pptx"
+
+
+# == DescribePptxPartitionerMetadataBehaviors ====================================================
 
 
 def test_partition_pptx_from_filename_exclude_metadata():
@@ -321,6 +332,9 @@ def test_partition_pptx_from_file_with_custom_metadata_date(mocker: MockFixture)
         elements = partition_pptx(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+# == DescribePptxPartitionerDownstreamBehaviors ==================================================
 
 
 def test_partition_pptx_with_json():
