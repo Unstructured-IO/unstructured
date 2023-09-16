@@ -138,19 +138,11 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         """Generate each document-element in presentation in document order."""
         filename = self._file if isinstance(self._file, str) else None
 
-        last_modification_date = None
-        if filename:
-            if not filename.startswith("/tmp"):
-                last_modification_date = get_last_modified_date(filename)
-        else:
-            assert not isinstance(self._file, str)
-            last_modification_date = get_last_modified_date_from_file(self._file)
-
         metadata = ElementMetadata(filename=self._metadata_filename or filename)
         num_slides = len(self._presentation.slides)
         for i, slide in enumerate(self._presentation.slides):
             metadata = ElementMetadata.from_dict(metadata.to_dict())
-            metadata.last_modified = self._metadata_last_modified or last_modification_date
+            metadata.last_modified = self._last_modified
             metadata.page_number = i + 1
             if self._include_slide_notes and slide.has_notes_slide is True:
                 notes_slide = slide.notes_slide
@@ -171,7 +163,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                             filename=self._metadata_filename or filename,
                             text_as_html=html_table,
                             page_number=metadata.page_number,
-                            last_modified=self._metadata_last_modified or last_modification_date,
+                            last_modified=self._last_modified,
                         )
                         yield Table(text=text_table, metadata=metadata)
                     continue
@@ -199,6 +191,25 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
 
             if self._include_page_breaks and i < num_slides - 1:
                 yield PageBreak(text="")
+
+    @lazyproperty
+    def _last_modified(self) -> Optional[str]:
+        """Last-modified date suitable for use in element metadata."""
+        # -- if this file was converted from another format, any last-modified date for the file
+        # -- will be today, so we get it from the conversion step in `._metadata_last_modified`.
+        if self._metadata_last_modified:
+            return self._metadata_last_modified
+
+        file = self._file
+
+        # -- if the file is on the filesystem, get its date from there --
+        if isinstance(file, str):
+            return None if file.startswith("/tmp") else get_last_modified_date(file)
+
+        # -- otherwise try getting it from the file-like object; this can work if `file` comes from
+        # -- `with open(abc.pptx, "rb") as file:`, but I can't see folks doing that much when they
+        # -- can just send us "abc.pptx" instead.
+        return get_last_modified_date_from_file(file)
 
     @lazyproperty
     def _presentation(self) -> Presentation:
