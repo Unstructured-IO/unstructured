@@ -145,11 +145,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             for shape in self._order_shapes(slide):
                 if shape.has_table:
                     assert isinstance(shape, GraphicFrame)
-                    table = shape.table
-                    html_table = convert_ms_office_table_to_text(table, as_html=True)
-                    text_table = convert_ms_office_table_to_text(table, as_html=False).strip()
-                    if text_table:
-                        yield Table(text=text_table, metadata=self._table_metadata(html_table))
+                    yield from self._iter_table_element(shape)
                     continue
                 if not shape.has_text_frame:
                     continue
@@ -217,6 +213,17 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             return
 
         yield NarrativeText(text=notes_text, metadata=self._text_metadata)
+
+    def _iter_table_element(self, graphfrm: GraphicFrame) -> Iterator[Table]:
+        """Generate zero-or-one Table element for the table in `shape`.
+
+        An empty table does not produce an element.
+        """
+        text_table = convert_ms_office_table_to_text(graphfrm.table, as_html=False).strip()
+        if not text_table:
+            return
+        html_table = convert_ms_office_table_to_text(graphfrm.table, as_html=True)
+        yield Table(text=text_table, metadata=self._table_metadata(html_table))
 
     @lazyproperty
     def _last_modified(self) -> Optional[str]:
