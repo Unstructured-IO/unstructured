@@ -23,7 +23,7 @@ charset-normalizer==3.2.0
     #   requests
 cryptography==41.0.3
     # via boxsdk
-fsspec==2023.9.0
+fsspec==2023.9.1
     # via
     #   -r requirements/ingest-box.in
     #   boxfs
