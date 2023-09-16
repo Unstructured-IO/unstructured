@@ -39,8 +39,6 @@ from unstructured.partition.text_type import (
 )
 from unstructured.utils import lazyproperty
 
-OPENXML_SCHEMA_NAME = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
-
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.PPTX)
@@ -56,7 +54,7 @@ def partition_pptx(
     chunking_strategy: Optional[str] = None,
     **kwargs: Any,
 ) -> List[Element]:
-    """Partitions Microsoft PowerPoint Documents in .pptx format into its document elements.
+    """Partition PowerPoint document in .pptx format into its document elements.
 
     Parameters
     ----------
@@ -67,9 +65,9 @@ def partition_pptx(
     include_page_breaks
         If True, includes a PageBreak element between slides
     metadata_filename
-        The filename to use for the metadata. Relevant because partition_ppt converts the
-        document .pptx before partition. We want the original source filename in the
-        metadata.
+        The filename to use for the metadata. Relevant because partition_ppt() converts its
+        (legacy) .ppt document to .pptx before partition. We want the filename of the original
+        .ppt source file in the metadata.
     metadata_last_modified
         The last modified date for the document.
     include_slide_notes
@@ -176,6 +174,14 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         if self._include_page_breaks:
             yield PageBreak("")
 
+    def _is_bulleted_paragraph(self, paragraph: _Paragraph) -> bool:
+        """True when `paragraph` has a bullet-charcter prefix.
+
+        Bullet characters in the openxml schema are represented by buChar.
+        """
+        # -- True when XPath returns a non-empty list (nodeset) --
+        return bool(paragraph._p.xpath("./a:pPr/a:buChar"))
+
     def _iter_maybe_slide_notes(self, slide: Slide) -> Iterator[NarrativeText]:
         """Generate zero-or-one NarrativeText element for the slide-notes."""
         # -- only emit slide-notes elements when enabled --
@@ -211,7 +217,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             text = paragraph.text
             if text.strip() == "":
                 continue
-            if _is_bulleted_paragraph(paragraph):
+            if self._is_bulleted_paragraph(paragraph):
                 yield ListItem(text=text, metadata=self._text_metadata)
             elif is_email_address(text):
                 yield EmailAddress(text=text)
@@ -287,13 +293,3 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             last_modified=self._last_modified,
             page_number=self._page_number,
         )
-
-
-def _is_bulleted_paragraph(paragraph: _Paragraph) -> bool:
-    """True when `paragraph` has a bullet-charcter prefix.
-
-    Bullet characters in the openxml schema are represented by buChar.
-    """
-    paragraph_xml = paragraph._p.get_or_add_pPr()
-    buChar = paragraph_xml.find(f"{OPENXML_SCHEMA_NAME}buChar")
-    return buChar is not None
