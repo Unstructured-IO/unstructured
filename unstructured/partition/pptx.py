@@ -137,7 +137,6 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
 
     def _iter_presentation_elements(self) -> Iterator[Element]:
         """Generate each document-element in presentation in document order."""
-        filename = self._file if isinstance(self._file, str) else None
 
         for slide in self._presentation.slides:
             yield from self._increment_page_number()
@@ -160,7 +159,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                         yield Table(
                             text=text_table,
                             metadata=ElementMetadata(
-                                filename=self._metadata_filename or filename,
+                                filename=self._filename,
                                 text_as_html=html_table,
                                 page_number=self._page_number,
                                 last_modified=self._last_modified,
@@ -188,6 +187,17 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                         yield Title(text=text, metadata=self._text_metadata)
                     else:
                         yield Text(text=text, metadata=self._text_metadata)
+
+    @lazyproperty
+    def _filename(self) -> Optional[str]:
+        """Suitable for use as metadata.filename, does not necessarily name source-file."""
+        return (
+            self._metadata_filename
+            if self._metadata_filename
+            else self._file
+            if isinstance(self._file, str)
+            else None
+        )
 
     def _increment_page_number(self) -> Iterator[PageBreak]:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
@@ -231,15 +241,10 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
     @property
     def _text_metadata(self):
         """ElementMetadata instance suitable for use with Text and subtypes."""
-        filename = (
-            self._metadata_filename
-            if self._metadata_filename
-            else self._file
-            if isinstance(self._file, str)
-            else None
-        )
         return ElementMetadata(
-            filename=filename, last_modified=self._last_modified, page_number=self._page_number
+            filename=self._filename,
+            last_modified=self._last_modified,
+            page_number=self._page_number,
         )
 
 
