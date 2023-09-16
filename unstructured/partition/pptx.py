@@ -139,21 +139,16 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         """Generate each document-element in presentation in document order."""
         filename = self._file if isinstance(self._file, str) else None
 
-        metadata = ElementMetadata(filename=self._metadata_filename or filename)
-
-        for i, slide in enumerate(self._presentation.slides):
+        for slide in self._presentation.slides:
             yield from self._increment_page_number()
 
-            metadata = ElementMetadata.from_dict(metadata.to_dict())
-            metadata.last_modified = self._last_modified
-            metadata.page_number = i + 1
             if self._include_slide_notes and slide.has_notes_slide is True:
                 notes_slide = slide.notes_slide
                 if notes_slide.notes_text_frame is not None:
                     notes_text_frame = notes_slide.notes_text_frame
                     notes_text = notes_text_frame.text
                     if notes_text.strip() != "":
-                        yield NarrativeText(text=notes_text, metadata=metadata)
+                        yield NarrativeText(text=notes_text, metadata=self._text_metadata)
 
             for shape in _order_shapes(slide.shapes):
                 if shape.has_table:
@@ -162,13 +157,15 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                     html_table = convert_ms_office_table_to_text(table, as_html=True)
                     text_table = convert_ms_office_table_to_text(table, as_html=False).strip()
                     if text_table:
-                        metadata = ElementMetadata(
-                            filename=self._metadata_filename or filename,
-                            text_as_html=html_table,
-                            page_number=metadata.page_number,
-                            last_modified=self._last_modified,
+                        yield Table(
+                            text=text_table,
+                            metadata=ElementMetadata(
+                                filename=self._metadata_filename or filename,
+                                text_as_html=html_table,
+                                page_number=self._page_number,
+                                last_modified=self._last_modified,
+                            ),
                         )
-                        yield Table(text=text_table, metadata=metadata)
                     continue
                 if not shape.has_text_frame:
                     continue
@@ -182,15 +179,15 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                     if text.strip() == "":
                         continue
                     if _is_bulleted_paragraph(paragraph):
-                        yield ListItem(text=text, metadata=metadata)
+                        yield ListItem(text=text, metadata=self._text_metadata)
                     elif is_email_address(text):
                         yield EmailAddress(text=text)
                     elif is_possible_narrative_text(text):
-                        yield NarrativeText(text=text, metadata=metadata)
+                        yield NarrativeText(text=text, metadata=self._text_metadata)
                     elif is_possible_title(text):
-                        yield Title(text=text, metadata=metadata)
+                        yield Title(text=text, metadata=self._text_metadata)
                     else:
-                        yield Text(text=text, metadata=metadata)
+                        yield Text(text=text, metadata=self._text_metadata)
 
     def _increment_page_number(self) -> Iterator[PageBreak]:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
@@ -230,6 +227,20 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
     def _presentation(self) -> Presentation:
         """The python-pptx `Presentation` object loaded from the provided source file."""
         return pptx.Presentation(self._file)
+
+    @property
+    def _text_metadata(self):
+        """ElementMetadata instance suitable for use with Text and subtypes."""
+        filename = (
+            self._metadata_filename
+            if self._metadata_filename
+            else self._file
+            if isinstance(self._file, str)
+            else None
+        )
+        return ElementMetadata(
+            filename=filename, last_modified=self._last_modified, page_number=self._page_number
+        )
 
 
 def _order_shapes(shapes: SlideShapes) -> List[BaseShape]:
