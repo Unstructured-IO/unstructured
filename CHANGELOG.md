@@ -1,4 +1,4 @@
-## 0.10.15-dev15
+## 0.10.15
 
 
 ### Enhancements
@@ -26,6 +26,12 @@
 * **Rename to Source and Destination Connectors in the Documentation.** Maintain naming consistency between Connectors codebase and documentation with the first addition to a destination connector.
 * **Non-HTML text files now return unstructured-elements as opposed to HTML-elements.** Previously the text based files that went through `partition_html` would return HTML-elements but now we preserve the format from the input using `source_format` argument in the partition call.
 * **Adds `PaddleOCR` as an optional alternative to `Tesseract`** for OCR in processing of PDF or Image files, it is installable via the `makefile` command `install-paddleocr`. For experimental purposes only.
+* **Bump unstructured-inference** to 0.5.28. This version bump markedly improves the output of table data, rendered as `metadata.text_as_html` in an element. These changes include:
+  * add env variable `ENTIRE_PAGE_OCR` to specify using paddle or tesseract on entire page OCR
+  * table structure detection now pads the input image by 25 pixels in all 4 directions to improve its recall (0.5.27)
+  * support paddle with both cpu and gpu and assumed it is pre-installed (0.5.26)
+  * fix a bug where `cells_to_html` doesn't handle cells spanning multiple rows properly (0.5.25)
+  * remove `cv2` preprocessing step before OCR step in table transformer (0.5.24)
 
 ### Features
 
