@@ -88,63 +88,73 @@ def partition_pptx(
 class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
     """Provides `.partition()` for PowerPoint 2007+ (.pptx) files."""
 
-    @classmethod
-    def iter_presentation_elements(
-        cls,
-        file: Optional[IO[bytes]] = None,
-        filename: Optional[str] = None,
+    def __init__(
+        self,
+        file: Optional[IO[bytes]],
+        filename: Optional[str],
+        # -- having default values for these arguments is not necessary for production uses because
+        # -- this object is always created by the classmethod. However it simplifies constructing
+        # -- this object in tests and makes them less sensitive to signature changes.
         include_page_breaks: bool = True,
         include_slide_notes: bool = False,
         metadata_filename: Optional[str] = None,
         metadata_last_modified: Optional[str] = None,
-    ) -> Iterator[Element]:
-        """Partition MS Word documents (.docx format) into its document elements."""
-        return iter(
-            cls()._partition_pptx(
-                file,
-                filename,
-                include_page_breaks,
-                include_slide_notes,
-                metadata_filename,
-                metadata_last_modified,
-            )
-        )
+    ) -> None:
+        self._file = file
+        self._filename = filename
+        self._include_page_breaks = include_page_breaks
+        self._include_slide_notes = include_slide_notes
+        self._metadata_filename = metadata_filename
+        self._metadata_last_modified = metadata_last_modified
 
-    def _partition_pptx(
-        self,
+    @classmethod
+    def iter_presentation_elements(
+        cls,
         file: Optional[IO[bytes]],
         filename: Optional[str],
         include_page_breaks: bool,
         include_slide_notes: bool,
         metadata_filename: Optional[str],
         metadata_last_modified: Optional[str],
-    ) -> List[Element]:
+    ) -> Iterator[Element]:
+        """Partition MS Word documents (.docx format) into its document elements."""
+        return iter(
+            cls(
+                file,
+                filename,
+                include_page_breaks,
+                include_slide_notes,
+                metadata_filename,
+                metadata_last_modified,
+            )._partition_pptx()
+        )
+
+    def _partition_pptx(self) -> List[Element]:
         """Generate each document-element in presentation in document order."""
-
-        # Verify that only one of the arguments was provided
-        exactly_one(filename=filename, file=file)
+        # -- verify only one source-file argument was provided --
+        exactly_one(filename=self._filename, file=self._file)
         last_modification_date = None
-        if filename is not None:
-            if not filename.startswith("/tmp"):
-                last_modification_date = get_last_modified_date(filename)
+        if self._filename is not None:
+            if not self._filename.startswith("/tmp"):
+                last_modification_date = get_last_modified_date(self._filename)
 
-            presentation = pptx.Presentation(filename)
+            presentation = pptx.Presentation(self._filename)
         else:
-            assert file is not None
-            last_modification_date = get_last_modified_date_from_file(file)
-            if isinstance(file, SpooledTemporaryFile):
-                file.seek(0)
-                file = io.BytesIO(file.read())
-            presentation = pptx.Presentation(file)
+            assert self._file is not None
+            last_modification_date = get_last_modified_date_from_file(self._file)
+            if isinstance(self._file, SpooledTemporaryFile):
+                self._file.seek(0)
+                self._file = io.BytesIO(self._file.read())
+            presentation = pptx.Presentation(self._file)
 
         elements: List[Element] = []
-        metadata = ElementMetadata(filename=metadata_filename or filename)
+        metadata = ElementMetadata(filename=self._metadata_filename or self._filename)
         num_slides = len(presentation.slides)
         for i, slide in enumerate(presentation.slides):
             metadata = ElementMetadata.from_dict(metadata.to_dict())
-            metadata.last_modified = metadata_last_modified or last_modification_date
+            metadata.last_modified = self._metadata_last_modified or last_modification_date
             metadata.page_number = i + 1
-            if include_slide_notes and slide.has_notes_slide is True:
+            if self._include_slide_notes and slide.has_notes_slide is True:
                 notes_slide = slide.notes_slide
                 if notes_slide.notes_text_frame is not None:
                     notes_text_frame = notes_slide.notes_text_frame
@@ -160,10 +170,10 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                     text_table = convert_ms_office_table_to_text(table, as_html=False).strip()
                     if text_table:
                         metadata = ElementMetadata(
-                            filename=metadata_filename or filename,
+                            filename=self._metadata_filename or self._filename,
                             text_as_html=html_table,
                             page_number=metadata.page_number,
-                            last_modified=metadata_last_modified or last_modification_date,
+                            last_modified=self._metadata_last_modified or last_modification_date,
                         )
                         elements.append(Table(text=text_table, metadata=metadata))
                     continue
@@ -189,7 +199,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                     else:
                         elements.append(Text(text=text, metadata=metadata))
 
-            if include_page_breaks and i < num_slides - 1:
+            if self._include_page_breaks and i < num_slides - 1:
                 elements.append(PageBreak(text=""))
 
         return elements
