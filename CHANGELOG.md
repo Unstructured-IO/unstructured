@@ -25,7 +25,7 @@
 * **Add delta table destination connector** New delta table destination connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Delta Table.
 * **Rename to Source and Destination Connectors in the Documentation.** Maintain naming consistency between Connectors codebase and documentation with the first addition to a destination connector.
 * **Non-HTML text files now return unstructured-elements as opposed to HTML-elements.** Previously the text based files that went through `partition_html` would return HTML-elements but now we preserve the format from the input using `source_format` argument in the partition call.
-* **Adds `PaddleOCR` as an optional alternative to `Tesseract`** for OCR in processing PDF or Image files, it is installable via `makefile` command `install-paddleocr`
+* **Adds `PaddleOCR` as an optional alternative to `Tesseract`** for OCR in processing of PDF or Image files, it is installable via the `makefile` command `install-paddleocr`. For experimental purposes only.
 
 ### Features
 
