@@ -1,10 +1,7 @@
 from typing import List
 
 import iso639
-<<<<<<< HEAD
 from langdetect import DetectorFactory, detect_langs
-=======
->>>>>>> eb8ce891 (chore: function to map between standard and Tesseract language codes (#1421))
 
 from unstructured.logger import logger
 
@@ -139,12 +136,9 @@ PYTESSERACT_LANGS = [
     "yor",
 ]
 
-<<<<<<< HEAD
 
 DetectorFactory.seed = 0  # do this inside a function?
 
-=======
->>>>>>> eb8ce891 (chore: function to map between standard and Tesseract language codes (#1421))
 
 def prepare_languages_for_tesseract(languages: List[str] = ["eng"]):
     """
