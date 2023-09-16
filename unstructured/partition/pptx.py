@@ -5,6 +5,7 @@ from tempfile import SpooledTemporaryFile
 from typing import IO, Any, Iterator, List, Optional, Union
 
 import pptx
+from pptx.presentation import Presentation
 from pptx.shapes.autoshape import Shape
 from pptx.shapes.base import BaseShape
 from pptx.shapes.graphfrm import GraphicFrame
@@ -36,6 +37,7 @@ from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_possible_title,
 )
+from unstructured.utils import lazyproperty
 
 OPENXML_SCHEMA_NAME = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
 
@@ -144,11 +146,9 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             assert not isinstance(self._file, str)
             last_modification_date = get_last_modified_date_from_file(self._file)
 
-        presentation = pptx.Presentation(self._file)
-
         metadata = ElementMetadata(filename=self._metadata_filename or filename)
-        num_slides = len(presentation.slides)
-        for i, slide in enumerate(presentation.slides):
+        num_slides = len(self._presentation.slides)
+        for i, slide in enumerate(self._presentation.slides):
             metadata = ElementMetadata.from_dict(metadata.to_dict())
             metadata.last_modified = self._metadata_last_modified or last_modification_date
             metadata.page_number = i + 1
@@ -199,6 +199,11 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
 
             if self._include_page_breaks and i < num_slides - 1:
                 yield PageBreak(text="")
+
+    @lazyproperty
+    def _presentation(self) -> Presentation:
+        """The python-pptx `Presentation` object loaded from the provided source file."""
+        return pptx.Presentation(self._file)
 
 
 def _order_shapes(shapes: SlideShapes) -> List[BaseShape]:
