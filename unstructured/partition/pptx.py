@@ -2,14 +2,13 @@ from __future__ import annotations
 
 import io
 from tempfile import SpooledTemporaryFile
-from typing import IO, Any, Iterator, List, Optional, Union
+from typing import IO, Any, Iterator, List, Optional, Sequence, Tuple, Union
 
 import pptx
 from pptx.presentation import Presentation
 from pptx.shapes.autoshape import Shape
 from pptx.shapes.base import BaseShape
 from pptx.shapes.graphfrm import GraphicFrame
-from pptx.shapes.shapetree import SlideShapes
 from pptx.slide import Slide
 from pptx.text.text import _Paragraph  # pyright: ignore [reportPrivateUsage]
 
@@ -143,7 +142,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             yield from self._increment_page_number()
             yield from self._iter_maybe_slide_notes(slide)
 
-            for shape in _order_shapes(slide.shapes):
+            for shape in self._order_shapes(slide):
                 if shape.has_table:
                     assert isinstance(shape, GraphicFrame)
                     table = shape.table
@@ -238,6 +237,14 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         # -- can just send us "abc.pptx" instead.
         return get_last_modified_date_from_file(file)
 
+    def _order_shapes(self, slide: Slide) -> Sequence[BaseShape]:
+        """Orders the shapes on `slide` from top to bottom and left to right."""
+
+        def sort_key(shape: BaseShape) -> Tuple[int, int]:
+            return shape.top or 0, shape.left or 0
+
+        return sorted(slide.shapes, key=sort_key)
+
     @property
     def _page_number(self) -> Optional[int]:
         """The current page (slide) number."""
@@ -265,11 +272,6 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             last_modified=self._last_modified,
             page_number=self._page_number,
         )
-
-
-def _order_shapes(shapes: SlideShapes) -> List[BaseShape]:
-    """Orders the shapes from top to bottom and left to right."""
-    return sorted(shapes, key=lambda x: (x.top or 0, x.left or 0))
 
 
 def _is_bulleted_paragraph(paragraph: _Paragraph) -> bool:
