@@ -9,6 +9,8 @@ from pptx.presentation import Presentation
 from pptx.shapes.autoshape import Shape
 from pptx.shapes.base import BaseShape
 from pptx.shapes.graphfrm import GraphicFrame
+from pptx.shapes.group import GroupShape
+from pptx.shapes.shapetree import _BaseGroupShapes  # pyright: ignore [reportPrivateUsage]
 from pptx.slide import Slide
 from pptx.text.text import _Paragraph  # pyright: ignore [reportPrivateUsage]
 
@@ -96,9 +98,6 @@ def partition_pptx(
 
 class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
     """Provides `.partition()` for PowerPoint 2007+ (.pptx) files."""
-
-    # TODO: Implement recursion into group-shapes. These are common and can include most of the
-    # shapes on the slide.
 
     def __init__(
         self,
@@ -261,10 +260,17 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
     def _order_shapes(self, slide: Slide) -> Sequence[BaseShape]:
         """Orders the shapes on `slide` from top to bottom and left to right."""
 
+        def iter_shapes(shapes: _BaseGroupShapes) -> Iterator[BaseShape]:
+            for shape in shapes:
+                if isinstance(shape, GroupShape):
+                    yield from iter_shapes(shape.shapes)
+                else:
+                    yield shape
+
         def sort_key(shape: BaseShape) -> Tuple[int, int]:
             return shape.top or 0, shape.left or 0
 
-        return sorted(slide.shapes, key=sort_key)
+        return sorted(iter_shapes(slide.shapes), key=sort_key)
 
     @property
     def _page_number(self) -> Optional[int]:

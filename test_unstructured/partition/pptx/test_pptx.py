@@ -1,8 +1,10 @@
+# pyright: reportPrivateUsage=false
+
 """Test suite for `unstructured.partition.pptx` module."""
 
 import os
 import pathlib
-from typing import Sequence, cast
+from typing import Iterator, Sequence, cast
 
 import pptx
 import pytest
@@ -18,7 +20,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition.json import partition_json
-from unstructured.partition.pptx import partition_pptx
+from unstructured.partition.pptx import _PptxPartitioner, partition_pptx
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -32,6 +34,10 @@ EXPECTED_PPTX_OUTPUT = [
     NarrativeText(text="Here is a lot of text!"),
     NarrativeText(text="Here is some text in a text box!"),
 ]
+
+
+def get_test_file_path(filename: str) -> str:
+    return str(pathlib.Path(__file__).parent / "test_files" / filename)
 
 
 # == DescribePptxPartitionerSourceFileBehaviors ==================================================
@@ -95,6 +101,20 @@ def test_partition_pptx_raises_with_both_specified():
 def test_partition_pptx_raises_with_neither():
     with pytest.raises(ValueError):
         partition_pptx()
+
+
+class DescribePptxPartitionerShapeOrderingBehaviors:
+    """Tests related to shape inclusion and ordering based on position."""
+
+    def it_recurses_into_group_shapes(self):
+        elements = cast(
+            Iterator[Text],
+            _PptxPartitioner(
+                get_test_file_path("group-shapes-nested.pptx")
+            )._iter_presentation_elements(),
+        )
+
+        assert [e.text for e in elements] == ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 
 
 # == DescribePptxPartitionerPageBreakBehaviors ===================================================
