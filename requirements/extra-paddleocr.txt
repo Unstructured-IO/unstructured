@@ -148,7 +148,11 @@ psutil==5.9.5
     # via visualdl
 pyclipper==1.3.0.post5
     # via unstructured-paddleocr
+<<<<<<< HEAD
 pycryptodome==3.19.0
+=======
+pycryptodome==3.18.0
+>>>>>>> 09a0958f (Feat: CORE-1269 - Install paddlepaddle wheel dependent on arch, supporting aarch64 (#1350))
     # via bce-python-sdk
 pyparsing==3.0.9
     # via
