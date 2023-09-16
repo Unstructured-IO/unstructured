@@ -1,3 +1,4 @@
+import json
 import os
 import typing as t
 from dataclasses import dataclass
@@ -9,10 +10,12 @@ import pandas as pd
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
+    BaseDestinationConnector,
     BaseIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    WriteConfig,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -141,3 +144,41 @@ class DeltaTableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
             )
             for uri in self.delta_table.file_uris()
         ]
+
+
+@dataclass
+class DeltaTableWriteConfig(WriteConfig):
+    write_column: str
+    mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
+
+
+@dataclass
+class DeltaTableDestinationConnector(BaseDestinationConnector):
+    write_config: DeltaTableWriteConfig
+    connector_config: SimpleDeltaTableConfig
+
+    @requires_dependencies(["deltalake"], extras="delta-table")
+    def initialize(self):
+        pass
+
+    @requires_dependencies(["deltalake"], extras="delta-table")
+    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+        from deltalake.writer import write_deltalake
+
+        json_list = []
+        for doc in docs:
+            local_path = doc._output_filename
+            with open(local_path) as json_file:
+                json_content = json.load(json_file)
+                json_items = [json.dumps(j) for j in json_content]
+                logger.info(f"converting {len(json_items)} rows from content in {local_path}")
+                json_list.extend(json_items)
+        logger.info(
+            f"writing {len(json_list)} rows to destination "
+            f"table at {self.connector_config.table_uri}",
+        )
+        write_deltalake(
+            table_or_uri=self.connector_config.table_uri,
+            data=pd.DataFrame(data={self.write_config.write_column: json_list}),
+            mode=self.write_config.mode,
+        )
