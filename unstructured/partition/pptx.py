@@ -124,17 +124,15 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         metadata_last_modified: Optional[str],
     ) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
-        return iter(
-            cls(
-                file,
-                include_page_breaks,
-                include_slide_notes,
-                metadata_filename,
-                metadata_last_modified,
-            )._partition_pptx()
-        )
+        return cls(
+            file,
+            include_page_breaks,
+            include_slide_notes,
+            metadata_filename,
+            metadata_last_modified,
+        )._iter_presentation_elements()
 
-    def _partition_pptx(self) -> List[Element]:
+    def _iter_presentation_elements(self) -> Iterator[Element]:
         """Generate each document-element in presentation in document order."""
         filename = self._file if isinstance(self._file, str) else None
 
@@ -148,7 +146,6 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
 
         presentation = pptx.Presentation(self._file)
 
-        elements: List[Element] = []
         metadata = ElementMetadata(filename=self._metadata_filename or filename)
         num_slides = len(presentation.slides)
         for i, slide in enumerate(presentation.slides):
@@ -161,7 +158,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                     notes_text_frame = notes_slide.notes_text_frame
                     notes_text = notes_text_frame.text
                     if notes_text.strip() != "":
-                        elements.append(NarrativeText(text=notes_text, metadata=metadata))
+                        yield NarrativeText(text=notes_text, metadata=metadata)
 
             for shape in _order_shapes(slide.shapes):
                 if shape.has_table:
@@ -176,7 +173,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                             page_number=metadata.page_number,
                             last_modified=self._metadata_last_modified or last_modification_date,
                         )
-                        elements.append(Table(text=text_table, metadata=metadata))
+                        yield Table(text=text_table, metadata=metadata)
                     continue
                 if not shape.has_text_frame:
                     continue
@@ -190,20 +187,18 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                     if text.strip() == "":
                         continue
                     if _is_bulleted_paragraph(paragraph):
-                        elements.append(ListItem(text=text, metadata=metadata))
+                        yield ListItem(text=text, metadata=metadata)
                     elif is_email_address(text):
-                        elements.append(EmailAddress(text=text))
+                        yield EmailAddress(text=text)
                     elif is_possible_narrative_text(text):
-                        elements.append(NarrativeText(text=text, metadata=metadata))
+                        yield NarrativeText(text=text, metadata=metadata)
                     elif is_possible_title(text):
-                        elements.append(Title(text=text, metadata=metadata))
+                        yield Title(text=text, metadata=metadata)
                     else:
-                        elements.append(Text(text=text, metadata=metadata))
+                        yield Text(text=text, metadata=metadata)
 
             if self._include_page_breaks and i < num_slides - 1:
-                elements.append(PageBreak(text=""))
-
-        return elements
+                yield PageBreak(text="")
 
 
 def _order_shapes(shapes: SlideShapes) -> List[BaseShape]:
