@@ -10,6 +10,7 @@ from pptx.shapes.autoshape import Shape
 from pptx.shapes.base import BaseShape
 from pptx.shapes.graphfrm import GraphicFrame
 from pptx.shapes.shapetree import SlideShapes
+from pptx.slide import Slide
 from pptx.text.text import _Paragraph  # pyright: ignore [reportPrivateUsage]
 
 from unstructured.chunking.title import add_chunking_strategy
@@ -140,14 +141,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
 
         for slide in self._presentation.slides:
             yield from self._increment_page_number()
-
-            if self._include_slide_notes and slide.has_notes_slide is True:
-                notes_slide = slide.notes_slide
-                if notes_slide.notes_text_frame is not None:
-                    notes_text_frame = notes_slide.notes_text_frame
-                    notes_text = notes_text_frame.text
-                    if notes_text.strip() != "":
-                        yield NarrativeText(text=notes_text, metadata=self._text_metadata)
+            yield from self._iter_maybe_slide_notes(slide)
 
             for shape in _order_shapes(slide.shapes):
                 if shape.has_table:
@@ -200,6 +194,30 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         # -- only emit page-breaks when enabled --
         if self._include_page_breaks:
             yield PageBreak("")
+
+    def _iter_maybe_slide_notes(self, slide: Slide) -> Iterator[NarrativeText]:
+        """Generate zero-or-one NarrativeText element for the slide-notes."""
+        # -- only emit slide-notes elements when enabled --
+        if not self._include_slide_notes:
+            return
+
+        # -- not all slides have a notes slide --
+        if not slide.has_notes_slide:
+            return
+
+        notes_slide = slide.notes_slide
+        notes_text_frame = notes_slide.notes_text_frame
+
+        # -- not all notes slides have a text-frame (it's created on first use) --
+        if not notes_text_frame:
+            return
+        notes_text = notes_text_frame.text.strip()
+
+        # -- not all notes text-frams contain text (if it's all deleted the text-frame remains) --
+        if not notes_text:
+            return
+
+        yield NarrativeText(text=notes_text, metadata=self._text_metadata)
 
     @lazyproperty
     def _last_modified(self) -> Optional[str]:
