@@ -99,6 +99,9 @@ def partition_pptx(
 class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
     """Provides `.partition()` for PowerPoint 2007+ (.pptx) files."""
 
+    # TODO: Implement recursion into group-shapes. These are common and can include most of the
+    # shapes on the slide.
+
     def __init__(
         self,
         file: Union[str, IO[bytes]],
@@ -146,28 +149,11 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                 if shape.has_table:
                     assert isinstance(shape, GraphicFrame)
                     yield from self._iter_table_element(shape)
-                    continue
-                if not shape.has_text_frame:
-                    continue
-                assert isinstance(shape, Shape)
-                # NOTE(robinson) - avoid processing shapes that are not on the actual slide
-                # NOTE - skip check if no top or left position (shape displayed top left)
-                if (shape.top and shape.left) and (shape.top < 0 or shape.left < 0):
-                    continue
-                for paragraph in shape.text_frame.paragraphs:
-                    text = paragraph.text
-                    if text.strip() == "":
-                        continue
-                    if _is_bulleted_paragraph(paragraph):
-                        yield ListItem(text=text, metadata=self._text_metadata)
-                    elif is_email_address(text):
-                        yield EmailAddress(text=text)
-                    elif is_possible_narrative_text(text):
-                        yield NarrativeText(text=text, metadata=self._text_metadata)
-                    elif is_possible_title(text):
-                        yield Title(text=text, metadata=self._text_metadata)
-                    else:
-                        yield Text(text=text, metadata=self._text_metadata)
+                elif shape.has_text_frame:
+                    assert isinstance(shape, Shape)
+                    yield from self._iter_paragraph_elements(shape)
+                # -- otherwise ditch it, this would include pictures, charts, connectors (lines),
+                # -- and free-form shapes (squiggly lines). Lines don't have text.
 
     @lazyproperty
     def _filename(self) -> Optional[str]:
@@ -213,6 +199,28 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             return
 
         yield NarrativeText(text=notes_text, metadata=self._text_metadata)
+
+    def _iter_paragraph_elements(self, shape: Shape) -> Iterator[Element]:
+        """Generate Text or subtype element for each paragraph in `shape`."""
+        # NOTE(robinson) - avoid processing shapes that are not on the actual slide
+        # NOTE - skip check if no top or left position (shape displayed top left)
+        if (shape.top and shape.left) and (shape.top < 0 or shape.left < 0):
+            return
+
+        for paragraph in shape.text_frame.paragraphs:
+            text = paragraph.text
+            if text.strip() == "":
+                continue
+            if _is_bulleted_paragraph(paragraph):
+                yield ListItem(text=text, metadata=self._text_metadata)
+            elif is_email_address(text):
+                yield EmailAddress(text=text)
+            elif is_possible_narrative_text(text):
+                yield NarrativeText(text=text, metadata=self._text_metadata)
+            elif is_possible_title(text):
+                yield Title(text=text, metadata=self._text_metadata)
+            else:
+                yield Text(text=text, metadata=self._text_metadata)
 
     def _iter_table_element(self, graphfrm: GraphicFrame) -> Iterator[Table]:
         """Generate zero-or-one Table element for the table in `shape`.
