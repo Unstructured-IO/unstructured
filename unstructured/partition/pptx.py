@@ -156,15 +156,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                     html_table = convert_ms_office_table_to_text(table, as_html=True)
                     text_table = convert_ms_office_table_to_text(table, as_html=False).strip()
                     if text_table:
-                        yield Table(
-                            text=text_table,
-                            metadata=ElementMetadata(
-                                filename=self._filename,
-                                text_as_html=html_table,
-                                page_number=self._page_number,
-                                last_modified=self._last_modified,
-                            ),
-                        )
+                        yield Table(text=text_table, metadata=self._table_metadata(html_table))
                     continue
                 if not shape.has_text_frame:
                     continue
@@ -237,6 +229,15 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
     def _presentation(self) -> Presentation:
         """The python-pptx `Presentation` object loaded from the provided source file."""
         return pptx.Presentation(self._file)
+
+    def _table_metadata(self, text_as_html: str):
+        """ElementMetadata instance suitable for use with Table element."""
+        return ElementMetadata(
+            filename=self._filename,
+            last_modified=self._last_modified,
+            page_number=self._page_number,
+            text_as_html=text_as_html,
+        )
 
     @property
     def _text_metadata(self):
