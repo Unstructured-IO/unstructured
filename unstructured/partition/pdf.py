@@ -200,7 +200,7 @@ def partition_pdf_or_image(
             )
 
         else:
-            languages = convert_old_ocr_languages_to_languages(ocr_languages)
+            languages = ocr_languages.split("+")
             logger.warning(
                 "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
                 "Please use languages instead.",

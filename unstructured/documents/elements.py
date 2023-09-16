@@ -146,7 +146,7 @@ class ElementMetadata:
     category_depth: Optional[int] = None
 
     # Languages in element. TODO(newelh) - More strongly type languages
-    languages: Optional[str] = None
+    languages: Optional[List[str]] = None
 
     # Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None
