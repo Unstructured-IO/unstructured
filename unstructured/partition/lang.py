@@ -1,6 +1,7 @@
 from typing import List
 
 import iso639
+from langdetect import DetectorFactory, detect_langs
 
 from unstructured.logger import logger
 
@@ -136,6 +137,9 @@ PYTESSERACT_LANGS = [
 ]
 
 
+DetectorFactory.seed = 0  # do this inside a function?
+
+
 def prepare_languages_for_tesseract(languages: List[str] = ["eng"]):
     """
     Entry point: convert languages (list of strings) into tesseract ocr langcode format (uses +)
@@ -201,3 +205,32 @@ def _get_all_tesseract_langcodes_with_prefix(prefix: str):
     Get all matching tesseract langcodes with this prefix (may be one or multiple variants).
     """
     return [langcode for langcode in PYTESSERACT_LANGS if langcode.startswith(prefix)]
+
+
+def detect_languages(
+    text: str,
+    languages: List[str] = ["eng"],
+) -> str:
+    if text.strip() == "":
+        return languages
+
+    # document level
+    # use detect langs to get multiple languages and their probabilities
+    doc_languages = set()
+
+    if languages is not None:
+        doc_languages = languages
+    else:
+        langdetect_result = detect_langs(text)
+
+        # NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
+        # Chinese variants. We normalizes these because there is a single model for Chinese
+        # machine translation
+        if any(lang.startswith("zh") for lang in langdetect_result):
+            doc_languages.add("zh")
+
+    # TODO(shreya) if multiple languages returned, detect on element level
+    # possibly a confidence threshold?
+
+    # TODO(shreya) think about return type: str or list
+    return doc_languages

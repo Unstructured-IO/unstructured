@@ -27,30 +27,6 @@ ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s\-,.!?_\/]+")
 NON_LOWERCASE_ALPHA_RE = re.compile(r"[^a-z]")
 
 
-def detect_languages(
-    text: str,
-    languages: List[str] = ["eng"],
-) -> str:
-    if text.strip() == "":
-        return languages
-
-    # document level
-    # use detect langs to get multiple languages and their probabilities
-    doc_language = language if language is not None else langdetect.detect(text)
-    
-    # NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
-    # Chinese variants. We normalizes these because there is a single model for Chinese
-    # machine translation
-    if doc_language.startswith("zh"):
-        doc_language = "zh"
-
-    #TODO(shreya) if multiple languages returned, detect on element level
-    # possibly a confidence threshold?
-
-    # TODO(shreya) think about return type: str or list
-    return doc_language
-
-
 def is_possible_narrative_text(
     text: str,
     cap_threshold: float = 0.5,
