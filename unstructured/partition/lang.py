@@ -1,7 +1,6 @@
 from typing import List
 
 import iso639
-import pytesseract
 
 from unstructured.logger import logger
 
