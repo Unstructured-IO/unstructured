@@ -196,9 +196,6 @@ class RequestsNetworkClient(NetworkClient):
 
 
 class DocumentMetadata:
-    BUFFER_SIZE = 1024
-    SEEK_SET = 0
-
     # TODO: Enforce Enums for content_type and encoding
     def __init__(self, content_type: str, encoding: str, last_modified: Optional[datetime]):
         self._content_type = content_type
