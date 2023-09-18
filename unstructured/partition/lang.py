@@ -207,6 +207,15 @@ def _get_all_tesseract_langcodes_with_prefix(prefix: str):
     return [langcode for langcode in PYTESSERACT_LANGS if langcode.startswith(prefix)]
 
 
+def _convert_to_standard_langcode(lang: str) -> str:
+    """
+    Convert a language code to the standard internal language code format.
+    """
+    # convert to standard ISO 639-3 language code
+    lang_iso639 = iso639.Language.match(lang)
+    return lang_iso639.part3
+
+
 def detect_languages(
     text: str,
     languages: List[str] = ["auto"],
@@ -222,11 +231,15 @@ def detect_languages(
         # NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
         # Chinese variants. We normalizes these because there is a single model for Chinese
         # machine translation
+        
         langdetect_langs = [
-            "zh" if langobj.lang.startswith("zh") else langobj.lang for langobj in langdetect_result
+            _convert_to_standard_langcode("zh")
+            if langobj.lang.startswith("zh")
+            else _convert_to_standard_langcode(langobj.lang)
+            for langobj in langdetect_result
         ]
 
-        # remove duplicates without modifying order
+        # remove duplicate chinese (if exists) without modifying order
         doc_languages = []
         for lang in langdetect_langs:
             if lang not in doc_languages:
