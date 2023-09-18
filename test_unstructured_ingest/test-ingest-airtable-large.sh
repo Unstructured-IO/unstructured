@@ -39,16 +39,16 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 
 # We are expecting fifteen directories: fourteen bases and the parent directory
-sh "$SCRIPT_DIR"/check-num-dirs-output.sh 15 "$OUTPUT_FOLDER_NAME"
+"$SCRIPT_DIR"/check-num-dirs-output.sh 15 "$OUTPUT_FOLDER_NAME"
 
 # We are expecting 101 files: 100 tables and the parent directory
-sh "$SCRIPT_DIR"/check-num-files-output.sh 101 "$OUTPUT_FOLDER_NAME"/"$LARGE_BASE_BASE_ID"/
+"$SCRIPT_DIR"/check-num-files-output.sh 101 "$OUTPUT_FOLDER_NAME"/"$LARGE_BASE_BASE_ID"/
 
 # Test on ingesting a large number of bases
 for i in {1..12}; do
   var="LARGE_WORKSPACE_BASE_ID_$i"
-  sh "$SCRIPT_DIR"/check-num-files-output.sh 12 "$OUTPUT_FOLDER_NAME"/"${!var}"
+  "$SCRIPT_DIR"/check-num-files-output.sh 12 "$OUTPUT_FOLDER_NAME"/"${!var}"
 done
 
 # Test on ingesting a table with lots of rows
-sh "$SCRIPT_DIR"/check-num-rows-and-columns-output.sh 39999 "$OUTPUT_DIR"/"$LARGE_TABLE_BASE_ID"/"$LARGE_TABLE_TABLE_ID".json
+"$SCRIPT_DIR"/check-num-rows-and-columns-output.sh 39999 "$OUTPUT_DIR"/"$LARGE_TABLE_BASE_ID"/"$LARGE_TABLE_TABLE_ID".json

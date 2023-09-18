@@ -13,7 +13,7 @@ DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 source "$SCRIPT_DIR"/cleanup.sh
 trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
 
-sh "$SCRIPT_DIR"/check-num-files-expected-output.sh 1 $OUTPUT_FOLDER_NAME 10k
+"$SCRIPT_DIR"/check-num-files-expected-output.sh 1 $OUTPUT_FOLDER_NAME 10k
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     biomed \
@@ -30,4 +30,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --max-retries 5 \
     --path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

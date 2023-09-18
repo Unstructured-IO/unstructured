@@ -41,4 +41,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --output-dir "$OUTPUT_DIR" \
     --verbose
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

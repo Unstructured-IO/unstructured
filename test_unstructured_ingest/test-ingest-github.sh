@@ -39,4 +39,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --git-file-glob '*.html,*.txt' \
     $ACCESS_TOKEN_FLAGS
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

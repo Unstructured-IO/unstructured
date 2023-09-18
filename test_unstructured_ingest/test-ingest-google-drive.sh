@@ -36,4 +36,4 @@ PYTHONPATH=. unstructured/ingest/main.py \
     --service-account-key "$GCP_INGEST_SERVICE_KEY_FILE"
 
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

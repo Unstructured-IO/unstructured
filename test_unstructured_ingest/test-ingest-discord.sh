@@ -28,4 +28,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --channels 1099442333440802930,1099601456321003600 \
     --token "$DISCORD_TOKEN" \
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

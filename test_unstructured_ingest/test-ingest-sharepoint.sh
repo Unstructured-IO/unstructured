@@ -33,4 +33,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --path "Shared Documents" \
     --recursive \
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

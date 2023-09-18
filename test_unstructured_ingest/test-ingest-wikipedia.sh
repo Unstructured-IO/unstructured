@@ -23,4 +23,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --page-title "Open Source Software"
 
-sh "$SCRIPT_DIR"/check-num-files-output.sh 3 $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-num-files-output.sh 3 $OUTPUT_FOLDER_NAME

@@ -33,4 +33,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --api-token "$CONFLUENCE_API_TOKEN" \
     --spaces testteamsp,MFS
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

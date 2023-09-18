@@ -13,7 +13,7 @@ DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 source "$SCRIPT_DIR"/cleanup.sh
 trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
 
-sh "$SCRIPT_DIR"/check-num-files-expected-output.sh 3 $OUTPUT_FOLDER_NAME 20k
+"$SCRIPT_DIR"/check-num-files-expected-output.sh 3 $OUTPUT_FOLDER_NAME 20k
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     s3 \
@@ -28,4 +28,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --anonymous
 
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

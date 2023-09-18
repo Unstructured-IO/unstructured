@@ -25,7 +25,7 @@ function cleanup() {
 trap cleanup EXIT
 
 # shellcheck source=/dev/null
-sh scripts/elasticsearch-test-helpers/create-and-check-es.sh
+scripts/elasticsearch-test-helpers/create-and-check-es.sh
 wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
@@ -41,5 +41,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --url http://localhost:9200 \
     --jq-query '{ethnicity, director, plot}'
 
-echo "SCRIPT_DIR: $SCRIPT_DIR"
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

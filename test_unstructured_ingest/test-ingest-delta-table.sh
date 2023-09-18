@@ -40,6 +40,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --write-column json_data \
     --table-uri $DESTINATION_TABLE
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
 
 python "$SCRIPT_DIR"/python/test-ingest-delta-table-output.py

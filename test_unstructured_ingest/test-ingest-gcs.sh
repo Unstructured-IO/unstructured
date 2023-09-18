@@ -34,4 +34,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --remote-url gs://utic-test-ingest-fixtures/
 
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

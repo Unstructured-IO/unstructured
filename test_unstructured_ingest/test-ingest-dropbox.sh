@@ -35,4 +35,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --remote-url "dropbox:// /"
 
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
