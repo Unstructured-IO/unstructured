@@ -18,7 +18,7 @@ arrow==1.2.3
     # via isoduration
 asttokens==2.4.0
     # via stack-data
-async-lru==2.0.4
+async-lru==1.0.3
     # via jupyterlab
 attrs==23.1.0
     # via
@@ -108,7 +108,7 @@ ipykernel==6.25.2
     #   jupyter-console
     #   jupyterlab
     #   qtconsole
-ipython==8.12.2
+ipython==8.11.0
     # via
     #   -c requirements/constraints.in
     #   -r requirements/dev.in
@@ -325,6 +325,7 @@ send2trash==1.8.2
     # via jupyter-server
 six==1.16.0
     # via
+    #   -c requirements/base.txt
     #   -c requirements/test.txt
     #   asttokens
     #   bleach
