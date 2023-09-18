@@ -1,7 +1,7 @@
 from typing import List
 
 import iso639
-from langdetect import DetectorFactory, detect_langs
+from langdetect import DetectorFactory, detect_langs, lang_detect_exception
 
 from unstructured.logger import logger
 
@@ -223,10 +223,16 @@ def detect_languages(
     if text.strip() == "":
         return ["eng"]  # english as default
 
+    # user inputted language
     if languages and "auto" not in languages:
         doc_languages = [_convert_to_standard_langcode(lang) for lang in languages]
+    # language detection
     else:
-        langdetect_result = detect_langs(text)  # list of Language objects
+        try:
+            langdetect_result = detect_langs(text)
+        except lang_detect_exception.LangDetectException as e:
+            logger.warning(e)
+            return ["eng"]  # english as default
 
         # NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
         # Chinese variants. We normalizes these because there is a single model for Chinese
