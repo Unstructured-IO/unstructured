@@ -47,8 +47,7 @@ class SimpleFsspecConfig(BaseConnectorConfig):
     # fsspec specific options
     path: str
     recursive: bool = False
-    # TODO revert to False as default
-    uncompress: bool = True
+    uncompress: bool = False
     access_kwargs: dict = field(default_factory=dict)
     protocol: str = field(init=False)
     path_without_protocol: str = field(init=False)

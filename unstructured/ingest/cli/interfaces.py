@@ -188,6 +188,8 @@ class CliFsspecConfig(BaseConfig, CliMixin):
                 type=bool,
                 default=False,
                 is_flag=True,
+                help="Uncompress any archived files. Currently supporting zip and tar "
+                "files based on file extension.",
             ),
         ]
         cmd.params.extend(options)
