@@ -209,28 +209,24 @@ def _get_all_tesseract_langcodes_with_prefix(prefix: str):
 
 def detect_languages(
     text: str,
-    languages: List[str] = ["eng"],
+    languages: List[str],  # no default
 ) -> str:
     if text.strip() == "":
         return languages
 
-    # document level
-    # use detect langs to get multiple languages and their probabilities
-    doc_languages = set()
-
     if languages is not None:
         doc_languages = languages
     else:
-        langdetect_result = detect_langs(text)
+        langdetect_result = detect_langs(text)  # list of Language objects
 
         # NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
         # Chinese variants. We normalizes these because there is a single model for Chinese
         # machine translation
-        if any(lang.startswith("zh") for lang in langdetect_result):
-            doc_languages.add("zh")
+        langdetect_langs = [
+            "zh" if langobj.lang.startswith("zh") else langobj.lang for langobj in langdetect_result
+        ]
 
-    # TODO(shreya) if multiple languages returned, detect on element level
-    # possibly a confidence threshold?
+        doc_languages = []
+        [doc_languages.append(lang) for lang in langdetect_langs if lang not in doc_languages]
 
-    # TODO(shreya) think about return type: str or list
     return doc_languages
