@@ -1,10 +1,17 @@
+import copy
 import os
 import re
+import tarfile
 import typing as t
+import zipfile
 from contextlib import suppress
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from unstructured.ingest.connector.local import (
+    LocalSourceConnector,
+    SimpleLocalConfig,
+)
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
@@ -31,12 +38,17 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "dropbox",
 ]
 
+zip_file_extensions = [".zip"]
+tar_file_extensions = [".tar", ".tar.gz", ".tgz"]
+
 
 @dataclass
 class SimpleFsspecConfig(BaseConnectorConfig):
     # fsspec specific options
     path: str
     recursive: bool = False
+    # TODO revert to False as default
+    uncompress: bool = True
     access_kwargs: dict = field(default_factory=dict)
     protocol: str = field(init=False)
     path_without_protocol: str = field(init=False)
@@ -181,7 +193,7 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         )
 
         """Verify that can get metadata for an object, validates connections info."""
-        ls_output = self.fs.ls(self.connector_config.path_without_protocol)
+        ls_output: t.List[str] = self.fs.ls(self.connector_config.path_without_protocol)
         if len(ls_output) < 1:
             raise ValueError(
                 f"No objects found in {self.connector_config.path}.",
@@ -209,16 +221,104 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 if v.get("size") > 0
             ]
 
-    def get_ingest_docs(self):
-        return [
-            self.ingest_doc_cls(
-                read_config=self.read_config,
-                connector_config=self.connector_config,
-                partition_config=self.partition_config,
-                remote_file_path=file,
+    def _decompress_file(self, filename: str) -> str:
+        head, tail = os.path.split(filename)
+        if any(filename.endswith(ext) for ext in zip_file_extensions):
+            for ext in zip_file_extensions:
+                if tail.endswith(ext):
+                    tail = tail[: -(len(ext))]
+                    break
+            path = os.path.join(head, f"{tail}-zip-uncompressed")
+            logger.info(f"extracting zip {filename} -> {path}")
+            with zipfile.ZipFile(filename) as zfile:
+                zfile.extractall(path=path)
+            return path
+        elif any(filename.endswith(ext) for ext in tar_file_extensions):
+            for ext in tar_file_extensions:
+                if tail.endswith(ext):
+                    tail = tail[: -(len(ext))]
+                    break
+
+            path = os.path.join(head, f"{tail}-tar-uncompressed")
+            logger.info(f"extracting tar {filename} -> {path}")
+            with tarfile.open(filename, "r:gz") as tfile:
+                tfile.extractall(path=path)
+            return path
+        else:
+            raise ValueError(
+                "filename {} not a recognized compressed extension: {}".format(
+                    filename,
+                    ", ".join(zip_file_extensions + tar_file_extensions),
+                ),
             )
-            for file in self._list_files()
-        ]
+
+    def _process_compressed_doc(self, doc: FsspecIngestDoc) -> t.List[BaseIngestDoc]:
+        # Download the raw file to local
+        doc.get_file()
+        path = self._decompress_file(filename=str(doc.filename))
+        new_read_configs = copy.copy(self.read_config)
+        new_partition_configs = copy.copy(self.partition_config)
+        relative_path = path.replace(self.read_config.download_dir, "")
+        if relative_path[0] == "/":
+            relative_path = relative_path[1:]
+        new_partition_configs.output_dir = os.path.join(
+            self.partition_config.output_dir,
+            relative_path,
+        )
+
+        local_connector = LocalSourceConnector(
+            connector_config=SimpleLocalConfig(
+                input_path=path,
+                recursive=True,
+            ),
+            read_config=new_read_configs,
+            partition_config=new_partition_configs,
+        )
+        local_connector.initialize()
+        return local_connector.get_ingest_docs()
+
+    def get_ingest_docs(self):
+        files = self._list_files()
+        # remove compressed files
+        zip_files = []
+        tar_files = []
+        uncompressed_files = []
+        docs: t.List[BaseIngestDoc] = []
+        for file in files:
+            if any(file.endswith(ext) for ext in zip_file_extensions):
+                zip_files.append(file)
+                continue
+            if any(file.endswith(ext) for ext in tar_file_extensions):
+                tar_files.append(file)
+                continue
+            uncompressed_files.append(file)
+        docs.extend(
+            [
+                self.ingest_doc_cls(
+                    read_config=self.read_config,
+                    connector_config=self.connector_config,
+                    partition_config=self.partition_config,
+                    remote_file_path=file,
+                )
+                for file in uncompressed_files
+            ],
+        )
+        if not self.connector_config.uncompress:
+            return docs
+        for compressed_file in zip_files + tar_files:
+            compressed_doc = self.ingest_doc_cls(
+                read_config=self.read_config,
+                partition_config=self.partition_config,
+                connector_config=self.connector_config,
+                remote_file_path=compressed_file,
+            )
+            try:
+                local_ingest_docs = self._process_compressed_doc(doc=compressed_doc)
+                logger.info(f"adding {len(local_ingest_docs)} from {compressed_file}")
+                docs.extend(local_ingest_docs)
+            finally:
+                compressed_doc.cleanup_file()
+        return docs
 
 
 @dataclass
