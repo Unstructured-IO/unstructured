@@ -137,9 +137,6 @@ PYTESSERACT_LANGS = [
 ]
 
 
-DetectorFactory.seed = 0  # do this inside a function?
-
-
 def prepare_languages_for_tesseract(languages: List[str] = ["eng"]):
     """
     Entry point: convert languages (list of strings) into tesseract ocr langcode format (uses +)
@@ -222,6 +219,8 @@ def detect_languages(
 ) -> List[str]:
     if text.strip() == "":
         return ["eng"]  # english as default
+
+    DetectorFactory.seed = 0
 
     # user inputted language
     if languages and "auto" not in languages:
