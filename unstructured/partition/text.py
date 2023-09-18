@@ -230,8 +230,8 @@ def partition_text(
     elif text is not None:
         file_text = str(text)
 
-    # detect language
-    detect_languages(file_text, languages)
+    languages = detect_languages(file_text, languages)
+    # TODO(shreya): add to metadata
 
     if paragraph_grouper is False:
         pass
