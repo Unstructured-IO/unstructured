@@ -192,6 +192,8 @@ def partition_text(
         for formatting purposes.
     include_metadata
         Determines whether or not metadata is included in the output.
+    languages
+        The list of languages present in the document.
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied.
@@ -202,6 +204,9 @@ def partition_text(
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
+
+    if not isinstance(languages, list):
+        raise TypeError("The language parameter must be a list of language codes as strings.")
 
     if (
         min_partition is not None
