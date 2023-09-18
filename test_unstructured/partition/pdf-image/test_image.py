@@ -132,7 +132,7 @@ def test_partition_image_with_table_extraction(
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 1
-    assert "Layouts of history Japanese documents" in table[0]
+    assert "<table><thead><th>" in table[0]
 
 
 def test_partition_image_with_multipage_tiff(
@@ -428,6 +428,20 @@ def test_partition_image_with_ocr_coordinates_are_not_nan_from_filename(
             for point in box:
                 assert point[0] is not math.nan
                 assert point[1] is not math.nan
+
+
+def test_partition_image_formats_languages_for_tesseract():
+    filename = "example-docs/jpn-vert.jpeg"
+    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
+        image.partition_image(filename=filename, strategy="hi_res", languages=["jpn_vert"])
+        mock_process.assert_called_once_with(
+            filename,
+            is_image=True,
+            ocr_languages="jpn_vert",
+            ocr_mode="entire_page",
+            extract_tables=False,
+            model_name=None,
+        )
 
 
 def test_partition_image_warns_with_ocr_languages(caplog):
