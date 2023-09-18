@@ -369,6 +369,22 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
     assert elements[1].text.startswith("Zejiang Shen")
 
 
+def test_auto_partition_formats_languages_for_tesseract():
+    filename = "example-docs/chi_sim_image.jpeg"
+    with patch(
+        "unstructured_inference.inference.layout.process_file_with_model",
+    ) as mock_process_file_with_model:
+        partition(filename, strategy="hi_res", languages=["zh"])
+        mock_process_file_with_model.assert_called_once_with(
+            filename,
+            is_image=True,
+            ocr_languages="chi_sim+chi_sim_vert+chi_tra+chi_tra_vert",
+            ocr_mode="entire_page",
+            extract_tables=False,
+            model_name=None,
+        )
+
+
 def test_auto_partition_warns_with_ocr_languages(caplog):
     filename = "example-docs/chevron-page.pdf"
     partition(filename=filename, strategy="hi_res", ocr_languages="eng")

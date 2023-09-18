@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Add a function to map between Tesseract and standard language codes.** This allows users to input language information to the `languages` param in any Tesseract-supported langcode or any ISO 639 standard language code.
+
 ### Features
 
 ### Fixes
@@ -62,7 +64,7 @@
 * Update all connectors to use new downstream architecture
   * New click type added to parse comma-delimited string inputs
   * Some CLI options renamed
-
+ 
 ### Features
 
 ### Fixes

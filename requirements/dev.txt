@@ -207,7 +207,7 @@ nbformat==5.9.2
     #   jupyter-server
     #   nbclient
     #   nbconvert
-nest-asyncio==1.5.7
+nest-asyncio==1.5.8
     # via ipykernel
 nodeenv==1.8.0
     # via pre-commit
