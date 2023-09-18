@@ -100,7 +100,9 @@ requests==2.31.0
 ruff==0.0.290
     # via -r requirements/test.in
 six==1.16.0
-    # via python-dateutil
+    # via
+    #   -c requirements/base.txt
+    #   python-dateutil
 tomli==2.0.1
     # via
     #   black

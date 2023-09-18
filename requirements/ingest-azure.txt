@@ -85,6 +85,7 @@ requests==2.31.0
     #   msal
 six==1.16.0
     # via
+    #   -c requirements/base.txt
     #   azure-core
     #   isodate
 typing-extensions==4.8.0
