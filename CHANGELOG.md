@@ -12,14 +12,6 @@
 
 ### Enhancements
 
-### Features
-
-### Fixes
-
-## 0.10.15
-
-### Enhancements
-
 * **Support for better element categories from the next-generation image-to-text model ("chipper").** Previously, not all of the classifications from Chipper were being mapped to proper `unstructured` element categories so the consumer of the library would see many `UncategorizedText` elements. This fixes the issue, improving the granularity of the element categories outputs for better downstream processing and chunking. The mapping update is:
   * "Threading": `NarrativeText`
   * "Form": `NarrativeText`
@@ -72,7 +64,7 @@
 * Update all connectors to use new downstream architecture
   * New click type added to parse comma-delimited string inputs
   * Some CLI options renamed
-
+ 
 ### Features
 
 ### Fixes
