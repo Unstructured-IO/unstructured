@@ -554,7 +554,7 @@ def test_auto_partition_works_with_unstructured_jsons_from_file():
 def test_auto_partition_odt_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
     elements = partition(filename=filename, strategy="hi_res")
-    assert elements == [Title("Lorem ipsum dolor sit amet.")]
+    assert elements[0] == Title("Lorem ipsum dolor sit amet.")
 
 
 def test_auto_partition_odt_from_file():
@@ -562,7 +562,7 @@ def test_auto_partition_odt_from_file():
     with open(filename, "rb") as f:
         elements = partition(file=f, strategy="hi_res")
 
-    assert elements == [Title("Lorem ipsum dolor sit amet.")]
+    assert elements[0] == Title("Lorem ipsum dolor sit amet.")
 
 
 @pytest.mark.parametrize(

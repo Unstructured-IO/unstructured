@@ -2,7 +2,7 @@ import os
 import pathlib
 
 from unstructured.chunking.title import chunk_by_title
-from unstructured.documents.elements import Title
+from unstructured.documents.elements import Table, Title
 from unstructured.partition.json import partition_json
 from unstructured.partition.odt import partition_odt
 from unstructured.staging.base import elements_to_json
@@ -14,7 +14,16 @@ EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs
 def test_partition_odt_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
     elements = partition_odt(filename=filename)
-    assert elements == [Title("Lorem ipsum dolor sit amet.")]
+    assert elements == [
+        Title("Lorem ipsum dolor sit amet."),
+        Table(
+            text="\nHeader row  Mon    Wed"
+            "   Fri\nColor       Blue"
+            "   Red   Green\nTime        1pm"
+            "    2pm   3pm\nLeader      "
+            "Sarah  Mark  Ryan",
+        ),
+    ]
     for element in elements:
         assert element.metadata.filename == "fake.odt"
 
@@ -29,8 +38,16 @@ def test_partition_odt_from_file():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
     with open(filename, "rb") as f:
         elements = partition_odt(file=f)
-
-    assert elements == [Title("Lorem ipsum dolor sit amet.")]
+    assert elements == [
+        Title("Lorem ipsum dolor sit amet."),
+        Table(
+            text="\nHeader row  Mon    Wed"
+            "   Fri\nColor       Blue"
+            "   Red   Green\nTime        1pm"
+            "    2pm   3pm\nLeader      "
+            "Sarah  Mark  Ryan",
+        ),
+    ]
 
 
 def test_partition_odt_from_file_with_metadata_filename():
