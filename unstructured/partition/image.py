@@ -81,4 +81,5 @@ def partition_image(
         languages=languages,
         strategy=strategy,
         metadata_last_modified=metadata_last_modified,
+        **kwargs,
     )

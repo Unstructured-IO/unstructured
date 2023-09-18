@@ -7,6 +7,7 @@ from .azure import get_source_cmd as azure_src
 from .biomed import get_source_cmd as biomed_src
 from .box import get_source_cmd as box_src
 from .confluence import get_source_cmd as confluence_src
+from .delta_table import get_dest_cmd as delta_table_dest
 from .delta_table import get_source_cmd as delta_table_src
 from .discord import get_source_cmd as discord_src
 from .dropbox import get_source_cmd as dropbox_src
@@ -57,7 +58,7 @@ src: t.List[click.Group] = [
     wikipedia_src(),
 ]
 
-dest: t.List[click.Command] = [s3_dest()]
+dest: t.List[click.Command] = [s3_dest(), delta_table_dest()]
 
 __all__ = [
     "src",

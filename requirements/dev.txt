@@ -80,7 +80,7 @@ filelock==3.12.4
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
-identify==2.5.28
+identify==2.5.29
     # via pre-commit
 idna==3.4
     # via
@@ -176,7 +176,7 @@ jupyter-server==2.7.3
     #   notebook-shim
 jupyter-server-terminals==0.4.4
     # via jupyter-server
-jupyterlab==4.0.5
+jupyterlab==4.0.6
     # via notebook
 jupyterlab-pygments==0.2.2
     # via nbconvert
