@@ -61,3 +61,8 @@ def test_detect_languages_english_provided():
 def test_detect_languages_korean_auto():
     text = "안녕하세요"
     assert lang.detect_languages(text) == ["kor"]
+
+
+def test_detect_languages_gets_multiple_languages():
+    text = "My lubimy mleko i chleb."
+    assert lang.detect_languages(text) == ["ces", "pol", "slk"]
