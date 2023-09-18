@@ -16,9 +16,6 @@ from unstructured.partition.common import exactly_one
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
-from unstructured.partition.lang import (
-    convert_old_ocr_languages_to_languages,
-)
 from unstructured.partition.text import partition_text
 from unstructured.partition.xml import partition_xml
 from unstructured.utils import dependency_exists
@@ -201,7 +198,9 @@ def partition(
     kwargs.setdefault("metadata_filename", metadata_filename)
 
     if not isinstance(languages, list):
-        raise TypeError("The language parameter must be a list of language codes as strings.")
+        raise TypeError(
+            "The language parameter must be a list of language codes as strings."
+        )
 
     if ocr_languages is not None:
         # check if languages was set to anything not the default value
@@ -213,7 +212,7 @@ def partition(
             )
 
         else:
-            languages = convert_old_ocr_languages_to_languages(ocr_languages)
+            languages = ocr_languages.split("+")
             logger.warning(
                 "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
                 "Please use languages instead.",
@@ -259,7 +258,9 @@ def partition(
         _partition_odt = _get_partition_with_extras("odt")
         elements = _partition_odt(filename=filename, file=file, **kwargs)
     elif filetype == FileType.EML:
-        elements = partition_email(filename=filename, file=file, encoding=encoding, **kwargs)
+        elements = partition_email(
+            filename=filename, file=file, encoding=encoding, **kwargs
+        )
     elif filetype == FileType.MSG:
         _partition_msg = _get_partition_with_extras("msg")
         elements = _partition_msg(filename=filename, file=file, **kwargs)
@@ -323,7 +324,11 @@ def partition(
             languages=languages,
             **kwargs,
         )
-    elif (filetype == FileType.PNG) or (filetype == FileType.JPG) or (filetype == FileType.TIFF):
+    elif (
+        (filetype == FileType.PNG)
+        or (filetype == FileType.JPG)
+        or (filetype == FileType.TIFF)
+    ):
         elements = partition_image(
             filename=filename,  # type: ignore
             file=file,  # type: ignore
@@ -386,7 +391,9 @@ def partition(
         elements = []
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
-        raise ValueError(f"{msg}. The {filetype} file type is not supported in partition.")
+        raise ValueError(
+            f"{msg}. The {filetype} file type is not supported in partition."
+        )
 
     for element in elements:
         element.metadata.url = url
