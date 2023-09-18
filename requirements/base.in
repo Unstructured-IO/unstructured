@@ -10,3 +10,4 @@ beautifulsoup4
 emoji
 dataclasses-json
 python-iso639
+langdetect
