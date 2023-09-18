@@ -171,8 +171,9 @@ class CliRecursiveConfig(BaseConfig, CliMixin):
         cmd.params.extend(options)
 
 
-class CliRemoteUrlConfig(BaseConfig, CliMixin):
+class CliFsspecConfig(BaseConfig, CliMixin):
     remote_url: str
+    uncompress: bool
 
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:
@@ -181,6 +182,12 @@ class CliRemoteUrlConfig(BaseConfig, CliMixin):
                 ["--remote-url"],
                 required=True,
                 help="Remote fsspec URL formatted as `protocol://dir/path`",
+            ),
+            click.Option(
+                ["--uncompress"],
+                type=bool,
+                default=False,
+                is_flag=True,
             ),
         ]
         cmd.params.extend(options)

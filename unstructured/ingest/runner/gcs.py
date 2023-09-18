@@ -14,6 +14,7 @@ def gcs(
     partition_config: PartitionConfig,
     remote_url: str,
     recursive: bool,
+    uncompress: bool,
     token: t.Optional[str],
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
@@ -35,6 +36,7 @@ def gcs(
         connector_config=SimpleGcsConfig(
             path=remote_url,
             recursive=recursive,
+            uncompress=uncompress,
             access_kwargs={"token": token},
         ),
         read_config=read_config,

@@ -14,6 +14,7 @@ def s3(
     partition_config: PartitionConfig,
     remote_url: str,
     recursive: bool,
+    uncompress: bool,
     anonymous: bool,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
@@ -35,6 +36,7 @@ def s3(
         connector_config=SimpleS3Config(
             path=remote_url,
             recursive=recursive,
+            uncompress=uncompress,
             access_kwargs={"anon": anonymous},
         ),
         read_config=read_config,

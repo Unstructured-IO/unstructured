@@ -16,6 +16,7 @@ def azure(
     account_key: t.Optional[str],
     connection_string: t.Optional[str],
     remote_url: str,
+    uncompress: bool,
     recursive: bool,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
@@ -54,6 +55,7 @@ def azure(
         connector_config=SimpleAzureBlobStorageConfig(
             path=remote_url,
             recursive=recursive,
+            uncompress=uncompress,
             access_kwargs=access_kwargs,
         ),
         read_config=read_config,

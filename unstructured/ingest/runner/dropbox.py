@@ -14,6 +14,7 @@ def dropbox(
     partition_config: PartitionConfig,
     remote_url: str,
     recursive: bool,
+    uncompress: bool,
     token: t.Optional[str],
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
@@ -39,6 +40,7 @@ def dropbox(
         connector_config=SimpleDropboxConfig(
             path=remote_url,
             recursive=recursive,
+            uncompress=uncompress,
             access_kwargs={"token": token},
         ),
         partition_config=partition_config,

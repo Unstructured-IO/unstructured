@@ -9,11 +9,11 @@ from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
+    CliFsspecConfig,
     CliMixin,
     CliPartitionConfig,
     CliReadConfig,
     CliRecursiveConfig,
-    CliRemoteUrlConfig,
 )
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
@@ -61,7 +61,7 @@ def box_source(ctx: click.Context, **options):
 def get_source_cmd() -> click.Group:
     cmd = box_source
     BoxCliConfig.add_cli_options(cmd)
-    CliRemoteUrlConfig.add_cli_options(cmd)
+    CliFsspecConfig.add_cli_options(cmd)
     CliRecursiveConfig.add_cli_options(cmd)
 
     # Common CLI configs

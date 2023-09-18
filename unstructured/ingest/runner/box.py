@@ -14,6 +14,7 @@ def box(
     partition_config: PartitionConfig,
     remote_url: str,
     recursive: bool,
+    uncompress: bool,
     box_app_config: t.Optional[str],
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
@@ -36,6 +37,7 @@ def box(
         connector_config=SimpleBoxConfig(
             path=remote_url,
             recursive=recursive,
+            uncompress=uncompress,
             access_kwargs={"box_app_config": box_app_config},
         ),
         partition_config=partition_config,

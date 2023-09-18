@@ -7,10 +7,10 @@ from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
+    CliFsspecConfig,
     CliPartitionConfig,
     CliReadConfig,
     CliRecursiveConfig,
-    CliRemoteUrlConfig,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import fsspec as fsspec_fn
@@ -38,7 +38,7 @@ def fsspec_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = fsspec_source
-    CliRemoteUrlConfig.add_cli_options(cmd)
+    CliFsspecConfig.add_cli_options(cmd)
     CliRecursiveConfig.add_cli_options(cmd)
 
     # Common CLI configs
