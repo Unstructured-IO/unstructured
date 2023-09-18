@@ -231,7 +231,6 @@ def detect_languages(
         # NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
         # Chinese variants. We normalizes these because there is a single model for Chinese
         # machine translation
-
         langdetect_langs = [
             _convert_to_standard_langcode("zh")
             if langobj.lang.startswith("zh")
