@@ -209,12 +209,12 @@ def _get_all_tesseract_langcodes_with_prefix(prefix: str):
 
 def detect_languages(
     text: str,
-    languages: List[str],  # no default
-) -> str:
+    languages: List[str] = ["auto"],
+) -> List[str]:
     if text.strip() == "":
-        return languages
+        return ["eng"]  # english as default
 
-    if languages is not None:
+    if languages and "auto" not in languages:
         doc_languages = languages
     else:
         langdetect_result = detect_langs(text)  # list of Language objects
@@ -226,7 +226,10 @@ def detect_languages(
             "zh" if langobj.lang.startswith("zh") else langobj.lang for langobj in langdetect_result
         ]
 
+        # remove duplicates without modifying order
         doc_languages = []
-        [doc_languages.append(lang) for lang in langdetect_langs if lang not in doc_languages]
+        for lang in langdetect_langs:
+            if lang not in doc_languages:
+                doc_languages.append(lang)
 
     return doc_languages
