@@ -212,7 +212,7 @@ def _convert_to_standard_langcode(lang: str) -> str:
     Convert a language code to the standard internal language code format.
     """
     # convert to standard ISO 639-3 language code
-    lang_iso639 = iso639.Language.match(lang)
+    lang_iso639 = iso639.Language.match(lang[:3].lower())
     return lang_iso639.part3
 
 
@@ -224,14 +224,14 @@ def detect_languages(
         return ["eng"]  # english as default
 
     if languages and "auto" not in languages:
-        doc_languages = languages
+        doc_languages = [_convert_to_standard_langcode(lang) for lang in languages]
     else:
         langdetect_result = detect_langs(text)  # list of Language objects
 
         # NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
         # Chinese variants. We normalizes these because there is a single model for Chinese
         # machine translation
-        
+
         langdetect_langs = [
             _convert_to_standard_langcode("zh")
             if langobj.lang.startswith("zh")
