@@ -11,7 +11,7 @@ DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-trap 'cleanup "$OUTPUT_DIR"' EXIT
+trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
 
 sh "$SCRIPT_DIR"/check-num-files-expected-output.sh 3 $OUTPUT_FOLDER_NAME 20k
 

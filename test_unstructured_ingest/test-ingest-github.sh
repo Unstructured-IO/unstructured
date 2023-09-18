@@ -10,7 +10,7 @@ DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-trap 'cleanup "$OUTPUT_DIR"' EXIT
+trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
 
 GH_READ_ONLY_ACCESS_TOKEN=${GH_READ_ONLY_ACCESS_TOKEN:-none}
 

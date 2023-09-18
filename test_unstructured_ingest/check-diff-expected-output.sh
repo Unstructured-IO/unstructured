@@ -21,16 +21,13 @@ OUTPUT_DIR_TEXT=$SCRIPT_DIR/text-output/$OUTPUT_FOLDER_NAME
 EXPECTED_OUTPUT_DIR=$SCRIPT_DIR/expected-structured-output/$OUTPUT_FOLDER_NAME
 EXPECTED_OUTPUT_DIR_TEXT=$SCRIPT_DIR/expected-text-output/$OUTPUT_FOLDER_NAME
 
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+
 function cleanup() {
   if [ "$TMP_DIRECTORY_CLEANUP" == "true" ]; then
-    if [ -d "$EXPECTED_OUTPUT_DIR_TEXT" ]; then
-      echo "cleaning up tmp directory: $EXPECTED_OUTPUT_DIR_TEXT"
-      rm -rf "$EXPECTED_OUTPUT_DIR_TEXT"
-    fi
-    if [ -d "$OUTPUT_DIR_TEXT" ]; then
-      echo "cleaning up tmp directory: $OUTPUT_DIR_TEXT"
-      rm -rf "$OUTPUT_DIR_TEXT"
-    fi
+    cleanup_dir "$EXPECTED_OUTPUT_DIR_TEXT"
+    cleanup_dir "$OUTPUT_DIR_TEXT"
   else
     echo "skipping tmp directory cleanup"
   fi

@@ -10,7 +10,7 @@ DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-trap 'cleanup "$OUTPUT_DIR"' EXIT
+trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
 
 if [ -z "$DISCORD_TOKEN" ]; then
    echo "Skipping Discord ingest test because the DISCORD_TOKEN env var is not set."

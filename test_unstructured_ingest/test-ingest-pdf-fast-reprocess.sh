@@ -11,7 +11,7 @@ INPUT_PATH=$SCRIPT_DIR/download
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-trap 'cleanup "$OUTPUT_DIR"' EXIT
+trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
 
 echo "REPROCESS INPUT PATH"
 ls "$INPUT_PATH"

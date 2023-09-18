@@ -13,7 +13,7 @@ DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-trap 'cleanup "$OUTPUT_DIR"' EXIT
+trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
 
 VARIED_DATA_BASE_ID="app5YQxSfp220fWtm"
 VARIED_DATA_BASE_ID_2="appJ43QmP8I17zu88"
