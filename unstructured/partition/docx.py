@@ -84,8 +84,8 @@ STYLE_TO_ELEMENT_MAPPING = {
 
 
 def _get_paragraph_runs(paragraph):
-    """
-    Get hyperlink text from a paragraph object.
+    """Get hyperlink text from a paragraph object.
+
     Without this, the default runs function skips over hyperlinks.
 
     Args:
