@@ -36,7 +36,7 @@
 * **Bump unstructured-inference** to 0.5.28. This version bump markedly improves the output of table data, rendered as `metadata.text_as_html` in an element. These changes include:
   * add env variable `ENTIRE_PAGE_OCR` to specify using paddle or tesseract on entire page OCR
   * table structure detection now pads the input image by 25 pixels in all 4 directions to improve its recall (0.5.27)
-  * support paddle with both cpu and gpu and assumes it is pre-installed (0.5.26)
+  * support paddle with both cpu and gpu and assume it is pre-installed (0.5.26)
   * fix a bug where `cells_to_html` doesn't handle cells spanning multiple rows properly (0.5.25)
   * remove `cv2` preprocessing step before OCR step in table transformer (0.5.24)
 
