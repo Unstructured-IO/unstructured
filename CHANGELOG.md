@@ -1,9 +1,9 @@
-## 0.10.16-dev1
+## 0.10.16-dev2
 
 
 ### Enhancements
 
-* **Adds data source properties to Airtable, Confluence and Discord connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+* **Adds data source properties to Airtable, Confluence, Discord, Elasticsearch, Google Drive, and Wikipedia connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
 
 ### Features
 
