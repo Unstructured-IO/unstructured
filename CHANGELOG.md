@@ -1,4 +1,15 @@
-## 0.10.16-dev0
+## 0.10.16-dev1
+
+
+### Enhancements
+
+* **Adds data source properties to Airtable, Confluence and Discord connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+
+### Features
+
+### Fixes
+
+## 0.10.15
 
 ### Enhancements
 
