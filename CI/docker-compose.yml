@@ -1,0 +1,5 @@
+services:
+  ci:
+    image: unstructured:ci
+    env_file:
+      - ci.env
