@@ -54,7 +54,7 @@ def partition_image(
 
     if not isinstance(languages, list):
         raise TypeError(
-            "The language parameter must be a list of language codes as strings."
+            "The language parameter must be a list of language codes as strings.",
         )
 
     if ocr_languages is not None:

@@ -84,7 +84,7 @@ def chunk_by_title(
                                 item["start"] += start_char
                                 item["end"] += start_char
 
-                        if i > 0:
+                        if i > 0 and _value != value:
                             _value.extend(value)
                             setattr(metadata, attr, _value)
 

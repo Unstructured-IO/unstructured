@@ -206,7 +206,9 @@ def partition_text(
         return []
 
     if not isinstance(languages, list):
-        raise TypeError("The language parameter must be a list of language codes as strings.")
+        raise TypeError(
+            "The language parameter must be a list of language codes as strings.",
+        )
 
     if (
         min_partition is not None
@@ -231,7 +233,6 @@ def partition_text(
         file_text = str(text)
 
     languages = detect_languages(file_text, languages)
-    # TODO(shreya): add to metadata
 
     if paragraph_grouper is False:
         pass
@@ -241,7 +242,9 @@ def partition_text(
         file_text = auto_paragraph_grouper(file_text)
 
     if min_partition is not None and len(file_text) < min_partition:
-        raise ValueError("`min_partition` cannot be larger than the length of file contents.")
+        raise ValueError(
+            "`min_partition` cannot be larger than the length of file contents.",
+        )
 
     file_content = split_by_paragraph(
         file_text,
@@ -254,6 +257,7 @@ def partition_text(
         ElementMetadata(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
+            languages=languages,
         )
         if include_metadata
         else ElementMetadata()

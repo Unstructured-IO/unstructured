@@ -106,7 +106,7 @@ def partition_pdf(
 
     if not isinstance(languages, list):
         raise TypeError(
-            "The language parameter must be a list of language codes as strings."
+            "The language parameter must be a list of language codes as strings.",
         )
 
     if ocr_languages is not None:
@@ -189,7 +189,7 @@ def partition_pdf_or_image(
 
     if not isinstance(languages, list):
         raise TypeError(
-            "The language parameter must be a list of language codes as strings."
+            "The language parameter must be a list of language codes as strings.",
         )
 
     if ocr_languages is not None:
@@ -309,9 +309,7 @@ def _partition_pdf_or_image_local(
 
     ocr_languages = "+".join(languages)
 
-    model_name = (
-        model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
-    )
+    model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
     if file is None:
         pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
         process_file_with_model_kwargs = {
@@ -577,7 +575,7 @@ def convert_pdf_to_images(
 def _get_element_box(
     boxes: List[str],
     char_count: int,
-) -> Tuple[Tuple[Tuple[float, float], Tuple[float, int], Tuple[int, int], Tuple[int, float]], int]:
+) -> Tuple[Tuple[Tuple[float, float], Tuple[float, int], Tuple[int, int], Tuple[int, float]], int,]:
     """Helper function to get the bounding box of an element.
 
     Args:
@@ -714,6 +712,7 @@ def _partition_pdf_or_image_with_ocr(
                 filename=filename,
                 page_number=page_number,
                 last_modified=metadata_last_modified,
+                languages=languages,
             )
             _text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,
@@ -774,14 +773,8 @@ def check_coords_within_boundary(
     line_height = boundary_y_max - boundary_y_min
 
     x_within_boundary = (
-        (
-            coordinates.points[0][0]
-            < boundary_x_min + (horizontal_threshold * line_width)
-        )
-        and (
-            coordinates.points[2][0]
-            < boundary_x_max + (horizontal_threshold * line_width)
-        )
+        (coordinates.points[0][0] < boundary_x_min + (horizontal_threshold * line_width))
+        and (coordinates.points[2][0] < boundary_x_max + (horizontal_threshold * line_width))
         and (coordinates.points[0][0] >= boundary_x_min)
     )
     y_within_boundary = (

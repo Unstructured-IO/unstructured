@@ -199,7 +199,7 @@ def partition(
 
     if not isinstance(languages, list):
         raise TypeError(
-            "The language parameter must be a list of language codes as strings."
+            "The language parameter must be a list of language codes as strings.",
         )
 
     if ocr_languages is not None:
@@ -259,7 +259,10 @@ def partition(
         elements = _partition_odt(filename=filename, file=file, **kwargs)
     elif filetype == FileType.EML:
         elements = partition_email(
-            filename=filename, file=file, encoding=encoding, **kwargs
+            filename=filename,
+            file=file,
+            encoding=encoding,
+            **kwargs,
         )
     elif filetype == FileType.MSG:
         _partition_msg = _get_partition_with_extras("msg")
@@ -324,11 +327,7 @@ def partition(
             languages=languages,
             **kwargs,
         )
-    elif (
-        (filetype == FileType.PNG)
-        or (filetype == FileType.JPG)
-        or (filetype == FileType.TIFF)
-    ):
+    elif (filetype == FileType.PNG) or (filetype == FileType.JPG) or (filetype == FileType.TIFF):
         elements = partition_image(
             filename=filename,  # type: ignore
             file=file,  # type: ignore
@@ -392,7 +391,7 @@ def partition(
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise ValueError(
-            f"{msg}. The {filetype} file type is not supported in partition."
+            f"{msg}. The {filetype} file type is not supported in partition.",
         )
 
     for element in elements:
