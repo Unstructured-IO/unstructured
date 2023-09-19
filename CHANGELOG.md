@@ -9,8 +9,7 @@
 
 ### Fixes
 
-* **GH Issue 1460** Fixes a bug that prevented certain pdf's from bypassing new coordinate logic
-
+* ***Fixes an issue that caused a partition error for some PDF's.** Fixes GH Issue 1460 by bypassing a coordinate check if an element has invalid coordinates.
 ## 0.10.15
 
 ### Enhancements

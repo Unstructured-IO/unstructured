@@ -761,6 +761,9 @@ def check_coords_within_boundary(
         a float ranges from [0,1] to scale the horizontal (x-axis) boundary
     """
     if not coord_has_valid_points(coordinates) and not coord_has_valid_points(boundary):
+        trace_logger.detail(  # type: ignore
+            f"coordinates {coordinates} and boundary {boundary} did not pass validation",
+        )
         return False
 
     boundary_x_min = boundary.points[0][0]
