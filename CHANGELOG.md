@@ -1,4 +1,4 @@
-## 0.10.16-dev2
+## 0.10.16
 
 
 ### Enhancements
@@ -8,6 +8,8 @@
 ### Features
 
 ### Fixes
+
+* **GH Issue 1460** Fixes a bug that prevented certain pdf's from bypassing new coordinate logic
 
 ## 0.10.15
 
