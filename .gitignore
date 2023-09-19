@@ -132,6 +132,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# pyright (Python LSP/type-checker in VSCode) config
+/pyrightconfig.json
+
 # ingest outputs
 /structured-output
 
