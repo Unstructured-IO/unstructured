@@ -144,7 +144,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             document_history["createdDate"],
             "%Y-%m-%dT%H:%M:%S.%fZ",
         ).isoformat()
-        if last_updated := document_history.get("lastUpdated", "").get("when", ""):
+        if last_updated := document_history.get("lastUpdated", {}).get("when", ""):
             date_modified = datetime.strptime(
                 last_updated,
                 "%Y-%m-%dT%H:%M:%S.%fZ",
