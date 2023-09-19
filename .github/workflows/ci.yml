@@ -234,7 +234,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup, lint]
+    needs: [setup]
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache/restore@v3
