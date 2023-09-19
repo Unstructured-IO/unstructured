@@ -1,11 +1,22 @@
 from __future__ import annotations
 
+import numbers
 import os
 import subprocess
 from datetime import datetime
 from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
-from typing import IO, TYPE_CHECKING, Any, BinaryIO, Dict, List, Optional, Tuple, Union
+from typing import (
+    IO,
+    TYPE_CHECKING,
+    Any,
+    BinaryIO,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import emoji
 from tabulate import tabulate
@@ -39,6 +50,32 @@ if TYPE_CHECKING:
         LocationlessLayoutElement,
     )
 
+HIERARCHY_RULE_SET = {
+    "Title": [
+        "Text",
+        "UncategorizedText",
+        "NarrativeText",
+        "ListItem",
+        "BulletedText",
+        "Table",
+        "FigureCaption",
+        "CheckBox",
+        "Table",
+    ],
+    "Header": [
+        "Title",
+        "Text",
+        "UncategorizedText",
+        "NarrativeText",
+        "ListItem",
+        "BulletedText",
+        "Table",
+        "FigureCaption",
+        "CheckBox",
+        "Table",
+    ],
+}
+
 
 def get_last_modified_date(filename: str) -> Union[str, None]:
     modify_date = datetime.fromtimestamp(os.path.getmtime(filename))
@@ -68,10 +105,11 @@ def normalize_layout_element(
     ],
     coordinate_system: Optional[CoordinateSystem] = None,
     infer_list_items: bool = True,
+    source_format: Optional[str] = "html",
 ) -> Union[Element, List[Element]]:
     """Converts an unstructured_inference LayoutElement object to an unstructured Element."""
 
-    if isinstance(layout_element, Element):
+    if isinstance(layout_element, Element) and source_format == "html":
         return layout_element
 
     # NOTE(alan): Won't the lines above ensure this never runs (PageBreak is a subclass of Element)?
@@ -88,8 +126,9 @@ def normalize_layout_element(
     # in order to add coordinates metadata to the element.
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
-    if layout_dict.get("prob"):
-        class_prob_metadata = ElementMetadata(detection_class_prob=float(layout_dict.get("prob")))
+    prob = layout_dict.get("prob")
+    if prob and isinstance(prob, (int, str, float, numbers.Number)):
+        class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))  # type: ignore
     else:
         class_prob_metadata = ElementMetadata()
     if element_type == "List":
@@ -102,7 +141,7 @@ def normalize_layout_element(
             )
         else:
             return ListItem(
-                text=text,
+                text=text if text else "",
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=class_prob_metadata,
@@ -110,12 +149,17 @@ def normalize_layout_element(
 
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
         _element_class = TYPE_TO_TEXT_ELEMENT_MAP[element_type]
-        return _element_class(
+        _element_class = _element_class(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
         )
+        if element_type == "Headline":
+            _element_class.metadata.category_depth = 1
+        elif element_type == "Subheadline":
+            _element_class.metadata.category_depth = 2
+        return _element_class
     elif element_type == "Checked":
         return CheckBox(
             checked=True,
@@ -132,7 +176,7 @@ def normalize_layout_element(
         )
     else:
         return Text(
-            text=text,
+            text=text if text else "",
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
@@ -140,16 +184,16 @@ def normalize_layout_element(
 
 
 def layout_list_to_list_items(
-    text: str,
-    coordinates: Tuple[Tuple[float, float], ...],
+    text: Optional[str],
+    coordinates: Optional[Tuple[Tuple[float, float], ...]],
     coordinate_system: Optional[CoordinateSystem],
     metadata=Optional[ElementMetadata],
 ) -> List[Element]:
     """Converts a list LayoutElement to a list of ListItem elements."""
-    split_items = ENUMERATED_BULLETS_RE.split(text)
+    split_items = ENUMERATED_BULLETS_RE.split(text) if text else []
     # NOTE(robinson) - this means there wasn't a match for the enumerated bullets
     if len(split_items) == 1:
-        split_items = UNICODE_BULLETS_RE.split(text)
+        split_items = UNICODE_BULLETS_RE.split(text) if text else []
 
     list_items: List[Element] = []
     for text_segment in split_items:
@@ -166,6 +210,53 @@ def layout_list_to_list_items(
             )
 
     return list_items
+
+
+def set_element_hierarchy(
+    elements: List[Element],
+    ruleset: Dict[str, List[str]] = HIERARCHY_RULE_SET,
+) -> List[Element]:
+    """Sets the parent_id for each element in the list of elements
+    based on the element's category, depth and a ruleset
+
+    """
+    stack: List[Element] = []
+    for element in elements:
+        parent_id = None
+        element_category = getattr(element, "category", None)
+        element_category_depth = getattr(element.metadata, "category_depth", 0) or 0
+
+        if not element_category:
+            continue
+
+        while stack:
+            top_element: Element = stack[-1]
+            top_element_category = getattr(top_element, "category")
+            top_element_category_depth = (
+                getattr(
+                    top_element.metadata,
+                    "category_depth",
+                    0,
+                )
+                or 0
+            )
+
+            if (
+                top_element_category == element_category
+                and top_element_category_depth < element_category_depth
+            ) or (
+                top_element_category != element_category
+                and element_category in ruleset.get(top_element_category, [])
+            ):
+                parent_id = top_element.id
+                break
+
+            stack.pop()
+
+        element.metadata.parent_id = parent_id
+        stack.append(element)
+
+    return elements
 
 
 def _add_element_metadata(
@@ -210,6 +301,8 @@ def _add_element_metadata(
         if emphasized_texts
         else None
     )
+    depth = element.metadata.category_depth if element.metadata.category_depth else None
+
     metadata = ElementMetadata(
         coordinates=coordinates_metadata,
         filename=filename,
@@ -222,8 +315,12 @@ def _add_element_metadata(
         emphasized_text_contents=emphasized_text_contents,
         emphasized_text_tags=emphasized_text_tags,
         section=section,
+        category_depth=depth,
         image_path=image_path,
     )
+    # NOTE(newel) - Element metadata is being merged into
+    # newly constructed metadata, not the other way around
+    # TODO? Make this more expected behavior?
     element.metadata = metadata.merge(element.metadata)
     return element
 
@@ -359,7 +456,10 @@ def convert_to_bytes(
     return f_bytes
 
 
-def convert_ms_office_table_to_text(table: "docxtable.Table", as_html: bool = True) -> str:
+def convert_ms_office_table_to_text(
+    table: "docxtable.Table",
+    as_html: bool = True,
+) -> str:
     """
     Convert a table object from a Word document to an HTML table string using the tabulate library.
 
@@ -430,11 +530,13 @@ def document_to_element_list(
     include_page_breaks: bool = False,
     last_modification_date: Optional[str] = None,
     infer_list_items: bool = True,
+    source_format: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
     sort_mode = kwargs.get("sort_mode", SORT_MODE_XY_CUT)
+
     num_pages = len(document.pages)
     for i, page in enumerate(document.pages):
         page_elements: List[Element] = []
@@ -454,6 +556,7 @@ def document_to_element_list(
                 layout_element,
                 coordinate_system=coordinate_system,
                 infer_list_items=infer_list_items,
+                source_format=source_format if source_format else "html",
             )
 
             if isinstance(element, List):
@@ -484,6 +587,7 @@ def document_to_element_list(
                 filetype=image_format,
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
+                category_depth=element.metadata.category_depth,
                 image_path=el_image_path,
                 **kwargs,
             )

@@ -134,6 +134,8 @@ class ElementMetadata:
     last_modified: Optional[str] = None
     filetype: Optional[str] = None
     attached_to_filename: Optional[str] = None
+    parent_id: Optional[Union[str, uuid.UUID, NoID, UUID]] = None
+    category_depth: Optional[int] = None
     image_path: Optional[str] = None
 
     # Page numbers currenlty supported for PDF, HTML and PPT documents
@@ -247,7 +249,6 @@ def process_metadata():
 
             regex_metadata: Dict["str", "str"] = params.get("regex_metadata", {})
             elements = _add_regex_metadata(elements, regex_metadata)
-
             unique_element_ids: bool = params.get("unique_element_ids", False)
             if unique_element_ids:
                 for element in elements:
@@ -316,7 +317,9 @@ class Element(ABC):
                 )
             )
         )
-        self.metadata = metadata.merge(ElementMetadata(coordinates=coordinates_metadata))
+        self.metadata = metadata.merge(
+            ElementMetadata(coordinates=coordinates_metadata),
+        )
 
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())
@@ -573,4 +576,12 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "Page-header": Header,  # Title?
     "Picture": Image,
     "Section-header": Header,
+    "Headline": Title,
+    "Subheadline": Title,
+    "Abstract": NarrativeText,
+    "Threading": NarrativeText,
+    "Form": NarrativeText,
+    "Field-Name": Title,
+    "Value": NarrativeText,
+    "Link": NarrativeText,
 }
