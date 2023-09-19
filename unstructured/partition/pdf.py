@@ -27,7 +27,7 @@ from unstructured.file_utils.filetype import (
     FileType,
     add_metadata_with_filetype,
 )
-from unstructured.logger import logger
+from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
     convert_to_bytes,
