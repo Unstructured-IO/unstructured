@@ -18,7 +18,7 @@ arrow==1.2.3
     # via isoduration
 asttokens==2.4.0
     # via stack-data
-async-lru==2.0.4
+async-lru==1.0.3
     # via jupyterlab
 attrs==23.1.0
     # via
@@ -80,7 +80,7 @@ filelock==3.12.4
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
-identify==2.5.28
+identify==2.5.29
     # via pre-commit
 idna==3.4
     # via
@@ -108,7 +108,7 @@ ipykernel==6.25.2
     #   jupyter-console
     #   jupyterlab
     #   qtconsole
-ipython==8.12.2
+ipython==8.11.0
     # via
     #   -c requirements/constraints.in
     #   -r requirements/dev.in
@@ -176,7 +176,7 @@ jupyter-server==2.7.3
     #   notebook-shim
 jupyter-server-terminals==0.4.4
     # via jupyter-server
-jupyterlab==4.0.5
+jupyterlab==4.0.6
     # via notebook
 jupyterlab-pygments==0.2.2
     # via nbconvert
@@ -207,7 +207,7 @@ nbformat==5.9.2
     #   jupyter-server
     #   nbclient
     #   nbconvert
-nest-asyncio==1.5.7
+nest-asyncio==1.5.8
     # via ipykernel
 nodeenv==1.8.0
     # via pre-commit
@@ -325,6 +325,7 @@ send2trash==1.8.2
     # via jupyter-server
 six==1.16.0
     # via
+    #   -c requirements/base.txt
     #   -c requirements/test.txt
     #   asttokens
     #   bleach
@@ -376,12 +377,6 @@ traitlets==5.10.0
     #   nbconvert
     #   nbformat
     #   qtconsole
-typing-extensions==4.7.1
-    # via
-    #   -c requirements/base.txt
-    #   -c requirements/test.txt
-    #   async-lru
-    #   ipython
 uri-template==1.3.0
     # via jsonschema
 urllib3==1.26.16
@@ -408,7 +403,7 @@ wheel==0.41.2
     #   pip-tools
 widgetsnbextension==4.0.9
     # via ipywidgets
-zipp==3.16.2
+zipp==3.17.0
     # via
     #   importlib-metadata
     #   importlib-resources

@@ -36,11 +36,11 @@ frozenlist==1.4.0
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2023.9.0
+fsspec==2023.9.1
     # via
     #   -r requirements/ingest-gcs.in
     #   gcsfs
-gcsfs==2023.9.0
+gcsfs==2023.9.1
     # via -r requirements/ingest-gcs.in
 google-api-core==2.11.1
     # via
