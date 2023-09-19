@@ -61,6 +61,12 @@ def test_partition_msg_from_filename():
         assert element.metadata.filename == "fake-email.msg"
 
 
+def test_partition_msg_from_filename_returns_uns_elements():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    elements = partition_msg(filename=filename)
+    assert isinstance(elements[0], NarrativeText)
+
+
 def test_partition_msg_from_filename_with_metadata_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
     elements = partition_msg(filename=filename, metadata_filename="test")

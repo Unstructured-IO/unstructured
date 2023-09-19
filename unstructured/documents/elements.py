@@ -586,4 +586,9 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "Headline": Title,
     "Subheadline": Title,
     "Abstract": NarrativeText,
+    "Threading": NarrativeText,
+    "Form": NarrativeText,
+    "Field-Name": Title,
+    "Value": NarrativeText,
+    "Link": NarrativeText,
 }

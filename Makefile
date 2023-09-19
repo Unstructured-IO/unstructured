@@ -21,7 +21,7 @@ install-base: install-base-pip-packages install-nltk-models
 install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test
+install-ci: install-base-pip-packages install-nltk-models install-huggingface install-paddleocr install-all-docs install-test
 
 .PHONY: install-base-ci
 install-base-ci: install-base-pip-packages install-nltk-models install-test
@@ -214,6 +214,9 @@ install-local-inference: install install-all-docs
 install-pandoc:
 	ARCH=${ARCH} ./scripts/install-pandoc.sh
 
+.PHONY: install-paddleocr
+install-paddleocr:
+	ARCH=${ARCH} ./scripts/install-paddleocr.sh
 
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
