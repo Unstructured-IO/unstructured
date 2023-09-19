@@ -60,6 +60,10 @@ In checklist form, the above steps are summarized as:
 
 - [ ] Create a new module under [unstructured/ingest/connector/](unstructured/ingest/connector/) implementing the 3 abstract base classes, similar to [unstructured/ingest/connector/github.py](unstructured/ingest/connector/github.py).
   - [ ] The subclass of `BaseIngestDoc` overrides `process_file()` if extra processing logic is needed other than what is provided by [auto.partition()](unstructured/partition/auto.py).
+  - [ ] The subclass of `BaseConnectorConfig` implements a session handle to manage connections. Check [here](https://github.com/Unstructured-IO/unstructured/pull/1058/files#diff-dae96d30f58cffe1b348c036d006b48bdc7e2e47fbd7c8ec1c45d63face1542d) for a detailed example.
+  - [ ] The subclass of `BaseIngestDoc` implements relevant data source properties to include metadata. Check [this PR](https://github.com/Unstructured-IO/unstructured/pull/1283) for detailed examples.
+    - [ ] The field `record_locator` property should include all of the information required to be able to reach to the document in the source platform.
+  - [ ] Add the relevant decorators from `unstructured.ingest.error` on top of relevant methods to handle errors such as a source connection error, destination connection error, or a partition error. For examples, check [here](https://github.com/Unstructured-IO/unstructured/commit/92692ad8d7d5001601dd88fef869a29660f492cb).
 - [ ] Update [unstructured/ingest/cli](unstructured/ingest/cli) with support for the new connector.
 - [ ] Create a folder under [examples/ingest](examples/ingest) that includes at least one well documented script.
 - [ ] Add a script test_unstructured_ingest/test-ingest-\<the-new-data-source\>.sh. It's json output files should have a total of no more than 100K.
@@ -71,6 +75,13 @@ In checklist form, the above steps are summarized as:
   - [ ] The added dependencies should be imported at runtime when the new connector is invoked, rather than as top-level imports.
   - [ ] Add the decorator `unstructured.utils.requires_dependencies` on top of each class instance or function that uses those connector-specific dependencies e.g. for `GitHubConnector` should look like `@requires_dependencies(dependencies=["github"], extras="github")`
   - [ ] Run `make tidy` and `make check` to ensure linting checks pass.
+- [ ] Update ingest documentation [here](https://github.com/Unstructured-IO/unstructured/tree/eb8ce8913729826b62fd4e1224f70d67c5289b9d/docs/source)
+- [ ] If there are secret variables obtained for the connector tests, make sure to:
+  - [ ] contact Unstructured team for them to add the secrets into Github
+  - [ ] include the secret variables in [`ci.yml`](https://github.com/Unstructured-IO/unstructured/blob/eb8ce8913729826b62fd4e1224f70d67c5289b9d/.github/workflows/ci.yml) and [`ingest-test-fixtures-update-pr.yml`](https://github.com/Unstructured-IO/unstructured/blob/eb8ce8913729826b62fd4e1224f70d67c5289b9d/.github/workflows/ingest-test-fixtures-update-pr.yml)
+  - [ ] add a make install line in the workflow configurations to be able to provide the workflow machine with the required dependencies on the connector while testing
+- [ ] Make sure that the tests for the connector are running and not getting skipped.
+- [ ] Whenever necessary, use the [ingest update test fixtures](https://github.com/Unstructured-IO/unstructured/actions/workflows/ingest-test-fixtures-update-pr.yml) workflow to update the test fixtures.
 - [ ] Honors the conventions of `BaseConnectorConfig` defined in [unstructured/ingest/interfaces.py](unstructured/ingest/interfaces.py) which is passed through [the CLI](unstructured/ingest/main.py):
   - [ ] If running with an `.output_dir` where structured outputs already exists for a given file, the file content is not re-downloaded from the data source nor is it reprocessed. This is made possible by implementing the call to `MyIngestDoc.has_output()` which is invoked in [MainProcess._filter_docs_with_outputs](ingest-prep-for-many/unstructured/ingest/main.py).
   - [ ] Unless `.reprocess` is `True`, then documents are always reprocessed.
