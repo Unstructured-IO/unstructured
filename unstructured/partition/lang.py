@@ -217,6 +217,10 @@ def detect_languages(
     text: str,
     languages: List[str] = ["auto"],
 ) -> List[str]:
+    """
+    Detects the list of languages present in the text (in the default "auto" mode),
+    or formats and passes through the user inputted document languages if provided.
+    """
     if text.strip() == "":
         return ["eng"]  # english as default
 
