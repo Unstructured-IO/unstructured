@@ -320,10 +320,17 @@ def _partition_pdf_or_image_local(
         "ocr_mode": ocr_mode,
         "extract_tables": infer_table_structure,
         "model_name": model_name,
+    }
+
+    process_with_model_extra_kwargs = {
         "pdf_image_dpi": pdf_image_dpi,
         "extract_images_in_pdf": extract_images_in_pdf,
         "image_output_dir_path": image_output_dir_path,
     }
+
+    for key, value in process_with_model_extra_kwargs.items():
+        if value:
+            process_with_model_kwargs[key] = value
 
     if file is None:
         layout = process_file_with_model(
