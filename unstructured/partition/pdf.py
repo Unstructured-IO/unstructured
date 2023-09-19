@@ -761,7 +761,7 @@ def check_coords_within_boundary(
         a float ranges from [0,1] to scale the horizontal (x-axis) boundary
     """
     if not coord_has_valid_points(coordinates) and not coord_has_valid_points(boundary):
-        raise ValueError("Invalid coordinates.")
+        return False
 
     boundary_x_min = boundary.points[0][0]
     boundary_x_max = boundary.points[2][0]
