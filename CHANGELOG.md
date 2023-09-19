@@ -3,7 +3,7 @@
 ### Enhancements
 
 * **Add a function to map between Tesseract and standard language codes.** This allows users to input language information to the `languages` param in any Tesseract-supported langcode or any ISO 639 standard language code.
-* **Add document level language detection to partitioning text documents.** Introduces the "auto" default for the languages param, which then detects the languages present in the document using the `langdetect` package.
+* **Add document level language detection functionality.** Introduces the "auto" default for the languages param, which then detects the languages present in the document using the `langdetect` package. Implemented only for the partition_text function to start.
 
 ### Features
 
