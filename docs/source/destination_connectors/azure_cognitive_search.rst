@@ -1,12 +1,13 @@
 Azure Cognitive Search
 ==========
 Batch process all your records using ``unstructured-ingest`` to store structured outputs locally on your filesystem and upload those local files to an Azure Cognitive Search index.
+To make sure the schema of the index matches the data being written to it, a sample schema json can be found here:
 
-First you'll need to install the delta table dependencies as shown here.
+First you'll need to install the azure cognitive search dependencies as shown here.
 
 .. code:: shell
 
-  pip install "unstructured[delta-table]"
+  pip install "unstructured[azure-cognitive-search]"
 
 Run Locally
 -----------

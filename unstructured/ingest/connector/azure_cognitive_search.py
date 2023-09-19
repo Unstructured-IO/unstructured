@@ -44,15 +44,44 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
             credential=credential,
         )
 
+    def conform_dict(self, data: dict) -> None:
+        from dateutil import parser  # type: ignore
+
+        if points := data.get("metadata", {}).get("coordinates", {}).get("points"):
+            data["metadata"]["coordinates"]["points"] = json.dumps(points)
+        if version := data.get("metadata", {}).get("data_source", {}).get("version"):
+            data["metadata"]["data_source"]["version"] = str(version)
+        if record_locator := data.get("metadata", {}).get("data_source", {}).get("record_locator"):
+            data["metadata"]["data_source"]["record_locator"] = json.dumps(record_locator)
+        if last_modified := data.get("metadata", {}).get("last_modified"):
+            data["metadata"]["last_modified"] = parser.parse(last_modified).strftime(
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            )
+        if date_created := data.get("metadata", {}).get("data_source", {}).get("date_created"):
+            data["metadata"]["data_source"]["date_created"] = parser.parse(date_created).strftime(
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            )
+        if date_modified := data.get("metadata", {}).get("data_source", {}).get("date_modified"):
+            data["metadata"]["data_source"]["date_modified"] = parser.parse(date_modified).strftime(
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            )
+        if date_processed := data.get("metadata", {}).get("data_source", {}).get("date_processed"):
+            data["metadata"]["data_source"]["date_processed"] = parser.parse(
+                date_processed,
+            ).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
+            data["metadata"]["regex_metadata"] = json.dumps(regex_metadata)
+        if page_number := data.get("metadata", {}).get("page_number"):
+            data["metadata"]["page_number"] = str(page_number)
+
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         json_list = []
         for doc in docs:
             local_path = doc._output_filename
             with open(local_path) as json_file:
-                # TODO figure out how to map to destination schema
                 json_content = json.load(json_file)
                 for content in json_content:
-                    content["metadata"] = json.dumps(content["metadata"])
+                    self.conform_dict(data=content)
                 logger.info(
                     f"appending {len(json_content)} json elements from content in {local_path}",
                 )
