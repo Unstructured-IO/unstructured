@@ -1,10 +1,14 @@
-## 0.10.16-dev2
+## 0.10.16-dev3
 
 
 ### Enhancements
 
 * **Adds data source properties to Airtable, Confluence, Discord, Elasticsearch, Google Drive, and Wikipedia connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
 * **DOCX partitioner refactored in preparation for enhancement.** Behavior should be unchanged except in multi-section documents containing different headers/footers for different sections. These will now emit all distinct headers and footers encountered instead of just those for the last section.
+* **Update ingest readme**
+  * Problem: There are various parts for connector development that are not explicitly mentioned in the ingest readme. Some of these steps can be critical, such as ensuring that the tests for the respective connector are not being skipped (ie. due to lack of credentials).
+  * Enhancement: Update ingest readme with relevant new steps, based on the recent updates on the ingest code, and based on the past occurences while developing connectors.
+  * Importance: This enhancement provides ease for both team members and community contributors to have a solid list of to-do points while developing ingest connectors.
 
 ### Features
 
@@ -76,7 +80,7 @@
 * Update all connectors to use new downstream architecture
   * New click type added to parse comma-delimited string inputs
   * Some CLI options renamed
- 
+
 ### Features
 
 ### Fixes
