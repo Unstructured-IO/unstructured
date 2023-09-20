@@ -22,8 +22,9 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
    --username "$SALESFORCE_USERNAME" \
    --consumer-key "$SALESFORCE_CONSUMER_KEY" \
    --private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
-   --categories "EmailMessage,Account,Lead,Case,Campaign" \
+   --categories "EmailMessage" \
    --output-dir salesforce-output \
+   --download-dir salesforce-download \
    --preserve-downloads \
    --reprocess \
    --verbose

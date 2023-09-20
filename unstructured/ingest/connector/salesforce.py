@@ -8,6 +8,7 @@ https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_de
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_connected_app.htm
 """
 import os
+from collections import OrderedDict
 import typing as t
 from dataclasses import dataclass
 from email.utils import formatdate
@@ -17,6 +18,7 @@ from textwrap import dedent
 
 from dateutil import parser  # type: ignore
 
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -48,7 +50,7 @@ Content-Type: text/plain; charset="UTF-8"
 $textbody
 --00000000000095c9b205eff92630
 Content-Type: text/html; charset="UTF-8"
-$textbody
+$htmlbody
 --00000000000095c9b205eff92630--
 """,
 )
@@ -148,7 +150,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         if self.record_type == "EmailMessage":
             record_file = self.record_id + ".eml"
         elif self.record_type in ["Account", "Lead", "Case", "Campaign"]:
-            record_file = self.record_id + ".txt"
+            record_file = self.record_id + ".xml"
         else:
             raise MissingCategoryError(
                 f"There are no categories with the name: {self.record_type}",
@@ -162,7 +164,25 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
+    
+    def _xml_for_record(self, record: OrderedDict) -> str:
+        """Creates partitionable xml file from a record"""
+        import xml.etree.ElementTree as ET
 
+        def flatten_dict(data, parent, prefix=""):
+            for key, value in data.items():
+                if isinstance(value, OrderedDict):
+                    flatten_dict(value, parent, prefix=f"{prefix}{key}.")
+                else:
+                    item = ET.Element("item")
+                    item.text = f"{prefix}{key}: {value}"
+                    parent.append(item)
+
+        root = ET.Element("root")
+        flatten_dict(record, root)
+        xml_string = ET.tostring(root, encoding="utf-8", xml_declaration=True).decode()
+        return xml_string
+    
     def create_account(self, account_json: t.Dict[str, t.Any]) -> str:
         """Creates partitionable account file"""
         account = ACCOUNT_TEMPLATE.substitute(
@@ -232,8 +252,8 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             number_of_converted_leads=campaign_json.get("NumberOfConvertedLeads"),
         )
         return dedent(campaign)
-
-    def create_eml(self, email_json: t.Dict[str, t.Any]) -> str:
+    
+    def _eml_for_record(self, email_json: t.Dict[str, t.Any]) -> str:
         """Recreates standard expected .eml format using template."""
         eml = EMAIL_TEMPLATE.substitute(
             date=formatdate(parser.parse(email_json.get("MessageDate")).timestamp()),
@@ -242,9 +262,11 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             from_email=email_json.get("FromAddress"),
             to_email=email_json.get("ToAddress"),
             textbody=email_json.get("TextBody"),
+            htmlbody=email_json.get("HtmlBody"),
         )
         return dedent(eml)
 
+    @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         """Saves individual json records locally."""
@@ -260,20 +282,23 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         try:
             if self.record_type == "EmailMessage":
-                formatted_record = self.create_eml(record)
-            elif self.record_type == "Account":
-                formatted_record = self.create_account(record)
-            elif self.record_type == "Lead":
-                formatted_record = self.create_lead(record)
-            elif self.record_type == "Case":
-                formatted_record = self.create_case(record)
-            elif self.record_type == "Campaign":
-                formatted_record = self.create_campaign(record)
+                document = self._eml_for_record(record)
             else:
-                raise ValueError(f"record type not recognized: {self.record_type}")
+                document = self._xml_for_record(record)
+                # formatted_record = self.create_eml(record)
+            # elif self.record_type == "Account":
+            #     formatted_record = self.create_account(record)
+            # elif self.record_type == "Lead":
+            #     formatted_record = self.create_lead(record)
+            # elif self.record_type == "Case":
+            #     formatted_record = self.create_case(record)
+            # elif self.record_type == "Campaign":
+            #     formatted_record = self.create_campaign(record)
+            # else:
+            #     raise ValueError(f"record type not recognized: {self.record_type}")
 
             with open(self._tmp_download_file(), "w") as page_file:
-                page_file.write(formatted_record)
+                page_file.write(document)
 
         except Exception as e:
             logger.error(
