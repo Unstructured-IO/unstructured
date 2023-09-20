@@ -1,5 +1,4 @@
-## 0.10.16-dev2
-
+## 0.10.16
 
 ### Enhancements
 
@@ -9,6 +8,8 @@
 ### Features
 
 ### Fixes
+
+* ***Fixes an issue that caused a partition error for some PDF's.** Fixes GH Issue 1460 by bypassing a coordinate check if an element has invalid coordinates.
 
 ## 0.10.15
 

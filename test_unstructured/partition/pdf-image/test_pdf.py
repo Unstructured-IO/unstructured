@@ -226,6 +226,14 @@ def test_partition_pdf_with_fast_strategy(
         assert element.metadata.filename == "layout-parser-paper-fast.pdf"
 
 
+def test_partition_pdf_with_fast_neg_coordinates():
+    filename = "example-docs/negative-coords.pdf"
+    elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
+    assert len(elements) == 5
+    assert elements[0].metadata.coordinates.points[0][0] < 0
+    assert elements[0].metadata.coordinates.points[1][0] < 0
+
+
 def test_partition_pdf_with_fast_groups_text(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
