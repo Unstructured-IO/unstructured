@@ -286,8 +286,7 @@ def test_partition_doc_with_json(mock_document, expected_elements, tmpdir, capsy
         assert elements[i] == test_elements[i]
 
 
-def test_add_chunking_strategy_on_partition_doc():
-    filename = "example-docs/handbook-1p.docx"
+def test_add_chunking_strategy_on_partition_doc(filename="example-docs/fake.doc"):
     chunk_elements = partition_doc(filename, chunking_strategy="by_title")
     elements = partition_doc(filename)
     chunks = chunk_by_title(elements)
