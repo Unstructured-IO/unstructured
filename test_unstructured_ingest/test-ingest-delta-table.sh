@@ -7,22 +7,21 @@ cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=delta-table
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
-DESTINATION_TABLE=/tmp/delta-table-dest
+DESTINATION_TABLE=$SCRIPT_DIR/delta-table-dest
 
-# shellcheck disable=SC1091
-source "$SCRIPT_DIR"/cleanup.sh
-trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+mkdir -p "$DESTINATION_TABLE"
 
 if [ -z "$AWS_ACCESS_KEY_ID" ] && [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
    echo "Skipping Delta Table ingest test because either AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY env var was not set."
    exit 0
 fi
 
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+
 function cleanup() {
-  if [ -d "$DESTINATION_TABLE" ]; then
-  echo "cleaning up tmp directory: $DESTINATION_TABLE"
-  rm -rf "$DESTINATION_TABLE"
-  fi
+  cleanup_dir "$DESTINATION_TABLE"
+  cleanup_dir "$OUTPUT_DIR"
 }
 
 trap cleanup EXIT
@@ -38,7 +37,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     delta-table \
     --write-column json_data \
-    --table-uri $DESTINATION_TABLE
+    --table-uri "$DESTINATION_TABLE"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
 
