@@ -316,7 +316,11 @@ def test_partition_docx_from_file_without_metadata_date(
 
 def test_get_emphasized_texts_from_paragraph(expected_emphasized_texts: List[Dict[str, str]]):
     partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx", None, None, False, None
+        "example-docs/fake-doc-emphasized-text.docx",
+        None,
+        None,
+        False,
+        None,
     )
     paragraph = partitioner._document.paragraphs[1]
     emphasized_texts = list(partitioner._iter_paragraph_emphasis(paragraph))
@@ -336,7 +340,11 @@ def test_get_emphasized_texts_from_paragraph(expected_emphasized_texts: List[Dic
 
 def test_iter_table_emphasis(expected_emphasized_texts: List[Dict[str, str]]):
     partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx", None, None, False, None
+        "example-docs/fake-doc-emphasized-text.docx",
+        None,
+        None,
+        False,
+        None,
     )
     table = partitioner._document.tables[0]
     emphasized_texts = list(partitioner._iter_table_emphasis(table))
@@ -344,10 +352,15 @@ def test_iter_table_emphasis(expected_emphasized_texts: List[Dict[str, str]]):
 
 
 def test_table_emphasis(
-    expected_emphasized_text_contents: List[str], expected_emphasized_text_tags: List[str]
+    expected_emphasized_text_contents: List[str],
+    expected_emphasized_text_tags: List[str],
 ):
     partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx", None, None, False, None
+        "example-docs/fake-doc-emphasized-text.docx",
+        None,
+        None,
+        False,
+        None,
     )
     table = partitioner._document.tables[0]
     emphasized_text_contents, emphasized_text_tags = partitioner._table_emphasis(table)
