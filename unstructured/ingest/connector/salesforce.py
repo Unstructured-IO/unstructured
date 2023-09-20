@@ -8,8 +8,8 @@ https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_de
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_connected_app.htm
 """
 import os
-from collections import OrderedDict
 import typing as t
+from collections import OrderedDict
 from dataclasses import dataclass
 from email.utils import formatdate
 from pathlib import Path
@@ -102,7 +102,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
-    
+
     def _xml_for_record(self, record: OrderedDict) -> str:
         """Creates partitionable xml file from a record"""
         import xml.etree.ElementTree as ET
@@ -120,7 +120,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         flatten_dict(record, root)
         xml_string = ET.tostring(root, encoding="utf-8", xml_declaration=True).decode()
         return xml_string
-    
+
     def _eml_for_record(self, email_json: t.Dict[str, t.Any]) -> str:
         """Recreates standard expected .eml format using template."""
         eml = EMAIL_TEMPLATE.substitute(
@@ -130,9 +130,11 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             from_email=email_json.get("FromAddress"),
             to_email=email_json.get("ToAddress"),
             textbody=email_json.get("TextBody"),
-            #TODO: This is a hack to get emails to process correctly. 
+            # TODO: This is a hack to get emails to process correctly.
             # The HTML partitioner seems to have issues with <br> and text without tags like <p>
-            htmlbody=email_json.get("HtmlBody").replace("<br />","<p>").replace("<body","<body><p"),
+            htmlbody=email_json.get("HtmlBody", "")  # "" because you can't .replace None
+            .replace("<br />", "<p>")
+            .replace("<body", "<body><p"),
         )
         return dedent(eml)
 
