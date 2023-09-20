@@ -444,11 +444,8 @@ def _construct_text(tag_elem: etree.Element, include_tail_text: bool = True) -> 
     return text.strip()
 
 
-def _has_break_tags(tag_elem: etree.Element) -> bool:
-    for descendant in tag_elem.iterdescendants():
-        if descendant.tag in TEXTBREAK_TAGS:
-            return True
-    return False
+def _has_break_tags(tag_elem: etree._Element) -> bool:  # pyright: ignore[reportPrivateUsage]
+    return any(descendant.tag in TEXTBREAK_TAGS for descendant in tag_elem.iterdescendants())
 
 
 def _unfurl_break_tags(tag_elem: etree.Element) -> List[etree.Element]:
