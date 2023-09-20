@@ -1,3 +1,13 @@
+## 0.10.17-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fixes Sphinx errors.** Fixes errors when running Sphinx `make html` and installs library to suppress warnings.
+
 ## 0.10.16
 
 ### Enhancements
