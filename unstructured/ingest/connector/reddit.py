@@ -4,8 +4,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-import pytz
-
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
@@ -72,7 +70,7 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
 
         self.source_metadata = SourceMetadata(
-            date_created=datetime.fromtimestamp(post.created_utc, pytz.utc).isoformat(),
+            date_created=datetime.utcfromtimestamp(post.created_utc).isoformat(),
             source_url=post.permalink,
             exists=file_exists,
         )
