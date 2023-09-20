@@ -1,7 +1,7 @@
 [
   {
     "type": "NarrativeText",
-    "element_id": "d954fa8e82ded23ebde30b2d53d5f81d",
+    "element_id": "3c0a5d71e07c028ce79bf3fd1a04e0ab",
     "metadata": {
       "data_source": {},
       "filetype": "message/rfc822",
@@ -13,6 +13,54 @@
       ],
       "subject": "Test of email 1"
     },
-    "text": "Jane. This is a test of sending you an email from Salesforce!\n\n_____________________________________________________________________\nPowered by Salesforce\nhttp://www.salesforce.com/"
+    "text": "Jane. This is a test of sending you an email from Salesforce!"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ada246e54712b8cb04cf9eeed042d9c8",
+    "metadata": {
+      "data_source": {},
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "jane_gray@uoa.edu"
+      ],
+      "subject": "Test of email 1"
+    },
+    "text": "_____________________________________________________________________"
+  },
+  {
+    "type": "Title",
+    "element_id": "b5cfb3867874279548fa1feb3b688171",
+    "metadata": {
+      "data_source": {},
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "jane_gray@uoa.edu"
+      ],
+      "subject": "Test of email 1"
+    },
+    "text": "Powered by Salesforce"
+  },
+  {
+    "type": "Title",
+    "element_id": "f3a436e93d3660eedd11ac4c7de5d8cf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "jane_gray@uoa.edu"
+      ],
+      "subject": "Test of email 1"
+    },
+    "text": "http://www.salesforce.com/"
   }
 ]
