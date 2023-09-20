@@ -222,9 +222,8 @@ def test_partition_html_from_url_raises_with_bad_status_code():
         status_code=500,
         headers={"Content-Type": "text/html"},
     )
-    with patch.object(requests, "get", return_value=response) as _:
-        with pytest.raises(ValueError):
-            partition_html(url="https://fake.url")
+    with patch.object(requests, "get", return_value=response) as _, pytest.raises(ValueError):
+        partition_html(url="https://fake.url")
 
 
 def test_partition_html_from_url_raises_with_bad_content_type():
@@ -237,9 +236,8 @@ def test_partition_html_from_url_raises_with_bad_content_type():
         status_code=200,
         headers={"Content-Type": "application/json"},
     )
-    with patch.object(requests, "get", return_value=response) as _:
-        with pytest.raises(ValueError):
-            partition_html(url="https://fake.url")
+    with patch.object(requests, "get", return_value=response) as _, pytest.raises(ValueError):
+        partition_html(url="https://fake.url")
 
 
 def test_partition_from_url_uses_headers(mocker):
