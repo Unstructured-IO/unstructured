@@ -55,68 +55,6 @@ $htmlbody
 """,
 )
 
-ACCOUNT_TEMPLATE = Template(
-    """Id: $id
-Name: $name
-Type: $account_type
-Phone: $phone
-AccountNumber: $account_number
-Website: $website
-Industry: $industry
-AnnualRevenue: $annual_revenue
-NumberOfEmployees: $number_employees
-Ownership: $ownership
-TickerSymbol: $ticker_symbol
-Description: $description
-Rating: $rating
-DandbCompanyId: $dnb_id
-""",
-)
-
-LEAD_TEMPLATE = Template(
-    """Id: $id
-Name: $name
-Title: $title
-Company: $company
-Phone: $phone
-Email: $email
-Website: $website
-Description: $description
-LeadSource: $lead_source
-Rating: $rating
-Status: $status
-Industry: $industry
-""",
-)
-
-CASE_TEMPLATE = Template(
-    """Id: $id
-Type: $type
-Status: $status
-Reason: $reason
-Origin: $origin
-Subject: $subject
-Priority: $priority
-Description: $description
-Comments: $comments
-""",
-)
-
-CAMPAIGN_TEMPLATE = Template(
-    """Id: $id
-Name: $name
-Type: $type
-Status: $status
-StartDate: $start_date
-EndDate: $end_date
-BudgetedCost: $budgeted_cost
-ActualCost: $actual_cost
-Description: $description
-NumberOfLeads: $number_of_leads
-NumberOfConvertedLeads: $number_of_converted_leads
-""",
-)
-
 
 @dataclass
 class SimpleSalesforceConfig(BaseConnectorConfig):
@@ -183,76 +121,6 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         xml_string = ET.tostring(root, encoding="utf-8", xml_declaration=True).decode()
         return xml_string
     
-    def create_account(self, account_json: t.Dict[str, t.Any]) -> str:
-        """Creates partitionable account file"""
-        account = ACCOUNT_TEMPLATE.substitute(
-            id=account_json.get("Id"),
-            name=account_json.get("Name"),
-            account_type=account_json.get("Type"),
-            phone=account_json.get("Phone"),
-            account_number=account_json.get("AccountNumber"),
-            website=account_json.get("Website"),
-            industry=account_json.get("Industry"),
-            annual_revenue=account_json.get("AnnualRevenue"),
-            number_employees=account_json.get("NumberOfEmployees"),
-            ownership=account_json.get("Ownership"),
-            ticker_symbol=account_json.get("TickerSymbol"),
-            description=account_json.get("Description"),
-            rating=account_json.get("Rating"),
-            dnb_id=account_json.get("DandbCompanyId"),
-        )
-        return dedent(account)
-
-    def create_lead(self, lead_json: t.Dict[str, t.Any]) -> str:
-        """Creates partitionable lead file"""
-        lead = LEAD_TEMPLATE.substitute(
-            id=lead_json.get("Id"),
-            name=lead_json.get("Name"),
-            title=lead_json.get("Title"),
-            company=lead_json.get("Company"),
-            phone=lead_json.get("Phone"),
-            email=lead_json.get("Email"),
-            website=lead_json.get("Website"),
-            description=lead_json.get("Description"),
-            lead_source=lead_json.get("LeadSource"),
-            rating=lead_json.get("Rating"),
-            status=lead_json.get("Status"),
-            industry=lead_json.get("Industry"),
-        )
-        return dedent(lead)
-
-    def create_case(self, case_json: t.Dict[str, t.Any]) -> str:
-        """Creates partitionable case file"""
-        case = CASE_TEMPLATE.substitute(
-            id=case_json.get("Id"),
-            type=case_json.get("Type"),
-            status=case_json.get("Status"),
-            reason=case_json.get("Reason"),
-            origin=case_json.get("Origin"),
-            subject=case_json.get("Subject"),
-            priority=case_json.get("Priority"),
-            description=case_json.get("Description"),
-            comments=case_json.get("Comments"),
-        )
-        return dedent(case)
-
-    def create_campaign(self, campaign_json: t.Dict[str, t.Any]) -> str:
-        """Creates partitionable campaign file"""
-        campaign = CAMPAIGN_TEMPLATE.substitute(
-            id=campaign_json.get("Id"),
-            name=campaign_json.get("Name"),
-            type=campaign_json.get("Type"),
-            status=campaign_json.get("Status"),
-            start_date=campaign_json.get("StartDate"),
-            end_date=campaign_json.get("EndDate"),
-            budgeted_cost=campaign_json.get("BudgetedCost"),
-            actual_cost=campaign_json.get("ActualCost"),
-            description=campaign_json.get("Description"),
-            number_of_leads=campaign_json.get("NumberOfLeads"),
-            number_of_converted_leads=campaign_json.get("NumberOfConvertedLeads"),
-        )
-        return dedent(campaign)
-    
     def _eml_for_record(self, email_json: t.Dict[str, t.Any]) -> str:
         """Recreates standard expected .eml format using template."""
         eml = EMAIL_TEMPLATE.substitute(
@@ -262,7 +130,9 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             from_email=email_json.get("FromAddress"),
             to_email=email_json.get("ToAddress"),
             textbody=email_json.get("TextBody"),
-            htmlbody=email_json.get("HtmlBody"),
+            #TODO: This is a hack to get emails to process correctly. 
+            # The HTML partitioner seems to have issues with <br> and text without tags like <p>
+            htmlbody=email_json.get("HtmlBody").replace("<br />","<p>").replace("<body","<body><p"),
         )
         return dedent(eml)
 
@@ -285,17 +155,6 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 document = self._eml_for_record(record)
             else:
                 document = self._xml_for_record(record)
-                # formatted_record = self.create_eml(record)
-            # elif self.record_type == "Account":
-            #     formatted_record = self.create_account(record)
-            # elif self.record_type == "Lead":
-            #     formatted_record = self.create_lead(record)
-            # elif self.record_type == "Case":
-            #     formatted_record = self.create_case(record)
-            # elif self.record_type == "Campaign":
-            #     formatted_record = self.create_campaign(record)
-            # else:
-            #     raise ValueError(f"record type not recognized: {self.record_type}")
 
             with open(self._tmp_download_file(), "w") as page_file:
                 page_file.write(document)
