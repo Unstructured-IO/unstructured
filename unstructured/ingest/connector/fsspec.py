@@ -138,10 +138,10 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         with suppress(NotImplementedError):
             date_modified = fs.modified(self.remote_file_path).isoformat()
 
-        version = (
+        version = str(
             fs.checksum(self.remote_file_path)
             if self.connector_config.protocol != "gs"
-            else fs.info(self.remote_file_path).get("etag", "")
+            else fs.info(self.remote_file_path).get("etag", ""),
         )
         file_exists = fs.exists(self.remote_file_path)
         self.source_metadata = SourceMetadata(
