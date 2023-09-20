@@ -35,8 +35,6 @@ function cleanup() {
 
 trap cleanup EXIT
 
-exit
-
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [ "$OVERWRITE_FIXTURES" != "false" ]; then
     # remove folder if it exists
