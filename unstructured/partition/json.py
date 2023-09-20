@@ -54,10 +54,7 @@ def partition_json(
         last_modification_date = get_last_modified_date_from_file(file)
 
         file_content = file.read()
-        if isinstance(file_content, str):
-            file_text = file_content
-        else:
-            file_text = file_content.decode()
+        file_text = file_content if isinstance(file_content, str) else file_content.decode()
         file.seek(0)
 
     elif text is not None:

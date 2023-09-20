@@ -26,12 +26,13 @@ Some document types support location data for the elements, usually in the form 
 If it exists, an element's location data is available with ``element.metadata.coordinates``.
 
 The ``coordinates`` property of an ``ElementMetadata`` stores:
+
 * points: These specify the corners of the bounding box starting from the top left corner and
-proceeding counter-clockwise. The points represent pixels, the origin is in the top left and
-the ``y`` coordinate increases in the downward direction.
+  proceeding counter-clockwise. The points represent pixels, the origin is in the top left and
+  the ``y`` coordinate increases in the downward direction.
 * system: The points have an associated coordinate system. A typical example of a coordinate system is
-``PixelSpace``, which is used for representing the coordinates of images. The coordinate system has a
-name, orientation, layout width, and layout height.
+  ``PixelSpace``, which is used for representing the coordinates of images. The coordinate system has a
+  name, orientation, layout width, and layout height.
 
 Information about the element’s coordinates (including the coordinate system name, coordinate points,
 the layout width, and the layout height) can be accessed with `element.to_dict()["metadata"]["coordinates"]`.

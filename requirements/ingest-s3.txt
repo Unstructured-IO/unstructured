@@ -28,7 +28,7 @@ frozenlist==1.4.0
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2023.9.0
+fsspec==2023.9.1
     # via
     #   -r requirements/ingest-s3.in
     #   s3fs
@@ -44,7 +44,7 @@ multidict==6.0.4
     #   yarl
 python-dateutil==2.8.2
     # via botocore
-s3fs==2023.9.0
+s3fs==2023.9.1
     # via -r requirements/ingest-s3.in
 six==1.16.0
     # via python-dateutil
