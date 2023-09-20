@@ -1,7 +1,6 @@
 {
   "@odata.context": "https://utic-test-ingest-fixtures.search.windows.net/$metadata#indexes/$entity",
   "@odata.etag": "\"0x8DBB93E09C8F4BD\"",
-  "name": "your-index-here",
   "fields": [
     {
       "name": "id",

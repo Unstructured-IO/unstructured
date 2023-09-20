@@ -1,5 +1,6 @@
 import json
 import typing as t
+import uuid
 from dataclasses import dataclass
 
 import azure.core.exceptions
@@ -47,6 +48,8 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
     def conform_dict(self, data: dict) -> None:
         from dateutil import parser  # type: ignore
 
+        data["id"] = str(uuid.uuid4())
+
         if points := data.get("metadata", {}).get("coordinates", {}).get("points"):
             data["metadata"]["coordinates"]["points"] = json.dumps(points)
         if version := data.get("metadata", {}).get("data_source", {}).get("version"):
@@ -79,6 +82,7 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
         for doc in docs:
             local_path = doc._output_filename
             with open(local_path) as json_file:
+                # TODO element id not a sufficient unique id to use
                 json_content = json.load(json_file)
                 for content in json_content:
                     self.conform_dict(data=content)
