@@ -184,7 +184,7 @@ def partition_docx(
             metadata_filename,
             include_page_breaks,
             metadata_last_modified,
-        )
+        ),
     )
 
 
@@ -752,7 +752,7 @@ class _SectBlockElementIterator:
     def _sectPrs(self) -> Sequence[CT_SectPr]:
         """All w:sectPr elements in document, in document-order."""
         return self._sectPr.xpath(
-            "/w:document/w:body/w:p/w:pPr/w:sectPr | /w:document/w:body/w:sectPr"
+            "/w:document/w:body/w:p/w:pPr/w:sectPr | /w:document/w:body/w:sectPr",
         )
 
 
@@ -787,7 +787,7 @@ def _get_paragraph_runs(paragraph: Paragraph) -> Sequence[Run]:
 
 
 Paragraph.runs = property(  # pyright: ignore[reportGeneralTypeIssues]
-    lambda self: _get_paragraph_runs(self)
+    lambda self: _get_paragraph_runs(self),
 )
 
 # ====================================================================================
