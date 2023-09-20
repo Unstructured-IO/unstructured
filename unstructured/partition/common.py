@@ -212,10 +212,12 @@ def set_hierarchy_by_indentation(
         if prev_ele:
             if (
                 ele.metadata.coordinates.points[0][0] - prev_ele.metadata.coordinates.points[0][0]
-            ) > 40 and type(
+            ) > 15 and type(
                 ele
             ) != Title:  # maybe take this out
                 ele.metadata.parent_id = prev_ele.id
+            elif type(ele) == ListItem and type(prev_ele) == ListItem:
+                ele.metadata.parent_id = prev_ele.metadata.parent_id
         left[i] = (ele, col)
         prev_ele = ele
         i += 1
@@ -226,8 +228,10 @@ def set_hierarchy_by_indentation(
         if prev_ele:
             if (
                 ele.metadata.coordinates.points[0][0] - prev_ele.metadata.coordinates.points[0][0]
-            ) > 100 and type(ele) != Title:
+            ) > 15 and type(ele) != Title:
                 ele.metadata.parent_id = prev_ele.id
+            elif type(ele) == ListItem and type(prev_ele) == ListItem:
+                ele.metadata.parent_id = prev_ele.metadata.parent_id
         right[i] = (ele, col)
         prev_ele = ele
         i += 1
