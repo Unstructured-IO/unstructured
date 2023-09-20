@@ -77,7 +77,7 @@ class CoordinatesMetadata:
 
     def to_dict(self):
         return {
-            "points": self.points,
+            "points": [[p[0], p[1]] for p in self.points],
             "system": None if self.system is None else str(self.system.__class__.__name__),
             "layout_width": None if self.system is None else self.system.width,
             "layout_height": None if self.system is None else self.system.height,
@@ -191,6 +191,8 @@ class ElementMetadata:
             _dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
         if self.coordinates:
             _dict["coordinates"] = cast(CoordinatesMetadata, self.coordinates).to_dict()
+        if self.parent_id:
+            _dict["parent_id"] = str(self.parent_id)
         return _dict
 
     @classmethod
@@ -328,7 +330,7 @@ class Element(abc.ABC):
     def to_dict(self) -> dict:
         return {
             "type": None,
-            "element_id": self.id,
+            "element_id": str(self.id),
             "metadata": self.metadata.to_dict(),
         }
 
@@ -385,7 +387,7 @@ class CheckBox(Element):
         out = super().to_dict()
         out["type"] = "CheckBox"
         out["checked"] = self.checked
-        out["element_id"] = self.id
+        out["element_id"] = str(self.id)
         return out
 
 
@@ -441,7 +443,7 @@ class Text(Element):
 
     def to_dict(self) -> dict:
         out = super().to_dict()
-        out["element_id"] = self.id
+        out["element_id"] = str(self.id)
         out["type"] = self.category
         out["text"] = self.text
         return out

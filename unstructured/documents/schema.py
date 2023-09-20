@@ -102,11 +102,11 @@ _element_schema = {
             "type": "string",
         },
         "type": {
-            "type": "string",
+            "type": ["string", "null"],
         },
         "metadata": _metadata_schema,
     },
-    "required": ["type", "text", "metadata", "element_id"],
+    "required": ["metadata", "element_id"],
 }
 
 _schema = {
