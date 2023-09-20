@@ -1,3 +1,13 @@
+## 0.10.17-dev3
+
+### Enhancements
+
+* **Improves salesforce partitioning** Partitions Salesforce data as xlm instead of text for improved detail and flexibility. Partitions htmlbody instead of textbody for Salesforce emails. Importance: Allows all Salesforce fields to be ingested and gives Salesforce emails more detailed partitioning.
+
+### Features
+
+### Fixes
+
 ## 0.10.17-dev2
 
 ### Enhancements
