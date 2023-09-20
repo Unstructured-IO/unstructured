@@ -22,7 +22,7 @@ filelock==3.12.4
     #   huggingface-hub
     #   torch
     #   transformers
-fsspec==2023.9.0
+fsspec==2023.9.1
     # via huggingface-hub
 huggingface-hub==0.17.1
     # via transformers
@@ -91,7 +91,7 @@ tqdm==4.66.1
     #   huggingface-hub
     #   sacremoses
     #   transformers
-transformers==4.33.1
+transformers==4.33.2
     # via -r requirements/huggingface.in
 typing-extensions==4.7.1
     # via

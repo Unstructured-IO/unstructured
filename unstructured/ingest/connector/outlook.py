@@ -13,6 +13,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -104,6 +105,40 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _output_filename(self):
         return Path(self.output_filepath).resolve()
 
+    @property
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
+        return {
+            "message_id": self.message_id,
+            "user_email": self.connector_config.user_email,
+        }
+
+    @requires_dependencies(["office365"], extras="outlook")
+    def update_source_metadata(self, **kwargs):
+        from office365.runtime.client_request_exception import ClientRequestException
+
+        try:
+            client = self.connector_config._get_client()
+            msg = (
+                client.users[self.connector_config.user_email]
+                .messages[self.message_id]
+                .get()
+                .execute_query()
+            )
+        except ClientRequestException as e:
+            if e.response.status_code == 404:
+                self.source_metadata = SourceMetadata(
+                    exists=False,
+                )
+                return
+            raise
+        self.source_metadata = SourceMetadata(
+            date_created=msg.created_datetime.isoformat(),
+            date_modified=msg.last_modified_datetime.isoformat(),
+            version=msg.get_property("changeKey"),
+            source_url=msg.get_property("webLink"),
+            exists=True,
+        )
+
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"], extras="outlook")
@@ -111,6 +146,7 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Relies on Office365 python sdk message object to do the download."""
         try:
             client = self.connector_config._get_client()
+            self.update_source_metadata()
             if not self.download_dir.is_dir():
                 logger.debug(f"Creating directory: {self.download_dir}")
                 self.download_dir.mkdir(parents=True, exist_ok=True)
