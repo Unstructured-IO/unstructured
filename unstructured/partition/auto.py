@@ -16,6 +16,9 @@ from unstructured.partition.common import exactly_one
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
+from unstructured.partition.lang import (
+    convert_old_ocr_languages_to_languages,
+)
 from unstructured.partition.text import partition_text
 from unstructured.partition.xml import partition_xml
 from unstructured.utils import dependency_exists
@@ -212,7 +215,7 @@ def partition(
             )
 
         else:
-            languages = ocr_languages.split("+")
+            languages = convert_old_ocr_languages_to_languages(ocr_languages)
             logger.warning(
                 "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
                 "Please use languages instead.",

@@ -4,6 +4,9 @@ from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
+from unstructured.partition.lang import (
+    convert_old_ocr_languages_to_languages,
+)
 from unstructured.partition.pdf import partition_pdf_or_image
 
 
@@ -65,9 +68,9 @@ def partition_image(
             )
 
         else:
-            languages = ocr_languages.split("+")
+            languages = convert_old_ocr_languages_to_languages(ocr_languages)
             logger.warning(
-                "The ocr_languages kwarg will be depsrecated in a future version of unstructured. "
+                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
                 "Please use languages instead.",
             )
 

@@ -37,6 +37,10 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
+from unstructured.partition.lang import (
+    convert_old_ocr_languages_to_languages,
+    prepare_languages_for_tesseract,
+)
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
@@ -119,7 +123,7 @@ def partition_pdf(
             )
 
         else:
-            languages = ocr_languages.split("+")
+            languages = convert_old_ocr_languages_to_languages(ocr_languages)
             logger.warning(
                 "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
                 "Please use languages instead.",
@@ -200,7 +204,7 @@ def partition_pdf_or_image(
             )
 
         else:
-            languages = ocr_languages.split("+")
+            languages = convert_old_ocr_languages_to_languages(ocr_languages)
             logger.warning(
                 "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
                 "Please use languages instead.",
@@ -307,7 +311,7 @@ def _partition_pdf_or_image_local(
         process_file_with_model,
     )
 
-    ocr_languages = "+".join(languages)
+    ocr_languages = prepare_languages_for_tesseract(languages)
 
     model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
     if file is None:
@@ -575,7 +579,7 @@ def convert_pdf_to_images(
 def _get_element_box(
     boxes: List[str],
     char_count: int,
-) -> Tuple[Tuple[Tuple[float, float], Tuple[float, int], Tuple[int, int], Tuple[int, float]], int,]:
+) -> Tuple[Tuple[Tuple[float, float], Tuple[float, int], Tuple[int, int], Tuple[int, float]], int]:
     """Helper function to get the bounding box of an element.
 
     Args:
@@ -672,7 +676,7 @@ def _partition_pdf_or_image_with_ocr(
     to an image prior to processing."""
     import unstructured_pytesseract
 
-    ocr_languages = "+".join(languages)
+    ocr_languages = prepare_languages_for_tesseract(languages)
 
     if is_image:
         if file is not None:
