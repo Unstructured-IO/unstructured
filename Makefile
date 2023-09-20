@@ -21,7 +21,7 @@ install-base: install-base-pip-packages install-nltk-models
 install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-paddleocr install-all-docs install-test
+install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test
 
 .PHONY: install-base-ci
 install-base-ci: install-base-pip-packages install-nltk-models install-test
@@ -324,7 +324,7 @@ check: check-src check-tests check-version
 ## check-src:               runs linters (source only, no tests)
 .PHONY: check-src
 check-src:
-	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore PT011,PT012,SIM117
+	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore COM812,PT011,PT012,SIM117
 	black --line-length 100 ${PACKAGE_NAME} --check
 	flake8 ${PACKAGE_NAME}
 	mypy ${PACKAGE_NAME} --ignore-missing-imports --check-untyped-defs

@@ -34,7 +34,7 @@ After installation, confirm the setup by executing the below Python code:
 .. code-block:: python
 
    from unstructured.partition.auto import partition
-   elements = partition(filename="example-docs/fake-email.eml")
+   elements = partition(filename="example-docs/eml/fake-email.eml")
 
 If you've opted for the "local-inference" installation, you should also be able to execute:
 
