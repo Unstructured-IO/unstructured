@@ -322,7 +322,7 @@ def set_element_hierarchy(
 
         element.metadata.parent_id = parent_id
         stack.append(element)
-
+        elements = set_hierarchy_by_indentation(elements)
     return elements
 
 
