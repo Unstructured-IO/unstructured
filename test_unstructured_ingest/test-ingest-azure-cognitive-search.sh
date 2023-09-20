@@ -51,12 +51,15 @@ fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   s3 \
+  --download-dir "$DOWNLOAD_DIR" \
+  --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --strategy fast \
+  --preserve-downloads \
+  --reprocess \
+  --output-dir "$OUTPUT_DIR" \
+  --verbose \
   --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
   --anonymous \
-  --output-dir s3-small-batch-output-to-azure \
-  --num-processes 2 \
-  --verbose \
-  --strategy fast \
   azure-cognitive-search \
   --key "$AZURE_SEARCH_API_KEY" \
   --endpoint "$AZURE_SEARCH_ENDPOINT" \
@@ -71,7 +74,7 @@ docs=$(curl "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTI
   --header 'content-type: application/json' | jq)
 
 expected_docs=0
-for i in $(jq length s3-small-batch-output-to-azure/small-pdf-set/*); do
+for i in $(jq length "$OUTPUT_DIR"/*); do
   expected_docs=$((expected_docs+i));
 done
 
