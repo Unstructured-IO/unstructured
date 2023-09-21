@@ -5,10 +5,13 @@ from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, cast
 
+from typing_extensions import ParamSpec
+
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
 
 _T = TypeVar("_T")
+_P = ParamSpec("_P")
 
 
 class lazyproperty(Generic[_T]):
@@ -133,14 +136,14 @@ def read_from_jsonl(filename: str) -> List[Dict]:
 def requires_dependencies(
     dependencies: Union[str, List[str]],
     extras: Optional[str] = None,
-):
+) -> Callable[[Callable[_P, _T]], Callable[_P, _T]]:
     if isinstance(dependencies, str):
         dependencies = [dependencies]
 
-    def decorator(func):
+    def decorator(func: Callable[_P, _T]) -> Callable[_P, _T]:
         @wraps(func)
-        def wrapper(*args, **kwargs):
-            missing_deps = []
+        def wrapper(*args: _P.args, **kwargs: _P.kwargs):
+            missing_deps: List[str] = []
             for dep in dependencies:
                 if not dependency_exists(dep):
                     missing_deps.append(dep)
