@@ -3,6 +3,7 @@ from __future__ import annotations
 import numbers
 import os
 import subprocess
+from collections import defaultdict
 from datetime import datetime
 from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
@@ -19,6 +20,7 @@ from typing import (
 )
 
 import emoji
+import numpy as np
 from tabulate import tabulate
 
 from unstructured.documents.coordinates import CoordinateSystem, PixelSpace
@@ -31,6 +33,7 @@ from unstructured.documents.elements import (
     ListItem,
     PageBreak,
     Text,
+    Title,
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
@@ -183,6 +186,69 @@ def normalize_layout_element(
         )
 
 
+def set_hierarchy_by_indentation(
+    elements: Element,
+) -> List[Element]:
+    left = []
+    right = []
+    coordinates = []
+    for ele in elements:
+        coordinates.append(ele.metadata.coordinates.points[0])
+
+    coords_np = np.asarray(coordinates)
+    median = np.median(coords_np)
+
+    # Split text from multicolumn page in left and right lists
+    # Will not work for more than 2 columns
+    for ele in elements:
+        if ele.metadata.coordinates.points[0][0] <= median:
+            left.append((ele, "left"))
+        else:
+            right.append((ele, "right"))
+
+    # Assign parent id to indented text
+    prev_ele = []
+    i = 0
+    for ele, col in left:
+        if prev_ele:
+            if (
+                ele.metadata.coordinates.points[0][0] - prev_ele.metadata.coordinates.points[0][0]
+            ) > 0.79 and isinstance(ele, Title):
+                ele.metadata.parent_id = prev_ele.id
+            elif isinstance(ele, ListItem) and isinstance(prev_ele, ListItem):
+                ele.metadata.parent_id = prev_ele.metadata.parent_id
+        left[i] = (ele, col)
+        prev_ele = ele
+        i += 1
+
+    prev_ele = []
+    i = 0
+    for ele, col in right:
+        if prev_ele:
+            if (
+                prev_ele.metadata.coordinates.points[0][0] / ele.metadata.coordinates.points[0][0]
+            ) >= 0.79 and isinstance(ele, Title):
+                ele.metadata.parent_id = prev_ele.id
+            elif isinstance(ele, ListItem) and isinstance(prev_ele, ListItem):
+                ele.metadata.parent_id = prev_ele.metadata.parent_id
+        right[i] = (ele, col)
+        prev_ele = ele
+        i += 1
+    # sort elements
+    left.extend(right)
+    sorted_ele = defaultdict(lambda: defaultdict(list))
+    for ele, col in left:
+        sorted_ele[getattr(ele, "metadata").page_number][col].append(ele)
+
+    final = []
+
+    for num in sorted(sorted_ele.keys()):
+        final.extend(list(sorted_ele[num]["left"]))
+        final.extend(list(sorted_ele[num]["right"]))
+
+    return final
+
+
 def layout_list_to_list_items(
     text: Optional[str],
     coordinates: Optional[Tuple[Tuple[float, float], ...]],
@@ -255,7 +321,7 @@ def set_element_hierarchy(
 
         element.metadata.parent_id = parent_id
         stack.append(element)
-
+        elements = set_hierarchy_by_indentation(elements)
     return elements
 
 

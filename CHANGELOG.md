@@ -1,3 +1,13 @@
+## 0.10.18-dev3
+
+### Enhancements
+
+* **Adds hierarchy by indentation** The code modifies the `parent_id` of indented text to the element above it instead of the having the nearest `Title` be its parent.
+
+### Features
+
+### Fixes
+
 ## 0.10.17-dev2
 
 ### Enhancements
