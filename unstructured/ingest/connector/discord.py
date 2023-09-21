@@ -89,17 +89,19 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 if self.days:
                     after_date = dt.datetime.utcnow() - dt.timedelta(days=self.days)
                 channel = bot.get_channel(int(self.channel))
-                jump_url = None
                 if channel is None:
-                    raise ValueError("Channel not found.")
-                jump_url = channel.jump_url
+                    raise FileNotFoundError("Channel not found.")
                 async for msg in channel.history(after=after_date):  # type: ignore
                     messages.append(msg)
                 await bot.close()
+            except FileNotFoundError:
+                logger.error("Channel not found")
+                await bot.close()
+                return messages, None
             except Exception:
                 logger.error("Error fetching messages")
                 await bot.close()
-                return messages, jump_url
+                raise
 
         bot.run(self.token)
         jump_url = bot.get_channel(int(self.channel)).jump_url  # type: ignore
