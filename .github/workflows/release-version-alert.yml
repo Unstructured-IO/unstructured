@@ -73,15 +73,11 @@ jobs:
         with:
           path: message_cache.txt
           key: message-cache-${{ env.MESSAGE_HASH }}
-      - name: Slack Notification (echo)
+      - name: Slack Notification
         if: env.SKIP_STEPS != 'true'
-        run: |
-          echo "Would have sent Slack notification: ${{env.SLACK_MESSAGE}}"
-      # - name: Slack Notification
-      #   if: env.SKIP_STEPS != 'true'
-      #   uses: slackapi/slack-github-action@v1.24.0
-      #   with:
-      #     channel-id: 'C05S1QMKL5D'
-      #     slack-message: ${{ env.SLACK_MESSAGE }}
-      #   env:
-      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: 'C05S1QMKL5D'
+          slack-message: ${{ env.SLACK_MESSAGE }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
