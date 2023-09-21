@@ -80,7 +80,7 @@ In checklist form, the above steps are summarized as:
   - [ ] contact Unstructured team for them to add the secrets into Github
   - [ ] include the secret variables in [`ci.yml`](https://github.com/Unstructured-IO/unstructured/blob/eb8ce8913729826b62fd4e1224f70d67c5289b9d/.github/workflows/ci.yml) and [`ingest-test-fixtures-update-pr.yml`](https://github.com/Unstructured-IO/unstructured/blob/eb8ce8913729826b62fd4e1224f70d67c5289b9d/.github/workflows/ingest-test-fixtures-update-pr.yml)
   - [ ] add a make install line in the workflow configurations to be able to provide the workflow machine with the required dependencies on the connector while testing
-- [ ] Make sure that the tests for the connector are running and not getting skipped.
+- [ ] Make sure the tests for the connector are running and not skipped by reviewing the logs in CI.
 - [ ] Whenever necessary, use the [ingest update test fixtures](https://github.com/Unstructured-IO/unstructured/actions/workflows/ingest-test-fixtures-update-pr.yml) workflow to update the test fixtures.
 - [ ] Honors the conventions of `BaseConnectorConfig` defined in [unstructured/ingest/interfaces.py](unstructured/ingest/interfaces.py) which is passed through [the CLI](unstructured/ingest/main.py):
   - [ ] If running with an `.output_dir` where structured outputs already exists for a given file, the file content is not re-downloaded from the data source nor is it reprocessed. This is made possible by implementing the call to `MyIngestDoc.has_output()` which is invoked in [MainProcess._filter_docs_with_outputs](ingest-prep-for-many/unstructured/ingest/main.py).
