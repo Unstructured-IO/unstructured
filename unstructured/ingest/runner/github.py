@@ -10,11 +10,11 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def github(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     url: str,
     git_branch: str,
+    verbose: bool = False,
     git_access_token: t.Optional[str] = None,
     git_file_glob: t.Optional[str] = None,
     writer_type: t.Optional[str] = None,

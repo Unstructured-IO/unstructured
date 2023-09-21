@@ -8,11 +8,11 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def local(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     input_path: str,
-    recursive: bool,
+    verbose: bool = False,
+    recursive: bool = False,
     file_glob: t.Optional[str] = None,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,

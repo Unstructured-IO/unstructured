@@ -9,10 +9,10 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def s3(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     remote_url: str,
+    verbose: bool = False,
     recursive: bool = False,
     anonymous: bool = False,
     writer_type: t.Optional[str] = None,

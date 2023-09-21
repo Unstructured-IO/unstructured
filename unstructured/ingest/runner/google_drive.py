@@ -10,12 +10,12 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def gdrive(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     service_account_key: str,
-    recursive: bool,
     drive_id: str,
+    verbose: bool = False,
+    recursive: bool = False,
     extension: t.Optional[str] = None,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,

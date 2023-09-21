@@ -11,11 +11,11 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def notion(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     api_key: str,
-    recursive: bool,
+    verbose: bool = False,
+    recursive: bool = False,
     page_ids: t.Optional[t.List[str]] = None,
     database_ids: t.Optional[t.List[str]] = None,
     writer_type: t.Optional[str] = None,

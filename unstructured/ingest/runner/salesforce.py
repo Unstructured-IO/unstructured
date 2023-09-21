@@ -10,14 +10,14 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def salesforce(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
-    recursive: bool,
     username: str,
     consumer_key: str,
     private_key_path: str,
     categories: t.List[str],
+    verbose: bool = False,
+    recursive: bool = False,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,
