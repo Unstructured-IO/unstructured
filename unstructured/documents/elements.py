@@ -402,7 +402,22 @@ class Formula(Element):
 
     category = "Formula"
 
-    pass
+    def __init__(
+        self,
+        element_id: Union[str, uuid.UUID, NoID, UUID] = NoID(),
+        coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+        coordinate_system: Optional[CoordinateSystem] = None,
+        metadata: Optional[ElementMetadata] = None,
+        text: str = "",
+    ):
+        super().__init__(
+            element_id=element_id,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+            metadata=metadata,
+        )
+        self.text = text
+        pass
 
 
 class Text(Element):
