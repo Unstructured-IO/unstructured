@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Generator, List, Optional, Tuple
 
 import backoff
@@ -16,11 +17,22 @@ from unstructured.ingest.connector.notion.types.database_properties import (
 )
 from unstructured.ingest.connector.notion.types.page import Page
 from unstructured.ingest.ingest_backoff import RetryStrategy, on_exception
+from unstructured.ingest.logger import make_default_logger
+
+logger = make_default_logger(logging.INFO)
 
 
 def backoff_handler(details):
-    print(
+    logger.info(
         "Backing off {wait:0.1f} seconds after {tries} tries "
+        "calling function {target} with args {args} and kwargs "
+        "{kwargs}".format(**details),
+    )
+
+
+def giveup_handler(details):
+    logger.error(
+        "Gave up after {elapsed:0.1f} seconds/{tries} tries "
         "calling function {target} with args {args} and kwargs "
         "{kwargs}".format(**details),
     )
@@ -35,6 +47,7 @@ class BlocksChildrenEndpoint(NotionBlocksChildrenEndpoint):
         backoff.expo,
         (httpx.TimeoutException, httpx.HTTPStatusError),
         on_backoff=backoff_handler,
+        on_giveup=giveup_handler,
     )
     def list(self, block_id: str, **kwargs: Any) -> Tuple[List[Block], dict]:
         resp: dict = super().list(block_id=block_id, **kwargs)  # type: ignore
@@ -45,6 +58,7 @@ class BlocksChildrenEndpoint(NotionBlocksChildrenEndpoint):
         backoff.expo,
         (httpx.TimeoutException, httpx.HTTPStatusError),
         on_backoff=backoff_handler,
+        on_giveup=giveup_handler,
     )
     def iterate_list(
         self,
@@ -70,6 +84,7 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
         backoff.expo,
         (httpx.TimeoutException, httpx.HTTPStatusError),
         on_backoff=backoff_handler,
+        on_giveup=giveup_handler,
     )
     def retrieve(self, database_id: str, **kwargs: Any) -> Database:
         resp: dict = super().retrieve(database_id=database_id, **kwargs)  # type: ignore
@@ -79,6 +94,7 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
         backoff.expo,
         (httpx.TimeoutException, httpx.HTTPStatusError, RequestTimeoutError),
         on_backoff=backoff_handler,
+        on_giveup=giveup_handler,
     )
     def retrieve_status(self, database_id: str, **kwargs) -> int:
         request = self.parent._build_request(
@@ -96,6 +112,7 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
         backoff.expo,
         (httpx.TimeoutException, httpx.HTTPStatusError),
         on_backoff=backoff_handler,
+        on_giveup=giveup_handler,
     )
     def query(self, database_id: str, **kwargs: Any) -> Tuple[List[Page], dict]:
         """Get a list of [Pages](https://developers.notion.com/reference/page) contained in the database.
@@ -112,6 +129,7 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
         backoff.expo,
         (httpx.TimeoutException, httpx.HTTPStatusError),
         on_backoff=backoff_handler,
+        on_giveup=giveup_handler,
     )
     def iterate_query(self, database_id: str, **kwargs: Any) -> Generator[List[Page], None, None]:
         while True:
@@ -141,6 +159,7 @@ class BlocksEndpoint(NotionBlocksEndpoint):
         backoff.expo,
         (httpx.TimeoutException, httpx.HTTPStatusError),
         on_backoff=backoff_handler,
+        on_giveup=giveup_handler,
     )
     def retrieve(self, block_id: str, **kwargs: Any) -> Block:
         resp: dict = super().retrieve(block_id=block_id, **kwargs)  # type: ignore
@@ -156,6 +175,7 @@ class PagesEndpoint(NotionPagesEndpoint):
         backoff.expo,
         (httpx.TimeoutException, httpx.HTTPStatusError),
         on_backoff=backoff_handler,
+        on_giveup=giveup_handler,
     )
     def retrieve(self, page_id: str, **kwargs: Any) -> Page:
         resp: dict = super().retrieve(page_id=page_id, **kwargs)  # type: ignore
@@ -165,6 +185,7 @@ class PagesEndpoint(NotionPagesEndpoint):
         backoff.expo,
         (httpx.TimeoutException, httpx.HTTPStatusError, RequestTimeoutError),
         on_backoff=backoff_handler,
+        on_giveup=giveup_handler,
     )
     def retrieve_status(self, page_id: str, **kwargs) -> int:
         request = self.parent._build_request(
