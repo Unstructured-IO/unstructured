@@ -6,7 +6,7 @@ on:
       - 'unstructured/__version__.py'
       - 'CHANGELOG.md'
   merge_group:
-    branches: [ main ]
+    branches: [ main ] 
 
 env:
   GHA_CACHE_KEY_VERSION: "v1"
