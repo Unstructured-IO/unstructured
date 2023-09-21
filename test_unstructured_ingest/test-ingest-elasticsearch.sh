@@ -9,12 +9,24 @@ OUTPUT_FOLDER_NAME=elasticsearch
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
-# shellcheck source=/dev/null
-sh scripts/elasticsearch-test-helpers/create-and-check-es.sh
-wait
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
 
-# Kill the container so the script can be repeatedly run using the same ports
-trap 'echo "Stopping Elasticsearch Docker container"; docker stop es-test' EXIT
+function cleanup() {
+  # Kill the container so the script can be repeatedly run using the same ports
+  if docker ps --filter "name=es-test"; then
+    echo "Stopping Elasticsearch Docker container"
+    docker stop es-test
+  fi
+
+  cleanup_dir "$OUTPUT_DIR"
+}
+
+trap cleanup EXIT
+
+# shellcheck source=/dev/null
+scripts/elasticsearch-test-helpers/create-and-check-es.sh
+wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     elasticsearch \
@@ -29,5 +41,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --url http://localhost:9200 \
     --jq-query '{ethnicity, director, plot}'
 
-echo "SCRIPT_DIR: $SCRIPT_DIR"
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
