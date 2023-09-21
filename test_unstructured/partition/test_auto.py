@@ -700,7 +700,7 @@ def test_auto_partition_xml_from_file_with_tags(filename="example-docs/factbook.
     assert "<leader>Joe Biden</leader>" in elements[0].text
 
 
-EXPECTED_XLSX_FILETYPE = ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 
 def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx"):
