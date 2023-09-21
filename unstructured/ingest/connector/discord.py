@@ -1,6 +1,7 @@
 import datetime as dt
 import os
 import typing as t
+from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -88,12 +89,17 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 if self.days:
                     after_date = dt.datetime.utcnow() - dt.timedelta(days=self.days)
                 channel = bot.get_channel(int(self.channel))
+                jump_url = None
+                if channel is None:
+                    raise ValueError("Channel not found.")
+                jump_url = channel.jump_url
                 async for msg in channel.history(after=after_date):  # type: ignore
                     messages.append(msg)
                 await bot.close()
             except Exception:
                 logger.error("Error fetching messages")
                 await bot.close()
+                return messages, jump_url
 
         bot.run(self.token)
         jump_url = bot.get_channel(int(self.channel)).jump_url  # type: ignore
