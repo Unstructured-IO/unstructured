@@ -1,17 +1,19 @@
 from __future__ import annotations
 
+import abc
+import copy
+import dataclasses as dc
 import datetime
+import functools
 import hashlib
 import inspect
 import os
 import pathlib
 import re
 import uuid
-from abc import ABC
-from copy import deepcopy
-from dataclasses import dataclass
-from functools import wraps
-from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
+
+from typing_extensions import Self, TypedDict
 
 from unstructured.documents.coordinates import (
     TYPE_TO_COORDINATE_SYSTEM_MAP,
@@ -20,19 +22,19 @@ from unstructured.documents.coordinates import (
 )
 
 
-class NoID(ABC):
+class NoID(abc.ABC):
     """Class to indicate that an element do not have an ID."""
 
     pass
 
 
-class UUID(ABC):
+class UUID(abc.ABC):
     """Class to indicate that an element should have a UUID."""
 
     pass
 
 
-@dataclass
+@dc.dataclass
 class DataSourceMetadata:
     """Metadata fields that pertain to the data source of the document."""
 
@@ -46,8 +48,12 @@ class DataSourceMetadata:
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
 
+    @classmethod
+    def from_dict(cls, input_dict):
+        return cls(**input_dict)
 
-@dataclass
+
+@dc.dataclass
 class CoordinatesMetadata:
     """Metadata fields that pertain to the coordinates of the element."""
 
@@ -125,7 +131,7 @@ class Link(TypedDict):
     url: str
 
 
-@dataclass
+@dc.dataclass
 class ElementMetadata:
     coordinates: Optional[CoordinatesMetadata] = None
     data_source: Optional[DataSourceMetadata] = None
@@ -195,11 +201,15 @@ class ElementMetadata:
         return _dict
 
     @classmethod
-    def from_dict(cls, input_dict):
-        constructor_args = deepcopy(input_dict)
+    def from_dict(cls, input_dict: Dict[str, Any]) -> Self:
+        constructor_args = copy.deepcopy(input_dict)
         if constructor_args.get("coordinates", None) is not None:
             constructor_args["coordinates"] = CoordinatesMetadata.from_dict(
                 constructor_args["coordinates"],
+            )
+        if constructor_args.get("data_source", None) is not None:
+            constructor_args["data_source"] = DataSourceMetadata.from_dict(
+                constructor_args["data_source"],
             )
         return cls(**constructor_args)
 
@@ -240,7 +250,7 @@ def process_metadata():
                     attribute on the elements in the output."""
                 )
 
-        @wraps(func)
+        @functools.wraps(func)
         def wrapper(*args, **kwargs):
             elements = func(*args, **kwargs)
             sig = inspect.signature(func)
@@ -296,7 +306,7 @@ def _add_regex_metadata(
     return elements
 
 
-class Element(ABC):
+class Element(abc.ABC):
     """An element is a section of a page in the document."""
 
     def __init__(

@@ -27,7 +27,7 @@ from unstructured.file_utils.filetype import (
     FileType,
     add_metadata_with_filetype,
 )
-from unstructured.logger import logger
+from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
     convert_to_bytes,
@@ -766,7 +766,10 @@ def check_coords_within_boundary(
         a float ranges from [0,1] to scale the horizontal (x-axis) boundary
     """
     if not coord_has_valid_points(coordinates) and not coord_has_valid_points(boundary):
-        raise ValueError("Invalid coordinates.")
+        trace_logger.detail(  # type: ignore
+            f"coordinates {coordinates} and boundary {boundary} did not pass validation",
+        )
+        return False
 
     boundary_x_min = boundary.points[0][0]
     boundary_x_max = boundary.points[2][0]
