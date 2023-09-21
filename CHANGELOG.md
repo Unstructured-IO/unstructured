@@ -1,4 +1,4 @@
-## 0.10.17-dev2
+## 0.10.17-dev3
 
 ### Enhancements
 
@@ -11,6 +11,11 @@
 ### Fixes
 
 * **Fixes a metadata source serialization bug** Problem: In unstructured elements, when loading an elements json file from the disk, the data_source attribute is assumed to be an instance of DataSourceMetadata and the code acts based on that. However the loader did not satisfy the assumption, and loaded it as a dict instead, causing an error. Fix: Added necessary code block to initialize a DataSourceMetadata object, also refactored DataSourceMetadata.from_dict() method to remove redundant code. Importance: Crucial to be able to load elements (which have data_source fields) from json files.
+
+* **Fix badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
+should be generated, however the __init__ function for that class haven't been wrote. After this change the element is correctly created with empty text 
+(as we currently don't handle Formulas yet) allowing the document to be loaded. Fix: Add __init__ function to Formula class. Importance: Crucial to be able to 
+load documents that contain formulas.
 
 ## 0.10.16
 
