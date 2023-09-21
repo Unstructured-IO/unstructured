@@ -187,7 +187,7 @@ def normalize_layout_element(
 
 
 def set_hierarchy_by_indentation(
-    elements: Element,
+    elements: List[Element],
 ) -> List[Element]:
     left = []
     right = []
