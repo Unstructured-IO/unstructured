@@ -224,6 +224,7 @@ def detect_languages(
     if text.strip() == "":
         return ["eng"]  # english as default
 
+    # set seed for deterministic langdetect outputs
     DetectorFactory.seed = 0
 
     # user inputted language
