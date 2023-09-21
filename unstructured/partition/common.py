@@ -3,7 +3,6 @@ from __future__ import annotations
 import numbers
 import os
 import subprocess
-
 from collections import defaultdict
 from datetime import datetime
 from io import BufferedReader, BytesIO, TextIOWrapper
@@ -214,9 +213,9 @@ def set_hierarchy_by_indentation(
         if prev_ele:
             if (
                 ele.metadata.coordinates.points[0][0] - prev_ele.metadata.coordinates.points[0][0]
-            ) > 0.79 and type(ele) is not Title:
+            ) > 0.79 and isinstance(ele, Title):
                 ele.metadata.parent_id = prev_ele.id
-            elif type(ele) == ListItem and type(prev_ele) == ListItem:
+            elif isinstance(ele, ListItem) and isinstance(prev_ele, ListItem):
                 ele.metadata.parent_id = prev_ele.metadata.parent_id
         left[i] = (ele, col)
         prev_ele = ele
@@ -228,9 +227,9 @@ def set_hierarchy_by_indentation(
         if prev_ele:
             if (
                 prev_ele.metadata.coordinates.points[0][0] / ele.metadata.coordinates.points[0][0]
-            ) >= 0.79 and type(ele) is not Title:
+            ) >= 0.79 and isinstance(ele, Title):
                 ele.metadata.parent_id = prev_ele.id
-            elif type(ele) == ListItem and type(prev_ele) == ListItem:
+            elif isinstance(ele, ListItem) and isinstance(prev_ele, ListItem):
                 ele.metadata.parent_id = prev_ele.metadata.parent_id
         right[i] = (ele, col)
         prev_ele = ele
