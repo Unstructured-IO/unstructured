@@ -40,9 +40,9 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def record_locator(self) -> t.Dict[str, t.Any]:
         return {
-            "url": self.connector_config.url,
             "repo_path": self.connector_config.repo_path,
             "file_path": self.path,
+            "branch": self.connector_config.branch,
         }
 
     def _create_full_tmp_dir_path(self):
@@ -55,6 +55,7 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
+        print(self)
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
