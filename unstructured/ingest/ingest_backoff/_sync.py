@@ -7,7 +7,7 @@ from datetime import timedelta
 from backoff._common import _init_wait_gen, _maybe_call, _next_wait
 from backoff._sync import _call_handlers
 
-from unstructured.ingest.backoff._strategy import RetryStrategy
+from unstructured.ingest.ingest_backoff._strategy import RetryStrategy
 
 
 def retry_exception(

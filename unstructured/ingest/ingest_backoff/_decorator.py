@@ -15,7 +15,7 @@ from backoff._typing import (
     _WaitGenerator,
 )
 
-from unstructured.ingest.backoff import _sync
+from unstructured.ingest.ingest_backoff import _sync
 
 
 def on_exception(

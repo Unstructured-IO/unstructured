@@ -1,10 +1,9 @@
-from typing import Any, Generator, List, Tuple
+from typing import Any, Generator, List, Optional, Tuple
 
+import backoff
 import httpx
 from notion_client import Client as NotionClient
-from notion_client.api_endpoints import (
-    BlocksChildrenEndpoint as NotionBlocksChildrenEndpoint,
-)
+from notion_client.api_endpoints import BlocksChildrenEndpoint as NotionBlocksChildrenEndpoint
 from notion_client.api_endpoints import BlocksEndpoint as NotionBlocksEndpoint
 from notion_client.api_endpoints import DatabasesEndpoint as NotionDatabasesEndpoint
 from notion_client.api_endpoints import PagesEndpoint as NotionPagesEndpoint
@@ -16,14 +15,21 @@ from unstructured.ingest.connector.notion.types.database_properties import (
     map_cells,
 )
 from unstructured.ingest.connector.notion.types.page import Page
+from unstructured.ingest.ingest_backoff import RetryStrategy, on_exception
 
 
 class BlocksChildrenEndpoint(NotionBlocksChildrenEndpoint):
+    def __init__(self, retry_strategy: Optional[RetryStrategy] = None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.retry_strategy = retry_strategy
+
+    @on_exception(backoff.expo, (httpx.TimeoutException, httpx.HTTPStatusError))
     def list(self, block_id: str, **kwargs: Any) -> Tuple[List[Block], dict]:
         resp: dict = super().list(block_id=block_id, **kwargs)  # type: ignore
         child_blocks = [Block.from_dict(data=b) for b in resp.pop("results", [])]
         return child_blocks, resp
 
+    @on_exception(backoff.expo, (httpx.TimeoutException, httpx.HTTPStatusError))
     def iterate_list(
         self,
         block_id: str,
@@ -40,10 +46,16 @@ class BlocksChildrenEndpoint(NotionBlocksChildrenEndpoint):
 
 
 class DatabasesEndpoint(NotionDatabasesEndpoint):
+    def __init__(self, retry_strategy: Optional[RetryStrategy] = None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.retry_strategy = retry_strategy
+
+    @on_exception(backoff.expo, (httpx.TimeoutException, httpx.HTTPStatusError))
     def retrieve(self, database_id: str, **kwargs: Any) -> Database:
         resp: dict = super().retrieve(database_id=database_id, **kwargs)  # type: ignore
         return Database.from_dict(data=resp)
 
+    @on_exception(backoff.expo, (httpx.TimeoutException, httpx.HTTPStatusError))
     def retrieve_status(self, database_id: str, **kwargs) -> int:
         request = self.parent._build_request(
             method="HEAD",
@@ -56,6 +68,7 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
         except httpx.TimeoutException:
             raise RequestTimeoutError()
 
+    @on_exception(backoff.expo, (httpx.TimeoutException, httpx.HTTPStatusError))
     def query(self, database_id: str, **kwargs: Any) -> Tuple[List[Page], dict]:
         """Get a list of [Pages](https://developers.notion.com/reference/page) contained in the database.
 
@@ -67,6 +80,7 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
             p.properties = map_cells(p.properties)
         return pages, resp
 
+    @on_exception(backoff.expo, (httpx.TimeoutException, httpx.HTTPStatusError))
     def iterate_query(self, database_id: str, **kwargs: Any) -> Generator[List[Page], None, None]:
         while True:
             response: dict = super().query(database_id=database_id, **kwargs)  # type: ignore
@@ -81,20 +95,33 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
 
 
 class BlocksEndpoint(NotionBlocksEndpoint):
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        retry_strategy: Optional[RetryStrategy] = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
         self.children = BlocksChildrenEndpoint(*args, **kwargs)
+        self.retry_strategy = retry_strategy
 
+    @on_exception(backoff.expo, (httpx.TimeoutException, httpx.HTTPStatusError))
     def retrieve(self, block_id: str, **kwargs: Any) -> Block:
         resp: dict = super().retrieve(block_id=block_id, **kwargs)  # type: ignore
         return Block.from_dict(data=resp)
 
 
 class PagesEndpoint(NotionPagesEndpoint):
+    def __init__(self, retry_strategy: Optional[RetryStrategy] = None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.retry_strategy = retry_strategy
+
+    @on_exception(backoff.expo, (httpx.TimeoutException, httpx.HTTPStatusError))
     def retrieve(self, page_id: str, **kwargs: Any) -> Page:
         resp: dict = super().retrieve(page_id=page_id, **kwargs)  # type: ignore
         return Page.from_dict(data=resp)
 
+    @on_exception(backoff.expo, (httpx.TimeoutException, httpx.HTTPStatusError))
     def retrieve_status(self, page_id: str, **kwargs) -> int:
         request = self.parent._build_request(
             method="HEAD",
@@ -109,8 +136,13 @@ class PagesEndpoint(NotionPagesEndpoint):
 
 
 class Client(NotionClient):
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        retry_strategy: Optional[RetryStrategy] = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
-        self.blocks = BlocksEndpoint(self)
-        self.pages = PagesEndpoint(self)
-        self.databases = DatabasesEndpoint(self)
+        self.blocks = BlocksEndpoint(retry_strategy=retry_strategy, parent=self)
+        self.pages = PagesEndpoint(retry_strategy=retry_strategy, parent=self)
+        self.databases = DatabasesEndpoint(retry_strategy=retry_strategy, parent=self)

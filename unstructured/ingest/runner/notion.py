@@ -1,9 +1,8 @@
 import hashlib
-import logging
 import typing as t
 from uuid import UUID
 
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.logger import logger
 from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
@@ -13,6 +12,8 @@ class NotionRunner(Runner):
         self,
         api_key: str,
         recursive: bool = False,
+        max_retries: t.Optional[int] = None,
+        max_time: t.Optional[float] = None,
         page_ids: t.Optional[t.List[str]] = None,
         database_ids: t.Optional[t.List[str]] = None,
         **kwargs,
@@ -20,7 +21,6 @@ class NotionRunner(Runner):
         page_ids = [str(UUID(p.strip())) for p in page_ids] if page_ids else []
         database_ids = [str(UUID(d.strip())) for d in database_ids] if database_ids else []
 
-        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
         if not page_ids and not database_ids:
             raise ValueError("no page ids nor database ids provided")
 
@@ -57,6 +57,8 @@ class NotionRunner(Runner):
                 database_ids=database_ids,
                 api_key=api_key,
                 recursive=recursive,
+                max_retries=max_retries,
+                max_time=max_time,
             ),
             read_config=self.read_config,
             processor_config=self.processor_config,
