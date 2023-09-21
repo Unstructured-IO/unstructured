@@ -57,7 +57,7 @@ google-auth-oauthlib==1.1.0
     # via gcsfs
 google-cloud-core==2.3.3
     # via google-cloud-storage
-google-cloud-storage==2.10.0
+google-cloud-storage==2.11.0
     # via gcsfs
 google-crc32c==1.5.0
     # via google-resumable-media
