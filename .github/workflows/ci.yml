@@ -2,20 +2,11 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
-    paths-ignore:
-      - 'unstructured/__version__.py'
-      - 'CHANGELOG.md'
-  pull_request:
-    branches: [ main ]
     paths-ignore:
       - 'unstructured/__version__.py'
       - 'CHANGELOG.md'
   merge_group:
     branches: [ main ]
-    paths-ignore:
-      - 'unstructured/__version__.py'
-      - 'CHANGELOG.md'
 
 env:
   GHA_CACHE_KEY_VERSION: "v1"
