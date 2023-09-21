@@ -47,7 +47,7 @@ class NotionCliConfig(BaseConfig, CliMixin):
                 help="Notion database IDs to pull text from",
             ),
             click.Option(
-                ["--max_retries"],
+                ["--max-retries"],
                 default=None,
                 type=int,
                 help="If provided, will use this max retry for "
