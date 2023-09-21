@@ -418,7 +418,7 @@ def test_auto_partition_formats_languages_for_tesseract():
         )
 
 
-def test_auto_partition_element_metadata():
+def test_auto_partition_element_metadata_user_provided_languages():
     filename = "example-docs/chevron-page.pdf"
     elements = partition(filename=filename, strategy="ocr_only", languages=["eng"])
     assert elements[0].metadata.languages == ["eng"]
