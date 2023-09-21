@@ -33,5 +33,9 @@ class DestinationConnectionError(CustomError):
     error_string = "Error in connecting to downstream data source: {}"
 
 
+class EmbeddingEncoderConnectionError(CustomError):
+    error_string = "Error in connecting to the embedding model provider: {}"
+
+
 class PartitionError(CustomError):
     error_string = "Error in partitioning content: {}"
