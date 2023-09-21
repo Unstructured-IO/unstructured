@@ -3,10 +3,13 @@
 ### Enhancements
 
 * **Adds data source properties to SharePoint, Outlook, Onedrive, Reddit, and Slack connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+* **Deduplicate nested elements to reduce noise in partition pdf or image results** Using `unstructured-inference==0.6.1`, which adds post processing steps to remove nested elements to reduce noise in the end results.
+* **Use `yolox_quantized` as default element detection model to improve table detection recall** `yolox_quantized` detects more diverse types of elements than current default `detectron` model and it improves the recall of table element detection.
 
 ### Features
 
 * **Adds the embedding module to be able to embed Elements** Problem: Many NLP applications require the ability to represent parts of documents in a semantic way. Until now, Unstructured did not have text embedding ability within the core library. Feature: This embedding module is able to track embeddings related data with a class, embed a list of elements, and return an updated list of Elements with the *embeddings* property. The module is also able to embed query strings. Importance: Ability to embed documents or parts of documents will enable users to make use of these semantic representations in different NLP applications, such as search, retrieval, and retrieval augmented generation.
+* **Adds the ability to set parameters for `unstructured-inference` models via environment variables** Problem: model parameters for `unstructured-inference` models, like table transformer, usually require tuning to obtain optimum performance. But changing the parameters would require changing the `unstructured-inference` package until now. Feature: `unstructured-inference>=0.6.0` introduces a `inference_config` object which parameters that can be override by environment variables. Importance: Ability to adjust key inference parameters easily so that the partition results are optimum for the use case.
 
 ### Fixes
 
