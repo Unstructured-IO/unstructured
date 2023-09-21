@@ -7,6 +7,10 @@ cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=local-single-file
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
@@ -19,4 +23,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 set +e
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

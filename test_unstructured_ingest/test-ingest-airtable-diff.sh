@@ -11,6 +11,10 @@ OUTPUT_FOLDER_NAME=airtable-diff
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+
 VARIED_DATA_BASE_ID="app5YQxSfp220fWtm"
 VARIED_DATA_BASE_ID_2="appJ43QmP8I17zu88"
 
@@ -30,4 +34,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess \
     --output-dir "$OUTPUT_DIR"
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
