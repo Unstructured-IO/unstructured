@@ -232,7 +232,7 @@ def detect_languages(
     # and the rest of the inputted languages will be ignored
     if languages and "auto" not in languages:
         doc_languages = [_convert_to_standard_langcode(lang) for lang in languages]
-    
+
     # language detection:
     else:
         try:
