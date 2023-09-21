@@ -37,7 +37,7 @@ Run Locally
                 verbose=True,
                 read_config=ReadConfig(),
                 partition_config=PartitionConfig(
-                    output_dir="confluence-ingest-output",
+                    output_dir="delta-table-example",
                     num_processes=2,
                 ),
                 table_uri="s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/",
@@ -79,9 +79,9 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
                 verbose=True,
                 read_config=ReadConfig(),
                 partition_config=PartitionConfig(
-                    output_dir="confluence-ingest-output",
+                    output_dir="delta-table-example",
                     num_processes=2,
-                   partition_by_api=True,
+                    partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
                 table_uri="s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/",
