@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import numbers
-import numpy as np
 import os
 import subprocess
+
 from collections import defaultdict
 from datetime import datetime
 from io import BufferedReader, BytesIO, TextIOWrapper
@@ -21,6 +21,7 @@ from typing import (
 )
 
 import emoji
+import numpy as np
 from tabulate import tabulate
 
 from unstructured.documents.coordinates import CoordinateSystem, PixelSpace
