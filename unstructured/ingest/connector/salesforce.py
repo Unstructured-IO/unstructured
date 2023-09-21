@@ -11,6 +11,7 @@ import os
 import typing as t
 from collections import OrderedDict
 from dataclasses import dataclass
+from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
 from string import Template
@@ -25,6 +26,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -138,6 +140,20 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return dedent(eml)
 
+    def update_source_metadata(self, record_json: t.Dict[str, t.Any]) -> None:
+        date_format = "%Y-%m-%dT%H:%M:%S.000+0000"
+        self.source_metadata = SourceMetadata(
+            date_created=datetime.strptime(record_json.get("CreatedDate"), date_format).isoformat(),
+            date_modified=datetime.strptime(
+                record_json.get("LastModifiedDate"),
+                date_format,
+            ).isoformat(),
+            # SystemModStamp is Timestamp if record has been modified by person or automated system
+            version=record_json.get("SystemModstamp"),
+            source_url=record_json.get("attributes").get("url"),
+            exists=True,
+        )
+
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
@@ -151,6 +167,8 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         record = client.query_all(
             f"select FIELDS(STANDARD) from {self.record_type} where Id='{self.record_id}'",
         )["records"][0]
+
+        self.update_source_metadata(record)
 
         try:
             if self.record_type == "EmailMessage":
