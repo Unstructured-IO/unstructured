@@ -1,4 +1,4 @@
-## 0.10.18-dev2
+## 0.10.18-dev3
 
 ### Enhancements
 
@@ -8,7 +8,7 @@
 
 ### Fixes
 
-## 0.10.17-dev1
+## 0.10.17-dev2
 
 ### Enhancements
 
@@ -16,7 +16,11 @@
 
 ### Features
 
+* **Adds the embedding module to be able to embed Elements** Problem: Many NLP applications require the ability to represent parts of documents in a semantic way. Until now, Unstructured did not have text embedding ability within the core library. Feature: This embedding module is able to track embeddings related data with a class, embed a list of elements, and return an updated list of Elements with the *embeddings* property. The module is also able to embed query strings. Importance: Ability to embed documents or parts of documents will enable users to make use of these semantic representations in different NLP applications, such as search, retrieval, and retrieval augmented generation.
+
 ### Fixes
+
+* **Fixes a metadata source serialization bug** Problem: In unstructured elements, when loading an elements json file from the disk, the data_source attribute is assumed to be an instance of DataSourceMetadata and the code acts based on that. However the loader did not satisfy the assumption, and loaded it as a dict instead, causing an error. Fix: Added necessary code block to initialize a DataSourceMetadata object, also refactored DataSourceMetadata.from_dict() method to remove redundant code. Importance: Crucial to be able to load elements (which have data_source fields) from json files.
 
 ## 0.10.16
 
@@ -88,7 +92,7 @@
 * Update all connectors to use new downstream architecture
   * New click type added to parse comma-delimited string inputs
   * Some CLI options renamed
- 
+
 ### Features
 
 ### Fixes
