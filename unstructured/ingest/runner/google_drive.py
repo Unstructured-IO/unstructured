@@ -16,7 +16,7 @@ def gdrive(
     service_account_key: str,
     recursive: bool,
     drive_id: str,
-    extension: t.Optional[str],
+    extension: t.Optional[str] = None,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,
