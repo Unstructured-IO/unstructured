@@ -536,14 +536,14 @@ def test_auto_partition_rtf_from_filename():
 
 
 def test_auto_partition_from_url():
-    url = ("https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/LICENSE.md")
+    url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/LICENSE.md"
     elements = partition(url=url, content_type="text/plain", strategy="hi_res")
     assert elements[0] == Title("Apache License")
     assert elements[0].metadata.url == url
 
 
 def test_partition_md_works_with_embedded_html():
-    url = ("https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/README.md")
+    url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/README.md"
     elements = partition(url=url, content_type="text/markdown", strategy="hi_res")
     elements[0].text
     unstructured_found = False
@@ -655,7 +655,9 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
     if filetype in (FileType.JPG, FileType.PNG, FileType.TIFF, FileType.EMPTY):
         pytest.skip()
     extension = filetype.name.lower()
-    filetype_module = (extension if filetype not in FILETYPE_TO_MODULE else FILETYPE_TO_MODULE[filetype])
+    filetype_module = (
+        extension if filetype not in FILETYPE_TO_MODULE else FILETYPE_TO_MODULE[filetype]
+    )
     fun_name = "partition_" + filetype_module
     module = import_module(f"unstructured.partition.{filetype_module}")  # noqa
     fun = eval(f"module.{fun_name}")
@@ -813,7 +815,7 @@ def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.x
     assert all(isinstance(element, Table) for element in elements)
     assert len(elements) == 3
 
-    assert (clean_extra_whitespace(elements[0].text)[:45] == EXPECTED_XLS_INITIAL_45_CLEAN_TEXT)
+    assert clean_extra_whitespace(elements[0].text)[:45] == EXPECTED_XLS_INITIAL_45_CLEAN_TEXT
     # NOTE(crag): if the beautifulsoup4 package is installed, some (but not all) additional
     # whitespace is removed, so the expected text length is less than is the case
     # when beautifulsoup4 is *not* installed. E.g.

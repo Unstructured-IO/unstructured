@@ -259,12 +259,7 @@ def partition(
         _partition_odt = _get_partition_with_extras("odt")
         elements = _partition_odt(filename=filename, file=file, **kwargs)
     elif filetype == FileType.EML:
-        elements = partition_email(
-            filename=filename,
-            file=file,
-            encoding=encoding,
-            **kwargs,
-        )
+        elements = partition_email(filename=filename, file=file, encoding=encoding, **kwargs)
     elif filetype == FileType.MSG:
         _partition_msg = _get_partition_with_extras("msg")
         elements = _partition_msg(filename=filename, file=file, **kwargs)
