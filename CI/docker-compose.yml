@@ -1,5 +1,5 @@
 services:
-  ci:
+  ingest-tests:
     image: unstructured:ci
     env_file:
       - ci.env

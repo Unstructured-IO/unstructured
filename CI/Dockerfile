@@ -45,5 +45,6 @@ RUN . .venv/bin/activate && \
 FROM run-deps as run
 COPY unstructured unstructured
 COPY test_unstructured_ingest test_unstructured_ingest
+COPY CI/entrypoint.sh entrypoint.sh
 
-ENTRYPOINT ["./test_unstructured_ingest/test-ingest.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
