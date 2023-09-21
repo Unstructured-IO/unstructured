@@ -25,6 +25,11 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 * **Fixes Sphinx errors.** Fixes errors when running Sphinx `make html` and installs library to suppress warnings.
 
 
+* **Fix badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
+should be generated, however the __init__ function for that class haven't been wrote. After this change the element is correctly created with empty text 
+(as we currently don't handle Formulas yet) allowing the document to be loaded. Fix: Add __init__ function to Formula class. Importance: Crucial to be able to 
+load documents that contain formulas.
+
 ## 0.10.16
 
 ### Enhancements
