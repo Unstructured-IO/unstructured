@@ -18,8 +18,8 @@ RUN python -m venv .venv && \
 
 FROM python-deps as run-deps
 RUN apt-get install -y libmagic-dev poppler-utils libreoffice pandoc && \
-    add-apt-repository -y ppa:alex-p/tesseract-ocr5 && apt-update && \
-    apt-get install -y tesseract-ocr tesseract-ocr-kor diffstat \
+    add-apt-repository -y ppa:alex-p/tesseract-ocr5 && apt-get update && \
+    apt-get install -y tesseract-ocr tesseract-ocr-kor diffstat
 RUN . .venv/bin/activate && \
     make install-ingest-s3 && \
     make install-ingest-airtable && \
