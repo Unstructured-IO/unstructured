@@ -407,6 +407,14 @@ docker-test:
 docker-smoke-test:
 	DOCKER_IMAGE=${DOCKER_IMAGE} ./scripts/docker-smoke-test.sh
 
+.PHONY: docker-build-ci
+docker-build-ci:
+	./scripts/docker-build-ci.sh
+
+PHONY: docker-run-ingest-tests
+docker-run-ingest-tests:
+	docker-compose -f ./CI/docker-compose.yml up
+
 
 ###########
 # Jupyter #
