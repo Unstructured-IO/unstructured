@@ -39,7 +39,7 @@ Run Locally
             discord(
                 verbose=True,
                 read_config=ReadConfig(
-                    download_dir="discord-example",
+                    download_dir="discord-ingest-download",
                     preserve_downloads=True,
                 ),
                 partition_config=PartitionConfig(
@@ -86,7 +86,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
             discord(
                 verbose=True,
                 read_config=ReadConfig(
-                    download_dir="discord-example",
+                    download_dir="discord-ingest-download",
                     preserve_downloads=True,
                 ),
                 partition_config=PartitionConfig(
