@@ -77,8 +77,8 @@ In checklist form, the above steps are summarized as:
   - [ ] Add the decorator `unstructured.utils.requires_dependencies` on top of each class instance or function that uses those connector-specific dependencies e.g. for `GitHubConnector` should look like `@requires_dependencies(dependencies=["github"], extras="github")`
   - [ ] Run `make tidy` and `make check` to ensure linting checks pass.
 - [ ] Update ingest documentation [here](https://github.com/Unstructured-IO/unstructured/tree/eb8ce8913729826b62fd4e1224f70d67c5289b9d/docs/source)
-- For team members that are developing in the original repository:
-  - If there are secret variables created for the connector tests, make sure to:
+- [ ] For team members that are developing in the original repository:
+  - [ ] If there are secret variables created for the connector tests, make sure to:
     - [ ] add the secrets into Github (contact someone with access)
     - [ ] include the secret variables in [`ci.yml`](https://github.com/Unstructured-IO/unstructured/blob/eb8ce8913729826b62fd4e1224f70d67c5289b9d/.github/workflows/ci.yml) and [`ingest-test-fixtures-update-pr.yml`](https://github.com/Unstructured-IO/unstructured/blob/eb8ce8913729826b62fd4e1224f70d67c5289b9d/.github/workflows/ingest-test-fixtures-update-pr.yml)
     - [ ] add a make install line in the workflow configurations to be able to provide the workflow machine with the required dependencies on the connector while testing
