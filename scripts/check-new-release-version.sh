@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -eux
 
 # Function to check if the current version is a non-dev version
 function is_non_dev_version {
