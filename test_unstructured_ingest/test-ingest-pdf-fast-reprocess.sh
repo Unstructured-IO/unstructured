@@ -9,6 +9,10 @@ OUTPUT_FOLDER_NAME=pdf-fast-reprocess
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 INPUT_PATH=$SCRIPT_DIR/download
 
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+
 echo "REPROCESS INPUT PATH"
 ls "$INPUT_PATH"
 
@@ -26,4 +30,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
