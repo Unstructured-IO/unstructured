@@ -227,10 +227,13 @@ def detect_languages(
     # set seed for deterministic langdetect outputs
     DetectorFactory.seed = 0
 
-    # user inputted language
+    # user inputted languages:
+    # if "auto" is included in the list of inputs, language detection will be triggered
+    # and the rest of the inputted languages will be ignored
     if languages and "auto" not in languages:
         doc_languages = [_convert_to_standard_langcode(lang) for lang in languages]
-    # language detection
+    
+    # language detection:
     else:
         try:
             langdetect_result = detect_langs(text)
