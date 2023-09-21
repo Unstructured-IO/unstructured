@@ -1,4 +1,4 @@
-## 0.10.17-dev3
+## 0.10.17-dev4
 
 ### Enhancements
 
@@ -11,6 +11,8 @@
 ### Fixes
 
 * **Fixes a metadata source serialization bug** Problem: In unstructured elements, when loading an elements json file from the disk, the data_source attribute is assumed to be an instance of DataSourceMetadata and the code acts based on that. However the loader did not satisfy the assumption, and loaded it as a dict instead, causing an error. Fix: Added necessary code block to initialize a DataSourceMetadata object, also refactored DataSourceMetadata.from_dict() method to remove redundant code. Importance: Crucial to be able to load elements (which have data_source fields) from json files.
+
+* **Fixes issue when channel raises `None`** Retrieves the channel only once, moves `jump_url` property setting within the message retrieval context.
 
 ## 0.10.16
 
