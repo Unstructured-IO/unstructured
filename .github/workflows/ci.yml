@@ -3,10 +3,19 @@ name: CI
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'unstructured/__version__.py'
+      - 'CHANGELOG.md'
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - 'unstructured/__version__.py'
+      - 'CHANGELOG.md'
   merge_group:
     branches: [ main ]
+    paths-ignore:
+      - 'unstructured/__version__.py'
+      - 'CHANGELOG.md'
 
 env:
   GHA_CACHE_KEY_VERSION: "v1"
@@ -97,7 +106,8 @@ jobs:
     - name: Lint
       run: |
         source .venv/bin/activate
-        make check
+        make check-tests
+        make check-src
 
   shellcheck:
     runs-on: ubuntu-latest
@@ -370,20 +380,6 @@ jobs:
         tesseract --version
         make install-nltk-models
         make test-unstructured-api-unit
-
-  changelog:
-    runs-on: ubuntu-latest
-    steps:
-    - if: github.ref != 'refs/heads/main'
-      uses: dorny/paths-filter@v2
-      id: changes
-      with:
-        filters: |
-          src:
-            - 'unstructured/**'
-
-    - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
-      uses: dangoslen/changelog-enforcer@v3
 
   # TODO - figure out best practice for caching docker images
   # (Using the virtualenv to get pytest)
