@@ -12,11 +12,15 @@ jobs:
   version:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v4
     - run: |
         make check-version
   changelog:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     - if: github.ref != 'refs/heads/main'
       uses: dorny/paths-filter@v2
       id: changes
