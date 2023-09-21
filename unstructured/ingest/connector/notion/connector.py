@@ -28,6 +28,11 @@ class SimpleNotionConfig(BaseConnectorConfig):
     max_retries: t.Optional[int] = None
     max_time: t.Optional[float] = None
 
+    def get_retry_strategy(self):
+        if self.max_time or self.max_retries:
+            return RetryStrategy(max_time=self.max_time, max_tries=self.max_retries)
+        return None
+
 
 @dataclass
 class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
@@ -59,9 +64,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def get_client(self):
         from unstructured.ingest.connector.notion.client import Client as NotionClient
 
-        retry_strategy = None
-        if self.connector_config.max_retries:
-            retry_strategy = RetryStrategy(max_tries=self.connector_config.max_retries)
+        retry_strategy = self.connector_config.get_retry_strategy()
         return NotionClient(auth=self.api_key, logger=logger, retry_strategy=retry_strategy)
 
     @BaseIngestDoc.skip_if_file_exists
@@ -177,9 +180,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def get_client(self):
         from unstructured.ingest.connector.notion.client import Client as NotionClient
 
-        retry_strategy = None
-        if self.connector_config.max_retries:
-            retry_strategy = RetryStrategy(max_tries=self.connector_config.max_retries)
+        retry_strategy = self.connector_config.get_retry_strategy()
         return NotionClient(auth=self.api_key, logger=logger, retry_strategy=retry_strategy)
 
     @BaseIngestDoc.skip_if_file_exists
@@ -279,9 +280,7 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         """Verify that can get metadata for an object, validates connections info."""
         from unstructured.ingest.connector.notion.client import Client as NotionClient
 
-        retry_strategy = None
-        if self.connector_config.max_retries:
-            retry_strategy = RetryStrategy(max_tries=self.connector_config.max_retries)
+        retry_strategy = self.connector_config.get_retry_strategy()
         self.client = NotionClient(
             auth=self.connector_config.api_key,
             logger=logger,

@@ -1,8 +1,9 @@
 import hashlib
+import logging
 import typing as t
 from uuid import UUID
 
-from unstructured.ingest.logger import logger
+from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
@@ -21,6 +22,7 @@ class NotionRunner(Runner):
         page_ids = [str(UUID(p.strip())) for p in page_ids] if page_ids else []
         database_ids = [str(UUID(d.strip())) for d in database_ids] if database_ids else []
 
+        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
         if not page_ids and not database_ids:
             raise ValueError("no page ids nor database ids provided")
 
