@@ -242,9 +242,7 @@ def test_partition_text_splits_long_text(filename="example-docs/norwich-city.txt
     assert elements[-1].text.endswith("External links")
 
 
-def test_partition_text_splits_long_text_max_partition(
-    filename="example-docs/norwich-city.txt",
-):
+def test_partition_text_splits_long_text_max_partition(filename="example-docs/norwich-city.txt"):
     elements = partition_text(filename=filename)
     elements_max_part = partition_text(filename=filename, max_partition=500)
     # NOTE(klaijan) - I edited the operation here from < to <=
@@ -254,20 +252,12 @@ def test_partition_text_splits_long_text_max_partition(
         assert len(element.text) <= 500
 
     # Make sure combined text is all the same
-    assert " ".join([el.text for el in elements]) == " ".join(
-        [el.text for el in elements_max_part],
-    )
+    assert " ".join([el.text for el in elements]) == " ".join([el.text for el in elements_max_part])
 
 
-def test_partition_text_splits_max_min_partition(
-    filename="example-docs/norwich-city.txt",
-):
+def test_partition_text_splits_max_min_partition(filename="example-docs/norwich-city.txt"):
     elements = partition_text(filename=filename)
-    elements_max_part = partition_text(
-        filename=filename,
-        min_partition=1000,
-        max_partition=1500,
-    )
+    elements_max_part = partition_text(filename=filename, min_partition=1000, max_partition=1500)
     for i, element in enumerate(elements_max_part):
         # NOTE(robinson) - the last element does not have a next element to merge with,
         # so it can be short
@@ -291,11 +281,7 @@ def test_partition_text_splits_max_min_partition(
     # that starts with bullet-like BULLETS_PATTERN, remove the re.sub part from the assert below.
 
     # Make sure combined text is all the same
-    assert re.sub(
-        BULLETS_PATTERN,
-        "",
-        " ".join([el.text for el in elements]),
-    ) == re.sub(
+    assert re.sub(BULLETS_PATTERN, "", " ".join([el.text for el in elements])) == re.sub(
         BULLETS_PATTERN,
         "",
         " ".join([el.text for el in elements_max_part]),
@@ -454,10 +440,7 @@ def test_partition_text_from_file_with_custom_metadata_date(
     )
 
     with open(filename, "rb") as f:
-        elements = partition_text(
-            file=f,
-            metadata_last_modified=expected_last_modification_date,
-        )
+        elements = partition_text(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
@@ -482,10 +465,7 @@ def test_partition_text_from_text_with_custom_metadata_date(
     with open(filename) as f:
         text = f.read()
 
-    elements = partition_text(
-        text=text,
-        metadata_last_modified=expected_last_modification_date,
-    )
+    elements = partition_text(text=text, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
@@ -522,9 +502,7 @@ def test_partition_text_with_json(filename, encoding):
         assert elements[i] == test_elements[i]
 
 
-def test_add_chunking_strategy_on_partition_text(
-    filename="example-docs/norwich-city.txt",
-):
+def test_add_chunking_strategy_on_partition_text(filename="example-docs/norwich-city.txt"):
     elements = partition_text(filename=filename)
     chunk_elements = partition_text(filename, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)

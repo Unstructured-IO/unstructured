@@ -201,9 +201,7 @@ def partition(
     kwargs.setdefault("metadata_filename", metadata_filename)
 
     if not isinstance(languages, list):
-        raise TypeError(
-            "The language parameter must be a list of language codes as strings.",
-        )
+        raise TypeError("The language parameter must be a list of language codes as strings.")
 
     if ocr_languages is not None:
         # check if languages was set to anything not the default value
@@ -393,9 +391,7 @@ def partition(
         elements = []
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
-        raise ValueError(
-            f"{msg}. The {filetype} file type is not supported in partition.",
-        )
+        raise ValueError(f"{msg}. The {filetype} file type is not supported in partition.")
 
     for element in elements:
         element.metadata.url = url

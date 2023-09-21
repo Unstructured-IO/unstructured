@@ -109,9 +109,7 @@ def partition_pdf(
     exactly_one(filename=filename, file=file)
 
     if not isinstance(languages, list):
-        raise TypeError(
-            "The language parameter must be a list of language codes as strings.",
-        )
+        raise TypeError("The language parameter must be a list of language codes as strings.")
 
     if ocr_languages is not None:
         # check if languages was set to anything not the default value
@@ -192,9 +190,7 @@ def partition_pdf_or_image(
     # function.
 
     if not isinstance(languages, list):
-        raise TypeError(
-            "The language parameter must be a list of language codes as strings.",
-        )
+        raise TypeError("The language parameter must be a list of language codes as strings.")
 
     if ocr_languages is not None:
         if languages != ["eng"]:
