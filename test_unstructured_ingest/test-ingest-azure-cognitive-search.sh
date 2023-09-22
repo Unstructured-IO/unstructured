@@ -69,17 +69,17 @@ echo "sleeping 5 seconds to let index finish catching up after writes"
 sleep 5
 
 # Check the contents of the index
-docs=$(curl "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX/docs/\$count?api-version=$API_VERSION" \
+docs_count=$(curl "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX/docs/\$count?api-version=$API_VERSION" \
   --header "api-key: $AZURE_SEARCH_API_KEY" \
   --header 'content-type: application/json' | jq)
 
-expected_docs=0
+expected_docs_count=0
 for i in $(jq length "$OUTPUT_DIR"/*); do
-  expected_docs=$((expected_docs+i));
+  expected_docs_count=$((expected_docs_count+i));
 done
 
 
-if [ "$docs" -ne "$expected_docs" ];then
-  echo "Number of docs $docs doesn't match the expected docs: $expected_docs"
+if [ "$docs_count" -ne "$expected_docs_count" ];then
+  echo "Number of docs $docs_count doesn't match the expected docs: $expected_docs_count"
   exit 1
 fi

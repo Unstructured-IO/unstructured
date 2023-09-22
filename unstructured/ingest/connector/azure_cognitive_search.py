@@ -46,6 +46,11 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
         )
 
     def conform_dict(self, data: dict) -> None:
+        """
+        updates the dictionary that is from each Element being converted into a dict/json
+        into a dictionary that conforms to the schema expected by the
+        Azure Cognitive Search index
+        """
         from dateutil import parser  # type: ignore
 
         data["id"] = str(uuid.uuid4())
