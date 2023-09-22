@@ -186,14 +186,14 @@ def normalize_layout_element(
         )
 
 
-def set_hierarchy_by_indentation(
+def set_hierarchy_by_indentation(  # Add exception handling for elements without coordinates
     elements: List[Element],
 ) -> List[Element]:
     left = []
     right = []
     coordinates = []
     for ele in elements:
-        coordinates.append(ele.metadata.coordinates.points[0])
+        coordinates.append(getattr(ele.metadata.coordinates, "points")[0])
 
     coords_np = np.asarray(coordinates)
     median = np.median(coords_np)
@@ -321,7 +321,8 @@ def set_element_hierarchy(
 
         element.metadata.parent_id = parent_id
         stack.append(element)
-        elements = set_hierarchy_by_indentation(elements)
+        if elements[0].metadata.coordinates != None:
+            elements = set_hierarchy_by_indentation(elements)
     return elements
 
 
