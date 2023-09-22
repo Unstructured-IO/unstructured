@@ -68,25 +68,33 @@ def chunk_by_title(
 
             for i, element in enumerate(section):
                 if isinstance(element, Text):
-                    if text:
-                        text += "\n\n"
+                    text += "\n\n" if text else ""
                     start_char = len(text)
                     text += element.text
 
                 for attr, value in vars(element.metadata).items():
-                    if isinstance(value, list):
-                        _value = getattr(metadata, attr, [])
-                        if _value is None:
-                            _value = []
+                    if not isinstance(value, list):
+                        continue
 
-                        if attr == "regex_metadata":
-                            for item in value:
-                                item["start"] += start_char
-                                item["end"] += start_char
+                    _value = getattr(metadata, attr, [])
+                    if _value is None:
+                        _value = []
 
-                        if i > 0 and _value != value:
-                            _value.extend(value)
-                            setattr(metadata, attr, _value)
+                    if attr == "regex_metadata":
+                        for item in value:
+                            item["start"] += start_char
+                            item["end"] += start_char
+
+                    if i > 0:
+                        # NOTE(newelh): Previously, _value was extended with value.
+                        # This caused a memory error if the content was a list of strings
+                        # with a large number of elements -- doubling the size of the list each time.
+                        # This now instead ensures that the _value list is unique and updated.
+                        for item in value:
+                            if item not in _value:
+                                _value.append(item)
+
+                        setattr(metadata, attr, _value)
 
             chunked_elements.append(CompositeElement(text=text, metadata=metadata))
 
@@ -113,9 +121,9 @@ def _split_elements_by_title_and_table(
             )
 
         section_length = sum([len(str(element)) for element in section])
-        new_section = (isinstance(element, Title) and section_length > combine_under_n_chars) or (
-            not metadata_matches or section_length > new_after_n_chars
-        )
+        new_section = (
+            isinstance(element, Title) and section_length > combine_under_n_chars
+        ) or (not metadata_matches or section_length > new_after_n_chars)
 
         if isinstance(element, Table) or not isinstance(element, Text):
             sections.append(section)
