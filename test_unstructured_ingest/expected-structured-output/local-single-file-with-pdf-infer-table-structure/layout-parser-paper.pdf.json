@@ -771,16 +771,6 @@
     "text": "1 ocr_agent = lp . TesseractAgent () 2 # Can be easily switched to other OCR software 3 tokens = ocr_agent . detect ( image )"
   },
   {
-    "type": "Image",
-    "element_id": "65ac0f9ae348b12ed9484b8af7296617",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "ocr_agent = lp.TesseractAgent ()pOi"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "7a151dbbe8b26ccdcb264ab005be5a36",
     "metadata": {

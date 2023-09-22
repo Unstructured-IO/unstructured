@@ -253,3 +253,7 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 | [Company Website](https://unstructured.io) | Unstructured.io product and company info |
 | [Documentation](https://unstructured-io.github.io/unstructured) | Full API documentation |
 | [Batch Processing](unstructured/ingest/README.md) | Ingesting batches of documents through Unstructured |
+
+## :chart_with_upwards_trend: Analytics
+
+We’ve partnered with Scarf (https://scarf.sh) to collect anonymized user statistics to understand which features our community is using and how to prioritize product decision-making in the future. To learn more about how we collect and use this data, please read our [Privacy Policy](https://unstructured.io/privacy-policy).
