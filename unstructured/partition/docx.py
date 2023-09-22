@@ -656,7 +656,6 @@ class _DocxPartitioner:
             # Check if category depth can be determined from style ilvl
             return self._parse_category_depth_by_style_ilvl()
 
-
     def _parse_category_depth_by_style_name(self, style_name: str) -> int:
         """Parse category-depth from the style-name of `paragraph`.
 
