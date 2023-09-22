@@ -584,7 +584,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "Page-footer": Footer,
     "Page-header": Header,  # Title?
     "Picture": Image,
-    "Section-header": Header,
+    "Section-header": Title,
     "Headline": Title,
     "Subheadline": Title,
     "Abstract": NarrativeText,

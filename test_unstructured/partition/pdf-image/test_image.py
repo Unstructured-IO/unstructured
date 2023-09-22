@@ -115,7 +115,7 @@ def test_partition_image_with_auto_strategy(
     filename="example-docs/layout-parser-paper-fast.jpg",
 ):
     elements = image.partition_image(filename=filename, strategy="auto")
-    titles = [el for el in elements if el.category == "Header" and len(el.text.split(" ")) > 10]
+    titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
     assert titles[0].text == title
     assert elements[0].metadata.detection_class_prob is not None
