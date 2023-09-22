@@ -120,7 +120,7 @@ packaging==23.1
     #   matplotlib
     #   scikit-image
     #   visualdl
-pandas==2.1.0
+pandas==2.0.3
     # via
     #   -c requirements/constraints.in
     #   visualdl
