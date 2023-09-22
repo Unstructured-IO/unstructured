@@ -7,6 +7,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=notion
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
+max_processes=${MAX_PROCESSES:=$(sysctl -n hw.ncpu)}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -24,7 +25,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --api-key "$NOTION_API_KEY" \
     --output-dir "$OUTPUT_DIR" \
     --database-ids "122b2c22996b435b9de2ee0e9d2b04bc" \
-    --num-processes 2 \
+    --num-processes "$max_processes" \
     --recursive \
     --verbose
 

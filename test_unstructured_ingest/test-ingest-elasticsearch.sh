@@ -8,6 +8,7 @@ echo "SCRIPT_DIR: $SCRIPT_DIR"
 OUTPUT_FOLDER_NAME=elasticsearch
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
+max_processes=${MAX_PROCESSES:=$(sysctl -n hw.ncpu)}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -32,7 +33,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     elasticsearch \
     --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth  \
-    --num-processes 2 \
+    --num-processes "$max_processes" \
     --preserve-downloads \
     --reprocess \
     --output-dir "$OUTPUT_DIR" \
