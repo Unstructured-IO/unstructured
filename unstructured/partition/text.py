@@ -233,7 +233,6 @@ def partition_text(
         file_text = str(text)
 
     languages = detect_languages(file_text, languages)
-    # TODO(shreya): add to metadata
 
     if paragraph_grouper is False:
         pass
@@ -256,6 +255,7 @@ def partition_text(
         ElementMetadata(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
+            languages=languages,
         )
         if include_metadata
         else ElementMetadata()
