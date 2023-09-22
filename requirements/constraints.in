@@ -23,7 +23,7 @@ IPython<8.13
 # AttributeError: 'ResourcePath' object has no attribute 'collection'
 Office365-REST-Python-Client<2.4.3
 # NOTE(christine) Pinned to set the `unstructured-inference` version
-unstructured-inference==0.5.28
+unstructured-inference==0.5.31
 # NOTE(klaijan) - Moved pin from test.in
 # pinning to avoid error in argilla library
 pydantic<2
@@ -34,3 +34,5 @@ unstructured.pytesseract>=0.3.12
 weaviate-client==3.23.2
 # Note(yuming) - pining to avoid conflict with paddle install
 matplotlib==3.7.2
+# NOTE(crag) - pin to available pandas for python 3.8 (at least in CI)
+pandas<2.1.1
