@@ -6,8 +6,8 @@ from tempfile import SpooledTemporaryFile
 from typing import Dict, List
 
 import docx
-from docx.document import Document
 import pytest
+from docx.document import Document
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
@@ -98,7 +98,8 @@ def expected_emphasized_text_tags():
 
 
 def test_partition_docx_from_filename(
-    mock_document_filename: str, expected_elements: List[Element]
+    mock_document_filename: str,
+    expected_elements: List[Element],
 ):
     elements = partition_docx(filename=mock_document_filename)
 

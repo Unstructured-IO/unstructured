@@ -1,6 +1,6 @@
 import os
 import tempfile
-from typing import Any, IO, List, Optional
+from typing import IO, Any, List, Optional
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata

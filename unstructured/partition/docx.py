@@ -439,7 +439,7 @@ class _DocxPartitioner:
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
-                    category_depth=0, # -- headers are always at the root level
+                    category_depth=0,  # -- headers are always at the root level
                 ),
             )
 
@@ -640,9 +640,10 @@ class _DocxPartitioner:
 
     def _parse_category_depth_by_style(self, paragraph: Paragraph) -> int:
         """Parse category-depth from the style-name of `paragraph`.
-        
+
         Category depth is 0-indexed and relative to the other element types in the document.
         """
+
         def _extract_number(suffix: str) -> int:
             return int(suffix.split()[-1]) - 1 if suffix.split()[-1].isdigit() else 0
 
@@ -655,14 +656,14 @@ class _DocxPartitioner:
         # Heading styles
         # TODO(newelh) - What if a heading follows a document header? Should it be 0 or 1?
         # -- This will only determine depth relative to the paragraph not for the whole document
-        if style_name.startswith('Heading'):
+        if style_name.startswith("Heading"):
             return _extract_number(style_name)
 
         if style_name == "Subtitle":
             return 1
 
         # List styles
-        list_prefixes = ['List', 'List Bullet', 'List Continue', 'List Number']
+        list_prefixes = ["List", "List Bullet", "List Continue", "List Number"]
         if any(style_name.startswith(prefix) for prefix in list_prefixes):
             return _extract_number(style_name)
 
