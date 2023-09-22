@@ -8,6 +8,10 @@ OUTPUT_FOLDER_NAME=gitlab
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
     gitlab \
     --download-dir "$DOWNLOAD_DIR" \
@@ -21,4 +25,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --git-file-glob '*.md,*.txt' \
     --url https://gitlab.com/gitlab-com/content-sites/docsy-gitlab
 
-sh "$SCRIPT_DIR"/check-num-files-output.sh 2 $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-num-files-output.sh 2 $OUTPUT_FOLDER_NAME

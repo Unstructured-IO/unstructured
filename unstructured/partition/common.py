@@ -269,10 +269,12 @@ def _add_element_metadata(
     coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
     section: Optional[str] = None,
+    image_path: Optional[str] = None,
     **kwargs,
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
     like the filename, source url, and page number."""
+
     coordinates_metadata = (
         CoordinatesMetadata(
             points=coordinates,
@@ -314,6 +316,7 @@ def _add_element_metadata(
         emphasized_text_tags=emphasized_text_tags,
         section=section,
         category_depth=depth,
+        image_path=image_path,
     )
     # NOTE(newel) - Element metadata is being merged into
     # newly constructed metadata, not the other way around
@@ -570,6 +573,11 @@ def document_to_element_list(
             coordinates = (
                 element.metadata.coordinates.points if element.metadata.coordinates else None
             )
+
+            el_image_path = (
+                layout_element.image_path if hasattr(layout_element, "image_path") else None
+            )
+
             _add_element_metadata(
                 element,
                 page_number=i + 1,
@@ -577,6 +585,7 @@ def document_to_element_list(
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 category_depth=element.metadata.category_depth,
+                image_path=el_image_path,
                 **kwargs,
             )
 
