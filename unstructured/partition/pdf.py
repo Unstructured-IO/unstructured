@@ -725,6 +725,7 @@ def _partition_pdf_or_image_with_ocr(
                 filename=filename,
                 page_number=page_number,
                 last_modified=metadata_last_modified,
+                languages=languages,
             )
             _text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,
