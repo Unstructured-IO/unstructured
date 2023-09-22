@@ -220,9 +220,7 @@ typing-extensions==4.8.0
 tzdata==2023.3
     # via pandas
 unstructured-inference==0.5.31
-    # via
-    #   -c requirements/constraints.in
-    #   -r requirements/extra-pdf-image.in
+    # via -r requirements/extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via
     #   -c requirements/constraints.in
