@@ -104,7 +104,9 @@ packaging==23.1
     #   transformers
     #   unstructured-pytesseract
 pandas==2.0.3
-    # via layoutparser
+    # via
+    #   -c requirements/constraints.in
+    #   layoutparser
 pdf2image==1.16.3
     # via
     #   -r requirements/extra-pdf-image.in
@@ -158,6 +160,8 @@ pyyaml==6.0.1
     #   omegaconf
     #   timm
     #   transformers
+rapidfuzz==3.3.0
+    # via unstructured-inference
 regex==2023.8.8
     # via
     #   -c requirements/base.txt
@@ -215,7 +219,7 @@ typing-extensions==4.8.0
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.5.28
+unstructured-inference==0.5.31
     # via -r requirements/extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via
