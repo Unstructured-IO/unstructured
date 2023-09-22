@@ -37,7 +37,7 @@ flatbuffers==23.5.26
     # via onnxruntime
 fonttools==4.42.1
     # via matplotlib
-fsspec==2023.9.1
+fsspec==2023.9.2
     # via huggingface-hub
 huggingface-hub==0.17.2
     # via
@@ -220,9 +220,7 @@ typing-extensions==4.8.0
 tzdata==2023.3
     # via pandas
 unstructured-inference==0.6.1
-    # via
-    #   -c requirements/constraints.in
-    #   -r requirements/extra-pdf-image.in
+    # via -r requirements/extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via
     #   -c requirements/constraints.in
