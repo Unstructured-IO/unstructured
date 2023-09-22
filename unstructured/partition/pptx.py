@@ -1,14 +1,7 @@
-import io
 from tempfile import SpooledTemporaryFile
-from typing import Any, BinaryIO, List, Optional, Union
+from typing import IO, BinaryIO, List, Optional, Union, cast
 
 import pptx
-import pptx.table
-from pptx.shapes.autoshape import Shape
-from pptx.shapes.base import BaseShape
-from pptx.shapes.graphfrm import GraphicFrame
-from pptx.shapes.shapetree import SlideShapes
-from pptx.text.text import _Paragraph  # pyright: ignore [reportPrivateUsage]
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import (
@@ -29,6 +22,7 @@ from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
+    spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.text_type import (
     is_email_address,
@@ -44,16 +38,16 @@ OPENXML_SCHEMA_NAME = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
 @add_chunking_strategy()
 def partition_pptx(
     filename: Optional[str] = None,
-    file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     include_page_breaks: bool = True,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     metadata_last_modified: Optional[str] = None,
     include_slide_notes: bool = False,
     chunking_strategy: Optional[str] = None,
-    **kwargs: Any,
+    **kwargs,
 ) -> List[Element]:
-    """Partition PowerPoint document in .pptx format into its document elements.
+    """Partitions Microsoft PowerPoint Documents in .pptx format into its document elements.
 
     Parameters
     ----------
@@ -64,9 +58,9 @@ def partition_pptx(
     include_page_breaks
         If True, includes a PageBreak element between slides
     metadata_filename
-        The filename to use for the metadata. Relevant because partition_ppt converts
-        the document .pptx before partition. We want the original source filename in
-        the metadata.
+        The filename to use for the metadata. Relevant because partition_ppt converts the
+        document .pptx before partition. We want the original source filename in the
+        metadata.
     metadata_last_modified
         The last modified date for the document.
 
@@ -75,22 +69,21 @@ def partition_pptx(
         If True, includes the slide notes as element
     """
 
-    # -- verify that only one of the arguments was provided --
+    # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file)
-
     last_modification_date = None
     if filename is not None:
         if not filename.startswith("/tmp"):
             last_modification_date = get_last_modified_date(filename)
 
         presentation = pptx.Presentation(filename)
-    else:
-        assert file is not None
+    elif file is not None:
         last_modification_date = get_last_modified_date_from_file(file)
-        if isinstance(file, SpooledTemporaryFile):
-            file.seek(0)
-            file = io.BytesIO(file.read())
-        presentation = pptx.Presentation(file)
+        presentation = pptx.Presentation(
+            spooled_to_bytes_io_if_needed(
+                cast(Union[BinaryIO, SpooledTemporaryFile], file),
+            ),
+        )
 
     elements: List[Element] = []
     metadata = ElementMetadata(filename=metadata_filename or filename)
@@ -109,7 +102,6 @@ def partition_pptx(
 
         for shape in _order_shapes(slide.shapes):
             if shape.has_table:
-                assert isinstance(shape, GraphicFrame)
                 table: pptx.table.Table = shape.table
                 html_table = convert_ms_office_table_to_text(table, as_html=True)
                 text_table = convert_ms_office_table_to_text(table, as_html=False).strip()
@@ -124,7 +116,6 @@ def partition_pptx(
                 continue
             if not shape.has_text_frame:
                 continue
-            assert isinstance(shape, Shape)
             # NOTE(robinson) - avoid processing shapes that are not on the actual slide
             # NOTE - skip check if no top or left position (shape displayed top left)
             if (shape.top and shape.left) and (shape.top < 0 or shape.left < 0):
@@ -150,16 +141,14 @@ def partition_pptx(
     return elements
 
 
-def _order_shapes(shapes: SlideShapes) -> List[BaseShape]:
+def _order_shapes(shapes):
     """Orders the shapes from top to bottom and left to right."""
     return sorted(shapes, key=lambda x: (x.top or 0, x.left or 0))
 
 
-def _is_bulleted_paragraph(paragraph: _Paragraph) -> bool:
-    """True when `paragraph` has a bullet-charcter prefix.
-
-    Bullet characters in the openxml schema are represented by buChar.
-    """
-    pPr_xml = paragraph._p.get_or_add_pPr().xml
-    buChar_count = pPr_xml.find(f"{OPENXML_SCHEMA_NAME}buChar")
-    return buChar_count > 0
+def _is_bulleted_paragraph(paragraph) -> bool:
+    """Determines if the paragraph is bulleted by looking for a bullet character prefix. Bullet
+    characters in the openxml schema are represented by buChar"""
+    paragraph_xml = paragraph._p.get_or_add_pPr()
+    buChar = paragraph_xml.find(f"{OPENXML_SCHEMA_NAME}buChar")
+    return buChar is not None
