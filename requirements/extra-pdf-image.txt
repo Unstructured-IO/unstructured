@@ -104,7 +104,9 @@ packaging==23.1
     #   transformers
     #   unstructured-pytesseract
 pandas==2.0.3
-    # via layoutparser
+    # via
+    #   -c requirements/constraints.in
+    #   layoutparser
 pdf2image==1.16.3
     # via
     #   -r requirements/extra-pdf-image.in

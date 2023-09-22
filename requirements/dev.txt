@@ -18,7 +18,7 @@ arrow==1.2.3
     # via isoduration
 asttokens==2.4.0
     # via stack-data
-async-lru==1.0.3
+async-lru==2.0.4
     # via jupyterlab
 attrs==23.1.0
     # via
@@ -108,7 +108,7 @@ ipykernel==6.25.2
     #   jupyter-console
     #   jupyterlab
     #   qtconsole
-ipython==8.11.0
+ipython==8.12.2
     # via
     #   -c requirements/constraints.in
     #   -r requirements/dev.in
@@ -376,6 +376,12 @@ traitlets==5.10.0
     #   nbconvert
     #   nbformat
     #   qtconsole
+typing-extensions==4.8.0
+    # via
+    #   -c requirements/base.txt
+    #   -c requirements/test.txt
+    #   async-lru
+    #   ipython
 uri-template==1.3.0
     # via jsonschema
 urllib3==1.26.16

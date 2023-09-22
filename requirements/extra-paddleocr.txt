@@ -125,7 +125,9 @@ packaging==23.1
     #   scikit-image
     #   visualdl
 pandas==2.0.3
-    # via visualdl
+    # via
+    #   -c requirements/constraints.in
+    #   visualdl
 pdf2image==1.16.3
     # via unstructured-paddleocr
 pillow==10.0.1

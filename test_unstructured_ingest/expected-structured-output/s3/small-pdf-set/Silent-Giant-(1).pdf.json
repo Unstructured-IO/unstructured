@@ -3474,8 +3474,8 @@
     "text": "2017"
   },
   {
-    "type": "FigureCaption",
-    "element_id": "3b5b3755bac62d7f53eb84cadc34c528",
+    "type": "NarrativeText",
+    "element_id": "338d3e15917414641f2b559473f168f8",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -3942,8 +3942,8 @@
     "text": "8"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "c48603fd38d3449d3afcd2dc18903083",
+    "type": "UncategorizedText",
+    "element_id": "481e5a54650b0a4ac7bc2568ddad436d",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -3961,7 +3961,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "de49f1c955d7c8a4d1d6d261c1cf21ba",
+    "element_id": "cff66c7267104eeade830b3dc8675acd",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -3978,8 +3978,8 @@
     "text": "The Silent Giant © 2019 World Nuclear Association. Registered in England and Wales, company number 01215741"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "821daa4396c0087d9d5ee9240bc5c85c",
+    "type": "Title",
+    "element_id": "2ef1a5c0752085d3a6935132ad9e597c",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -3997,7 +3997,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "705da4db5e220010ddfd03d9452855e4",
+    "element_id": "20ef77d9aa66e60f1443750cdbaa9014",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
