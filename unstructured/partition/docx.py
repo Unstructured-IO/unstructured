@@ -557,7 +557,6 @@ class _DocxPartitioner:
         """ElementMetadata object describing `paragraph`."""
         emphasized_text_contents, emphasized_text_tags = self._paragraph_emphasis(paragraph)
         category_depth = self._parse_category_depth_by_style(paragraph)
-        print("Category depth: ", category_depth)
         return ElementMetadata(
             filename=self._metadata_filename,
             page_number=self._page_number,
@@ -649,7 +648,6 @@ class _DocxPartitioner:
 
         # Determine category depth from style name
         style_name = (paragraph.style and paragraph.style.name) or "Normal"
-        print(style_name)
         depth = self._parse_category_depth_by_style_name(style_name)
 
         if depth > 0:
