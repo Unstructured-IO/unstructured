@@ -40,7 +40,7 @@ def test_get_narrative():
 def test_get_formula():
     document = MockDocumentWithFormula()
     formula = [e for e in document.elements if isinstance(e, Formula)]
-    assert isinstance(formula[0], Formula)
+    assert formula[0].text != ""
 
 
 @pytest.mark.parametrize("index", [0, 1, 2])
