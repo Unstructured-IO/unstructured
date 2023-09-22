@@ -284,3 +284,10 @@ def test_add_chunking_strategy_on_partition_md(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_md_parse_table():
+    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "table.md")
+    elements = partition_md(filename=filename)
+    assert len(elements) > 0
+    assert elements[0].category == "Table"
