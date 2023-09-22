@@ -4,7 +4,7 @@
 
 * **Adds data source properties to SharePoint, Outlook, Onedrive, Reddit, and Slack connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
 * **Deduplicate nested elements to reduce noise in partition pdf or image results** Using `unstructured-inference==0.6.1`, which adds post processing steps to remove nested elements to reduce noise in the end results.
-* **Use `yolox_quantized` as default element detection model to improve table detection recall** `yolox_quantized` detects more diverse types of elements than current default `detectron` model and it improves the recall of table element detection.
+* **Use `yolox_quantized` as default element detection model to improve table detection recall** `yolox_quantized` detects more diverse types of elements than current default `detectron` model and it improves the recall of table element detection. As part of the switch the element type `Section-header` is now mapped to `Title` so that `yolox` detected elements reproduces the same category types as `detectron` after mapping.
 
 ### Features
 
