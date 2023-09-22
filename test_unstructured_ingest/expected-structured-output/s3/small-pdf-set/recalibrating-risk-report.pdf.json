@@ -2628,8 +2628,8 @@
     "text": "8"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "481e5a54650b0a4ac7bc2568ddad436d",
+    "type": "NarrativeText",
+    "element_id": "c48603fd38d3449d3afcd2dc18903083",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -2647,7 +2647,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "36d3613fc20527bb317afd4e447d1c74",
+    "element_id": "fc5faebaec5a1349ce932f1863bdd842",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -2664,8 +2664,8 @@
     "text": "Recalibrating risk © 2021 World Nuclear Association. Registered in England and Wales, company number 01215741"
   },
   {
-    "type": "Title",
-    "element_id": "2ef1a5c0752085d3a6935132ad9e597c",
+    "type": "NarrativeText",
+    "element_id": "821daa4396c0087d9d5ee9240bc5c85c",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -2683,7 +2683,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "20ef77d9aa66e60f1443750cdbaa9014",
+    "element_id": "705da4db5e220010ddfd03d9452855e4",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",

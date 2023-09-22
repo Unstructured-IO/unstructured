@@ -11,6 +11,16 @@
   },
   {
     "type": "NarrativeText",
+    "element_id": "9234133787d0a6b3976b16569c0b5cf3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "journal homepage: www.elsevier.com/locate/dib"
+  },
+  {
+    "type": "NarrativeText",
     "element_id": "869adddb184177031536477262e0dde0",
     "metadata": {
       "data_source": {},
@@ -31,17 +41,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "9234133787d0a6b3976b16569c0b5cf3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "journal homepage: www.elsevier.com/locate/dib"
-  },
-  {
-    "type": "Title",
-    "element_id": "0ccb3a9876bbc64a1ca09fa40c4f844d",
+    "element_id": "ac01687ab870e4bb6e7313db4654928a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1127,7 +1127,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "5 1 os = — 10; =o ° © —\" 205 i —~é é —ip a5 — Control -2 — & 2.5 T T T 0.0000001 + —-0.00001 0.001 O14 Current Density (A/cm2)"
+    "text": "    5 1 os = — 10; =o ° © —\" 205 i —~é é —ip a5 — Control -2 — & 2.5 T T T 0.0000001 + —-0.00001 0.001 O14 Current Density (A/cm2)"
   },
   {
     "type": "FigureCaption",
