@@ -647,11 +647,7 @@ class _DocxPartitioner:
         def _extract_number(suffix: str) -> int:
             return int(suffix.split()[-1]) - 1 if suffix.split()[-1].isdigit() else 0
 
-        print("Style: ", paragraph.style)
-        print("Style name: ", paragraph.style.name if paragraph.style else "None")
         style_name = (paragraph.style and paragraph.style.name) or "Normal"
-
-        print("Parsing category depth by style, style name: ", style_name)
 
         # Heading styles
         # TODO(newelh) - What if a heading follows a document header? Should it be 0 or 1?
