@@ -18,7 +18,7 @@
     "text": "//s88ciation"
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "80f1cd7f1c8e281093a32842b1e5bbce",
     "metadata": {
       "data_source": {
@@ -36,7 +36,7 @@
     "text": "WORLD NUCLEAR"
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "51174df4a3a78fe261885b1818b66876",
     "metadata": {
       "data_source": {
@@ -72,7 +72,7 @@
     "text": "The need for nuclear in a clean energy system"
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "2fa985d0a50e61b09ec22c447cc4b2c9",
     "metadata": {
       "data_source": {
@@ -288,7 +288,7 @@
     "text": "1"
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "257fa04b9d79fc46da551d720411595a",
     "metadata": {
       "data_source": {
@@ -1386,7 +1386,7 @@
     "text": "Despite impressive recent growth, the stark reality is that renewables alone will not be able to resolve our dependence on fossil fuels. Clearly, the sun does not always shine, and the wind does not always blow, and this is compounded by the fact that many times these periods coincide with when electricity demand is at its highest, but renewables can be complementary to nuclear energy. Storage solutions, such as batteries, will not be able to power our societies for days or weeks when the weather is not favourable. Natural gas is currently the most used solution for the intermittency problem, which only serves to reinforce our economy’s dependence of fossil fuels, and severely undermines the apparently ‘green credentials’ of many renewables."
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "899a2c517ba69726f3808d66f442e439",
     "metadata": {
       "data_source": {
@@ -2610,7 +2610,7 @@
     "text": "Figure 4. Comparison of number of fatalities due to electricity generation viii"
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "98d83a387e3ac2261daaf8d936bf3e27",
     "metadata": {
       "data_source": {
@@ -3636,7 +3636,7 @@
     "text": "Nuclear power is the silent giant of today’s energy system – it runs quietly in the background, capable of delivering immense amounts of power, regardless of weather or season, allowing us to focus on everything else in life. It is a technology that is available now, and can be expanded quickly across the world to help us solve some of the most defining challenges we face. Nuclear energy holds the potential to herald a new, cleaner and truly sustainable world – enabling us to pass on a cleaner planet to our children."
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "e56261e0bd30965b8e68ed2abb15b141",
     "metadata": {
       "data_source": {

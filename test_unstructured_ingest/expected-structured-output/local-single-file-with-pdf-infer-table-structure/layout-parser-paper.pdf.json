@@ -1,6 +1,6 @@
 [
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "2f7cc75f6467bba468022c4c2875335e",
     "metadata": {
       "data_source": {},
@@ -320,7 +320,7 @@
     "text": "The rest of the paper is organized as follows. Section 2 provides an overview of related work. The core LayoutParser library, DL Model Zoo, and customized model training are described in Section 3, and the DL model hub and commu- nity platform are detailed in Section 4. Section 5 shows two examples of how LayoutParser can be used in practical DIA projects, and Section 6 concludes."
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "1513104c7bf6cd40223a7cc23798378f",
     "metadata": {
       "data_source": {},
@@ -430,7 +430,7 @@
     "text": "There have been a variety of document data collections to facilitate the development of DL models. Some examples include PRImA [3](magazine layouts), PubLayNet [38](academic paper layouts), Table Bank [18](tables in academic papers), Newspaper Navigator Dataset [16, 17](newspaper ﬁgure layouts) and HJDataset [31](historical Japanese document layouts). A spectrum of models trained on these datasets are currently available in the LayoutParser model zoo to support diﬀerent use cases."
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "740238ba10202556c962840e5c882446",
     "metadata": {
       "data_source": {},
@@ -561,7 +561,7 @@
     "text": "1 For each dataset, we train several models of diﬀerent sizes for diﬀerent needs (the trade-oﬀ between accuracy vs. computational cost). For “base model” and “large model”, we refer to using the ResNet 50 or ResNet 101 backbones [13], respectively. One can train models of diﬀerent architectures, like Faster R-CNN [28] (F) and Mask R-CNN [12] (M). For example, an F in the Large Model column indicates it has a Faster R-CNN model trained using the ResNet 101 backbone. The platform is maintained and a number of additions will be made to the model zoo in coming months."
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "9f26ca353a2c130a2e32f457d71c1350",
     "metadata": {
       "data_source": {},
@@ -671,7 +671,7 @@
     "text": "Shown in Table 1, LayoutParser currently hosts 9 pre-trained models trained on 5 diﬀerent datasets. Description of the training dataset is provided alongside with the trained models such that users can quickly identify the most suitable models for their tasks. Additionally, when such a model is not readily available, LayoutParser also supports training customized layout models and community sharing of the models (detailed in Section 3.5)."
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "acd4f4584a990134d927e19b6d7e5f88",
     "metadata": {
       "data_source": {},
@@ -741,7 +741,7 @@
     "text": "7"
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "89c6cd1d893f782ea68d75737e3393fd",
     "metadata": {
       "data_source": {},
@@ -1052,7 +1052,7 @@
     "text": "Move the current block with the shift distances in x and y direction"
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "709c2d8cd3b15512f8452715fab45e4f",
     "metadata": {
       "data_source": {},
@@ -1072,7 +1072,7 @@
     "text": "The end goal of DIA is to transform the image-based document data into a structured database. LayoutParser supports exporting layout data into diﬀerent formats like JSON, csv, and will add the support for the METS/ALTO XML format 14 . It can also load datasets from layout analysis-speciﬁc formats like COCO [38] and the Page Format [25] for training layout models (Section 3.5). Visualization of the layout detection results is critical for both presentation and debugging. LayoutParser is built with an integrated API for displaying the layout information along with the original document image. Shown in Figure 3, it enables presenting layout data with rich meta information and features in diﬀerent modes. More detailed information can be found in the online LayoutParser documentation page."
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "d57c26aad19349fc98ee8822f24f19d9",
     "metadata": {
       "data_source": {},
@@ -1212,7 +1212,7 @@
     "text": "Fig. 4: Illustration of (a) the original historical Japanese document with layout detection results and (b) a recreated version of the document image that achieves much better character recognition recall. The reorganization algorithm rearranges the tokens based on the their detected bounding boxes given a maximum allowed height."
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "a84f27645308850514566b3bb9d3efa0",
     "metadata": {
       "data_source": {},
@@ -1242,7 +1242,7 @@
     "text": "Beyond DL models, LayoutParser also promotes the sharing of entire doc- ument digitization pipelines. For example, sometimes the pipeline requires the combination of multiple DL models to achieve better accuracy. Currently, pipelines are mainly described in academic papers and implementations are often not pub- licly available. To this end, the LayoutParser community platform also enables the sharing of layout pipelines to promote the discussion and reuse of techniques. For each shared pipeline, it has a dedicated project page, with links to the source code, documentation, and an outline of the approaches. A discussion panel is provided for exchanging ideas. Combined with the core LayoutParser library, users can easily build reusable components based on the shared pipelines and apply them to solve their unique problems."
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "0e654d0b0bc44cbd58f1cb7c7b02c3c5",
     "metadata": {
       "data_source": {},
@@ -1292,7 +1292,7 @@
     "text": "focuses on precision, eﬃciency, and robustness. The target documents may have complicated structures, and may require training multiple layout detection models to achieve the optimal accuracy. Light-weight pipelines are built for relatively simple documents, with an emphasis on development ease, speed and ﬂexibility. Ideally one only needs to use existing resources, and model training should be avoided. Through two exemplar projects, we show how practitioners in both academia and industry can easily build such pipelines using LayoutParser and extract high-quality structured document data for their downstream tasks. The source code for these projects will be publicly available in the LayoutParser community hub."
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "1fe1cb84a12b8216ea9d734262b3e4ec",
     "metadata": {
       "data_source": {},
@@ -1512,7 +1512,7 @@
     "text": "Fig. 6: This lightweight table detector can identify tables (outlined in red) and cells (shaded in blue) in diﬀerent locations on a page. In very few cases (d), it might generate minor error predictions, e.g, failing to capture the top text line of a table."
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "76c98240da7b06b4b3fcf8109edbbaba",
     "metadata": {
       "data_source": {},
@@ -1572,7 +1572,7 @@
     "text": "Z. Shen et al."
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "a2a71736439cbc5e1445bddd40712b9b",
     "metadata": {
       "data_source": {},
@@ -1602,7 +1602,7 @@
     "text": "Acknowledgements We thank the anonymous reviewers for their comments and suggestions. This project is supported in part by NSF Grant OIA-2033558 and funding from the Harvard Data Science Initiative and Harvard Catalyst. Zejiang Shen thanks Doug Downey for suggestions."
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "e56261e0bd30965b8e68ed2abb15b141",
     "metadata": {
       "data_source": {},

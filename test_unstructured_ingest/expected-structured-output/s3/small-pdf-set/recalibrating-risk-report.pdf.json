@@ -1,6 +1,6 @@
 [
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "3288e0ea130894600aa48a45aaf12121",
     "metadata": {
       "data_source": {
@@ -18,7 +18,7 @@
     "text": "WORLD ASSOCIATION"
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "d72f07e2c764ae90417305db928ebce1",
     "metadata": {
       "data_source": {
@@ -90,7 +90,7 @@
     "text": "Registered in England and Wales, company number 01215741. This report represents the views of individual experts, but does not necessarily represent those of any of the World Nuclear Association’s individual member organizations."
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "2fa985d0a50e61b09ec22c447cc4b2c9",
     "metadata": {
       "data_source": {
@@ -216,7 +216,7 @@
     "text": "1"
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "6b3149c1769f5cd200ec2a0017b936dc",
     "metadata": {
       "data_source": {
@@ -1656,7 +1656,7 @@
     "text": "3"
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "b6812463b15ddda3f2402dfda95d2c86",
     "metadata": {
       "data_source": {
@@ -1764,7 +1764,7 @@
     "text": "4"
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "3506b7d2b1626663985ae1a521a60fe1",
     "metadata": {
       "data_source": {
@@ -1998,7 +1998,7 @@
     "text": "5"
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "75ed57ac08703850c3e6aa55ac4aea97",
     "metadata": {
       "data_source": {
@@ -2160,7 +2160,7 @@
     "text": "7"
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "e56261e0bd30965b8e68ed2abb15b141",
     "metadata": {
       "data_source": {
