@@ -235,6 +235,14 @@ def detect_languages(
 
     # language detection:
     else:
+        # warn if any values other than "auto" were provided
+        if len(languages) > 1:
+            logger.warning(
+                f'Since "auto" is present in the input languages provided ({languages}), '
+                "the language will be auto detected and the rest of the inputted "
+                "languages will be ignored.",
+            )
+
         try:
             langdetect_result = detect_langs(text)
         except lang_detect_exception.LangDetectException as e:

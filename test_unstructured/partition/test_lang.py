@@ -66,3 +66,10 @@ def test_detect_languages_korean_auto():
 def test_detect_languages_gets_multiple_languages():
     text = "My lubimy mleko i chleb."
     assert lang.detect_languages(text) == ["ces", "pol", "slk"]
+
+
+def test_detect_languages_warns_for_auto_and_other_input(caplog):
+    text = "This is another short sentence."
+    languages = ["en", "auto", "rus"]
+    assert lang.detect_languages(text, languages) == ["eng"]
+    assert "rest of the inputted languages will be ignored" in caplog.text
