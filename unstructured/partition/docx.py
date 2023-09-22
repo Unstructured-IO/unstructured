@@ -557,6 +557,7 @@ class _DocxPartitioner:
         """ElementMetadata object describing `paragraph`."""
         emphasized_text_contents, emphasized_text_tags = self._paragraph_emphasis(paragraph)
         category_depth = self._parse_category_depth_by_style(paragraph)
+        print("Category depth: ", category_depth)
         return ElementMetadata(
             filename=self._metadata_filename,
             page_number=self._page_number,
@@ -639,6 +640,26 @@ class _DocxPartitioner:
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])
 
     def _parse_category_depth_by_style(self, paragraph: Paragraph) -> int:
+        """Determine category depth from paragraph metadata"""
+
+        # Determine category depth from paragraph ilvl xpath
+        xpath = paragraph._element.xpath("./w:pPr/w:numPr/w:ilvl/@w:val")
+        if xpath:
+            return int(xpath[0])
+
+        # Determine category depth from style name
+        style_name = (paragraph.style and paragraph.style.name) or "Normal"
+        print(style_name)
+        depth = self._parse_category_depth_by_style_name(style_name)
+
+        if depth > 0:
+            return depth
+        else:
+            # Check if category depth can be determined from style ilvl
+            return self._parse_category_depth_by_style_ilvl()
+
+
+    def _parse_category_depth_by_style_name(self, style_name: str) -> int:
         """Parse category-depth from the style-name of `paragraph`.
 
         Category depth is 0-indexed and relative to the other element types in the document.
@@ -647,11 +668,7 @@ class _DocxPartitioner:
         def _extract_number(suffix: str) -> int:
             return int(suffix.split()[-1]) - 1 if suffix.split()[-1].isdigit() else 0
 
-        style_name = (paragraph.style and paragraph.style.name) or "Normal"
-
         # Heading styles
-        # TODO(newelh) - What if a heading follows a document header? Should it be 0 or 1?
-        # -- This will only determine depth relative to the paragraph not for the whole document
         if style_name.startswith("Heading"):
             return _extract_number(style_name)
 
@@ -664,6 +681,10 @@ class _DocxPartitioner:
             return _extract_number(style_name)
 
         # Other styles
+        return 0
+
+    def _parse_category_depth_by_style_ilvl(self) -> int:
+        # TODO(newelh) Parsing category depth by style ilvl is not yet implemented
         return 0
 
 
