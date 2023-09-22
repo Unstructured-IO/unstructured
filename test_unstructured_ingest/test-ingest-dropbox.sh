@@ -8,6 +8,10 @@ OUTPUT_FOLDER_NAME=dropbox
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+
 if [ -z "$DROPBOX_APP_KEY" ] || [ -z "$DROPBOX_APP_SECRET" ] || [ -z "$DROPBOX_REFRESH_TOKEN" ]; then
    echo "Skipping Dropbox ingest test because one or more of these env vars is not set:"
    echo "DROPBOX_APP_KEY, DROPBOX_APP_SECRET, DROPBOX_REFRESH_TOKEN"
@@ -31,4 +35,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --remote-url "dropbox:// /"
 
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

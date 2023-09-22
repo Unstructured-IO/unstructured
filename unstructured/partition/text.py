@@ -207,7 +207,7 @@ def partition_text(
 
     if not isinstance(languages, list):
         raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]'
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
         )
 
     if (

@@ -8,6 +8,10 @@ OUTPUT_FOLDER_NAME=wikipedia
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
     wikipedia \
     --download-dir "$DOWNLOAD_DIR" \
@@ -19,4 +23,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --page-title "Open Source Software"
 
-sh "$SCRIPT_DIR"/check-num-files-output.sh 3 $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-num-files-output.sh 3 $OUTPUT_FOLDER_NAME
