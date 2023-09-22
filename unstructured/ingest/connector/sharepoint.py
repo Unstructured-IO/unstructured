@@ -116,7 +116,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         try:
             if self.is_page:
-                file = site_client.web.get_file_by_server_relative_path(self.server_path)
+                file = site_client.web.get_file_by_server_relative_path("/" + self.server_path)
                 file = file.listItemAllFields.select(CONTENT_LABELS).get().execute_query()
             else:
                 file = site_client.web.get_file_by_server_relative_url(self.server_path)
