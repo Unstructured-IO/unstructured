@@ -4,8 +4,7 @@ from pptx.oxml.text import CT_TextParagraph
 from pptx.shapes import Subshape
 
 class TextFrame(Subshape):
-    @property
-    def text(self) -> str: ...
+    text: str
     @property
     def paragraphs(self) -> Sequence[_Paragraph]: ...
 

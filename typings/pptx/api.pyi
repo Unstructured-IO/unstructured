@@ -1,5 +1,5 @@
-from typing import BinaryIO, Union
+from typing import BinaryIO, Optional, Union
 
 import pptx.presentation
 
-def Presentation(pptx: Union[str, BinaryIO]) -> pptx.presentation.Presentation: ...
+def Presentation(pptx: Optional[Union[str, BinaryIO]] = None) -> pptx.presentation.Presentation: ...

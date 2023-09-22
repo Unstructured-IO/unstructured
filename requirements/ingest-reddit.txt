@@ -33,5 +33,5 @@ urllib3==1.26.16
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-websocket-client==1.6.2
+websocket-client==1.6.3
     # via praw

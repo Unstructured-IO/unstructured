@@ -6,6 +6,7 @@ import pytest
 import requests
 
 from unstructured.chunking.title import chunk_by_title
+from unstructured.documents.elements import Title
 from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
 from unstructured.staging.base import elements_to_json
@@ -20,6 +21,13 @@ def test_partition_md_from_filename():
     assert len(elements) > 0
     for element in elements:
         assert element.metadata.filename == "README.md"
+
+
+def test_partition_md_from_filename_returns_uns_elements():
+    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    elements = partition_md(filename=filename)
+    assert len(elements) > 0
+    assert isinstance(elements[0], Title)
 
 
 def test_partition_md_from_filename_with_metadata_filename():
@@ -94,9 +102,8 @@ def test_partition_md_from_url_raises_with_bad_status_code():
         status_code=500,
         headers={"Content-Type": "text/html"},
     )
-    with patch.object(requests, "get", return_value=response) as _:
-        with pytest.raises(ValueError):
-            partition_md(url="https://fake.url")
+    with patch.object(requests, "get", return_value=response) as _, pytest.raises(ValueError):
+        partition_md(url="https://fake.url")
 
 
 def test_partition_md_from_url_raises_with_bad_content_type():
@@ -109,9 +116,8 @@ def test_partition_md_from_url_raises_with_bad_content_type():
         status_code=200,
         headers={"Content-Type": "application/json"},
     )
-    with patch.object(requests, "get", return_value=response) as _:
-        with pytest.raises(ValueError):
-            partition_md(url="https://fake.url")
+    with patch.object(requests, "get", return_value=response) as _, pytest.raises(ValueError):
+        partition_md(url="https://fake.url")
 
 
 def test_partition_md_raises_with_none_specified():

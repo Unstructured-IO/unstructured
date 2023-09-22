@@ -1,11 +1,25 @@
+# pyright: reportPrivateUsage=false
+
+from __future__ import annotations
+
 import io
 import itertools
 import os
 import tempfile
 from tempfile import SpooledTemporaryFile
-from typing import Any, BinaryIO, Dict, IO, Iterator, List, Optional, Sequence
-from typing import Tuple, Type, Union, cast
-from typing_extensions import TypeAlias
+from typing import (
+    Any,
+    BinaryIO,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    Union,
+    cast,
+)
 
 # -- CT_* stands for "complex-type", an XML element type in docx parlance --
 import docx
@@ -17,11 +31,12 @@ from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.oxml.xmlchemy import BaseOxmlElement
-from docx.section import _Footer, _Header, Section  # pyright: ignore [reportPrivateUsage]
+from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 from lxml import etree
+from typing_extensions import TypeAlias
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
@@ -54,7 +69,7 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
-from unstructured.utils import dependency_exists, lazyproperty
+from unstructured.utils import dependency_exists, lazyproperty, requires_dependencies
 
 if dependency_exists("pypandoc"):
     import pypandoc
@@ -64,10 +79,11 @@ BlockElement: TypeAlias = Union[CT_P, CT_Tbl]
 BlockItem: TypeAlias = Union[Paragraph, DocxTable]
 
 
+@requires_dependencies("pypandoc")
 def convert_and_partition_docx(
     source_format: str,
     filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
+    file: Optional[BinaryIO] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
@@ -88,39 +104,41 @@ def convert_and_partition_docx(
         Determines whether or not metadata is included in the metadata attribute on the elements in
         the output.
     """
-    if "pypandoc" not in globals():
-        raise ImportError("package 'pypandoc' required for this operation but not installed")
-
     exactly_one(filename=filename, file=file)
 
     def validate_filename(filename: str) -> str:
+        """Return path to a file confirmed to exist on the filesystem."""
         if not os.path.exists(filename):
             raise ValueError(f"The file {filename} does not exist.")
-        _, filename_no_path = os.path.split(os.path.abspath(filename))
-        return filename_no_path
+        return filename
 
-    def write_to_tempfile(file: BinaryIO) -> str:
+    def copy_to_tempfile(file: BinaryIO) -> str:
+        """Return path to temporary copy of file to be converted."""
         with tempfile.NamedTemporaryFile(delete=False) as tmp:
             tmp.write(file.read())
-            _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
-        return filename_no_path
+            return tmp.name
 
-    filename_no_path = (
-        validate_filename(filename) if filename else write_to_tempfile(cast(BinaryIO, file))
-    )
+    def extract_docx_filename(file_path: str) -> str:
+        """Return a filename like "foo.docx" from a path like "a/b/foo.odt" """
+        # -- a/b/foo.odt -> foo.odt --
+        filename = os.path.basename(file_path)
+        # -- foo.odt -> foo --
+        root_name, _ = os.path.splitext(filename)
+        # -- foo -> foo.docx --
+        return f"{root_name}.docx"
 
-    base_filename, _ = os.path.splitext(filename_no_path)
+    file_path = validate_filename(filename) if filename else copy_to_tempfile(cast(BinaryIO, file))
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        docx_filename = os.path.join(tmpdir, f"{base_filename}.docx")
+        docx_path = os.path.join(tmpdir, extract_docx_filename(file_path))
         pypandoc.convert_file(  # pyright: ignore
-            filename,
+            file_path,
             "docx",
             format=source_format,
-            outputfile=docx_filename,
+            outputfile=docx_path,
         )
         elements = partition_docx(
-            filename=docx_filename,
+            filename=docx_path,
             metadata_filename=metadata_filename,
             include_metadata=include_metadata,
             metadata_last_modified=metadata_last_modified,
@@ -166,32 +184,25 @@ def partition_docx(
             metadata_filename,
             include_page_breaks,
             metadata_last_modified,
-        )
+        ),
     )
 
 
 class _DocxPartitioner:
     """Provides `.partition()` for MS-Word 2007+ (.docx) files."""
 
-    # TODO: Add a test with a real-life multi-page document with hard page-breaks, odd-to-odd and
-    #       even-to-even section breaks and enough text to run to a few pages and make sure we're on
-    #       the right page all the time.
-    # TODO: Get rid of `._element_contains_pagebreak()`. Use XPath to implement a separate
-    #       `._document_contains_pagebreaks()` so there's no caller for the old version anymore. I
-    #       think that should be looking for `w:lastRenderedPageBreak` only btw. It looks like
-    #       `w:lastRenderedPageBreak` is the most reliable page-break indicator and better than I
-    #       thought. It indicates all page-breaks on my most recent test. A problem is that a hard
-    #       page-break produces a `w:lastRenderedPageBreak` in the following paragraph, so if we
-    #       trigger on both then we double-count that page-break. Section-start triggered
-    #       page-breaks also give rise to a `w:lastRenderedPageBreak` element so probably don't need
-    #       to be counted separately.
     # TODO: I think we can do better on metadata.filename. Should that only be populated when a
     #       `metadata_filename` argument was provided to `partition_docx()`? What about when not but
     #       we do get a `filename` arg or a `file` arg that has a `.name` attribute?
     # TODO: get last-modified date from document-properties (stored in docx package) rather than
     #       relying on last filesystem-write date; maybe fall-back to filesystem-date.
-    # TODO: Improve ._is_list_item() to detect manually-applied bullets (which do not appear in the
-    #       paragraph text so are missed by `is_bulleted_text()`) using XPath.
+    # TODO: improve `._element_contains_pagebreak()`. It uses substring matching on the rendered
+    #       XML text which is error-prone and not performant. Use XPath instead with the specific
+    #       locations a page-break can be located. Also, there can be more than one, so return a
+    #       count instead of a boolean.
+    # TODO: Improve document-contains-pagebreaks algorithm to use XPath and to search for
+    #       `w:lastRenderedPageBreak` alone. Make it independent and don't rely on anything like
+    #        the "_element_contains_pagebreak()" function.
     # TODO: Improve ._is_list_item() to include list-styles such that telling whether a paragraph is
     #       a list-item is encapsulated in a single place rather than distributed around the code.
     # TODO: Improve ._is_list_item() method of detecting a numbered-list-item to use XPath instead
@@ -201,20 +212,6 @@ class _DocxPartitioner:
     #       domain-specific knowledge to comfortable here and is of general use so welcome in the
     #       library.
     # TODO: Move Paragraph._get_paragraph_runs() monkey-patch upstream to `python-docx`.
-
-    # DONE: detect mid-document sections. Current code only detects the last (default) section (the
-    #       one at w:body/w:sectPr) and misses all others that are located at w:p/w:pPr/w:sectPr.
-    # DONE: Implement a local `Section.iter_block_items()` to use instead of traversing
-    #       block-items (paragraph, table) using XML. That avoids docx XML internals in
-    #       main loop, can be moved upstream, allows getting rid of table_idx counter,
-    #       etc.
-    # DONE: A section can give rise to one or two page breaks, like an "odd-page" section start
-    #       from an odd current-page produces two. Add page-break detection on section as well.
-    # DONE: Improve Header/Footer behavior to account for "is-linked-to-previous" condition which
-    #       I think means for us to skip that header/footer since it's the same as the one that
-    #       came before it. Also, it needs to query whether different-first-page-header is active,
-    #       just having a first-page header defined doesn't make it appear. Same with
-    #       different-even-odd-page-headers.
 
     def __init__(
         self,
@@ -258,7 +255,7 @@ class _DocxPartitioner:
             for block_item in _SectBlockItemIterator.iter_sect_block_items(section, self._document):
                 # -- a block-item can only be a Paragraph ... --
                 if isinstance(block_item, Paragraph):
-                    yield from self._iter_maybe_paragraph_element(block_item)
+                    yield from self._iter_paragraph_elements(block_item)
                     # -- a paragraph can contain a page-break --
                     yield from self._iter_maybe_paragraph_page_breaks(block_item)
                 # -- ... or a Table --
@@ -304,9 +301,11 @@ class _DocxPartitioner:
                     return True
         return False
 
-    def _increment_page_number(self, n: int = 1) -> None:
-        """Increment current page number by `n` to reflect transition to a new page."""
-        self._page_counter += n
+    def _increment_page_number(self) -> Iterator[PageBreak]:
+        """Increment page-number by 1 and generate a PageBreak element if enabled."""
+        self._page_counter += 1
+        if self._include_page_breaks:
+            yield PageBreak("")
 
     def _is_list_item(self, paragraph: Paragraph) -> bool:
         """True when `paragraph` can be identified as a list-item."""
@@ -315,17 +314,18 @@ class _DocxPartitioner:
 
         return "<w:numPr>" in paragraph._p.xml
 
-    def _iter_maybe_paragraph_element(self, paragraph: Paragraph) -> Iterator[Element]:
-        """Generate zero-or-one document element for `p`.
+    def _iter_paragraph_elements(self, paragraph: Paragraph) -> Iterator[Element]:
+        """Generate zero-or-one document element for `paragraph`.
 
-        `CT_P` is the docx XML-element type for a paragraph. Empty paragraphs are typically used for
-        inter-paragraph spacing and do not produce a document element.
+        In Word, an empty paragraph is commonly used for inter-paragraph spacing. An empty paragraph
+        does not contribute to the document-element stream and will not cause an element to be
+        emitted.
         """
-        text = paragraph.text.strip()
+        text = paragraph.text
 
         # -- blank paragraphs are commonly used for spacing between paragraphs and
         # -- do not contribute to the document-element stream.
-        if not text:
+        if not text.strip():
             return
 
         metadata = self._paragraph_metadata(paragraph)
@@ -375,9 +375,7 @@ class _DocxPartitioner:
         if not has_page_break_implementation_we_have_so_far():
             return
 
-        self._increment_page_number()
-        if self._include_page_breaks:
-            yield PageBreak(text="")
+        yield from self._increment_page_number()
 
     def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[Dict[str, str]]:
         """Generate e.g. {"text": "MUST", "tag": "b"} for each emphasis in `paragraph`."""
@@ -451,53 +449,41 @@ class _DocxPartitioner:
             yield from iter_header(section.even_page_header, "even_page")
 
     def _iter_section_page_breaks(self, section_idx: int, section: Section) -> Iterator[PageBreak]:
-        """Generate zero, one, or two `PageBreak` document elements for `section`.
+        """Generate zero-or-one `PageBreak` document elements for `section`.
 
-        A docx section has a "start" type which can be "continuous" (no page-break), "nextPage"
-        (one page-break), or "evenPage or "oddPage" which can be one or two page-breaks depending
-        on the current page-number.
+        A docx section has a "start" type which can be "continuous" (no page-break), "nextPage",
+        "evenPage", or "oddPage". For the next, even, and odd varieties, a `w:renderedPageBreak`
+        element signals one page break. Here we only need to handle the case where we need to add
+        another, for example to go from one odd page to another odd page and we need a total of
+        two page-breaks.
         """
-
-        def iter_maybe_page_break():
-            self._increment_page_number()
-            if self._include_page_breaks:
-                yield PageBreak(text="")
 
         def page_is_odd() -> bool:
             return self._page_counter % 2 == 1
 
         start_type = section.start_type
 
-        if start_type == WD_SECTION_START.NEW_PAGE:
-            # -- the first page of the document is an implicit "new-page", so no page-break --
-            if section_idx == 0:
-                return
-            yield from iter_maybe_page_break()
+        # -- This method is called upon entering a new section, which happens before any paragraphs
+        # -- in that section are partitioned. A rendered page-break due to a section-start occurs
+        # -- in the first paragraph of the section and so occurs _later_ in the proces. Here we
+        # -- predict when two page breaks will be needed and emit one of them. The second will be
+        # -- emitted by the rendered page-break to follow.
 
-        elif start_type == WD_SECTION_START.EVEN_PAGE:
-            # -- the first document section could conceivably have an even-page start although I
-            # -- can't think of a use-case offhand. In that case, page-number would be 1 and here
-            # -- we should increment it to 2 and emit a PageBreak element if so configured. This
-            # -- logic handles that edge-case as-is.
-
-            # -- we always issue at least one page-break --
-            yield from iter_maybe_page_break()
-            # -- then a second one only if that lands us on an odd page --
-            if page_is_odd():
-                yield from iter_maybe_page_break()
+        if start_type == WD_SECTION_START.EVEN_PAGE:
+            # -- on an even page we need two total, add one to supplement the rendered page break
+            # -- to follow. There is no "first-document-page" special case because 1 is odd.
+            if not page_is_odd():
+                yield from self._increment_page_number()
 
         elif start_type == WD_SECTION_START.ODD_PAGE:
             # -- the first page of the document is an implicit "new" odd-page, so no page-break --
             if section_idx == 0:
                 return
-            # -- otherwise we always issue at least one page-break --
-            yield from iter_maybe_page_break()
-            # -- then a second only if that lands us on an even page --
-            if not page_is_odd():
-                yield from iter_maybe_page_break()
+            if page_is_odd():
+                yield from self._increment_page_number()
 
-        # -- otherwise, start-type is one of "continuous" or "new-column", neither of which start a
-        # -- new page.
+        # -- otherwise, start-type is one of "continuous", "new-column", or "next-page", none of
+        # -- which need our help to get the page-breaks right.
         return
 
     def _iter_table_element(self, table: DocxTable) -> Iterator[Table]:
@@ -536,11 +522,11 @@ class _DocxPartitioner:
         if self._metadata_last_modified:
             return self._metadata_last_modified
 
-        filename, file = self._filename, self._file
+        file_path, file = self._filename, self._file
 
         # -- if the file is on the filesystem, get its date from there --
-        if filename is not None:
-            return None if filename.startswith("/tmp") else get_last_modified_date(filename)
+        if file_path is not None:
+            return None if file_path.startswith("/tmp") else get_last_modified_date(file_path)
 
         # -- otherwise try getting it from the file-like object (unlikely since BytesIO and its
         # -- brethren have no such metadata).
@@ -576,7 +562,6 @@ class _DocxPartitioner:
             last_modified=self._last_modified,
             emphasized_text_contents=emphasized_text_contents or None,
             emphasized_text_tags=emphasized_text_tags or None,
-            category_depth=category_depth,
         )
 
     def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
@@ -658,23 +643,25 @@ class _DocxPartitioner:
         """
         def _extract_number(suffix: str) -> int:
             return int(suffix.split()[-1]) - 1 if suffix.split()[-1].isdigit() else 0
-        
+
         style_name = (paragraph.style and paragraph.style.name) or "Normal"
 
         # Heading styles
         if style_name.startswith('Heading'):
             return _extract_number(style_name)
-        
+
         if style_name == "Subtitle":
             return 1
-        
+
         # List styles
         list_prefixes = ['List', 'List Bullet', 'List Continue', 'List Number']
         if any(style_name.startswith(prefix) for prefix in list_prefixes):
             return _extract_number(style_name)
-        
+
         # Other styles
         return 0
+
+
 class _SectBlockItemIterator:
     """Generates the block-items in a section.
 
@@ -792,7 +779,7 @@ class _SectBlockElementIterator:
     def _sectPrs(self) -> Sequence[CT_SectPr]:
         """All w:sectPr elements in document, in document-order."""
         return self._sectPr.xpath(
-            "/w:document/w:body/w:p/w:pPr/w:sectPr | /w:document/w:body/w:sectPr"
+            "/w:document/w:body/w:p/w:pPr/w:sectPr | /w:document/w:body/w:sectPr",
         )
 
 
@@ -827,7 +814,7 @@ def _get_paragraph_runs(paragraph: Paragraph) -> Sequence[Run]:
 
 
 Paragraph.runs = property(  # pyright: ignore[reportGeneralTypeIssues]
-    lambda self: _get_paragraph_runs(self)
+    lambda self: _get_paragraph_runs(self),
 )
 
 # ====================================================================================

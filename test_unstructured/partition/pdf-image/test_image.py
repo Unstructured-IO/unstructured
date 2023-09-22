@@ -132,7 +132,7 @@ def test_partition_image_with_table_extraction(
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 1
-    assert "Layouts of history Japanese documents" in table[0]
+    assert "<table><thead><th>" in table[0]
 
 
 def test_partition_image_with_multipage_tiff(
@@ -398,18 +398,50 @@ def test_partition_msg_with_json(
         assert elements[i] == test_elements[i]
 
 
-def test_partition_image_with_ocr_has_coordinates_from_file(
-    mocker,
+def test_partition_image_with_ocr_has_coordinates_from_filename(
     filename="example-docs/english-and-korean.png",
 ):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    mocker.patch(
-        "unstructured.partition.pdf.get_last_modified_date",
-        return_value=mocked_last_modification_date,
-    )
     elements = image.partition_image(filename=filename, strategy="ocr_only")
     int_coordinates = [(int(x), int(y)) for x, y in elements[0].metadata.coordinates.points]
     assert int_coordinates == [(14, 36), (14, 16), (381, 16), (381, 36)]
+
+
+@pytest.mark.parametrize(
+    ("filename"),
+    [
+        ("example-docs/layout-parser-paper-with-table.jpg"),
+        ("example-docs/english-and-korean.png"),
+        ("example-docs/layout-parser-paper-fast.jpg"),
+    ],
+)
+def test_partition_image_with_ocr_coordinates_are_not_nan_from_filename(
+    filename,
+):
+    import math
+
+    elements = image.partition_image(filename=filename, strategy="ocr_only")
+    for element in elements:
+        # TODO (jennings) One or multiple elements is an empty string
+        # without coordinates. This should be fixed in a new issue
+        if element.text:
+            box = element.metadata.coordinates.points
+            for point in box:
+                assert point[0] is not math.nan
+                assert point[1] is not math.nan
+
+
+def test_partition_image_formats_languages_for_tesseract():
+    filename = "example-docs/jpn-vert.jpeg"
+    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
+        image.partition_image(filename=filename, strategy="hi_res", languages=["jpn_vert"])
+        mock_process.assert_called_once_with(
+            filename,
+            is_image=True,
+            ocr_languages="jpn_vert",
+            ocr_mode="entire_page",
+            extract_tables=False,
+            model_name=None,
+        )
 
 
 def test_partition_image_warns_with_ocr_languages(caplog):
@@ -426,3 +458,14 @@ def test_add_chunking_strategy_on_partition_image(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_image_uses_model_name():
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_or_image_local",
+    ) as mockpartition:
+        image.partition_image("example-docs/layout-parser-paper-fast.jpg", model_name="test")
+        print(mockpartition.call_args)
+        assert "model_name" in mockpartition.call_args.kwargs
+        assert mockpartition.call_args.kwargs["model_name"]

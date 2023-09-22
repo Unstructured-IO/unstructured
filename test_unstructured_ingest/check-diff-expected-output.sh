@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Description: Compare the structured output files to the expected output files and exit with an error
-#              if they are different. If the environment variable OVERWRITE_FIXTURES is not "false", 
+#              if they are different. If the environment variable OVERWRITE_FIXTURES is not "false",
 #              then this script will instead copy the output files to the expected output directory.
 #
 # Arguments:
@@ -14,11 +14,26 @@ set +e
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
+TMP_DIRECTORY_CLEANUP=${TMP_DIRECTORY_CLEANUP:-true}
 OUTPUT_FOLDER_NAME=$1
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 OUTPUT_DIR_TEXT=$SCRIPT_DIR/text-output/$OUTPUT_FOLDER_NAME
 EXPECTED_OUTPUT_DIR=$SCRIPT_DIR/expected-structured-output/$OUTPUT_FOLDER_NAME
 EXPECTED_OUTPUT_DIR_TEXT=$SCRIPT_DIR/expected-text-output/$OUTPUT_FOLDER_NAME
+
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+
+function cleanup() {
+  if [ "$TMP_DIRECTORY_CLEANUP" == "true" ]; then
+    cleanup_dir "$EXPECTED_OUTPUT_DIR_TEXT"
+    cleanup_dir "$OUTPUT_DIR_TEXT"
+  else
+    echo "skipping tmp directory cleanup"
+  fi
+}
+
+trap cleanup EXIT
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [ "$OVERWRITE_FIXTURES" != "false" ]; then

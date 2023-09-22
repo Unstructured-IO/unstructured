@@ -328,7 +328,11 @@ def test_partition_docx_from_file_without_metadata_date(
 
 def test_get_emphasized_texts_from_paragraph(expected_emphasized_texts: List[Dict[str, str]]):
     partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx", None, None, False, None
+        "example-docs/fake-doc-emphasized-text.docx",
+        None,
+        None,
+        False,
+        None,
     )
     paragraph = partitioner._document.paragraphs[1]
     emphasized_texts = list(partitioner._iter_paragraph_emphasis(paragraph))
@@ -348,7 +352,11 @@ def test_get_emphasized_texts_from_paragraph(expected_emphasized_texts: List[Dic
 
 def test_iter_table_emphasis(expected_emphasized_texts: List[Dict[str, str]]):
     partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx", None, None, False, None
+        "example-docs/fake-doc-emphasized-text.docx",
+        None,
+        None,
+        False,
+        None,
     )
     table = partitioner._document.tables[0]
     emphasized_texts = list(partitioner._iter_table_emphasis(table))
@@ -356,10 +364,15 @@ def test_iter_table_emphasis(expected_emphasized_texts: List[Dict[str, str]]):
 
 
 def test_table_emphasis(
-    expected_emphasized_text_contents: List[str], expected_emphasized_text_tags: List[str]
+    expected_emphasized_text_contents: List[str],
+    expected_emphasized_text_tags: List[str],
 ):
     partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx", None, None, False, None
+        "example-docs/fake-doc-emphasized-text.docx",
+        None,
+        None,
+        False,
+        None,
     )
     table = partitioner._document.tables[0]
     emphasized_text_contents, emphasized_text_tags = partitioner._table_emphasis(table)
@@ -409,8 +422,7 @@ def test_partition_docx_with_json(mock_document, expected_elements, tmpdir):
         assert elements[i] == test_elements[i]
 
 
-def test_add_chunking_strategy_on_partition_docx():
-    filename = "example-docs/handbook-1p.docx"
+def test_add_chunking_strategy_on_partition_docx(filename="example-docs/handbook-1p.docx"):
     chunk_elements = partition_docx(filename, chunking_strategy="by_title")
     elements = partition_docx(filename)
     chunks = chunk_by_title(elements)

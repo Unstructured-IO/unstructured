@@ -2,6 +2,8 @@ from docx.oxml.text.run import CT_R
 from docx.text.paragraph import Paragraph
 
 class Run:
+    _element: CT_R
+    _r: CT_R
     def __init__(self, r: CT_R, parent: Paragraph) -> None: ...
     @property
     def bold(self) -> bool: ...

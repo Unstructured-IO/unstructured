@@ -112,7 +112,7 @@ def partition_pptx(
                 table: pptx.table.Table = shape.table
                 html_table = convert_ms_office_table_to_text(table, as_html=True)
                 text_table = convert_ms_office_table_to_text(table, as_html=False).strip()
-                if (text_table := text_table.strip()) != "":
+                if text_table:
                     metadata = ElementMetadata(
                         filename=metadata_filename or filename,
                         text_as_html=html_table,

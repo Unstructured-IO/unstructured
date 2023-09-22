@@ -44,9 +44,14 @@ install-nltk-models:
 .PHONY: install-test
 install-test:
 	python3 -m pip install -r requirements/test.txt
+	# NOTE(yao) - CI seem to always install tesseract to test so it would make sense to also require
+	# pytesseract installation into the virtual env for testing
+	python3 -m pip install unstructured.pytesseract -c requirements/constraints.in
+	python3 -m pip install argilla -c requirements/constraints.in
 	# NOTE(robinson) - Installing weaviate-client separately here because the requests
 	# version conflicts with label_studio_sdk
-	python3 -m pip install weaviate-client
+	python3 -m pip install weaviate-client -c requirements/constraints.in
+	# TODO (yao): find out if how to constrain argilla properly without causing conflicts
 	python3 -m pip install argilla
 
 .PHONY: install-dev
@@ -209,6 +214,9 @@ install-local-inference: install install-all-docs
 install-pandoc:
 	ARCH=${ARCH} ./scripts/install-pandoc.sh
 
+.PHONY: install-paddleocr
+install-paddleocr:
+	ARCH=${ARCH} ./scripts/install-paddleocr.sh
 
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
@@ -316,7 +324,7 @@ check: check-src check-tests check-version
 ## check-src:               runs linters (source only, no tests)
 .PHONY: check-src
 check-src:
-	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore PT011,PT012,SIM117
+	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore COM812,PT011,PT012,SIM117
 	black --line-length 100 ${PACKAGE_NAME} --check
 	flake8 ${PACKAGE_NAME}
 	mypy ${PACKAGE_NAME} --ignore-missing-imports --check-untyped-defs

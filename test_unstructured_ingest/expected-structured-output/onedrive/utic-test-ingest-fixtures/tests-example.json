@@ -3,7 +3,15 @@
     "type": "Table",
     "element_id": "0e2d044a26942328e2b8647574232e7f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/tests-example.xls",
+        "record_locator": {
+          "user_pname": "devops@unstructuredio.onmicrosoft.com",
+          "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls"
+        },
+        "date_created": "2023-08-24T03:00:43",
+        "date_modified": "2023-08-24T03:00:43"
+      },
       "filename": "tests-example.xls",
       "filetype": "application/vnd.ms-excel",
       "page_number": 1,
@@ -16,7 +24,15 @@
     "type": "Table",
     "element_id": "5c56dd4c5b649b873ebd848312e66753",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/tests-example.xls",
+        "record_locator": {
+          "user_pname": "devops@unstructuredio.onmicrosoft.com",
+          "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls"
+        },
+        "date_created": "2023-08-24T03:00:43",
+        "date_modified": "2023-08-24T03:00:43"
+      },
       "filename": "tests-example.xls",
       "filetype": "application/vnd.ms-excel",
       "page_number": 2,
@@ -29,7 +45,15 @@
     "type": "Table",
     "element_id": "f48657c4eb70d98975e567248d0ef4bb",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/tests-example.xls",
+        "record_locator": {
+          "user_pname": "devops@unstructuredio.onmicrosoft.com",
+          "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls"
+        },
+        "date_created": "2023-08-24T03:00:43",
+        "date_modified": "2023-08-24T03:00:43"
+      },
       "filename": "tests-example.xls",
       "filetype": "application/vnd.ms-excel",
       "page_number": 3,

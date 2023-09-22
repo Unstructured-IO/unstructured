@@ -10,6 +10,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -50,8 +51,41 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _output_filename(self):
         raise NotImplementedError()
 
+    @property
+    def date_created(self) -> t.Optional[str]:
+        return None
+
+    @property
+    def date_modified(self) -> t.Optional[str]:
+        return None
+
+    @property
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
+        return {
+            "page_title": self.connector_config.title,
+            "page_url": self.source_metadata.source_url,  # type: ignore
+        }
+
     def _create_full_tmp_dir_path(self):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
+
+    @requires_dependencies(["wikipedia"], extras="wikipedia")
+    def update_source_metadata(self):
+        from wikipedia.exceptions import PageError
+
+        try:
+            page = self.page
+        except PageError:
+            self.source_metadata = SourceMetadata(
+                exists=False,
+            )
+            return
+
+        self.source_metadata = SourceMetadata(
+            version=page.revision_id,
+            source_url=page.url,
+            exists=True,
+        )
 
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
@@ -59,6 +93,7 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
+        self.update_source_metadata()
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.text)
 
