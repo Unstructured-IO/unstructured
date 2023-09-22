@@ -397,7 +397,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Efficient Data Annotation Model Customization Document Images Community Platform ‘a >) ¥ DIA Model Hub i .) Customized Model Training] == | Layout Detection Models | ——= DIA Pipeline Sharing ~ OCR Module = { Layout Data stuctue ) = (storage Visualization VY"
+    "text": "  Efficient Data Annotation Model Customization Document Images Community Platform ‘a >) ¥ DIA Model Hub i .) Customized Model Training] == | Layout Detection Models | ——= DIA Pipeline Sharing ~ OCR Module = { Layout Data stuctue ) = (storage Visualization       VY    "
   },
   {
     "type": "NarrativeText",
@@ -658,7 +658,7 @@
       "filetype": "application/pdf",
       "page_number": 6
     },
-    "text": "- ° . 3 a a 4 a 3 oo er ‘ 2 § 8 a 8 3 3 ‘ £ 4 A g a 9 ‘ 3 ¥ Coordinate g 4 5 3 + § 3 H Extra Features [O=\") [Bo] eaing i Text | | Type | | ower ° & a ¢ o [ coordinatel textblock1, 3 3 ’ g Q 3 , textblock2 , layoutl ] 4 q ® A list of the layout elements Ff"
+    "text": "                        - ° . 3 a a 4 a 3 oo er ‘ 2 § 8 a 8 3 3 ‘ £ 4 A g a 9 ‘ 3 ¥ Coordinate g 4 5 3 + § 3 H Extra Features [O=\") [Bo] eaing i Text | | Type | | ower ° & a ¢ o [ coordinatel textblock1, 3 3 ’ g Q 3 , textblock2 , layoutl ] 4 q ® A list of the layout elements Ff  "
   },
   {
     "type": "NarrativeText",
@@ -1129,7 +1129,7 @@
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "x09 Burpunog uayor Aeydsiq 1 vondo 10g Guypunog usyoy apir:z uondo Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR'd Text at the Correspoding Position"
+    "text": "x09 Burpunog uayor Aeydsiq 1 vondo     10g Guypunog usyoy apir:z uondo Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR'd Text at the Correspoding Position"
   },
   {
     "type": "NarrativeText",
@@ -1199,7 +1199,7 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "Intra-column reading order Token Categories tie (Adress 2) tee (NE sumber Variable HEE company type Column Categories (J tite we) adaress —_ (7) section Header by ‘e * Column reading order a a (a) Illustration of the original Japanese Maximum Allowed Height BRE B>e EER eR (b) Illustration of the recreated document with dense text structure for better OCR performance"
+    "text": "Intra-column reading order   Token Categories tie (Adress 2) tee (NE sumber Variable HEE company type Column Categories (J tite we) adaress —_ (7) section Header by ‘e * Column reading order         a a (a) Illustration of the original Japanese Maximum Allowed Height BRE B>e EER eR (b) Illustration of the recreated document with dense text structure for better OCR performance"
   },
   {
     "type": "NarrativeText",
@@ -1329,7 +1329,7 @@
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "(spe peepee, ‘Active Learning Layout Annotate Layout Dataset | + ‘Annotation Toolkit ¥ a Deep Leaming Layout Model Training & Inference, ¥ ; Handy Data Structures & Post-processing El Apis for Layout Det a LAR ror tye eats) 4 Text Recognition | <—— Default ane Customized ¥ ee Layout Structure Visualization & Export | <—— | visualization & Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules"
+    "text": "                        (spe peepee, ‘Active Learning Layout Annotate Layout Dataset | + ‘Annotation Toolkit ¥ a Deep Leaming Layout Model Training & Inference, ¥ ; Handy Data Structures & Post-processing El Apis for Layout Det a LAR ror tye eats) 4 Text Recognition | <—— Default ane Customized ¥ ee Layout Structure Visualization & Export | <—— | visualization & Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules"
   },
   {
     "type": "NarrativeText",
@@ -1499,7 +1499,7 @@
       "filetype": "application/pdf",
       "page_number": 13
     },
-    "text": "(@) Partial table at the bottom (&) Full page table (6) Partial table at the top (d) Mis-detected tet line"
+    "text": "                                                                                                  (@) Partial table at the bottom (&) Full page table (6) Partial table at the top (d) Mis-detected tet line    "
   },
   {
     "type": "FigureCaption",
