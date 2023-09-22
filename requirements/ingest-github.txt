@@ -17,7 +17,7 @@ charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt
     #   requests
-cryptography==41.0.3
+cryptography==41.0.4
     # via pyjwt
 deprecated==1.2.14
     # via pygithub
