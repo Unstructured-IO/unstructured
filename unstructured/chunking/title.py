@@ -88,7 +88,7 @@ def chunk_by_title(
                     if i > 0:
                         # NOTE(newelh): Previously, _value was extended with value.
                         # This caused a memory error if the content was a list of strings
-                        # with a large number of elements -- doubling the size of the list each time.
+                        # with a large number of elements -- doubling the list size each time.
                         # This now instead ensures that the _value list is unique and updated.
                         for item in value:
                             if item not in _value:
@@ -121,9 +121,9 @@ def _split_elements_by_title_and_table(
             )
 
         section_length = sum([len(str(element)) for element in section])
-        new_section = (
-            isinstance(element, Title) and section_length > combine_under_n_chars
-        ) or (not metadata_matches or section_length > new_after_n_chars)
+        new_section = (isinstance(element, Title) and section_length > combine_under_n_chars) or (
+            not metadata_matches or section_length > new_after_n_chars
+        )
 
         if isinstance(element, Table) or not isinstance(element, Text):
             sections.append(section)
