@@ -6,6 +6,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=local-single-file-with-pdf-infer-table-structure
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+max_processes=${MAX_PROCESSES:=$(sysctl -n hw.ncpu)}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
