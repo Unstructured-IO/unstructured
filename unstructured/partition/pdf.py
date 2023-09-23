@@ -6,9 +6,15 @@ from typing import BinaryIO, Iterator, List, Optional, Union, cast
 
 import pdf2image
 import PIL
+from pdfminer.pdfpage import PDFPage
 from pdfminer.high_level import extract_pages
-from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
+from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox, LAParams
 from pdfminer.utils import open_filename
+from pdfminer.converter import PDFResourceManager, PDFPageAggregator
+from pdfminer.pdfinterp import PDFPageInterpreter
+from pdfminer.pdfdocument import PDFDocument
+from pdfminer.pdfparser import PDFParser
+from pdfminer.pdftypes import PDFObjRef
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import clean_extra_whitespace
@@ -438,15 +444,31 @@ def _process_pdfminer_pages(
     elements: List[Element] = []
     sort_mode = kwargs.get("sort_mode", SORT_MODE_XY_CUT)
 
-    for i, page in enumerate(extract_pages(fp)):  # type: ignore
-        width, height = page.width, page.height
+    rsrcmgr = PDFResourceManager()
+    laparams = LAParams()
+    device = PDFPageAggregator(rsrcmgr, laparams=laparams)
+    interpreter = PDFPageInterpreter(rsrcmgr, device)
+
+    for i, page in enumerate(PDFPage.get_pages(fp)):  # type: ignore
+        interpreter.process_page(page)
+        page_layout = device.get_result()
+
+        width, height = page_layout.width, page_layout.height
 
         text_segments = []
         page_elements = []
-        for obj in page:
-            x1, y2, x2, y1 = obj.bbox
-            y1 = height - y1
-            y2 = height - y2
+        annotation_list = []
+
+        coordinate_system = PixelSpace(
+            width=width,
+            height=height,
+        )
+        if page.annots:
+            get_uris(page.annots, annotation_list, height, coordinate_system, i+1)
+
+        for obj in page_layout:
+
+            x1, y2, x2, y1 = rect_to_bbox(obj.bbox, height)
 
             if hasattr(obj, "get_text"):
                 _text_snippets = [obj.get_text()]
@@ -458,10 +480,6 @@ def _process_pdfminer_pages(
                 _text = clean_extra_whitespace(_text)
                 if _text.strip():
                     text_segments.append(_text)
-                    coordinate_system = PixelSpace(
-                        width=width,
-                        height=height,
-                    )
                     points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
                     element = element_from_text(
                         _text,
@@ -534,6 +552,9 @@ def _process_pdfminer_pages(
 
         if include_page_breaks:
             elements.append(PageBreak(text=""))
+    # breakpoint()
+
+    # check_coords_within_boundary(annotation_list[0]['coordinates'], elements[0].metadata.coordinates, 0.05, 0.05)
 
     return elements
 
@@ -739,12 +760,82 @@ def check_coords_within_boundary(
     line_height = boundary_y_max - boundary_y_min
 
     x_within_boundary = (
-        (coordinates.points[0][0] < boundary_x_min + (horizontal_threshold * line_width))
+        (coordinates.points[0][0] > boundary_x_min - (horizontal_threshold * line_width))
         and (coordinates.points[2][0] < boundary_x_max + (horizontal_threshold * line_width))
         and (coordinates.points[0][0] >= boundary_x_min)
     )
     y_within_boundary = (
-        coordinates.points[0][1] < boundary_y_max + (vertical_threshold * line_height)
-    ) and (coordinates.points[0][1] > boundary_y_min)
+        (coordinates.points[0][1] < boundary_y_max + (vertical_threshold * line_height))
+    ) and (coordinates.points[0][1] > boundary_y_min - (vertical_threshold * line_height))
 
     return x_within_boundary and y_within_boundary
+
+
+def get_uris(annots, annotation_list, height, coordinate_system, page_number):
+    if isinstance(annots, List):
+        return get_uris_from_annots(annots, annotation_list, height, coordinate_system, page_number)
+    return get_uris_from_annots(annots.resolve(), annotation_list, height, coordinate_system, page_number)
+
+
+def get_uris_from_annots(annots, annotation_list, height, coordinate_system, page_number):
+    for annotation in annots:
+        annotation_dict = try_resolve(annotation)
+        if str(annotation_dict["Subtype"]) != "/'Link'" or "A" not in annotation_dict:
+            continue
+        x1, y2, x2, y1 = rect_to_bbox(annotation_dict["Rect"], height)
+        uri_dict = try_resolve(annotation_dict["A"])
+        uri_type = str(uri_dict["S"])
+
+        try: 
+            if uri_type == "/'URI'":
+                uri = try_resolve(try_resolve(uri_dict["URI"])).decode("utf-8")
+            if uri_type == "/'GoTo'":
+                uri = try_resolve(try_resolve(uri_dict["D"])).decode("utf-8")
+        except:
+            uri = None
+
+        points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+        
+        coordinates_metadata = CoordinatesMetadata(
+            points=points,
+            system=coordinate_system,
+        )
+        
+        annotation_list.append({"coordinates": coordinates_metadata, "type": uri_type, "uri": uri, "page_number": page_number})
+
+
+def try_resolve(annot):
+    try:
+        return annot.resolve()
+    except:
+        return annot
+
+
+def rect_to_bbox(rect, height):
+    x1, y2, x2, y1 = rect
+    y1 = height - y1
+    y2 = height - y2
+    return (x1, y2, x2, y1)
+
+"""
+points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+
+points=(
+    (72.0, 72.69200000000001), 
+    (72.0, 107.69200000000001), 
+    (201.822, 107.69200000000001), 
+    (201.822, 72.69200000000001)
+
+points=(
+    (124.9688, 72), 
+    (124.9688, 83.6875), 
+    (141.6875, 83.6875), 
+    (141.6875, 72))
+points=(
+    (124.9688, 84), 
+    (124.9688, 95.6875), 
+    (151.0625, 95.6875), 
+    (151.0625, 84))
+
+https://stackoverflow.com/questions/63170120/how-can-i-extract-text-fragments-from-pdf-with-their-coordinates-in-python
+"""
