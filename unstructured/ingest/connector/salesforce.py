@@ -140,17 +140,17 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return dedent(eml)
 
-    def update_source_metadata(self, record_json: t.Dict[str, t.Any]) -> None:
+    def update_source_metadata(self, record_json: t.Dict[str, t.Any]) -> None:  # type: ignore
         date_format = "%Y-%m-%dT%H:%M:%S.000+0000"
         self.source_metadata = SourceMetadata(
-            date_created=datetime.strptime(record_json.get("CreatedDate"), date_format).isoformat(),
+            date_created=datetime.strptime(record_json["CreatedDate"], date_format).isoformat(),
             date_modified=datetime.strptime(
-                record_json.get("LastModifiedDate"),
+                record_json["LastModifiedDate"],
                 date_format,
             ).isoformat(),
             # SystemModStamp is Timestamp if record has been modified by person or automated system
             version=record_json.get("SystemModstamp"),
-            source_url=record_json.get("attributes").get("url"),
+            source_url=record_json["attributes"].get("url"),
             exists=True,
         )
 
