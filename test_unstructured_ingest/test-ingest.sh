@@ -44,18 +44,11 @@ scripts=(
 'test-ingest-sharepoint.sh'
 )
 
-CURRENT_SCRIPT="none"
-
-function print_last_run() {
-  if [ "$CURRENT_SCRIPT" != "none" ]; then
-    echo "Last ran script: $CURRENT_SCRIPT"
-  fi
-}
-
-trap print_last_run EXIT
+PIDS=""
+FAIL=0
 
 for script in "${scripts[@]}"; do
-  CURRENT_SCRIPT=$script
+  CURRENT_SCRIPT="$script"
   if [[ "$CURRENT_SCRIPT" == "test-ingest-notion.sh" ]]; then
     echo "--------- RUNNING SCRIPT $script --- IGNORING FAILURES"
     set +e
@@ -66,7 +59,20 @@ for script in "${scripts[@]}"; do
   else
     echo "--------- RUNNING SCRIPT $script ---------"
     echo "Running ./test_unstructured_ingest/$script"
-    ./test_unstructured_ingest/"$script"
+    ./test_unstructured_ingest/"$script" & PIDS="$PIDS $!"
     echo "--------- FINISHED SCRIPT $script ---------"
   fi
 done
+
+for job in "$PIDS"
+do
+    wait "$job" || let "FAIL+=1"
+    echo "$job" "$FAIL"
+done
+
+if [ "$FAIL" == "0" ];
+then
+    exit 0
+else
+    exit 1
+fi
