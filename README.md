@@ -68,14 +68,14 @@ NOTE: we build multi-platform images to support both x86_64 and Apple silicon ha
 We build Docker images for all pushes to `main`. We tag each image with the corresponding short commit hash (e.g. `fbc7a69`) and the application version (e.g. `0.5.5-dev1`). We also tag the most recent image with `latest`. To leverage this, `docker pull` from our image repository.
 
 ```bash
-docker pull quay.io/unstructured-io/unstructured:latest
+docker pull downloads.unstructured.io/unstructured-io/unstructured:latest
 ```
 
 Once pulled, you can create a container from this image and shell to it.
 
 ```bash
 # create the container
-docker run -dt --name unstructured quay.io/unstructured-io/unstructured:latest
+docker run -dt --name unstructured downloads.unstructured.io/unstructured-io/unstructured:latest
 
 # this will drop you into a bash shell where the Docker image is running
 docker exec -it unstructured bash
