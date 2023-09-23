@@ -48,7 +48,7 @@ PIDS=""
 FAIL=0
 
 for script in "${scripts[@]}"; do
-  CURRENT_SCRIPT="$script"
+  CURRENT_SCRIPT=$script
   if [[ "$CURRENT_SCRIPT" == "test-ingest-notion.sh" ]]; then
     echo "--------- RUNNING SCRIPT $script --- IGNORING FAILURES"
     set +e
@@ -66,7 +66,7 @@ done
 
 for job in "$PIDS"
 do
-    wait "$job" || let "FAIL+=1"
+    wait "$job" || (( "FAIL+=1" ))
     echo "$job" "$FAIL"
 done
 
