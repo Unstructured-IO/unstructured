@@ -148,7 +148,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 record_json["LastModifiedDate"],
                 date_format,
             ).isoformat(),
-            # SystemModStamp is Timestamp if record has been modified by person or automated system
+            # SystemModstamp is Timestamp if record has been modified by person or automated system
             version=record_json.get("SystemModstamp"),
             source_url=record_json["attributes"].get("url"),
             exists=True,
