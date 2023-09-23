@@ -64,7 +64,7 @@ for script in "${scripts[@]}"; do
   fi
 done
 
-for job in "$PIDS"
+for job in $PIDS
 do
     wait "$job" || (( "FAIL+=1" ))
     echo "$job" "$FAIL"
