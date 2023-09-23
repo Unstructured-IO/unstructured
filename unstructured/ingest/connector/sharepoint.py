@@ -68,7 +68,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     registry_name: str = "sharepoint"
 
     def __post_init__(self):
-        self.extension = "".join(Path(self.file_path).suffixes) if not self.is_page else ".html"
+        self.extension = Path(self.file_path).suffix if not self.is_page else ".html"
         self.extension = ".html" if self.extension == ".aspx" else self.extension
         if not self.extension:
             raise ValueError("Unsupported file without extension.")
@@ -87,9 +87,9 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         parent = Path(self.file_path).with_suffix(self.extension)
         self.download_dir = (download_path / parent.parent).resolve()
         self.download_filepath = (download_path / parent).resolve()
-        oname = f"{str(parent)[:-len(self.extension)]}.json"
+        output_filename = str(parent) + ".json"
         self.output_dir = (output_path / parent.parent).resolve()
-        self.output_filepath = (output_path / oname).resolve()
+        self.output_filepath = (output_path / output_filename).resolve()
 
     @property
     def filename(self):
@@ -295,10 +295,16 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         files = self._list_files(root_folder, self.connector_config.recursive)
         if not files:
             logger.info(
-                f"Couldn't process files in path {self.connector_config.path}\
+                f"No processable files at path {self.connector_config.path}\
                 for site {site_client.base_url}",
             )
-        output = [self._prepare_ingest_doc(file, site_client.base_url) for file in files]
+        output = []
+        for file in files:
+            try:
+                output.append(self._prepare_ingest_doc(file, site_client.base_url))
+            except ValueError as e:
+                logger.error("Unable to process file %s", file.properties["Name"])
+                logger.error(e)
         if self.connector_config.process_pages:
             page_output = self._list_pages(site_client)
             if not page_output:

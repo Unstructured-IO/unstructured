@@ -48,6 +48,10 @@ class DataSourceMetadata:
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
 
+    @classmethod
+    def from_dict(cls, input_dict):
+        return cls(**input_dict)
+
 
 @dc.dataclass
 class CoordinatesMetadata:
@@ -138,6 +142,7 @@ class ElementMetadata:
     attached_to_filename: Optional[str] = None
     parent_id: Optional[Union[str, uuid.UUID, NoID, UUID]] = None
     category_depth: Optional[int] = None
+    image_path: Optional[str] = None
 
     # Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None
@@ -199,6 +204,10 @@ class ElementMetadata:
         if constructor_args.get("coordinates", None) is not None:
             constructor_args["coordinates"] = CoordinatesMetadata.from_dict(
                 constructor_args["coordinates"],
+            )
+        if constructor_args.get("data_source", None) is not None:
+            constructor_args["data_source"] = DataSourceMetadata.from_dict(
+                constructor_args["data_source"],
             )
         return cls(**constructor_args)
 
@@ -389,14 +398,6 @@ class CheckBox(Element):
         return out
 
 
-class Formula(Element):
-    "An element containing formulas in a document"
-
-    category = "Formula"
-
-    pass
-
-
 class Text(Element):
     """Base element for capturing free text from within document."""
 
@@ -457,6 +458,14 @@ class Text(Element):
             raise ValueError("Cleaner produced a non-string output.")
 
         self.text = cleaned_text
+
+
+class Formula(Text):
+    "An element containing formulas in a document"
+
+    category = "Formula"
+
+    pass
 
 
 class CompositeElement(Text):

@@ -66,7 +66,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     registry_name: str = "onedrive"
 
     def __post_init__(self):
-        self.ext = "".join(Path(self.file_name).suffixes)
+        self.ext = Path(self.file_name).suffix
         if not self.ext:
             raise ValueError("Unsupported file without extension.")
 
@@ -94,9 +94,9 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         self.download_dir = download_path
         self.download_filepath = (download_path / self.file_name).resolve()
-        oname = f"{self.file_name[:-len(self.ext)]}.json"
+        output_filename = output_filename = self.file_name + ".json"
         self.output_dir = output_path
-        self.output_filepath = (output_path / oname).resolve()
+        self.output_filepath = (output_path / output_filename).resolve()
 
     @property
     def filename(self):
