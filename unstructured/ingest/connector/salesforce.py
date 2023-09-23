@@ -36,8 +36,9 @@ class MissingCategoryError(Exception):
     """There are no categories with that name."""
 
 
-ACCEPTED_CATEGORIES = ["Account", "Case", "Campaign", "EmailMessage", "Lead"]
+SALESFORCE_API_VERSION = "57.0"
 
+ACCEPTED_CATEGORIES = ["Account", "Case", "Campaign", "EmailMessage", "Lead"]
 
 EMAIL_TEMPLATE = Template(
     """MIME-Version: 1.0
@@ -76,6 +77,7 @@ class SimpleSalesforceConfig(BaseConnectorConfig):
             username=self.username,
             consumer_key=self.consumer_key,
             privatekey_file=self.private_key_path,
+            version=SALESFORCE_API_VERSION,
         )
 
 
