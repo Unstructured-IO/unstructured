@@ -22,6 +22,8 @@ emoji==2.8.0
     # via -r requirements/base.in
 filetype==1.2.0
     # via -r requirements/base.in
+scarf @ https://packages.unstructured.io/scarf.tgz
+    # via -r requirements/base.in
 idna==3.4
     # via requests
 joblib==1.3.2
