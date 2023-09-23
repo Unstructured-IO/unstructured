@@ -25,7 +25,7 @@ Office365-REST-Python-Client<2.4.3
 # NOTE(trevor) `unstructured-inference` is set in extra-pdf-image.in to allow
 # unstructured-inference to be upgraded when unstructured library is upgraded
 # https://github.com/Unstructured-IO/unstructured/issues/1458
-# unstructured-inference
+unstructured-inference==0.5.31
 # NOTE(klaijan) - Moved pin from test.in
 # pinning to avoid error in argilla library
 pydantic<2
