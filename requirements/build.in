@@ -22,4 +22,4 @@ furo==2023.7.26
 certifi>=2022.12.07
 
 # NOTE(ronny) - Added to suppress Sphinx warnings
-myst-parser==2.0.0
+myst-parser
