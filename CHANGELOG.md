@@ -1,8 +1,9 @@
-## 0.10.17-dev3
+## 0.10.17-dev6
 
 ### Enhancements
 
 * **Adds data source properties to SharePoint, Outlook, Onedrive, Reddit, and Slack connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+* **Add functionality to save embedded images in PDF's separately as images** This allows users to save embedded images in PDF's separately as images, given some directory path. The saved image path is written to the metadata for the Image element. Downstream applications may benefit by providing users with image links from relevant "hits."
 
 ### Features
 
@@ -11,6 +12,7 @@
 ### Fixes
 
 * **Fixes a metadata source serialization bug** Problem: In unstructured elements, when loading an elements json file from the disk, the data_source attribute is assumed to be an instance of DataSourceMetadata and the code acts based on that. However the loader did not satisfy the assumption, and loaded it as a dict instead, causing an error. Fix: Added necessary code block to initialize a DataSourceMetadata object, also refactored DataSourceMetadata.from_dict() method to remove redundant code. Importance: Crucial to be able to load elements (which have data_source fields) from json files.
+* **Fixes issue where unstructured-inference was not getting updated** Problem: unstructured-inference was not getting upgraded to the version to match unstructured release when doing a pip install.  Solution: using `pip install unstructured[all-docs]` it will now upgrade both unstructured and unstructured-inference. Importance: This will ensure that the inference library is always in sync with the unstructured library, otherwise users will be using outdated libraries which will likely lead to unintended behavior.
 * **Fixes SharePoint connector failures if any document has an unsupported filetype** Problem: Currently the entire connector ingest run fails if a single IngestDoc has an unsupported filetype. This is because a ValueError is raised in the IngestDoc's `__post_init__`. Fix: Adds a try/catch when the IngestConnector runs get_ingest_docs such that the error is logged but all processable documents->IngestDocs are still instantiated and returned. Importance: Allows users to ingest SharePoint content even when some files with unsupported filetypes exist there.
 * **Fixes Sharepoint connector server_path issue** Problem: Server path for the Sharepoint Ingest Doc was incorrectly formatted, causing issues while fetching pages from the remote source. Fix: changes formatting of remote file path before instantiating SharepointIngestDocs and appends a '/' while fetching pages from the remote source. Importance: Allows users to fetch pages from Sharepoint Sites.
 
