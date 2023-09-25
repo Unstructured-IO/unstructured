@@ -1,34 +1,22 @@
 import os
 import tempfile
 from pathlib import PurePath
-from typing import Any, BinaryIO, Collection, List, Optional, Tuple, Union, cast
+from typing import BinaryIO, List, Optional, Union, cast
 
 import pdf2image
+import PIL
 import pytesseract
-from pdfminer.high_level import extract_pages
-from pdfminer.layout import LTContainer, LTImage
-from PIL import Image, ImageSequence
 from pytesseract import Output
-from scipy.sparse.csgraph import connected_components
 from unstructured_inference.inference.elements import (
-    EmbeddedTextRegion,
-    ImageTextRegion,
     Rectangle,
     TextRegion,
-    intersections,
+    partition_groups_from_regions,
 )
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
 )
 
-from unstructured.logger import logger
-
 SUBREGION_THRESHOLD_FOR_OCR = 0.5
-ELEMENTS_V_PADDING_COEF = 0.3
-ELEMENTS_H_PADDING_COEF = 0.4
-LAYOUT_SAME_REGION_THRESHOLD = 0.75
-LAYOUT_SUBREGION_THRESHOLD = 0.75
-FULL_PAGE_REGION_THRESHOLD = 0.99
 
 
 def process_data_with_ocr(
@@ -40,13 +28,13 @@ def process_data_with_ocr(
     with tempfile.NamedTemporaryFile() as tmp_file:
         tmp_file.write(data.read())
         tmp_file.flush()  #
-        ocr_layouts, extracted_layouts = process_file_with_ocr(
+        ocr_layouts = process_file_with_ocr(
             tmp_file.name,
             is_image=is_image,
             ocr_languages=ocr_languages,
             pdf_image_dpi=pdf_image_dpi,
         )
-        return ocr_layouts, extracted_layouts
+        return ocr_layouts
 
 
 def process_file_with_ocr(
@@ -56,12 +44,11 @@ def process_file_with_ocr(
     pdf_image_dpi: int = 200,
 ) -> List[List[TextRegion]]:
     if is_image:
-        logger.info(f"Reading image file: {filename} ...")
         try:
-            image = Image.open(filename)
+            image = PIL.Image.open(filename)
             format = image.format
             images = []
-            for im in ImageSequence.Iterator(image):
+            for im in PIL.ImageSequence.Iterator(image):
                 im = im.convert("RGB")
                 im.format = format
                 images.append(im)
@@ -70,138 +57,46 @@ def process_file_with_ocr(
                 raise e
             else:
                 raise FileNotFoundError(f'File "{filename}" not found!') from e
-        ocr_layouts = []
-        for image in images:
-            ocr_data = pytesseract.image_to_data(
-                image,
-                lang=ocr_languages,
-                output_type=Output.DICT,
-            )
-            ocr_layout = parse_ocr_data_tesseract(ocr_data)
-            ocr_layouts.append(ocr_layout)
-        return ocr_layouts, None
     else:
-        logger.info(f"Reading PDF for file: {filename} ...")
-        with tempfile.TemporaryDirectory() as temp_dir:
-            extracted_layouts, _image_paths = load_pdf(
-                filename,
-                pdf_image_dpi,
-                output_folder=temp_dir,
-                path_only=True,
-            )
-            image_paths = cast(List[str], _image_paths)
-            if len(extracted_layouts) > len(image_paths):
-                raise RuntimeError(
-                    "Some images were not loaded. "
-                    "Check that poppler is installed and in your $PATH.",
-                )
-            for i, image_path in enumerate(image_paths):
-                with Image.open(image_path) as image:
-                    ocr_data = pytesseract.image_to_data(
-                        image,
-                        lang=ocr_languages,
-                        output_type=Output.DICT,
-                    )
-                ocr_layout = parse_ocr_data_tesseract(ocr_data)
-                ocr_layouts.append(ocr_layout)
-        return ocr_layouts, extracted_layouts
+        # ocr PDF
+        ...
+    ocr_layouts = []
+    for image in images:
+        ocr_data = pytesseract.image_to_data(
+            image,
+            lang=ocr_languages,
+            output_type=Output.DICT,
+        )
+        ocr_layout = parse_ocr_data_tesseract(ocr_data)
+        ocr_layouts.append(ocr_layout)
+    return ocr_layouts
 
 
-def merge_layouts(infered_layouts, extracted_layouts, ocr_layouts):
-    merged_layouts = []
-    return merged_layouts
-
-
-def load_pdf(
+def load_images_from_pdf(
     filename: str,
     dpi: int = 200,
     output_folder: Optional[Union[str, PurePath]] = None,
     path_only: bool = False,
-) -> Tuple[List[List[TextRegion]], Union[List[Image.Image], List[str]]]:
-    """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
-    pdf pages using pdf2image"""
-
-    layouts = []
-    for page in extract_pages(filename):
-        layout: List[TextRegion] = []
-        height = page.height
-        for element in page:
-            x1, y2, x2, y1 = element.bbox
-            y1 = height - y1
-            y2 = height - y2
-            # Coefficient to rescale bounding box to be compatible with images
-            coef = dpi / 72
-
-            if hasattr(element, "get_text"):
-                _text = element.get_text()
-                element_class = EmbeddedTextRegion  # type: ignore
-            else:
-                embedded_images = get_images_from_pdf_element(element)
-                if len(embedded_images) > 0:
-                    _text = None
-                    element_class = ImageTextRegion  # type: ignore
-                else:
-                    continue
-
-            text_region = element_class(x1 * coef, y1 * coef, x2 * coef, y2 * coef, text=_text)
-
-            if text_region.area > 0:
-                layout.append(text_region)
-        layouts.append(layout)
-
+) -> Union[List[PIL.Image.Image], List[str]]:
+    """image renderings of the pdf pages using pdf2image""" ""
     if path_only and not output_folder:
         raise ValueError("output_folder must be specified if path_only is true")
 
     if output_folder is not None:
-        images = pdf2image.convert_from_path(
+        _image_paths = pdf2image.convert_from_path(
             filename,
             dpi=dpi,
             output_folder=output_folder,
             paths_only=path_only,
         )
     else:
-        images = pdf2image.convert_from_path(
+        _image_paths = pdf2image.convert_from_path(
             filename,
             dpi=dpi,
             paths_only=path_only,
         )
-
-    return layouts, images
-
-
-def get_images_from_pdf_element(layout_object: Any) -> List[LTImage]:
-    """
-    Recursively extracts LTImage objects from a PDF layout element.
-
-    This function takes a PDF layout element (could be LTImage or LTContainer) and recursively
-    extracts all LTImage objects contained within it.
-
-    Parameters:
-    - layout_object (Any): The PDF layout element to extract images from.
-
-    Returns:
-    - List[LTImage]: A list of LTImage objects extracted from the layout object.
-
-    Note:
-    - This function recursively traverses through the layout_object to find and accumulate all
-     LTImage objects.
-    - If the input layout_object is an LTImage, it will be included in the returned list.
-    - If the input layout_object is an LTContainer, the function will recursively search its
-     children for LTImage objects.
-    - If the input layout_object is neither LTImage nor LTContainer, an empty list will be
-     returned.
-    """
-
-    # recursively locate Image objects in layout_object
-    if isinstance(layout_object, LTImage):
-        return [layout_object]
-    if isinstance(layout_object, LTContainer):
-        img_list: List[LTImage] = []
-        for child in layout_object:
-            img_list = img_list + get_images_from_pdf_element(child)
-        return img_list
-    else:
-        return []
+    image_paths = cast(List[str], _image_paths)
+    return image_paths
 
 
 def parse_ocr_data_tesseract(ocr_data: dict) -> List[TextRegion]:
@@ -243,143 +138,6 @@ def parse_ocr_data_tesseract(ocr_data: dict) -> List[TextRegion]:
             text_regions.append(text_region)
 
     return text_regions
-
-
-def merge_inferred_layout_with_extracted_layout(
-    inferred_layout: Collection[LayoutElement],
-    extracted_layout: Collection[TextRegion],
-    page_image_size: tuple,
-    ocr_layout: Optional[List[TextRegion]] = None,
-    supplement_with_ocr_elements: bool = True,
-    same_region_threshold: float = LAYOUT_SAME_REGION_THRESHOLD,
-    subregion_threshold: float = LAYOUT_SUBREGION_THRESHOLD,
-) -> List[LayoutElement]:
-    """Merge two layouts to produce a single layout."""
-    extracted_elements_to_add: List[TextRegion] = []
-    inferred_regions_to_remove = []
-    w, h = page_image_size
-    full_page_region = Rectangle(0, 0, w, h)
-    for extracted_region in extracted_layout:
-        extracted_is_image = isinstance(extracted_region, ImageTextRegion)
-        if extracted_is_image:
-            # Skip extracted images for this purpose, we don't have the text from them and they
-            # don't provide good text bounding boxes.
-
-            is_full_page_image = region_bounding_boxes_are_almost_the_same(
-                extracted_region,
-                full_page_region,
-                FULL_PAGE_REGION_THRESHOLD,
-            )
-
-            if is_full_page_image:
-                continue
-        region_matched = False
-        for inferred_region in inferred_layout:
-            if inferred_region.intersects(extracted_region):
-                same_bbox = region_bounding_boxes_are_almost_the_same(
-                    inferred_region,
-                    extracted_region,
-                    same_region_threshold,
-                )
-                inferred_is_subregion_of_extracted = inferred_region.is_almost_subregion_of(
-                    extracted_region,
-                    subregion_threshold=subregion_threshold,
-                )
-                inferred_is_text = inferred_region.type not in (
-                    "Figure",
-                    "Image",
-                    "PageBreak",
-                    "Table",
-                )
-                extracted_is_subregion_of_inferred = extracted_region.is_almost_subregion_of(
-                    inferred_region,
-                    subregion_threshold=subregion_threshold,
-                )
-                either_region_is_subregion_of_other = (
-                    inferred_is_subregion_of_extracted or extracted_is_subregion_of_inferred
-                )
-                if same_bbox:
-                    # Looks like these represent the same region
-                    grow_region_to_match_region(inferred_region, extracted_region)
-                    inferred_region.text = extracted_region.text
-                    region_matched = True
-                elif extracted_is_subregion_of_inferred and inferred_is_text and extracted_is_image:
-                    grow_region_to_match_region(inferred_region, extracted_region)
-                    region_matched = True
-                elif either_region_is_subregion_of_other and inferred_region.type != "Table":
-                    inferred_regions_to_remove.append(inferred_region)
-        if not region_matched:
-            extracted_elements_to_add.append(extracted_region)
-    # Need to classify the extracted layout elements we're keeping.
-    categorized_extracted_elements_to_add = [
-        LayoutElement(
-            el.x1,
-            el.y1,
-            el.x2,
-            el.y2,
-            text=el.text,
-            type="Image" if isinstance(el, ImageTextRegion) else "UncategorizedText",
-            source=el.source,
-        )
-        for el in extracted_elements_to_add
-    ]
-    inferred_regions_to_add = [
-        region for region in inferred_layout if region not in inferred_regions_to_remove
-    ]
-    inferred_regions_to_add_without_text = [
-        region for region in inferred_regions_to_add if not region.text
-    ]
-    if ocr_layout is not None:
-        for inferred_region in inferred_regions_to_add_without_text:
-            inferred_region.text = aggregate_ocr_text_by_block(
-                ocr_layout,
-                inferred_region,
-                SUBREGION_THRESHOLD_FOR_OCR,
-            )
-        out_layout = categorized_extracted_elements_to_add + inferred_regions_to_add
-        final_layout = (
-            supplement_layout_with_ocr_elements(out_layout, ocr_layout)
-            if supplement_with_ocr_elements
-            else out_layout
-        )
-    else:
-        final_layout = categorized_extracted_elements_to_add + inferred_regions_to_add
-
-    return final_layout
-
-
-def region_bounding_boxes_are_almost_the_same(
-    region1: Rectangle,
-    region2: Rectangle,
-    same_region_threshold: float = 0.75,
-) -> bool:
-    """Returns whether bounding boxes are almost the same. This is determined by checking if the
-    intersection over union is above some threshold."""
-    return region1.intersection_over_union(region2) > same_region_threshold
-
-
-def grow_region_to_match_region(region_to_grow: Rectangle, region_to_match: Rectangle):
-    """Grows a region to the minimum size necessary to contain both regions."""
-    (new_x1, new_y1), _, (new_x2, new_y2), _ = minimal_containing_region(
-        region_to_grow,
-        region_to_match,
-    ).coordinates
-    region_to_grow.x1, region_to_grow.y1, region_to_grow.x2, region_to_grow.y2 = (
-        new_x1,
-        new_y1,
-        new_x2,
-        new_y2,
-    )
-
-
-def minimal_containing_region(*regions: Rectangle) -> Rectangle:
-    """Returns the smallest rectangular region that contains all regions passed"""
-    x1 = min(region.x1 for region in regions)
-    y1 = min(region.y1 for region in regions)
-    x2 = max(region.x2 for region in regions)
-    y2 = max(region.y2 for region in regions)
-
-    return Rectangle(x1, y1, x2, y2)
 
 
 def merge_inferred_layout_with_ocr_layout(
@@ -505,28 +263,6 @@ def get_elements_from_ocr_regions(ocr_regions: List[TextRegion]) -> List[LayoutE
         )
         for r in merged_regions
     ]
-
-
-def partition_groups_from_regions(regions: Collection[Rectangle]) -> List[List[Rectangle]]:
-    """Partitions regions into groups of regions based on proximity. Returns list of lists of
-    regions, each list corresponding with a group"""
-    if len(regions) == 0:
-        return []
-    padded_regions = [
-        r.vpad(r.height * ELEMENTS_V_PADDING_COEF).hpad(
-            r.height * ELEMENTS_H_PADDING_COEF,
-        )
-        for r in regions
-    ]
-
-    intersection_mtx = intersections(*padded_regions)
-
-    _, group_nums = connected_components(intersection_mtx)
-    groups: List[List[Rectangle]] = [[] for _ in range(max(group_nums) + 1)]
-    for region, group_num in zip(regions, group_nums):
-        groups[group_num].append(region)
-
-    return groups
 
 
 def merge_text_regions(regions: List[TextRegion]) -> TextRegion:
