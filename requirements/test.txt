@@ -97,7 +97,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-ruff==0.0.290
+ruff==0.0.291
     # via -r requirements/test.in
 six==1.16.0
     # via
@@ -113,7 +113,7 @@ types-click==7.1.8
     # via -r requirements/test.in
 types-markdown==3.4.2.10
     # via -r requirements/test.in
-types-requests==2.31.0.3
+types-requests==2.31.0.5
     # via -r requirements/test.in
 types-tabulate==0.9.0.3
     # via -r requirements/test.in
