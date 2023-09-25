@@ -429,3 +429,97 @@ def test_add_chunking_strategy_on_partition_docx(filename="example-docs/handbook
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_parse_category_depth_by_style():
+    partitioner = _DocxPartitioner(
+        "example-docs/category-level.docx",
+        None,
+        None,
+        False,
+        None,
+    )
+
+    # Remember that category depths are 0-indexed and relative to the category type
+    # Title, list item, bullet, narrative text, etc.
+    paragraph = partitioner._document.paragraphs[0]
+    assert "Some text before any heading" in paragraph.text
+    assert partitioner._parse_category_depth_by_style(paragraph) == 0
+
+    paragraph = partitioner._document.paragraphs[1]
+    assert "A Heading 1" in paragraph.text
+    assert partitioner._parse_category_depth_by_style(paragraph) == 0
+
+    paragraph = partitioner._document.paragraphs[2]
+    assert "Some text below the first heading" in paragraph.text
+    assert partitioner._parse_category_depth_by_style(paragraph) == 0
+
+    paragraph = partitioner._document.paragraphs[3]
+    assert "A top level list item" in paragraph.text
+    assert partitioner._parse_category_depth_by_style(paragraph) == 0
+
+    paragraph = partitioner._document.paragraphs[4]
+    assert "Next level" in paragraph.text
+    assert partitioner._parse_category_depth_by_style(paragraph) == 1
+
+    paragraph = partitioner._document.paragraphs[5]
+    assert "Same" in paragraph.text
+    assert partitioner._parse_category_depth_by_style(paragraph) == 1
+
+    paragraph = partitioner._document.paragraphs[6]
+    assert "Second top-level list item" in paragraph.text
+    assert partitioner._parse_category_depth_by_style(paragraph) == 0
+
+    paragraph = partitioner._document.paragraphs[7]
+    assert "Some narrative text" in paragraph.text
+    assert partitioner._parse_category_depth_by_style(paragraph) == 0
+
+    paragraph = partitioner._document.paragraphs[8]
+    assert "A Heading 2" in paragraph.text
+    assert partitioner._parse_category_depth_by_style(paragraph) == 1
+
+    paragraph = partitioner._document.paragraphs[9]
+    assert "Some text" in paragraph.text
+    assert partitioner._parse_category_depth_by_style(paragraph) == 0
+
+    paragraph = partitioner._document.paragraphs[10]
+    assert "Another Heading 1" in paragraph.text
+    assert partitioner._parse_category_depth_by_style(paragraph) == 0
+
+    paragraph = partitioner._document.paragraphs[11]
+    assert "And some narrative text" in paragraph.text
+    assert partitioner._parse_category_depth_by_style(paragraph) == 0
+
+def test_parse_category_depth_by_style_name():
+    
+    partitioner = _DocxPartitioner(
+        None,
+        None,
+        None,
+        False,
+        None,
+    )
+    assert partitioner._parse_category_depth_by_style_name("Heading 1") == 0
+    assert partitioner._parse_category_depth_by_style_name("Heading 2") == 1
+    assert partitioner._parse_category_depth_by_style_name("Heading 3") == 2
+    assert partitioner._parse_category_depth_by_style_name("Subtitle") == 1
+    assert partitioner._parse_category_depth_by_style_name("List") == 0
+    assert partitioner._parse_category_depth_by_style_name("List 2") == 1
+    assert partitioner._parse_category_depth_by_style_name("List 3") == 2
+    assert partitioner._parse_category_depth_by_style_name("List Bullet") == 0
+    assert partitioner._parse_category_depth_by_style_name("List Bullet 2") == 1
+    assert partitioner._parse_category_depth_by_style_name("List Bullet 3") == 2
+    assert partitioner._parse_category_depth_by_style_name("List Number") == 0
+    assert partitioner._parse_category_depth_by_style_name("List Number 2") == 1
+    assert partitioner._parse_category_depth_by_style_name("List Number 3") == 2
+
+def test_parse_category_depth_by_style_ilvl():
+
+    partitioner = _DocxPartitioner(
+        None,
+        None,
+        None,
+        False,
+        None,
+    )
+    assert partitioner._parse_category_depth_by_style_ilvl() == 0
