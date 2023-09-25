@@ -37,7 +37,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Id: 701Hu000001eX9FIAU"
   },
@@ -65,7 +68,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Name: User Conference - Jun 17-19, 2002"
   },
@@ -93,7 +99,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Type: Conference"
   },
@@ -107,7 +116,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Status: Planned"
   },
@@ -121,7 +133,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "StartDate: 2023-07-09"
   },
@@ -135,7 +150,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "EndDate: 2023-07-11"
   },
@@ -163,7 +181,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "BudgetedCost: 100000.0"
   },
@@ -177,7 +198,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "ActualCost: None"
   },
@@ -233,7 +257,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Description: None"
   },
@@ -247,7 +274,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "NumberOfLeads: 0"
   },
@@ -261,7 +291,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "NumberOfConvertedLeads: 0"
   },
