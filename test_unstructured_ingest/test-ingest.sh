@@ -30,7 +30,8 @@ scripts=(
 'test-ingest-confluence-diff.sh'
 'test-ingest-confluence-large.sh'
 'test-ingest-airtable-diff.sh'
-'test-ingest-airtable-large.sh'
+# NOTE(ryan): This test is disabled because it is triggering too many requests to the API
+# 'test-ingest-airtable-large.sh'
 'test-ingest-local-single-file.sh'
 'test-ingest-local-single-file-with-encoding.sh'
 'test-ingest-local-single-file-with-pdf-infer-table-structure.sh'
