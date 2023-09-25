@@ -8,7 +8,7 @@ from unstructured.ingest.runner.utils import update_download_dir_hash
 from unstructured.ingest.runner.writers import writer_map
 
 
-class Sharepoint(Runner):
+class SharePoint(Runner):
     def run(
         self,
         site: str,

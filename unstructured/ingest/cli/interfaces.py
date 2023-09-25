@@ -194,8 +194,6 @@ class CliEmbeddingsConfig(EmbeddingConfig, CliMixin):
             click.Option(
                 ["--embedding-api-key"],
                 help="openai api key",
-                envvar="OPENAI_API_KEY",
-                show_envvar=True,
             ),
             click.Option(
                 ["--embedding-model-name"],
@@ -212,6 +210,11 @@ class CliEmbeddingsConfig(EmbeddingConfig, CliMixin):
         *,
         infer_missing=False,
     ):
+        """
+        Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
+        This allows CLI arguments to be prepended with embedding_ during CLI invocation but
+        doesn't require that as part of the field names in this class
+        """
         if isinstance(kvs, dict):
             new_kvs = {
                 k[len("embedding-") :]: v  # noqa: E203
