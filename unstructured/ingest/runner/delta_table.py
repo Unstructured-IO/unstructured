@@ -19,6 +19,7 @@ def delta_table(
     storage_options: t.Optional[str] = None,
     without_files: bool = False,
     columns: t.Optional[t.List[str]] = None,
+    exit_on_error: bool = False,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,
@@ -67,4 +68,5 @@ def delta_table(
         partition_config=partition_config,
         verbose=verbose,
         dest_doc_connector=dest_doc_connector,
+        exit_on_error=exit_on_error,
     )

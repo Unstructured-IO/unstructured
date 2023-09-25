@@ -29,7 +29,11 @@ def initialize():
     get_model(os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME"))
 
 
-def process_document(ingest_doc_json: str, **partition_kwargs) -> Optional[List[Dict[str, Any]]]:
+def process_document(
+    ingest_doc_json: str,
+    exit_on_error: bool = False,
+    **partition_kwargs,
+) -> Optional[List[Dict[str, Any]]]:
     """Process the serialized json for any IngestDoc-like class of document with chosen
     Unstructured partition logic.
 
@@ -62,8 +66,11 @@ def process_document(ingest_doc_json: str, **partition_kwargs) -> Optional[List[
         doc.write_result()
     except Exception:
         # TODO(crag) save the exception instead of print?
+        if exit_on_error:
+            logger.error(f"Failed to process {doc}")
+            raise Exception
         logger.error(f"Failed to process {doc}", exc_info=True)
     finally:
         if doc:
             doc.cleanup_file()
-        return isd_elems_no_filename
+    return isd_elems_no_filename

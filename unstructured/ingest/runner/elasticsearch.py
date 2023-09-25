@@ -16,6 +16,7 @@ def elasticsearch(
     url: str,
     index_name: str,
     jq_query: t.Optional[str],
+    exit_on_error: bool = False,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,
@@ -62,4 +63,5 @@ def elasticsearch(
         partition_config=partition_config,
         verbose=verbose,
         dest_doc_connector=dest_doc_connector,
+        exit_on_error=exit_on_error,
     )

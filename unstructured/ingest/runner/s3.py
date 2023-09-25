@@ -15,6 +15,7 @@ def s3(
     remote_url: str,
     recursive: bool,
     anonymous: bool,
+    exit_on_error: bool = False,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,
@@ -51,4 +52,5 @@ def s3(
         partition_config=partition_config,
         verbose=verbose,
         dest_doc_connector=dest_doc_connector,
+        exit_on_error=exit_on_error,
     )

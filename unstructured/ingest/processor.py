@@ -105,9 +105,11 @@ def process_documents(
     partition_config: PartitionConfig,
     verbose: bool,
     dest_doc_connector: t.Optional[BaseDestinationConnector] = None,
+    exit_on_error: bool = False,
 ) -> None:
     process_document_with_partition_args = partial(
         process_document,
+        exit_on_error=exit_on_error,
         strategy=partition_config.strategy,
         ocr_languages=partition_config.ocr_languages,
         encoding=partition_config.encoding,

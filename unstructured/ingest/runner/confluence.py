@@ -19,6 +19,7 @@ def confluence(
     max_num_of_spaces: int,
     max_num_of_docs_from_each_space: int,
     spaces: t.Optional[t.List[str]] = None,
+    exit_on_error: bool = False,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,
@@ -67,4 +68,5 @@ def confluence(
         partition_config=partition_config,
         verbose=verbose,
         dest_doc_connector=dest_doc_connector,
+        exit_on_error=exit_on_error,
     )

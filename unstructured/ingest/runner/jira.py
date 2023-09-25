@@ -19,6 +19,7 @@ def jira(
     projects: t.Optional[t.List[str]],
     boards: t.Optional[t.List[str]],
     issues: t.Optional[t.List[str]],
+    exit_on_error: bool = False,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,
@@ -69,4 +70,5 @@ def jira(
         partition_config=partition_config,
         verbose=verbose,
         dest_doc_connector=dest_doc_connector,
+        exit_on_error=exit_on_error,
     )

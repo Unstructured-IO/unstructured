@@ -17,6 +17,7 @@ def wikipedia(
     auto_suggest: bool,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
+    exit_on_error: bool = False,
     **kwargs,
 ):
     writer_kwargs = writer_kwargs if writer_kwargs else {}
@@ -58,4 +59,5 @@ def wikipedia(
         partition_config=partition_config,
         verbose=verbose,
         dest_doc_connector=dest_doc_connector,
+        exit_on_error=exit_on_error,
     )

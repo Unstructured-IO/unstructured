@@ -16,6 +16,7 @@ from unstructured.ingest.cli.interfaces import (
     CliMixin,
     CliPartitionConfig,
     CliReadConfig,
+    CommonSourceCliConfig,
 )
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
@@ -93,5 +94,5 @@ def get_source_cmd() -> click.Group:
     # Common CLI configs
     CliReadConfig.add_cli_options(cmd)
     CliPartitionConfig.add_cli_options(cmd)
-    cmd.params.append(click.Option(["-v", "--verbose"], is_flag=True, default=False))
+    CommonSourceCliConfig.add_cli_options(cmd)
     return cmd

@@ -13,6 +13,29 @@ class CliMixin:
         pass
 
 
+class CommonSourceCliConfig(BaseConfig, CliMixin):
+    verbose: bool
+    exit_on_error: bool
+
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["-v", "--verbose"],
+                is_flag=True,
+                default=False,
+            ),
+            click.Option(
+                ["--exit-on-error"],
+                is_flag=True,
+                default=False,
+                help="If any of the docs being processed have an error, "
+                "exit with the appropriate exit code",
+            ),
+        ]
+        cmd.params.extend(options)
+
+
 class CliReadConfig(ReadConfig, CliMixin):
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:
