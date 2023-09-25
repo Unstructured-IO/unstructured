@@ -16,6 +16,7 @@ from unstructured.ingest.cli.interfaces import (
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import runner_map
+from unstructured.ingest.runner.base_runner import Runner
 
 
 @dataclass
@@ -62,7 +63,6 @@ def azure_cognitive_search_dest(ctx: click.Context, **options):
     if not ctx.parent.info_name:
         raise click.ClickException("parent command missing info name")
     source_cmd = ctx.parent.info_name.replace("-", "_")
-    runner_cls = runner_map[source_cmd]
     parent_options: dict = ctx.parent.params if ctx.parent else {}
     conform_click_options(options)
     conform_click_options(parent_options)
@@ -76,16 +76,28 @@ def azure_cognitive_search_dest(ctx: click.Context, **options):
         embedding_config = CliEmbeddingsConfig.from_dict(parent_options)
         # Run for schema validation
         AzureCognitiveSearchCliWriteConfig.from_dict(options)
-        runner = runner_cls(
-            read_config=read_config,
-            partition_config=partition_config,
-            writer_type="azure_cognitive_search",
-            writer_kwargs=options,
-            embedding_config=embedding_config,
-        )
-        runner.run(
-            **parent_options,
-        )
+        runner = runner_map[source_cmd]
+        # TODO update all other runners to implement base runner class
+        if isinstance(runner, Runner):
+            runner_instance = runner(
+                read_config=read_config,
+                partition_config=partition_config,
+                writer_type="azure_cognitive_search",
+                writer_kwargs=options,
+                embedding_config=embedding_config,
+            )
+            runner_instance.run(
+                **parent_options,
+            )
+        else:
+            runner(
+                read_config=read_config,
+                partition_config=partition_config,
+                writer_type="s3",
+                writer_kwargs=options,
+                **parent_options,
+            )
+
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
