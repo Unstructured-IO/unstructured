@@ -190,19 +190,19 @@ def test_element_to_dict():
 
 
 def test_metadata_from_dict_extra_fields():
-    '''
+    """
     Assert that the metadata classes ignore nonexistent fields.
     This can be an issue when elements_from_json gets a schema
     from the future.
-    '''
+    """
     element_metadata = {
-        'new_field': 'hello',
+        "new_field": "hello",
         "data_source": {
             "new_field": "world",
         },
         "coordinates": {
-            "new_field": "foo"
-        }
+            "new_field": "foo",
+        },
     }
 
     metadata = ElementMetadata.from_dict(element_metadata)
