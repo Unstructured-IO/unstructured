@@ -4,7 +4,7 @@ set -e
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
-OUTPUT_FOLDER_NAME=s3-azure-dest
+OUTPUT_FOLDER_NAME=s3-azure-cog-search-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 DESTINATION_INDEX="utic-test-ingest-fixtures-output-$(date +%s)"
@@ -40,7 +40,7 @@ trap cleanup EXIT
 echo "Creating index $DESTINATION_INDEX"
 response_code=$(curl -s -o /dev/null -w "%{http_code}" -X PUT \
 "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
---header "api-key: JV1LDVRivKEY9J9rHBQqQeTvaGoYbD670RWRaANxaTAzSeDy8Eon" \
+--header "api-key: $AZURE_SEARCH_API_KEY" \
 --header 'content-type: application/json' \
 --data "@$SCRIPT_DIR/files/azure_cognitive_index_schema.json")
 
@@ -68,31 +68,32 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --index "$DESTINATION_INDEX"
 
 
-
-docs_count=0
+# It can take some time for the index to catch up with the content that was written, this check between 10s sleeps
+# to give it that time process the writes. Will timeout after checking for a minute.
+docs_count_remote=0
 attempt=1
-while [ "$docs_count" -eq 0 ] && [ "$attempt" -lt 6 ]; do
+while [ "$docs_count_remote" -eq 0 ] && [ "$attempt" -lt 6 ]; do
   echo "attempt $attempt: sleeping 10 seconds to let index finish catching up after writes"
   sleep 10
 
   # Check the contents of the index
-  docs_count=$(curl "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX/docs/\$count?api-version=$API_VERSION" \
+  docs_count_remote=$(curl "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX/docs/\$count?api-version=$API_VERSION" \
     --header "api-key: $AZURE_SEARCH_API_KEY" \
     --header 'content-type: application/json' | jq)
 
-  echo "docs count pulled from Azure: $docs_count"
+  echo "docs count pulled from Azure: $docs_count_remote"
 
   attempt=$((attempt+1))
 done
 
 
-expected_docs_count=0
+docs_count_local=0
 for i in $(jq length "$OUTPUT_DIR"/**/*.json); do
-  expected_docs_count=$((expected_docs_count+i));
+  docs_count_local=$((docs_count_local+i));
 done
 
 
-if [ "$docs_count" -ne "$expected_docs_count" ];then
-  echo "Number of docs $docs_count doesn't match the expected docs: $expected_docs_count"
+if [ "$docs_count_remote" -ne "$docs_count_local" ];then
+  echo "Number of docs in Azure $docs_count_remote doesn't match the expected docs: $docs_count_local"
   exit 1
 fi
