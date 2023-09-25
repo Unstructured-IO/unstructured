@@ -8,7 +8,7 @@ import pdf2image
 import PIL
 from pdfminer.pdfpage import PDFPage
 from pdfminer.high_level import extract_pages
-from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox, LAParams
+from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox, LAParams, LTTextContainer
 from pdfminer.utils import open_filename
 from pdfminer.converter import PDFResourceManager, PDFPageAggregator
 from pdfminer.pdfinterp import PDFPageInterpreter
@@ -55,6 +55,8 @@ from unstructured.partition.utils.sorting import (
     sort_page_elements,
 )
 from unstructured.utils import requires_dependencies
+
+from lxml import etree
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
@@ -438,6 +440,7 @@ def _process_pdfminer_pages(
     filename: str = "",
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
+    root = etree.Element('pdf_data'),
     **kwargs,
 ):
     """Uses PDF miner to split a document into pages and process them."""
@@ -468,7 +471,8 @@ def _process_pdfminer_pages(
 
         for obj in page_layout:
 
-            x1, y2, x2, y1 = rect_to_bbox(obj.bbox, height)
+            x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
+            bbox = (x1, y1, x2, y2)
 
             if hasattr(obj, "get_text"):
                 _text_snippets = [obj.get_text()]
@@ -480,6 +484,11 @@ def _process_pdfminer_pages(
                 _text = clean_extra_whitespace(_text)
                 if _text.strip():
                     text_segments.append(_text)
+
+                    # annotations_within_element, annotation_list = check_annotations_within_element(annotation_list, bbox, i+1)
+
+                    # extract_text_from_bbox()
+
                     points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
                     element = element_from_text(
                         _text,
@@ -552,10 +561,7 @@ def _process_pdfminer_pages(
 
         if include_page_breaks:
             elements.append(PageBreak(text=""))
-    # breakpoint()
-
-    # check_coords_within_boundary(annotation_list[0]['coordinates'], elements[0].metadata.coordinates, 0.05, 0.05)
-
+    
     return elements
 
 
@@ -782,7 +788,7 @@ def get_uris_from_annots(annots, annotation_list, height, coordinate_system, pag
         annotation_dict = try_resolve(annotation)
         if str(annotation_dict["Subtype"]) != "/'Link'" or "A" not in annotation_dict:
             continue
-        x1, y2, x2, y1 = rect_to_bbox(annotation_dict["Rect"], height)
+        x1, y1, x2, y2 = rect_to_bbox(annotation_dict["Rect"], height)
         uri_dict = try_resolve(annotation_dict["A"])
         uri_type = str(uri_dict["S"])
 
@@ -801,7 +807,7 @@ def get_uris_from_annots(annots, annotation_list, height, coordinate_system, pag
             system=coordinate_system,
         )
         
-        annotation_list.append({"coordinates": coordinates_metadata, "type": uri_type, "uri": uri, "page_number": page_number})
+        annotation_list.append({"coordinates": coordinates_metadata, "bbox": (x1, y1, x2, y2), "type": uri_type, "uri": uri, "page_number": page_number})
 
 
 def try_resolve(annot):
@@ -815,27 +821,46 @@ def rect_to_bbox(rect, height):
     x1, y2, x2, y1 = rect
     y1 = height - y1
     y2 = height - y2
-    return (x1, y2, x2, y1)
+    return (x1, y1, x2, y2)
 
-"""
-points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
 
-points=(
-    (72.0, 72.69200000000001), 
-    (72.0, 107.69200000000001), 
-    (201.822, 107.69200000000001), 
-    (201.822, 72.69200000000001)
+def calculate_intersection_area(bbox1, bbox2):
+    # Bounding box format: (x1, y1, x2, y2)
+    x1_1, y1_1, x2_1, y2_1 = bbox1
+    x1_2, y1_2, x2_2, y2_2 = bbox2
 
-points=(
-    (124.9688, 72), 
-    (124.9688, 83.6875), 
-    (141.6875, 83.6875), 
-    (141.6875, 72))
-points=(
-    (124.9688, 84), 
-    (124.9688, 95.6875), 
-    (151.0625, 95.6875), 
-    (151.0625, 84))
+    # Calculate the coordinates of the intersection rectangle
+    x_intersection = max(x1_1, x1_2)
+    y_intersection = max(y1_1, y1_2)
+    x2_intersection = min(x2_1, x2_2)
+    y2_intersection = min(y2_1, y2_2)
 
-https://stackoverflow.com/questions/63170120/how-can-i-extract-text-fragments-from-pdf-with-their-coordinates-in-python
-"""
+    # Check for non-negative width and height (no intersection if negative)
+    if x_intersection < x2_intersection and y_intersection < y2_intersection:
+        # intersection_area = (x2_intersection - x_intersection) * (y2_intersection - y_intersection)
+        intersection_area = calculate_bbox_area((x_intersection, y_intersection, x2_intersection, y2_intersection))
+        return intersection_area
+    else:
+        # No intersection
+        return 0.0
+
+
+def calculate_bbox_area(bbox):
+    x1, y1, x2, y2 = bbox
+    area = (x2 - x1) * (y2 - y1)
+    return area
+
+
+def check_annotations_within_element(annotation_list, element_bbox, page_number, threshold=0.95):
+    # check elements in the page
+    annotations_within_element = []
+    for annotation in annotation_list:
+        if annotation['page_number'] == page_number:
+            if calculate_intersection_area(element_bbox, annotation['bbox']) / calculate_bbox_area(annotation['bbox']) > threshold:
+                annotations_within_element.append(annotation)
+                annotation_list.pop()
+    return annotations_within_element, annotation_list
+
+
+def extract_text_from_bbox(page, page_number):
+    page_element = etree.SubElement(root, 'page', number=str(page_number))
