@@ -308,10 +308,12 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
             version = self.parsed_fields["versions"][-1].get("id")
         self.source_metadata = SourceMetadata(
             date_created=datetime.strptime(
-                self.parsed_fields["created"], "%Y-%m-%dT%H:%M:%S.%f%z"
+                self.parsed_fields["created"],
+                "%Y-%m-%dT%H:%M:%S.%f%z",
             ).isoformat(),
             date_modified=datetime.strptime(
-                self.parsed_fields["updated"], "%Y-%m-%dT%H:%M:%S.%f%z"
+                self.parsed_fields["updated"],
+                "%Y-%m-%dT%H:%M:%S.%f%z",
             ).isoformat(),
             version=version,
             source_url=f"{self.connector_config.url}/browse/{self.file_meta.issue_key}",
