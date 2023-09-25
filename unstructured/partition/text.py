@@ -1,7 +1,7 @@
 import copy
 import re
 import textwrap
-from typing import IO, Callable, List, Optional, Tuple
+from typing import IO, Any, Callable, List, Optional, Tuple
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -47,7 +47,7 @@ def split_by_paragraph(
 ) -> List[str]:
     paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
 
-    split_paragraphs = []
+    split_paragraphs: List[str] = []
     for paragraph in paragraphs:
         split_paragraphs.extend(
             split_content_to_fit_max(
@@ -100,7 +100,7 @@ def split_content_to_fit_max(
     """Splits a paragraph or section of content so that all of the elements fit into the
     max partition window."""
     sentences = sent_tokenize(content)
-    chunks = []
+    chunks: List[str] = []
     tmp_chunk = ""
     for sentence in sentences:
         if max_partition is not None and len(sentence) > max_partition:
@@ -136,8 +136,8 @@ def combine_paragraphs_less_than_min(
     max_possible_partition = len(" ".join(split_paragraphs))
     max_partition = max_partition or max_possible_partition
 
-    combined_paras = []
-    combined_idxs = []
+    combined_paras: List[str] = []
+    combined_idxs: List[int] = []
     for i, para in enumerate(split_paragraphs):
         if i in combined_idxs:
             continue
@@ -222,6 +222,7 @@ def partition_text(
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
+    file_text = ""
 
     last_modification_date = None
     if filename is not None:

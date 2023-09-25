@@ -221,7 +221,7 @@ def blank_line_grouper(
 
 def auto_paragraph_grouper(
     text: str,
-    line_split: re.Pattern = LINE_BREAK_RE,
+    line_split: re.Pattern[str] = LINE_BREAK_RE,
     max_line_count: int = 2000,
     threshold: float = 0.1,
 ) -> str:
