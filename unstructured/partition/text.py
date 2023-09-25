@@ -175,7 +175,7 @@ def partition_text(
     chunking_strategy: Optional[str] = None,
     detect_language_per_element: bool = False,
     detection_origin: Optional[str] = "text",
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.
     If paragraphs are below "min_partition" or above "max_partition" boundaries,
