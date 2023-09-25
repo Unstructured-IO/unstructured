@@ -1,3 +1,5 @@
+import typing as t
+
 from .airtable import airtable
 from .azure import azure
 from .biomed import biomed
@@ -23,6 +25,35 @@ from .salesforce import salesforce
 from .sharepoint import sharepoint
 from .slack import slack
 from .wikipedia import wikipedia
+
+runner_map: t.Dict[str, t.Callable] = {
+    "airtable": airtable,
+    "azure": azure,
+    "biomed": biomed,
+    "box": box,
+    "confluence": confluence,
+    "delta_table": delta_table,
+    "discord": discord,
+    "dropbox": dropbox,
+    "elasticsearch": elasticsearch,
+    "fsspec": fsspec,
+    "gcs": gcs,
+    "github": github,
+    "gitlab": gitlab,
+    "gdrive": gdrive,
+    "google_drive": gdrive,
+    "jira": jira,
+    "local": local,
+    "notion": notion,
+    "onedrive": onedrive,
+    "outlook": outlook,
+    "reddit": reddit,
+    "s3": s3,
+    "salesforce": salesforce,
+    "sharepoint": sharepoint,
+    "slack": slack,
+    "wikipedia": wikipedia,
+}
 
 __all__ = [
     "airtable",
@@ -50,4 +81,5 @@ __all__ = [
     "sharepoint",
     "slack",
     "wikipedia",
+    "runner_map",
 ]
