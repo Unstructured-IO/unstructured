@@ -4,7 +4,10 @@
     "element_id": "697cb5681a4f17c6cb712dfce64ae2d1",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Id: 701Hu000001eX9HIAU"
   },
@@ -13,7 +16,10 @@
     "element_id": "37c6c6fcf92fd42c703ad967a4691a32",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Name: International Electrical Engineers Association Trade Show - Mar 4-5, 2002"
   },
@@ -22,7 +28,10 @@
     "element_id": "a4b5a79024228eb84bcefe4bfe8bce47",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Type: Trade Show"
   },
@@ -31,7 +40,10 @@
     "element_id": "b537e10ee8e78ec7a18792eaa76ce0e4",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Status: Planned"
   },
@@ -40,7 +52,10 @@
     "element_id": "5d68899808565a0eb340e7ce9a42c981",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "StartDate: 2023-03-26"
   },
@@ -49,7 +64,10 @@
     "element_id": "eb23b79d3e286bef615fa4bf7bbe6c6d",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "EndDate: 2023-03-27"
   },
@@ -58,7 +76,10 @@
     "element_id": "2bb64865cdfea5db0f000dde162fc372",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "BudgetedCost: 50000.0"
   },
@@ -67,7 +88,10 @@
     "element_id": "754630afa9bba639e59a8a80785f2766",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "ActualCost: None"
   },
@@ -76,7 +100,10 @@
     "element_id": "8750ec1f6f59b282d104b919c7ffab0f",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Description: None"
   },
@@ -85,7 +112,10 @@
     "element_id": "54e16b100bf2118d4c7c18c3f93e2223",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "NumberOfLeads: 0"
   },
@@ -94,7 +124,10 @@
     "element_id": "db1ed63f2ed83e51f75619047c417e49",
     "metadata": {
       "data_source": {},
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "NumberOfConvertedLeads: 0"
   }

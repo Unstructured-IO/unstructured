@@ -10,6 +10,16 @@
     "text": "Data in Brief 22 (2019) 484–487"
   },
   {
+    "type": "Image",
+    "element_id": "70d50409ea726a2789ebbd004bec31f4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Contents lists available at ScienceDirect Data in Brief journal homepage: www.elsevier.com/locate/dib"
+  },
+  {
     "type": "NarrativeText",
     "element_id": "b0658ce9dccc0acba9a472c2bb992cc9",
     "metadata": {
@@ -28,16 +38,6 @@
       "page_number": 1
     },
     "text": "Data in Brief"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "9234133787d0a6b3976b16569c0b5cf3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "journal homepage: www.elsevier.com/locate/dib"
   },
   {
     "type": "Title",
