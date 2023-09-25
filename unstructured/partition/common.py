@@ -31,6 +31,7 @@ from unstructured.documents.elements import (
     ListItem,
     PageBreak,
     Text,
+    Title,
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
@@ -555,7 +556,6 @@ def document_to_element_list(
                 infer_list_items=infer_list_items,
                 source_format=source_format if source_format else "html",
             )
-
             if isinstance(element, List):
                 for el in element:
                     if last_modification_date:
@@ -569,6 +569,12 @@ def document_to_element_list(
                 element.metadata.text_as_html = (
                     layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
                 )
+                if (isinstance(element, Title) and not element.metadata.category_depth) and any(
+                    el.metadata.category_depth is not None
+                    for el in page.elements
+                    if isinstance(el, Title)
+                ):
+                    element.metadata.category_depth = 0
                 page_elements.append(element)
             coordinates = (
                 element.metadata.coordinates.points if element.metadata.coordinates else None
