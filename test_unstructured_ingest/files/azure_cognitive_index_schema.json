@@ -18,7 +18,7 @@
     {
       "name": "embeddings",
       "type": "Collection(Edm.Single)",
-      "dimensions": 400,
+      "dimensions": 1536,
       "vectorSearchConfiguration": "embeddings-config"
     },
     {
@@ -111,6 +111,10 @@
         },
         {
           "name": "page_number",
+          "type": "Edm.String"
+        },
+        {
+          "name": "page_name",
           "type": "Edm.String"
         },
         {

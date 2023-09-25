@@ -5,12 +5,14 @@ from html import unescape
 from pathlib import Path
 from urllib.parse import urlparse
 
+from unstructured.embed.interfaces import BaseEmbeddingEncoder
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSourceConnector,
+    EmbeddingConfig,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
     SourceMetadata,
@@ -66,6 +68,13 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     is_page: bool
     file_path: str
     registry_name: str = "sharepoint"
+    embedding_config: t.Optional[EmbeddingConfig] = None
+
+    @property
+    def embedder(self) -> t.Optional[BaseEmbeddingEncoder]:
+        if self.embedding_config and self.embedding_config.api_key:
+            return self.embedding_config.get_embedder()
+        return None
 
     def __post_init__(self):
         self.extension = Path(self.file_path).suffix if not self.is_page else ".html"
@@ -234,6 +243,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 @dataclass
 class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleSharepointConfig
+    embedding_config: t.Optional[EmbeddingConfig] = None
 
     @requires_dependencies(["office365"], extras="sharepoint")
     def _list_files(self, folder, recursive) -> t.List["File"]:
@@ -265,13 +275,14 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
             file_path = obj.serverRelativeUrl[1:]
 
         return SharepointIngestDoc(
-            self.read_config,
-            self.partition_config,
-            self.connector_config,
-            base_url,
-            server_path,
-            is_page,
-            file_path,
+            read_config=self.read_config,
+            partition_config=self.partition_config,
+            connector_config=self.connector_config,
+            site_url=base_url,
+            server_path=server_path,
+            is_page=is_page,
+            file_path=file_path,
+            embedding_config=self.embedding_config,
         )
 
     @requires_dependencies(["office365"], extras="sharepoint")
