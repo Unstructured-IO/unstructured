@@ -29,7 +29,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   pyairtable
-typing-extensions==4.7.1
+typing-extensions==4.8.0
     # via
     #   -c requirements/base.txt
     #   pyairtable
