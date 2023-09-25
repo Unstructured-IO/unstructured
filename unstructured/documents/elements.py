@@ -398,14 +398,6 @@ class CheckBox(Element):
         return out
 
 
-class Formula(Element):
-    "An element containing formulas in a document"
-
-    category = "Formula"
-
-    pass
-
-
 class Text(Element):
     """Base element for capturing free text from within document."""
 
@@ -466,6 +458,14 @@ class Text(Element):
             raise ValueError("Cleaner produced a non-string output.")
 
         self.text = cleaned_text
+
+
+class Formula(Text):
+    "An element containing formulas in a document"
+
+    category = "Formula"
+
+    pass
 
 
 class CompositeElement(Text):
