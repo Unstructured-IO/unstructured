@@ -36,7 +36,7 @@ frozenlist==1.4.0
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2023.9.2
+fsspec==2023.9.1
     # via
     #   -r requirements/ingest-gcs.in
     #   gcsfs
