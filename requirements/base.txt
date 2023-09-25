@@ -44,6 +44,8 @@ regex==2023.8.8
     # via nltk
 requests==2.31.0
     # via -r requirements/base.in
+scarf @ https://packages.unstructured.io/scarf.tgz
+    # via -r requirements/base.in
 soupsieve==2.5
     # via beautifulsoup4
 tabulate==0.9.0
