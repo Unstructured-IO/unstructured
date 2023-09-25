@@ -4,6 +4,7 @@ import click
 
 from .airtable import get_source_cmd as airtable_src
 from .azure import get_source_cmd as azure_src
+from .azure_cognitive_search import get_dest_cmd as azure_cognitive_search_dest
 from .biomed import get_source_cmd as biomed_src
 from .box import get_source_cmd as box_src
 from .confluence import get_source_cmd as confluence_src
@@ -58,7 +59,7 @@ src: t.List[click.Group] = [
     wikipedia_src(),
 ]
 
-dest: t.List[click.Command] = [s3_dest(), delta_table_dest()]
+dest: t.List[click.Command] = [azure_cognitive_search_dest(), s3_dest(), delta_table_dest()]
 
 __all__ = [
     "src",

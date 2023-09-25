@@ -37,5 +37,5 @@ weaviate-client==3.23.2
 # Note(yuming) - pining to avoid conflict with paddle install
 matplotlib==3.7.2
 # NOTE(crag) - pin to available pandas for python 3.8 (at least in CI)
-pandas<2.1.1
 fsspec==2023.9.1
+pandas<2.0.4
