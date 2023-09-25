@@ -83,7 +83,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 docs_count=0
 attempt=1
-while [ $docs_count -eq 0 ] && [ $attempt -lt 6 ]; do
+while [ "$docs_count" -eq 0 ] && [ "$attempt" -lt 6 ]; do
   echo "attempt $attempt: sleeping 10 seconds to let index finish catching up after writes"
   sleep 10
 
