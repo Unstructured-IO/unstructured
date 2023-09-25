@@ -25,7 +25,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --output-dir "$OUTPUT_DIR" \
     --verbose \
     --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
-    --anonymous
+    --anonymous\
+    --exit-on-error
 
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

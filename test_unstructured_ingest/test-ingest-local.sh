@@ -19,6 +19,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --output-dir "$OUTPUT_DIR" \
     --verbose \
     --file-glob "*.html" \
-    --input-path example-docs
+    --input-path example-docs \
+    --exit-on-error
 
 "$SCRIPT_DIR"/check-num-files-output.sh 12 $OUTPUT_FOLDER_NAME

@@ -33,5 +33,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --user-pname "$MS_USER_PNAME" \
     --path '/utic-test-ingest-fixtures' \
     --recursive \
+    --exit-on-error
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

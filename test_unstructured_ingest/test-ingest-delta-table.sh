@@ -35,7 +35,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     delta-table \
     --write-column json_data \
-    --table-uri "$DESTINATION_TABLE"
+    --table-uri "$DESTINATION_TABLE" \
+    --exit-on-error
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
 

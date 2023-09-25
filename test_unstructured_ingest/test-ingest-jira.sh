@@ -52,7 +52,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --api-token "$JIRA_INGEST_API_TOKEN" \
         --projects "JCTP3" \
         --boards "1" \
-        --issues "JCTP2-4,JCTP2-7,JCTP2-8,10012,JCTP2-11"
+        --issues "JCTP2-4,JCTP2-7,JCTP2-8,10012,JCTP2-11" \
+        --exit-on-error
 
 
 

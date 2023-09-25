@@ -37,6 +37,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --url dcneiner/Downloadify \
     --git-file-glob '*.html,*.txt' \
-    $ACCESS_TOKEN_FLAGS
+    $ACCESS_TOKEN_FLAGS \
+    --exit-on-error
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

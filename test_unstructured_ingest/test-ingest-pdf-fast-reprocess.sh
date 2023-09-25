@@ -26,7 +26,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --file-glob "*.pdf" \
     --input-path "$INPUT_PATH" \
-    --recursive
+    --recursive \
+    --exit-on-error
 
 
 

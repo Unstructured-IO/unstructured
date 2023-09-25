@@ -31,5 +31,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --decay .3 \
     --max-request-time 30 \
     --max-retries 5 \
+    --exit-on-error
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

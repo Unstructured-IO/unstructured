@@ -29,6 +29,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
    --channels C052BGT7718 \
    --token "${SLACK_TOKEN}" \
    --start-date 2023-04-01 \
-   --end-date 2023-04-08T12:00:00-08:00
+   --end-date 2023-04-08T12:00:00-08:00 \
+   --exit-on-error
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

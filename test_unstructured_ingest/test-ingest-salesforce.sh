@@ -39,6 +39,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --recursive \
     --reprocess \
     --output-dir "$OUTPUT_DIR" \
-    --verbose
+    --verbose \
+    --exit-on-error
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

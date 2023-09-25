@@ -33,7 +33,8 @@ PYTHONPATH=. unstructured/ingest/main.py \
     --output-dir "$OUTPUT_DIR" \
     --verbose \
     --drive-id 1OQZ66OHBE30rNsNa7dweGLfRmXvkT_jr \
-    --service-account-key "$GCP_INGEST_SERVICE_KEY_FILE"
+    --service-account-key "$GCP_INGEST_SERVICE_KEY_FILE" \
+    --exit-on-error
 
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

@@ -32,6 +32,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \
-    --output-dir "$OUTPUT_DIR"
+    --output-dir "$OUTPUT_DIR" \
+    --exit-on-error
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

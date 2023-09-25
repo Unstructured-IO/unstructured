@@ -31,7 +31,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --tenant "$MS_TENANT_ID" \
     --user-email "$MS_USER_EMAIL" \
     --outlook-folders IntegrationTest \
-    --recursive
+    --recursive \
+    --exit-on-error
 
 
 

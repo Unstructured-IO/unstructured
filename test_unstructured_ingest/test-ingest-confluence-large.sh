@@ -40,6 +40,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --max-num-of-spaces 10 \
     --spaces testteamsp1 \
     --max-num-of-docs-from-each-space 250 \
+    --exit-on-error
 
 OUTPUT_SUBFOLDER_NAME=testteamsp1
 

@@ -23,6 +23,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --output-dir "$OUTPUT_DIR" \
     --verbose \
     --account-name azureunstructured1 \
-    --remote-url abfs://container1/
+    --remote-url abfs://container1/ \
+    --exit-on-error
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

@@ -18,7 +18,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --encoding cp1252 \
     --verbose \
     --reprocess \
-    --input-path example-docs/fake-html-cp1252.html
+    --input-path example-docs/fake-html-cp1252.html \
+    --exit-on-error
 
 set +e
 

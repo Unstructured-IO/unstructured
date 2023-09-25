@@ -23,6 +23,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --git-branch 'v0.0.7' \
     --git-file-glob '*.md,*.txt' \
-    --url https://gitlab.com/gitlab-com/content-sites/docsy-gitlab
+    --url https://gitlab.com/gitlab-com/content-sites/docsy-gitlab \
+    --exit-on-error
 
 "$SCRIPT_DIR"/check-num-files-output.sh 2 $OUTPUT_FOLDER_NAME

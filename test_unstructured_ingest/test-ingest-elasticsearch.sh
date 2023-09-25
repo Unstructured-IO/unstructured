@@ -39,6 +39,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --index-name movies \
     --url http://localhost:9200 \
-    --jq-query '{ethnicity, director, plot}'
+    --jq-query '{ethnicity, director, plot}' \
+    --exit-on-error
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

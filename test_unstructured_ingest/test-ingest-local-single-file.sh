@@ -19,7 +19,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --strategy ocr_only \
     --verbose \
     --reprocess \
-    --input-path example-docs/english-and-korean.png
+    --input-path example-docs/english-and-korean.png \
+    --exit-on-error
 
 set +e
 

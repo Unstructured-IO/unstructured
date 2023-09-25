@@ -27,5 +27,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --channels 1099442333440802930,1099601456321003600 \
     --token "$DISCORD_TOKEN" \
+    --exit-on-error
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

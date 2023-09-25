@@ -29,5 +29,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --max-request-time 30 \
     --max-retries 5 \
     --path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
+    --exit-on-error
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

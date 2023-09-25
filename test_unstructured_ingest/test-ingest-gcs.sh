@@ -31,7 +31,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --token "$GCP_INGEST_SERVICE_KEY_FILE" \
     --recursive \
-    --remote-url gs://utic-test-ingest-fixtures/
+    --remote-url gs://utic-test-ingest-fixtures/ \
+    --exit-on-error
 
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

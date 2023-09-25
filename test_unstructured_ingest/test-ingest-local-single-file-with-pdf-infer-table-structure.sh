@@ -19,7 +19,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --strategy hi_res \
     --verbose \
     --reprocess \
-    --input-path example-docs/layout-parser-paper.pdf
+    --input-path example-docs/layout-parser-paper.pdf \
+    --exit-on-error
 
 set +e
 

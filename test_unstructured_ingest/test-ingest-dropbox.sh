@@ -32,7 +32,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --token  "$DROPBOX_ACCESS_TOKEN" \
     --recursive \
-    --remote-url "dropbox:// /"
+    --remote-url "dropbox:// /" \
+    --exit-on-error
 
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

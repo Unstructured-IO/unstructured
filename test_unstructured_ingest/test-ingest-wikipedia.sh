@@ -21,6 +21,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --preserve-downloads \
     --output-dir "$OUTPUT_DIR" \
     --verbose \
-    --page-title "Open Source Software"
+    --page-title "Open Source Software" \
+    --exit-on-error
 
 "$SCRIPT_DIR"/check-num-files-output.sh 3 $OUTPUT_FOLDER_NAME

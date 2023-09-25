@@ -35,7 +35,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --num-processes 2 \
     --preserve-downloads \
     --reprocess \
-    --output-dir "$OUTPUT_DIR"
+    --output-dir "$OUTPUT_DIR" \
+    --exit-on-error
 
 
 # We are expecting fifteen directories: fourteen bases and the parent directory

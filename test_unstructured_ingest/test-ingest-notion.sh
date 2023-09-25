@@ -26,7 +26,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --database-ids "122b2c22996b435b9de2ee0e9d2b04bc" \
     --num-processes 2 \
     --recursive \
-    --verbose
+    --verbose \
+    --exit-on-error
 
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
