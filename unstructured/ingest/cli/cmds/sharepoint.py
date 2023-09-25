@@ -9,6 +9,7 @@ from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
+    CliEmbeddingsConfig,
     CliMixin,
     CliPartitionConfig,
     CliReadConfig,
@@ -16,7 +17,7 @@ from unstructured.ingest.cli.interfaces import (
 )
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import sharepoint as sharepoint_fn
+from unstructured.ingest.runner import Sharepoint
 
 
 @dataclass
@@ -82,12 +83,18 @@ def sharepoint_source(ctx: click.Context, **options):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
     log_options(options, verbose=verbose)
     try:
-        # run_init_checks(**options)
         read_config = CliReadConfig.from_dict(options)
         partition_config = CliPartitionConfig.from_dict(options)
+        embedding_config = CliEmbeddingsConfig.from_dict(options)
         # Run for schema validation
         SharepointCliConfig.from_dict(options)
-        sharepoint_fn(read_config=read_config, partition_config=partition_config, **options)
+        sharepoint_runner = Sharepoint(
+            read_config=read_config,
+            partition_config=partition_config,
+            verbose=verbose,
+            embedding_config=embedding_config,
+        )
+        sharepoint_runner.run(**options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
@@ -101,5 +108,6 @@ def get_source_cmd() -> click.Group:
     # Common CLI configs
     CliReadConfig.add_cli_options(cmd)
     CliPartitionConfig.add_cli_options(cmd)
+    CliEmbeddingsConfig.add_cli_options(cmd)
     cmd.params.append(click.Option(["-v", "--verbose"], is_flag=True, default=False))
     return cmd

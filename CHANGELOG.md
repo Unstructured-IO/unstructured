@@ -8,6 +8,7 @@
 * **Improves salesforce partitioning** Partitions Salesforce data as xlm instead of text for improved detail and flexibility. Partitions htmlbody instead of textbody for Salesforce emails. Importance: Allows all Salesforce fields to be ingested and gives Salesforce emails more detailed partitioning.
 * **Add document level language detection functionality.** Introduces the "auto" default for the languages param, which then detects the languages present in the document using the `langdetect` package. Adds the document languages as ISO 639-3 codes to the element metadata. Implemented only for the partition_text function to start.
 * **PPTX partitioner refactored in preparation for enhancement.** Behavior should be unchanged except that shapes enclosed in a group-shape are now included, as many levels deep as required (a group-shape can itself contain a group-shape).
+* **Embeddings support in ingest CLI** The sharepoint connector can now optionally create embeddings from the elements it pulls out during partition and upload those embeddings to Azure Cognitive Search index.
 
 ### Features
 

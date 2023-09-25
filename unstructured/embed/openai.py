@@ -1,3 +1,4 @@
+import types
 from typing import List, Optional
 
 import numpy as np
@@ -26,7 +27,7 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
         return np.isclose(np.linalg.norm(self.examplary_embedding), 1.0)
 
     def embed_query(self, query):
-        return self.openai_client.embed_documents(str(query))
+        return self.openai_client.embed_documents([str(query)])
 
     def embed_documents(self, elements: List[Element]) -> List[Element]:
         embeddings = self.openai_client.embed_documents([str(e) for e in elements])
@@ -35,8 +36,19 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
 
     def _add_embeddings_to_elements(self, elements, embeddings) -> List[Element]:
         assert len(elements) == len(embeddings)
-        for i in range(len(elements)):
-            elements[i].embeddings = embeddings[i]
+        elements_w_embedding = []
+
+        for i, element in enumerate(elements):
+            original_method = element.to_dict
+
+            def new_to_dict(self):
+                d = original_method()
+                d["embeddings"] = self.embeddings
+                return d
+
+            element.embeddings = embeddings[i]
+            elements_w_embedding.append(element)
+            element.to_dict = types.MethodType(new_to_dict, element)
         return elements
 
     @EmbeddingEncoderConnectionError.wrap

@@ -8,6 +8,7 @@ from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
+    CliEmbeddingsConfig,
     CliMixin,
     CliPartitionConfig,
     CliReadConfig,
@@ -61,7 +62,7 @@ def azure_cognitive_search_dest(ctx: click.Context, **options):
     if not ctx.parent.info_name:
         raise click.ClickException("parent command missing info name")
     source_cmd = ctx.parent.info_name.replace("-", "_")
-    runner_fn = runner_map[source_cmd]
+    runner_cls = runner_map[source_cmd]
     parent_options: dict = ctx.parent.params if ctx.parent else {}
     conform_click_options(options)
     conform_click_options(parent_options)
@@ -72,13 +73,17 @@ def azure_cognitive_search_dest(ctx: click.Context, **options):
     try:
         read_config = CliReadConfig.from_dict(parent_options)
         partition_config = CliPartitionConfig.from_dict(parent_options)
+        embedding_config = CliEmbeddingsConfig.from_dict(parent_options)
         # Run for schema validation
         AzureCognitiveSearchCliWriteConfig.from_dict(options)
-        runner_fn(
+        runner = runner_cls(
             read_config=read_config,
             partition_config=partition_config,
             writer_type="azure_cognitive_search",
             writer_kwargs=options,
+            embedding_config=embedding_config,
+        )
+        runner.run(
             **parent_options,
         )
     except Exception as e:
