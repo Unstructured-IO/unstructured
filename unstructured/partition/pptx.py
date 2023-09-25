@@ -78,6 +78,9 @@ def partition_pptx(
     # -- verify only one source-file argument was provided --
     exactly_one(filename=filename, file=file)
 
+    # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
+    # -- exception when Zipfile tries to open it. Both the docx and pptx formats are zip archives,
+    # -- so we need to work around that bug here.
     if isinstance(file, SpooledTemporaryFile):
         file.seek(0)
         file = io.BytesIO(file.read())
@@ -137,6 +140,17 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
 
     def _iter_presentation_elements(self) -> Iterator[Element]:
         """Generate each document-element in presentation in document order."""
+        # -- This implementation composes a collection of iterators into a "combined" iterator
+        # -- return value using `yield from`. You can think of the return value as an Element
+        # -- stream and each `yield from` as "add elements found by this function to the stream".
+        # -- This is functionally analogous to declaring `elements: List[Element] = []` at the top
+        # -- and using `elements.extend()` for the results of each of the function calls, but is
+        # -- more perfomant, uses less memory (avoids producing and then garbage-collecting all
+        # -- those small lists), is more flexible for later iterator operations like filter,
+        # -- chain, map, etc. and is perhaps more elegant and simpler to read once you have the
+        # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
+        # -- functions like `._iter_paragraph_elements()` where the "just return when done"
+        # -- characteristic of a generator avoids repeated code to form interim results into lists.
 
         for slide in self._presentation.slides:
             yield from self._increment_page_number()
