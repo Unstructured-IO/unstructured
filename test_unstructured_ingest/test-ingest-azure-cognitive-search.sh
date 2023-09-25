@@ -4,11 +4,13 @@ set -e
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
-OUTPUT_FOLDER_NAME=s3
+OUTPUT_FOLDER_NAME=s3-azure-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 DESTINATION_INDEX="utic-test-ingest-fixtures-output-$(date +%s)"
-API_VERSION=2020-06-30
+# The vector configs on the schema currently only exist on versions:
+# 2023-07-01-Preview, 2021-04-30-Preview, 2020-06-30-Preview
+API_VERSION=2023-07-01-Preview
 
 if [ -z "$AZURE_SEARCH_ENDPOINT" ] && [ -z "$AZURE_SEARCH_API_KEY" ]; then
    echo "Skipping Azure Cognitive Search ingest test because neither AZURE_SEARCH_ENDPOINT nor AZURE_SEARCH_API_KEY env vars are set."
@@ -18,20 +20,20 @@ fi
 function cleanup {
   response_code=$(curl -s -o /dev/null -w "%{http_code}" \
   "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
-  --header "api-key: JV1LDVRivKEY9J9rHBQqQeTvaGoYbD670RWRaANxaTAzSeDy8Eon" \
+  --header "api-key: $AZURE_SEARCH_API_KEY" \
   --header 'content-type: application/json')
   if [ "$response_code" == "200" ]; then
     echo "deleting index $DESTINATION_INDEX"
     curl -X DELETE \
     "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
-    --header "api-key: JV1LDVRivKEY9J9rHBQqQeTvaGoYbD670RWRaANxaTAzSeDy8Eon" \
+    --header "api-key: $AZURE_SEARCH_API_KEY" \
     --header 'content-type: application/json'
   else
     echo "Index $DESTINATION_INDEX does not exist, nothing to delete"
   fi
 }
 
-trap cleanup EXIT
+#trap cleanup EXIT
 
 
 # Create index
@@ -65,16 +67,27 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --endpoint "$AZURE_SEARCH_ENDPOINT" \
   --index "$DESTINATION_INDEX"
 
-echo "sleeping 5 seconds to let index finish catching up after writes"
-sleep 5
 
-# Check the contents of the index
-docs_count=$(curl "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX/docs/\$count?api-version=$API_VERSION" \
-  --header "api-key: $AZURE_SEARCH_API_KEY" \
-  --header 'content-type: application/json' | jq)
+
+docs_count=0
+attempt=1
+while [ $docs_count -eq 0 ] && [ $attempt -lt 6 ]; do
+  echo "attempt $attempt: sleeping 10 seconds to let index finish catching up after writes"
+  sleep 10
+
+  # Check the contents of the index
+  docs_count=$(curl "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX/docs/\$count?api-version=$API_VERSION" \
+    --header "api-key: $AZURE_SEARCH_API_KEY" \
+    --header 'content-type: application/json' | jq)
+
+  echo "docs count pulled from Azure: $docs_count"
+
+  attempt=$((attempt+1))
+done
+
 
 expected_docs_count=0
-for i in $(jq length "$OUTPUT_DIR"/*); do
+for i in $(jq length "$OUTPUT_DIR"/**/*.json); do
   expected_docs_count=$((expected_docs_count+i));
 done
 

@@ -16,6 +16,12 @@
       "type": "Edm.String"
     },
     {
+      "name": "embeddings",
+      "type": "Collection(Edm.Single)",
+      "dimensions": 400,
+      "vectorSearchConfiguration": "embeddings-config"
+    },
+    {
       "name": "type",
       "type": "Edm.String"
     },
@@ -161,5 +167,19 @@
         }
       ]
     }
-  ]
+  ],
+  "vectorSearch": {
+    "algorithmConfigurations": [
+      {
+        "name": "embeddings-config",
+        "kind": "hnsw",
+        "hnswParameters": {
+          "metric": "cosine",
+          "m": 4,
+          "efConstruction": 400,
+          "efSearch": 500
+        }
+      }
+    ]
+  }
 }
