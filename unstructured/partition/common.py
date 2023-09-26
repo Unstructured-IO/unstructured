@@ -41,6 +41,9 @@ from unstructured.utils import dependency_exists
 if dependency_exists("docx") and dependency_exists("docx.table"):
     from docx.table import Table as docxtable
 
+if dependency_exists("pptx") and dependency_exists("pptx.table"):
+    from pptx.table import Table as pptxtable
+
 if dependency_exists("numpy") and dependency_exists("cv2"):
     from unstructured.partition.utils.sorting import sort_page_elements
 
@@ -457,7 +460,9 @@ def convert_to_bytes(
     return f_bytes
 
 
-def convert_ms_office_table_to_text(table: "docxtable", as_html: bool = True) -> str:
+def convert_ms_office_table_to_text(
+    table: Union["docxtable", "pptxtable"], as_html: bool = True
+) -> str:
     """
     Convert a table object from a Word document to an HTML table string using the tabulate library.
 

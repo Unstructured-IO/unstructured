@@ -11,7 +11,10 @@
           "document_id": "6"
         }
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "American"
   },
@@ -27,7 +30,10 @@
           "document_id": "6"
         }
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "D.W. Griffith"
   },
@@ -43,7 +49,10 @@
           "document_id": "6"
         }
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "A young couple decides to elope after being caught in the midst of a romantic moment by the woman's angry father. They make plans to leave, but a thief discovers their plans and hides in their trunk and waits for the right moment to steal their belongings."
   }
