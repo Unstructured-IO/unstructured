@@ -10,6 +10,7 @@ def s3_writer(
     remote_url: str,
     anonymous: bool,
     verbose: bool = False,
+    **kwargs,
 ):
     from unstructured.ingest.connector.s3 import (
         S3DestinationConnector,
@@ -30,6 +31,7 @@ def azure_cognitive_search_writer(
     endpoint: str,
     key: str,
     index: str,
+    **kwargs,
 ):
     from unstructured.ingest.connector.azure_cognitive_search import (
         AzureCognitiveSearchDestinationConnector,
