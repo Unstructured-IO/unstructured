@@ -575,8 +575,8 @@ def document_to_element_list(
                     ):
                         element.metadata.category_depth = 0
                 except AttributeError:
-                    # HTML instances
-                    pass
+                    logger.info("HTML element instance has no attribute type")
+
                 page_elements.append(element)
             coordinates = (
                 element.metadata.coordinates.points if element.metadata.coordinates else None
