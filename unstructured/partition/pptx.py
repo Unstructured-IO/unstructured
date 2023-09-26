@@ -95,8 +95,9 @@ def partition_pptx(
             include_slide_notes,
             metadata_filename,
             metadata_last_modified,
-        )
+        ),
     )
+
 
 class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
     """Provides `.partition()` for PowerPoint 2007+ (.pptx) files."""
