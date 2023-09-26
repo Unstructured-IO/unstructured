@@ -1,4 +1,4 @@
-## 0.10.17-dev7
+## 0.10.17-dev8
 
 ### Enhancements
 
@@ -10,6 +10,7 @@
 ### Features
 
 * **Adds the embedding module to be able to embed Elements** Problem: Many NLP applications require the ability to represent parts of documents in a semantic way. Until now, Unstructured did not have text embedding ability within the core library. Feature: This embedding module is able to track embeddings related data with a class, embed a list of elements, and return an updated list of Elements with the *embeddings* property. The module is also able to embed query strings. Importance: Ability to embed documents or parts of documents will enable users to make use of these semantic representations in different NLP applications, such as search, retrieval, and retrieval augmented generation.
+* **Adds ability to pass timeout for a request when partitioning via a `url`.** `partition` now accepts a new optional parameter `request_timeout` which if set will prevent any `requests.get` from hanging indefinitely and instead will raise a timeout error. This is useful when partitioning a url that may be slow to respond or may not respond at all.
 
 ### Fixes
 
@@ -17,7 +18,7 @@
 * **Fixes issue where unstructured-inference was not getting updated** Problem: unstructured-inference was not getting upgraded to the version to match unstructured release when doing a pip install.  Solution: using `pip install unstructured[all-docs]` it will now upgrade both unstructured and unstructured-inference. Importance: This will ensure that the inference library is always in sync with the unstructured library, otherwise users will be using outdated libraries which will likely lead to unintended behavior.
 * **Fixes SharePoint connector failures if any document has an unsupported filetype** Problem: Currently the entire connector ingest run fails if a single IngestDoc has an unsupported filetype. This is because a ValueError is raised in the IngestDoc's `__post_init__`. Fix: Adds a try/catch when the IngestConnector runs get_ingest_docs such that the error is logged but all processable documents->IngestDocs are still instantiated and returned. Importance: Allows users to ingest SharePoint content even when some files with unsupported filetypes exist there.
 * **Fixes badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
-should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class 
+should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class
 allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
 * **Fixes Sphinx errors.** Fixes errors when running Sphinx `make html` and installs library to suppress warnings.
 
