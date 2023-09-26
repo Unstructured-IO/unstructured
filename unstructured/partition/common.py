@@ -16,7 +16,6 @@ from typing import (
     Optional,
     Tuple,
     Union,
-    cast,
 )
 
 import emoji
@@ -52,7 +51,6 @@ if TYPE_CHECKING:
     from unstructured_inference.inference.layoutelement import (
         LayoutElement,
         LocationlessLayoutElement,
-        Source,
     )
 
 HIERARCHY_RULE_SET = {
@@ -132,7 +130,10 @@ def normalize_layout_element(
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
     prob = layout_dict.get("prob")
-    source = cast(Source, layout_dict.get("source")).value
+    aux_source = getattr(layout_dict, "source", None)
+    source = None
+    if aux_source:
+        source = aux_source.value
     if prob and isinstance(prob, (int, str, float, numbers.Number)):
         class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))  # type: ignore
     else:
