@@ -280,6 +280,8 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 for k, v in kvs.items()
                 if k.startswith("chunking_")
             }
+            if "run_chunking" in kvs:
+                new_kvs["run_chunking"] = kvs["run_chunking"]
             if len(new_kvs.keys()) == 0:
                 return None
             return _decode_dataclass(cls, new_kvs, infer_missing)

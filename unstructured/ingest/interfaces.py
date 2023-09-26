@@ -81,6 +81,7 @@ class EmbeddingConfig(BaseConfig):
         return OpenAIEmbeddingEncoder(**kwargs)
 
 
+@dataclass
 class ChunkingConfig(BaseConfig):
     run_chunking: bool = False
     multipage_sections: bool = True
@@ -135,6 +136,9 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._date_processed = None
+
+    def run_chunking(self, elements: t.List[Element]) -> t.List[Element]:
+        return elements
 
     @property
     def embedder(self) -> t.Optional[BaseEmbeddingEncoder]:
@@ -285,6 +289,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
                 raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
 
             elements = elements_from_json(text=response.json())
+        elements = self.run_chunking(elements=elements)
         if self.embedder:
             logger.info("Running embedder to add vector content to elements")
             elements = self.embedder.embed_documents(elements)

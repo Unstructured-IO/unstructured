@@ -1,4 +1,5 @@
 import logging
+import types
 from dataclasses import dataclass
 
 import click
@@ -8,6 +9,7 @@ from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
+    CliChunkingConfig,
     CliEmbeddingsConfig,
     CliMixin,
     CliPartitionConfig,
@@ -16,7 +18,6 @@ from unstructured.ingest.cli.interfaces import (
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import runner_map
-from unstructured.ingest.runner.base_runner import Runner
 
 
 @dataclass
@@ -74,27 +75,29 @@ def azure_cognitive_search_dest(ctx: click.Context, **options):
         read_config = CliReadConfig.from_dict(parent_options)
         partition_config = CliPartitionConfig.from_dict(parent_options)
         embedding_config = CliEmbeddingsConfig.from_dict(parent_options)
+        chunking_config = CliChunkingConfig.from_dict(parent_options)
         # Run for schema validation
         AzureCognitiveSearchCliWriteConfig.from_dict(options)
         runner = runner_map[source_cmd]
         # TODO update all other runners to implement base runner class
-        if isinstance(runner, Runner):
+        if isinstance(runner, types.FunctionType):
+            runner(
+                read_config=read_config,
+                partition_config=partition_config,
+                writer_type="s3",
+                writer_kwargs=options,
+                **parent_options,
+            )
+        else:
             runner_instance = runner(
                 read_config=read_config,
                 partition_config=partition_config,
                 writer_type="azure_cognitive_search",
                 writer_kwargs=options,
                 embedding_config=embedding_config,
+                chunking_config=chunking_config,
             )
             runner_instance.run(
-                **parent_options,
-            )
-        else:
-            runner(
-                read_config=read_config,
-                partition_config=partition_config,
-                writer_type="s3",
-                writer_kwargs=options,
                 **parent_options,
             )
 

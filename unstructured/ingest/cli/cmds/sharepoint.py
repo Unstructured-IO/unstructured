@@ -87,7 +87,7 @@ def sharepoint_source(ctx: click.Context, **options):
         read_config = CliReadConfig.from_dict(options)
         partition_config = CliPartitionConfig.from_dict(options)
         embedding_config = CliEmbeddingsConfig.from_dict(options)
-        # chunking_config = CliChunkingConfig.from_dict(options)
+        chunking_config = CliChunkingConfig.from_dict(options)
         # Run for schema validation
         SharepointCliConfig.from_dict(options)
         sharepoint_runner = SharePoint(
@@ -95,6 +95,7 @@ def sharepoint_source(ctx: click.Context, **options):
             partition_config=partition_config,
             verbose=verbose,
             embedding_config=embedding_config,
+            chunking_config=chunking_config,
         )
         sharepoint_runner.run(**options)
     except Exception as e:
