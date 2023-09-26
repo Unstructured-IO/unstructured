@@ -28,7 +28,7 @@ charset-normalizer==3.2.0
     #   -c requirements/base.txt
     #   aiohttp
     #   requests
-dataclasses-json==0.6.0
+dataclasses-json==0.6.1
     # via
     #   -c requirements/base.txt
     #   langchain
