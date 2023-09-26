@@ -52,6 +52,7 @@ if TYPE_CHECKING:
     from unstructured_inference.inference.layoutelement import (
         LayoutElement,
         LocationlessLayoutElement,
+        Source,
     )
 
 HIERARCHY_RULE_SET = {
@@ -131,8 +132,6 @@ def normalize_layout_element(
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
     prob = layout_dict.get("prob")
-    from unstructured_inference.inference.layoutelement import Source
-
     source = cast(Source, layout_dict.get("source")).value
     if prob and isinstance(prob, (int, str, float, numbers.Number)):
         class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))  # type: ignore
@@ -472,7 +471,8 @@ def convert_to_bytes(
 
 
 def convert_ms_office_table_to_text(
-    table: Union["docxtable", "pptxtable"], as_html: bool = True
+    table: Union["docxtable", "pptxtable"],
+    as_html: bool = True,
 ) -> str:
     """
     Convert a table object from a Word document to an HTML table string using the tabulate library.
