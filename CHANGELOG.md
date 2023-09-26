@@ -1,4 +1,4 @@
-## 0.10.17-dev8
+## 0.10.17-dev9
 
 ### Enhancements
 
@@ -21,6 +21,8 @@
 * **Fix badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
 should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class 
 allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
+* **Fixes Sphinx errors.** Fixes errors when running Sphinx `make html` and installs library to suppress warnings.
+
 
 ## 0.10.16
 
