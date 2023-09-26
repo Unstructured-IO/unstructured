@@ -30,6 +30,7 @@ frozenlist==1.4.0
     #   aiosignal
 fsspec==2023.9.1
     # via
+    #   -c requirements/constraints.in
     #   -r requirements/ingest-s3.in
     #   s3fs
 idna==3.4
@@ -48,7 +49,7 @@ s3fs==2023.9.1
     # via -r requirements/ingest-s3.in
 six==1.16.0
     # via python-dateutil
-typing-extensions==4.7.1
+typing-extensions==4.8.0
     # via
     #   -c requirements/base.txt
     #   aioitertools

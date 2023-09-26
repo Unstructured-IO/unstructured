@@ -97,7 +97,7 @@ importlib-metadata==6.8.0
     #   jupyterlab
     #   jupyterlab-server
     #   nbconvert
-importlib-resources==6.0.1
+importlib-resources==6.1.0
     # via
     #   jsonschema
     #   jsonschema-specifications
@@ -133,7 +133,7 @@ json5==0.9.14
     # via jupyterlab-server
 jsonpointer==2.4
     # via jsonschema
-jsonschema[format-nongpl]==4.19.0
+jsonschema[format-nongpl]==4.19.1
     # via
     #   jupyter-events
     #   jupyterlab-server
@@ -211,7 +211,7 @@ nest-asyncio==1.5.8
     # via ipykernel
 nodeenv==1.8.0
     # via pre-commit
-notebook==7.0.3
+notebook==7.0.4
     # via jupyter
 notebook-shim==0.2.3
     # via
@@ -376,7 +376,7 @@ traitlets==5.10.0
     #   nbconvert
     #   nbformat
     #   qtconsole
-typing-extensions==4.7.1
+typing-extensions==4.8.0
     # via
     #   -c requirements/base.txt
     #   -c requirements/test.txt
@@ -408,7 +408,7 @@ wheel==0.41.2
     #   pip-tools
 widgetsnbextension==4.0.9
     # via ipywidgets
-zipp==3.16.2
+zipp==3.17.0
     # via
     #   importlib-metadata
     #   importlib-resources

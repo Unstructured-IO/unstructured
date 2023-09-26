@@ -142,6 +142,7 @@ class ElementMetadata:
     attached_to_filename: Optional[str] = None
     parent_id: Optional[Union[str, uuid.UUID, NoID, UUID]] = None
     category_depth: Optional[int] = None
+    image_path: Optional[str] = None
 
     # Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None
@@ -397,14 +398,6 @@ class CheckBox(Element):
         return out
 
 
-class Formula(Element):
-    "An element containing formulas in a document"
-
-    category = "Formula"
-
-    pass
-
-
 class Text(Element):
     """Base element for capturing free text from within document."""
 
@@ -465,6 +458,14 @@ class Text(Element):
             raise ValueError("Cleaner produced a non-string output.")
 
         self.text = cleaned_text
+
+
+class Formula(Text):
+    "An element containing formulas in a document"
+
+    category = "Formula"
+
+    pass
 
 
 class CompositeElement(Text):
