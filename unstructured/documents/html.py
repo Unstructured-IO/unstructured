@@ -273,12 +273,13 @@ class HTMLDocument(XMLDocument):
 def _get_links_from_tag(tag_elem: etree.Element) -> List[Link]:
     links: List[Link] = []
     href = tag_elem.get("href")
+    # TODO(klaijan) - add html href start_index
     if href:
-        links.append({"text": tag_elem.text, "url": href})
+        links.append({"text": tag_elem.text, "url": href, "start_index": -1})
     for tag in tag_elem.iterdescendants():
         href = tag.get("href")
         if href:
-            links.append({"text": tag.text, "url": href})
+            links.append({"text": tag.text, "url": href, "start_index": -1})
     return links
 
 

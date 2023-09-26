@@ -856,3 +856,65 @@ def test_combine_numbered_list(filename):
     assert first_list_element.text.endswith(
         "character recognition, and other DIA tasks (Section 3)",
     )
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-docs/layout-parser-paper-fast.pdf"],
+)
+def test_hyperlinks(filename):
+    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    links = [
+        {
+            "text": "37",
+            "url": "cite.xu2019layoutlm",
+            "start_index": 0,
+        },
+        {
+            "text": "38",
+            "url": "cite.zhong2019publaynet",
+            "start_index": 23,
+        },
+        {
+            "text": "22",
+            "url": "cite.oliveira2018dhsegment",
+            "start_index": 27,
+        },
+        {
+            "text": "26",
+            "url": "cite.prasad2020cascadetabnet",
+            "start_index": 49,
+        },
+        {
+            "text": "4",
+            "url": "cite.baek2019character",
+            "start_index": 80,
+        },
+        {
+            "text": "1",
+            "url": "cite.tensorflow2015-whitepaper",
+            "start_index": 252,
+        },
+        {
+            "text": "24",
+            "url": "cite.paszke2019pytorch",
+            "start_index": 267,
+        },
+    ]
+    text = "LayoutParser is well aligned with recent e\ufb00orts for improving \
+        DL model reusability in other disciplines like natural language processing \
+        [8, 34] and com- puter vision [35], but with a focus on unique challenges in DIA. \
+        We show LayoutParser can be applied in sophisticated and large-scale digitization projects"
+
+    assert elements[-1].metadata.links == links
+    assert elements[-1].text == text
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-docs/embedded-link.pdf"],
+)
+def test_hyperlinks_multiple_lines(filename):
+    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    assert elements[-1].metadata.links[-1]["text"] == "capturing"
+    assert len(elements[-1].metadata.links) == 5

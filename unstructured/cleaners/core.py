@@ -2,6 +2,9 @@ import quopri
 import re
 import sys
 import unicodedata
+from typing import Tuple
+
+import numpy as np
 
 from unstructured.file_utils.encoding import (
     format_encoding_str,
@@ -16,8 +19,6 @@ from unstructured.nlp.patterns import (
     UNICODE_BULLETS_RE_0W,
 )
 
-from typing import List
-import numpy as np
 
 def clean_non_ascii_chars(text) -> str:
     """Cleans non-ascii characters from unicode string.
@@ -416,7 +417,7 @@ def bytes_string_to_string(text: str, encoding: str = "utf-8"):
     return text_bytes.decode(formatted_encoding)
 
 
-def clean_extra_whitespace_with_index_run(text: str) -> str:
+def clean_extra_whitespace_with_index_run(text: str) -> Tuple[str, np.ndarray]:
     """Cleans extra whitespace characters that appear between words.
     Calculate distance between characters of original text and cleaned text.
 
@@ -437,7 +438,10 @@ def clean_extra_whitespace_with_index_run(text: str) -> str:
 
     distance, original_index, cleaned_index = 0, 0, 0
     while cleaned_index < len(cleaned_text):
-        if text[original_index] == cleaned_text[cleaned_index] or (bool(re.match("[\xa0\n]", text[original_index])) and bool(re.match(" ", cleaned_text[cleaned_index]))):
+        if text[original_index] == cleaned_text[cleaned_index] or (
+            bool(re.match("[\xa0\n]", text[original_index]))
+            and bool(re.match(" ", cleaned_text[cleaned_index]))
+        ):
             moved_indices[cleaned_index] = distance
             original_index += 1
             cleaned_index += 1
