@@ -1,7 +1,6 @@
 import json
 import os
 import typing as t
-from contextlib import suppress
 from dataclasses import dataclass
 from datetime import datetime as dt
 from pathlib import Path
@@ -81,19 +80,13 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def update_source_metadata(self, **kwargs):
         fs = kwargs.get("fs", self._get_fs_from_uri())
-        date_created = None
-        with suppress(NotImplementedError):
-            date_created = fs.created(self.uri).isoformat()
-        date_modified = None
-        with suppress(NotImplementedError):
-            date_modified = fs.modified(self.uri).isoformat()
         version = (
             fs.checksum(self.uri) if fs.protocol != "gs" else fs.info(self.uri).get("etag", "")
         )
         file_exists = fs.exists(self.uri)
         self.source_metadata = SourceMetadata(
-            date_created=date_created,
-            date_modified=date_modified,
+            date_created=self.created_at,
+            date_modified=self.modified_date,
             version=version,
             source_url=self.uri,
             exists=file_exists,
