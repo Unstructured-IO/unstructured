@@ -11,7 +11,10 @@
           "document_id": "7"
         }
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "American"
   },
@@ -27,7 +30,10 @@
           "document_id": "7"
         }
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "D. W. Griffith"
   },
@@ -43,7 +49,10 @@
           "document_id": "7"
         }
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "A white girl (Florence Lawrence) rejects a proposal from an Indian brave (Charles Inslee) in this early one-reel Western melodrama. Despite the rejection, the Indian still comes to the girl's defense when she is abducted by his warring tribe. In her first year in films, Florence Lawrence was already the most popular among the Biograph Company's anonymous stock company players. By 1909, she was known the world over as \"The Biograph Girl.\""
   }

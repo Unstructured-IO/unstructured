@@ -191,6 +191,7 @@ shapely==2.0.1
     #   unstructured-paddleocr
 six==1.16.0
     # via
+    #   -c requirements/base.txt
     #   attrdict
     #   bce-python-sdk
     #   imgaug

@@ -68,25 +68,33 @@ def chunk_by_title(
 
             for i, element in enumerate(section):
                 if isinstance(element, Text):
-                    if text:
-                        text += "\n\n"
+                    text += "\n\n" if text else ""
                     start_char = len(text)
                     text += element.text
 
                 for attr, value in vars(element.metadata).items():
-                    if isinstance(value, list):
-                        _value = getattr(metadata, attr, [])
-                        if _value is None:
-                            _value = []
+                    if not isinstance(value, list):
+                        continue
 
-                        if attr == "regex_metadata":
-                            for item in value:
-                                item["start"] += start_char
-                                item["end"] += start_char
+                    _value = getattr(metadata, attr, [])
+                    if _value is None:
+                        _value = []
 
-                        if i > 0:
-                            _value.extend(value)
-                            setattr(metadata, attr, _value)
+                    if attr == "regex_metadata":
+                        for item in value:
+                            item["start"] += start_char
+                            item["end"] += start_char
+
+                    if i > 0:
+                        # NOTE(newelh): Previously, _value was extended with value.
+                        # This caused a memory error if the content was a list of strings
+                        # with a large number of elements -- doubling the list size each time.
+                        # This now instead ensures that the _value list is unique and updated.
+                        for item in value:
+                            if item not in _value:
+                                _value.append(item)
+
+                        setattr(metadata, attr, _value)
 
             chunked_elements.append(CompositeElement(text=text, metadata=metadata))
 
