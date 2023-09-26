@@ -33,7 +33,7 @@ Examples:
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
   isd_csv = convert_to_csv(elements)
 
-For more information about the ``convert_to_csv`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`_.
+For more information about the ``convert_to_csv`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`__.
 
 
 ``convert_to_dataframe``
@@ -53,7 +53,7 @@ Examples:
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
   df = convert_to_dataframe(elements)
 
-For more information about the ``convert_to_dataframe`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`_.
+For more information about the ``convert_to_dataframe`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`__.
 
 
 ``convert_to_dict``
@@ -72,7 +72,7 @@ Examples:
   elements = [Title(text="Title"), NarrativeText(text="Narrative")]
   isd = convert_to_dict(elements)
 
-For more information about the ``convert_to_dict`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`_.
+For more information about the ``convert_to_dict`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`__.
 
 
 ``dict_to_elements``
@@ -95,13 +95,13 @@ Examples:
   # [ Title(text="My Title"), NarrativeText(text="My Narrative")]
   elements = dict_to_elements(isd)
 
-For more information about the ``dict_to_elements`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`_.
+For more information about the ``dict_to_elements`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`__.
 
 
 ``stage_csv_for_prodigy``
 --------------------------
 
-Formats outputs in CSV format for use with `Prodigy <https://prodi.gy/docs/api-loaders>`_. After running ``stage_csv_for_prodigy``, you can
+Formats outputs in CSV format for use with `Prodigy <https://prodi.gy/docs/api-loaders>`__. After running ``stage_csv_for_prodigy``, you can
 write the results to a CSV file that is ready to be used with Prodigy.
 
 Examples:
@@ -119,13 +119,13 @@ Examples:
   with open("prodigy.csv", "w") as csv_file:
       csv_file.write(prodigy_csv_data)
 
-For more information about the ``stage_csv_for_prodigy`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/prodigy.py>`_.
+For more information about the ``stage_csv_for_prodigy`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/prodigy.py>`__.
 
 
 ``stage_for_argilla``
 --------------------------
 
-Convert a list of ``Text`` elements to an `Argilla Dataset <https://docs.argilla.io/en/latest/reference/python/python_client.html#python-ref-datasets>`_.
+Convert a list of ``Text`` elements to an `Argilla Dataset <https://docs.argilla.io/en/latest/reference/python/python_client.html#python-ref-datasets>`__.
 The type of Argilla dataset to be generated can be specified with ``argilla_task``
 parameter. Valid values for ``argilla_task`` are ``"text_classification"``,
 ``"token_classification"``, and ``"text2text"``. If ``"token_classification"`` is selected
@@ -147,7 +147,7 @@ Examples:
 
   argilla_dataset = stage_for_argilla(elements, "text_classification", metadata=metadata)
 
-For more information about the ``stage_for_argilla`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/argilla.py>`_.
+For more information about the ``stage_for_argilla`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/argilla.py>`__.
 
 
 ``stage_for_baseplate``
@@ -201,7 +201,7 @@ The output will look like:
         ],
     }
 
-For more information about the ``stage_for_baseplate`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/baseplate.py>`_.
+For more information about the ``stage_for_baseplate`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/baseplate.py>`__.
 
 
 ``stage_for_datasaur``
@@ -239,13 +239,13 @@ Example:
   entities = [[{"text": "Matt", "type": "PER", "start_idx": 11, "end_idx": 15}]]
   datasaur_data = stage_for_datasaur(elements, entities)
 
-For more information about the ``stage_for_datasaur`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/datasaur.py>`_.
+For more information about the ``stage_for_datasaur`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/datasaur.py>`__.
 
 
 ``stage_for_label_box``
 --------------------------
 
-Formats outputs for use with `LabelBox <https://docs.labelbox.com/docs/overview>`_. LabelBox accepts cloud-hosted data
+Formats outputs for use with `LabelBox <https://docs.labelbox.com/docs/overview>`__. LabelBox accepts cloud-hosted data
 and does not support importing text directly. The ``stage_for_label_box`` does the following:
 
 * Stages the data files in the ``output_directory`` specified in function arguments to be uploaded to a cloud storage service.
@@ -306,7 +306,7 @@ files to an S3 bucket.
 
   upload_staged_files()
 
-For more information about the ``stage_for_label_box`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/label_box.py>`_.
+For more information about the ``stage_for_label_box`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/label_box.py>`__.
 
 
 ``stage_for_label_studio``
@@ -470,13 +470,13 @@ task in LabelStudio:
 See the `LabelStudio docs <https://labelstud.io/tags/labels.html>`_ for a full list of options
 for labels and annotations.
 
-For more information about the ``stage_for_label_studio`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/label_studio.py>`_.
+For more information about the ``stage_for_label_studio`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/label_studio.py>`__.
 
 
 ``stage_for_prodigy``
 --------------------------
 
-Formats outputs in JSON format for use with `Prodigy <https://prodi.gy/docs/api-loaders>`_. After running ``stage_for_prodigy``, you can
+Formats outputs in JSON format for use with `Prodigy <https://prodi.gy/docs/api-loaders>`__. After running ``stage_for_prodigy``, you can
 write the results to a JSON file that is ready to be used with Prodigy.
 
 Examples:
@@ -513,7 +513,7 @@ use the ``save_as_jsonl`` utility function to save the formatted data to a ``.js
   # The resulting jsonl file is ready to be used with Prodigy.
   save_as_jsonl(prodigy_data, "prodigy.jsonl")
 
-For more information about the ``stage_for_prodigy`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/prodigy.py>`_.
+For more information about the ``stage_for_prodigy`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/prodigy.py>`__.
 
 
 ``stage_for_transformers``
@@ -597,7 +597,7 @@ The following optional keyword arguments can be specified in
 
     results = [nlp(chunk) for chunk in chunks]
 
-For more information about the ``stage_for_transformers`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/huggingface.py>`_.
+For more information about the ``stage_for_transformers`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/huggingface.py>`__.
 
 
 ``stage_for_weaviate``
@@ -650,5 +650,5 @@ options for uploading data and querying data once it has been uploaded.
               uuid=generate_uuid5(data_object),
           )
 
-For more information about the ``stage_for_weaviate`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/weaviate.py>`_.
+For more information about the ``stage_for_weaviate`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/weaviate.py>`__.
 
