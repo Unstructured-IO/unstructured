@@ -74,9 +74,10 @@ class Processor:
             if not docs:
                 return
 
-        # Debugging tip: use the below line and comment out the mp.Pool loop
+        # Debugging tip: use the below lines and comment out the mp.Pool loop
         # block to remain in single process
-        # self.doc_processor_fn(docs[0])
+        # json_docs = [doc.to_json() for doc in docs]
+        # self.doc_processor_fn(json_docs[0])
         logger.info(f"Processing {len(docs)} docs")
         json_docs = [doc.to_json() for doc in docs]
         with mp.Pool(
