@@ -69,6 +69,7 @@ class EmbeddingConfig(BaseConfig):
     model_name: t.Optional[str] = None
 
     def get_embedder(self) -> BaseEmbeddingEncoder:
+        # TODO update to incorporate other embedder types once they exist
         kwargs = {
             "api_key": self.api_key,
         }

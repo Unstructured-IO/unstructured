@@ -43,7 +43,7 @@ function cleanup {
   fi
 }
 
-#trap cleanup EXIT
+trap cleanup EXIT
 
 
 # Create index
@@ -76,11 +76,11 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --site "$SHAREPOINT_SITE" \
     --path "Shared Documents" \
     --recursive \
+    --embedding-api-key "$OPENAI_API_KEY" \
     azure-cognitive-search \
     --key "$AZURE_SEARCH_API_KEY" \
     --endpoint "$AZURE_SEARCH_ENDPOINT" \
-    --index "$DESTINATION_INDEX" \
-    --embedding-api-key "$OPENAI_API_KEY"
+    --index "$DESTINATION_INDEX"
 
 # It can take some time for the index to catch up with the content that was written, this check between 10s sleeps
 # to give it that time process the writes. Will timeout after checking for a minute.
