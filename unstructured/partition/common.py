@@ -570,9 +570,7 @@ def document_to_element_list(
                     layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
                 )
                 if (isinstance(element, Title) and not element.metadata.category_depth) and any(
-                    el.metadata.category_depth is not None
-                    for el in page.elements
-                    if isinstance(el, Title)
+                    el.type in ["Headline", "Subheadline"] for el in page.elements
                 ):
                     element.metadata.category_depth = 0
                 page_elements.append(element)
