@@ -35,6 +35,18 @@ class MockPageLayout(layout.PageLayout):
                 type="Headline",
                 text="Charlie Brown and the Great Pumpkin",
             ),
+            LocationlessLayoutElement(
+                type="Subheadline",
+                text="The Beginning",
+            ),
+            LocationlessLayoutElement(
+                type="Text",
+                text="This time Charlie Brown had it really tricky...",
+            ),
+            LocationlessLayoutElement(
+                type="Title",
+                text="Another book title in the same page",
+            ),
         ]
 
 
@@ -405,3 +417,12 @@ def test_set_element_hierarchy_custom_rule_set():
     assert (
         elements[5].metadata.parent_id == elements[4].id
     ), "FigureCaption should be child of Title 2"
+
+
+def test_document_to_element_list_sets_category_depth_titles():
+    layout_with_hierarchies = MockDocumentLayout()
+    elements = document_to_element_list(layout_with_hierarchies)
+    assert elements[0].metadata.category_depth == 1
+    assert elements[1].metadata.category_depth == 2
+    assert elements[2].metadata.category_depth is None
+    assert elements[3].metadata.category_depth == 0
