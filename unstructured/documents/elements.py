@@ -421,7 +421,7 @@ class Text(Element):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
 
-        if isinstance(element_id, NoID):
+        if isinstance(element_id, NoID) and text:
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
             element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
 

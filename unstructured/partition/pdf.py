@@ -296,7 +296,7 @@ def _partition_pdf_or_image_local(
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
     languages: List[str] = ["eng"],
-    ocr_mode: str = "entire_page",
+    # ocr_mode: str = "entire_page",
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     **kwargs,
@@ -307,35 +307,65 @@ def _partition_pdf_or_image_local(
         process_file_with_model,
     )
 
+    from unstructured.partition.ocr import (
+        merge_inferred_layout_with_ocr_layout,
+        process_data_with_ocr,
+        process_file_with_ocr,
+    )
+
     ocr_languages = prepare_languages_for_tesseract(languages)
 
     model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
+
+    pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
+    if pdf_image_dpi is None:
+        pdf_image_dpi = 300 if model_name == "chipper" else 200
+    if (pdf_image_dpi < 300) and (model_name == "chipper"):
+        logger.warning(
+            "The Chipper model performs better when images are rendered with DPI >= 300 "
+            f"(currently {pdf_image_dpi}).",
+        )
+
     if file is None:
-        pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
         process_file_with_model_kwargs = {
             "is_image": is_image,
-            "ocr_languages": ocr_languages,
-            "ocr_mode": ocr_mode,
             "extract_tables": infer_table_structure,
             "model_name": model_name,
+            "pdf_image_dpi": pdf_image_dpi,
         }
-        if pdf_image_dpi:
-            process_file_with_model_kwargs["pdf_image_dpi"] = pdf_image_dpi
-        layout = process_file_with_model(
+        inferenced_layouts = process_file_with_model(
             filename,
             **process_file_with_model_kwargs,
         )
+        ocr_layouts = process_file_with_ocr(
+            filename,
+            is_image=is_image,
+            ocr_languages=ocr_languages,
+            pdf_image_dpi=pdf_image_dpi,
+        )
+        import pdb
+
+        pdb.set_trace()
     else:
-        layout = process_data_with_model(
+        inferenced_layouts = process_data_with_model(
+            file,
+            is_image=is_image,
+            extract_tables=infer_table_structure,
+            model_name=model_name,
+            pdf_image_dpi=pdf_image_dpi,
+        )
+        file.seek(0)
+        ocr_layouts = process_data_with_ocr(
             file,
             is_image=is_image,
             ocr_languages=ocr_languages,
-            ocr_mode=ocr_mode,
-            extract_tables=infer_table_structure,
-            model_name=model_name,
+            pdf_image_dpi=pdf_image_dpi,
         )
+
+    merged_layouts = merge_inferred_layout_with_ocr_layout(inferenced_layouts, ocr_layouts)
+
     elements = document_to_element_list(
-        layout,
+        merged_layouts,
         sortable=True,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_last_modified,

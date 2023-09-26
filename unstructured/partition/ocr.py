@@ -1,17 +1,19 @@
 import os
 import tempfile
-from pathlib import PurePath
 from typing import BinaryIO, List, Optional, Union, cast
 
+import numpy as np
 import pdf2image
-import PIL
 import pytesseract
+from PIL import Image as PILImage
+from PIL import ImageSequence
 from pytesseract import Output
 from unstructured_inference.inference.elements import (
     Rectangle,
     TextRegion,
     partition_groups_from_regions,
 )
+from unstructured_inference.inference.layout import DocumentLayout
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
 )
@@ -27,9 +29,9 @@ def process_data_with_ocr(
 ) -> List[List[TextRegion]]:
     with tempfile.NamedTemporaryFile() as tmp_file:
         tmp_file.write(data.read())
-        tmp_file.flush()  #
+        tmp_file.flush()
         ocr_layouts = process_file_with_ocr(
-            tmp_file.name,
+            filename=tmp_file.name,
             is_image=is_image,
             ocr_languages=ocr_languages,
             pdf_image_dpi=pdf_image_dpi,
@@ -45,58 +47,45 @@ def process_file_with_ocr(
 ) -> List[List[TextRegion]]:
     if is_image:
         try:
-            image = PIL.Image.open(filename)
-            format = image.format
-            images = []
-            for im in PIL.ImageSequence.Iterator(image):
-                im = im.convert("RGB")
-                im.format = format
-                images.append(im)
+            with PILImage.open(filename) as image:
+                format = image.format
+                ocr_layouts = []
+                for im in ImageSequence.Iterator(image):
+                    im = im.convert("RGB")
+                    im.format = format
+                    ocr_data = pytesseract.image_to_data(
+                        np.array(im),
+                        lang=ocr_languages,
+                        output_type=Output.DICT,
+                    )
+                    ocr_layout = parse_ocr_data_tesseract(ocr_data)
+                    ocr_layouts.append(ocr_layout)
+            return ocr_layouts
         except Exception as e:
             if os.path.isdir(filename) or os.path.isfile(filename):
                 raise e
             else:
                 raise FileNotFoundError(f'File "{filename}" not found!') from e
     else:
-        # ocr PDF
-        ...
-    ocr_layouts = []
-    for image in images:
-        ocr_data = pytesseract.image_to_data(
-            image,
-            lang=ocr_languages,
-            output_type=Output.DICT,
-        )
-        ocr_layout = parse_ocr_data_tesseract(ocr_data)
-        ocr_layouts.append(ocr_layout)
-    return ocr_layouts
-
-
-def load_images_from_pdf(
-    filename: str,
-    dpi: int = 200,
-    output_folder: Optional[Union[str, PurePath]] = None,
-    path_only: bool = False,
-) -> Union[List[PIL.Image.Image], List[str]]:
-    """image renderings of the pdf pages using pdf2image""" ""
-    if path_only and not output_folder:
-        raise ValueError("output_folder must be specified if path_only is true")
-
-    if output_folder is not None:
-        _image_paths = pdf2image.convert_from_path(
-            filename,
-            dpi=dpi,
-            output_folder=output_folder,
-            paths_only=path_only,
-        )
-    else:
-        _image_paths = pdf2image.convert_from_path(
-            filename,
-            dpi=dpi,
-            paths_only=path_only,
-        )
-    image_paths = cast(List[str], _image_paths)
-    return image_paths
+        with tempfile.TemporaryDirectory() as temp_dir:
+            _image_paths = pdf2image.convert_from_path(
+                filename,
+                dpi=pdf_image_dpi,
+                output_folder=temp_dir,
+                paths_only=True,
+            )
+            image_paths = cast(List[str], _image_paths)
+            ocr_layouts = []
+            for image_path in image_paths:
+                with PILImage.open(image_path) as image:
+                    ocr_data = pytesseract.image_to_data(
+                        np.array(image),
+                        lang=ocr_languages,
+                        output_type=Output.DICT,
+                    )
+                    ocr_layout = parse_ocr_data_tesseract(ocr_data)
+                    ocr_layouts.append(ocr_layout)
+            return ocr_layouts
 
 
 def parse_ocr_data_tesseract(ocr_data: dict) -> List[TextRegion]:
@@ -141,6 +130,20 @@ def parse_ocr_data_tesseract(ocr_data: dict) -> List[TextRegion]:
 
 
 def merge_inferred_layout_with_ocr_layout(
+    inferred_layouts: "DocumentLayout",
+    ocr_layouts: List[List[TextRegion]],
+) -> "DocumentLayout":
+    merged_layouts = inferred_layouts
+    pages = inferred_layouts.pages
+    for i in range(len(pages)):
+        inferred_layout = pages[i].elements
+        ocr_layout = ocr_layouts[i]
+        merged_layout = merge_inferred_layout_with_ocr_layout_per_page(inferred_layout, ocr_layout)
+        merged_layouts.pages[i].elements = merged_layout
+    return merged_layouts
+
+
+def merge_inferred_layout_with_ocr_layout_per_page(
     inferred_layout: List[LayoutElement],
     ocr_layout: List[TextRegion],
     supplement_with_ocr_elements: bool = True,
