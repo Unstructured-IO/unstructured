@@ -569,10 +569,14 @@ def document_to_element_list(
                 element.metadata.text_as_html = (
                     layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
                 )
-                if (isinstance(element, Title) and not element.metadata.category_depth) and any(
-                    el.type in ["Headline", "Subheadline"] for el in page.elements
-                ):
-                    element.metadata.category_depth = 0
+                try:
+                    if (isinstance(element, Title) and not element.metadata.category_depth) and any(
+                        el.type in ["Headline", "Subheadline"] for el in page.elements
+                    ):
+                        element.metadata.category_depth = 0
+                except AttributeError:
+                    # HTML instances
+                    pass
                 page_elements.append(element)
             coordinates = (
                 element.metadata.coordinates.points if element.metadata.coordinates else None
