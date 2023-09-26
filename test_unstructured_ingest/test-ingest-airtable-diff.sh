@@ -10,6 +10,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=airtable-diff
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
+max_processes=${MAX_PROCESSES:=$(python -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -29,7 +30,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
     --list-of-paths "$VARIED_DATA_BASE_ID $VARIED_DATA_BASE_ID_2" \
     --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-    --num-processes 2 \
+    --num-processes "$max_processes" \
     --preserve-downloads \
     --reprocess \
     --output-dir "$OUTPUT_DIR"
