@@ -25,6 +25,29 @@ def s3_writer(
     )
 
 
+@requires_dependencies(["azure"], extras="azure-cognitive-search")
+def azure_cognitive_search_writer(
+    endpoint: str,
+    key: str,
+    index: str,
+):
+    from unstructured.ingest.connector.azure_cognitive_search import (
+        AzureCognitiveSearchDestinationConnector,
+        AzureCognitiveSearchWriteConfig,
+        SimpleAzureCognitiveSearchStorageConfig,
+    )
+
+    return AzureCognitiveSearchDestinationConnector(
+        write_config=AzureCognitiveSearchWriteConfig(
+            index=index,
+        ),
+        connector_config=SimpleAzureCognitiveSearchStorageConfig(
+            endpoint=endpoint,
+            key=key,
+        ),
+    )
+
+
 @requires_dependencies(["deltalake"], extras="delta-table")
 def delta_table_writer(
     table_uri: t.Union[str, Path],
@@ -51,4 +74,5 @@ def delta_table_writer(
 writer_map: t.Dict[str, t.Callable] = {
     "s3": s3_writer,
     "delta_table": delta_table_writer,
+    "azure_cognitive_search": azure_cognitive_search_writer,
 }
