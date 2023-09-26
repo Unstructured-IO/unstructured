@@ -116,7 +116,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         try:
             if self.is_page:
-                file = site_client.web.get_file_by_server_relative_path(self.server_path)
+                file = site_client.web.get_file_by_server_relative_path("/" + self.server_path)
                 file = file.listItemAllFields.select(CONTENT_LABELS).get().execute_query()
             else:
                 file = site_client.web.get_file_by_server_relative_url(self.server_path)
@@ -139,7 +139,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 .execute_query()
             )
         except Exception as e:
-            logger.error(f"Failed to retrieve page {self.server_path} from site {self.server_path}")
+            logger.error(f"Failed to retrieve page {self.server_path} from site {self.site_url}")
             logger.error(e)
             return None
         return page
@@ -257,7 +257,7 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
     def _prepare_ingest_doc(self, obj: t.Union["File", "SitePage"], base_url, is_page=False):
         if is_page:
             file_path = obj.get_property("Url", "")
-            server_path = f"/{file_path}" if file_path[0] != "/" else file_path
+            server_path = file_path if file_path[0] != "/" else file_path[1:]
             if (url_path := (urlparse(base_url).path)) and (url_path != "/"):
                 file_path = url_path[1:] + "/" + file_path
         else:
