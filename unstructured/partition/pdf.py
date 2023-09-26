@@ -2,7 +2,7 @@ import os
 import re
 import warnings
 from tempfile import SpooledTemporaryFile
-from typing import BinaryIO, Iterator, List, Optional, Sequence, Union, cast
+from typing import BinaryIO, Iterator, List, Optional, Sequence, Tuple, Union, cast
 
 import numpy as np
 import pdf2image
@@ -481,7 +481,6 @@ def _process_pdfminer_pages(
 
         page_elements = []
         annotation_list = []
-        urls_metadata = []
 
         coordinate_system = PixelSpace(
             width=width,
@@ -493,6 +492,8 @@ def _process_pdfminer_pages(
         for obj in page_layout:
             x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
             bbox = (x1, y1, x2, y2)
+
+            urls_metadata = []
 
             if len(annotation_list) > 0 and isinstance(obj, LTTextBox):
                 annotations_within_element = check_annotations_within_element(
@@ -937,6 +938,8 @@ def calculate_bbox_area(bbox):
 
 
 def check_annotations_within_element(annotation_list, element_bbox, page_number, threshold=0.9):
+    # if element_bbox == (72.0, 120.69200000000001, 537.751, 179.692):
+    #     breakpoint()
     annotations_within_element = []
     for annotation in annotation_list:
         if annotation["page_number"] == page_number and (
