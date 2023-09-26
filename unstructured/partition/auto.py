@@ -137,6 +137,7 @@ def partition(
     xml_keep_tags: bool = False,
     data_source_metadata: Optional[DataSourceMetadata] = None,
     metadata_filename: Optional[str] = None,
+    request_timeout: Optional[int] = None,
     **kwargs,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
@@ -183,6 +184,9 @@ def partition(
     xml_keep_tags
         If True, will retain the XML tags in the output. Otherwise it will simply extract
         the text from within the tags. Only applies to partition_xml.
+    request_timeout
+        The timeout for the HTTP request if URL is set. Defaults to None meaning no timeout and
+        requests will block indefinitely.
     """
     exactly_one(file=file, filename=filename, url=url)
 
@@ -225,6 +229,7 @@ def partition(
             content_type=content_type,
             headers=headers,
             ssl_verify=ssl_verify,
+            request_timeout=request_timeout,
         )
     else:
         if headers != {}:
@@ -407,8 +412,9 @@ def file_and_type_from_url(
     content_type: Optional[str] = None,
     headers: Dict[str, str] = {},
     ssl_verify: bool = True,
+    request_timeout: Optional[int] = None,
 ) -> Tuple[io.BytesIO, Optional[FileType]]:
-    response = requests.get(url, headers=headers, verify=ssl_verify)
+    response = requests.get(url, headers=headers, verify=ssl_verify, timeout=request_timeout)
     file = io.BytesIO(response.content)
 
     content_type = content_type or response.headers.get("Content-Type")
