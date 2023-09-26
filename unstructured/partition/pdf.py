@@ -4,11 +4,13 @@ import warnings
 from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, Iterator, List, Optional, Union, cast
 
+import numpy as np
+
 import pdf2image
 import PIL
 from pdfminer.pdfpage import PDFPage
 from pdfminer.high_level import extract_pages
-from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox, LAParams, LTTextContainer
+from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox, LAParams, LTTextContainer, LTChar
 from pdfminer.utils import open_filename
 from pdfminer.converter import PDFResourceManager, PDFPageAggregator
 from pdfminer.pdfinterp import PDFPageInterpreter
@@ -17,7 +19,7 @@ from pdfminer.pdfparser import PDFParser
 from pdfminer.pdftypes import PDFObjRef
 
 from unstructured.chunking.title import add_chunking_strategy
-from unstructured.cleaners.core import clean_extra_whitespace
+from unstructured.cleaners.core import clean_extra_whitespace, clean_extra_whitespace_with_index_run, index_adjustment_after_clean_extra_whitespace
 from unstructured.documents.coordinates import PixelSpace, PointSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
@@ -56,7 +58,7 @@ from unstructured.partition.utils.sorting import (
 )
 from unstructured.utils import requires_dependencies
 
-from lxml import etree
+# from lxml import etree
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
@@ -440,7 +442,6 @@ def _process_pdfminer_pages(
     filename: str = "",
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
-    root = etree.Element('pdf_data'),
     **kwargs,
 ):
     """Uses PDF miner to split a document into pages and process them."""
@@ -458,22 +459,30 @@ def _process_pdfminer_pages(
 
         width, height = page_layout.width, page_layout.height
 
-        text_segments = []
+        # text_segments = []
         page_elements = []
-        annotation_list = []
+        urls_metadata = []
 
         coordinate_system = PixelSpace(
             width=width,
             height=height,
         )
         if page.annots:
-            get_uris(page.annots, annotation_list, height, coordinate_system, i+1)
+            annotation_list = get_uris(page.annots, height, coordinate_system, i+1)
 
         for obj in page_layout:
-
             x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
             bbox = (x1, y1, x2, y2)
 
+            if isinstance(obj, LTTextBox):
+                try:
+                    annotations_within_element, annotation_list = check_annotations_within_element(annotation_list, bbox, i+1)
+                    _, words = get_word_bounding_box_from_element(obj, height)
+                    for annot in annotations_within_element:
+                        urls_metadata.append(map_bbox_and_index(words, annot))
+                except:
+                    pass
+            
             if hasattr(obj, "get_text"):
                 _text_snippets = [obj.get_text()]
             else:
@@ -481,14 +490,8 @@ def _process_pdfminer_pages(
                 _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
 
             for _text in _text_snippets:
-                _text = clean_extra_whitespace(_text)
+                _text, moved_indices = clean_extra_whitespace_with_index_run(_text)
                 if _text.strip():
-                    text_segments.append(_text)
-
-                    # annotations_within_element, annotation_list = check_annotations_within_element(annotation_list, bbox, i+1)
-
-                    # extract_text_from_bbox()
-
                     points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
                     element = element_from_text(
                         _text,
@@ -499,11 +502,18 @@ def _process_pdfminer_pages(
                         points=points,
                         system=coordinate_system,
                     )
+
+                    try:
+                        link_urls = [{"text": url['text'], "url": url['uri'], "start_index": index_adjustment_after_clean_extra_whitespace(url['start_index'], moved_indices)} for url in urls_metadata]
+                    except:
+                        link_urls = None 
+
                     element.metadata = ElementMetadata(
                         filename=filename,
                         page_number=i + 1,
                         coordinates=coordinates_metadata,
                         last_modified=metadata_last_modified,
+                        link_urls=link_urls,
                     )
                     page_elements.append(element)
         list_item = 0
@@ -544,7 +554,7 @@ def _process_pdfminer_pages(
                     system=coordinate_system,
                 )
                 page_element = list_page_element
-                updated_page_elements.pop()
+                updated_page_elements.pop(0)
 
             updated_page_elements.append(page_element)
 
@@ -777,13 +787,14 @@ def check_coords_within_boundary(
     return x_within_boundary and y_within_boundary
 
 
-def get_uris(annots, annotation_list, height, coordinate_system, page_number):
+def get_uris(annots, height, coordinate_system, page_number):
     if isinstance(annots, List):
-        return get_uris_from_annots(annots, annotation_list, height, coordinate_system, page_number)
-    return get_uris_from_annots(annots.resolve(), annotation_list, height, coordinate_system, page_number)
+        return get_uris_from_annots(annots, height, coordinate_system, page_number)
+    return get_uris_from_annots(annots.resolve(), height, coordinate_system, page_number)
 
 
-def get_uris_from_annots(annots, annotation_list, height, coordinate_system, page_number):
+def get_uris_from_annots(annots, height, coordinate_system, page_number):
+    annotation_list = []
     for annotation in annots:
         annotation_dict = try_resolve(annotation)
         if str(annotation_dict["Subtype"]) != "/'Link'" or "A" not in annotation_dict:
@@ -808,7 +819,7 @@ def get_uris_from_annots(annots, annotation_list, height, coordinate_system, pag
         )
         
         annotation_list.append({"coordinates": coordinates_metadata, "bbox": (x1, y1, x2, y2), "type": uri_type, "uri": uri, "page_number": page_number})
-
+    return annotation_list
 
 def try_resolve(annot):
     try:
@@ -825,23 +836,18 @@ def rect_to_bbox(rect, height):
 
 
 def calculate_intersection_area(bbox1, bbox2):
-    # Bounding box format: (x1, y1, x2, y2)
     x1_1, y1_1, x2_1, y2_1 = bbox1
     x1_2, y1_2, x2_2, y2_2 = bbox2
 
-    # Calculate the coordinates of the intersection rectangle
     x_intersection = max(x1_1, x1_2)
     y_intersection = max(y1_1, y1_2)
     x2_intersection = min(x2_1, x2_2)
     y2_intersection = min(y2_1, y2_2)
 
-    # Check for non-negative width and height (no intersection if negative)
     if x_intersection < x2_intersection and y_intersection < y2_intersection:
-        # intersection_area = (x2_intersection - x_intersection) * (y2_intersection - y_intersection)
         intersection_area = calculate_bbox_area((x_intersection, y_intersection, x2_intersection, y2_intersection))
         return intersection_area
     else:
-        # No intersection
         return 0.0
 
 
@@ -851,16 +857,75 @@ def calculate_bbox_area(bbox):
     return area
 
 
-def check_annotations_within_element(annotation_list, element_bbox, page_number, threshold=0.95):
-    # check elements in the page
+def check_annotations_within_element(annotation_list, element_bbox, page_number, threshold=0.9):
     annotations_within_element = []
     for annotation in annotation_list:
         if annotation['page_number'] == page_number:
             if calculate_intersection_area(element_bbox, annotation['bbox']) / calculate_bbox_area(annotation['bbox']) > threshold:
                 annotations_within_element.append(annotation)
-                annotation_list.pop()
+                annotation_list.pop(0)
     return annotations_within_element, annotation_list
 
 
-def extract_text_from_bbox(page, page_number):
-    page_element = etree.SubElement(root, 'page', number=str(page_number))
+def get_word_bounding_box_from_element(obj, height):
+    characters = []
+    words = []
+    text_len = 0
+
+    for text_line in obj:
+        word = ""
+        for index, character in enumerate(text_line):
+            if isinstance(character, LTChar):
+                characters.append(character)
+
+                char = character.get_text()
+
+                if not char.strip():
+                    words.append({"text": word, "bbox": (x1, y1, x2, y2), "start_index": start_index})
+                    word = ""
+                    continue
+
+                # TODO(klaijan) - isalnum() only works with A-Z, a-z and 0-9
+                # will need to switch to some pattern matching once we support more languages                        
+                if index == 0:
+                    isalnum = char.isalnum()
+
+                if char.isalnum() != isalnum:
+                    isalnum = char.isalnum()
+                    words.append({"text": word, "bbox": (x1, y1, x2, y2), "start_index": start_index})
+                    word = ""
+
+                if len(word) == 0:
+                    start_index = text_len + index
+                    x1 = character.x0
+                    y2 = height - character.y0
+                    x2 = character.x1
+                    y1 = height - character.y1
+                else: 
+                    x2 = character.x1 
+                    y2 = height - character.y0
+
+                word += char
+        text_len += len(text_line)
+    return characters, words
+
+
+def map_bbox_and_index(words, annot):
+    distance_from_bbox_start = np.sqrt((annot['bbox'][0] - np.array([word['bbox'][0] for word in words]))**2 + (annot['bbox'][1] - np.array([word['bbox'][1] for word in words]))**2)
+    distance_from_bbox_end = np.sqrt((annot['bbox'][2] - np.array([word['bbox'][2] for word in words]))**2 + (annot['bbox'][3] - np.array([word['bbox'][3] for word in words]))**2)
+    closest_start = np.argmin(distance_from_bbox_start)
+    closest_end = np.argmin(distance_from_bbox_end)
+
+    text = ""
+    if closest_end >= closest_start:
+        for _ in range(closest_start, closest_end + 1):
+            text += " "
+            text += words[_]['text']
+    else:
+        raise ValueError("Could not correctly identify the text associate with uri. End index < Start index.") 
+
+    annot['text'] = text.strip()
+    annot['start_index'] = words[closest_start]['start_index']
+    return annot
+
+
