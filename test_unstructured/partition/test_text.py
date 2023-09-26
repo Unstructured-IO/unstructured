@@ -165,9 +165,9 @@ def test_partition_text_from_bytes_file_default_encoding(filename):
         assert element.metadata.filename is None
 
 
-def test_auto_partition_element_metadata_user_provided_languages():
+def test_text_partition_element_metadata_user_provided_languages():
     filename = "example-docs/book-war-and-peace-1p.txt"
-    elements = partition_text(filename=filename, strategy="fast")
+    elements = partition_text(filename=filename, strategy="fast", languages=["en"])
     assert elements[0].metadata.languages == ["eng"]
 
 
