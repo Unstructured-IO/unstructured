@@ -184,7 +184,9 @@ scipy==1.10.1
     #   -c requirements/constraints.in
     #   layoutparser
 six==1.16.0
-    # via python-dateutil
+    # via
+    #   -c requirements/base.txt
+    #   python-dateutil
 sympy==1.12
     # via
     #   onnxruntime

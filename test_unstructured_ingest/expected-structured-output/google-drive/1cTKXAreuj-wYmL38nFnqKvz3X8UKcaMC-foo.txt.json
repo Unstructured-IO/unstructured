@@ -13,7 +13,10 @@
         "date_created": "2023-06-15T06:15:59.687000",
         "date_modified": "2023-06-15T06:15:39"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "three"
   }

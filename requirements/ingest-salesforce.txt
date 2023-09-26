@@ -60,6 +60,7 @@ simple-salesforce==1.12.5
     # via -r requirements/ingest-salesforce.in
 six==1.16.0
     # via
+    #   -c requirements/base.txt
     #   isodate
     #   python-dateutil
     #   requests-file
