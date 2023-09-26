@@ -8,8 +8,8 @@ import os
 import tempfile
 from tempfile import SpooledTemporaryFile
 from typing import (
+    IO,
     Any,
-    BinaryIO,
     Dict,
     Iterator,
     List,
@@ -83,7 +83,7 @@ BlockItem: TypeAlias = Union[Paragraph, DocxTable]
 def convert_and_partition_docx(
     source_format: str,
     filename: Optional[str] = None,
-    file: Optional[BinaryIO] = None,
+    file: Optional[IO[bytes]] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
@@ -112,7 +112,7 @@ def convert_and_partition_docx(
             raise ValueError(f"The file {filename} does not exist.")
         return filename
 
-    def copy_to_tempfile(file: BinaryIO) -> str:
+    def copy_to_tempfile(file: IO[bytes]) -> str:
         """Return path to temporary copy of file to be converted."""
         with tempfile.NamedTemporaryFile(delete=False) as tmp:
             tmp.write(file.read())
@@ -127,7 +127,7 @@ def convert_and_partition_docx(
         # -- foo -> foo.docx --
         return f"{root_name}.docx"
 
-    file_path = validate_filename(filename) if filename else copy_to_tempfile(cast(BinaryIO, file))
+    file_path = validate_filename(filename) if filename else copy_to_tempfile(cast(IO[bytes], file))
 
     with tempfile.TemporaryDirectory() as tmpdir:
         docx_path = os.path.join(tmpdir, extract_docx_filename(file_path))
@@ -152,7 +152,7 @@ def convert_and_partition_docx(
 @add_chunking_strategy()
 def partition_docx(
     filename: Optional[str] = None,
-    file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]] = None,
+    file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
     include_metadata: bool = True,
@@ -216,7 +216,7 @@ class _DocxPartitioner:
     def __init__(
         self,
         filename: Optional[str],
-        file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]],
+        file: Optional[IO[bytes]],
         metadata_filename: Optional[str],
         include_page_breaks: bool,
         metadata_last_modified: Optional[str],
@@ -232,7 +232,7 @@ class _DocxPartitioner:
     def iter_document_elements(
         cls,
         filename: Optional[str] = None,
-        file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]] = None,
+        file: Optional[IO[bytes]] = None,
         metadata_filename: Optional[str] = None,
         include_page_breaks: bool = True,
         metadata_last_modified: Optional[str] = None,
