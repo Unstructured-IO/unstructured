@@ -1,6 +1,11 @@
 EXPECTED_TABLE = """<table border="1" class="dataframe">
   <tbody>
     <tr>
+      <td>Stanley Cups</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
       <td>Team</td>
       <td>Location</td>
       <td>Stanley Cups</td>
@@ -24,14 +29,22 @@ EXPECTED_TABLE = """<table border="1" class="dataframe">
 </table>"""
 
 
-EXPECTED_TEXT = "Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"
+EXPECTED_TEXT = (
+    "Stanley Cups Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"
+)
 
 EXPECTED_TEXT_WITH_EMOJI = (
+    "Stanley Cups "
     "Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13 👨\\U+1F3FB🔧 TOR 15"
 )
 
 EXPECTED_TABLE_WITH_EMOJI = """<table border="1" class="dataframe">
   <tbody>
+    <tr>
+      <td>Stanley Cups</td>
+      <td></td>
+      <td></td>
+    </tr>
     <tr>
       <td>Team</td>
       <td>Location</td>
