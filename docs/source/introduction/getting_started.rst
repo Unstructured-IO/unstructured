@@ -1,8 +1,8 @@
 Getting Started
----------------
+===============
 
 Quick Installation
-~~~~~~~~~~~~~~~~~~
+------------------
 
 This guide offers concise steps to swiftly install and validate your ``unstructured`` installation.
 
@@ -27,14 +27,14 @@ This guide offers concise steps to swiftly install and validate your ``unstructu
    - `pandoc` : For EPUBs, RTFs, and Open Office documents.
 
 Validating Installation
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 After installation, confirm the setup by executing the below Python code:
 
 .. code-block:: python
 
    from unstructured.partition.auto import partition
-   elements = partition(filename="example-docs/fake-email.eml")
+   elements = partition(filename="example-docs/eml/fake-email.eml")
 
 If you've opted for the "local-inference" installation, you should also be able to execute:
 
@@ -61,7 +61,7 @@ Before running the code in this make sure you've installed the ``unstructured`` 
 and all dependencies using the instructions in the `Quick Start <https://unstructured-io.github.io/unstructured/installing.html#quick-start>`_ section.
 
 Partitioning a document
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 In this section, we'll cut right to the chase and get to the most important part of the library: partitioning a document.
 The goal of document partitioning is to read in a source document, split the document into sections, categorize those sections,
@@ -95,15 +95,11 @@ We highly recommend installing ``libmagic`` and you may observe different file d
 if ``libmagic`` is not installed`.
 
 
-
 Document elements
-~~~~~~~~~~~~~~~~~
-
+-----------------
 
 When we partition a document, the output is a list of document ``Element`` objects.
 These element objects represent different components of the source document. Currently, the ``unstructured`` library supports the following element types:
-
-
 
 * ``Element``
 	* ``Text``
@@ -120,11 +116,9 @@ These element objects represent different components of the source document. Cur
 	* ``CheckBox``
 	* ``Image``
 
-
 Other element types that we will add in the future include tables and figures.
 Different partitioning functions use different methods for determining the element type and extracting the associated content.
 Document elements have a ``str`` representation. You can print them using the snippet below.
-
 
 .. code:: python
 
@@ -140,8 +134,6 @@ For example, if you're training a summarization model you may only want to inclu
 You'll notice that the output above includes a lot of titles and other content that may not be suitable for a summarization model.
 The following code shows how you can limit your output to only narrative text with at least two sentences. As you can see, the output now only contains narrative text.
 
-
-
 .. code:: python
 
 	from unstructured.documents.elements import NarrativeText
@@ -152,10 +144,8 @@ The following code shows how you can limit your output to only narrative text wi
 	        print(element)
 	        print("\n")
 
-
-
 Tables
-~~~~~~
+------
 
 For ``Table`` elements, the raw text of the table will be stored in the ``text`` attribute for the Element, and HTML representation
 of the table will be available in the element metadata under ``element.metadata.text_as_html``. For most documents where
@@ -178,7 +168,6 @@ pass in ``infer_table_structured=True``. Here is an example (Note: this example 
 
 The text will look like this:
 
-
 .. code:: python
 
 	Dataset Base Model1 Large Model Notes PubLayNet [38] F / M M Layouts of modern scientific documents PRImA [3] M - Layouts of scanned modern magazines and scientific reports Newspaper [17] F - Layouts of scanned US newspapers from the 20th century TableBank [18] F F Table region on modern scientific and business document HJDataset [31] F / M - Layouts of history Japanese documents
@@ -191,8 +180,8 @@ And the ``text_as_html`` metadata will look like this:
 	<table><thead><th>Dataset</th><th>| Base Model’</th><th>| Notes</th></thead><tr><td>PubLayNet</td><td>[38] F/M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA [3]</td><td>M</td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper</td><td>F</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset [31]</td><td>F/M</td><td>Layouts of history Japanese documents</td></tr></table>
 
 
-Converting elements to a dictionary or JSON
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Converting Elements to Dictionary or JSON
+-------------------------------------------
 
 The final step in the process for most users is to convert the output to JSON.
 You can convert a list of document elements to a list of dictionaries using the ``convert_to_dict`` function.
@@ -210,8 +199,6 @@ The workflow for using ``convert_to_dict`` appears below.
 The ``unstructured`` library also includes utilities for saving a list of elements to JSON and reading
 a list of elements from JSON, as seen in the snippet below
 
-
-
 .. code:: python
 
     from unstructured.staging.base import elements_to_json, elements_from_json
@@ -222,9 +209,8 @@ a list of elements from JSON, as seen in the snippet below
     elements = elements_from_json(filename=filename)
 
 
-###################
 Unique Element IDs
-###################
+------------------
 
 By default, the element ID is a SHA-256 hash of the element text. This is to ensure that
 the ID is deterministic. One downside is that the ID is not guaranteed to be unique.
@@ -241,14 +227,11 @@ if you'd like to use the IDs as a primary key in a database, for example.
     elements[0].id
 
 
-
 Wrapping it all up
-~~~~~~~~~~~~~~~~~~
+------------------
 
 To conclude, the basic workflow for reading in a document and converting it to a JSON in ``unstructured``
 looks like the following:
-
-
 
 .. code:: python
 

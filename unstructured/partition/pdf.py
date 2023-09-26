@@ -41,7 +41,7 @@ from unstructured.file_utils.filetype import (
     FileType,
     add_metadata_with_filetype,
 )
-from unstructured.logger import logger
+from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
     convert_to_bytes,
@@ -327,29 +327,37 @@ def _partition_pdf_or_image_local(
     ocr_languages = prepare_languages_for_tesseract(languages)
 
     model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
+    pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
+    extract_images_in_pdf = kwargs.get("extract_images_in_pdf", False)
+    image_output_dir_path = kwargs.get("image_output_dir_path", None)
+
+    process_with_model_kwargs = {
+        "is_image": is_image,
+        "ocr_languages": ocr_languages,
+        "ocr_mode": ocr_mode,
+        "extract_tables": infer_table_structure,
+        "model_name": model_name,
+    }
+
+    process_with_model_extra_kwargs = {
+        "pdf_image_dpi": pdf_image_dpi,
+        "extract_images_in_pdf": extract_images_in_pdf,
+        "image_output_dir_path": image_output_dir_path,
+    }
+
+    for key, value in process_with_model_extra_kwargs.items():
+        if value:
+            process_with_model_kwargs[key] = value
+
     if file is None:
-        pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
-        process_file_with_model_kwargs = {
-            "is_image": is_image,
-            "ocr_languages": ocr_languages,
-            "ocr_mode": ocr_mode,
-            "extract_tables": infer_table_structure,
-            "model_name": model_name,
-        }
-        if pdf_image_dpi:
-            process_file_with_model_kwargs["pdf_image_dpi"] = pdf_image_dpi
         layout = process_file_with_model(
             filename,
-            **process_file_with_model_kwargs,
+            **process_with_model_kwargs,
         )
     else:
         layout = process_data_with_model(
             file,
-            is_image=is_image,
-            ocr_languages=ocr_languages,
-            ocr_mode=ocr_mode,
-            extract_tables=infer_table_structure,
-            model_name=model_name,
+            **process_with_model_kwargs,
         )
     elements = document_to_element_list(
         layout,
@@ -362,17 +370,22 @@ def _partition_pdf_or_image_local(
         infer_list_items=False,
         **kwargs,
     )
-    out_elements = []
 
+    out_elements = []
     for el in elements:
-        if (isinstance(el, PageBreak) and not include_page_breaks) or (
-            # NOTE(crag): small chunks of text from Image elements tend to be garbage
-            isinstance(el, Image)
-            and (el.text is None or len(el.text) < 24 or el.text.find(" ") == -1)
-        ):
+        if isinstance(el, PageBreak) and not include_page_breaks:
             continue
+
+        if isinstance(el, Image):
+            # NOTE(crag): small chunks of text from Image elements tend to be garbage
+            if not el.metadata.image_path and (
+                el.text is None or len(el.text) < 24 or el.text.find(" ") == -1
+            ):
+                continue
+            else:
+                out_elements.append(cast(Element, el))
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
-        if isinstance(el, Text):
+        elif isinstance(el, Text):
             el.text = re.sub(
                 RE_MULTISPACE_INCLUDING_NEWLINES,
                 " ",
@@ -628,21 +641,50 @@ def convert_pdf_to_images(
             yield image
 
 
-def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
+def _get_element_box(
+    boxes: List[str],
+    char_count: int,
+) -> Tuple[Tuple[Tuple[float, float], Tuple[float, int], Tuple[int, int], Tuple[int, float]], int]:
+    """Helper function to get the bounding box of an element.
+
+    Args:
+        boxes (List[str])
+        char_count (int)
+    """
+    min_x = float("inf")
+    min_y = float("inf")
+    max_x = 0
+    max_y = 0
+    for box in boxes:
+        _, _x1, _y1, _x2, _y2, _ = box.split()
+
+        x1, y1, x2, y2 = map(int, [_x1, _y1, _x2, _y2])
+        min_x = min(min_x, x1)
+        min_y = min(min_y, y1)
+        max_x = max(max_x, x2)
+        max_y = max(max_y, y2)
+
+    return ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y)), char_count
+
+
+def _add_pytesseract_bboxes_to_elements(
+    elements: List[Text],
+    bboxes_string: str,
+    width: int,
+    height: int,
+) -> List[Text]:
     """
     Get the bounding box of each element and add it to element.metadata.coordinates
 
     Args:
         elements: elements containing text detected by pytesseract.image_to_string.
-        bboxes (str): The return value of pytesseract.image_to_boxes.
+        bboxes_string (str): The return value of pytesseract.image_to_boxes.
+        width: width of image
+        height: height of image
     """
     # (NOTE) jennings: This function was written with pytesseract in mind, but
     # paddle returns similar values via `ocr.ocr(img)`.
     # See more at issue #1176: https://github.com/Unstructured-IO/unstructured/issues/1176
-    min_x = float("inf")
-    min_y = float("inf")
-    max_x = 0
-    max_y = 0
     point_space = PointSpace(
         width=width,
         height=height,
@@ -652,40 +694,35 @@ def add_pytesseract_bbox_to_elements(elements, bboxes, width, height):
         height=height,
     )
 
-    boxes = bboxes.strip().split("\n")
-    i = 0
+    boxes = bboxes_string.strip().split("\n")
+    box_idx = 0
     for element in elements:
+        if not element.text:
+            box_idx += 1
+            continue
+        try:
+            while boxes[box_idx][0] != element.text[0]:
+                box_idx += 1
+        except IndexError:
+            break
         char_count = len(element.text.replace(" ", ""))
+        if box_idx + char_count > len(boxes):
+            break
+        _points, char_count = _get_element_box(
+            boxes=boxes[box_idx : box_idx + char_count],  # noqa
+            char_count=char_count,
+        )
+        box_idx += char_count
 
-        for box in boxes[i : i + char_count]:  # noqa
-            _, x1, y1, x2, y2, _ = box.split()
-            x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
-
-            min_x = min(min_x, x1)
-            min_y = min(min_y, y1)
-            max_x = max(max_x, x2)
-            max_y = max(max_y, y2)
-
-        points = ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y))
-        converted_points = tuple(
-            [
-                point_space.convert_coordinates_to_new_system(pixel_space, *point)
-                for point in points
-            ],
+        converted_points = point_space.convert_multiple_coordinates_to_new_system(
+            pixel_space,
+            _points,
         )
 
         element.metadata.coordinates = CoordinatesMetadata(
             points=converted_points,
             system=pixel_space,
         )
-
-        # reset for next element
-        min_x = float("inf")
-        min_y = float("inf")
-        max_x = 0
-        max_y = 0
-        i += char_count
-
     return elements
 
 
@@ -709,14 +746,14 @@ def _partition_pdf_or_image_with_ocr(
     if is_image:
         if file is not None:
             image = PIL.Image.open(file)
-            text, bboxes = unstructured_pytesseract.run_and_get_multiple_output(
+            text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,
                 extensions=["txt", "box"],
                 lang=ocr_languages,
             )
         else:
             image = PIL.Image.open(filename)
-            text, bboxes = unstructured_pytesseract.run_and_get_multiple_output(
+            text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,
                 extensions=["txt", "box"],
                 lang=ocr_languages,
@@ -728,7 +765,12 @@ def _partition_pdf_or_image_with_ocr(
             metadata_last_modified=metadata_last_modified,
         )
         width, height = image.size
-        add_pytesseract_bbox_to_elements(elements, bboxes, width, height)
+        _add_pytesseract_bboxes_to_elements(
+            elements=elements,
+            bboxes_string=_bboxes,
+            width=width,
+            height=height,
+        )
 
     else:
         elements = []
@@ -753,11 +795,15 @@ def _partition_pdf_or_image_with_ocr(
                 min_partition=min_partition,
             )
 
-            # FIXME (yao): do not save duplicated info?
             for element in _elements:
                 element.metadata = metadata
 
-            add_pytesseract_bbox_to_elements(_elements, _bboxes, width, height)
+            _add_pytesseract_bboxes_to_elements(
+                elements=_elements,
+                bboxes_string=_bboxes,
+                width=width,
+                height=height,
+            )
 
             elements.extend(_elements)
             if include_page_breaks:
@@ -784,7 +830,10 @@ def check_coords_within_boundary(
         a float ranges from [0,1] to scale the horizontal (x-axis) boundary
     """
     if not coord_has_valid_points(coordinates) and not coord_has_valid_points(boundary):
-        raise ValueError("Invalid coordinates.")
+        trace_logger.detail(  # type: ignore
+            f"coordinates {coordinates} and boundary {boundary} did not pass validation",
+        )
+        return False
 
     boundary_x_min = boundary.points[0][0]
     boundary_x_max = boundary.points[2][0]

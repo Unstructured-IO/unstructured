@@ -16,6 +16,7 @@ from unstructured.ingest.cli.interfaces import (
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import delta_table as delta_table_fn
+from unstructured.ingest.runner import runner_map
 
 
 @dataclass
@@ -76,6 +77,75 @@ def delta_table_source(ctx: click.Context, **options):
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
+
+
+@dataclass
+class DeltaTableCliWriteConfig(BaseConfig, CliMixin):
+    write_column: str
+    mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
+
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--write-column"],
+                required=True,
+                type=str,
+                help="column in delta table to write json content",
+            ),
+            click.Option(
+                ["--mode"],
+                default="error",
+                type=click.Choice(["error", "append", "overwrite", "ignore"]),
+                help="How to handle existing data. Default is to error if table already exists. "
+                "If 'append', will add new data. "
+                "If 'overwrite', will replace table with new data. "
+                "If 'ignore', will not write anything if table already exists.",
+            ),
+        ]
+        cmd.params.extend(options)
+
+
+@click.command(name="delta-table")
+@click.pass_context
+def delta_table_dest(ctx: click.Context, **options):
+    if not ctx.parent:
+        raise click.ClickException("destination command called without a parent")
+    if not ctx.parent.info_name:
+        raise click.ClickException("parent command missing info name")
+    source_cmd = ctx.parent.info_name.replace("-", "_")
+    runner_fn = runner_map[source_cmd]
+    parent_options: dict = ctx.parent.params if ctx.parent else {}
+    conform_click_options(options)
+    conform_click_options(parent_options)
+    verbose = parent_options.get("verbose", False)
+    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+    log_options(parent_options, verbose=verbose)
+    log_options(options, verbose=verbose)
+    try:
+        # run_init_checks(**options)
+        read_config = CliReadConfig.from_dict(parent_options)
+        partition_config = CliPartitionConfig.from_dict(parent_options)
+        # Run for schema validation
+        DeltaTableCliConfig.from_dict(options)
+        DeltaTableCliWriteConfig.from_dict(options)
+        runner_fn(
+            read_config=read_config,
+            partition_config=partition_config,
+            writer_type="delta_table",
+            writer_kwargs=options,
+            **parent_options,
+        )
+    except Exception as e:
+        logger.error(e, exc_info=True)
+        raise click.ClickException(str(e)) from e
+
+
+def get_dest_cmd() -> click.Command:
+    cmd = delta_table_dest
+    DeltaTableCliConfig.add_cli_options(cmd)
+    DeltaTableCliWriteConfig.add_cli_options(cmd)
+    return cmd
 
 
 def get_source_cmd() -> click.Group:

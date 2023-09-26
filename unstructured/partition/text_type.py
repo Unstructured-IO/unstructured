@@ -315,7 +315,7 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5, languages: List[str] = 
     return bool(ratio > threshold)
 
 
-def is_us_city_state_zip(text) -> bool:
+def is_us_city_state_zip(text: str) -> bool:
     """Checks if the given text is in the format of US city/state/zip code.
 
     Examples
@@ -327,7 +327,7 @@ def is_us_city_state_zip(text) -> bool:
     return US_CITY_STATE_ZIP_RE.match(text.strip()) is not None
 
 
-def is_email_address(text) -> bool:
+def is_email_address(text: str) -> bool:
     """Check if the given text is the email address"""
     return EMAIL_ADDRESS_PATTERN_RE.match(text.strip()) is not None
 

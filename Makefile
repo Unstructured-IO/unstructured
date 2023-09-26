@@ -215,18 +215,14 @@ install-local-inference: install install-all-docs
 install-pandoc:
 	ARCH=${ARCH} ./scripts/install-pandoc.sh
 
+.PHONY: install-paddleocr
+install-paddleocr:
+	ARCH=${ARCH} ./scripts/install-paddleocr.sh
 
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
 pip-compile:
-	@for file in $(shell ls requirements/*.in); do \
-		if [[ "$${file}" =~ "constraints" ]]; then \
-			continue; \
-		fi; \
-		echo "running: pip-compile --upgrade $${file}"; \
-		pip-compile --upgrade $${file}; \
-	done
-	cp requirements/build.txt docs/requirements.txt
+	@scripts/pip-compile.sh
 
 
 
@@ -322,7 +318,7 @@ check: check-src check-tests check-version
 ## check-src:               runs linters (source only, no tests)
 .PHONY: check-src
 check-src:
-	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore PT011,PT012,SIM117
+	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore COM812,PT011,PT012,SIM117
 	black --line-length 100 ${PACKAGE_NAME} --check
 	flake8 ${PACKAGE_NAME}
 	mypy ${PACKAGE_NAME} --ignore-missing-imports --check-untyped-defs

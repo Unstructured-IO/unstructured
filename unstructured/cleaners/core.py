@@ -32,7 +32,7 @@ def clean_non_ascii_chars(text) -> str:
     return en.decode()
 
 
-def clean_bullets(text) -> str:
+def clean_bullets(text: str) -> str:
     """Cleans unicode bullets from a section of text.
 
     Example

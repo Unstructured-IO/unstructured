@@ -1,0 +1,65 @@
+[
+  {
+    "type": "Table",
+    "element_id": "0e2d044a26942328e2b8647574232e7f",
+    "metadata": {
+      "data_source": {
+        "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/tests-example.xls",
+        "record_locator": {
+          "user_pname": "devops@unstructuredio.onmicrosoft.com",
+          "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls"
+        },
+        "date_created": "2023-08-24T03:00:43",
+        "date_modified": "2023-08-24T03:00:43"
+      },
+      "filename": "tests-example.xls",
+      "filetype": "application/vnd.ms-excel",
+      "page_number": 1,
+      "page_name": "Example Test",
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th>MC</th>\n      <th>What is 2+2?</th>\n      <th>4</th>\n      <th>correct</th>\n      <th>3</th>\n      <th>incorrect</th>\n      <th>Unnamed: 6</th>\n      <th>Unnamed: 7</th>\n      <th>Unnamed: 8</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>MA</td>\n      <td>What C datatypes are 8 bits? (assume i386)</td>\n      <td>int</td>\n      <td></td>\n      <td>float</td>\n      <td></td>\n      <td>double</td>\n      <td></td>\n      <td>char</td>\n    </tr>\n    <tr>\n      <td>TF</td>\n      <td>Bagpipes are awesome.</td>\n      <td>true</td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>ESS</td>\n      <td>How have the original Henry Hornbostel buildings influenced campus architecture and design in the last 30 years?</td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>ORD</td>\n      <td>Rank the following in their order of operation.</td>\n      <td>Parentheses</td>\n      <td>Exponents</td>\n      <td>Division</td>\n      <td>Addition</td>\n      <td></td>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>FIB</td>\n      <td>The student activities fee is</td>\n      <td>95</td>\n      <td>dollars for students enrolled in</td>\n      <td>19</td>\n      <td>units or more,</td>\n      <td></td>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>MAT</td>\n      <td>Match the lower-case greek letter with its capital form.</td>\n      <td>λ</td>\n      <td>Λ</td>\n      <td>α</td>\n      <td>γ</td>\n      <td>Γ</td>\n      <td>φ</td>\n      <td>Φ</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n\n\nMC\nWhat is 2+2?\n4\ncorrect\n3\nincorrect\nUnnamed: 6\nUnnamed: 7\nUnnamed: 8\n\n\n\n\nMA\nWhat C datatypes are 8 bits? (assume i386)\nint\n\nfloat\n\ndouble\n\nchar\n\n\nTF\nBagpipes are awesome.\ntrue\n\n\n\n\n\n\n\n\nESS\nHow have the original Henry Hornbostel buildings influenced campus architecture and design in the last 30 years?\n\n\n\n\n\n\n\n\n\nORD\nRank the following in their order of operation.\nParentheses\nExponents\nDivision\nAddition\n\n\n\n\n\nFIB\nThe student activities fee is\n95\ndollars for students enrolled in\n19\nunits or more,\n\n\n\n\n\nMAT\nMatch the lower-case greek letter with its capital form.\nλ\nΛ\nα\nγ\nΓ\nφ\nΦ\n\n\n"
+  },
+  {
+    "type": "Table",
+    "element_id": "5c56dd4c5b649b873ebd848312e66753",
+    "metadata": {
+      "data_source": {
+        "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/tests-example.xls",
+        "record_locator": {
+          "user_pname": "devops@unstructuredio.onmicrosoft.com",
+          "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls"
+        },
+        "date_created": "2023-08-24T03:00:43",
+        "date_modified": "2023-08-24T03:00:43"
+      },
+      "filename": "tests-example.xls",
+      "filetype": "application/vnd.ms-excel",
+      "page_number": 2,
+      "page_name": "Format Abbr.",
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th>Unnamed: 0</th>\n      <th>Unnamed: 1</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>http://www.cmu.edu/blackboard</td>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>Question Format Abbreviations</td>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>Abbreviation</td>\n      <td>Question Type</td>\n    </tr>\n    <tr>\n      <td>MC</td>\n      <td>Multiple Choice</td>\n    </tr>\n    <tr>\n      <td>MA</td>\n      <td>Multiple Answer</td>\n    </tr>\n    <tr>\n      <td>TF</td>\n      <td>True/False</td>\n    </tr>\n    <tr>\n      <td>ESS</td>\n      <td>Essay</td>\n    </tr>\n    <tr>\n      <td>ORD</td>\n      <td>Ordering</td>\n    </tr>\n    <tr>\n      <td>MAT</td>\n      <td>Matching</td>\n    </tr>\n    <tr>\n      <td>FIB</td>\n      <td>Fill in the Blank</td>\n    </tr>\n    <tr>\n      <td>FIL</td>\n      <td>File response</td>\n    </tr>\n    <tr>\n      <td>NUM</td>\n      <td>Numeric Response</td>\n    </tr>\n    <tr>\n      <td>SR</td>\n      <td>Short response</td>\n    </tr>\n    <tr>\n      <td>OP</td>\n      <td>Opinion</td>\n    </tr>\n    <tr>\n      <td>FIB_PLUS</td>\n      <td>Multiple Fill in the Blank</td>\n    </tr>\n    <tr>\n      <td>JUMBLED_SENTENCE</td>\n      <td>Jumbled Sentence</td>\n    </tr>\n    <tr>\n      <td>QUIZ_BOWL</td>\n      <td>Quiz Bowl</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n\n\nUnnamed: 0\nUnnamed: 1\n\n\n\n\n\n\n\n\n\n\n\n\nhttp://www.cmu.edu/blackboard\n\n\n\n\n\n\n\nQuestion Format Abbreviations\n\n\n\n\n\n\n\nAbbreviation\nQuestion Type\n\n\nMC\nMultiple Choice\n\n\nMA\nMultiple Answer\n\n\nTF\nTrue/False\n\n\nESS\nEssay\n\n\nORD\nOrdering\n\n\nMAT\nMatching\n\n\nFIB\nFill in the Blank\n\n\nFIL\nFile response\n\n\nNUM\nNumeric Response\n\n\nSR\nShort response\n\n\nOP\nOpinion\n\n\nFIB_PLUS\nMultiple Fill in the Blank\n\n\nJUMBLED_SENTENCE\nJumbled Sentence\n\n\nQUIZ_BOWL\nQuiz Bowl\n\n\n"
+  },
+  {
+    "type": "Table",
+    "element_id": "f48657c4eb70d98975e567248d0ef4bb",
+    "metadata": {
+      "data_source": {
+        "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/tests-example.xls",
+        "record_locator": {
+          "user_pname": "devops@unstructuredio.onmicrosoft.com",
+          "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls"
+        },
+        "date_created": "2023-08-24T03:00:43",
+        "date_modified": "2023-08-24T03:00:43"
+      },
+      "filename": "tests-example.xls",
+      "filetype": "application/vnd.ms-excel",
+      "page_number": 3,
+      "page_name": "Readme",
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th>Unnamed: 0</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td>http://www.cmu.edu/blackboard</td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td>File Information</td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td>Source</td>\n    </tr>\n    <tr>\n      <td>http://www.cmu.edu/blackboard/files/evaluate/tests-example.xls</td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td>Version</td>\n    </tr>\n    <tr>\n      <td>1.0 (January 2012)</td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td>Contact</td>\n    </tr>\n    <tr>\n      <td>bb-help@andrew.cmu.edu</td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td></td>\n    </tr>\n    <tr>\n      <td>About</td>\n    </tr>\n    <tr>\n      <td>This is an example and template for preparing Blackboard tests offline. See the full directions at: http://www.cmu.edu/blackboard/evaluate#manage_tests/import_questions</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n\n\nUnnamed: 0\n\n\n\n\n\n\n\n\n\n\nhttp://www.cmu.edu/blackboard\n\n\n\n\n\nFile Information\n\n\n\n\n\n\n\n\nSource\n\n\nhttp://www.cmu.edu/blackboard/files/evaluate/tests-example.xls\n\n\n\n\n\n\n\n\nVersion\n\n\n1.0 (January 2012)\n\n\n\n\n\n\n\n\nContact\n\n\nbb-help@andrew.cmu.edu\n\n\n\n\n\n\n\n\nAbout\n\n\nThis is an example and template for preparing Blackboard tests offline. See the full directions at: http://www.cmu.edu/blackboard/evaluate#manage_tests/import_questions\n\n\n"
+  }
+]

@@ -12,6 +12,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -33,7 +34,7 @@ class SimpleElasticsearchConfig(BaseConnectorConfig):
 
 
 @dataclass
-class ElasticsearchFileMeta:
+class ElasticsearchDocumentMeta:
     """Metadata specifying:
     name of the elasticsearch index that is being reached to,
     and the id of document that is being reached to,
@@ -53,7 +54,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """
 
     connector_config: SimpleElasticsearchConfig
-    file_meta: ElasticsearchFileMeta
+    document_meta: ElasticsearchDocumentMeta
     registry_name: str = "elasticsearch"
 
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
@@ -61,8 +62,8 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def filename(self):
         return (
             Path(self.read_config.download_dir)
-            / self.file_meta.index_name
-            / f"{self.file_meta.document_id}.txt"
+            / self.document_meta.index_name
+            / f"{self.document_meta.document_id}.txt"
         ).resolve()
 
     @property
@@ -71,7 +72,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         the output file."""
         # Generate SHA256 hash and take the first 8 characters
         query_hash = hashlib.sha256((self.connector_config.jq_query or "").encode()).hexdigest()[:8]
-        output_file = f"{self.file_meta.document_id}-{query_hash}.json"
+        output_file = f"{self.document_meta.document_id}-{query_hash}.json"
         return (
             Path(self.partition_config.output_dir) / self.connector_config.index_name / output_file
         )
@@ -104,21 +105,50 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         concatenated_values = seperator.join(values)
         return concatenated_values
 
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    def _get_document(self):
+        from elasticsearch import Elasticsearch, NotFoundError
+
+        try:
+            # TODO: instead of having a separate client for each doc,
+            # have a separate client for each process
+            es = Elasticsearch(self.connector_config.url)
+            document = es.get(
+                index=self.connector_config.index_name,
+                id=self.document_meta.document_id,
+            )
+        except NotFoundError:
+            logger.error("Couldn't find document with ID: %s", self.document_meta.document_id)
+            return None
+        return document
+
+    def update_source_metadata(self, **kwargs):
+        document = kwargs.get("document", self._get_document())
+        if document is None:
+            self.source_metadata = SourceMetadata(
+                exists=False,
+            )
+            return
+        self.source_metadata = SourceMetadata(
+            version=document["_version"],
+            exists=document["found"],
+        )
+
     @SourceConnectionError.wrap
-    @requires_dependencies(["elasticsearch", "jq"], extras="elasticsearch")
+    @requires_dependencies(["jq"], extras="elasticsearch")
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         import jq
-        from elasticsearch import Elasticsearch
 
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-        # TODO: instead of having a separate client for each doc,
-        # have a separate client for each process
-        es = Elasticsearch(self.connector_config.url)
-        document_dict = es.get(
-            index=self.connector_config.index_name,
-            id=self.file_meta.document_id,
-        ).body["_source"]
+        document = self._get_document()
+        self.update_source_metadata(document=document)
+        if document is None:
+            raise ValueError(
+                f"Failed to get document {self.document_meta.document_id}",
+            )
+
+        document_dict = document.body["_source"]
         if self.connector_config.jq_query:
             document_dict = json.loads(
                 jq.compile(self.connector_config.jq_query).input(document_dict).text(),
@@ -127,6 +157,26 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.document)
+
+    @property
+    def date_created(self) -> t.Optional[str]:
+        return None
+
+    @property
+    def date_modified(self) -> t.Optional[str]:
+        return None
+
+    @property
+    def source_url(self) -> t.Optional[str]:
+        return None
+
+    @property
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
+        return {
+            "url": self.connector_config.url,
+            "index_name": self.connector_config.index_name,
+            "document_id": self.document_meta.document_id,
+        }
 
 
 @dataclass
@@ -166,7 +216,7 @@ class ElasticsearchSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnec
                 connector_config=self.connector_config,
                 partition_config=self.partition_config,
                 read_config=self.read_config,
-                file_meta=ElasticsearchFileMeta(self.connector_config.index_name, id),
+                document_meta=ElasticsearchDocumentMeta(self.connector_config.index_name, id),
             )
             for id in ids
         ]

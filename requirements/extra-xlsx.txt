@@ -14,7 +14,9 @@ numpy==1.24.4
 openpyxl==3.1.2
     # via -r requirements/extra-xlsx.in
 pandas==2.0.3
-    # via -r requirements/extra-xlsx.in
+    # via
+    #   -c requirements/constraints.in
+    #   -r requirements/extra-xlsx.in
 python-dateutil==2.8.2
     # via pandas
 pytz==2023.3.post1
