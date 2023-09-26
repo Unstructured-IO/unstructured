@@ -3,6 +3,7 @@ from typing import Any, Generator, List, Optional, Tuple
 
 import backoff
 import httpx
+import notion_client.errors
 from notion_client import Client as NotionClient
 from notion_client.api_endpoints import BlocksChildrenEndpoint as NotionBlocksChildrenEndpoint
 from notion_client.api_endpoints import BlocksEndpoint as NotionBlocksEndpoint
@@ -38,6 +39,13 @@ def giveup_handler(details):
     )
 
 
+retryable_exceptions = (
+    httpx.TimeoutException,
+    httpx.HTTPStatusError,
+    notion_client.errors.HTTPResponseError,
+)
+
+
 class BlocksChildrenEndpoint(NotionBlocksChildrenEndpoint):
     def __init__(self, retry_strategy: Optional[RetryStrategy] = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -45,7 +53,7 @@ class BlocksChildrenEndpoint(NotionBlocksChildrenEndpoint):
 
     @on_exception(
         backoff.expo,
-        (httpx.TimeoutException, httpx.HTTPStatusError),
+        retryable_exceptions,
         on_backoff=backoff_handler,
         on_giveup=giveup_handler,
     )
@@ -82,7 +90,7 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
 
     @on_exception(
         backoff.expo,
-        (httpx.TimeoutException, httpx.HTTPStatusError),
+        retryable_exceptions,
         on_backoff=backoff_handler,
         on_giveup=giveup_handler,
     )
@@ -92,7 +100,7 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
 
     @on_exception(
         backoff.expo,
-        (httpx.TimeoutException, httpx.HTTPStatusError, RequestTimeoutError),
+        retryable_exceptions,
         on_backoff=backoff_handler,
         on_giveup=giveup_handler,
     )
@@ -110,7 +118,7 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
 
     @on_exception(
         backoff.expo,
-        (httpx.TimeoutException, httpx.HTTPStatusError),
+        retryable_exceptions,
         on_backoff=backoff_handler,
         on_giveup=giveup_handler,
     )
@@ -127,7 +135,7 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
 
     @on_exception(
         backoff.expo,
-        (httpx.TimeoutException, httpx.HTTPStatusError),
+        retryable_exceptions,
         on_backoff=backoff_handler,
         on_giveup=giveup_handler,
     )
@@ -157,7 +165,7 @@ class BlocksEndpoint(NotionBlocksEndpoint):
 
     @on_exception(
         backoff.expo,
-        (httpx.TimeoutException, httpx.HTTPStatusError),
+        retryable_exceptions,
         on_backoff=backoff_handler,
         on_giveup=giveup_handler,
     )
@@ -173,7 +181,7 @@ class PagesEndpoint(NotionPagesEndpoint):
 
     @on_exception(
         backoff.expo,
-        (httpx.TimeoutException, httpx.HTTPStatusError),
+        retryable_exceptions,
         on_backoff=backoff_handler,
         on_giveup=giveup_handler,
     )
@@ -183,7 +191,7 @@ class PagesEndpoint(NotionPagesEndpoint):
 
     @on_exception(
         backoff.expo,
-        (httpx.TimeoutException, httpx.HTTPStatusError, RequestTimeoutError),
+        retryable_exceptions,
         on_backoff=backoff_handler,
         on_giveup=giveup_handler,
     )
