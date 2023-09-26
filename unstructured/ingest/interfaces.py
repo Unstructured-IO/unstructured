@@ -262,8 +262,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
 
             if response.status_code != 200:
                 raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
-
-            elements = elements_from_json(text=response.json())
+            elements = elements_from_json(text=json.dumps(response.json()))
         if self.embedder:
             logger.info("Running embedder to add vector content to elements")
             elements = self.embedder.embed_documents(elements)
