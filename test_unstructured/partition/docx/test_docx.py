@@ -17,7 +17,6 @@ from unstructured.documents.elements import (
     Header,
     ListItem,
     NarrativeText,
-    PageBreak,
     Table,
     Text,
     Title,
@@ -490,8 +489,8 @@ def test_parse_category_depth_by_style():
     assert "And some narrative text" in paragraph.text
     assert partitioner._parse_category_depth_by_style(paragraph) == 0
 
+
 def test_parse_category_depth_by_style_name():
-    
     partitioner = _DocxPartitioner(
         None,
         None,
@@ -513,8 +512,8 @@ def test_parse_category_depth_by_style_name():
     assert partitioner._parse_category_depth_by_style_name("List Number 2") == 1
     assert partitioner._parse_category_depth_by_style_name("List Number 3") == 2
 
-def test_parse_category_depth_by_style_ilvl():
 
+def test_parse_category_depth_by_style_ilvl():
     partitioner = _DocxPartitioner(
         None,
         None,
