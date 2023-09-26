@@ -1,7 +1,7 @@
 import pytest
 
 from unstructured.documents.base import Document, Page
-from unstructured.documents.elements import NarrativeText, Title
+from unstructured.documents.elements import Formula, NarrativeText, Title
 
 
 class MockDocument(Document):
@@ -17,12 +17,30 @@ class MockDocument(Document):
         self._pages = [page]
 
 
+class MockDocumentWithFormula(Document):
+    def __init__(self):
+        super().__init__()
+        elements = [
+            Title(text="This is a narrative."),
+            Formula(text="e=mc2"),
+        ]
+        page = Page(number=0)
+        page.elements = elements
+        self._pages = [page]
+
+
 def test_get_narrative():
     document = MockDocument()
     narrative = document.get_narrative()
     for element in narrative:
         assert isinstance(element, NarrativeText)
     document.print_narrative()
+
+
+def test_get_formula():
+    document = MockDocumentWithFormula()
+    formula = [e for e in document.elements if isinstance(e, Formula)]
+    assert formula[0].text != ""
 
 
 @pytest.mark.parametrize("index", [0, 1, 2])

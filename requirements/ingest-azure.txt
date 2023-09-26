@@ -51,6 +51,7 @@ frozenlist==1.4.0
     #   aiosignal
 fsspec==2023.9.1
     # via
+    #   -c requirements/constraints.in
     #   -r requirements/ingest-azure.in
     #   adlfs
 idna==3.4
