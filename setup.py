@@ -157,6 +157,7 @@ setup(
         "huggingface": load_requirements("requirements/huggingface.in"),
         "local-inference": all_doc_reqs,
         "paddleocr": load_requirements("requirements/extra-paddleocr.in"),
+        "openai": load_requirements("requirements/ingest-openai.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

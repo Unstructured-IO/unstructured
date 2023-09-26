@@ -53,8 +53,9 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
 
     @EmbeddingEncoderConnectionError.wrap
     @requires_dependencies(
-        ["langchain", "openai"],
-    )  # add extras="langchain" when it's added to the makefile
+        ["langchain", "openai", "tiktoken"],
+        extras="openai",
+    )
     def get_openai_client(self):
         if not hasattr(self, "openai_client"):
             """Creates a langchain OpenAI python client to embed elements."""
