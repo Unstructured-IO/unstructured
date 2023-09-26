@@ -135,6 +135,7 @@ class Link(TypedDict):
 class ElementMetadata:
     coordinates: Optional[CoordinatesMetadata] = None
     data_source: Optional[DataSourceMetadata] = None
+    data_origin: Optional[str] = None
     filename: Optional[str] = None
     file_directory: Optional[str] = None
     last_modified: Optional[str] = None
@@ -322,6 +323,7 @@ class Element(abc.ABC):
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
+        data_origin: Optional[str] = None,
     ):
         if metadata is None:
             metadata = ElementMetadata()
@@ -339,6 +341,7 @@ class Element(abc.ABC):
         self.metadata = metadata.merge(
             ElementMetadata(coordinates=coordinates_metadata),
         )
+        self.data_origin = data_origin
 
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())
@@ -348,6 +351,7 @@ class Element(abc.ABC):
             "type": None,
             "element_id": self.id,
             "metadata": self.metadata.to_dict(),
+            "data_origin": self.data_origin,
         }
 
     def convert_coordinates_to_new_system(
@@ -384,6 +388,7 @@ class CheckBox(Element):
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
         metadata: Optional[ElementMetadata] = None,
+        data_origin: Optional[str] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         super().__init__(
@@ -391,6 +396,7 @@ class CheckBox(Element):
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=metadata,
+            data_origin=data_origin,
         )
         self.checked: bool = checked
 
@@ -419,6 +425,7 @@ class Text(Element):
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
+        data_origin: Optional[str] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
@@ -435,6 +442,7 @@ class Text(Element):
             metadata=metadata,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
+            data_origin=data_origin,
         )
 
     def __str__(self):
@@ -446,6 +454,7 @@ class Text(Element):
                 (self.text == other.text),
                 (self.metadata.coordinates == other.metadata.coordinates),
                 (self.category == other.category),
+                (self.data_origin == other.data_origin),
             ],
         )
 

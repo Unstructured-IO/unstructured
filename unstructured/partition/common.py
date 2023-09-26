@@ -16,6 +16,7 @@ from typing import (
     Optional,
     Tuple,
     Union,
+    cast,
 )
 
 import emoji
@@ -130,6 +131,9 @@ def normalize_layout_element(
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
     prob = layout_dict.get("prob")
+    from unstructured_inference.inference.layoutelement import Source
+
+    source = cast(Source, layout_dict.get("source")).value
     if prob and isinstance(prob, (int, str, float, numbers.Number)):
         class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))  # type: ignore
     else:
@@ -141,6 +145,7 @@ def normalize_layout_element(
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=class_prob_metadata,
+                data_origin=source,
             )
         else:
             return ListItem(
@@ -148,6 +153,7 @@ def normalize_layout_element(
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=class_prob_metadata,
+                data_origin=source,
             )
 
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
@@ -157,6 +163,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
+            data_origin=source,
         )
         if element_type == "Headline":
             _element_class.metadata.category_depth = 1
@@ -169,6 +176,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
+            data_origin=source,
         )
     elif element_type == "Unchecked":
         return CheckBox(
@@ -176,6 +184,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
+            data_origin=source,
         )
     else:
         return Text(
@@ -183,6 +192,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
+            data_origin=source,
         )
 
 
@@ -191,6 +201,7 @@ def layout_list_to_list_items(
     coordinates: Optional[Tuple[Tuple[float, float], ...]],
     coordinate_system: Optional[CoordinateSystem],
     metadata=Optional[ElementMetadata],
+    data_origin=Optional[str],
 ) -> List[Element]:
     """Converts a list LayoutElement to a list of ListItem elements."""
     split_items = ENUMERATED_BULLETS_RE.split(text) if text else []
@@ -209,6 +220,7 @@ def layout_list_to_list_items(
                     coordinates=coordinates,
                     coordinate_system=coordinate_system,
                     metadata=metadata,
+                    data_origin=data_origin,
                 ),
             )
 
