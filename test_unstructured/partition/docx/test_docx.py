@@ -328,11 +328,7 @@ def test_partition_docx_from_file_without_metadata_date(
 
 def test_get_emphasized_texts_from_paragraph(expected_emphasized_texts: List[Dict[str, str]]):
     partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx",
-        None,
-        None,
-        False,
-        None,
+        "example-docs/fake-doc-emphasized-text.docx", None, None, False, None
     )
     paragraph = partitioner._document.paragraphs[1]
     emphasized_texts = list(partitioner._iter_paragraph_emphasis(paragraph))
@@ -352,11 +348,7 @@ def test_get_emphasized_texts_from_paragraph(expected_emphasized_texts: List[Dic
 
 def test_iter_table_emphasis(expected_emphasized_texts: List[Dict[str, str]]):
     partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx",
-        None,
-        None,
-        False,
-        None,
+        "example-docs/fake-doc-emphasized-text.docx", None, None, False, None
     )
     table = partitioner._document.tables[0]
     emphasized_texts = list(partitioner._iter_table_emphasis(table))
@@ -368,11 +360,7 @@ def test_table_emphasis(
     expected_emphasized_text_tags: List[str],
 ):
     partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx",
-        None,
-        None,
-        False,
-        None,
+        "example-docs/fake-doc-emphasized-text.docx", None, None, False, None
     )
     table = partitioner._document.tables[0]
     emphasized_text_contents, emphasized_text_tags = partitioner._table_emphasis(table)
@@ -431,94 +419,61 @@ def test_add_chunking_strategy_on_partition_docx(filename="example-docs/handbook
 
 
 def test_parse_category_depth_by_style():
-    partitioner = _DocxPartitioner(
-        "example-docs/category-level.docx",
-        None,
-        None,
-        False,
-        None,
-    )
+    partitioner = _DocxPartitioner("example-docs/category-level.docx", None, None, False, None)
 
-    # Remember that category depths are 0-indexed and relative to the category type
+    # Category depths are 0-indexed and relative to the category type
     # Title, list item, bullet, narrative text, etc.
-    paragraph = partitioner._document.paragraphs[0]
-    assert "Some text before any heading" in paragraph.text
-    assert partitioner._parse_category_depth_by_style(paragraph) == 0
+    test_cases = [
+        (0, "Call me Ishmael."),
+        (0, "A Heading 1"),
+        (0, "Whenever I find myself growing grim"),
+        (0, "A top level list item"),
+        (1, "Next level"),
+        (1, "Same"),
+        (0, "Second top-level list item"),
+        (0, "whenever I find myself involuntarily"),
+        (0, ""),  # Empty paragraph
+        (1, "A Heading 2"),
+        (0, "This is my substitute for pistol and ball"),
+        (0, "Another Heading 1"),
+        (0, "There now is your insular city"),
+    ]
 
-    paragraph = partitioner._document.paragraphs[1]
-    assert "A Heading 1" in paragraph.text
-    assert partitioner._parse_category_depth_by_style(paragraph) == 0
-
-    paragraph = partitioner._document.paragraphs[2]
-    assert "Some text below the first heading" in paragraph.text
-    assert partitioner._parse_category_depth_by_style(paragraph) == 0
-
-    paragraph = partitioner._document.paragraphs[3]
-    assert "A top level list item" in paragraph.text
-    assert partitioner._parse_category_depth_by_style(paragraph) == 0
-
-    paragraph = partitioner._document.paragraphs[4]
-    assert "Next level" in paragraph.text
-    assert partitioner._parse_category_depth_by_style(paragraph) == 1
-
-    paragraph = partitioner._document.paragraphs[5]
-    assert "Same" in paragraph.text
-    assert partitioner._parse_category_depth_by_style(paragraph) == 1
-
-    paragraph = partitioner._document.paragraphs[6]
-    assert "Second top-level list item" in paragraph.text
-    assert partitioner._parse_category_depth_by_style(paragraph) == 0
-
-    paragraph = partitioner._document.paragraphs[7]
-    assert "Some narrative text" in paragraph.text
-    assert partitioner._parse_category_depth_by_style(paragraph) == 0
-
-    paragraph = partitioner._document.paragraphs[8]
-    assert "A Heading 2" in paragraph.text
-    assert partitioner._parse_category_depth_by_style(paragraph) == 1
-
-    paragraph = partitioner._document.paragraphs[9]
-    assert "Some text" in paragraph.text
-    assert partitioner._parse_category_depth_by_style(paragraph) == 0
-
-    paragraph = partitioner._document.paragraphs[10]
-    assert "Another Heading 1" in paragraph.text
-    assert partitioner._parse_category_depth_by_style(paragraph) == 0
-
-    paragraph = partitioner._document.paragraphs[11]
-    assert "And some narrative text" in paragraph.text
-    assert partitioner._parse_category_depth_by_style(paragraph) == 0
+    paragraphs = partitioner._document.paragraphs
+    for idx, (depth, text) in enumerate(test_cases):
+        paragraph = paragraphs[idx]
+        actual_depth = partitioner._parse_category_depth_by_style(paragraph)
+        assert text in paragraph.text, f"paragraph[{[idx]}].text does not contain {text}"
+        assert (
+            actual_depth == depth
+        ), f"expected paragraph[{idx}] to have depth=={depth}, got {actual_depth}"
 
 
 def test_parse_category_depth_by_style_name():
-    partitioner = _DocxPartitioner(
-        None,
-        None,
-        None,
-        False,
-        None,
-    )
-    assert partitioner._parse_category_depth_by_style_name("Heading 1") == 0
-    assert partitioner._parse_category_depth_by_style_name("Heading 2") == 1
-    assert partitioner._parse_category_depth_by_style_name("Heading 3") == 2
-    assert partitioner._parse_category_depth_by_style_name("Subtitle") == 1
-    assert partitioner._parse_category_depth_by_style_name("List") == 0
-    assert partitioner._parse_category_depth_by_style_name("List 2") == 1
-    assert partitioner._parse_category_depth_by_style_name("List 3") == 2
-    assert partitioner._parse_category_depth_by_style_name("List Bullet") == 0
-    assert partitioner._parse_category_depth_by_style_name("List Bullet 2") == 1
-    assert partitioner._parse_category_depth_by_style_name("List Bullet 3") == 2
-    assert partitioner._parse_category_depth_by_style_name("List Number") == 0
-    assert partitioner._parse_category_depth_by_style_name("List Number 2") == 1
-    assert partitioner._parse_category_depth_by_style_name("List Number 3") == 2
+    partitioner = _DocxPartitioner(None, None, None, False, None)
+
+    test_cases = [
+        (0, "Heading 1"),
+        (1, "Heading 2"),
+        (2, "Heading 3"),
+        (1, "Subtitle"),
+        (0, "List"),
+        (1, "List 2"),
+        (2, "List 3"),
+        (0, "List Bullet"),
+        (1, "List Bullet 2"),
+        (2, "List Bullet 3"),
+        (0, "List Number"),
+        (1, "List Number 2"),
+        (2, "List Number 3"),
+    ]
+
+    for idx, (depth, text) in enumerate(test_cases):
+        assert (
+            partitioner._parse_category_depth_by_style_name(text) == depth
+        ), f"test case {test_cases[idx]} failed"
 
 
 def test_parse_category_depth_by_style_ilvl():
-    partitioner = _DocxPartitioner(
-        None,
-        None,
-        None,
-        False,
-        None,
-    )
+    partitioner = _DocxPartitioner(None, None, None, False, None)
     assert partitioner._parse_category_depth_by_style_ilvl() == 0
