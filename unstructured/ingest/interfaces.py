@@ -13,7 +13,11 @@ from pathlib import Path
 import requests
 from dataclasses_json import DataClassJsonMixin
 
-from unstructured.documents.elements import DataSourceMetadata
+from unstructured.chunking.title import chunk_by_title
+from unstructured.documents.elements import (
+    DataSourceMetadata,
+    Element,
+)
 from unstructured.embed.interfaces import BaseEmbeddingEncoder
 from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
@@ -75,6 +79,24 @@ class EmbeddingConfig(BaseConfig):
         if self.model_name:
             kwargs["model_name"] = self.model_name
         return OpenAIEmbeddingEncoder(**kwargs)
+
+
+class ChunkingConfig(BaseConfig):
+    run_chunking: bool = False
+    multipage_sections: bool = True
+    combine_under_n_chars: int = 500
+    new_after_n_chars: int = 1500
+
+    def chunk(self, elements: t.List[Element]) -> t.List[Element]:
+        if self.run_chunking:
+            return chunk_by_title(
+                elements=elements,
+                multipage_sections=self.multipage_sections,
+                combine_under_n_chars=self.combine_under_n_chars,
+                new_after_n_chars=self.new_after_n_chars,
+            )
+        else:
+            return elements
 
 
 @dataclass

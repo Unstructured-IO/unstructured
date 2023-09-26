@@ -4,7 +4,13 @@ import click
 from dataclasses_json.core import Json, _decode_dataclass
 
 from unstructured.ingest.cli.cmds.utils import DelimitedString
-from unstructured.ingest.interfaces import BaseConfig, EmbeddingConfig, PartitionConfig, ReadConfig
+from unstructured.ingest.interfaces import (
+    BaseConfig,
+    ChunkingConfig,
+    EmbeddingConfig,
+    PartitionConfig,
+    ReadConfig,
+)
 
 
 class CliMixin:
@@ -220,6 +226,59 @@ class CliEmbeddingsConfig(EmbeddingConfig, CliMixin):
                 k[len("embedding-") :]: v  # noqa: E203
                 for k, v in kvs.items()
                 if k.startswith("embedding_")
+            }
+            if len(new_kvs.keys()) == 0:
+                return None
+            return _decode_dataclass(cls, new_kvs, infer_missing)
+        return _decode_dataclass(cls, kvs, infer_missing)
+
+
+class CliChunkingConfig(ChunkingConfig, CliMixin):
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--run-chunking"],
+                is_flag=True,
+                default=False,
+            ),
+            click.Option(
+                ["--chunking-multipage-sections"],
+                is_flag=True,
+                default=False,
+            ),
+            click.Option(
+                ["--chunking-combine-under-n-chars"],
+                type=int,
+                default=500,
+                show_default=True,
+            ),
+            click.Option(
+                ["--chunking-new-after-n-chars"],
+                type=int,
+                default=1500,
+                show_default=True,
+            ),
+        ]
+        cmd.params.extend(options)
+
+    @classmethod
+    def from_dict(
+        cls,
+        kvs: Json,
+        *,
+        infer_missing=False,
+    ):
+        """
+        Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
+        This allows CLI arguments to be prepended with embedding_ during CLI invocation but
+        doesn't require that as part of the field names in this class
+        """
+        if isinstance(kvs, dict):
+            new_kvs = {
+                k[len("chunking_") :]: v  # noqa: E203
+                for k, v in kvs.items()
+                if k.startswith("chunking_")
             }
             if len(new_kvs.keys()) == 0:
                 return None
