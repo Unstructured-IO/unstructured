@@ -1,8 +1,9 @@
+import io
 import os
 import re
 import warnings
 from tempfile import SpooledTemporaryFile
-from typing import BinaryIO, Iterator, List, Optional, Sequence, Tuple, Union, cast
+from typing import IO, Any, BinaryIO, Iterator, List, Optional, Sequence, Tuple, Union, cast
 
 import numpy as np
 import pdf2image
@@ -160,11 +161,13 @@ def partition_pdf(
 
 def extractable_elements(
     filename: str = "",
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[bytes, IO[bytes]]] = None,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ):
+    if isinstance(file, bytes):
+        file = io.BytesIO(file)
     return _partition_pdf_with_pdfminer(
         filename=filename,
         file=file,
@@ -279,7 +282,7 @@ def partition_pdf_or_image(
             layout_elements = []
             for el in _layout_elements:
                 if hasattr(el, "category") and el.category == "UncategorizedText":
-                    new_el = element_from_text(el.text)
+                    new_el = element_from_text(cast(Text, el).text)
                     new_el.metadata = el.metadata
                 else:
                     new_el = el
@@ -400,10 +403,10 @@ def _partition_pdf_or_image_local(
 @requires_dependencies("pdfminer", "local-inference")
 def _partition_pdf_with_pdfminer(
     filename: str = "",
-    file: Optional[BinaryIO] = None,
+    file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
     processing or detectron2 is not available.
@@ -610,7 +613,7 @@ def _process_pdfminer_pages(
 
 def convert_pdf_to_images(
     filename: str = "",
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[bytes, IO[bytes]]] = None,
     chunk_size: int = 10,
 ) -> Iterator[PIL.Image.Image]:
     # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
@@ -730,7 +733,7 @@ def _add_pytesseract_bboxes_to_elements(
 @requires_dependencies("unstructured_pytesseract")
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[bytes, IO[bytes]]] = None,
     include_page_breaks: bool = False,
     languages: List[str] = ["eng"],
     is_image: bool = False,
@@ -767,7 +770,7 @@ def _partition_pdf_or_image_with_ocr(
         )
         width, height = image.size
         _add_pytesseract_bboxes_to_elements(
-            elements=elements,
+            elements=cast(List[Text], elements),
             bboxes_string=_bboxes,
             width=width,
             height=height,
@@ -782,6 +785,7 @@ def _partition_pdf_or_image_with_ocr(
                 filename=filename,
                 page_number=page_number,
                 last_modified=metadata_last_modified,
+                languages=languages,
             )
             _text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,
@@ -800,7 +804,7 @@ def _partition_pdf_or_image_with_ocr(
                 element.metadata = metadata
 
             _add_pytesseract_bboxes_to_elements(
-                elements=_elements,
+                elements=cast(List[Text], _elements),
                 bboxes_string=_bboxes,
                 width=width,
                 height=height,

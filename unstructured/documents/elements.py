@@ -13,7 +13,7 @@ import re
 import uuid
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 
-from typing_extensions import Self, TypedDict
+from typing_extensions import ParamSpec, Self, TypedDict
 
 from unstructured.documents.coordinates import (
     TYPE_TO_COORDINATE_SYSTEM_MAP,
@@ -145,6 +145,9 @@ class ElementMetadata:
     category_depth: Optional[int] = None
     image_path: Optional[str] = None
 
+    # Languages in element. TODO(newelh) - More strongly type languages
+    languages: Optional[List[str]] = None
+
     # Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None
 
@@ -227,10 +230,19 @@ class ElementMetadata:
         return dt
 
 
-def process_metadata():
-    """Decorator for processing metadata for document elements."""
+_P = ParamSpec("_P")
 
-    def decorator(func: Callable):
+
+def process_metadata() -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
+    """Post-process element-metadata for this document.
+
+    This decorator adds a post-processing step to a document partitioner. It adds documentation for
+    `metadata_filename` and `include_metadata` parameters if not present. Also adds regex-metadata
+    when `regex_metadata` keyword-argument is provided and changes the element-id to a UUID when
+    `unique_element_ids` argument is provided and True.
+    """
+
+    def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
         if func.__doc__:
             if (
                 "metadata_filename" in func.__code__.co_varnames
@@ -251,10 +263,10 @@ def process_metadata():
                 )
 
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
             elements = func(*args, **kwargs)
             sig = inspect.signature(func)
-            params = dict(**dict(zip(sig.parameters, args)), **kwargs)
+            params: Dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
             for param in sig.parameters.values():
                 if param.name not in params and param.default is not param.empty:
                     params[param.name] = param.default
@@ -273,17 +285,14 @@ def process_metadata():
     return decorator
 
 
-def _elements_ids_to_uuid():
-    pass
-
-
 def _add_regex_metadata(
     elements: List[Element],
     regex_metadata: Dict[str, str] = {},
 ) -> List[Element]:
     """Adds metadata based on a user provided regular expression.
-    The additional metadata will be added to the regex_metadata
-    attrbuted in the element metadata."""
+
+    The additional metadata will be added to the regex_metadata attrbuted in the element metadata.
+    """
     for element in elements:
         if isinstance(element, Text):
             _regex_metadata: Dict["str", List[RegexMetadata]] = {}
