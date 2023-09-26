@@ -1,7 +1,7 @@
 Unstructured API
 #################
 
-Try our hosted API! It's freely available to use with any of the file types listed above. This is the easiest way to get started, all you need is an API key. You can get your API key `here <https://unstructured.io/#get-api-key>`_ now and start using it today.
+Try our hosted API! It's freely available to use with any of the file types listed above. This is the easiest way to get started, all you need is an API key. You can get your API key `here <https://unstructured.io/#get-api-key>`__ now and start using it today.
 
 Now you can get started with this quick example:
 
@@ -45,9 +45,9 @@ Now you can get started with this quick example:
 
         json_response = response.json()
 
-Below, you will find a more comprehensive overview of the API capabilities. For detailed information on request and response schemas, refer to the `API documentation <https://api.unstructured.io/general/docs#/>`_.
+Below, you will find a more comprehensive overview of the API capabilities. For detailed information on request and response schemas, refer to the `API documentation <https://api.unstructured.io/general/docs#/>`__.
 
-NOTE: You can also host the API locally. For more information check the `Using the API Locally`_ section.
+NOTE: You can also host the API locally. For more information check the `Using the API Locally <https://github.com/Unstructured-IO/unstructured-api>`__ section.
 
 
 Supported File Types

@@ -8,6 +8,7 @@ OUTPUT_FOLDER_NAME=delta-table
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 DESTINATION_TABLE=$SCRIPT_DIR/delta-table-dest
+max_processes=${MAX_PROCESSES:=$(python -c "import os; print(os.cpu_count())")}
 
 if [ -z "$AWS_ACCESS_KEY_ID" ] && [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
    echo "Skipping Delta Table ingest test because either AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY env var was not set."
@@ -26,6 +27,7 @@ trap cleanup EXIT
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     delta-table \
+    --num-processes "$max_processes" \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.date_created,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --download-dir "$DOWNLOAD_DIR" \
     --table-uri s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/ \

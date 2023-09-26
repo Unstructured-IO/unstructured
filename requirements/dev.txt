@@ -325,6 +325,7 @@ send2trash==1.8.2
     # via jupyter-server
 six==1.16.0
     # via
+    #   -c requirements/base.txt
     #   -c requirements/test.txt
     #   asttokens
     #   bleach
