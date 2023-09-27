@@ -386,6 +386,12 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
 #         )
 
 
+def test_auto_partition_element_metadata_user_provided_languages():
+    filename = "example-docs/chevron-page.pdf"
+    elements = partition(filename=filename, strategy="ocr_only", languages=["eng"])
+    assert elements[0].metadata.languages == ["eng"]
+
+
 def test_auto_partition_warns_with_ocr_languages(caplog):
     filename = "example-docs/chevron-page.pdf"
     partition(filename=filename, strategy="hi_res", ocr_languages="eng")
