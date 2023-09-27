@@ -380,10 +380,10 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
         )
 
-    _ = merge_inferred_layout_with_ocr_layout(inferenced_layouts, ocr_layouts)
+    merged_layouts = merge_inferred_layout_with_ocr_layout(inferenced_layouts, ocr_layouts)
 
     elements = document_to_element_list(
-        inferenced_layouts,
+        merged_layouts,
         sortable=True,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_last_modified,
