@@ -1,3 +1,4 @@
+import copy
 import functools
 import inspect
 from typing import Any, Callable, Dict, List, TypeVar
@@ -9,9 +10,77 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     Table,
+    TableChunk,
     Text,
     Title,
 )
+
+
+def chunk_by_characters(
+    elements: List[Element],
+    num_characters: int = 200,
+) -> List[Element]:
+    """Uses num_characters to return elements within a document in specific sizes.
+    Currently only applies to Table elements.
+     Parameters
+    ----------
+    elements
+        A list of unstructured elements. Usually the output of a partition functions.
+    num_characters
+        Splits elements text field so that a section matches the desired length."""
+
+    chunked_elements: List[Element] = []
+
+    for element in elements:
+        if isinstance(element, Table):
+            char_len = len(element.text)
+            html_table = element.to_dict().get("text_as_html")
+            if html_table:
+                char_len = len(html_table)
+            if char_len > num_characters:
+                chunked_elements.extend(chunk_table_element(element))
+            else:
+                chunked_elements.append(element)
+            # create TableChunk element if text is more than num chars
+        else:
+            # TODO (Amanda): extend to other element types
+            chunked_elements.append(element)
+
+    return chunked_elements
+
+
+def chunk_table_element(
+    element: Table,
+    num_characters: int,
+) -> List[TableChunk]:
+    chunks = []
+    text = element.text
+    text_as_html = element.text_as_html
+    i = 0
+    metadata = element.metadata
+    while text or text_as_html:
+        text_chunk = text[:num_characters]
+        text_as_html_chunk = text_as_html[:num_characters]
+        table_chunk = TableChunk(
+            text=text_chunk,
+            metadata=copy.copy(metadata),
+        )
+        if text_as_html:
+            table_chunk.metadata.text_as_html = text_as_html_chunk
+        if i > 0:
+            table_chunk.metadata.is_continuation = True
+
+        chunks.append(table_chunk)
+
+        # Remove the processed chunk from text and text_as_html
+        text = text[num_characters:]
+        text_as_html = text_as_html[num_characters:]
+
+        # Ensure that text and text_as_html are not empty before continuing
+        if not text and not text_as_html:
+            break
+
+    return chunks
 
 
 def chunk_by_title(
@@ -28,7 +97,7 @@ def chunk_by_title(
     Parameters
     ----------
     elements
-        A list of unstructured elements. Usually the ouput of a partition functions.
+        A list of unstructured elements. Usually the output of a partition functions.
     multipage_sections
         If True, sections can span multiple pages. Defaults to True.
     combine_under_n_chars
@@ -220,6 +289,11 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
                     multipage_sections=params.get("multipage_sections", True),
                     combine_under_n_chars=params.get("combine_under_n_chars", 500),
                     new_after_n_chars=params.get("new_after_n_chars", 1500),
+                )
+            if params.get("chunking_strategy") == "by_num_characters":
+                elements = chunk_by_characters(
+                    elements,
+                    num_characters=params.get("num_characters", 200),
                 )
             return elements
 
