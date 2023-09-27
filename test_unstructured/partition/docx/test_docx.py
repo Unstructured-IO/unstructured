@@ -495,7 +495,9 @@ def test_add_chunking_strategy_by_chars_on_partition_docx(
     filename="example-docs/fake-doc-emphasized-text.docx",
 ):
     chunk_elements = partition_docx(
-        filename, chunking_strategy="by_num_characters", num_characters=9
+        filename,
+        chunking_strategy="by_num_characters",
+        num_characters=9,
     )
     elements = partition_docx(filename)
     chunks = chunk_by_characters(elements, 9)

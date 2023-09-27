@@ -197,7 +197,9 @@ def test_add_chunking_strategy_by_chars_to_partition_csv():
 
     elements = partition_csv(filename=filename)
     chunk_elements = partition_csv(
-        filename, chunking_strategy="by_num_characters", num_characters=9
+        filename,
+        chunking_strategy="by_num_characters",
+        num_characters=9,
     )
     chunks = chunk_by_characters(elements, 9)
     assert chunk_elements != elements

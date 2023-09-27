@@ -200,7 +200,9 @@ def test_add_chunking_strategy_by_chars_on_partition_epub(
 ):
     elements = partition_epub(filename=filename)
     chunk_elements = partition_epub(
-        filename, chunking_strategy="by_num_characters", num_characters=5
+        filename,
+        chunking_strategy="by_num_characters",
+        num_characters=5,
     )
     chunks = chunk_by_characters(elements, 5)
     assert chunk_elements != elements
