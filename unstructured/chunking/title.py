@@ -34,7 +34,7 @@ def chunk_by_characters(
     for element in elements:
         if isinstance(element, Table):
             char_len = len(element.text)
-            html_table = element.to_dict().get("text_as_html")
+            html_table = getattr(element, "text_as_html")
             if html_table:
                 char_len = len(html_table)
             if char_len > num_characters:  # type: ignore
