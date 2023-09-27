@@ -29,8 +29,8 @@ release = __version__.split("-")[0]
 # ones.
 extensions = [
     "sphinx_rtd_theme",
-    "sphinx.ext.autosectionlabel",
     "sphinx_tabs.tabs",
+    "myst_parser",
 ]
 
 # Add any paths that contain templates here, relative to this directory.

@@ -12,7 +12,10 @@
         "date_created": "2023-08-24T13:38:35.057000+00:00",
         "date_modified": "2023-08-24T13:39:02.055000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "IssueID_IssueKey:10014     JCTP3-1"
   },
@@ -29,7 +32,10 @@
         "date_created": "2023-08-24T13:38:35.057000+00:00",
         "date_modified": "2023-08-24T13:39:02.055000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "ProjectID_Key:JCTP3     Jira Connector Test Project 3 - Company Managed Project"
   },
@@ -46,7 +52,10 @@
         "date_created": "2023-08-24T13:38:35.057000+00:00",
         "date_modified": "2023-08-24T13:39:02.055000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "IssueType:Epic"
   },
@@ -63,7 +72,10 @@
         "date_created": "2023-08-24T13:38:35.057000+00:00",
         "date_modified": "2023-08-24T13:39:02.055000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Status:Backlog"
   },
@@ -80,7 +92,10 @@
         "date_created": "2023-08-24T13:38:35.057000+00:00",
         "date_modified": "2023-08-24T13:39:02.055000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Priority:{'self': 'https://unstructured-jira-connector-test.atlassian.net/rest/api/2/priority/3', 'iconUrl': 'https://unstructured-jira-connector-test.atlassian.net/images/icons/priorities/medium.svg', 'name': 'Medium', 'id': '3'}"
   },
@@ -97,7 +112,10 @@
         "date_created": "2023-08-24T13:38:35.057000+00:00",
         "date_modified": "2023-08-24T13:39:02.055000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "AssigneeID_Name:712020:7bc7fdcb-67e7-435d-b4a2-128aee12820c     Unstructured Devops"
   },
@@ -114,7 +132,10 @@
         "date_created": "2023-08-24T13:38:35.057000+00:00",
         "date_modified": "2023-08-24T13:39:02.055000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "ReporterAdr_Name:devops+jira-connector@unstructured.io     Unstructured Devops"
   },
@@ -131,7 +152,10 @@
         "date_created": "2023-08-24T13:38:35.057000+00:00",
         "date_modified": "2023-08-24T13:39:02.055000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Labels:"
   },
@@ -148,7 +172,10 @@
         "date_created": "2023-08-24T13:38:35.057000+00:00",
         "date_modified": "2023-08-24T13:39:02.055000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Components:Component 1"
   },
@@ -165,7 +192,10 @@
         "date_created": "2023-08-24T13:38:35.057000+00:00",
         "date_modified": "2023-08-24T13:39:02.055000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Epic Summary 1"
   },
@@ -182,7 +212,10 @@
         "date_created": "2023-08-24T13:38:35.057000+00:00",
         "date_modified": "2023-08-24T13:39:02.055000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "{}"
   }
