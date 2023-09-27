@@ -14,13 +14,13 @@ import requests
 from dataclasses_json import DataClassJsonMixin
 
 from unstructured.chunking.title import chunk_by_title
-from unstructured.documents.elements import DataSourceMetadata, Element
-from unstructured.embed.interfaces import BaseEmbeddingEncoder
+from unstructured.documents.elements import DataSourceMetadata
+from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
-from unstructured.staging.base import convert_to_dict, elements_from_json
+from unstructured.staging.base import elements_from_json
 
 
 @dataclass
@@ -36,12 +36,8 @@ class BaseConfig(DataClassJsonMixin, ABC):
 @dataclass
 class PartitionConfig(BaseConfig):
     # where to write structured data outputs
-    output_dir: str = "structured-output"
-    num_processes: int = 2
-    max_docs: t.Optional[int] = None
     pdf_infer_table_structure: bool = False
     strategy: str = "auto"
-    reprocess: bool = False
     ocr_languages: str = "eng"
     encoding: t.Optional[str] = None
     fields_include: t.List[str] = field(
@@ -62,6 +58,10 @@ class ReadConfig(BaseConfig):
     re_download: bool = False
     preserve_downloads: bool = False
     download_only: bool = False
+    max_docs: t.Optional[int] = None
+    reprocess: bool = False
+    output_dir: str = "structured-output"
+    num_processes: int = 2
 
 
 @dataclass
@@ -127,13 +127,9 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     """
 
     read_config: ReadConfig
-    partition_config: PartitionConfig
     connector_config: BaseConnectorConfig
     source_metadata: t.Optional[SourceMetadata] = field(init=False, default=None)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._date_processed = None
+    _date_processed: t.Optional[str] = field(init=False, default=None)
 
     def run_chunking(self, elements: t.List[Element]) -> t.List[Element]:
         return elements
@@ -251,8 +247,12 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         logger.info(f"Wrote {self._output_filename}")
 
     @PartitionError.wrap
-    def partition_file(self, **partition_kwargs) -> t.List[t.Dict[str, t.Any]]:
-        if not self.partition_config.partition_by_api:
+    def partition_file(
+        self,
+        partition_config=PartitionConfig,
+        **partition_kwargs,
+    ) -> t.List[Element]:
+        if not partition_config.partition_by_api:
             logger.debug("Using local partition")
             elements = partition(
                 filename=str(self.filename),
@@ -267,14 +267,14 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
                 **partition_kwargs,
             )
         else:
-            endpoint = self.partition_config.partition_endpoint
+            endpoint = partition_config.partition_endpoint
 
             logger.debug(f"Using remote partition ({endpoint})")
 
             with open(self.filename, "rb") as f:
                 headers_dict = {}
-                if self.partition_config.api_key:
-                    headers_dict["UNSTRUCTURED-API-KEY"] = self.partition_config.api_key
+                if partition_config.api_key:
+                    headers_dict["UNSTRUCTURED-API-KEY"] = partition_config.api_key
                 response = requests.post(
                     f"{endpoint}",
                     files={"files": (str(self.filename), f)},
@@ -286,30 +286,30 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
             if response.status_code != 200:
                 raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
             elements = elements_from_json(text=json.dumps(response.json()))
-        elements = self.run_chunking(elements=elements)
-        if self.embedder:
-            logger.info("Running embedder to add vector content to elements")
-            elements = self.embedder.embed_documents(elements)
-        return convert_to_dict(elements)
+        return elements
 
-    def process_file(self, **partition_kwargs) -> t.Optional[t.List[t.Dict[str, t.Any]]]:
+    def process_file(
+        self,
+        partition_config=PartitionConfig,
+        **partition_kwargs,
+    ) -> t.Optional[t.List[t.Dict[str, t.Any]]]:
         self._date_processed = datetime.utcnow().isoformat()
         if self.read_config.download_only:
             return None
         logger.info(f"Processing {self.filename}")
 
-        isd_elems = self.partition_file(**partition_kwargs)
+        isd_elems = self.partition_file(partition_config=partition_config, **partition_kwargs)
 
         self.isd_elems_no_filename: t.List[t.Dict[str, t.Any]] = []
         for elem in isd_elems:
             # type: ignore
-            if self.partition_config.metadata_exclude and self.partition_config.metadata_include:
+            if partition_config.metadata_exclude and partition_config.metadata_include:
                 raise ValueError(
                     "Arguments `--metadata-include` and `--metadata-exclude` are "
                     "mutually exclusive with each other.",
                 )
-            elif self.partition_config.metadata_exclude:
-                ex_list = self.partition_config.metadata_exclude
+            elif partition_config.metadata_exclude:
+                ex_list = partition_config.metadata_exclude
                 for ex in ex_list:
                     if "." in ex:  # handle nested fields
                         nested_fields = ex.split(".")
@@ -322,15 +322,15 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
                             current_elem.pop(field_to_exclude, None)
                     else:  # handle top-level fields
                         elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
-            elif self.partition_config.metadata_include:
-                in_list = self.partition_config.metadata_include
+            elif partition_config.metadata_include:
+                in_list = partition_config.metadata_include
                 for k in list(elem["metadata"].keys()):  # type: ignore[attr-defined]
                     if k not in in_list:
                         elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
-            in_list = self.partition_config.fields_include
+            in_list = partition_config.fields_include
             elem = {k: v for k, v in elem.items() if k in in_list}
 
-            if self.partition_config.flatten_metadata:
+            if partition_config.flatten_metadata:
                 for k, v in elem["metadata"].items():  # type: ignore[attr-defined]
                     elem[k] = v
                 elem.pop("metadata")  # type: ignore[attr-defined]
@@ -346,19 +346,6 @@ class BaseSourceConnector(DataClassJsonMixin, ABC):
 
     read_config: ReadConfig
     connector_config: BaseConnectorConfig
-    partition_config: PartitionConfig
-
-    def __init__(
-        self,
-        read_config: ReadConfig,
-        connector_config: BaseConnectorConfig,
-        partition_config: PartitionConfig,
-    ):
-        """Expects a standard_config object that implements StandardConnectorConfig
-        and config object that implements BaseConnectorConfig."""
-        self.read_config = read_config
-        self.connector_config = connector_config
-        self.partition_config = partition_config
 
     @abstractmethod
     def cleanup(self, cur_dir=None):

@@ -45,7 +45,6 @@ def wikipedia(
             auto_suggest=auto_suggest,
         ),
         read_config=read_config,
-        partition_config=partition_config,
     )
 
     dest_doc_connector = None

@@ -51,14 +51,19 @@ class CliReadConfig(ReadConfig, CliMixin):
                 "is not specified and "
                 "skip processing them through unstructured.",
             ),
-        ]
-        cmd.params.extend(options)
-
-
-class CliPartitionConfig(PartitionConfig, CliMixin):
-    @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
-        options = [
+            click.Option(
+                ["--max-docs"],
+                default=None,
+                type=int,
+                help="If specified, process at most specified number of documents.",
+            ),
+            click.Option(
+                ["--reprocess"],
+                is_flag=True,
+                default=False,
+                help="Reprocess a downloaded file even if the relevant structured "
+                "output .json file in output directory already exists.",
+            ),
             click.Option(
                 ["--output-dir"],
                 default="structured-output",
@@ -70,12 +75,14 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 show_default=True,
                 help="Number of parallel processes to process docs in.",
             ),
-            click.Option(
-                ["--max-docs"],
-                default=None,
-                type=int,
-                help="If specified, process at most specified number of documents.",
-            ),
+        ]
+        cmd.params.extend(options)
+
+
+class CliPartitionConfig(PartitionConfig, CliMixin):
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
             click.Option(
                 ["--pdf-infer-table-structure"],
                 default=False,
@@ -87,13 +94,6 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 default="auto",
                 help="The method that will be used to process the documents. "
                 "Default: auto. Other strategies include `fast` and `hi_res`.",
-            ),
-            click.Option(
-                ["--reprocess"],
-                is_flag=True,
-                default=False,
-                help="Reprocess a downloaded file even if the relevant structured "
-                "output .json file in output directory already exists.",
             ),
             click.Option(
                 ["--ocr-languages"],
