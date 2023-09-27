@@ -100,7 +100,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         return (
-            Path(self.partition_config.output_dir)
+            Path(self.read_config.output_dir)
             / f"{self.remote_file_path.replace(f'{self.connector_config.dir_path}/', '')}.json"
         )
 
@@ -214,7 +214,6 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             self.ingest_doc_cls(
                 read_config=self.read_config,
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
                 remote_file_path=file,
             )
             for file in self._list_files()

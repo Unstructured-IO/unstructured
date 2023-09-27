@@ -18,6 +18,7 @@ from unstructured.documents.elements import DataSourceMetadata
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
+from unstructured.ingest.ingest_doc_json_mixin import IngestDocJsonMixin
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import elements_from_json
@@ -49,6 +50,7 @@ class PartitionConfig(BaseConfig):
     partition_endpoint: t.Optional[str] = None
     partition_by_api: bool = False
     api_key: t.Optional[str] = None
+    reprocess: bool = False
 
 
 @dataclass
@@ -59,7 +61,6 @@ class ReadConfig(BaseConfig):
     preserve_downloads: bool = False
     download_only: bool = False
     max_docs: t.Optional[int] = None
-    reprocess: bool = False
     output_dir: str = "structured-output"
     num_processes: int = 2
 
@@ -117,7 +118,7 @@ class SourceMetadata(DataClassJsonMixin, ABC):
 
 
 @dataclass
-class BaseIngestDoc(DataClassJsonMixin, ABC):
+class BaseIngestDoc(IngestDocJsonMixin, ABC):
     """An "ingest document" is specific to a connector, and provides
     methods to fetch a single raw document, store it locally for processing, any cleanup
     needed after successful processing of the doc, and the ability to write the doc's
@@ -169,6 +170,15 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     @abstractmethod
     def filename(self):
         """The local filename of the document after fetching from remote source."""
+
+    @property
+    def base_filename(self) -> t.Optional[str]:
+        if self.read_config.download_dir and self.filename:
+            download_path = str(Path(self.read_config.download_dir).resolve())
+            full_path = str(self.filename)
+            base_path = full_path.replace(download_path, "")
+            return base_path
+        return None
 
     @property
     @abstractmethod
@@ -237,14 +247,14 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         """Determine if structured output for this doc already exists."""
         return self._output_filename.is_file() and self._output_filename.stat().st_size
 
-    def write_result(self):
-        """Write the structured json result for this doc. result must be json serializable."""
-        if self.read_config.download_only:
-            return
-        self._output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(self._output_filename, "w", encoding="utf8") as output_f:
-            json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
-        logger.info(f"Wrote {self._output_filename}")
+    # def write_result(self):
+    #     """Write the structured json result for this doc. result must be json serializable."""
+    #     if self.read_config.download_only:
+    #         return
+    #     self._output_filename.parent.mkdir(parents=True, exist_ok=True)
+    #     with open(self._output_filename, "w", encoding="utf8") as output_f:
+    #         json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
+    #     logger.info(f"Wrote {self._output_filename}")
 
     @PartitionError.wrap
     def partition_file(

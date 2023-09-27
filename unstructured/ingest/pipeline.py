@@ -1,4 +1,6 @@
+import hashlib
 import json
+import logging
 import multiprocessing as mp
 import os.path
 import typing as t
@@ -8,31 +10,51 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from unstructured.ingest.connector.registry import create_ingest_doc_from_json
-from unstructured.ingest.connector.wikipedia import (
-    SimpleWikipediaConfig,
-    WikipediaSourceConnector,
+from unstructured.ingest.connector.s3 import (
+    S3SourceConnector,
+    SimpleS3Config,
 )
 from unstructured.ingest.error import PartitionError
 from unstructured.ingest.interfaces import (
     BaseSourceConnector,
+    EmbeddingConfig,
     IngestDocSessionHandleMixin,
     PartitionConfig,
     ReadConfig,
 )
-from unstructured.ingest.logger import logger
-from unstructured.staging.base import convert_to_dict
+from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.staging.base import convert_to_dict, elements_from_json
+
+ingest_log_streaming_init(logging.DEBUG)
 
 
 @dataclass
-class PipelineConfig:
-    output_dir: str = "structured-output"
+class PipelineContext:
     num_processes: int = 2
     pipeline_id: uuid.UUID = uuid.uuid4()
+    working_dir: t.Optional[str] = None
+    ingest_docs_map: dict = field(default_factory=dict)
+
+    def get_working_dir(self) -> Path:
+        if self.working_dir:
+            return (Path(self.working_dir) / str(self.pipeline_id)).resolve()
+        else:
+            cache_path = (
+                Path.home()
+                / ".cache"
+                / "unstructured"
+                / "ingest"
+                / "pipeline"
+                / str(self.pipeline_id)
+            )
+            if not cache_path.exists():
+                cache_path.mkdir(parents=True, exist_ok=True)
+            return cache_path.resolve()
 
 
 @dataclass
 class PipelineNode(ABC):
-    pipeline_config: PipelineConfig
+    pipeline_config: PipelineContext
 
     def __call__(self, iterable: t.Iterable[t.Any] = None):
         iterable = iterable if iterable else []
@@ -106,7 +128,7 @@ class PartitionNode(PipelineNode):
         pass
 
     def get_path(self) -> t.Optional[Path]:
-        return (Path(self.pipeline_config.output_dir) / "partitioned").resolve()
+        return (Path(self.pipeline_config.get_working_dir()) / "partitioned").resolve()
 
 
 class ReformatNode(PipelineNode):
@@ -128,7 +150,7 @@ class PipelineException(BaseException):
 
 @dataclass
 class Pipeline:
-    pipeline_config: PipelineConfig
+    pipeline_config: PipelineContext
     doc_factory_node: DocFactoryNode
     source_node: SourceNode
     partition_node: t.Optional[PartitionNode] = None
@@ -138,8 +160,15 @@ class Pipeline:
     def run(self):
         logger.info(f"running pipeline {self.pipeline_config.pipeline_id}")
         json_docs = self.doc_factory_node()
-        _ = self.source_node(iterable=json_docs)
-        _ = self.partition_node(iterable=json_docs)
+        for doc in json_docs:
+            json_as_dict = json.loads(doc)
+            hashed = hashlib.sha256(json_as_dict.get("filename").encode()).hexdigest()[:32]
+            self.pipeline_config.ingest_docs_map[hashed] = doc
+        # self.source_node(iterable=json_docs)
+        # partitioned_jsons = self.partition_node(iterable=json_docs)
+        # for reformat_node in self.reformat_nodes:
+        #     reformatted_jsons = reformat_node(iterable=partitioned_jsons)
+        #     partitioned_jsons = reformatted_jsons
 
 
 @dataclass
@@ -147,33 +176,8 @@ class DocFactory(DocFactoryNode):
     def initialize(self):
         self.source_doc_connector.initialize()
 
-    def _filter_docs_with_outputs(self, docs):
-        num_docs_all = len(docs)
-        docs = [doc for doc in docs if not doc.has_output()]
-        if self.source_doc_connector.read_config.max_docs is not None:
-            if num_docs_all > self.source_doc_connector.read_config.max_docs:
-                num_docs_all = self.source_doc_connector.read_config.max_docs
-            docs = docs[: self.source_doc_connector.read_config.max_docs]
-        num_docs_to_process = len(docs)
-        if num_docs_to_process == 0:
-            logger.info(
-                "All docs have structured outputs, nothing to do. Use --reprocess to process all.",
-            )
-            return None
-        elif num_docs_to_process != num_docs_all:
-            logger.info(
-                f"Skipping processing for {num_docs_all - num_docs_to_process} docs out of "
-                f"{num_docs_all} since their structured outputs already exist, use --reprocess to "
-                "reprocess those in addition to the unprocessed ones.",
-            )
-        return docs
-
     def run(self) -> t.Iterable[str]:
         docs = self.source_doc_connector.get_ingest_docs()
-        if not self.source_doc_connector.read_config.reprocess:
-            docs = self._filter_docs_with_outputs(docs)
-            if not docs:
-                return []
         json_docs = [doc.to_json() for doc in docs]
         return json_docs
 
@@ -201,6 +205,11 @@ class Partitioner(PartitionNode):
     @PartitionError.wrap
     def run(self, ingest_doc_json) -> str:
         doc = create_ingest_doc_from_json(ingest_doc_json)
+        doc_filename = os.path.basename(doc.filename)
+        json_path = (Path(self.get_path()) / doc_filename).resolve()
+        if not self.partition_config.reprocess and json_path.is_file() and json_path.stat().st_size:
+            logger.debug(f"File exists: {json_path}, skipping partition")
+            return str(json_path)
         elements = doc.partition_file(
             partition_config=self.partition_config,
             strategy=self.partition_config.strategy,
@@ -209,30 +218,56 @@ class Partitioner(PartitionNode):
             pdf_infer_table_structure=self.partition_config.pdf_infer_table_structure,
         )
         elements_dict = convert_to_dict(elements)
-        doc_filename = os.path.basename(doc.filename)
-        json_path = (Path(self.get_path()) / doc_filename).resolve()
         with open(json_path, "w", encoding="utf8") as output_f:
             json.dump(elements_dict, output_f, ensure_ascii=False, indent=2)
-        return json_path
+        return str(json_path)
 
 
-pipeline_config = PipelineConfig(output_dir="pipeline-test-output", num_processes=1)
+@dataclass
+class Embedder(ReformatNode):
+    embedder_config: EmbeddingConfig
+    reprocess: bool = False
+
+    def run(self, elements_json: str) -> str:
+        elements_json_filename = os.path.basename(elements_json)
+        json_path = (Path(self.get_path()) / elements_json_filename).resolve()
+        if not self.reprocess and json_path.is_file() and json_path.stat().st_size:
+            logger.debug(f"File exists: {json_path}, skipping embedding")
+            return str(json_path)
+        elements = elements_from_json(filename=elements_json)
+        embedder = self.embedder_config.get_embedder()
+        embedded_elements = embedder.embed_documents(elements=elements)
+        elements_dict = convert_to_dict(embedded_elements)
+        with open(json_path, "w", encoding="utf8") as output_f:
+            json.dump(elements_dict, output_f, ensure_ascii=False, indent=2)
+        return str(json_path)
+
+    def get_path(self) -> t.Optional[Path]:
+        return (Path(self.pipeline_config.get_working_dir()) / "embedded").resolve()
+
+
+pipeline_config = PipelineContext(num_processes=1)
 read_config = ReadConfig(preserve_downloads=True, download_dir="pipeline-test-output")
 partition_config = PartitionConfig()
 page_title = "Open Source Software"
 auto_suggest = False
 
 
-source_doc_connector = WikipediaSourceConnector(  # type: ignore
-    connector_config=SimpleWikipediaConfig(
-        title=page_title,
-        auto_suggest=auto_suggest,
+source_doc_connector = S3SourceConnector(  # type: ignore
+    connector_config=SimpleS3Config(
+        path="s3://utic-dev-tech-fixtures/small-pdf-set/",
+        recursive=True,
+        access_kwargs={"anon": True},
     ),
     read_config=read_config,
 )
 doc_factory = DocFactory(pipeline_config=pipeline_config, source_doc_connector=source_doc_connector)
 reader = Reader(pipeline_config=pipeline_config)
 partitioner = Partitioner(pipeline_config=pipeline_config, partition_config=partition_config)
+embedder = Embedder(
+    pipeline_config=pipeline_config,
+    embedder_config=EmbeddingConfig(api_key="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"),
+)
 
 if __name__ == "__main__":
     pipeline = Pipeline(
@@ -240,5 +275,6 @@ if __name__ == "__main__":
         doc_factory_node=doc_factory,
         source_node=reader,
         partition_node=partitioner,
+        reformat_nodes=[embedder],
     )
     pipeline.run()

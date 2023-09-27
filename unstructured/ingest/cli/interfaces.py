@@ -58,13 +58,6 @@ class CliReadConfig(ReadConfig, CliMixin):
                 help="If specified, process at most specified number of documents.",
             ),
             click.Option(
-                ["--reprocess"],
-                is_flag=True,
-                default=False,
-                help="Reprocess a downloaded file even if the relevant structured "
-                "output .json file in output directory already exists.",
-            ),
-            click.Option(
                 ["--output-dir"],
                 default="structured-output",
                 help="Where to place structured output .json files.",
@@ -83,6 +76,13 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:
         options = [
+            click.Option(
+                ["--reprocess"],
+                is_flag=True,
+                default=False,
+                help="Reprocess a downloaded file even if the relevant structured "
+                "output .json file in output directory already exists.",
+            ),
             click.Option(
                 ["--pdf-infer-table-structure"],
                 default=False,
