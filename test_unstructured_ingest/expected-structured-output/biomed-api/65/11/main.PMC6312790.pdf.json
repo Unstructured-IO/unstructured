@@ -10,16 +10,6 @@
     "text": "Data in Brief 22 (2019) 451–457"
   },
   {
-    "type": "Image",
-    "element_id": "70d50409ea726a2789ebbd004bec31f4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Contents lists available at ScienceDirect Data in Brief journal homepage: www.elsevier.com/locate/dib"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "b0658ce9dccc0acba9a472c2bb992cc9",
     "metadata": {
@@ -38,6 +28,16 @@
       "page_number": 1
     },
     "text": "Data in Brief"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9234133787d0a6b3976b16569c0b5cf3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "journal homepage: www.elsevier.com/locate/dib"
   },
   {
     "type": "Title",
@@ -401,16 +401,6 @@
   },
   {
     "type": "Title",
-    "element_id": "1bd621f0b71079e0948b0aad011a7f4b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "t h g e W"
-  },
-  {
-    "type": "Title",
     "element_id": "acac86c0e609ca906f632b0e2dacccb2",
     "metadata": {
       "data_source": {},
@@ -418,6 +408,16 @@
       "page_number": 2
     },
     "text": "l"
+  },
+  {
+    "type": "Title",
+    "element_id": "1bd621f0b71079e0948b0aad011a7f4b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "t h g e W"
   },
   {
     "type": "Title",
@@ -441,6 +441,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "30"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
     "metadata": {
       "data_source": {},
@@ -458,16 +468,6 @@
       "page_number": 2
     },
     "text": "10"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "30"
   },
   {
     "type": "Title",
@@ -591,6 +591,26 @@
   },
   {
     "type": "NarrativeText",
+    "element_id": "4f0139b605dfdd9eb93e920a6115e1b5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": ") r a e y / m m"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "("
+  },
+  {
+    "type": "NarrativeText",
     "element_id": "49e7364ce1027887460959b2a757b184",
     "metadata": {
       "data_source": {},
@@ -610,16 +630,6 @@
     "text": "i"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "74599fca46202613cccb12e97774b306",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "E n o i t i b h n I"
-  },
-  {
     "type": "Title",
     "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
@@ -628,6 +638,26 @@
       "page_number": 3
     },
     "text": "i"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ba5ec51d07a4ac0e951608704431d59a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": ")"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "74599fca46202613cccb12e97774b306",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "E n o i t i b h n I"
   },
   {
     "type": "Title",
@@ -651,63 +681,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
+    "element_id": "525fbe4b6760bd759bfeeae2ee487f12",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "("
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ba5ec51d07a4ac0e951608704431d59a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": ")"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "4f0139b605dfdd9eb93e920a6115e1b5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": ") r a e y / m m"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6c19ccbab57f4e9a47a14c0c50211272",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "(mm/year) 100 4 80 4 Efficiency (%) 1 _—__. SS v- 74 —~X_ Senn, ~~. —__, ~ ol, T T T T T T T 1"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "8139b33952401b3ee0e2ca84651cb9a1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "0.9"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "a97b042d7bd59d92a46e8ab17f7dff73",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "1.8"
+    "text": "(mm/year) 100 4 80 4 Efficiency (%) 1 _—__. —o— SS v- —a— 74 —~X_ Senn, —y— ~~. —6~ —__, ~ —o- ol, T T T T T T T 1"
   },
   {
     "type": "UncategorizedText",
@@ -721,6 +701,26 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "a97b042d7bd59d92a46e8ab17f7dff73",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "1.8"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "8139b33952401b3ee0e2ca84651cb9a1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "0.9"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
       "data_source": {},
@@ -728,6 +728,76 @@
       "page_number": 3
     },
     "text": "100"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4a44dc15364204a80fe80e9039455cc1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "10"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "20"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "30"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d59eced1ded07f84c145592f65bdf854",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "40"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "1a6562590ef19d1045d06c4055742d38",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "50"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ff5a1ae012afa5d4c889c50ad427aaf5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "70"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "39fa9ec190eee7b6f4dff1100d6343e1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "60"
   },
   {
     "type": "UncategorizedText",
@@ -748,76 +818,6 @@
       "page_number": 3
     },
     "text": "90"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "39fa9ec190eee7b6f4dff1100d6343e1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "60"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4a44dc15364204a80fe80e9039455cc1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "10"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "1a6562590ef19d1045d06c4055742d38",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "50"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d59eced1ded07f84c145592f65bdf854",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "40"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "30"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "20"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ff5a1ae012afa5d4c889c50ad427aaf5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "70"
   },
   {
     "type": "UncategorizedText",
@@ -1120,16 +1120,6 @@
     "text": "Inhibitor be (V/dec) ba (V/dec) Ecorr (V) icorr (A/cm?) Polarization Corrosion concentration (g) resistance (Q) rate (mm/year) oO 0.0335 0.0409 0.0003 24.0910 2.8163 2 1.9460 0.0596 0.0002 121.440 1.5054 4 0.0163 0.2369 0.0001 42.121 0.9476 6 0.3233 0.0540 5.39E-05 373.180 0.4318 8 0.1240 0.0556 5.46E-05 305.650 0.3772 10 0.0382 0.0086 1.24E-05 246.080 0.0919"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "9492908fadeab22ca81f18f2ba4f4f35",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "0 2 4 6 8 10"
-  },
-  {
     "type": "Title",
     "element_id": "362d4a20958df0c88550b9e5d1f2ef5b",
     "metadata": {
@@ -1138,6 +1128,16 @@
       "page_number": 4
     },
     "text": "Inhibitor concentration (g)"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "9492908fadeab22ca81f18f2ba4f4f35",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "0 2 4 6 8 10"
   },
   {
     "type": "Title",
@@ -1200,16 +1200,6 @@
     "text": "(cid:3) 0.9393 (cid:3) 0.8276 (cid:3) 0.8825 (cid:3) 0.8027 (cid:3) 0.5896 (cid:3) 0.5356"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "d71f426079cb8c2bb3d960ce1e23d290",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "0.0003 0.0002 0.0001 5.39E-05 5.46E-05 1.24E-05"
-  },
-  {
     "type": "Title",
     "element_id": "6978574f5e6e70a2883ea5ea51aa34f7",
     "metadata": {
@@ -1218,6 +1208,16 @@
       "page_number": 4
     },
     "text": "icorr (A/cm2)"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d71f426079cb8c2bb3d960ce1e23d290",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "0.0003 0.0002 0.0001 5.39E-05 5.46E-05 1.24E-05"
   },
   {
     "type": "Title",
@@ -1301,23 +1301,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "element_id": "2c624232cdd221771294dfbb310aca00",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "2"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "4"
+    "text": "8"
   },
   {
     "type": "UncategorizedText",
@@ -1331,23 +1321,33 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "2c624232cdd221771294dfbb310aca00",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "8"
+    "text": "4"
   },
   {
-    "type": "Title",
-    "element_id": "48baae83e27f90cd89699a178ab01c46",
+    "type": "UncategorizedText",
+    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "2+ T T T 1"
+    "text": "2"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "a0dfa682f99b0794f40f195f9a7adfcd",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "—=—Cc/0 2+ T T T 1"
   },
   {
     "type": "UncategorizedText",

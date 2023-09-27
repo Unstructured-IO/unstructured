@@ -8,6 +8,11 @@ cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=jira-diff
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
+max_processes=${MAX_PROCESSES:=$(python -c "import os; print(os.cpu_count())")}
+
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
 
 if [ -z "$JIRA_INGEST_USER_EMAIL" ] || [ -z "$JIRA_INGEST_API_TOKEN" ]; then
    echo "Skipping Jira ingest test because the JIRA_INGEST_USER_EMAIL or JIRA_INGEST_API_TOKEN env var is not set."
@@ -38,7 +43,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         jira \
         --download-dir "$DOWNLOAD_DIR" \
         --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-        --num-processes 2 \
+        --num-processes "$max_processes" \
         --preserve-downloads \
         --reprocess \
         --output-dir "$OUTPUT_DIR" \
@@ -52,4 +57,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
