@@ -218,7 +218,7 @@ class CliEmbeddingsConfig(EmbeddingConfig, CliMixin):
     ):
         """
         Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
-        This allows CLI arguments to be prepended with embedding_ during CLI invocation but
+        This allows CLI arguments to be prepended with chunk_ during CLI invocation but
         doesn't require that as part of the field names in this class
         """
         if isinstance(kvs, dict):
@@ -238,23 +238,23 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
     def add_cli_options(cmd: click.Command) -> None:
         options = [
             click.Option(
-                ["--run-chunking"],
+                ["--chunk-elements"],
                 is_flag=True,
                 default=False,
             ),
             click.Option(
-                ["--chunking-multipage-sections"],
+                ["--chunk-multipage-sections"],
                 is_flag=True,
                 default=False,
             ),
             click.Option(
-                ["--chunking-combine-under-n-chars"],
+                ["--chunk-combine-under-n-chars"],
                 type=int,
                 default=500,
                 show_default=True,
             ),
             click.Option(
-                ["--chunking-new-after-n-chars"],
+                ["--chunk-new-after-n-chars"],
                 type=int,
                 default=1500,
                 show_default=True,
@@ -271,17 +271,20 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
     ):
         """
         Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
-        This allows CLI arguments to be prepended with embedding_ during CLI invocation but
+        This allows CLI arguments to be prepended with chunking_ during CLI invocation but
         doesn't require that as part of the field names in this class
         """
         if isinstance(kvs, dict):
-            new_kvs = {
-                k[len("chunking_") :]: v  # noqa: E203
-                for k, v in kvs.items()
-                if k.startswith("chunking_")
-            }
-            if "run_chunking" in kvs:
-                new_kvs["run_chunking"] = kvs["run_chunking"]
+            new_kvs = {}
+            if "chunk_elements" in kvs:
+                new_kvs["chunk_elements"] = kvs.pop("chunk_elements")
+            new_kvs.update(
+                {
+                    k[len("chunking_") :]: v  # noqa: E203
+                    for k, v in kvs.items()
+                    if k.startswith("chunking_")
+                },
+            )
             if len(new_kvs.keys()) == 0:
                 return None
             return _decode_dataclass(cls, new_kvs, infer_missing)

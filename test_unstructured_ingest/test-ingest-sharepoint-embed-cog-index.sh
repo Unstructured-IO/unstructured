@@ -77,8 +77,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --path "Shared Documents" \
     --recursive \
     --embedding-api-key "$OPENAI_API_KEY" \
-    --run-chunking \
-    --chunking-multipage-sections \
+    --chunk-elements \
+    --chunk-multipage-sections \
     azure-cognitive-search \
     --key "$AZURE_SEARCH_API_KEY" \
     --endpoint "$AZURE_SEARCH_ENDPOINT" \

@@ -81,13 +81,13 @@ class EmbeddingConfig(BaseConfig):
 
 @dataclass
 class ChunkingConfig(BaseConfig):
-    run_chunking: bool = False
+    chunk_elements: bool = False
     multipage_sections: bool = True
     combine_under_n_chars: int = 500
     new_after_n_chars: int = 1500
 
     def chunk(self, elements: t.List[Element]) -> t.List[Element]:
-        if self.run_chunking:
+        if self.chunk_elements:
             return chunk_by_title(
                 elements=elements,
                 multipage_sections=self.multipage_sections,
