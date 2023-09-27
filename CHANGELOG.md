@@ -1,4 +1,4 @@
-## 0.10.17-dev10
+## 0.10.17-dev12
 
 ### Enhancements
 
@@ -26,7 +26,8 @@
 should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class 
 allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
 * **Fixes Sphinx errors.** Fixes errors when running Sphinx `make html` and installs library to suppress warnings.
-
+* **Fixes a metadata backwards compatibility error** Problem: When calling `partition_via_api`, the hosted api may return an element schema that's newer than the current `unstructured`. In this case, metadata fields were added which did not exist in the local `ElementMetadata` dataclass, and `__init__()` threw an error. Fix: remove nonexistent fields before instantiating in `ElementMetadata.from_json()`. Importance: Crucial to avoid breaking changes when adding fields.
+ 
 
 ## 0.10.16
 
