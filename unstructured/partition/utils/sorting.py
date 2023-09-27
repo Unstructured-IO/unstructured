@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
 
@@ -8,11 +8,27 @@ from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY
 from unstructured.partition.utils.xycut import recursive_xy_cut
 
 
-def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> List[int]:
+def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> Tuple[int, int, int, int]:
     points = coordinates.points
     left, top = points[0]
     right, bottom = points[2]
-    return [int(left), int(top), int(right), int(bottom)]
+    return int(left), int(top), int(right), int(bottom)
+
+
+def shrink_bbox(bbox: Tuple[int, int, int, int], shrink_factor) -> Tuple[int, int, int, int]:
+    left, top, right, bottom = bbox
+    width = right - left
+    height = bottom - top
+    new_width = width * shrink_factor
+    new_height = height * shrink_factor
+    dw = (width - new_width) / 2
+    dh = (height - new_height) / 2
+
+    new_left = left + dw
+    new_right = right - dw
+    new_top = top + dh
+    new_bottom = bottom - dh
+    return int(new_left), int(new_top), int(new_right), int(new_bottom)
 
 
 def coord_has_valid_points(coordinates: CoordinatesMetadata) -> bool:
@@ -82,9 +98,16 @@ def sort_page_elements(
     if sort_mode == SORT_MODE_XY_CUT:
         if not _coords_ok(strict_points=True):
             return page_elements
-        boxes = [coordinates_to_bbox(coords) for coords in coordinates_list]
+        shrunken_bboxes = []
+        for coords in coordinates_list:
+            bbox = coordinates_to_bbox(coords)
+            shrunken_bbox = shrink_bbox(bbox, 0.9)
+            shrunken_bboxes.append(shrunken_bbox)
+
         res: List[int] = []
-        recursive_xy_cut(np.asarray(boxes).astype(int), np.arange(len(boxes)), res)
+        recursive_xy_cut(
+            np.asarray(shrunken_bboxes).astype(int), np.arange(len(shrunken_bboxes)), res
+        )
         sorted_page_elements = [page_elements[i] for i in res]
     elif sort_mode == SORT_MODE_BASIC:
         if not _coords_ok(strict_points=False):
