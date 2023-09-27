@@ -59,6 +59,7 @@ numexpr==2.8.6
     # via langchain
 numpy==1.24.4
     # via
+    #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   langchain
     #   numexpr
