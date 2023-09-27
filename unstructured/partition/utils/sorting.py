@@ -17,7 +17,8 @@ def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> Tuple[int, int, int
         coordinates (CoordinatesMetadata): Metadata containing points to represent the bounding box.
 
     Returns:
-        Tuple[int, int, int, int]: A tuple representing the bounding box in the format (left, top, right, bottom).
+        Tuple[int, int, int, int]: A tuple representing the bounding box in the format
+        (left, top, right, bottom).
     """
 
     points = coordinates.points
@@ -31,11 +32,13 @@ def shrink_bbox(bbox: Tuple[int, int, int, int], shrink_factor) -> Tuple[int, in
     Shrink a bounding box by a given shrink factor while maintaining its center.
 
     Parameters:
-        bbox (Tuple[int, int, int, int]): The original bounding box represented by (left, top, right, bottom).
+        bbox (Tuple[int, int, int, int]): The original bounding box represented by
+        (left, top, right, bottom).
         shrink_factor (float): The factor by which to shrink the bounding box (0.0 to 1.0).
 
     Returns:
-        Tuple[int, int, int, int]: The shrunken bounding box represented by (left, top, right, bottom).
+        Tuple[int, int, int, int]: The shrunken bounding box represented by
+        (left, top, right, bottom).
     """
 
     left, top, right, bottom = bbox
