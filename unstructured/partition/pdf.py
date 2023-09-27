@@ -328,7 +328,7 @@ def _partition_pdf_or_image_local(
     )
 
     from unstructured.partition.ocr import (
-        merge_inferred_layout_with_ocr_layout,
+        merge_inferred_layouts_with_ocr_layouts,
         process_data_with_ocr,
         process_file_with_ocr,
     )
@@ -380,7 +380,7 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
         )
 
-    merged_layouts = merge_inferred_layout_with_ocr_layout(inferenced_layouts, ocr_layouts)
+    merged_layouts = merge_inferred_layouts_with_ocr_layouts(inferenced_layouts, ocr_layouts)
 
     elements = document_to_element_list(
         merged_layouts,
