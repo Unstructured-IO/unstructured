@@ -50,6 +50,7 @@ networkx==3.1
     # via torch
 numpy==1.24.4
     # via
+    #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   transformers
 packaging==23.1
