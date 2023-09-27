@@ -8,6 +8,7 @@ et-xmlfile==1.1.0
     # via openpyxl
 numpy==1.24.4
     # via
+    #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   pandas
 openpyxl==3.1.2

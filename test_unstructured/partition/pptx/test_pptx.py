@@ -112,7 +112,7 @@ class DescribePptxPartitionerShapeOrderingBehaviors:
         elements = cast(
             Iterator[Text],
             _PptxPartitioner(
-                get_test_file_path("group-shapes-nested.pptx")
+                get_test_file_path("group-shapes-nested.pptx"),
             )._iter_presentation_elements(),
         )
 
