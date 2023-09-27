@@ -30,4 +30,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose
 
 
-"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+OVERWRITE_FIXTURES="false" "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
