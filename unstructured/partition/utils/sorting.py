@@ -1,6 +1,7 @@
 from typing import List, Tuple
 
 import numpy as np
+from unstructured_inference.constants import XY_CUT_BBOX_SHRINK_FACTOR
 
 from unstructured.documents.elements import CoordinatesMetadata, Element
 from unstructured.logger import trace_logger
@@ -53,6 +54,7 @@ def coord_has_valid_points(coordinates: CoordinatesMetadata) -> bool:
 def sort_page_elements(
     page_elements: List[Element],
     sort_mode: str = SORT_MODE_XY_CUT,
+    shrink_factor: float = XY_CUT_BBOX_SHRINK_FACTOR,
 ) -> List[Element]:
     """
     Sorts a list of page elements based on the specified sorting mode.
@@ -101,12 +103,14 @@ def sort_page_elements(
         shrunken_bboxes = []
         for coords in coordinates_list:
             bbox = coordinates_to_bbox(coords)
-            shrunken_bbox = shrink_bbox(bbox, 0.9)
+            shrunken_bbox = shrink_bbox(bbox, shrink_factor)
             shrunken_bboxes.append(shrunken_bbox)
 
         res: List[int] = []
         recursive_xy_cut(
-            np.asarray(shrunken_bboxes).astype(int), np.arange(len(shrunken_bboxes)), res
+            np.asarray(shrunken_bboxes).astype(int),
+            np.arange(len(shrunken_bboxes)),
+            res,
         )
         sorted_page_elements = [page_elements[i] for i in res]
     elif sort_mode == SORT_MODE_BASIC:
