@@ -23,7 +23,7 @@ azure-datalake-store==0.0.53
     # via adlfs
 azure-identity==1.14.0
     # via adlfs
-azure-storage-blob==12.18.1
+azure-storage-blob==12.18.2
     # via adlfs
 certifi==2023.7.22
     # via
@@ -86,6 +86,7 @@ requests==2.31.0
     #   msal
 six==1.16.0
     # via
+    #   -c requirements/base.txt
     #   azure-core
     #   isodate
 typing-extensions==4.8.0

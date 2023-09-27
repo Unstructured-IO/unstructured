@@ -325,6 +325,7 @@ send2trash==1.8.2
     # via jupyter-server
 six==1.16.0
     # via
+    #   -c requirements/base.txt
     #   -c requirements/test.txt
     #   asttokens
     #   bleach
@@ -359,7 +360,7 @@ tornado==6.3.3
     #   jupyterlab
     #   notebook
     #   terminado
-traitlets==5.10.0
+traitlets==5.10.1
     # via
     #   comm
     #   ipykernel

@@ -134,6 +134,7 @@ def test_partition_file():
         "filename",
         "file_directory",
         "filetype",
+        "languages",
         "last_modified",
     }
     for elem in isd_elems:
