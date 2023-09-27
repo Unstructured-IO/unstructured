@@ -529,8 +529,8 @@ def _process_pdfminer_pages(
                     )
 
                     links: List[Link] = []
-                    try:
-                        for url in urls_metadata:
+                    for url in urls_metadata:
+                        try:
                             links.append(
                                 {
                                     "text": url["text"],
@@ -541,8 +541,8 @@ def _process_pdfminer_pages(
                                     ),
                                 },
                             )
-                    except IndexError:
-                        pass
+                        except IndexError:
+                            pass
 
                     element.metadata = ElementMetadata(
                         filename=filename,
@@ -935,7 +935,7 @@ def calculate_intersection_area(bbox1, bbox2):
         return 0.0
 
 
-def calculate_bbox_area(bbox):
+def calculate_bbox_area(bbox: Tuple[float, float, float, float]) -> float:
     x1, y1, x2, y2 = bbox
     area = (x2 - x1) * (y2 - y1)
     return area
@@ -1004,6 +1004,11 @@ def get_word_bounding_box_from_element(obj, height):
 
 
 def map_bbox_and_index(words, annot):
+    if len(words) == 0:
+        annot["text"] = ""
+        annot["start_index"] = -1
+        return annot
+        
     distance_from_bbox_start = np.sqrt(
         (annot["bbox"][0] - np.array([word["bbox"][0] for word in words])) ** 2
         + (annot["bbox"][1] - np.array([word["bbox"][1] for word in words])) ** 2,
@@ -1012,8 +1017,8 @@ def map_bbox_and_index(words, annot):
         (annot["bbox"][2] - np.array([word["bbox"][2] for word in words])) ** 2
         + (annot["bbox"][3] - np.array([word["bbox"][3] for word in words])) ** 2,
     )
-    closest_start = np.argmin(distance_from_bbox_start)
-    closest_end = np.argmin(distance_from_bbox_end)
+    closest_start = try_argmin(distance_from_bbox_start)
+    closest_end = try_argmin(distance_from_bbox_end)
 
     # NOTE(klaijan) - get the word from closest start only if the end index comes after start index
     text = ""
@@ -1027,3 +1032,10 @@ def map_bbox_and_index(words, annot):
     annot["text"] = text.strip()
     annot["start_index"] = words[closest_start]["start_index"]
     return annot
+
+
+def try_argmin(array: np.ndarray):
+    try:
+        return np.argmin(array)
+    except IndexError:
+        return -1
