@@ -41,7 +41,7 @@ TABLE_FIELDNAMES: List[str] = [
 
 def convert_to_isd(elements: List[Element]) -> List[Dict[str, Any]]:
     """Represents the document elements as an Initial Structured Document (ISD)."""
-    isd: List[Dict[str, str]] = []
+    isd: List[Dict[str, Any]] = []
     for element in elements:
         section = element.to_dict()
         isd.append(section)
