@@ -8,6 +8,7 @@ from test_unstructured.partition.test_constants import (
     EXPECTED_TEXT,
     EXPECTED_TEXT_WITH_EMOJI,
 )
+from unstructured.chunking.title import chunk_by_characters
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
 from unstructured.partition.csv import partition_csv
@@ -189,3 +190,15 @@ def test_partition_csv_with_json(filename, expected_text, expected_table):
     assert elements[0].metadata.filename == test_elements[0].metadata.filename
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+
+
+def test_add_chunking_strategy_by_chars_to_partition_csv():
+    filename = "example-docs/stanley-cups.csv"
+
+    elements = partition_csv(filename=filename)
+    chunk_elements = partition_csv(
+        filename, chunking_strategy="by_num_characters", num_characters=9
+    )
+    chunks = chunk_by_characters(elements, 9)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks

@@ -1,7 +1,7 @@
 import os
 import pathlib
 
-from unstructured.chunking.title import chunk_by_title
+from unstructured.chunking.title import chunk_by_characters, chunk_by_title
 from unstructured.documents.elements import Table, Text
 from unstructured.partition.epub import partition_epub
 from unstructured.partition.json import partition_json
@@ -185,11 +185,23 @@ def test_partition_epub_with_json(
         elements[i] == test_elements[i]
 
 
-def test_add_chunking_strategy_on_partition_epub(
+def test_add_chunking_strategy_by_title_on_partition_epub(
     filename=os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub"),
 ):
     elements = partition_epub(filename=filename)
     chunk_elements = partition_epub(filename, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_add_chunking_strategy_by_chars_on_partition_epub(
+    filename=os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub"),
+):
+    elements = partition_epub(filename=filename)
+    chunk_elements = partition_epub(
+        filename, chunking_strategy="by_num_characters", num_characters=5
+    )
+    chunks = chunk_by_characters(elements, 5)
     assert chunk_elements != elements
     assert chunk_elements == chunks

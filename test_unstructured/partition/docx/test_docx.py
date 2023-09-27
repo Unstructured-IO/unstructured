@@ -9,7 +9,7 @@ import docx
 import pytest
 from docx.document import Document
 
-from unstructured.chunking.title import chunk_by_title
+from unstructured.chunking.title import chunk_by_characters, chunk_by_title
 from unstructured.documents.elements import (
     Address,
     Element,
@@ -422,7 +422,7 @@ def test_partition_docx_with_json(mock_document, expected_elements, tmpdir):
         assert elements[i] == test_elements[i]
 
 
-def test_add_chunking_strategy_on_partition_docx(filename="example-docs/handbook-1p.docx"):
+def test_add_chunking_strategy_by_title_on_partition_docx(filename="example-docs/handbook-1p.docx"):
     chunk_elements = partition_docx(filename, chunking_strategy="by_title")
     elements = partition_docx(filename)
     chunks = chunk_by_title(elements)
@@ -489,3 +489,15 @@ def test_parse_category_depth_by_style_name():
 def test_parse_category_depth_by_style_ilvl():
     partitioner = _DocxPartitioner(None, None, None, False, None)
     assert partitioner._parse_category_depth_by_style_ilvl() == 0
+
+
+def test_add_chunking_strategy_by_chars_on_partition_docx(
+    filename="example-docs/fake-doc-emphasized-text.docx",
+):
+    chunk_elements = partition_docx(
+        filename, chunking_strategy="by_num_characters", num_characters=9
+    )
+    elements = partition_docx(filename)
+    chunks = chunk_by_characters(elements, 9)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks

@@ -1,7 +1,7 @@
 import copy
 import functools
 import inspect
-from typing import Any, Callable, Dict, List, TypeVar
+from typing import Any, Callable, Dict, List, Optional, TypeVar
 
 from typing_extensions import ParamSpec
 
@@ -18,7 +18,7 @@ from unstructured.documents.elements import (
 
 def chunk_by_characters(
     elements: List[Element],
-    num_characters: int = 200,
+    num_characters: Optional[int] = 200,
 ) -> List[Element]:
     """Uses num_characters to return elements within a document in specific sizes.
     Currently only applies to Table elements.
@@ -37,8 +37,8 @@ def chunk_by_characters(
             html_table = element.to_dict().get("text_as_html")
             if html_table:
                 char_len = len(html_table)
-            if char_len > num_characters:
-                chunked_elements.extend(chunk_table_element(element))
+            if char_len > num_characters:  # type: ignore
+                chunked_elements.extend(chunk_table_element(element, num_characters))
             else:
                 chunked_elements.append(element)
             # create TableChunk element if text is more than num chars
@@ -51,35 +51,36 @@ def chunk_by_characters(
 
 def chunk_table_element(
     element: Table,
-    num_characters: int,
+    num_characters: Optional[int] = 200,
 ) -> List[TableChunk]:
     chunks = []
     text = element.text
-    text_as_html = element.text_as_html
+    text_as_html = element.text_as_html if hasattr(element, "text_as_html") else None
     i = 0
     metadata = element.metadata
     while text or text_as_html:
         text_chunk = text[:num_characters]
-        text_as_html_chunk = text_as_html[:num_characters]
         table_chunk = TableChunk(
             text=text_chunk,
             metadata=copy.copy(metadata),
         )
         if text_as_html:
+            text_as_html_chunk = text_as_html[:num_characters]
             table_chunk.metadata.text_as_html = text_as_html_chunk
+            # Remove the processed chunk from text_as_html
+            text_as_html = text_as_html[num_characters:]
         if i > 0:
             table_chunk.metadata.is_continuation = True
 
         chunks.append(table_chunk)
+        i += 1
 
-        # Remove the processed chunk from text and text_as_html
+        # Remove the processed chunk from text
         text = text[num_characters:]
-        text_as_html = text_as_html[num_characters:]
 
         # Ensure that text and text_as_html are not empty before continuing
         if not text and not text_as_html:
             break
-
     return chunks
 
 

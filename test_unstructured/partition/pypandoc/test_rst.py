@@ -153,5 +153,8 @@ def test_add_chunking_strategy_on_partition_rst(filename="example-docs/README.rs
     elements = partition_rst(filename=filename)
     chunk_elements = partition_rst(filename, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)
+    import pdb
+
+    pdb.set_trace()
     assert chunk_elements != elements
     assert chunk_elements == chunks

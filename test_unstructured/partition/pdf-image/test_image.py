@@ -7,7 +7,7 @@ from PIL import Image
 from pytesseract import TesseractError
 from unstructured_inference.inference import layout
 
-from unstructured.chunking.title import chunk_by_title
+from unstructured.chunking.title import chunk_by_characters, chunk_by_title
 from unstructured.partition import image, pdf
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
@@ -450,12 +450,31 @@ def test_partition_image_warns_with_ocr_languages(caplog):
     assert "The ocr_languages kwarg will be deprecated" in caplog.text
 
 
-def test_add_chunking_strategy_on_partition_image(
+def test_add_chunking_strategy_by_title_on_partition_image(
     filename="example-docs/layout-parser-paper-fast.jpg",
 ):
     elements = image.partition_image(filename=filename)
     chunk_elements = image.partition_image(filename, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_add_chunking_strategy_by_chars_on_partition_image(
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    elements = image.partition_image(
+        filename=filename,
+        strategy="hi_res",
+        infer_table_structure=True,
+    )
+    chunk_elements = image.partition_image(
+        filename,
+        strategy="hi_res",
+        infer_table_structure=True,
+        chunking_strategy="by_num_characters",
+    )
+    chunks = chunk_by_characters(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
 
