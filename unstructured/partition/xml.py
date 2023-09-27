@@ -1,6 +1,6 @@
 from io import BytesIO
 from tempfile import SpooledTemporaryFile
-from typing import IO, BinaryIO, List, Optional, Union, cast
+from typing import IO, BinaryIO, Iterator, List, Optional, Union, cast
 
 from lxml import etree
 
@@ -27,7 +27,7 @@ def get_leaf_elements(
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     text: Optional[str] = None,
     xml_path: Optional[str] = None,
-) -> List[Optional[str]]:
+) -> Iterator[Optional[str]]:
     """Get leaf elements from the XML tree defined in filename, file, or text."""
     exactly_one(filename=filename, file=file, text=text)
     if filename:
@@ -46,10 +46,10 @@ def get_leaf_elements(
 
 
 def _get_leaf_elements(
-    file: Union[str, IO[bytes]], xml_path: Optional[str] = None
-) -> List[Optional[str]]:
+    file: Union[str, IO[bytes]],
+    xml_path: Optional[str] = None,
+) -> Iterator[Optional[str]]:
     """Parse the XML tree in a memory efficient manner if possible."""
-    elements = []
     element_stack = []
 
     element_iterator = etree.iterparse(file, events=("start", "end"))
@@ -67,13 +67,12 @@ def _get_leaf_elements(
 
         if event == "end":
             if element.text is not None and element.text.strip():
-                elements.append(element.text)
+                yield element.text
 
             element.clear()
 
         while element_stack and element_stack[-1].getparent() is None:
             element_stack.pop()
-    return elements
 
 
 @process_metadata()
