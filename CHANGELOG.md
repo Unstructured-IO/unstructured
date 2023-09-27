@@ -1,8 +1,14 @@
-## 0.10.17-dev4
+## 0.10.17-dev10
 
 ### Enhancements
 
 * **Adds data source properties to SharePoint, Outlook, Onedrive, Reddit, and Slack connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+* **Add functionality to save embedded images in PDF's separately as images** This allows users to save embedded images in PDF's separately as images, given some directory path. The saved image path is written to the metadata for the Image element. Downstream applications may benefit by providing users with image links from relevant "hits."
+* **Azure Cognite Search destination connector** New Azure Cognitive Search destination connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to an Azure Cognitive Search index.
+* **Improves salesforce partitioning** Partitions Salesforce data as xlm instead of text for improved detail and flexibility. Partitions htmlbody instead of textbody for Salesforce emails. Importance: Allows all Salesforce fields to be ingested and gives Salesforce emails more detailed partitioning.
+* **Add document level language detection functionality.** Introduces the "auto" default for the languages param, which then detects the languages present in the document using the `langdetect` package. Adds the document languages as ISO 639-3 codes to the element metadata. Implemented only for the partition_text function to start.
+* **PPTX partitioner refactored in preparation for enhancement.** Behavior should be unchanged except that shapes enclosed in a group-shape are now included, as many levels deep as required (a group-shape can itself contain a group-shape).
+* **Embeddings support for the SharePoint SourceConnector via unstructured-ingest CLI** The SharePoint connector can now optionally create embeddings from the elements it pulls out during partition and upload those embeddings to Azure Cognitive Search index.
 
 ### Features
 
@@ -11,8 +17,14 @@
 ### Fixes
 
 * **Fixes a metadata source serialization bug** Problem: In unstructured elements, when loading an elements json file from the disk, the data_source attribute is assumed to be an instance of DataSourceMetadata and the code acts based on that. However the loader did not satisfy the assumption, and loaded it as a dict instead, causing an error. Fix: Added necessary code block to initialize a DataSourceMetadata object, also refactored DataSourceMetadata.from_dict() method to remove redundant code. Importance: Crucial to be able to load elements (which have data_source fields) from json files.
-
-* **Fixes issue when channel raises `None`** Retrieves the channel only once, moves `jump_url` property setting within the message retrieval context.
+* **Fixes issue where unstructured-inference was not getting updated** Problem: unstructured-inference was not getting upgraded to the version to match unstructured release when doing a pip install.  Solution: using `pip install unstructured[all-docs]` it will now upgrade both unstructured and unstructured-inference. Importance: This will ensure that the inference library is always in sync with the unstructured library, otherwise users will be using outdated libraries which will likely lead to unintended behavior.
+* **Fixes SharePoint connector failures if any document has an unsupported filetype** Problem: Currently the entire connector ingest run fails if a single IngestDoc has an unsupported filetype. This is because a ValueError is raised in the IngestDoc's `__post_init__`. Fix: Adds a try/catch when the IngestConnector runs get_ingest_docs such that the error is logged but all processable documents->IngestDocs are still instantiated and returned. Importance: Allows users to ingest SharePoint content even when some files with unsupported filetypes exist there.
+* **Fixes Sharepoint connector server_path issue** Problem: Server path for the Sharepoint Ingest Doc was incorrectly formatted, causing issues while fetching pages from the remote source. Fix: changes formatting of remote file path before instantiating SharepointIngestDocs and appends a '/' while fetching pages from the remote source. Importance: Allows users to fetch pages from Sharepoint Sites.
+* **Fixes badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
+should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class 
+allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
+* **Fixes Sphinx errors.** Fixes errors when running Sphinx `make html` and installs library to suppress warnings.
+* **Fixes issue when channel returns `None`** Problem: Getting the `jump_url` out of the discord `channel` when it's non-existent fails. Fix: property `jump_url`is retrieved within the same context as the messages from the channel. Importance: Avoid possible issues when the connector fails to fetch information about the discord channel.
 
 ## 0.10.16
 
@@ -21,6 +33,7 @@
 * **Adds data source properties to Airtable, Confluence, Discord, Elasticsearch, Google Drive, and Wikipedia connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
 * **DOCX partitioner refactored in preparation for enhancement.** Behavior should be unchanged except in multi-section documents containing different headers/footers for different sections. These will now emit all distinct headers and footers encountered instead of just those for the last section.
 * **Add a function to map between Tesseract and standard language codes.** This allows users to input language information to the `languages` param in any Tesseract-supported langcode or any ISO 639 standard language code.
+* **Add document level language detection functionality.** Introduces the "auto" default for the languages param, which then detects the languages present in the document using the `langdetect` package. Implemented only for the partition_text function to start.
 
 ### Features
 
@@ -29,6 +42,7 @@
 * ***Fixes an issue that caused a partition error for some PDF's.** Fixes GH Issue 1460 by bypassing a coordinate check if an element has invalid coordinates.
 
 ## 0.10.15
+
 
 ### Enhancements
 

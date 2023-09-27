@@ -5,12 +5,14 @@ from html import unescape
 from pathlib import Path
 from urllib.parse import urlparse
 
+from unstructured.embed.interfaces import BaseEmbeddingEncoder
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSourceConnector,
+    EmbeddingConfig,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
     SourceMetadata,
@@ -66,9 +68,16 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     is_page: bool
     file_path: str
     registry_name: str = "sharepoint"
+    embedding_config: t.Optional[EmbeddingConfig] = None
+
+    @property
+    def embedder(self) -> t.Optional[BaseEmbeddingEncoder]:
+        if self.embedding_config and self.embedding_config.api_key:
+            return self.embedding_config.get_embedder()
+        return None
 
     def __post_init__(self):
-        self.extension = "".join(Path(self.file_path).suffixes) if not self.is_page else ".html"
+        self.extension = Path(self.file_path).suffix if not self.is_page else ".html"
         self.extension = ".html" if self.extension == ".aspx" else self.extension
         if not self.extension:
             raise ValueError("Unsupported file without extension.")
@@ -87,9 +96,9 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         parent = Path(self.file_path).with_suffix(self.extension)
         self.download_dir = (download_path / parent.parent).resolve()
         self.download_filepath = (download_path / parent).resolve()
-        oname = f"{str(parent)[:-len(self.extension)]}.json"
+        output_filename = str(parent) + ".json"
         self.output_dir = (output_path / parent.parent).resolve()
-        self.output_filepath = (output_path / oname).resolve()
+        self.output_filepath = (output_path / output_filename).resolve()
 
     @property
     def filename(self):
@@ -116,7 +125,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         try:
             if self.is_page:
-                file = site_client.web.get_file_by_server_relative_path(self.server_path)
+                file = site_client.web.get_file_by_server_relative_path("/" + self.server_path)
                 file = file.listItemAllFields.select(CONTENT_LABELS).get().execute_query()
             else:
                 file = site_client.web.get_file_by_server_relative_url(self.server_path)
@@ -139,7 +148,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 .execute_query()
             )
         except Exception as e:
-            logger.error(f"Failed to retrieve page {self.server_path} from site {self.server_path}")
+            logger.error(f"Failed to retrieve page {self.server_path} from site {self.site_url}")
             logger.error(e)
             return None
         return page
@@ -234,6 +243,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 @dataclass
 class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleSharepointConfig
+    embedding_config: t.Optional[EmbeddingConfig] = None
 
     @requires_dependencies(["office365"], extras="sharepoint")
     def _list_files(self, folder, recursive) -> t.List["File"]:
@@ -257,7 +267,7 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
     def _prepare_ingest_doc(self, obj: t.Union["File", "SitePage"], base_url, is_page=False):
         if is_page:
             file_path = obj.get_property("Url", "")
-            server_path = f"/{file_path}" if file_path[0] != "/" else file_path
+            server_path = file_path if file_path[0] != "/" else file_path[1:]
             if (url_path := (urlparse(base_url).path)) and (url_path != "/"):
                 file_path = url_path[1:] + "/" + file_path
         else:
@@ -265,13 +275,14 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
             file_path = obj.serverRelativeUrl[1:]
 
         return SharepointIngestDoc(
-            self.read_config,
-            self.partition_config,
-            self.connector_config,
-            base_url,
-            server_path,
-            is_page,
-            file_path,
+            read_config=self.read_config,
+            partition_config=self.partition_config,
+            connector_config=self.connector_config,
+            site_url=base_url,
+            server_path=server_path,
+            is_page=is_page,
+            file_path=file_path,
+            embedding_config=self.embedding_config,
         )
 
     @requires_dependencies(["office365"], extras="sharepoint")
@@ -295,10 +306,16 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         files = self._list_files(root_folder, self.connector_config.recursive)
         if not files:
             logger.info(
-                f"Couldn't process files in path {self.connector_config.path}\
+                f"No processable files at path {self.connector_config.path}\
                 for site {site_client.base_url}",
             )
-        output = [self._prepare_ingest_doc(file, site_client.base_url) for file in files]
+        output = []
+        for file in files:
+            try:
+                output.append(self._prepare_ingest_doc(file, site_client.base_url))
+            except ValueError as e:
+                logger.error("Unable to process file %s", file.properties["Name"])
+                logger.error(e)
         if self.connector_config.process_pages:
             page_output = self._list_pages(site_client)
             if not page_output:

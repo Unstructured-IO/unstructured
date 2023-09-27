@@ -1,8 +1,9 @@
+import io
 import os
 import re
 import warnings
 from tempfile import SpooledTemporaryFile
-from typing import BinaryIO, Iterator, List, Optional, Tuple, Union, cast
+from typing import IO, Any, BinaryIO, Iterator, List, Optional, Tuple, Union, cast
 
 import pdf2image
 import PIL
@@ -143,11 +144,13 @@ def partition_pdf(
 
 def extractable_elements(
     filename: str = "",
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[bytes, IO[bytes]]] = None,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ):
+    if isinstance(file, bytes):
+        file = io.BytesIO(file)
     return _partition_pdf_with_pdfminer(
         filename=filename,
         file=file,
@@ -262,7 +265,7 @@ def partition_pdf_or_image(
             layout_elements = []
             for el in _layout_elements:
                 if hasattr(el, "category") and el.category == "UncategorizedText":
-                    new_el = element_from_text(el.text)
+                    new_el = element_from_text(cast(Text, el).text)
                     new_el.metadata = el.metadata
                 else:
                     new_el = el
@@ -310,29 +313,37 @@ def _partition_pdf_or_image_local(
     ocr_languages = prepare_languages_for_tesseract(languages)
 
     model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
+    pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
+    extract_images_in_pdf = kwargs.get("extract_images_in_pdf", False)
+    image_output_dir_path = kwargs.get("image_output_dir_path", None)
+
+    process_with_model_kwargs = {
+        "is_image": is_image,
+        "ocr_languages": ocr_languages,
+        "ocr_mode": ocr_mode,
+        "extract_tables": infer_table_structure,
+        "model_name": model_name,
+    }
+
+    process_with_model_extra_kwargs = {
+        "pdf_image_dpi": pdf_image_dpi,
+        "extract_images_in_pdf": extract_images_in_pdf,
+        "image_output_dir_path": image_output_dir_path,
+    }
+
+    for key, value in process_with_model_extra_kwargs.items():
+        if value:
+            process_with_model_kwargs[key] = value
+
     if file is None:
-        pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
-        process_file_with_model_kwargs = {
-            "is_image": is_image,
-            "ocr_languages": ocr_languages,
-            "ocr_mode": ocr_mode,
-            "extract_tables": infer_table_structure,
-            "model_name": model_name,
-        }
-        if pdf_image_dpi:
-            process_file_with_model_kwargs["pdf_image_dpi"] = pdf_image_dpi
         layout = process_file_with_model(
             filename,
-            **process_file_with_model_kwargs,
+            **process_with_model_kwargs,
         )
     else:
         layout = process_data_with_model(
             file,
-            is_image=is_image,
-            ocr_languages=ocr_languages,
-            ocr_mode=ocr_mode,
-            extract_tables=infer_table_structure,
-            model_name=model_name,
+            **process_with_model_kwargs,
         )
     elements = document_to_element_list(
         layout,
@@ -345,17 +356,22 @@ def _partition_pdf_or_image_local(
         infer_list_items=False,
         **kwargs,
     )
-    out_elements = []
 
+    out_elements = []
     for el in elements:
-        if (isinstance(el, PageBreak) and not include_page_breaks) or (
-            # NOTE(crag): small chunks of text from Image elements tend to be garbage
-            isinstance(el, Image)
-            and (el.text is None or len(el.text) < 24 or el.text.find(" ") == -1)
-        ):
+        if isinstance(el, PageBreak) and not include_page_breaks:
             continue
+
+        if isinstance(el, Image):
+            # NOTE(crag): small chunks of text from Image elements tend to be garbage
+            if not el.metadata.image_path and (
+                el.text is None or len(el.text) < 24 or el.text.find(" ") == -1
+            ):
+                continue
+            else:
+                out_elements.append(cast(Element, el))
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
-        if isinstance(el, Text):
+        elif isinstance(el, Text):
             el.text = re.sub(
                 RE_MULTISPACE_INCLUDING_NEWLINES,
                 " ",
@@ -370,10 +386,10 @@ def _partition_pdf_or_image_local(
 @requires_dependencies("pdfminer", "local-inference")
 def _partition_pdf_with_pdfminer(
     filename: str = "",
-    file: Optional[BinaryIO] = None,
+    file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
     processing or detectron2 is not available.
@@ -540,7 +556,7 @@ def _process_pdfminer_pages(
 
 def convert_pdf_to_images(
     filename: str = "",
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[bytes, IO[bytes]]] = None,
     chunk_size: int = 10,
 ) -> Iterator[PIL.Image.Image]:
     # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
@@ -660,7 +676,7 @@ def _add_pytesseract_bboxes_to_elements(
 @requires_dependencies("unstructured_pytesseract")
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[bytes, IO[bytes]]] = None,
     include_page_breaks: bool = False,
     languages: List[str] = ["eng"],
     is_image: bool = False,
@@ -697,7 +713,7 @@ def _partition_pdf_or_image_with_ocr(
         )
         width, height = image.size
         _add_pytesseract_bboxes_to_elements(
-            elements=elements,
+            elements=cast(List[Text], elements),
             bboxes_string=_bboxes,
             width=width,
             height=height,
@@ -712,6 +728,7 @@ def _partition_pdf_or_image_with_ocr(
                 filename=filename,
                 page_number=page_number,
                 last_modified=metadata_last_modified,
+                languages=languages,
             )
             _text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,
@@ -730,7 +747,7 @@ def _partition_pdf_or_image_with_ocr(
                 element.metadata = metadata
 
             _add_pytesseract_bboxes_to_elements(
-                elements=_elements,
+                elements=cast(List[Text], _elements),
                 bboxes_string=_bboxes,
                 width=width,
                 height=height,

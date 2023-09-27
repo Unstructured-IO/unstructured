@@ -28,6 +28,7 @@ from unstructured.partition.common import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
+from unstructured.partition.lang import detect_languages
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -166,6 +167,7 @@ def partition_text(
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
+    languages: List[str] = ["auto"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
@@ -190,6 +192,8 @@ def partition_text(
         for formatting purposes.
     include_metadata
         Determines whether or not metadata is included in the output.
+    languages
+        The list of languages present in the document.
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied.
@@ -200,6 +204,11 @@ def partition_text(
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
 
     if (
         min_partition is not None
@@ -223,6 +232,8 @@ def partition_text(
     elif text is not None:
         file_text = str(text)
 
+    languages = detect_languages(file_text, languages)
+
     if paragraph_grouper is False:
         pass
     elif paragraph_grouper is not None:
@@ -244,6 +255,7 @@ def partition_text(
         ElementMetadata(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
+            languages=languages,
         )
         if include_metadata
         else ElementMetadata()

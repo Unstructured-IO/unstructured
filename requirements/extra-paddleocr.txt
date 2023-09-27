@@ -53,7 +53,7 @@ idna==3.4
     # via
     #   -c requirements/base.txt
     #   requests
-imageio==2.31.3
+imageio==2.31.4
     # via
     #   imgaug
     #   scikit-image
@@ -61,7 +61,7 @@ imgaug==0.4.0
     # via unstructured-paddleocr
 importlib-metadata==6.8.0
     # via flask
-importlib-resources==6.0.1
+importlib-resources==6.1.0
     # via matplotlib
 itsdangerous==2.1.2
     # via flask
@@ -125,7 +125,9 @@ packaging==23.1
     #   scikit-image
     #   visualdl
 pandas==2.0.3
-    # via visualdl
+    # via
+    #   -c requirements/constraints.in
+    #   visualdl
 pdf2image==1.16.3
     # via unstructured-paddleocr
 pillow==10.0.1
@@ -165,9 +167,9 @@ pytz==2023.3.post1
     #   pandas
 pywavelets==1.4.1
     # via scikit-image
-rapidfuzz==3.3.0
+rapidfuzz==3.3.1
     # via unstructured-paddleocr
-rarfile==4.0
+rarfile==4.1
     # via visualdl
 requests==2.31.0
     # via
@@ -189,6 +191,7 @@ shapely==2.0.1
     #   unstructured-paddleocr
 six==1.16.0
     # via
+    #   -c requirements/base.txt
     #   attrdict
     #   bce-python-sdk
     #   imgaug
@@ -213,7 +216,7 @@ visualdl==2.5.3
     # via unstructured-paddleocr
 werkzeug==2.3.7
     # via flask
-zipp==3.16.2
+zipp==3.17.0
     # via
     #   importlib-metadata
     #   importlib-resources
