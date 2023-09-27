@@ -133,6 +133,7 @@ class Link(TypedDict):
 
     text: Optional[str]
     url: str
+    start_index: int
 
 
 @dc.dataclass
@@ -161,6 +162,7 @@ class ElementMetadata:
     url: Optional[str] = None
     link_urls: Optional[List[str]] = None
     link_texts: Optional[List[str]] = None
+    links: Optional[List[Link]] = None
 
     # E-mail specific metadata fields
     sent_from: Optional[List[str]] = None

@@ -875,7 +875,7 @@ def test_partition_pdf_or_image_warns_with_ocr_languages(caplog):
 
 
 def test_partition_categorization_backup():
-    text = "This is Clearly a Title."
+    text = "This is Clearly a Title"
     with mock.patch.object(pdf, "_partition_pdf_or_image_local", return_value=[Text(text)]):
         elements = pdf.partition_pdf_or_image(
             "example-docs/layout-parser-paper-fast.pdf",
@@ -898,7 +898,45 @@ def test_combine_numbered_list(filename):
             first_list_element = element
             break
     assert len(elements) < 28
-    assert first_list_element.text.endswith("(Section 3)")
+    assert first_list_element.text.endswith(
+        "character recognition, and other DIA tasks (Section 3)",
+    )
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-docs/layout-parser-paper-fast.pdf"],
+)
+def test_hyperlinks(filename):
+    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    links = [
+        {
+            "text": "8",
+            "url": "cite.gardner2018allennlp",
+            "start_index": 138,
+        },
+        {
+            "text": "34",
+            "url": "cite.wolf2019huggingface",
+            "start_index": 141,
+        },
+        {
+            "text": "35",
+            "url": "cite.wu2019detectron2",
+            "start_index": 168,
+        },
+    ]
+    assert elements[-1].metadata.links == links
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-docs/embedded-link.pdf"],
+)
+def test_hyperlinks_multiple_lines(filename):
+    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    assert elements[-1].metadata.links[-1]["text"] == "capturing"
+    assert len(elements[-1].metadata.links) == 2
 
 
 def test_partition_pdf_uses_model_name():
