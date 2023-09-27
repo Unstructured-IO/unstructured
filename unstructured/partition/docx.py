@@ -411,6 +411,7 @@ class _DocxPartitioner:
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
+                    category_depth=0,
                 ),
             )
 
@@ -438,6 +439,7 @@ class _DocxPartitioner:
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
+                    category_depth=0,  # -- headers are always at the root level
                 ),
             )
 
@@ -554,12 +556,14 @@ class _DocxPartitioner:
     def _paragraph_metadata(self, paragraph: Paragraph) -> ElementMetadata:
         """ElementMetadata object describing `paragraph`."""
         emphasized_text_contents, emphasized_text_tags = self._paragraph_emphasis(paragraph)
+        category_depth = self._parse_category_depth_by_style(paragraph)
         return ElementMetadata(
             filename=self._metadata_filename,
             page_number=self._page_number,
             last_modified=self._last_modified,
             emphasized_text_contents=emphasized_text_contents or None,
             emphasized_text_tags=emphasized_text_tags or None,
+            category_depth=category_depth,
         )
 
     def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
@@ -633,6 +637,52 @@ class _DocxPartitioner:
         """[contents, tags] pair describing emphasized text in `table`."""
         iter_tbl_emph, iter_tbl_emph_2 = itertools.tee(self._iter_table_emphasis(table))
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])
+
+    def _parse_category_depth_by_style(self, paragraph: Paragraph) -> int:
+        """Determine category depth from paragraph metadata"""
+
+        # Determine category depth from paragraph ilvl xpath
+        xpath = paragraph._element.xpath("./w:pPr/w:numPr/w:ilvl/@w:val")
+        if xpath:
+            return int(xpath[0])
+
+        # Determine category depth from style name
+        style_name = (paragraph.style and paragraph.style.name) or "Normal"
+        depth = self._parse_category_depth_by_style_name(style_name)
+
+        if depth > 0:
+            return depth
+        else:
+            # Check if category depth can be determined from style ilvl
+            return self._parse_category_depth_by_style_ilvl()
+
+    def _parse_category_depth_by_style_name(self, style_name: str) -> int:
+        """Parse category-depth from the style-name of `paragraph`.
+
+        Category depth is 0-indexed and relative to the other element types in the document.
+        """
+
+        def _extract_number(suffix: str) -> int:
+            return int(suffix.split()[-1]) - 1 if suffix.split()[-1].isdigit() else 0
+
+        # Heading styles
+        if style_name.startswith("Heading"):
+            return _extract_number(style_name)
+
+        if style_name == "Subtitle":
+            return 1
+
+        # List styles
+        list_prefixes = ["List", "List Bullet", "List Continue", "List Number"]
+        if any(style_name.startswith(prefix) for prefix in list_prefixes):
+            return _extract_number(style_name)
+
+        # Other styles
+        return 0
+
+    def _parse_category_depth_by_style_ilvl(self) -> int:
+        # TODO(newelh) Parsing category depth by style ilvl is not yet implemented
+        return 0
 
 
 class _SectBlockItemIterator:
