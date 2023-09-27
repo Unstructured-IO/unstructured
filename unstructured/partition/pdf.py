@@ -769,14 +769,14 @@ def _partition_pdf_or_image_with_ocr(
         if file is not None:
             image = PIL.Image.open(file)
             text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
-                image,
+                np.array(image),
                 extensions=["txt", "box"],
                 lang=ocr_languages,
             )
         else:
             image = PIL.Image.open(filename)
             text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
-                image,
+                np.array(image),
                 extensions=["txt", "box"],
                 lang=ocr_languages,
             )
