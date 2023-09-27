@@ -7,7 +7,7 @@
         "url": "https://unstructuredio.sharepoint.com/SitePages/This-is-a-title.aspx",
         "version": "1.0",
         "record_locator": {
-          "server_path": "/SitePages/This-is-a-title.aspx",
+          "server_path": "SitePages/This-is-a-title.aspx",
           "site_url": "https://unstructuredio.sharepoint.com"
         },
         "date_created": "0001-01-01T08:00:00Z",
@@ -27,7 +27,7 @@
         "url": "https://unstructuredio.sharepoint.com/SitePages/This-is-a-title.aspx",
         "version": "1.0",
         "record_locator": {
-          "server_path": "/SitePages/This-is-a-title.aspx",
+          "server_path": "SitePages/This-is-a-title.aspx",
           "site_url": "https://unstructuredio.sharepoint.com"
         },
         "date_created": "0001-01-01T08:00:00Z",
@@ -47,7 +47,7 @@
         "url": "https://unstructuredio.sharepoint.com/SitePages/This-is-a-title.aspx",
         "version": "1.0",
         "record_locator": {
-          "server_path": "/SitePages/This-is-a-title.aspx",
+          "server_path": "SitePages/This-is-a-title.aspx",
           "site_url": "https://unstructuredio.sharepoint.com"
         },
         "date_created": "0001-01-01T08:00:00Z",
@@ -67,7 +67,7 @@
         "url": "https://unstructuredio.sharepoint.com/SitePages/This-is-a-title.aspx",
         "version": "1.0",
         "record_locator": {
-          "server_path": "/SitePages/This-is-a-title.aspx",
+          "server_path": "SitePages/This-is-a-title.aspx",
           "site_url": "https://unstructuredio.sharepoint.com"
         },
         "date_created": "0001-01-01T08:00:00Z",
