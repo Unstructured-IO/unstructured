@@ -8,6 +8,10 @@ import pytesseract
 from PIL import Image as PILImage
 from PIL import ImageSequence
 from pytesseract import Output
+from unstructured_inference.constants import (
+    SUBREGION_THRESHOLD_FOR_OCR,
+    Source,
+)
 from unstructured_inference.inference.elements import (
     Rectangle,
     TextRegion,
@@ -18,8 +22,6 @@ from unstructured_inference.inference.layoutelement import (
     LayoutElement,
 )
 
-SUBREGION_THRESHOLD_FOR_OCR = 0.5
-
 
 def process_data_with_ocr(
     data: Optional[Union[bytes, BinaryIO]],
@@ -28,7 +30,7 @@ def process_data_with_ocr(
     pdf_image_dpi: int = 200,
 ) -> List[List[TextRegion]]:
     with tempfile.NamedTemporaryFile() as tmp_file:
-        tmp_file.write(data.read())
+        tmp_file.write(data.read() if hasattr(data, "read") else data)
         tmp_file.flush()
         ocr_layouts = process_file_with_ocr(
             filename=tmp_file.name,
@@ -139,7 +141,7 @@ def merge_inferred_layout_with_ocr_layout(
         inferred_layout = pages[i].elements
         ocr_layout = ocr_layouts[i]
         merged_layout = merge_inferred_layout_with_ocr_layout_per_page(inferred_layout, ocr_layout)
-        merged_layouts.pages[i].elements = merged_layout
+        merged_layouts.pages[i].elements[:] = merged_layout
     return merged_layouts
 
 
@@ -261,7 +263,7 @@ def get_elements_from_ocr_regions(ocr_regions: List[TextRegion]) -> List[LayoutE
             r.x2,
             r.y2,
             text=r.text,
-            source=None,
+            source=r.source,
             type="UncategorizedText",
         )
         for r in merged_regions
@@ -286,5 +288,7 @@ def merge_text_regions(regions: List[TextRegion]) -> TextRegion:
 
     merged_text = " ".join([tr.text for tr in regions if tr.text])
     sources = [*{tr.source for tr in regions}]
-    source = sources.pop() if len(sources) == 1 else "merged:".join(sources)  # type:ignore
-    return TextRegion(min_x1, min_y1, max_x2, max_y2, source=source, text=merged_text)
+    source = sources.pop() if len(sources) == 1 else Source.MERGED
+    element = TextRegion(min_x1, min_y1, max_x2, max_y2, source=source, text=merged_text)
+    setattr(element, "merged_sources", sources)
+    return element

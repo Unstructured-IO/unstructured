@@ -343,9 +343,6 @@ def _partition_pdf_or_image_local(
             ocr_languages=ocr_languages,
             pdf_image_dpi=pdf_image_dpi,
         )
-        import pdb
-
-        pdb.set_trace()
     else:
         inferenced_layouts = process_data_with_model(
             file,
@@ -354,7 +351,8 @@ def _partition_pdf_or_image_local(
             model_name=model_name,
             pdf_image_dpi=pdf_image_dpi,
         )
-        file.seek(0)
+        if hasattr(file, "seek"):
+            file.seek(0)
         ocr_layouts = process_data_with_ocr(
             file,
             is_image=is_image,
@@ -362,10 +360,10 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
         )
 
-    merged_layouts = merge_inferred_layout_with_ocr_layout(inferenced_layouts, ocr_layouts)
+    _ = merge_inferred_layout_with_ocr_layout(inferenced_layouts, ocr_layouts)
 
     elements = document_to_element_list(
-        merged_layouts,
+        inferenced_layouts,
         sortable=True,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_last_modified,
