@@ -87,7 +87,6 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
         for doc in docs:
             local_path = doc._output_filename
             with open(local_path) as json_file:
-                # TODO element id not a sufficient unique id to use
                 json_content = json.load(json_file)
                 for content in json_content:
                     self.conform_dict(data=content)
