@@ -23,6 +23,7 @@ from typing import (
 
 # -- CT_* stands for "complex-type", an XML element type in docx parlance --
 import docx
+from docx.blkcntnr import BlockItemContainer
 from docx.document import Document
 from docx.enum.section import WD_SECTION_START
 from docx.oxml.ns import nsmap, qn
@@ -32,7 +33,7 @@ from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.oxml.xmlchemy import BaseOxmlElement
 from docx.section import Section, _Footer, _Header
-from docx.table import Table as DocxTable
+from docx.table import _Cell, Table as DocxTable
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 from lxml import etree
@@ -158,6 +159,7 @@ def partition_docx(
     include_metadata: bool = True,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
+    metadata_languages: Optional[List[str]],
     **kwargs: Any,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -184,6 +186,7 @@ def partition_docx(
             metadata_filename,
             include_page_breaks,
             metadata_last_modified,
+            metadata_languages,
         ),
     )
 
@@ -220,12 +223,14 @@ class _DocxPartitioner:
         metadata_filename: Optional[str],
         include_page_breaks: bool,
         metadata_last_modified: Optional[str],
+        metadata_languages: Optional[List[str]]
     ) -> None:
         self._filename = filename
         self._file = file
         self._metadata_filename = metadata_filename
         self._include_page_breaks = include_page_breaks
         self._metadata_last_modified = metadata_last_modified
+        self._metadata_languages = metadata_languages
         self._page_counter: int = 1
 
     @classmethod
@@ -236,6 +241,7 @@ class _DocxPartitioner:
         metadata_filename: Optional[str] = None,
         include_page_breaks: bool = True,
         metadata_last_modified: Optional[str] = None,
+        metadata_languages: Optional[List[str]],
     ) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
         return cls(
@@ -244,6 +250,7 @@ class _DocxPartitioner:
             metadata_filename,
             include_page_breaks,
             metadata_last_modified,
+            metadata_languages,
         )._iter_document_elements()
 
     def _iter_document_elements(self) -> Iterator[Element]:
@@ -277,6 +284,33 @@ class _DocxPartitioner:
             file.seek(0)
             file = io.BytesIO(file.read())
         return docx.Document(file)
+
+    @lazyproperty
+    def _document_text(self) -> str:
+        """The full text of the document as a single string."""
+
+        def iter_block_container_paragraphs(blkcntnr: BlockItemContainer) -> Iterator[Paragraph]:
+            """Generate each paragraph in `blkcntnr`.
+
+            Recurses into tables to get paragraphs in table-cells.
+            """
+            if isinstance(blkcntnr, Document):
+                parent_elm = blkcntnr.element.body
+            elif isinstance(blkcntnr, _Cell):
+                parent_elm = blkcntnr._tc
+            else:
+                raise ValueError("something's not right")
+
+            for child in parent_elm.iterchildren():
+                if isinstance(child, CT_P):
+                    yield Paragraph(child, blkcntnr)
+                elif isinstance(child, CT_Tbl):
+                    table = DocxTable(child, blkcntnr)
+                    for row in table.rows:
+                        for cell in row.cells:
+                            yield from iter_block_container_paragraphs(cell)
+
+        return " ".join(p.text for p in iter_block_container_paragraphs(self._document))
 
     @lazyproperty
     def _document_contains_pagebreaks(self) -> bool:
@@ -514,6 +548,14 @@ class _DocxPartitioner:
                     yield from self._iter_paragraph_emphasis(paragraph)
 
     @lazyproperty
+    def _languages(self) -> List[str]:
+        """(Human) languages detect in the document content."""
+        if self._metadata_languages is not None:
+            return self._metadata_languages
+
+        return detect_languages(self._document_text)
+
+    @lazyproperty
     def _last_modified(self) -> Optional[str]:
         """Last-modified date suitable for use in element metadata."""
         # -- if this file was converted from another format, any last-modified date for the file
@@ -560,6 +602,7 @@ class _DocxPartitioner:
             last_modified=self._last_modified,
             emphasized_text_contents=emphasized_text_contents or None,
             emphasized_text_tags=emphasized_text_tags or None,
+            languages=self._languages,
         )
 
     def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
