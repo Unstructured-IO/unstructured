@@ -7,7 +7,7 @@
         "url": "https://unstructuredio.sharepoint.com/SitePages/Home.aspx",
         "version": "1.2",
         "record_locator": {
-          "server_path": "/SitePages/Home.aspx",
+          "server_path": "SitePages/Home.aspx",
           "site_url": "https://unstructuredio.sharepoint.com"
         },
         "date_created": "0001-01-01T08:00:00Z",
@@ -27,7 +27,7 @@
         "url": "https://unstructuredio.sharepoint.com/SitePages/Home.aspx",
         "version": "1.2",
         "record_locator": {
-          "server_path": "/SitePages/Home.aspx",
+          "server_path": "SitePages/Home.aspx",
           "site_url": "https://unstructuredio.sharepoint.com"
         },
         "date_created": "0001-01-01T08:00:00Z",

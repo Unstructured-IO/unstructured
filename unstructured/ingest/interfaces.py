@@ -14,10 +14,12 @@ import requests
 from dataclasses_json import DataClassJsonMixin
 
 from unstructured.documents.elements import DataSourceMetadata
+from unstructured.embed.interfaces import BaseEmbeddingEncoder
+from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
-from unstructured.staging.base import convert_to_dict
+from unstructured.staging.base import convert_to_dict, elements_from_json
 
 
 @dataclass
@@ -42,7 +44,7 @@ class PartitionConfig(BaseConfig):
     ocr_languages: str = "eng"
     encoding: t.Optional[str] = None
     fields_include: t.List[str] = field(
-        default_factory=lambda: ["element_id", "text", "type", "metadata"],
+        default_factory=lambda: ["element_id", "text", "type", "metadata", "embeddings"],
     )
     flatten_metadata: bool = False
     metadata_exclude: t.List[str] = field(default_factory=list)
@@ -59,6 +61,21 @@ class ReadConfig(BaseConfig):
     re_download: bool = False
     preserve_downloads: bool = False
     download_only: bool = False
+
+
+@dataclass
+class EmbeddingConfig(BaseConfig):
+    api_key: str
+    model_name: t.Optional[str] = None
+
+    def get_embedder(self) -> BaseEmbeddingEncoder:
+        # TODO update to incorporate other embedder types once they exist
+        kwargs = {
+            "api_key": self.api_key,
+        }
+        if self.model_name:
+            kwargs["model_name"] = self.model_name
+        return OpenAIEmbeddingEncoder(**kwargs)
 
 
 @dataclass
@@ -97,6 +114,10 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._date_processed = None
+
+    @property
+    def embedder(self) -> t.Optional[BaseEmbeddingEncoder]:
+        return None
 
     @property
     def date_created(self) -> t.Optional[str]:
@@ -222,8 +243,6 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
                 ),
                 **partition_kwargs,
             )
-            return convert_to_dict(elements)
-
         else:
             endpoint = self.partition_config.partition_endpoint
 
@@ -243,8 +262,11 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
 
             if response.status_code != 200:
                 raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
-
-            return response.json()
+            elements = elements_from_json(text=json.dumps(response.json()))
+        if self.embedder:
+            logger.info("Running embedder to add vector content to elements")
+            elements = self.embedder.embed_documents(elements)
+        return convert_to_dict(elements)
 
     def process_file(self, **partition_kwargs) -> t.Optional[t.List[t.Dict[str, t.Any]]]:
         self._date_processed = datetime.utcnow().isoformat()
@@ -281,7 +303,6 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
                 for k in list(elem["metadata"].keys()):  # type: ignore[attr-defined]
                     if k not in in_list:
                         elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
-
             in_list = self.partition_config.fields_include
             elem = {k: v for k, v in elem.items() if k in in_list}
 

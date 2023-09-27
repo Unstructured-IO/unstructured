@@ -41,7 +41,7 @@ fsspec==2023.9.1
     # via
     #   -c requirements/constraints.in
     #   huggingface-hub
-huggingface-hub==0.17.2
+huggingface-hub==0.17.3
     # via
     #   timm
     #   transformers
