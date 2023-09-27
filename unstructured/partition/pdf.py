@@ -67,8 +67,6 @@ from unstructured.partition.utils.sorting import (
 )
 from unstructured.utils import requires_dependencies
 
-# from lxml import etree
-
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
 
