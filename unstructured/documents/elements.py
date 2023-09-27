@@ -326,7 +326,7 @@ class Element(abc.ABC):
         data_origin: Optional[str] = None,
     ):
         if metadata is None:
-            metadata = ElementMetadata()
+            metadata = ElementMetadata(data_origin=data_origin)
         self.id: Union[str, uuid.UUID, NoID, UUID] = element_id
         coordinates_metadata = (
             None
@@ -341,7 +341,6 @@ class Element(abc.ABC):
         self.metadata = metadata.merge(
             ElementMetadata(coordinates=coordinates_metadata),
         )
-        self.data_origin = data_origin
 
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())
@@ -351,7 +350,6 @@ class Element(abc.ABC):
             "type": None,
             "element_id": self.id,
             "metadata": self.metadata.to_dict(),
-            "data_origin": self.data_origin,
         }
 
     def convert_coordinates_to_new_system(
@@ -454,7 +452,6 @@ class Text(Element):
                 (self.text == other.text),
                 (self.metadata.coordinates == other.metadata.coordinates),
                 (self.category == other.category),
-                (self.data_origin == other.data_origin),
             ],
         )
 

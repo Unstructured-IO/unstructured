@@ -285,6 +285,7 @@ def _add_element_metadata(
     coordinate_system: Optional[CoordinateSystem] = None,
     section: Optional[str] = None,
     image_path: Optional[str] = None,
+    data_origin: Optional[str] = None,
     **kwargs,
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
@@ -332,6 +333,7 @@ def _add_element_metadata(
         section=section,
         category_depth=depth,
         image_path=image_path,
+        data_origin=data_origin,
     )
     # NOTE(newel) - Element metadata is being merged into
     # newly constructed metadata, not the other way around
@@ -546,6 +548,7 @@ def document_to_element_list(
     last_modification_date: Optional[str] = None,
     infer_list_items: bool = True,
     source_format: Optional[str] = None,
+    data_origin: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
@@ -604,6 +607,7 @@ def document_to_element_list(
                 coordinate_system=coordinate_system,
                 category_depth=element.metadata.category_depth,
                 image_path=el_image_path,
+                data_origin=data_origin,
                 **kwargs,
             )
 

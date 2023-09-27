@@ -334,7 +334,7 @@ class _DocxPartitioner:
         if self._is_list_item(paragraph):
             clean_text = clean_bullets(text).strip()
             if clean_text:
-                yield ListItem(text=clean_text, metadata=metadata)
+                yield ListItem(text=clean_text, metadata=metadata, data_origin="docx")
             return
 
         # -- determine element-type from an explicit Word paragraph-style if possible --
@@ -350,7 +350,7 @@ class _DocxPartitioner:
             return
 
         # -- if all that fails we give it the default `Text` element-type --
-        yield Text(text, metadata=metadata)
+        yield Text(text, metadata=metadata, data_origin="docx")
 
     def _iter_maybe_paragraph_page_breaks(self, paragraph: Paragraph) -> Iterator[PageBreak]:
         """Generate a `PageBreak` document element for each page-break in `paragraph`.
@@ -411,6 +411,7 @@ class _DocxPartitioner:
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
+                    data_origin="docx",
                 ),
             )
 
@@ -438,6 +439,7 @@ class _DocxPartitioner:
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
+                    data_origin="docx",
                 ),
             )
 
@@ -503,6 +505,7 @@ class _DocxPartitioner:
                 last_modified=self._last_modified,
                 emphasized_text_contents=emphasized_text_contents or None,
                 emphasized_text_tags=emphasized_text_tags or None,
+                data_origin="docx",
             ),
         )
 
@@ -560,6 +563,7 @@ class _DocxPartitioner:
             last_modified=self._last_modified,
             emphasized_text_contents=emphasized_text_contents or None,
             emphasized_text_tags=emphasized_text_tags or None,
+            data_origin="docx",
         )
 
     def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:

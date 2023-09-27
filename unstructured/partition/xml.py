@@ -109,6 +109,7 @@ def partition_xml(
         ElementMetadata(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
+            data_origin="xml",
         )
         if include_metadata
         else ElementMetadata()

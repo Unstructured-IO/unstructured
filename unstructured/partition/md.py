@@ -96,4 +96,5 @@ def partition_md(
         source_format="md",
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified or last_modification_date,
+        data_origin="md",
     )

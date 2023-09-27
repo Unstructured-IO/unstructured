@@ -79,12 +79,13 @@ def partition_msg(
     elif text is None:
         pass
     elif "<html>" in text or "</div>" in text:
-        elements = partition_html(text=text)
+        elements = partition_html(text=text, data_origin="msg")
     else:
         elements = partition_text(
             text=text,
             max_partition=max_partition,
             min_partition=min_partition,
+            data_source="msg",
         )
 
     metadata = build_msg_metadata(

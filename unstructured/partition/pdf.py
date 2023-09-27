@@ -267,7 +267,6 @@ def partition_pdf_or_image(
                 if hasattr(el, "category") and el.category == "UncategorizedText":
                     new_el = element_from_text(cast(Text, el).text)
                     new_el.metadata = el.metadata
-                    new_el.data_origin = el.data_origin
                 else:
                     new_el = el
                 layout_elements.append(new_el)
@@ -355,6 +354,7 @@ def _partition_pdf_or_image_local(
         # block with NLP rules. Otherwise, the assumptions in
         # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
         infer_list_items=False,
+        data_origin="pdf",
         **kwargs,
     )
 
