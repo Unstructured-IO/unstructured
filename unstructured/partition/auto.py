@@ -98,6 +98,10 @@ if dependency_exists("pandas") and dependency_exists("openpyxl"):
 
     PARTITION_WITH_EXTRAS_MAP["xlsx"] = partition_xlsx
 
+if dependency_exists("openai-whisper"):
+    from unstructured.partition.audio import partition_audio
+
+    PARTITION_WITH_EXTRAS_MAP["audio"] = partition_audio
 
 def _get_partition_with_extras(
     doc_type: str,
@@ -359,6 +363,12 @@ def partition(
     elif filetype == FileType.TSV:
         _partition_tsv = _get_partition_with_extras("tsv")
         elements = _partition_tsv(filename=filename, file=file, **kwargs)
+    elif filetype == FileType.MP4:
+        elements = partition_audio(
+            filename=filename,
+            file=file,
+            **kwargs,
+        )
     elif filetype == FileType.EMPTY:
         elements = []
     else:

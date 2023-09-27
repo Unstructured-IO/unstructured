@@ -92,6 +92,9 @@ class FileType(Enum):
 
     # Open Office Types
     ODT = 70
+    
+    #Audio File Types
+    MP4 = 80
 
     # NOTE(robinson) - This is to support sorting for pandas groupby functions
     def __lt__(self, other):
@@ -192,6 +195,12 @@ EXT_TO_FILETYPE = {
     ".swift": FileType.TXT,
     ".ts": FileType.TXT,
     ".go": FileType.TXT,
+    ".m4a": FileType.MP4,
+    ".mp3": FileType.MP4,
+    ".webm": FileType.MP4,
+    ".mp4": FileType.MP4,
+    ".wave": FileType.MP4,
+    ".mpeg": FileType.MP4,
     None: FileType.UNK,
 }
 

@@ -166,6 +166,17 @@ class ElementMetadata:
 
     # Metadata extracted via regex
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
+    
+    #Audio-Segment Metadata Fields
+    language_code: Optional[str] = None
+    seek: Optional[int] = None
+    start: Optional[float] = None
+    end: Optional[float] = None
+    tokens: Optional[List[int]] = None
+    avg_logprob: Optional[float] = None
+    compression_ratio: Optional[float] = None
+    no_speech_prob: Optional[float] = None
+    
 
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
@@ -545,6 +556,13 @@ class Footer(Text):
     pass
 
 
+class AudioSegment(Text):
+    "An element containing Audio Segments generated from OpenAi-Whisper on Audio Files"
+    
+    category = "Audio-Segment"
+    
+    pass
+
 TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "UncategorizedText": Text,
     "FigureCaption": FigureCaption,
@@ -569,4 +587,5 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "Page-header": Header,  # Title?
     "Picture": Image,
     "Section-header": Header,
+    "Audio-Segment": AudioSegment
 }
