@@ -1,6 +1,7 @@
 from typing import List
 
 import iso639
+from langdetect import DetectorFactory, detect_langs, lang_detect_exception
 
 from unstructured.logger import logger
 
@@ -201,3 +202,68 @@ def _get_all_tesseract_langcodes_with_prefix(prefix: str):
     Get all matching tesseract langcodes with this prefix (may be one or multiple variants).
     """
     return [langcode for langcode in PYTESSERACT_LANGS if langcode.startswith(prefix)]
+
+
+def _convert_to_standard_langcode(lang: str) -> str:
+    """
+    Convert a language code to the standard internal language code format.
+    """
+    # convert to standard ISO 639-3 language code
+    lang_iso639 = iso639.Language.match(lang[:3].lower())
+    return lang_iso639.part3
+
+
+def detect_languages(
+    text: str,
+    languages: List[str] = ["auto"],
+) -> List[str]:
+    """
+    Detects the list of languages present in the text (in the default "auto" mode),
+    or formats and passes through the user inputted document languages if provided.
+    """
+    if text.strip() == "":
+        return ["eng"]  # english as default
+
+    # set seed for deterministic langdetect outputs
+    DetectorFactory.seed = 0
+
+    # user inputted languages:
+    # if "auto" is included in the list of inputs, language detection will be triggered
+    # and the rest of the inputted languages will be ignored
+    if languages and "auto" not in languages:
+        doc_languages = [_convert_to_standard_langcode(lang) for lang in languages]
+
+    # language detection:
+    else:
+        # warn if any values other than "auto" were provided
+        if len(languages) > 1:
+            logger.warning(
+                f'Since "auto" is present in the input languages provided ({languages}), '
+                "the language will be auto detected and the rest of the inputted "
+                "languages will be ignored.",
+            )
+
+        try:
+            langdetect_result = detect_langs(text)
+        except lang_detect_exception.LangDetectException as e:
+            logger.warning(e)
+            return ["eng"]  # english as default
+
+        # NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
+        # Chinese variants. We normalizes these because there is a single model for Chinese
+        # machine translation
+        # TODO(shreya): decide how to maintain nonstandard chinese script information
+        langdetect_langs = [
+            _convert_to_standard_langcode("zh")
+            if langobj.lang.startswith("zh")
+            else _convert_to_standard_langcode(langobj.lang)
+            for langobj in langdetect_result
+        ]
+
+        # remove duplicate chinese (if exists) without modifying order
+        doc_languages = []
+        for lang in langdetect_langs:
+            if lang not in doc_languages:
+                doc_languages.append(lang)
+
+    return doc_languages

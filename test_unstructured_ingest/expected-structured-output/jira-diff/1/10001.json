@@ -12,7 +12,12 @@
         "date_created": "2023-08-22T11:29:43.033+0000",
         "date_modified": "2023-08-24T12:03:31.591+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "fra",
+        "cat",
+        "ita"
+      ]
     },
     "text": "IssueID_IssueKey:10001     JCTP1-2"
   },
@@ -29,7 +34,12 @@
         "date_created": "2023-08-22T11:29:43.033+0000",
         "date_modified": "2023-08-24T12:03:31.591+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "fra",
+        "cat",
+        "ita"
+      ]
     },
     "text": "ProjectID_Key:JCTP1     Jira Connector Test Project 1"
   },
@@ -46,7 +56,12 @@
         "date_created": "2023-08-22T11:29:43.033+0000",
         "date_modified": "2023-08-24T12:03:31.591+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "fra",
+        "cat",
+        "ita"
+      ]
     },
     "text": "IssueType:Task"
   },
@@ -63,7 +78,12 @@
         "date_created": "2023-08-22T11:29:43.033+0000",
         "date_modified": "2023-08-24T12:03:31.591+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "fra",
+        "cat",
+        "ita"
+      ]
     },
     "text": "Status:In Progress"
   },
@@ -80,7 +100,12 @@
         "date_created": "2023-08-22T11:29:43.033+0000",
         "date_modified": "2023-08-24T12:03:31.591+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "fra",
+        "cat",
+        "ita"
+      ]
     },
     "text": "Priority:{'self': 'https://unstructured-jira-connector-test.atlassian.net/rest/api/2/priority/3', 'iconUrl': 'https://unstructured-jira-connector-test.atlassian.net/images/icons/priorities/medium.svg', 'name': 'Medium', 'id': '3'}"
   },
@@ -97,7 +122,12 @@
         "date_created": "2023-08-22T11:29:43.033+0000",
         "date_modified": "2023-08-24T12:03:31.591+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "fra",
+        "cat",
+        "ita"
+      ]
     },
     "text": "AssigneeID_Name:{}     {}"
   },
@@ -114,7 +144,12 @@
         "date_created": "2023-08-22T11:29:43.033+0000",
         "date_modified": "2023-08-24T12:03:31.591+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "fra",
+        "cat",
+        "ita"
+      ]
     },
     "text": "ReporterAdr_Name:devops+jira-connector@unstructured.io     Unstructured Devops"
   },
@@ -131,7 +166,12 @@
         "date_created": "2023-08-22T11:29:43.033+0000",
         "date_modified": "2023-08-24T12:03:31.591+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "fra",
+        "cat",
+        "ita"
+      ]
     },
     "text": "Labels:"
   },
@@ -148,7 +188,12 @@
         "date_created": "2023-08-22T11:29:43.033+0000",
         "date_modified": "2023-08-24T12:03:31.591+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "fra",
+        "cat",
+        "ita"
+      ]
     },
     "text": "Components:"
   },
@@ -165,7 +210,12 @@
         "date_created": "2023-08-22T11:29:43.033+0000",
         "date_modified": "2023-08-24T12:03:31.591+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "fra",
+        "cat",
+        "ita"
+      ]
     },
     "text": "Unstructured Devops     My comment 1"
   },
@@ -182,7 +232,12 @@
         "date_created": "2023-08-22T11:29:43.033+0000",
         "date_modified": "2023-08-24T12:03:31.591+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "fra",
+        "cat",
+        "ita"
+      ]
     },
     "text": "Test in progress 1"
   },
@@ -199,7 +254,12 @@
         "date_created": "2023-08-22T11:29:43.033+0000",
         "date_modified": "2023-08-24T12:03:31.591+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "fra",
+        "cat",
+        "ita"
+      ]
     },
     "text": "Cur deinde Metrodori liberos commendas? Quicquid porro animo cernimus, id omne oritur a sensibus; Ergo ita: non posse honeste vivi, nisi honeste vivatur? [Quis Aristidem non mortuum diligit?|http://loripsum.net/] Quid, de quo nulla dissensio est? [Bork|http://loripsum.net/]"
   },
@@ -216,7 +276,12 @@
         "date_created": "2023-08-22T11:29:43.033+0000",
         "date_modified": "2023-08-24T12:03:31.591+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "fra",
+        "cat",
+        "ita"
+      ]
     },
     "text": "Atqui pugnantibus et contrariis studiis consiliisque semper utens nihil quieti videre, nihil tranquilli potest. Habes, inquam, Cato, formam eorum, de quibus loquor, philosophorum. [Ecce aliud simile dissimile.|http://loripsum.net/] Ad quorum et cognitionem et usum iam corroborati natura ipsa praeeunte deducimur. Itaque et manendi in vita et migrandi ratio omnis iis rebus, quas supra dixi, metienda. Quicquid enim a sapientia proficiscitur, id continuo debet expletum esse omnibus suis partibus; At ille non pertimuit saneque fidenter: Istis quidem ipsis verbis, inquit; Utrum igitur tibi litteram videor an totas paginas commovere?"
   },
@@ -233,7 +298,12 @@
         "date_created": "2023-08-22T11:29:43.033+0000",
         "date_modified": "2023-08-24T12:03:31.591+0000"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "fra",
+        "cat",
+        "ita"
+      ]
     },
     "text": "Duo Reges: constructio interrete. Nunc omni virtuti vitium contrario nomine opponitur. Non autem hoc: igitur ne illud quidem. Ergo hoc quidem apparet, nos ad agendum esse natos. Quo tandem modo? Quod si ita se habeat, non possit beatam praestare vitam sapientia. Propter nos enim illam, non propter eam nosmet ipsos diligimus."
   }

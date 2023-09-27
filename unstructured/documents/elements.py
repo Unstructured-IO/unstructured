@@ -13,7 +13,7 @@ import re
 import uuid
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 
-from typing_extensions import Self, TypedDict
+from typing_extensions import ParamSpec, Self, TypedDict
 
 from unstructured.documents.coordinates import (
     TYPE_TO_COORDINATE_SYSTEM_MAP,
@@ -47,6 +47,10 @@ class DataSourceMetadata:
 
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
+
+    @classmethod
+    def from_dict(cls, input_dict):
+        return cls(**input_dict)
 
 
 @dc.dataclass
@@ -138,6 +142,10 @@ class ElementMetadata:
     attached_to_filename: Optional[str] = None
     parent_id: Optional[Union[str, uuid.UUID, NoID, UUID]] = None
     category_depth: Optional[int] = None
+    image_path: Optional[str] = None
+
+    # Languages in element. TODO(newelh) - More strongly type languages
+    languages: Optional[List[str]] = None
 
     # Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None
@@ -200,6 +208,10 @@ class ElementMetadata:
             constructor_args["coordinates"] = CoordinatesMetadata.from_dict(
                 constructor_args["coordinates"],
             )
+        if constructor_args.get("data_source", None) is not None:
+            constructor_args["data_source"] = DataSourceMetadata.from_dict(
+                constructor_args["data_source"],
+            )
         return cls(**constructor_args)
 
     def merge(self, other: ElementMetadata):
@@ -216,10 +228,19 @@ class ElementMetadata:
         return dt
 
 
-def process_metadata():
-    """Decorator for processing metadata for document elements."""
+_P = ParamSpec("_P")
 
-    def decorator(func: Callable):
+
+def process_metadata() -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
+    """Post-process element-metadata for this document.
+
+    This decorator adds a post-processing step to a document partitioner. It adds documentation for
+    `metadata_filename` and `include_metadata` parameters if not present. Also adds regex-metadata
+    when `regex_metadata` keyword-argument is provided and changes the element-id to a UUID when
+    `unique_element_ids` argument is provided and True.
+    """
+
+    def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
         if func.__doc__:
             if (
                 "metadata_filename" in func.__code__.co_varnames
@@ -240,10 +261,10 @@ def process_metadata():
                 )
 
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
             elements = func(*args, **kwargs)
             sig = inspect.signature(func)
-            params = dict(**dict(zip(sig.parameters, args)), **kwargs)
+            params: Dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
             for param in sig.parameters.values():
                 if param.name not in params and param.default is not param.empty:
                     params[param.name] = param.default
@@ -262,17 +283,14 @@ def process_metadata():
     return decorator
 
 
-def _elements_ids_to_uuid():
-    pass
-
-
 def _add_regex_metadata(
     elements: List[Element],
     regex_metadata: Dict[str, str] = {},
 ) -> List[Element]:
     """Adds metadata based on a user provided regular expression.
-    The additional metadata will be added to the regex_metadata
-    attrbuted in the element metadata."""
+
+    The additional metadata will be added to the regex_metadata attrbuted in the element metadata.
+    """
     for element in elements:
         if isinstance(element, Text):
             _regex_metadata: Dict["str", List[RegexMetadata]] = {}
@@ -389,14 +407,6 @@ class CheckBox(Element):
         return out
 
 
-class Formula(Element):
-    "An element containing formulas in a document"
-
-    category = "Formula"
-
-    pass
-
-
 class Text(Element):
     """Base element for capturing free text from within document."""
 
@@ -457,6 +467,14 @@ class Text(Element):
             raise ValueError("Cleaner produced a non-string output.")
 
         self.text = cleaned_text
+
+
+class Formula(Text):
+    "An element containing formulas in a document"
+
+    category = "Formula"
+
+    pass
 
 
 class CompositeElement(Text):

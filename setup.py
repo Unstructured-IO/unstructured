@@ -129,6 +129,9 @@ setup(
         # Extra requirements for data connectors
         "s3": load_requirements("requirements/ingest-s3.in"),
         "azure": load_requirements("requirements/ingest-azure.in"),
+        "azure-cognitive-search": load_requirements(
+            "requirements/ingest-azure-cognitive-search.in",
+        ),
         "biomed": load_requirements("requirements/ingest-biomed.in"),
         "discord": load_requirements("requirements/ingest-discord.in"),
         "github": load_requirements("requirements/ingest-github.in"),
@@ -154,6 +157,7 @@ setup(
         "huggingface": load_requirements("requirements/huggingface.in"),
         "local-inference": all_doc_reqs,
         "paddleocr": load_requirements("requirements/extra-paddleocr.in"),
+        "openai": load_requirements("requirements/ingest-openai.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},
