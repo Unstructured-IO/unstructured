@@ -1,5 +1,5 @@
 import json
-from typing import IO, List, Optional
+from typing import IO, Any, List, Optional
 
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import (
@@ -24,7 +24,7 @@ def partition_json(
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Element]:
     """Partitions an .json document into its constituent elements.
 
