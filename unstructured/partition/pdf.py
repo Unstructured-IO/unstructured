@@ -1,3 +1,4 @@
+import contextlib
 import io
 import os
 import re
@@ -19,6 +20,7 @@ from pdfminer.layout import (
 )
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.pdfpage import PDFPage
+from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 
 from unstructured.chunking.title import add_chunking_strategy
@@ -530,7 +532,7 @@ def _process_pdfminer_pages(
 
                     links: List[Link] = []
                     for url in urls_metadata:
-                        try:
+                        with contextlib.suppress(IndexError):
                             links.append(
                                 {
                                     "text": url["text"],
@@ -541,8 +543,6 @@ def _process_pdfminer_pages(
                                     ),
                                 },
                             )
-                        except IndexError:
-                            pass
 
                     element.metadata = ElementMetadata(
                         filename=filename,
@@ -860,13 +860,23 @@ def check_coords_within_boundary(
     return x_within_boundary and y_within_boundary
 
 
-def get_uris(annots, height, coordinate_system, page_number):
+def get_uris(
+    annots: Union[PDFObjRef, List[PDFObjRef]],
+    height: float,
+    coordinate_system: Union[PixelSpace, PointSpace],
+    page_number: int,
+) -> List[dict]:
     if isinstance(annots, List):
         return get_uris_from_annots(annots, height, coordinate_system, page_number)
     return get_uris_from_annots(annots.resolve(), height, coordinate_system, page_number)
 
 
-def get_uris_from_annots(annots, height, coordinate_system, page_number):
+def get_uris_from_annots(
+    annots: List[PDFObjRef],
+    height: Union[int, float],
+    coordinate_system: Union[PixelSpace, PointSpace],
+    page_number: int,
+) -> List[dict]:
     annotation_list = []
     for annotation in annots:
         annotation_dict = try_resolve(annotation)
@@ -903,21 +913,27 @@ def get_uris_from_annots(annots, height, coordinate_system, page_number):
     return annotation_list
 
 
-def try_resolve(annot):
+def try_resolve(annot: PDFObjRef):
     try:
         return annot.resolve()
     except Exception:
         return annot
 
 
-def rect_to_bbox(rect, height):
+def rect_to_bbox(
+    rect: Tuple[float, float, float, float],
+    height: float,
+) -> Tuple[float, float, float, float]:
     x1, y2, x2, y1 = rect
     y1 = height - y1
     y2 = height - y2
     return (x1, y1, x2, y2)
 
 
-def calculate_intersection_area(bbox1, bbox2):
+def calculate_intersection_area(
+    bbox1: Tuple[float, float, float, float],
+    bbox2: Tuple[float, float, float, float],
+) -> float:
     x1_1, y1_1, x2_1, y2_1 = bbox1
     x1_2, y1_2, x2_2, y2_2 = bbox2
 
@@ -941,9 +957,12 @@ def calculate_bbox_area(bbox: Tuple[float, float, float, float]) -> float:
     return area
 
 
-def check_annotations_within_element(annotation_list, element_bbox, page_number, threshold=0.9):
-    # if element_bbox == (72.0, 120.69200000000001, 537.751, 179.692):
-    #     breakpoint()
+def check_annotations_within_element(
+    annotation_list: List[dict],
+    element_bbox: Tuple[float, float, float, float],
+    page_number: int,
+    threshold: float = 0.9,
+) -> List[dict]:
     annotations_within_element = []
     for annotation in annotation_list:
         if annotation["page_number"] == page_number and (
@@ -955,7 +974,10 @@ def check_annotations_within_element(annotation_list, element_bbox, page_number,
     return annotations_within_element
 
 
-def get_word_bounding_box_from_element(obj, height):
+def get_word_bounding_box_from_element(
+    obj: LTTextBox,
+    height: float,
+) -> Tuple[List[LTChar], List[dict]]:
     characters = []
     words = []
     text_len = 0
@@ -1003,12 +1025,12 @@ def get_word_bounding_box_from_element(obj, height):
     return characters, words
 
 
-def map_bbox_and_index(words, annot):
+def map_bbox_and_index(words: List[dict], annot: dict):
     if len(words) == 0:
         annot["text"] = ""
         annot["start_index"] = -1
         return annot
-        
+
     distance_from_bbox_start = np.sqrt(
         (annot["bbox"][0] - np.array([word["bbox"][0] for word in words])) ** 2
         + (annot["bbox"][1] - np.array([word["bbox"][1] for word in words])) ** 2,
@@ -1034,8 +1056,8 @@ def map_bbox_and_index(words, annot):
     return annot
 
 
-def try_argmin(array: np.ndarray):
+def try_argmin(array: np.ndarray) -> int:
     try:
-        return np.argmin(array)
+        return int(np.argmin(array))
     except IndexError:
         return -1
