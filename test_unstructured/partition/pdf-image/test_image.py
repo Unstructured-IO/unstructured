@@ -8,7 +8,7 @@ from pytesseract import TesseractError
 from unstructured_inference.inference import layout
 
 from unstructured.chunking.title import chunk_by_title
-from unstructured.partition import image, pdf
+from unstructured.partition import image, ocr, pdf
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_to_json
 
@@ -144,8 +144,8 @@ def test_partition_image_with_multipage_tiff(
 
 def test_partition_image_with_language_passed(filename="example-docs/example.jpg"):
     with mock.patch.object(
-        layout,
-        "process_file_with_model",
+        ocr,
+        "process_file_with_ocr",
         mock.MagicMock(),
     ) as mock_partition:
         image.partition_image(
@@ -161,8 +161,8 @@ def test_partition_image_from_file_with_language_passed(
     filename="example-docs/example.jpg",
 ):
     with mock.patch.object(
-        layout,
-        "process_data_with_model",
+        ocr,
+        "process_data_with_ocr",
         mock.MagicMock(),
     ) as mock_partition, open(filename, "rb") as f:
         image.partition_image(file=f, strategy="hi_res", ocr_languages="eng+swe")
@@ -437,8 +437,7 @@ def test_partition_image_formats_languages_for_tesseract():
         mock_process.assert_called_once_with(
             filename,
             is_image=True,
-            ocr_languages="jpn_vert",
-            ocr_mode="entire_page",
+            pdf_image_dpi=200,
             extract_tables=False,
             model_name=None,
         )
