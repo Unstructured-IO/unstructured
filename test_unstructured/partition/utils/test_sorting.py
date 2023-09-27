@@ -5,7 +5,7 @@ from unstructured.documents.elements import CoordinatesMetadata, Element, Text
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
 from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
-    sort_page_elements,
+    sort_page_elements, shrink_bbox,
 )
 
 
@@ -98,3 +98,17 @@ def test_sort_basic_pos_coordinates():
 
     sorted_elem_text = " ".join([str(elem.text) for elem in sorted_page_elements])
     assert sorted_elem_text == "7 8 9"
+
+
+def test_shrink_bbox():
+    # Test case 1: Shrink by a factor of 0.5
+    bbox = (0, 0, 100, 100)
+    shrink_factor = 0.5
+    expected_result = (25, 25, 75, 75)
+    assert shrink_bbox(bbox, shrink_factor) == expected_result
+
+    # Test case 2: Shrink by a factor of 0.8
+    bbox = (0, 0, 200, 100)
+    shrink_factor = 0.9
+    expected_result = (10, 5, 190, 95)
+    assert shrink_bbox(bbox, shrink_factor) == expected_result
