@@ -16,6 +16,12 @@
       "type": "Edm.String"
     },
     {
+      "name": "embeddings",
+      "type": "Collection(Edm.Single)",
+      "dimensions": 1536,
+      "vectorSearchConfiguration": "embeddings-config"
+    },
+    {
       "name": "type",
       "type": "Edm.String"
     },
@@ -108,6 +114,10 @@
           "type": "Edm.String"
         },
         {
+          "name": "page_name",
+          "type": "Edm.String"
+        },
+        {
           "name": "url",
           "type": "Edm.String"
         },
@@ -161,5 +171,19 @@
         }
       ]
     }
-  ]
+  ],
+  "vectorSearch": {
+    "algorithmConfigurations": [
+      {
+        "name": "embeddings-config",
+        "kind": "hnsw",
+        "hnswParameters": {
+          "metric": "cosine",
+          "m": 4,
+          "efConstruction": 400,
+          "efSearch": 500
+        }
+      }
+    ]
+  }
 }
