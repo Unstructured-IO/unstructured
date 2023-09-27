@@ -1,5 +1,5 @@
-from typing import BinaryIO, Optional, Union
+from typing import IO, Optional, Union
 
 import docx.document
 
-def Document(docx: Optional[Union[str, BinaryIO]] = None) -> docx.document.Document: ...
+def Document(docx: Optional[Union[str, IO[bytes]]] = None) -> docx.document.Document: ...

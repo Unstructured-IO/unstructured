@@ -6,6 +6,7 @@
 #
 numpy==1.24.4
     # via
+    #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   pandas
 pandas==2.0.3
@@ -17,6 +18,8 @@ python-dateutil==2.8.2
 pytz==2023.3.post1
     # via pandas
 six==1.16.0
-    # via python-dateutil
+    # via
+    #   -c requirements/base.txt
+    #   python-dateutil
 tzdata==2023.3
     # via pandas

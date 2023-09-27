@@ -1,6 +1,8 @@
+import functools
 import inspect
-from functools import wraps
-from typing import Callable, List
+from typing import Any, Callable, Dict, List, TypeVar
+
+from typing_extensions import ParamSpec
 
 from unstructured.documents.elements import (
     CompositeElement,
@@ -68,25 +70,33 @@ def chunk_by_title(
 
             for i, element in enumerate(section):
                 if isinstance(element, Text):
-                    if text:
-                        text += "\n\n"
+                    text += "\n\n" if text else ""
                     start_char = len(text)
                     text += element.text
 
                 for attr, value in vars(element.metadata).items():
-                    if isinstance(value, list):
-                        _value = getattr(metadata, attr, [])
-                        if _value is None:
-                            _value = []
+                    if not isinstance(value, list):
+                        continue
 
-                        if attr == "regex_metadata":
-                            for item in value:
-                                item["start"] += start_char
-                                item["end"] += start_char
+                    _value = getattr(metadata, attr, [])
+                    if _value is None:
+                        _value = []
 
-                        if i > 0:
-                            _value.extend(value)
-                            setattr(metadata, attr, _value)
+                    if attr == "regex_metadata":
+                        for item in value:
+                            item["start"] += start_char
+                            item["end"] += start_char
+
+                    if i > 0:
+                        # NOTE(newelh): Previously, _value was extended with value.
+                        # This caused a memory error if the content was a list of strings
+                        # with a large number of elements -- doubling the list size each time.
+                        # This now instead ensures that the _value list is unique and updated.
+                        for item in value:
+                            if item not in _value:
+                                _value.append(item)
+
+                        setattr(metadata, attr, _value)
 
             chunked_elements.append(CompositeElement(text=text, metadata=metadata))
 
@@ -149,9 +159,9 @@ def _metadata_matches(
 
 
 def _drop_extra_metadata(
-    metadata_dict: dict,
+    metadata_dict: Dict[str, Any],
     include_pages: bool = True,
-) -> dict:
+) -> Dict[str, Any]:
     keys_to_drop = ["element_id", "type", "coordinates", "parent_id", "category_depth"]
     if not include_pages and "page_number" in metadata_dict:
         keys_to_drop.append("page_number")
@@ -167,13 +177,17 @@ def _drop_extra_metadata(
     return metadata_dict
 
 
-def add_chunking_strategy():
+_T = TypeVar("_T")
+_P = ParamSpec("_P")
+
+
+def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
     """Decorator for chuncking text. Uses title elements to identify sections within the document
     for chunking. Splits off a new section when a title is detected or if metadata changes,
     which happens when page numbers or sections change. Cuts off sections once they have exceeded
     a character length of new_after_n_chars."""
 
-    def decorator(func: Callable):
+    def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
         if func.__doc__ and (
             "chunking_strategy" in func.__code__.co_varnames
             and "chunking_strategy" not in func.__doc__
@@ -192,11 +206,11 @@ def add_chunking_strategy():
                 + "\n\t\t\tCuts off new sections once they reach a length of n characters"
             )
 
-        @wraps(func)
-        def wrapper(*args, **kwargs):
+        @functools.wraps(func)
+        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
             elements = func(*args, **kwargs)
             sig = inspect.signature(func)
-            params = dict(**dict(zip(sig.parameters, args)), **kwargs)
+            params: Dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
             for param in sig.parameters.values():
                 if param.name not in params and param.default is not param.empty:
                     params[param.name] = param.default

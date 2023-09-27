@@ -20,3 +20,6 @@ furo==2023.7.26
 
 # NOTE(robinson) - The following dependencies are pinned to address security scans
 certifi>=2022.12.07
+
+# NOTE(ronny) - Added to suppress Sphinx warnings
+myst-parser
