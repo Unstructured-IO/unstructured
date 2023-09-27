@@ -306,7 +306,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
         # NOTE: The response dict contains a key named `versions` which is a list of dictionaries.
         #  Validation is TBD.
         version = None
-        if len(self.parsed_fields["versions"]) > 1:
+        if len(self.parsed_fields["versions"]) >= 1:
             version = self.parsed_fields["versions"][-1].get("id")
         self.source_metadata = SourceMetadata(
             date_created=datetime.strptime(
