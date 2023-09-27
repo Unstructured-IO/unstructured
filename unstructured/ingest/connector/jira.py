@@ -303,6 +303,8 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
                 exists=exists,
             )
             return
+        # NOTE: The response dict contains a key named `versions` which is a list of dictionaries.
+        #  Validation is TBD.
         version = None
         if len(self.parsed_fields["versions"]) > 1:
             version = self.parsed_fields["versions"][-1].get("id")
