@@ -8,3 +8,9 @@ tabulate
 requests
 beautifulsoup4
 emoji
+dataclasses-json
+python-iso639
+langdetect
+# (Trevor): This is a simple hello world package that is used to track
+# download count for this package using scarf.
+https://packages.unstructured.io/scarf.tgz

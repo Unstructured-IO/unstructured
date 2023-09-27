@@ -9,11 +9,11 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   elastic-transport
-elastic-transport==8.4.0
+elastic-transport==8.4.1
     # via elasticsearch
-elasticsearch==8.9.0
+elasticsearch==8.10.0
     # via -r requirements/ingest-elasticsearch.in
-jq==1.4.1
+jq==1.6.0
     # via -r requirements/ingest-elasticsearch.in
 urllib3==1.26.16
     # via

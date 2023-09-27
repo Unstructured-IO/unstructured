@@ -4,13 +4,16 @@ import pathlib
 
 import pytest
 
+from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import group_broken_paragraphs
 from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
+from unstructured.partition.json import partition_json
 from unstructured.partition.text import (
     combine_paragraphs_less_than_min,
     partition_text,
     split_content_to_fit_max,
 )
+from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -160,6 +163,12 @@ def test_partition_text_from_bytes_file_default_encoding(filename):
     assert elements == EXPECTED_OUTPUT
     for element in elements:
         assert element.metadata.filename is None
+
+
+def test_auto_partition_element_metadata_user_provided_languages():
+    filename = "example-docs/book-war-and-peace-1p.txt"
+    elements = partition_text(filename=filename, strategy="fast")
+    assert elements[0].metadata.languages == ["eng"]
 
 
 def test_partition_text_from_text():
@@ -478,3 +487,30 @@ def test_partition_text_with_unique_ids():
     assert elements[0].id.count("-") == 4
     # Test that the element is JSON serializable. This should run without an error
     json.dumps(elements[0].to_dict())
+
+
+@pytest.mark.parametrize(
+    ("filename", "encoding"),
+    [
+        ("fake-text.txt", "utf-8"),
+        ("fake-text.txt", None),
+        ("fake-text-utf-16-be.txt", "utf-16-be"),
+    ],
+)
+def test_partition_text_with_json(filename, encoding):
+    filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_text(filename=filename_path, encoding=encoding)
+    test_elements = partition_json(text=elements_to_json(elements))
+
+    assert len(elements) == len(test_elements)
+    assert elements[0].metadata.filename == test_elements[0].metadata.filename
+    for i in range(len(elements)):
+        assert elements[i] == test_elements[i]
+
+
+def test_add_chunking_strategy_on_partition_text(filename="example-docs/norwich-city.txt"):
+    elements = partition_text(filename=filename)
+    chunk_elements = partition_text(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks

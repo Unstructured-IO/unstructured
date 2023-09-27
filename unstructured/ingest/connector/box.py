@@ -8,15 +8,16 @@ Maybe check 'Make api calls as the as-user header'
 REAUTHORIZE app after making any of the above changes
 """
 
+import typing as t
 from dataclasses import dataclass
-from typing import Type
 
 from unstructured.ingest.connector.fsspec import (
-    FsspecConnector,
+    FsspecDestinationConnector,
     FsspecIngestDoc,
+    FsspecSourceConnector,
     SimpleFsspecConfig,
 )
-from unstructured.ingest.interfaces import StandardConnectorConfig
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.utils import requires_dependencies
 
 
@@ -27,48 +28,37 @@ class AccessTokenError(Exception):
 @dataclass
 class SimpleBoxConfig(SimpleFsspecConfig):
     @requires_dependencies(["boxfs"], extras="box")
-    def __post_init__(self):
+    def get_access_kwargs(self):
+        # Return access_kwargs with oauth. The oauth object can not be stored directly in the config
+        # because it is not serializable.
         from boxsdk import JWTAuth
 
-        super().__post_init__()
-        # We are passing in a json file path via the envt. variable.
-        # Need to convert that to an Oauth2 object.
-        try:
-            self.access_kwargs["oauth"] = JWTAuth.from_settings_file(
+        access_kwargs_with_oauth = {
+            "oauth": JWTAuth.from_settings_file(
                 self.access_kwargs["box_app_config"],
-            )
-        except (TypeError, ValueError, KeyError) as e:
-            raise AccessTokenError(f"Problem with box_app_config: {e}")
-
-    def __getstate__(self):
-        """
-        NOTE: This should not be a permanent solution.
-        Multiprocessing fails when it tries to pickle some Locks in the SimpleBoxConfig.
-        __getstate__ is called right before an object gets pickled.
-        We are setting those attributes to None to allow pickling.
-        """
-        state = self.__dict__.copy()
-        state["access_kwargs"]["oauth"]._refresh_lock = None
-        state["access_kwargs"]["oauth"]._rsa_private_key._blinding_lock = None
-        state["access_kwargs"]["oauth"]._rsa_private_key._backend = None
-        state["access_kwargs"]["oauth"]._rsa_private_key._rsa_cdata = None
-        state["access_kwargs"]["oauth"]._rsa_private_key._evp_pkey = None
-        return state
+            ),
+        }
+        access_kwargs_with_oauth.update(self.access_kwargs)
+        return access_kwargs_with_oauth
 
 
+@dataclass
 class BoxIngestDoc(FsspecIngestDoc):
+    connector_config: SimpleBoxConfig
+    registry_name: str = "box"
+
+    @SourceConnectionError.wrap
     @requires_dependencies(["boxfs", "fsspec"], extras="box")
     def get_file(self):
         super().get_file()
 
 
-@requires_dependencies(["boxfs", "fsspec"], extras="box")
-class BoxConnector(FsspecConnector):
-    ingest_doc_cls: Type[BoxIngestDoc] = BoxIngestDoc
+@dataclass
+class BoxSourceConnector(FsspecSourceConnector):
+    connector_config: SimpleBoxConfig
+    ingest_doc_cls: t.Type[BoxIngestDoc] = BoxIngestDoc
 
-    def __init__(
-        self,
-        config: SimpleBoxConfig,
-        standard_config: StandardConnectorConfig,
-    ) -> None:
-        super().__init__(standard_config, config)
+
+@dataclass
+class BoxDestinationConnector(FsspecDestinationConnector):
+    connector_config: SimpleBoxConfig

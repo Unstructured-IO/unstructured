@@ -29,7 +29,7 @@ def clean_non_ascii_chars(text) -> str:
     return en.decode()
 
 
-def clean_bullets(text) -> str:
+def clean_bullets(text: str) -> str:
     """Cleans unicode bullets from a section of text.
 
     Example
@@ -66,6 +66,37 @@ def clean_ordered_bullets(text) -> str:
         return text
 
     return text_cl
+
+
+def clean_ligatures(text) -> str:
+    """Replaces ligatures with their most likely equivalent characters.
+
+    Example
+    -------
+    The beneﬁts -> The benefits
+    High quality ﬁnancial -> High quality financial
+    """
+    ligatures_map = {
+        "æ": "ae",
+        "Æ": "AE",
+        "ﬀ": "ff",
+        "ﬁ": "fi",
+        "ﬂ": "fl",
+        "ﬃ": "ffi",
+        "ﬄ": "ffl",
+        "ﬅ": "ft",
+        "ʪ": "ls",
+        "œ": "oe",
+        "Œ": "OE",
+        "ȹ": "qp",
+        "ﬆ": "st",
+        "ʦ": "ts",
+    }
+    cleaned_text: str = text
+    for k, v in ligatures_map.items():
+        cleaned_text = cleaned_text.replace(k, v)
+
+    return cleaned_text
 
 
 def group_bullet_paragraph(paragraph: str) -> list:

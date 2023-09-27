@@ -1,67 +1,159 @@
 import logging
+import typing as t
+from dataclasses import dataclass
 
 import click
 
+from unstructured.ingest.cli.cmds.utils import Group, conform_click_options
 from unstructured.ingest.cli.common import (
-    add_shared_options,
     log_options,
-    map_to_processor_config,
-    map_to_standard_config,
-    run_init_checks,
 )
+from unstructured.ingest.cli.interfaces import (
+    CliMixin,
+    CliPartitionConfig,
+    CliReadConfig,
+)
+from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import delta_table as delta_table_fn
+from unstructured.ingest.runner import runner_map
 
 
-@click.command()
-@click.option(
-    "--table-uri",
-    required=True,
-    help="the path of the DeltaTable",
-)
-@click.option(
-    "--version",
-    default=None,
-    type=int,
-    help="version of the DeltaTable",
-)
-@click.option(
-    "--storage_options",
-    required=False,
-    type=str,
-    help="a dictionary of the options to use for the storage backend, "
-    "format='value1=key1,value2=key2'",
-)
-@click.option(
-    "--without_files",
-    is_flag=True,
-    default=False,
-    help="If set, will load table without tracking files.",
-)
-def delta_table(**options):
+@dataclass
+class DeltaTableCliConfig(BaseConfig, CliMixin):
+    table_uri: str
+    version: t.Optional[int] = None
+    storage_options: t.Optional[str] = None
+    without_files: bool = False
+
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--table-uri"],
+                required=True,
+                help="the path of the DeltaTable",
+            ),
+            click.Option(
+                ["--version"],
+                default=None,
+                type=int,
+                help="version of the DeltaTable",
+            ),
+            click.Option(
+                ["--storage_options"],
+                required=False,
+                type=str,
+                help="a dictionary of the options to use for the storage backend, "
+                "format='value1=key1,value2=key2'",
+            ),
+            click.Option(
+                ["--without-files"],
+                is_flag=True,
+                default=False,
+                help="If set, will load table without tracking files.",
+            ),
+        ]
+        cmd.params.extend(options)
+
+
+@click.group(name="delta-table", invoke_without_command=True, cls=Group)
+@click.pass_context
+def delta_table_source(ctx: click.Context, **options):
+    if ctx.invoked_subcommand:
+        return
+
+    conform_click_options(options)
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(options)
+    log_options(options, verbose=verbose)
     try:
-        run_init_checks(**options)
-        connector_config = map_to_standard_config(options)
-        processor_config = map_to_processor_config(options)
-        if storage_options := options.get("storage_options"):
-            formatted_storage_options = {
-                w.split("=")[0]: w.split("=")[1] for w in storage_options.split(",")
-            }
-            options["storage_options"] = formatted_storage_options
-        delta_table_fn(
-            connector_config=connector_config,
-            processor_config=processor_config,
-            **options,
+        # run_init_checks(**options)
+        read_config = CliReadConfig.from_dict(options)
+        partition_config = CliPartitionConfig.from_dict(options)
+        # Run for schema validation
+        DeltaTableCliConfig.from_dict(options)
+        delta_table_fn(read_config=read_config, partition_config=partition_config, **options)
+    except Exception as e:
+        logger.error(e, exc_info=True)
+        raise click.ClickException(str(e)) from e
+
+
+@dataclass
+class DeltaTableCliWriteConfig(BaseConfig, CliMixin):
+    write_column: str
+    mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
+
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--write-column"],
+                required=True,
+                type=str,
+                help="column in delta table to write json content",
+            ),
+            click.Option(
+                ["--mode"],
+                default="error",
+                type=click.Choice(["error", "append", "overwrite", "ignore"]),
+                help="How to handle existing data. Default is to error if table already exists. "
+                "If 'append', will add new data. "
+                "If 'overwrite', will replace table with new data. "
+                "If 'ignore', will not write anything if table already exists.",
+            ),
+        ]
+        cmd.params.extend(options)
+
+
+@click.command(name="delta-table")
+@click.pass_context
+def delta_table_dest(ctx: click.Context, **options):
+    if not ctx.parent:
+        raise click.ClickException("destination command called without a parent")
+    if not ctx.parent.info_name:
+        raise click.ClickException("parent command missing info name")
+    source_cmd = ctx.parent.info_name.replace("-", "_")
+    runner_fn = runner_map[source_cmd]
+    parent_options: dict = ctx.parent.params if ctx.parent else {}
+    conform_click_options(options)
+    conform_click_options(parent_options)
+    verbose = parent_options.get("verbose", False)
+    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+    log_options(parent_options, verbose=verbose)
+    log_options(options, verbose=verbose)
+    try:
+        # run_init_checks(**options)
+        read_config = CliReadConfig.from_dict(parent_options)
+        partition_config = CliPartitionConfig.from_dict(parent_options)
+        # Run for schema validation
+        DeltaTableCliConfig.from_dict(options)
+        DeltaTableCliWriteConfig.from_dict(options)
+        runner_fn(
+            read_config=read_config,
+            partition_config=partition_config,
+            writer_type="delta_table",
+            writer_kwargs=options,
+            **parent_options,
         )
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
 
 
-def get_cmd() -> click.Command:
-    cmd = delta_table
-    add_shared_options(cmd)
+def get_dest_cmd() -> click.Command:
+    cmd = delta_table_dest
+    DeltaTableCliConfig.add_cli_options(cmd)
+    DeltaTableCliWriteConfig.add_cli_options(cmd)
+    return cmd
+
+
+def get_source_cmd() -> click.Group:
+    cmd = delta_table_source
+    DeltaTableCliConfig.add_cli_options(cmd)
+
+    # Common CLI configs
+    CliReadConfig.add_cli_options(cmd)
+    CliPartitionConfig.add_cli_options(cmd)
+    cmd.params.append(click.Option(["-v", "--verbose"], is_flag=True, default=False))
     return cmd

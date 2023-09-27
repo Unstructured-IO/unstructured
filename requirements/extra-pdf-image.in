@@ -3,7 +3,9 @@
 
 pdf2image
 pdfminer.six
-# NOTE(robinson) - See this issue here
-# https://github.com/facebookresearch/detectron2/issues/5010
-Pillow<10
-unstructured-inference
+# Do not move to contsraints.in, otherwise unstructured-inference will not be upgraded
+# when unstructured library is.
+unstructured-inference==0.5.31
+# unstructured fork of pytesseract that provides an interface to allow for multiple output formats
+# from one tesseract call
+unstructured.pytesseract>=0.3.12

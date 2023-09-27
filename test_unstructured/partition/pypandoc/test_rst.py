@@ -1,5 +1,9 @@
+from unstructured.chunking.title import chunk_by_title
+from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Title
+from unstructured.partition.json import partition_json
 from unstructured.partition.rst import partition_rst
+from unstructured.staging.base import elements_to_json
 
 
 def test_partition_rst_from_filename(filename="example-docs/README.rst"):
@@ -8,6 +12,11 @@ def test_partition_rst_from_filename(filename="example-docs/README.rst"):
     assert elements[0].metadata.filetype == "text/x-rst"
     for element in elements:
         assert element.metadata.filename == "README.rst"
+
+
+def test_partition_rst_from_filename_returns_uns_elements(filename="example-docs/README.rst"):
+    elements = partition_rst(filename=filename)
+    assert isinstance(elements[0], Title)
 
 
 def test_partition_rst_from_filename_with_metadata_filename(
@@ -126,3 +135,23 @@ def test_partition_rst_from_file_with_custom_metadata_date(
         elements = partition_rst(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_rst_with_json(filename="example-docs/README.rst"):
+    elements = partition_rst(filename=filename)
+    test_elements = partition_json(text=elements_to_json(elements))
+
+    assert len(elements) == len(test_elements)
+    assert clean_extra_whitespace(elements[0].text) == clean_extra_whitespace(test_elements[0].text)
+    assert elements[0].metadata.filename == test_elements[0].metadata.filename
+
+    for i in range(len(elements)):
+        assert elements[i] == test_elements[i]
+
+
+def test_add_chunking_strategy_on_partition_rst(filename="example-docs/README.rst"):
+    elements = partition_rst(filename=filename)
+    chunk_elements = partition_rst(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks

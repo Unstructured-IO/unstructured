@@ -357,7 +357,7 @@ Examples:
   # Returns ""‘A lovely quote!’"
   replace_unicode_characters("\x91A lovely quote!\x92")
 
-For more information about the ``replace_unicode_quotes`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``replace_unicode_quotes`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`__.
 
 
 ``translate_text``
@@ -390,4 +390,4 @@ Examples:
   # Output is "I can also translate Russian!"
   translate_text("Я тоже можно переводать русский язык!", "ru", "en")
 
-For more information about the ``translate_text`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/translate.py>`_.
+For more information about the ``translate_text`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/translate.py>`__.

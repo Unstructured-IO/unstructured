@@ -1,0 +1,149 @@
+[
+  {
+    "type": "Title",
+    "element_id": "b4e8db308de7be5daf941cdfe9ea77cd",
+    "metadata": {
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "date_created": "2023-08-20T14:35:49",
+        "date_modified": "2023-08-20T14:35:55"
+      },
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2"
+    },
+    "text": "Hey Sean."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "383058971777c314cff4cc10960ee84f",
+    "metadata": {
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "date_created": "2023-08-20T14:35:49",
+        "date_modified": "2023-08-20T14:35:55"
+      },
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2"
+    },
+    "text": "Testing email parsing here."
+  },
+  {
+    "type": "Title",
+    "element_id": "37e9e141c34a359d036d4760368cf88b",
+    "metadata": {
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "date_created": "2023-08-20T14:35:49",
+        "date_modified": "2023-08-20T14:35:55"
+      },
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2"
+    },
+    "text": "Type: email"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "36a9f06f033f03c18d12b8318e018b65",
+    "metadata": {
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "date_created": "2023-08-20T14:35:49",
+        "date_modified": "2023-08-20T14:35:55"
+      },
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2"
+    },
+    "text": "Just testing the email system"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ada246e54712b8cb04cf9eeed042d9c8",
+    "metadata": {
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "date_created": "2023-08-20T14:35:49",
+        "date_modified": "2023-08-20T14:35:55"
+      },
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2"
+    },
+    "text": "_____________________________________________________________________"
+  },
+  {
+    "type": "Title",
+    "element_id": "b5cfb3867874279548fa1feb3b688171",
+    "metadata": {
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "date_created": "2023-08-20T14:35:49",
+        "date_modified": "2023-08-20T14:35:55"
+      },
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2"
+    },
+    "text": "Powered by Salesforce"
+  },
+  {
+    "type": "Title",
+    "element_id": "f3a436e93d3660eedd11ac4c7de5d8cf",
+    "metadata": {
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "date_created": "2023-08-20T14:35:49",
+        "date_modified": "2023-08-20T14:35:55"
+      },
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2"
+    },
+    "text": "http://www.salesforce.com/"
+  }
+]

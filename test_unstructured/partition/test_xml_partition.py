@@ -3,7 +3,11 @@ import pathlib
 
 import pytest
 
+from unstructured.chunking.title import chunk_by_title
+from unstructured.documents.elements import NarrativeText, Title
+from unstructured.partition.json import partition_json
 from unstructured.partition.xml import partition_xml
+from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -71,8 +75,17 @@ def test_partition_xml_from_filename_with_tags_default_encoding(filename):
     file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
     elements = partition_xml(filename=file_path, xml_keep_tags=True)
 
-    assert elements[5].text == "<leader>Joe Biden</leader>"
-    assert elements[5].metadata.filename == filename
+    assert "<leader>Joe Biden</leader>" in elements[0].text
+    assert elements[0].metadata.filename == filename
+
+
+def test_partition_xml_from_text_with_tags(filename="example-docs/factbook.xml"):
+    with open(filename) as f:
+        text = f.read()
+    elements = partition_xml(text=text, xml_keep_tags=True, metadata_filename=filename)
+
+    assert "<leader>Joe Biden</leader>" in elements[0].text
+    assert elements[0].metadata.filename == "factbook.xml"
 
 
 @pytest.mark.parametrize(
@@ -94,8 +107,8 @@ def test_partition_xml_from_file_with_tags_default_encoding(filename):
     with open(file_path) as f:
         elements = partition_xml(file=f, xml_keep_tags=True, metadata_filename=file_path)
 
-    assert elements[5].text == "<leader>Joe Biden</leader>"
-    assert elements[5].metadata.filename == filename
+    assert "<leader>Joe Biden</leader>" in elements[0].text
+    assert elements[0].metadata.filename == filename
 
 
 @pytest.mark.parametrize(
@@ -107,8 +120,8 @@ def test_partition_xml_from_file_rb_with_tags_default_encoding(filename):
     with open(file_path, "rb") as f:
         elements = partition_xml(file=f, xml_keep_tags=True, metadata_filename=file_path)
 
-    assert elements[5].text == "<leader>Joe Biden</leader>"
-    assert elements[5].metadata.filename == filename
+    assert "<leader>Joe Biden</leader>" in elements[0].text
+    assert elements[0].metadata.filename == filename
 
 
 @pytest.mark.parametrize(
@@ -231,3 +244,47 @@ def test_partition_xml_from_file_with_custom_metadata_date(
         elements = partition_xml(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["factbook.xml", "factbook-utf-16.xml"],
+)
+def test_partition_xml_with_json(filename):
+    file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_xml(filename=file_path, xml_keep_tags=False)
+    test_elements = partition_json(text=elements_to_json(elements))
+
+    assert len(elements) == len(test_elements)
+    assert elements[0].metadata.page_number == test_elements[0].metadata.page_number
+    assert elements[0].metadata.filename == test_elements[0].metadata.filename
+
+    for i in range(len(elements)):
+        assert elements[i] == test_elements[i]
+
+
+def test_partition_xml_with_narrative_line_breaks():
+    xml_text = """<xml>
+        <parrot>
+            <name>Conure</name>
+            <description>A conure is a very friendly bird.
+            Conures are feathery and like to dance.
+            </description>
+        </parrot>
+    </xml>"""
+
+    elements = partition_xml(text=xml_text)
+    assert elements[0] == Title("Conure")
+    assert isinstance(elements[1], NarrativeText)
+    assert str(elements[1]).startswith("A conure is a very friendly bird.")
+    assert str(elements[1]).strip().endswith("Conures are feathery and like to dance.")
+
+
+def test_add_chunking_strategy_on_partition_xml(
+    filename="example-docs/factbook.xml",
+):
+    elements = partition_xml(filename=filename)
+    chunk_elements = partition_xml(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks

@@ -4,14 +4,17 @@ import pathlib
 import msg_parser
 import pytest
 
+from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     ElementMetadata,
     ListItem,
     NarrativeText,
     Title,
 )
+from unstructured.partition.json import partition_json
 from unstructured.partition.msg import extract_msg_attachment_info, partition_msg
 from unstructured.partition.text import partition_text
+from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
@@ -36,6 +39,8 @@ ATTACH_EXPECTED_OUTPUT = [
 def test_partition_msg_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
     elements = partition_msg(filename=filename)
+    parent_id = elements[0].metadata.parent_id
+
     assert elements == EXPECTED_MSG_OUTPUT
     assert (
         elements[0].metadata.to_dict()
@@ -49,10 +54,17 @@ def test_partition_msg_from_filename():
             sent_to=["Matthew Robinson (None)"],
             subject="Test Email",
             filetype="application/vnd.ms-outlook",
+            parent_id=parent_id,
         ).to_dict()
     )
     for element in elements:
         assert element.metadata.filename == "fake-email.msg"
+
+
+def test_partition_msg_from_filename_returns_uns_elements():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    elements = partition_msg(filename=filename)
+    assert isinstance(elements[0], NarrativeText)
 
 
 def test_partition_msg_from_filename_with_metadata_filename():
@@ -170,6 +182,11 @@ def test_partition_msg_can_process_attachments(
         metadata_last_modified=mocked_last_modification_date,
     )
 
+    # This test does not need to validate if hierarchy is working
+    # Patch to nullify parent_id
+    expected_metadata.parent_id = None
+    elements[-1].metadata.parent_id = None
+
     assert elements[0].text.startswith("Hello!")
     for element in elements[:-1]:
         assert element.metadata.filename == "fake-email-attachment.msg"
@@ -225,7 +242,10 @@ def test_partition_msg_from_file_custom_metadata_date(
     expected_last_modification_date = "2020-07-05T09:24:28"
 
     with open(filename, "rb") as f:
-        elements = partition_msg(file=f, metadata_last_modified=expected_last_modification_date)
+        elements = partition_msg(
+            file=f,
+            metadata_last_modified=expected_last_modification_date,
+        )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
@@ -243,6 +263,17 @@ def test_partition_msg_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
+def test_partition_msg_with_json():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    elements = partition_msg(filename=filename)
+    test_elements = partition_json(text=elements_to_json(elements))
+
+    assert elements == test_elements
+    assert elements[0].metadata.sent_from == test_elements[0].metadata.sent_from
+    assert elements[0].metadata.sent_to[0] == test_elements[0].metadata.sent_to[0]
+    assert elements[0].metadata.subject == test_elements[0].metadata.subject
+
+
 def test_partition_msg_with_pgp_encrypted_message(
     caplog,
     filename="example-docs/fake-encrypted.msg",
@@ -252,3 +283,13 @@ def test_partition_msg_with_pgp_encrypted_message(
     assert elements == []
     assert "WARNING" in caplog.text
     assert "Encrypted email detected" in caplog.text
+
+
+def test_add_chunking_strategy_on_partition_msg(
+    filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg"),
+):
+    elements = partition_msg(filename=filename)
+    chunk_elements = partition_msg(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks

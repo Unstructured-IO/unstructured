@@ -10,7 +10,7 @@ beautifulsoup4==4.12.2
     #   bs4
 bs4==0.0.1
     # via -r requirements/ingest-biomed.in
-soupsieve==2.4.1
+soupsieve==2.5
     # via
     #   -c requirements/base.txt
     #   beautifulsoup4

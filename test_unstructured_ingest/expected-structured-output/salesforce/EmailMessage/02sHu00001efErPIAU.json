@@ -1,0 +1,86 @@
+[
+  {
+    "type": "NarrativeText",
+    "element_id": "3c0a5d71e07c028ce79bf3fd1a04e0ab",
+    "metadata": {
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErPIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "date_created": "2023-08-20T14:34:16",
+        "date_modified": "2023-08-21T14:34:16"
+      },
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "jane_gray@uoa.edu"
+      ],
+      "subject": "Test of email 1"
+    },
+    "text": "Jane. This is a test of sending you an email from Salesforce!"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ada246e54712b8cb04cf9eeed042d9c8",
+    "metadata": {
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErPIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "date_created": "2023-08-20T14:34:16",
+        "date_modified": "2023-08-21T14:34:16"
+      },
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "jane_gray@uoa.edu"
+      ],
+      "subject": "Test of email 1"
+    },
+    "text": "_____________________________________________________________________"
+  },
+  {
+    "type": "Title",
+    "element_id": "b5cfb3867874279548fa1feb3b688171",
+    "metadata": {
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErPIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "date_created": "2023-08-20T14:34:16",
+        "date_modified": "2023-08-21T14:34:16"
+      },
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "jane_gray@uoa.edu"
+      ],
+      "subject": "Test of email 1"
+    },
+    "text": "Powered by Salesforce"
+  },
+  {
+    "type": "Title",
+    "element_id": "f3a436e93d3660eedd11ac4c7de5d8cf",
+    "metadata": {
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErPIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "date_created": "2023-08-20T14:34:16",
+        "date_modified": "2023-08-21T14:34:16"
+      },
+      "filetype": "message/rfc822",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "jane_gray@uoa.edu"
+      ],
+      "subject": "Test of email 1"
+    },
+    "text": "http://www.salesforce.com/"
+  }
+]

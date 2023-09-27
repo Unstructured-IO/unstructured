@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from typing import Type
 
 from unstructured.ingest.connector.fsspec import (
-    FsspecConnector,
+    FsspecDestinationConnector,
     FsspecIngestDoc,
+    FsspecSourceConnector,
     SimpleFsspecConfig,
 )
-from unstructured.ingest.interfaces import StandardConnectorConfig
 from unstructured.utils import requires_dependencies
 
 
@@ -15,19 +15,23 @@ class SimpleS3Config(SimpleFsspecConfig):
     pass
 
 
+@dataclass
 class S3IngestDoc(FsspecIngestDoc):
+    connector_config: SimpleS3Config
+    remote_file_path: str
+    registry_name: str = "s3"
+
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
     def get_file(self):
         super().get_file()
 
 
-@requires_dependencies(["s3fs", "fsspec"], extras="s3")
-class S3Connector(FsspecConnector):
+@dataclass
+class S3SourceConnector(FsspecSourceConnector):
+    connector_config: SimpleS3Config
     ingest_doc_cls: Type[S3IngestDoc] = S3IngestDoc
 
-    def __init__(
-        self,
-        config: SimpleS3Config,
-        standard_config: StandardConnectorConfig,
-    ) -> None:
-        super().__init__(standard_config, config)
+
+@dataclass
+class S3DestinationConnector(FsspecDestinationConnector):
+    connector_config: SimpleS3Config

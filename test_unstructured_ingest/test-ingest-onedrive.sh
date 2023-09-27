@@ -7,6 +7,11 @@ cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=onedrive
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
+max_processes=${MAX_PROCESSES:=$(python -c "import os; print(os.cpu_count())")}
+
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
 
 if [ -z "$MS_CLIENT_ID" ] || [ -z "$MS_CLIENT_CRED" ] || [ -z "$MS_USER_PNAME" ]; then
    echo "Skipping OneDrive ingest test because the MS_CLIENT_ID, MS_CLIENT_CRED, MS_USER_PNAME env var is not set."
@@ -16,12 +21,12 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
     onedrive \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified \
-    --num-processes 2 \
-    --partition-strategy hi_res \
+    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+    --num-processes "$max_processes" \
+    --strategy hi_res \
     --preserve-downloads \
     --reprocess \
-    --structured-output-dir "$OUTPUT_DIR" \
+    --output-dir "$OUTPUT_DIR" \
     --verbose \
     --client-cred "$MS_CLIENT_CRED" \
     --client-id "$MS_CLIENT_ID" \
@@ -30,4 +35,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --path '/utic-test-ingest-fixtures' \
     --recursive \
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

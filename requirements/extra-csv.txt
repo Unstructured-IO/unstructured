@@ -9,12 +9,16 @@ numpy==1.24.4
     #   -c requirements/constraints.in
     #   pandas
 pandas==2.0.3
-    # via -r requirements/extra-csv.in
+    # via
+    #   -c requirements/constraints.in
+    #   -r requirements/extra-csv.in
 python-dateutil==2.8.2
     # via pandas
-pytz==2023.3
+pytz==2023.3.post1
     # via pandas
 six==1.16.0
-    # via python-dateutil
+    # via
+    #   -c requirements/base.txt
+    #   python-dateutil
 tzdata==2023.3
     # via pandas

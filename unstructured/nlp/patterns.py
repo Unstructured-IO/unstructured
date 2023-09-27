@@ -138,3 +138,15 @@ JSON_PATTERN = r"(?s)\{(?=.*:).*?(?:\}|$)|\[(?s:.*?)\](?:$|,|\])"
 
 # taken from https://stackoverflow.com/a/3845829/12406158
 VALID_JSON_CHARACTERS = r"[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]"
+
+IMAGE_URL_PATTERN = (
+    r"(?i)https?://"
+    r"(?:[a-z0-9$_@.&+!*\\(\\),%-])+"
+    r"(?:/[a-z0-9$_@.&+!*\\(\\),%-]*)*"
+    r"\.(?:jpg|jpeg|png|gif|bmp)"
+)
+
+# NOTE(klaijan) - only supports one level numbered list for now
+# e.g. 1. 2. 3. or 1) 2) 3), not 1.1 1.2 1.3
+NUMBERED_LIST_PATTERN = r"^\d+(\.|\))\s(.+)"
+NUMBERED_LIST_RE = re.compile(NUMBERED_LIST_PATTERN)

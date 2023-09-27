@@ -1,0 +1,296 @@
+[
+  {
+    "type": "Title",
+    "element_id": "d568cb10f3cf2b15e62968dcbf0727a7",
+    "metadata": {
+      "data_source": {
+        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
+        "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
+          "issue_key": "JCTP1-3"
+        },
+        "date_created": "2023-08-22T11:29:46.189+0000",
+        "date_modified": "2023-08-23T14:36:31.252+0000"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "cat",
+        "ita"
+      ]
+    },
+    "text": "IssueID_IssueKey:10002     JCTP1-3"
+  },
+  {
+    "type": "Title",
+    "element_id": "5d6b5d74f7f384c6d366d4db6fdd890c",
+    "metadata": {
+      "data_source": {
+        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
+        "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
+          "issue_key": "JCTP1-3"
+        },
+        "date_created": "2023-08-22T11:29:46.189+0000",
+        "date_modified": "2023-08-23T14:36:31.252+0000"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "cat",
+        "ita"
+      ]
+    },
+    "text": "ProjectID_Key:JCTP1     Jira Connector Test Project 1"
+  },
+  {
+    "type": "Title",
+    "element_id": "dedb957c58285b5ffc7e10b74526266c",
+    "metadata": {
+      "data_source": {
+        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
+        "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
+          "issue_key": "JCTP1-3"
+        },
+        "date_created": "2023-08-22T11:29:46.189+0000",
+        "date_modified": "2023-08-23T14:36:31.252+0000"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "cat",
+        "ita"
+      ]
+    },
+    "text": "IssueType:Task"
+  },
+  {
+    "type": "Title",
+    "element_id": "716c0a65e1e0c2ce8eac69e08cfdc6f2",
+    "metadata": {
+      "data_source": {
+        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
+        "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
+          "issue_key": "JCTP1-3"
+        },
+        "date_created": "2023-08-22T11:29:46.189+0000",
+        "date_modified": "2023-08-23T14:36:31.252+0000"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "cat",
+        "ita"
+      ]
+    },
+    "text": "Status:Done"
+  },
+  {
+    "type": "Title",
+    "element_id": "97f6e01d1c6ee504c4feeae1ab2e7ace",
+    "metadata": {
+      "data_source": {
+        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
+        "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
+          "issue_key": "JCTP1-3"
+        },
+        "date_created": "2023-08-22T11:29:46.189+0000",
+        "date_modified": "2023-08-23T14:36:31.252+0000"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "cat",
+        "ita"
+      ]
+    },
+    "text": "Priority:{'self': 'https://unstructured-jira-connector-test.atlassian.net/rest/api/2/priority/3', 'iconUrl': 'https://unstructured-jira-connector-test.atlassian.net/images/icons/priorities/medium.svg', 'name': 'Medium', 'id': '3'}"
+  },
+  {
+    "type": "Title",
+    "element_id": "082962c30e083254955e0bcdb7c44210",
+    "metadata": {
+      "data_source": {
+        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
+        "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
+          "issue_key": "JCTP1-3"
+        },
+        "date_created": "2023-08-22T11:29:46.189+0000",
+        "date_modified": "2023-08-23T14:36:31.252+0000"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "cat",
+        "ita"
+      ]
+    },
+    "text": "AssigneeID_Name:{}     {}"
+  },
+  {
+    "type": "Title",
+    "element_id": "88a9ab41dc24a388b6fb681c25a23751",
+    "metadata": {
+      "data_source": {
+        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
+        "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
+          "issue_key": "JCTP1-3"
+        },
+        "date_created": "2023-08-22T11:29:46.189+0000",
+        "date_modified": "2023-08-23T14:36:31.252+0000"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "cat",
+        "ita"
+      ]
+    },
+    "text": "ReporterAdr_Name:devops+jira-connector@unstructured.io     Unstructured Devops"
+  },
+  {
+    "type": "Title",
+    "element_id": "2dabfb30dd19895a0735f20a728e8553",
+    "metadata": {
+      "data_source": {
+        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
+        "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
+          "issue_key": "JCTP1-3"
+        },
+        "date_created": "2023-08-22T11:29:46.189+0000",
+        "date_modified": "2023-08-23T14:36:31.252+0000"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "cat",
+        "ita"
+      ]
+    },
+    "text": "Labels:"
+  },
+  {
+    "type": "Title",
+    "element_id": "749dd93ddca4986780a6c8170f137197",
+    "metadata": {
+      "data_source": {
+        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
+        "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
+          "issue_key": "JCTP1-3"
+        },
+        "date_created": "2023-08-22T11:29:46.189+0000",
+        "date_modified": "2023-08-23T14:36:31.252+0000"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "cat",
+        "ita"
+      ]
+    },
+    "text": "Components:"
+  },
+  {
+    "type": "Title",
+    "element_id": "a035282a59f65907b31bb31795518cd2",
+    "metadata": {
+      "data_source": {
+        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
+        "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
+          "issue_key": "JCTP1-3"
+        },
+        "date_created": "2023-08-22T11:29:46.189+0000",
+        "date_modified": "2023-08-23T14:36:31.252+0000"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "cat",
+        "ita"
+      ]
+    },
+    "text": "Unstructured Devops     My comment 1"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "09339b8d6c8da54c80af958e385bead4",
+    "metadata": {
+      "data_source": {
+        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
+        "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
+          "issue_key": "JCTP1-3"
+        },
+        "date_created": "2023-08-22T11:29:46.189+0000",
+        "date_modified": "2023-08-23T14:36:31.252+0000"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "cat",
+        "ita"
+      ]
+    },
+    "text": "Test done 1"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "2e901605576abe44f365744a17b5f973",
+    "metadata": {
+      "data_source": {
+        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
+        "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
+          "issue_key": "JCTP1-3"
+        },
+        "date_created": "2023-08-22T11:29:46.189+0000",
+        "date_modified": "2023-08-23T14:36:31.252+0000"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "cat",
+        "ita"
+      ]
+    },
+    "text": "_At iam decimum annum in spelunca iacet._ Quid ei reliquisti, nisi te, quoquo modo loqueretur, intellegere, quid diceret? Non laboro, inquit, de nomine. Duo Reges: constructio interrete. Nummus in Croesi divitiis obscuratur, pars est tamen divitiarum. Bork Itaque quantum adiit periculum! ad honestatem enim illum omnem conatum suum referebat, non ad voluptatem."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "448a412046e767bf66cb643398760e20",
+    "metadata": {
+      "data_source": {
+        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
+        "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
+          "issue_key": "JCTP1-3"
+        },
+        "date_created": "2023-08-22T11:29:46.189+0000",
+        "date_modified": "2023-08-23T14:36:31.252+0000"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "cat",
+        "ita"
+      ]
+    },
+    "text": "[Bork|http://loripsum.net/] Illi enim inter se dissentiunt. Et non ex maxima parte de tota iudicabis? [Refert tamen, quo modo.|http://loripsum.net/] [Quam ob rem tandem, inquit, non satisfacit?|http://loripsum.net/] Ex quo, id quod omnes expetunt, beate vivendi ratio inveniri et comparari potest."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "053f313e7b73de59e2b309a847f99344",
+    "metadata": {
+      "data_source": {
+        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-3",
+        "record_locator": {
+          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
+          "issue_key": "JCTP1-3"
+        },
+        "date_created": "2023-08-22T11:29:46.189+0000",
+        "date_modified": "2023-08-23T14:36:31.252+0000"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "cat",
+        "ita"
+      ]
+    },
+    "text": "Hic nihil fuit, quod quaereremus. Itaque haec cum illis est dissensio, cum Peripateticis nulla sane. Vos autem cum perspicuis dubia debeatis illustrare, dubiis perspicua conamini tollere. [Quae cum essent dicta, discessimus.|http://loripsum.net/] Nam, ut sint illa vendibiliora, haec uberiora certe sunt. [Equidem, sed audistine modo de Carneade?|http://loripsum.net/]"
+  }
+]

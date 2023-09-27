@@ -1,5 +1,8 @@
+from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Title
+from unstructured.partition.json import partition_json
 from unstructured.partition.org import partition_org
+from unstructured.staging.base import elements_to_json
 
 
 def test_partition_org_from_filename(filename="example-docs/README.org"):
@@ -120,3 +123,24 @@ def test_partition_org_from_file_with_custom_metadata_date(
         elements = partition_org(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_org_with_json(filename="example-docs/README.org"):
+    elements = partition_org(filename=filename)
+    test_elements = partition_json(text=elements_to_json(elements))
+
+    assert elements[0] == test_elements[0]
+    assert elements[0].metadata.filename == test_elements[0].metadata.filename
+
+    for i in range(len(elements)):
+        assert elements[i] == test_elements[i]
+
+
+def test_add_chunking_strategy_on_partition_org(
+    filename="example-docs/README.org",
+):
+    elements = partition_org(filename=filename)
+    chunk_elements = partition_org(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks

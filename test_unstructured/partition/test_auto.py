@@ -9,6 +9,7 @@ import docx
 import pytest
 
 from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT
+from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
@@ -338,7 +339,7 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         include_page_breaks=False,
         infer_table_structure=False,
         strategy="fast",
-        ocr_languages="eng",
+        languages=["eng"],
     )
 
 
@@ -366,6 +367,34 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
 
     assert isinstance(elements[1], NarrativeText)
     assert elements[1].text.startswith("Zejiang Shen")
+
+
+def test_auto_partition_formats_languages_for_tesseract():
+    filename = "example-docs/chi_sim_image.jpeg"
+    with patch(
+        "unstructured_inference.inference.layout.process_file_with_model",
+    ) as mock_process_file_with_model:
+        partition(filename, strategy="hi_res", languages=["zh"])
+        mock_process_file_with_model.assert_called_once_with(
+            filename,
+            is_image=True,
+            ocr_languages="chi_sim+chi_sim_vert+chi_tra+chi_tra_vert",
+            ocr_mode="entire_page",
+            extract_tables=False,
+            model_name=None,
+        )
+
+
+def test_auto_partition_element_metadata_user_provided_languages():
+    filename = "example-docs/chevron-page.pdf"
+    elements = partition(filename=filename, strategy="ocr_only", languages=["eng"])
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_auto_partition_warns_with_ocr_languages(caplog):
+    filename = "example-docs/chevron-page.pdf"
+    partition(filename=filename, strategy="hi_res", ocr_languages="eng")
+    assert "The ocr_languages kwarg will be deprecated" in caplog.text
 
 
 def test_partition_pdf_doesnt_raise_warning():
@@ -547,7 +576,7 @@ def test_auto_partition_works_with_unstructured_jsons_from_file():
 def test_auto_partition_odt_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
     elements = partition(filename=filename, strategy="hi_res")
-    assert elements == [Title("Lorem ipsum dolor sit amet.")]
+    assert elements[0] == Title("Lorem ipsum dolor sit amet.")
 
 
 def test_auto_partition_odt_from_file():
@@ -555,7 +584,7 @@ def test_auto_partition_odt_from_file():
     with open(filename, "rb") as f:
         elements = partition(file=f, strategy="hi_res")
 
-    assert elements == [Title("Lorem ipsum dolor sit amet.")]
+    assert elements[0] == Title("Lorem ipsum dolor sit amet.")
 
 
 @pytest.mark.parametrize(
@@ -644,7 +673,7 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
 
 
 def test_auto_partition_xml_from_filename(filename="example-docs/factbook.xml"):
-    elements = partition(filename=filename, xml_keep_tags=False)
+    elements = partition(filename=filename, xml_keep_tags=False, metadata_filename=filename)
 
     assert elements[0].text == "United States"
     assert elements[0].metadata.filename == "factbook.xml"
@@ -660,15 +689,15 @@ def test_auto_partition_xml_from_file(filename="example-docs/factbook.xml"):
 def test_auto_partition_xml_from_filename_with_tags(filename="example-docs/factbook.xml"):
     elements = partition(filename=filename, xml_keep_tags=True)
 
-    assert elements[5].text == "<leader>Joe Biden</leader>"
-    assert elements[5].metadata.filename == "factbook.xml"
+    assert "<leader>Joe Biden</leader>" in elements[0].text
+    assert elements[0].metadata.filename == "factbook.xml"
 
 
 def test_auto_partition_xml_from_file_with_tags(filename="example-docs/factbook.xml"):
     with open(filename, "rb") as f:
         elements = partition(file=f, xml_keep_tags=True)
 
-    assert elements[5].text == "<leader>Joe Biden</leader>"
+    assert "<leader>Joe Biden</leader>" in elements[0].text
 
 
 EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -904,3 +933,50 @@ def test_get_partition_with_extras_prompts_for_install_if_missing():
 
     msg = str(exception_info.value)
     assert 'Install the pdf dependencies with pip install "unstructured[pdf]"' in msg
+
+
+def test_add_chunking_strategy_on_partition_auto():
+    filename = "example-docs/example-10k-1p.html"
+    chunk_elements = partition(filename, chunking_strategy="by_title")
+    elements = partition(filename)
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_add_chunking_strategy_on_partition_auto_respects_multipage():
+    filename = "example-docs/example-10k-1p.html"
+    partitioned_elements_multipage_false_combine_chars_0 = partition(
+        filename,
+        chunking_strategy="by_title",
+        multipage_sections=False,
+        combine_under_n_chars=0,
+    )
+    partitioned_elements_multipage_true_combine_chars_0 = partition(
+        filename,
+        chunking_strategy="by_title",
+        multipage_sections=True,
+        combine_under_n_chars=0,
+    )
+    elements = partition(filename)
+    cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(
+        elements,
+        multipage_sections=False,
+        combine_under_n_chars=0,
+    )
+    cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(
+        elements,
+        multipage_sections=True,
+        combine_under_n_chars=0,
+    )
+    assert (
+        partitioned_elements_multipage_false_combine_chars_0
+        == cleaned_elements_multipage_false_combine_chars_0
+    )
+    assert (
+        partitioned_elements_multipage_true_combine_chars_0
+        == cleaned_elements_multipage_true_combine_chars_0
+    )
+    assert len(partitioned_elements_multipage_true_combine_chars_0) != len(
+        partitioned_elements_multipage_false_combine_chars_0,
+    )

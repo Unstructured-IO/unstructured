@@ -4,6 +4,7 @@ from typing import IO, List, Optional
 
 from ebooklib import epub
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
@@ -16,6 +17,7 @@ from unstructured.partition.html import partition_html
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.EPUB)
+@add_chunking_strategy()
 def partition_epub(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -24,6 +26,7 @@ def partition_epub(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     encoding: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an EPUB document. The document is first converted to HTML and then
@@ -91,6 +94,7 @@ def partition_epub(
             text=item_content,
             section=item_title,
             metadata_last_modified=metadata_last_modified or last_modification_date,
+            source_format="epub",
             **kwargs,
         )
 

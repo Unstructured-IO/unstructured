@@ -7,6 +7,15 @@ Introduction
 The ``unstructured`` library aims to simplify and streamline the preprocessing of structured and unstructured documents for downstream tasks. And what that means is no matter where your data is
 and no matter what format that data is in, Unstructured's toolkit will transform and preprocess that data into an easily digestable and usable format.
 
+Product Offerings
+^^^^^^^^^^^^^^^^^
+
+- **Python Library**: Unstructured's open source software `(library) <https://github.com/Unstructured-IO/unstructured>`__.
+
+- **Hosted API**: Easiest and most scalable way to process large documents in quantity `(library) <https://github.com/Unstructured-IO/unstructured-api>`__.
+
+- **Enterprise Product**: In development with the hopes of launching late 2023.
+
 Key Features
 ^^^^^^^^^^^^^
 
@@ -18,18 +27,17 @@ Key Features
     
 - **Customizability**: Easily extend and customize the library to fit specific requirements or unique use cases.
 
-Key Concepts
-^^^^^^^^^^^^^
+Common Use Cases
+^^^^^^^^^^^^^^^^
 
-- **Connectors**: Interfaces that enable the library to interact with different data sources and sinks, like cloud storage or databases.
-
-- **Bricks**: Modular units of the library that allow users to partition, clean, and stage data efficiently.
-
-- **Metadata**: Data about data. In ``unstructured``, metadata helps in keeping track of the source, type, and other essential attributes of the data.
+- **Pretraining Models**
+- **Fine-tuning Models**
+- **Retrieval Augmented Generation (RAG)**
+- **Traditional ETL**
 
 Quickstart Tutorial
 ^^^^^^^^^^^^^^^^^^^^
 
-If you're eager to dive in, head over to our :doc:`getting_started` to get a hands-on introduction to the ``unstructured`` library. In a few minutes, you'll have a basic workflow set up and running!
+If you're eager to dive in, head over to our `Getting Started <https://unstructured-io.github.io/unstructured/introduction/getting_started.html>`__ to get a hands-on introduction to the ``unstructured`` library. In a few minutes, you'll have a basic workflow set up and running!
 
 For more detailed information about specific components or advanced features, explore the rest of the documentation.

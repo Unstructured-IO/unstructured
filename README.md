@@ -21,7 +21,7 @@
 <div>
   <p align="center">
   <a
-  href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1x7cgo0pg-PTptXWylzPQF9xZolzCnwQ">
+  href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-23kciff0y-bvzXxJkgtbXe5POo_rxMkw">
     <img src="https://img.shields.io/badge/JOIN US ON SLACK-4A154B?style=for-the-badge&logo=slack&logoColor=white" />
   </a>
   <a href="https://www.linkedin.com/company/unstructuredio/">
@@ -47,7 +47,7 @@ While access to the hosted Unstructured API will remain free, API Keys are requi
 
 We are releasing the beta version of our Chipper model to deliver superior performance when processing high-resolution, complex documents. To start using the Chipper model in your API request, you can utilize the `hi_res_model_name=chipper` parameter. Please refer to the documentation [here](https://unstructured-io.github.io/unstructured/api.html#beta-version-hi-res-strategy-with-chipper-model).
 
-As the Chipper model is in beta version, we welcome feedback and suggestions. For those interested in testing the Chipper model, we encourage you to connect with us on [Slack community](https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1x7cgo0pg-PTptXWylzPQF9xZolzCnwQ).
+As the Chipper model is in beta version, we welcome feedback and suggestions. For those interested in testing the Chipper model, we encourage you to connect with us on [Slack community](https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-23kciff0y-bvzXxJkgtbXe5POo_rxMkw).
 
 ## :eight_pointed_black_star: Quick Start
 
@@ -68,14 +68,14 @@ NOTE: we build multi-platform images to support both x86_64 and Apple silicon ha
 We build Docker images for all pushes to `main`. We tag each image with the corresponding short commit hash (e.g. `fbc7a69`) and the application version (e.g. `0.5.5-dev1`). We also tag the most recent image with `latest`. To leverage this, `docker pull` from our image repository.
 
 ```bash
-docker pull quay.io/unstructured-io/unstructured:latest
+docker pull downloads.unstructured.io/unstructured-io/unstructured:latest
 ```
 
 Once pulled, you can create a container from this image and shell to it.
 
 ```bash
 # create the container
-docker run -dt --name unstructured quay.io/unstructured-io/unstructured:latest
+docker run -dt --name unstructured downloads.unstructured.io/unstructured-io/unstructured:latest
 
 # this will drop you into a bash shell where the Docker image is running
 docker exec -it unstructured bash
@@ -165,6 +165,14 @@ If using the optional `pre-commit`, you'll just need to install the hooks with `
 `pre-commit` package is installed as part of `make install` mentioned above. Finally, if you decided to use `pre-commit`
 you can also uninstall the hooks with `pre-commit uninstall`.
 
+In addition to develop in your local OS we also provide a helper to use docker providing a development environment:
+
+```bash
+make docker-start-dev
+```
+
+This starts a docker container with your local repo mounted to `/mnt/local_unstructured`. This docker image allows you to develop without worrying about your OS's compatibility with the repo and its dependencies.
+
 ## :clap: Quick Tour
 
 ### Documentation
@@ -245,3 +253,7 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 | [Company Website](https://unstructured.io) | Unstructured.io product and company info |
 | [Documentation](https://unstructured-io.github.io/unstructured) | Full API documentation |
 | [Batch Processing](unstructured/ingest/README.md) | Ingesting batches of documents through Unstructured |
+
+## :chart_with_upwards_trend: Analytics
+
+We’ve partnered with Scarf (https://scarf.sh) to collect anonymized user statistics to understand which features our community is using and how to prioritize product decision-making in the future. To learn more about how we collect and use this data, please read our [Privacy Policy](https://unstructured.io/privacy-policy).

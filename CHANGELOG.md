@@ -1,11 +1,199 @@
-## 0.10.9-dev2
+## 0.10.17-dev9
 
 ### Enhancements
+
+* **Adds data source properties to SharePoint, Outlook, Onedrive, Reddit, and Slack connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+* **Add functionality to save embedded images in PDF's separately as images** This allows users to save embedded images in PDF's separately as images, given some directory path. The saved image path is written to the metadata for the Image element. Downstream applications may benefit by providing users with image links from relevant "hits."
+* **Azure Cognite Search destination connector** New Azure Cognitive Search destination connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to an Azure Cognitive Search index.
+* **Improves salesforce partitioning** Partitions Salesforce data as xlm instead of text for improved detail and flexibility. Partitions htmlbody instead of textbody for Salesforce emails. Importance: Allows all Salesforce fields to be ingested and gives Salesforce emails more detailed partitioning.
+* **Add document level language detection functionality.** Introduces the "auto" default for the languages param, which then detects the languages present in the document using the `langdetect` package. Adds the document languages as ISO 639-3 codes to the element metadata. Implemented only for the partition_text function to start.
+* **PPTX partitioner refactored in preparation for enhancement.** Behavior should be unchanged except that shapes enclosed in a group-shape are now included, as many levels deep as required (a group-shape can itself contain a group-shape).
+* **Embeddings support for the SharePoint SourceConnector via unstructured-ingest CLI** The SharePoint connector can now optionally create embeddings from the elements it pulls out during partition and upload those embeddings to Azure Cognitive Search index.
+
+### Features
+
+* **Adds the embedding module to be able to embed Elements** Problem: Many NLP applications require the ability to represent parts of documents in a semantic way. Until now, Unstructured did not have text embedding ability within the core library. Feature: This embedding module is able to track embeddings related data with a class, embed a list of elements, and return an updated list of Elements with the *embeddings* property. The module is also able to embed query strings. Importance: Ability to embed documents or parts of documents will enable users to make use of these semantic representations in different NLP applications, such as search, retrieval, and retrieval augmented generation.
+
+### Fixes
+
+* **Fixes a metadata source serialization bug** Problem: In unstructured elements, when loading an elements json file from the disk, the data_source attribute is assumed to be an instance of DataSourceMetadata and the code acts based on that. However the loader did not satisfy the assumption, and loaded it as a dict instead, causing an error. Fix: Added necessary code block to initialize a DataSourceMetadata object, also refactored DataSourceMetadata.from_dict() method to remove redundant code. Importance: Crucial to be able to load elements (which have data_source fields) from json files.
+* **Fixes issue where unstructured-inference was not getting updated** Problem: unstructured-inference was not getting upgraded to the version to match unstructured release when doing a pip install.  Solution: using `pip install unstructured[all-docs]` it will now upgrade both unstructured and unstructured-inference. Importance: This will ensure that the inference library is always in sync with the unstructured library, otherwise users will be using outdated libraries which will likely lead to unintended behavior.
+* **Fixes SharePoint connector failures if any document has an unsupported filetype** Problem: Currently the entire connector ingest run fails if a single IngestDoc has an unsupported filetype. This is because a ValueError is raised in the IngestDoc's `__post_init__`. Fix: Adds a try/catch when the IngestConnector runs get_ingest_docs such that the error is logged but all processable documents->IngestDocs are still instantiated and returned. Importance: Allows users to ingest SharePoint content even when some files with unsupported filetypes exist there.
+* **Fixes Sharepoint connector server_path issue** Problem: Server path for the Sharepoint Ingest Doc was incorrectly formatted, causing issues while fetching pages from the remote source. Fix: changes formatting of remote file path before instantiating SharepointIngestDocs and appends a '/' while fetching pages from the remote source. Importance: Allows users to fetch pages from Sharepoint Sites.
+* **Fixes badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
+should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class 
+allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
+* **Fixes Sphinx errors.** Fixes errors when running Sphinx `make html` and installs library to suppress warnings.
+
+
+## 0.10.16
+
+### Enhancements
+
+* **Adds data source properties to Airtable, Confluence, Discord, Elasticsearch, Google Drive, and Wikipedia connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+* **DOCX partitioner refactored in preparation for enhancement.** Behavior should be unchanged except in multi-section documents containing different headers/footers for different sections. These will now emit all distinct headers and footers encountered instead of just those for the last section.
+* **Add a function to map between Tesseract and standard language codes.** This allows users to input language information to the `languages` param in any Tesseract-supported langcode or any ISO 639 standard language code.
+* **Add document level language detection functionality.** Introduces the "auto" default for the languages param, which then detects the languages present in the document using the `langdetect` package. Implemented only for the partition_text function to start.
 
 ### Features
 
 ### Fixes
 
+* ***Fixes an issue that caused a partition error for some PDF's.** Fixes GH Issue 1460 by bypassing a coordinate check if an element has invalid coordinates.
+
+## 0.10.15
+
+
+### Enhancements
+
+* **Support for better element categories from the next-generation image-to-text model ("chipper").** Previously, not all of the classifications from Chipper were being mapped to proper `unstructured` element categories so the consumer of the library would see many `UncategorizedText` elements. This fixes the issue, improving the granularity of the element categories outputs for better downstream processing and chunking. The mapping update is:
+  * "Threading": `NarrativeText`
+  * "Form": `NarrativeText`
+  * "Field-Name": `Title`
+  * "Value": `NarrativeText`
+  * "Link": `NarrativeText`
+  * "Headline": `Title` (with `category_depth=1`)
+  * "Subheadline": `Title` (with `category_depth=2`)
+  * "Abstract": `NarrativeText`
+* **Better ListItem grouping for PDF's (fast strategy).** The `partition_pdf` with `fast` strategy previously broke down some numbered list item lines as separate elements. This enhancement leverages the x,y coordinates and bbox sizes to help decide whether the following chunk of text is a continuation of the immediate previous detected ListItem element or not, and not detect it as its own non-ListItem element.
+* **Fall back to text-based classification for uncategorized Layout elements for Images and PDF's**. Improves element classification by running existing text-based rules on previously `UncategorizedText` elements.
+* **Adds table partitioning for Partitioning for many doc types including: .html, .epub., .md, .rst, .odt, and .msg.** At the core of this change is the .html partition functionality, which is leveraged by the other effected doc types. This impacts many scenarios where `Table` Elements are now propery extracted.
+* **Create and add `add_chunking_strategy` decorator to partition functions.** Previously, users were responsible for their own chunking after partitioning elements, often required for downstream applications. Now, individual elements may be combined into right-sized chunks where min and max character size may be specified if `chunking_strategy=by_title`. Relevant elements are grouped together for better downstream results. This enables users immediately use partitioned results effectively in downstream applications (e.g. RAG architecture apps) without any additional post-processing.
+* **Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf, image, and auto partitioning functions.** Previously, language information was only being used for Tesseract OCR for image-based documents and was in a Tesseract specific string format, but by refactoring into a list of standard language codes independent of Tesseract, the `unstructured` library will better support `languages` for other non-image pipelines and/or support for other OCR engines.
+* **Removes `UNSTRUCTURED_LANGUAGE` env var usage and replaces `language` with `languages` as an input parameter to unstructured-partition-text_type functions.** The previous parameter/input setup was not user-friendly or scalable to the variety of elements being processed. By refactoring the inputted language information into a list of standard language codes, we can support future applications of the element language such as detection, metadata, and multi-language elements. Now, to skip English specific checks, set the `languages` parameter to any non-English language(s).
+* **Adds `xlsx` and `xls` filetype extensions to the `skip_infer_table_types` default list in `partition`.** By adding these file types to the input parameter these files should not go through table extraction. Users can still specify if they would like to extract tables from these filetypes, but will have to set the `skip_infer_table_types` to exclude the desired filetype extension. This avoids mis-representing complex spreadsheets where there may be multiple sub-tables and other content.
+* **Better debug output related to sentence counting internals**. Clarify message when sentence is not counted toward sentence count because there aren't enough words, relevant for developers focused on `unstructured`s NLP internals.
+* **Faster ocr_only speed for partitioning PDF and images.** Use `unstructured_pytesseract.run_and_get_multiple_output` function to reduce the number of calls to `tesseract` by half when partitioning pdf or image with `tesseract`
+* **Adds data source properties to fsspec connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+* **Add delta table destination connector** New delta table destination connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Delta Table.
+* **Rename to Source and Destination Connectors in the Documentation.** Maintain naming consistency between Connectors codebase and documentation with the first addition to a destination connector.
+* **Non-HTML text files now return unstructured-elements as opposed to HTML-elements.** Previously the text based files that went through `partition_html` would return HTML-elements but now we preserve the format from the input using `source_format` argument in the partition call.
+* **Adds `PaddleOCR` as an optional alternative to `Tesseract`** for OCR in processing of PDF or Image files, it is installable via the `makefile` command `install-paddleocr`. For experimental purposes only.
+* **Bump unstructured-inference** to 0.5.28. This version bump markedly improves the output of table data, rendered as `metadata.text_as_html` in an element. These changes include:
+  * add env variable `ENTIRE_PAGE_OCR` to specify using paddle or tesseract on entire page OCR
+  * table structure detection now pads the input image by 25 pixels in all 4 directions to improve its recall (0.5.27)
+  * support paddle with both cpu and gpu and assume it is pre-installed (0.5.26)
+  * fix a bug where `cells_to_html` doesn't handle cells spanning multiple rows properly (0.5.25)
+  * remove `cv2` preprocessing step before OCR step in table transformer (0.5.24)
+
+### Features
+
+* **Adds element metadata via `category_depth` with default value None**.
+  * This additional metadata is useful for vectordb/LLM, chunking strategies, and retrieval applications.
+* **Adds a naive hierarchy for elements via a `parent_id` on the element's metadata**
+  * Users will now have more metadata for implementing vectordb/LLM chunking strategies. For example, text elements could be queried by their preceding title element.
+  * Title elements created from HTML headings will properly nest
+
+### Fixes
+
+* **`add_pytesseract_bboxes_to_elements` no longer returns `nan` values**. The function logic is now broken into new methods
+  `_get_element_box` and `convert_multiple_coordinates_to_new_system`
+* **Selecting a different model wasn't being respected when calling `partition_image`.** Problem: `partition_pdf` allows for passing a `model_name` parameter. Given the similarity between the image and PDF pipelines, the expected behavior is that `partition_image` should support the same parameter, but `partition_image` was unintentionally not passing along its `kwargs`. This was corrected by adding the kwargs to the downstream call.
+* **Fixes a chunking issue via dropping the field "coordinates".** Problem: chunk_by_title function was chunking each element to its own individual chunk while it needed to group elements into a fewer number of chunks. We've discovered that this happens due to a metadata matching logic in chunk_by_title function, and discovered that elements with different metadata can't be put into the same chunk. At the same time, any element with "coordinates" essentially had different metadata than other elements, due each element locating in different places and having different coordinates. Fix: That is why we have included the key "coordinates" inside a list of excluded metadata keys, while doing this "metadata_matches" comparision. Importance: This change is crucial to be able to chunk by title for documents which include "coordinates" metadata in their elements.
+
+## 0.10.14
+
+### Enhancements
+
+* Update all connectors to use new downstream architecture
+  * New click type added to parse comma-delimited string inputs
+  * Some CLI options renamed
+
+### Features
+
+### Fixes
+
+## 0.10.13
+
+### Enhancements
+
+* Updated documentation: Added back support doc types for partitioning, more Python codes in the API page,  RAG definition, and use case.
+* Updated Hi-Res Metadata: PDFs and Images using Hi-Res strategy now have layout model class probabilities added ot metadata.
+* Updated the `_detect_filetype_from_octet_stream()` function to use libmagic to infer the content type of file when it is not a zip file.
+* Tesseract minor version bump to 5.3.2
+
+### Features
+
+* Add Jira Connector to be able to pull issues from a Jira organization
+* Add `clean_ligatures` function to expand ligatures in text
+
+
+### Fixes
+
+* `partition_html` breaks on `<br>` elements.
+* Ingest error handling to properly raise errors when wrapped
+* GH issue 1361: fixes a sortig error that prevented some PDF's from being parsed
+* Bump unstructured-inference
+  * Brings back embedded images in PDF's (0.5.23)
+
+## 0.10.12
+
+### Enhancements
+
+* Removed PIL pin as issue has been resolved upstream
+* Bump unstructured-inference
+  * Support for yolox_quantized layout detection model (0.5.20)
+* YoloX element types added
+
+
+### Features
+
+* Add Salesforce Connector to be able to pull Account, Case, Campaign, EmailMessage, Lead
+
+### Fixes
+
+
+* Bump unstructured-inference
+  * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
+
+## 0.10.11
+
+### Enhancements
+
+* Bump unstructured-inference
+  * Combine entire-page OCR output with layout-detected elements, to ensure full coverage of the page (0.5.19)
+
+### Features
+
+* Add in ingest cli s3 writer
+
+### Fixes
+
+* Fix a bug where `xy-cut` sorting attemps to sort elements without valid coordinates; now xy cut sorting only works when **all** elements have valid coordinates
+
+## 0.10.10
+
+### Enhancements
+
+* Adds `text` as an input parameter to `partition_xml`.
+* `partition_xml` no longer runs through `partition_text`, avoiding incorrect splitting
+  on carriage returns in the XML. Since `partition_xml` no longer calls `partition_text`,
+  `min_partition` and `max_partition` are no longer supported in `partition_xml`.
+* Bump `unstructured-inference==0.5.18`, change non-default detectron2 classification threshold
+* Upgrade base image from rockylinux 8 to rockylinux 9
+* Serialize IngestDocs to JSON when passing to subprocesses
+
+### Features
+
+### Fixes
+
+- Fix a bug where mismatched `elements` and `bboxes` are passed into `add_pytesseract_bbox_to_elements`
+
+## 0.10.9
+
+### Enhancements
+
+* Fix `test_json` to handle only non-extra dependencies file types (plain-text)
+
+### Features
+
+* Adds `chunk_by_title` to break a document into sections based on the presence of `Title`
+  elements.
+* add new extraction function `extract_image_urls_from_html` to extract all img related URL from html text.
+
+### Fixes
+
+* Make cv2 dependency optional
 * Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
 * Re-enable test-ingest-confluence-diff for ingest tests
 * Fix syntax for ingest test check number of files

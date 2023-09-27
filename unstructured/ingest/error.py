@@ -2,7 +2,7 @@ from abc import ABC
 from functools import wraps
 
 
-class CustomError(BaseException, ABC):
+class CustomError(Exception, ABC):
     error_string: str
 
     @classmethod
@@ -19,8 +19,8 @@ class CustomError(BaseException, ABC):
                 return f(*args, **kwargs)
             except BaseException as error:
                 if not isinstance(error, cls):
-                    raise cls(cls.error_string.format(str(error)))
-                raise error
+                    raise cls(cls.error_string.format(str(error))) from error
+                raise
 
         return wrapper
 
@@ -31,6 +31,14 @@ class SourceConnectionError(CustomError):
 
 class DestinationConnectionError(CustomError):
     error_string = "Error in connecting to downstream data source: {}"
+
+
+class EmbeddingEncoderConnectionError(CustomError):
+    error_string = "Error in connecting to the embedding model provider: {}"
+
+
+class WriteError(CustomError):
+    error_string = "Error in writing to downstream data source: {}"
 
 
 class PartitionError(CustomError):

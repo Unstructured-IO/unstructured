@@ -1,15 +1,16 @@
 import fnmatch
 import os
+import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
+    SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 
@@ -17,29 +18,30 @@ from unstructured.ingest.logger import logger
 @dataclass
 class SimpleGitConfig(BaseConnectorConfig):
     url: str
-    access_token: Optional[str]
-    branch: Optional[str]
-    file_glob: Optional[str]
+    access_token: t.Optional[str]
+    branch: t.Optional[str]
+    file_glob: t.Optional[str]
     repo_path: str = field(init=False, repr=False)
 
 
 @dataclass
 class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
-    config: SimpleGitConfig = field(repr=False)
+    connector_config: SimpleGitConfig = field(repr=False)
     path: str
 
     @property
     def filename(self):
-        return (Path(self.standard_config.download_dir) / self.path).resolve()
+        return (Path(self.read_config.download_dir) / self.path).resolve()
 
     @property
     def _output_filename(self):
-        return Path(self.standard_config.output_dir) / f"{self.path}.json"
+        return Path(self.partition_config.output_dir) / f"{self.path}.json"
 
     def _create_full_tmp_dir_path(self):
         """includes directories in in the gitlab repository"""
         self.filename.parent.mkdir(parents=True, exist_ok=True)
 
+    @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
@@ -52,8 +54,8 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
 
 @dataclass
-class GitConnector(ConnectorCleanupMixin, BaseConnector):
-    config: SimpleGitConfig
+class GitSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
+    connector_config: SimpleGitConfig
 
     def initialize(self):
         pass
@@ -84,9 +86,9 @@ class GitConnector(ConnectorCleanupMixin, BaseConnector):
         return supported
 
     def does_path_match_glob(self, path: str) -> bool:
-        if not self.config.file_glob:
+        if not self.connector_config.file_glob:
             return True
-        patterns = self.config.file_glob.split(",")
+        patterns = self.connector_config.file_glob.split(",")
         for pattern in patterns:
             if fnmatch.filter([path], pattern):
                 return True

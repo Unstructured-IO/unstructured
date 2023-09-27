@@ -1,20 +1,24 @@
 from __future__ import annotations
 
+import enum
+import functools
 import inspect
 import json
 import os
 import re
 import zipfile
-from enum import Enum
-from functools import wraps
-from typing import IO, Callable, Optional
+from typing import IO, Any, Callable, Dict, List, Optional
 
+from typing_extensions import ParamSpec
+
+from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import (
     _add_element_metadata,
     _remove_element_metadata,
     exactly_one,
+    set_element_hierarchy,
 )
 
 try:
@@ -50,7 +54,7 @@ EXPECTED_PPTX_FILES = [
 ]
 
 
-class FileType(Enum):
+class FileType(enum.Enum):
     UNK = 0
     EMPTY = 1
 
@@ -382,7 +386,7 @@ def detect_filetype(
     return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
 
-def _detect_filetype_from_octet_stream(file: IO) -> FileType:
+def _detect_filetype_from_octet_stream(file: IO[bytes]) -> FileType:
     """Detects the filetype, given a file with an application/octet-stream MIME type."""
     file.seek(0)
     if zipfile.is_zipfile(file):
@@ -397,6 +401,10 @@ def _detect_filetype_from_octet_stream(file: IO) -> FileType:
         elif all(f in archive_filenames for f in EXPECTED_PPTX_FILES):
             return FileType.PPTX
 
+    if LIBMAGIC_AVAILABLE:
+        # Infer mime type using magic if octet-stream is not zip file
+        mime_type = magic.from_buffer(file.read(4096), mime=True)
+        return STR_TO_FILETYPE.get(mime_type, FileType.UNK)
     logger.warning(
         "Could not detect the filetype from application/octet-stream MIME type.",
     )
@@ -435,7 +443,11 @@ def _is_text_file_a_json(
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a JSON file."""
-    file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+    file_text = _read_file_start_for_type_check(
+        file=file,
+        filename=filename,
+        encoding=encoding,
+    )
     try:
         json.loads(file_text)
         return True
@@ -451,7 +463,11 @@ def is_json_processable(
 ) -> bool:
     exactly_one(filename=filename, file=file, file_text=file_text)
     if file_text is None:
-        file_text = _read_file_start_for_type_check(file=file, filename=filename, encoding=encoding)
+        file_text = _read_file_start_for_type_check(
+            file=file,
+            filename=filename,
+            encoding=encoding,
+        )
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
 
 
@@ -483,7 +499,7 @@ def _is_text_file_a_csv(
     return all(_count_commas(line) == header_count for line in lines[:1])
 
 
-def _check_eml_from_buffer(file: IO) -> bool:
+def _check_eml_from_buffer(file: IO[bytes]) -> bool:
     """Checks if a text/plain file is actually a .eml file. Uses a regex pattern to see if the
     start of the file matches the typical pattern for a .eml file."""
     file.seek(0)
@@ -521,13 +537,20 @@ def _is_code_mime_type(mime_type: str) -> bool:
     return any(language in mime_type for language in PROGRAMMING_LANGUAGES)
 
 
-def add_metadata_with_filetype(filetype: FileType):
-    def decorator(func: Callable):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
+_P = ParamSpec("_P")
+
+
+def add_metadata_with_filetype(
+    filetype: FileType,
+) -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
+    """..."""
+
+    def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
+        @functools.wraps(func)
+        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
             elements = func(*args, **kwargs)
             sig = inspect.signature(func)
-            params = dict(**dict(zip(sig.parameters, args)), **kwargs)
+            params: Dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
             for param in sig.parameters.values():
                 if param.name not in params and param.default is not param.empty:
                     params[param.name] = param.default
@@ -539,6 +562,7 @@ def add_metadata_with_filetype(filetype: FileType):
                 metadata_kwargs = {
                     kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
                 }
+                elements = set_element_hierarchy(elements)
 
                 for element in elements:
                     # NOTE(robinson) - Attached files have already run through this logic
