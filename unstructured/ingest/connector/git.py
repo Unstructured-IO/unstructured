@@ -39,11 +39,13 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def record_locator(self) -> t.Dict[str, t.Any]:
-        return {
+        record_locator = {
             "repo_path": self.connector_config.repo_path,
             "file_path": self.path,
-            "branch": self.connector_config.branch,
         }
+        if self.connector_config.branch is not None:
+            record_locator["branch"] = self.connector_config.branch
+        return record_locator
 
     def _create_full_tmp_dir_path(self):
         """includes directories in in the gitlab repository"""
