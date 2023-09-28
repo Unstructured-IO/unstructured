@@ -369,21 +369,20 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
     assert elements[1].text.startswith("Zejiang Shen")
 
 
-# TODO(yuming): change this mock function to the ocr one
-# def test_auto_partition_formats_languages_for_tesseract():
-#     filename = "example-docs/chi_sim_image.jpeg"
-#     with patch(
-#         "unstructured_inference.inference.layout.process_file_with_model",
-#     ) as mock_process_file_with_model:
-#         partition(filename, strategy="hi_res", languages=["zh"])
-#         mock_process_file_with_model.assert_called_once_with(
-#             filename,
-#             is_image=True,
-#             ocr_languages="chi_sim+chi_sim_vert+chi_tra+chi_tra_vert",
-#             ocr_mode="entire_page",
-#             extract_tables=False,
-#             model_name=None,
-#         )
+def test_auto_partition_formats_languages_for_tesseract():
+    filename = "example-docs/chi_sim_image.jpeg"
+    with patch(
+        "unstructured.partition.ocr.process_file_with_ocr",
+    ) as mock_process_file_with_model:
+        partition(filename, strategy="hi_res", languages=["zh"])
+        mock_process_file_with_model.assert_called_once_with(
+            filename,
+            is_image=True,
+            ocr_languages="chi_sim+chi_sim_vert+chi_tra+chi_tra_vert",
+            # TODO(yuming): add this back when support ocr_mode
+            # ocr_mode="entire_page",
+            pdf_image_dpi=200,
+        )
 
 
 def test_auto_partition_element_metadata_user_provided_languages():
