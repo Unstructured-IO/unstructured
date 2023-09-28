@@ -130,10 +130,10 @@ def normalize_layout_element(
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
     prob = layout_dict.get("prob")
-    aux_source = layout_dict["source"] if "source" in layout_dict else None
-    source = None
-    if aux_source:
-        source = aux_source.value
+    aux_origin = layout_dict["source"] if "source" in layout_dict else None
+    origin = None
+    if aux_origin:
+        origin = aux_origin.value
     if prob and isinstance(prob, (int, str, float, numbers.Number)):
         class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))  # type: ignore
     else:
@@ -145,7 +145,7 @@ def normalize_layout_element(
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=class_prob_metadata,
-                data_origin=source,
+                data_origin=origin,
             )
         else:
             return ListItem(
@@ -153,7 +153,7 @@ def normalize_layout_element(
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=class_prob_metadata,
-                data_origin=source,
+                data_origin=origin,
             )
 
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
@@ -163,7 +163,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
-            data_origin=source,
+            data_origin=origin,
         )
         if element_type == "Headline":
             _element_class.metadata.category_depth = 1
@@ -176,7 +176,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
-            data_origin=source,
+            data_origin=origin,
         )
     elif element_type == "Unchecked":
         return CheckBox(
@@ -184,7 +184,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
-            data_origin=source,
+            data_origin=origin,
         )
     else:
         return Text(
@@ -192,7 +192,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
-            data_origin=source,
+            data_origin=origin,
         )
 
 
