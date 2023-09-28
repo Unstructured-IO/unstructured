@@ -5,6 +5,8 @@ from html import unescape
 from pathlib import Path
 from urllib.parse import urlparse
 
+import requests
+
 from unstructured.documents.elements import Element
 from unstructured.embed.interfaces import BaseEmbeddingEncoder
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
@@ -274,6 +276,10 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
                 if "/Forms" in f.serverRelativeUrl:
                     continue
                 files += self._list_files(f, recursive)
+            if files:
+                import pdb
+
+                pdb.set_trace()
             return files
         except ClientRequestException as e:
             if e.response.status_code != 404:
@@ -356,3 +362,106 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
             site_client = self.connector_config.get_site_client(site_url)
             ingest_docs = ingest_docs + self._ingest_site_docs(site_client)
         return ingest_docs
+
+
+class ConnectorRBAC:
+    def __init__(self, tenant, client_id, client_secret):
+        self.tenant = tenant
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.access_token = self.get_access_token()
+
+    def get_access_token(self):
+        url = f"https://login.microsoftonline.com/{self.tenant}/oauth2/v2.0/token"
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+
+        data = {
+            "client_id": self.client_id,
+            "scope": "https://graph.microsoft.com/.default",
+            "client_secret": self.client_secret,
+            "grant_type": "client_credentials",
+        }
+
+        response = requests.post(url, headers=headers, data=data)
+        return response.json()["access_token"]
+
+    def validated_response(self, response):
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"Request failed with status code {response.status_code}:")
+            print(response.text)
+
+    def get_sites(self):
+        url = "https://graph.microsoft.com/v1.0/sites"
+        params = {
+            "$select": "webUrl, id",
+        }
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+        }
+
+        response = requests.get(url, params=params, headers=headers)
+        return self.validated_response(response)
+
+    def get_drives(self, site):
+        url = f"https://graph.microsoft.com/v1.0/sites/{site}/drives"
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+        }
+
+        response = requests.get(url, headers=headers)
+
+        return self.validated_response(response)
+
+    def get_drive_items(self, site, drive_id):
+        url = f"https://graph.microsoft.com/v1.0/sites/{site}/drives/{drive_id}/root/children"
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+        }
+
+        response = requests.get(url, headers=headers)
+
+        return self.validated_response(response)
+
+    def get_permissions_for_drive_item(self, site, drive_id, item_id):
+        url = f"https://graph.microsoft.com/v1.0/sites/ \
+        {site}/drives/{drive_id}/items/{item_id}/permissions"
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+        }
+
+        response = requests.get(url, headers=headers)
+
+        return self.validated_response(response)
+
+    def print_all_permissions(self):
+        sites = [(site["id"], site["webUrl"]) for site in self.get_sites()["value"]]
+        drive_ids = []
+
+        for site_id, site_url in sites:
+            drives = self.get_drives(site_id)
+            if drives:
+                print(f"Working on site {site_url}")
+                drives_for_site = drives["value"]
+                drive_ids.extend([(site_id, drive["id"]) for drive in drives_for_site])
+
+        item_ids = []
+        for site, drive_id in drive_ids:
+            drive_items = self.get_drive_items(site, drive_id)
+            if drive_items:
+                item_ids.extend(
+                    [(site, drive_id, item["id"], item["name"]) for item in drive_items["value"]],
+                )
+
+        from pprint import PrettyPrinter
+
+        p = PrettyPrinter(indent=2)
+        for site, drive_id, item_id, item_name in item_ids:
+            print(item_name)
+            p.pprint(self.get_permissions_for_drive_item(site, drive_id, item_id)["value"])
+            print("\n\n")
