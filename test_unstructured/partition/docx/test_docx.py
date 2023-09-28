@@ -106,6 +106,7 @@ def test_partition_docx_from_filename(
     assert elements[0].metadata.page_number is None
     for element in elements:
         assert element.metadata.filename == "mock_document.docx"
+    assert {element.metadata.data_origin for element in elements} == {"docx"}
 
 
 def test_partition_docx_from_filename_with_metadata_filename(mock_document, tmpdir):

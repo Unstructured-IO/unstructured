@@ -245,6 +245,7 @@ def test_partition_image_default_strategy_hi_res():
     assert elements[0].metadata.coordinates is not None
     assert elements[0].metadata.detection_class_prob is not None
     assert isinstance(elements[0].metadata.detection_class_prob, float)
+    assert {element.metadata.data_origin for element in elements} == {"image"}
 
 
 def test_partition_image_metadata_date(

@@ -21,6 +21,7 @@ def test_partition_md_from_filename():
     assert len(elements) > 0
     for element in elements:
         assert element.metadata.filename == "README.md"
+    assert {element.metadata.data_origin for element in elements} == {"md"}
 
 
 def test_partition_md_from_filename_returns_uns_elements():

@@ -33,6 +33,7 @@ def test_partition_epub_from_filename():
         assert element.metadata.section is not None
         all_sections.add(element.metadata.section)
     assert all_sections == expected_sections
+    assert {element.metadata.data_origin for element in elements} == {"epub"}
 
 
 def test_partition_epub_from_filename_returns_table_in_elements():

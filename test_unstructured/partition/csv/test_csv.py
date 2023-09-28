@@ -54,12 +54,12 @@ def test_partition_csv_from_file(filename, expected_text, expected_table):
     f_path = f"example-docs/{filename}"
     with open(f_path, "rb") as f:
         elements = partition_csv(file=f)
-
     assert clean_extra_whitespace(elements[0].text) == expected_text
     assert isinstance(elements[0], Table)
     assert elements[0].metadata.text_as_html == expected_table
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
     assert elements[0].metadata.filename is None
+    assert {element.metadata.data_origin for element in elements} == {"csv"}
 
 
 def test_partition_csv_from_file_with_metadata_filename(filename="example-docs/stanley-cups.csv"):

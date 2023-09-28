@@ -28,6 +28,7 @@ def test_partition_ppt_from_filename():
     assert elements == EXPECTED_PPT_OUTPUT
     for element in elements:
         assert element.metadata.filename == "fake-power-point.ppt"
+    assert {element.metadata.data_origin for element in elements} == {"pptx"}
 
 
 def test_partition_ppt_from_filename_with_metadata_filename():

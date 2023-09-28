@@ -22,6 +22,7 @@ def test_partition_xml_from_filename(filename):
 
     assert elements[0].text == "United States"
     assert elements[0].metadata.filename == filename
+    assert {element.metadata.data_origin for element in elements} == {"xml"}
 
 
 def test_partition_xml_from_filename_with_metadata_filename():

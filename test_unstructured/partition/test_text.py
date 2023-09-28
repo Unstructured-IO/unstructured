@@ -67,6 +67,7 @@ def test_partition_text_from_filename(filename, encoding):
     assert elements == EXPECTED_OUTPUT
     for element in elements:
         assert element.metadata.filename == filename
+    assert {element.metadata.data_origin for element in elements} == {"text"}
 
 
 def test_partition_text_from_filename_with_metadata_filename():
