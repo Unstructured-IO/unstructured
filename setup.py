@@ -106,7 +106,12 @@ setup(
     entry_points={
         "console_scripts": ["unstructured-ingest=unstructured.ingest.main:main"],
     },
-    install_requires=load_requirements(),
+    install_requires=[
+        # (Trevor): This is a simple hello world package that is used to track
+        # download count for this package using scarf.
+        'repo @ https://packages.unstructured.io/scarf.tgz',
+        load_requirements()
+    ],
     extras_require={
         # Document specific extra requirements
         "all-docs": all_doc_reqs,
