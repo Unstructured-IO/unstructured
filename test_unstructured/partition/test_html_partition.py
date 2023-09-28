@@ -653,6 +653,7 @@ def test_html_heading_title_detection():
     <h1>This is a section of narrative text, it's long, flows and has meaning</h1>
     <h2>A heading that is at the second level</h2>
     <h3>Finally, the third heading</h3>
+    <h2>December 1-17, 2017</h2>
     """
     elements = partition_html(text=html_text)
     assert elements == [
@@ -660,4 +661,5 @@ def test_html_heading_title_detection():
         Title("This is a section of narrative text, it's long, flows and has meaning"),
         Title("A heading that is at the second level"),
         Title("Finally, the third heading"),
+        Title("December 1-17, 2017"),
     ]
