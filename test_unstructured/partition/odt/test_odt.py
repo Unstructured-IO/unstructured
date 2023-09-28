@@ -27,7 +27,7 @@ def test_partition_odt_from_filename():
     for element in elements:
         assert element.metadata.filename == "fake.odt"
     assert {element.metadata.data_origin for element in elements} == {
-        "docx"
+        "docx",
     }  # this file is processed by docx backend
 
 
