@@ -38,7 +38,7 @@ def test_partition_xml_from_filename_with_metadata_filename():
 )
 def test_partition_xml_from_file(filename):
     file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    with open(file_path) as f:
+    with open(file_path, "rb") as f:
         elements = partition_xml(file=f, xml_keep_tags=False, metadata_filename=file_path)
 
     assert elements[0].text == "United States"
@@ -47,7 +47,7 @@ def test_partition_xml_from_file(filename):
 
 def test_partition_xml_from_file_with_metadata_filename():
     file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", "factbook.xml")
-    with open(file_path) as f:
+    with open(file_path, "rb") as f:
         elements = partition_xml(file=f, xml_keep_tags=False, metadata_filename="test")
 
     assert elements[0].text == "United States"
@@ -158,7 +158,7 @@ def test_partition_xml_from_filename_exclude_metadata(filename):
 )
 def test_partition_xml_from_file_exclude_metadata(filename):
     file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    with open(file_path) as f:
+    with open(file_path, "rb") as f:
         elements = partition_xml(
             file=f,
             xml_keep_tags=False,
