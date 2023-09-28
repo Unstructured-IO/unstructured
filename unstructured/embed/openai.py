@@ -1,5 +1,5 @@
 import types
-from typing import List, Optional
+from typing import List
 
 import numpy as np
 
@@ -12,7 +12,7 @@ from unstructured.utils import requires_dependencies
 
 
 class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
-    def __init__(self, api_key: str, model_name: Optional[str] = "text-embedding-ada-002"):
+    def __init__(self, api_key: str, model_name: str = "text-embedding-ada-002"):
         self.api_key = api_key
         self.model_name = model_name
         self.initialize()

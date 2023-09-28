@@ -50,7 +50,11 @@ class DataSourceMetadata:
 
     @classmethod
     def from_dict(cls, input_dict):
-        return cls(**input_dict)
+        # Only use existing fields when constructing
+        supported_fields = [f.name for f in dc.fields(cls)]
+        args = {k: v for k, v in input_dict.items() if k in supported_fields}
+
+        return cls(**args)
 
 
 @dc.dataclass
@@ -129,6 +133,7 @@ class Link(TypedDict):
 
     text: Optional[str]
     url: str
+    start_index: int
 
 
 @dc.dataclass
@@ -157,6 +162,7 @@ class ElementMetadata:
     url: Optional[str] = None
     link_urls: Optional[List[str]] = None
     link_texts: Optional[List[str]] = None
+    links: Optional[List[Link]] = None
 
     # E-mail specific metadata fields
     sent_from: Optional[List[str]] = None
@@ -212,7 +218,12 @@ class ElementMetadata:
             constructor_args["data_source"] = DataSourceMetadata.from_dict(
                 constructor_args["data_source"],
             )
-        return cls(**constructor_args)
+
+        # Only use existing fields when constructing
+        supported_fields = [f.name for f in dc.fields(cls)]
+        args = {k: v for k, v in constructor_args.items() if k in supported_fields}
+
+        return cls(**args)
 
     def merge(self, other: ElementMetadata):
         for k in self.__dict__:
