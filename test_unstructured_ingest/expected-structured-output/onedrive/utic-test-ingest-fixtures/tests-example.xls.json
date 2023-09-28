@@ -12,6 +12,7 @@
         "date_created": "2023-08-24T03:00:43",
         "date_modified": "2023-08-24T03:00:43"
       },
+      "data_origin": "xlsx",
       "filename": "tests-example.xls",
       "filetype": "application/vnd.ms-excel",
       "page_number": 1,
@@ -33,6 +34,7 @@
         "date_created": "2023-08-24T03:00:43",
         "date_modified": "2023-08-24T03:00:43"
       },
+      "data_origin": "xlsx",
       "filename": "tests-example.xls",
       "filetype": "application/vnd.ms-excel",
       "page_number": 2,
@@ -54,6 +56,7 @@
         "date_created": "2023-08-24T03:00:43",
         "date_modified": "2023-08-24T03:00:43"
       },
+      "data_origin": "xlsx",
       "filename": "tests-example.xls",
       "filetype": "application/vnd.ms-excel",
       "page_number": 3,
