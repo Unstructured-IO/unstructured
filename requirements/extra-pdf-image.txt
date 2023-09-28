@@ -93,7 +93,7 @@ onnx==1.14.1
     # via unstructured-inference
 onnxruntime==1.16.0
     # via unstructured-inference
-opencv-python==4.8.0.76
+opencv-python==4.8.1.78
     # via
     #   layoutparser
     #   unstructured-inference
@@ -213,7 +213,7 @@ tqdm==4.66.1
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.33.2
+transformers==4.33.3
     # via unstructured-inference
 typing-extensions==4.8.0
     # via
@@ -224,7 +224,7 @@ typing-extensions==4.8.0
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.5.31
+unstructured-inference==0.6.6
     # via -r requirements/extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via

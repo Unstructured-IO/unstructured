@@ -317,7 +317,7 @@ def _partition_pdf_or_image_local(
     include_page_breaks: bool = False,
     languages: List[str] = ["eng"],
     ocr_mode: str = "entire_page",
-    model_name: Optional[str] = None,
+    model_name: Optional[str] = "detectron2_onnx",
     metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
