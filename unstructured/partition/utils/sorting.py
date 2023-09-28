@@ -1,3 +1,4 @@
+import os
 from typing import List, Tuple
 
 import numpy as np
@@ -7,7 +8,6 @@ from unstructured.logger import trace_logger
 from unstructured.partition.utils.constants import (
     SORT_MODE_BASIC,
     SORT_MODE_XY_CUT,
-    XY_CUT_BBOX_SHRINK_FACTOR,
 )
 from unstructured.partition.utils.xycut import recursive_xy_cut
 
@@ -81,7 +81,7 @@ def coord_has_valid_points(coordinates: CoordinatesMetadata) -> bool:
 def sort_page_elements(
     page_elements: List[Element],
     sort_mode: str = SORT_MODE_XY_CUT,
-    shrink_factor: float = XY_CUT_BBOX_SHRINK_FACTOR,
+    shrink_factor: float = 0.9,
 ) -> List[Element]:
     """
     Sorts a list of page elements based on the specified sorting mode.
@@ -101,6 +101,10 @@ def sort_page_elements(
     Returns:
     - List[Element]: A list of sorted page elements.
     """
+
+    shrink_factor = float(
+        os.environ.get("UNSTRUCTURED_XY_CUT_BBOX_SHRINK_FACTOR", shrink_factor),
+    )
 
     if not page_elements:
         return []
