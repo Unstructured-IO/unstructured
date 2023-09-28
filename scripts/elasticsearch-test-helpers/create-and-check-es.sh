@@ -23,6 +23,7 @@ while [ "$status_code" -ne 200 ] && [ "$retry_count" -lt "$max_retries" ]; do
   # Process the files only when the Elasticsearch cluster is live
   if [ "$status_code" -eq 200 ]; then
     echo "Cluster is live."
+	sleep 1
     python "$SCRIPT_DIR/create_and_fill_es.py"
   else
     ((retry_count++))
