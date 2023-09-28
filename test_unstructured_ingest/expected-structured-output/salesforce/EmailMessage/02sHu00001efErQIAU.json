@@ -9,7 +9,6 @@
         "date_created": "2023-08-20T14:35:49",
         "date_modified": "2023-08-20T14:35:55"
       },
-      "data_origin": "email",
       "filetype": "message/rfc822",
       "sent_from": [
         "devops+salesforce-connector@unstructured.io"
@@ -31,7 +30,6 @@
         "date_created": "2023-08-20T14:35:49",
         "date_modified": "2023-08-20T14:35:55"
       },
-      "data_origin": "email",
       "filetype": "message/rfc822",
       "sent_from": [
         "devops+salesforce-connector@unstructured.io"
@@ -53,7 +51,6 @@
         "date_created": "2023-08-20T14:35:49",
         "date_modified": "2023-08-20T14:35:55"
       },
-      "data_origin": "email",
       "filetype": "message/rfc822",
       "sent_from": [
         "devops+salesforce-connector@unstructured.io"
@@ -75,7 +72,6 @@
         "date_created": "2023-08-20T14:35:49",
         "date_modified": "2023-08-20T14:35:55"
       },
-      "data_origin": "email",
       "filetype": "message/rfc822",
       "sent_from": [
         "devops+salesforce-connector@unstructured.io"
@@ -97,7 +93,6 @@
         "date_created": "2023-08-20T14:35:49",
         "date_modified": "2023-08-20T14:35:55"
       },
-      "data_origin": "email",
       "filetype": "message/rfc822",
       "sent_from": [
         "devops+salesforce-connector@unstructured.io"
@@ -119,7 +114,6 @@
         "date_created": "2023-08-20T14:35:49",
         "date_modified": "2023-08-20T14:35:55"
       },
-      "data_origin": "email",
       "filetype": "message/rfc822",
       "sent_from": [
         "devops+salesforce-connector@unstructured.io"
@@ -141,7 +135,6 @@
         "date_created": "2023-08-20T14:35:49",
         "date_modified": "2023-08-20T14:35:55"
       },
-      "data_origin": "email",
       "filetype": "message/rfc822",
       "sent_from": [
         "devops+salesforce-connector@unstructured.io"
