@@ -51,6 +51,7 @@ class SharePoint(Runner):
             read_config=self.read_config,
             partition_config=self.partition_config,
             embedding_config=self.embedding_config,
+            chunking_config=self.chunking_config,
         )
 
         dest_doc_connector = None
