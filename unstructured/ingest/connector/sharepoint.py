@@ -5,8 +5,6 @@ from html import unescape
 from pathlib import Path
 from urllib.parse import urlparse
 
-import requests
-
 from unstructured.documents.elements import Element
 from unstructured.embed.interfaces import BaseEmbeddingEncoder
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
@@ -37,6 +35,9 @@ CONTENT_LABELS = ["CanvasContent1", "LayoutWebpartsContent1", "TimeCreated"]
 class SimpleSharepointConfig(BaseConnectorConfig):
     client_id: str
     client_credential: str = field(repr=False)
+    application_id_rbac: str
+    client_cred_rbac: str = field(repr=False)
+    rbac_tenant: str
     site_url: str
     path: str
     process_pages: bool = False
@@ -62,6 +63,18 @@ class SimpleSharepointConfig(BaseConnectorConfig):
             logger.error("Couldn't set Sharepoint client.")
             raise
         return site_client
+
+    def get_rbac_client(self):
+        try:
+            rbac_connector = ConnectorRBAC(
+                self.rbac_tenant,
+                self.application_id_rbac,
+                self.client_cred_rbac,
+            )
+            assert rbac_connector.access_token
+            return rbac_connector
+        except Exception as e:
+            logger.error("Couldn't obtain Sharepoint RBAC ingestion access token:", e)
 
 
 @dataclass
@@ -347,6 +360,12 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 
     def get_ingest_docs(self):
         base_site_client = self.connector_config.get_site_client()
+
+        if self.connector_config.application_id_rbac:
+            rbac_client = self.connector_config.get_rbac_client()
+            if rbac_client:
+                rbac_client.print_all_permissions()
+
         if not base_site_client.is_tenant:
             return self._ingest_site_docs(base_site_client)
         tenant = base_site_client.tenant
@@ -361,20 +380,23 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 
 
 class ConnectorRBAC:
-    def __init__(self, tenant, client_id, client_secret):
-        self.tenant = tenant
-        self.client_id = client_id
-        self.client_secret = client_secret
+    def __init__(self, rbac_tenant, application_id_rbac, client_cred_rbac):
+        self.rbac_tenant = rbac_tenant
+        self.application_id_rbac = application_id_rbac
+        self.client_cred_rbac = client_cred_rbac
         self.access_token = self.get_access_token()
 
+    @requires_dependencies(["requests"], extras="sharepoint")
     def get_access_token(self):
-        url = f"https://login.microsoftonline.com/{self.tenant}/oauth2/v2.0/token"
+        import requests
+
+        url = f"https://login.microsoftonline.com/{self.rbac_tenant}/oauth2/v2.0/token"
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
         data = {
-            "client_id": self.client_id,
+            "client_id": self.application_id_rbac,
             "scope": "https://graph.microsoft.com/.default",
-            "client_secret": self.client_secret,
+            "client_secret": self.client_cred_rbac,
             "grant_type": "client_credentials",
         }
 
@@ -388,7 +410,10 @@ class ConnectorRBAC:
             print(f"Request failed with status code {response.status_code}:")
             print(response.text)
 
+    @requires_dependencies(["requests"], extras="sharepoint")
     def get_sites(self):
+        import requests
+
         url = "https://graph.microsoft.com/v1.0/sites"
         params = {
             "$select": "webUrl, id",
@@ -401,7 +426,10 @@ class ConnectorRBAC:
         response = requests.get(url, params=params, headers=headers)
         return self.validated_response(response)
 
+    @requires_dependencies(["requests"], extras="sharepoint")
     def get_drives(self, site):
+        import requests
+
         url = f"https://graph.microsoft.com/v1.0/sites/{site}/drives"
 
         headers = {
@@ -412,7 +440,10 @@ class ConnectorRBAC:
 
         return self.validated_response(response)
 
+    @requires_dependencies(["requests"], extras="sharepoint")
     def get_drive_items(self, site, drive_id):
+        import requests
+
         url = f"https://graph.microsoft.com/v1.0/sites/{site}/drives/{drive_id}/root/children"
 
         headers = {
@@ -423,7 +454,10 @@ class ConnectorRBAC:
 
         return self.validated_response(response)
 
+    @requires_dependencies(["requests"], extras="sharepoint")
     def get_permissions_for_drive_item(self, site, drive_id, item_id):
+        import requests
+
         url = f"https://graph.microsoft.com/v1.0/sites/ \
         {site}/drives/{drive_id}/items/{item_id}/permissions"
 
@@ -442,7 +476,7 @@ class ConnectorRBAC:
         for site_id, site_url in sites:
             drives = self.get_drives(site_id)
             if drives:
-                print(f"Working on site {site_url}")
+                print(f"Obtaining RBAC data for site: {site_url}")
                 drives_for_site = drives["value"]
                 drive_ids.extend([(site_id, drive["id"]) for drive in drives_for_site])
 
