@@ -276,10 +276,6 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
                 if "/Forms" in f.serverRelativeUrl:
                     continue
                 files += self._list_files(f, recursive)
-            if files:
-                import pdb
-
-                pdb.set_trace()
             return files
         except ClientRequestException as e:
             if e.response.status_code != 404:
