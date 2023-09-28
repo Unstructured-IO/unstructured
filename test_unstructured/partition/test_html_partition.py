@@ -645,3 +645,19 @@ def test_add_chunking_strategy_on_partition_html(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_html_heading_title_detection():
+    html_text = """
+    <p>This is a section of narrative text, it's long, flows and has meaning</p>
+    <h1>This is a section of narrative text, it's long, flows and has meaning</h1>
+    <h2>A heading that is at the second level</h2>
+    <h3>Finally, the third heading</h3>
+    """
+    elements = partition_html(text=html_text)
+    assert elements == [
+        NarrativeText("This is a section of narrative text, it's long, flows and has meaning"),
+        Title("This is a section of narrative text, it's long, flows and has meaning"),
+        Title("A heading that is at the second level"),
+        Title("Finally, the third heading"),
+    ]
