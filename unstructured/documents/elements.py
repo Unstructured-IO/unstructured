@@ -199,7 +199,11 @@ class ElementMetadata:
             self.filename = filename
 
     def to_dict(self):
-        _dict = {key: value for key, value in self.__dict__.items() if value is not None}
+        _dict = {
+            key: value
+            for key, value in self.__dict__.items()
+            if value is not None and key != "data_origin"
+        }
         if "regex_metadata" in _dict and not _dict["regex_metadata"]:
             _dict.pop("regex_metadata")
         if self.data_source:
