@@ -87,8 +87,8 @@ class MockDocumentLayout(layout.DocumentLayout):
 @pytest.mark.parametrize(
     ("filename", "file"),
     [
-        # ("example-docs/example.jpg", None),
-        (None, b"0000"),
+        ("example-docs/example.jpg", None),
+        # (None, b"0000"),
     ],
 )
 def test_partition_image_local(monkeypatch, filename, file):
