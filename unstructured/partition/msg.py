@@ -145,6 +145,7 @@ def build_msg_metadata(
         subject=getattr(msg_obj, "subject", None),
         last_modified=metadata_last_modified or email_date,
         filename=filename,
+        data_origin="msg",
     )
 
 

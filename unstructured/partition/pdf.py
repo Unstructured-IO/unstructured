@@ -549,6 +549,7 @@ def _process_pdfminer_pages(
                         coordinates=coordinates_metadata,
                         last_modified=metadata_last_modified,
                         links=links,
+                        data_origin="pdfminer",
                     )
                     page_elements.append(element)
         list_item = 0
@@ -766,6 +767,7 @@ def _partition_pdf_or_image_with_ocr(
             max_partition=max_partition,
             min_partition=min_partition,
             metadata_last_modified=metadata_last_modified,
+            data_source="OCR",
         )
         width, height = image.size
         _add_pytesseract_bboxes_to_elements(
@@ -785,6 +787,7 @@ def _partition_pdf_or_image_with_ocr(
                 page_number=page_number,
                 last_modified=metadata_last_modified,
                 languages=languages,
+                data_origin="OCR",
             )
             _text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,

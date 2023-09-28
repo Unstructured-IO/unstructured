@@ -95,6 +95,7 @@ def partition_epub(
             section=item_title,
             metadata_last_modified=metadata_last_modified or last_modification_date,
             source_format="epub",
+            data_origin="epub",
             **kwargs,
         )
 

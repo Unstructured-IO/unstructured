@@ -172,7 +172,7 @@ def partition_text(
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
-    data_source: Optional[str] = None,
+    data_source: Optional[str] = "text",
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.

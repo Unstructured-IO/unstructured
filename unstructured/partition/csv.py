@@ -65,8 +65,9 @@ def partition_csv(
             text_as_html=html_text,
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
+            data_origin="csv",
         )
     else:
         metadata = ElementMetadata()
 
-    return [Table(text=text, metadata=metadata, data_origin="csv")]
+    return [Table(text=text, metadata=metadata)]

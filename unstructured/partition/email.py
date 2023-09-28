@@ -405,6 +405,7 @@ def partition_email(
             max_partition=max_partition,
             metadata_filename=metadata_filename or filename,
             min_partition=min_partition,
+            data_source="email",
         )
 
     for idx, element in enumerate(elements):
