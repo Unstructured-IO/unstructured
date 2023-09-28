@@ -9,8 +9,10 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-cffi==1.16.0
-    # via cryptography
+cffi==1.15.1
+    # via
+    #   -c requirements/constraints.in
+    #   cryptography
 charset-normalizer==3.2.0
     # via
     #   -c requirements/base.txt

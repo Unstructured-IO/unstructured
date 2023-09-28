@@ -41,3 +41,5 @@ fsspec==2023.9.1
 pandas<2.0.4
 # langchain limits this to 3.1.7
 anyio==3.1.7
+# Pin to support argon2-cffi-bindings
+cffi==1.15.1
