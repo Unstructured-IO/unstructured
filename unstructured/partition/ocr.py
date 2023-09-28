@@ -129,6 +129,42 @@ def parse_ocr_data_tesseract(ocr_data: dict) -> List[TextRegion]:
     return text_regions
 
 
+def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
+    """
+    Parse the OCR result data to extract a list of TextRegion objects from
+    paddle.
+
+    The function processes the OCR result dictionary, looking for bounding
+    box information and associated text to create instances of the TextRegion
+    class, which are then appended to a list.
+
+    Parameters:
+    - ocr_data (list): A list containing the OCR result data
+
+    Returns:
+    - List[TextRegion]: A list of TextRegion objects, each representing a
+                        detected text region within the OCR-ed image.
+
+    Note:
+    - An empty string or a None value for the 'text' key in the input
+      dictionary will result in its associated bounding box being ignored.
+    """
+    text_regions = []
+    for idx in range(len(ocr_data)):
+        res = ocr_data[idx]
+        for line in res:
+            x1 = min([i[0] for i in line[0]])
+            y1 = min([i[1] for i in line[0]])
+            x2 = max([i[0] for i in line[0]])
+            y2 = max([i[1] for i in line[0]])
+            text = line[1][0]
+            if text:
+                text_region = TextRegion(x1, y1, x2, y2, text)
+                text_regions.append(text_region)
+
+    return text_regions
+
+
 def merge_inferred_layouts_with_ocr_layouts(
     inferred_layouts: "DocumentLayout",
     ocr_layouts: List[List[TextRegion]],
