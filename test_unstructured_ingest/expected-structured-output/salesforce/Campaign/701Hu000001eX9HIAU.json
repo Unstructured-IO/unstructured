@@ -9,6 +9,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "attributes.type: Campaign"
@@ -23,6 +24,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "attributes.url: /services/data/v57.0/sobjects/Campaign/701Hu000001eX9HIAU"
@@ -37,6 +39,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "Id: 701Hu000001eX9HIAU"
@@ -51,6 +54,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "IsDeleted: False"
@@ -65,6 +69,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "Name: International Electrical Engineers Association Trade Show - Mar 4-5, 2002"
@@ -79,6 +84,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "ParentId: None"
@@ -93,6 +99,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "Type: Trade Show"
@@ -107,6 +114,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "Status: Planned"
@@ -121,6 +129,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "StartDate: 2023-03-26"
@@ -135,6 +144,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "EndDate: 2023-03-27"
@@ -149,6 +159,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "ExpectedRevenue: 8500000.0"
@@ -163,6 +174,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "BudgetedCost: 50000.0"
@@ -177,6 +189,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "ActualCost: None"
@@ -191,6 +204,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "ExpectedResponse: 0.0"
@@ -205,6 +219,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "NumberSent: 0.0"
@@ -219,6 +234,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "IsActive: True"
@@ -233,6 +249,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "Description: None"
@@ -247,6 +264,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "NumberOfLeads: 0"
@@ -261,6 +279,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "NumberOfConvertedLeads: 0"
@@ -275,6 +294,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "NumberOfContacts: 0"
@@ -289,6 +309,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "NumberOfResponses: 0"
@@ -303,6 +324,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "NumberOfOpportunities: 0"
@@ -317,6 +339,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "NumberOfWonOpportunities: 0"
@@ -331,6 +354,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "AmountAllOpportunities: 0.0"
@@ -345,6 +369,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "AmountWonOpportunities: 0.0"
@@ -359,6 +384,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "OwnerId: 005Hu00000Owz9uIAB"
@@ -373,6 +399,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "CreatedDate: 2023-08-18T11:48:08.000+0000"
@@ -387,6 +414,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "CreatedById: 005Hu00000Owz9uIAB"
@@ -401,6 +429,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "LastModifiedDate: 2023-08-18T11:48:08.000+0000"
@@ -415,6 +444,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "LastModifiedById: 005Hu00000Owz9uIAB"
@@ -429,6 +459,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "SystemModstamp: 2023-08-18T11:48:08.000+0000"
@@ -443,6 +474,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "LastActivityDate: None"
@@ -457,6 +489,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "LastViewedDate: None"
@@ -471,6 +504,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "LastReferencedDate: None"
@@ -485,6 +519,7 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
+      "data_origin": "xml",
       "filetype": "application/xml"
     },
     "text": "CampaignMemberRecordTypeId: None"
