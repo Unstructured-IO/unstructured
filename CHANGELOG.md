@@ -1,4 +1,4 @@
-## 0.10.17-dev16
+## 0.10.17-dev17
 
 ### Enhancements
 
@@ -12,6 +12,7 @@
 * **Embeddings support for the SharePoint SourceConnector via unstructured-ingest CLI** The SharePoint connector can now optionally create embeddings from the elements it pulls out during partition and upload those embeddings to Azure Cognitive Search index.
 * **Improves hierarchy from docx files by leveraging natural hierarchies built into docx documents**  Hierarchy can now be detected from an indentation level for list bullets/numbers and by style name (e.g. Heading 1, List Bullet 2, List Number).
 * **Chunking support for the SharePoint SourceConnector via unstructured-ingest CLI** The SharePoint connector can now optionally chunk the elements pulled out during partition via the chunking unstructured brick. This can be used as a stage before creating embeddings.
+* **bump `unstructured-inference` to `0.6.6`** The updated version of `unstructured-inference` makes table extraction in `hi_res` mode configurable to fine tune table extraction performance; it also improves element detection by adding a deduplication post processing step in the `hi_res` partitioning of pdfs and images.
 
 ### Features
 
