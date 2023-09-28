@@ -1,7 +1,7 @@
 import logging
 import multiprocessing as mp
+import platform
 import typing as t
-from contextlib import suppress
 from functools import partial
 
 from unstructured.ingest.doc_processor.generalized import initialize, process_document
@@ -11,9 +11,6 @@ from unstructured.ingest.interfaces import (
     PartitionConfig,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-
-with suppress(RuntimeError):
-    mp.set_start_method("spawn")
 
 
 class Processor:
@@ -107,6 +104,13 @@ def process_documents(
     verbose: bool,
     dest_doc_connector: t.Optional[BaseDestinationConnector] = None,
 ) -> None:
+    if "linux" in platform.platform().lower():
+        mp.set_start_method("fork", force=True)
+        logger.info("set multiprocessing context to fork")
+    else:
+        mp.set_start_method("spawn", force=True)
+        logger.info("set multiprocessing context to spawn")
+
     process_document_with_partition_args = partial(
         process_document,
         strategy=partition_config.strategy,
