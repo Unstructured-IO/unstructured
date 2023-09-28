@@ -93,8 +93,9 @@ onnx==1.14.1
     # via unstructured-inference
 onnxruntime==1.16.0
     # via unstructured-inference
-opencv-python==4.8.1.78
+opencv-python==4.8.0.76
     # via
+    #   -c requirements/constraints.in
     #   layoutparser
     #   unstructured-inference
 packaging==23.1

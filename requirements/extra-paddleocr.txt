@@ -112,9 +112,12 @@ numpy==1.24.4
     #   unstructured-paddleocr
     #   visualdl
 opencv-contrib-python==4.8.0.76
-    # via unstructured-paddleocr
+    # via
+    #   -c requirements/constraints.in
+    #   unstructured-paddleocr
 opencv-python==4.8.0.76
     # via
+    #   -c requirements/constraints.in
     #   imgaug
     #   unstructured-paddleocr
 openpyxl==3.1.2
