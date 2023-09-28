@@ -15,6 +15,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
@@ -51,24 +52,8 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return os.path.splitext(basename)[0]
 
     @property
-    def source_url(self) -> t.Optional[str]:
-        """The url of the source document."""
-        return self.uri
-
-    @property
-    def date_created(self) -> t.Optional[str]:
-        """This is the creation time of the table itself, not the file or specific record"""
-        # TODO get creation time of file/record
-        return self.created_at
-
-    @property
     def filename(self):
         return (Path(self.read_config.download_dir) / f"{self.uri_filename()}.csv").resolve()
-
-    @property
-    def date_modified(self) -> t.Optional[str]:
-        """The date the document was last modified on the source system."""
-        return self.modified_date
 
     @property
     def _output_filename(self):
@@ -80,11 +65,8 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
 
-    @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["fsspec"], extras="delta-table")
-    def get_file(self):
-        import pyarrow.parquet as pq
+    def _get_fs_from_uri(self):
         from fsspec.core import url_to_fs
 
         try:
@@ -94,6 +76,29 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 f"uri {self.uri} may be associated with a filesystem that "
                 f"requires additional dependencies: {error}",
             )
+        return fs
+
+    def update_source_metadata(self, **kwargs):
+        fs = kwargs.get("fs", self._get_fs_from_uri())
+        version = (
+            fs.checksum(self.uri) if fs.protocol != "gs" else fs.info(self.uri).get("etag", "")
+        )
+        file_exists = fs.exists(self.uri)
+        self.source_metadata = SourceMetadata(
+            date_created=self.created_at,
+            date_modified=self.modified_date,
+            version=version,
+            source_url=self.uri,
+            exists=file_exists,
+        )
+
+    @SourceConnectionError.wrap
+    @BaseIngestDoc.skip_if_file_exists
+    def get_file(self):
+        import pyarrow.parquet as pq
+
+        fs = self._get_fs_from_uri()
+        self.update_source_metadata(fs=fs)
         logger.info(f"using a {fs} filesystem to collect table data")
         self._create_full_tmp_dir_path()
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
