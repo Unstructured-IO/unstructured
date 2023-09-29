@@ -81,15 +81,22 @@ def partition_xlsx(
 
         _connected_components = _find_connected_components(sheet)
         for _connected_component in _connected_components:
+            # breakpoint()
             min_x, min_y, max_x, max_y = _find_min_max_coords(_connected_component)
 
-            subtable = sheet.iloc[min_x : max_x + 1, min_y : max_y + 1]
+            subtable = sheet.iloc[min_x : max_x + 1, min_y : max_y + 1]  # noqa: E203
             single_non_empty_rows, single_non_empty_row_contents = _single_non_empty_rows(
                 subtable.iterrows(),
             )
-            first_row, last_row = _find_first_and_last_non_consecutive_row(single_non_empty_rows)
-            if first_row and last_row:
-                subtable = _get_sub_subtable(subtable, (first_row + 1, -last_row - 1))
+            front_non_consecutive, last_non_consecutive = _find_first_and_last_non_consecutive_row(
+                single_non_empty_rows
+            )
+
+            # NOTE(klaijan) - need to explicitly define the condition to avoid the case of 0
+            if front_non_consecutive is not None and last_non_consecutive is not None:
+                first_row = front_non_consecutive - max_x
+                last_row = max_x - last_non_consecutive
+                subtable = _get_sub_subtable(subtable, (first_row, last_row))
 
             # detect_languages
 
@@ -103,20 +110,20 @@ def partition_xlsx(
             else:
                 metadata = ElementMetadata()
 
-            if first_row:
-                for content in single_non_empty_row_contents[: first_row + 1]:
+            if front_non_consecutive is not None:
+                for content in single_non_empty_row_contents[: front_non_consecutive + 1]:
                     element = _check_content_element_type(str(content))
                     element.metadata = metadata
                     elements.append(element)
 
-            if len(subtable) == 1:
+            if subtable is not None and len(subtable) == 1:
                 element = _check_content_element_type(str(subtable.iloc[0].values[0]))
                 element.metadata = metadata
                 elements.append(element)
 
             elif subtable is not None:
                 # parse subtables as html
-                html_text = subtable.to_html(index=False, header=header, na_rep="")
+                html_text = subtable.to_html(index=False, header=include_header, na_rep="")
                 text = soupparser_fromstring(html_text).text_content()
 
                 table_metadata = metadata
@@ -125,8 +132,10 @@ def partition_xlsx(
                 subtable = Table(text=text, metadata=table_metadata)
                 elements.append(subtable)
 
-            if last_row:
-                for content in single_non_empty_row_contents[-last_row - 1 :]:
+            if last_non_consecutive is not None:
+                for content in single_non_empty_row_contents[
+                    front_non_consecutive + 1 :
+                ]:  # noqa: E203
                     element = _check_content_element_type(str(content))
                     element.metadata = metadata
                     elements.append(element)
@@ -186,16 +195,17 @@ def _get_sub_subtable(subtable, first_and_last_row):
     # TODO(klaijan) - to further check for sub subtable, we could check whether
     # two consecutive rows contains full row of cells.
     # if yes, it might not be a header. We should check the length.
-    # If `front_non_consecutive` and `last_non_consecutive` is at the same index
-    # there is no sutable
-    front_non_consecutive, last_non_consecutive = first_and_last_row
-    if front_non_consecutive + last_non_consecutive == 0:
+    first_row, last_row = first_and_last_row
+    if last_row == first_row:
         return None
-    return subtable.iloc[front_non_consecutive:last_non_consecutive]
+    return subtable.iloc[first_row : last_row + 1]
 
 
 def _find_first_and_last_non_consecutive_row(row_indices):
     # NOTE(klaijan) - only consider non-table rows for consecutive top or bottom rows
+    if len(row_indices) == 1:
+        return row_indices[0], row_indices[0]
+
     arr = np.array(row_indices)
     front_non_consecutive = next(
         (i for i, (x, y) in enumerate(zip(arr, arr[1:])) if x + 1 != y),
@@ -240,3 +250,6 @@ def _check_content_element_type(text) -> Element:
         return Text(
             text=text,
         )
+
+
+# add language
