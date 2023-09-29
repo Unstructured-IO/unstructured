@@ -40,4 +40,6 @@ matplotlib==3.7.2
 fsspec==2023.9.1
 pandas<2.0.4
 # langchain limits this to 3.1.7
-anyio==3.1.7
+anyio==3.7.1
+cffi==1.15.1
+opencv-python==4.8.0.76
