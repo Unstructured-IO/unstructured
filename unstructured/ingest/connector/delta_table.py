@@ -184,8 +184,8 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
             f"table at {self.connector_config.table_uri}",
         )
         # NOTE: deltalake writer on Linux sometimes can finish but still trigger a SIGABRT and cause
-        # ingest to fail, even though all tasks are completed normally. PUtting the writer into a
-        # process mitigates this issue by ensuring python interpretor waits properly for deltalake's
+        # ingest to fail, even though all tasks are completed normally. Putting the writer into a
+        # process mitigates this issue by ensuring python interpreter waits properly for deltalake's
         # rust backend to finish
         writer = Process(
             target=write_deltalake,
