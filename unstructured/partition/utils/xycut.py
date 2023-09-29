@@ -85,7 +85,8 @@ def recursive_xy_cut(boxes: np.ndarray, indices: np.ndarray, res: List[int]):
 
     Args:
         boxes: (N, 4)
-        indices: during the recursion process, the index of box in the original data is always represented.
+        indices: during the recursion process, the index of box in the original data
+         is always represented.
         res: save output
 
     """
@@ -134,6 +135,66 @@ def recursive_xy_cut(boxes: np.ndarray, indices: np.ndarray, res: List[int]):
             recursive_xy_cut(
                 x_sorted_boxes_chunk[_indices],
                 x_sorted_indices_chunk[_indices],
+                res,
+            )
+
+
+def recursive_xy_cut_swapped(boxes: np.ndarray, indices: np.ndarray, res: List[int]):
+    """
+    Args:
+        boxes: (N, 4) - Numpy array representing bounding boxes with shape (N, 4)
+        where each row is (left, top, right, bottom)
+        indices: An array representing indices that correspond to boxes in the original data
+        res: A list to save the output results
+    """
+
+    # Sort the bounding boxes based on x-coordinates (flipped)
+    assert len(boxes) == len(indices)
+    _indices = boxes[:, 0].argsort()
+    x_sorted_boxes = boxes[_indices]
+    x_sorted_indices = indices[_indices]
+
+    # Project the boxes onto the x-axis and split the projection profile
+    x_projection = projection_by_bboxes(boxes=x_sorted_boxes, axis=0)
+    pos_x = split_projection_profile(x_projection, 0, 1)
+
+    if not pos_x:
+        return
+
+    arr_x0, arr_x1 = pos_x
+
+    # Loop over the segments obtained from the x-axis projection
+    for c0, c1 in zip(arr_x0, arr_x1):
+        # Obtain sub-boxes in the x-axis segment
+        _indices = (c0 <= x_sorted_boxes[:, 0]) & (x_sorted_boxes[:, 0] < c1)
+        x_sorted_boxes_chunk = x_sorted_boxes[_indices]
+        x_sorted_indices_chunk = x_sorted_indices[_indices]
+
+        # Sort the sub-boxes based on y-coordinates (flipped)
+        _indices = x_sorted_boxes_chunk[:, 1].argsort()
+        y_sorted_boxes_chunk = x_sorted_boxes_chunk[_indices]
+        y_sorted_indices_chunk = x_sorted_indices_chunk[_indices]
+
+        # Project the sub-boxes onto the y-axis and split the projection profile
+        y_projection = projection_by_bboxes(boxes=y_sorted_boxes_chunk, axis=1)
+        pos_y = split_projection_profile(y_projection, 0, 1)
+
+        if not pos_y:
+            continue
+
+        arr_y0, arr_y1 = pos_y
+
+        if len(arr_y0) == 1:
+            # If there's no splitting along the y-axis, add the indices to the result
+            res.extend(y_sorted_indices_chunk)
+            continue
+
+        # Recursive call for sub-boxes along the y-axis segments
+        for r0, r1 in zip(arr_y0, arr_y1):
+            _indices = (r0 <= y_sorted_boxes_chunk[:, 1]) & (y_sorted_boxes_chunk[:, 1] < r1)
+            recursive_xy_cut_swapped(
+                y_sorted_boxes_chunk[_indices],
+                y_sorted_indices_chunk[_indices],
                 res,
             )
 
