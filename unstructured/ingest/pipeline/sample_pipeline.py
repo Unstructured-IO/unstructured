@@ -16,7 +16,9 @@ from unstructured.ingest.pipeline import (
     Pipeline,
     PipelineContext,
     Reader,
+    Writer,
 )
+from unstructured.ingest.runner.writers import s3_writer
 
 if __name__ == "__main__":
     pipeline_config = PipelineContext(num_processes=1)
@@ -43,6 +45,13 @@ if __name__ == "__main__":
         pipeline_config=pipeline_config,
         embedder_config=EmbeddingConfig(api_key=os.getenv("OPENAI_API_KEY")),
     )
+    writer = Writer(
+        pipeline_config=pipeline_config,
+        dest_doc_connector=s3_writer(
+            remote_url="s3://utic-dev-tech-fixtures/small-pdf-set/",
+            anonymous=True,
+        ),
+    )
     pipeline = Pipeline(
         verbose=True,
         pipeline_config=pipeline_config,
@@ -50,5 +59,6 @@ if __name__ == "__main__":
         source_node=reader,
         partition_node=partitioner,
         reformat_nodes=[embedder],
+        write_node=writer,
     )
     pipeline.run()

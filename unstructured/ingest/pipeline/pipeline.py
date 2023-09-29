@@ -38,3 +38,6 @@ class Pipeline:
         for reformat_node in self.reformat_nodes:
             reformatted_jsons = reformat_node(iterable=partitioned_jsons)
             partitioned_jsons = reformatted_jsons
+
+        if self.write_node:
+            self.write_node(iterable=partitioned_jsons)

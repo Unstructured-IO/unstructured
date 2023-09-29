@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from unstructured.ingest.interfaces import (
+    BaseDestinationConnector,
     BaseSourceConnector,
     PartitionConfig,
 )
@@ -34,7 +35,12 @@ class PipelineNode(ABC):
     def __call__(self, iterable: t.Iterable[t.Any] = None):
         iterable = iterable if iterable else []
         self.initialize()
-        if self.pipeline_config.num_processes == 1 or not self.supported_multiprocessing():
+        if not self.supported_multiprocessing():
+            if iterable:
+                self.result = self.run(iterable)
+            else:
+                self.result = self.run()
+        elif self.pipeline_config.num_processes == 1:
             if iterable:
                 self.result = [self.run(it) for it in iterable]
             else:
@@ -70,6 +76,10 @@ class PipelineNode(ABC):
 class DocFactoryNode(PipelineNode):
     source_doc_connector: BaseSourceConnector
 
+    def initialize(self):
+        super().initialize()
+        self.source_doc_connector.initialize()
+
     @abstractmethod
     def run(self) -> t.Iterable[str]:
         pass
@@ -78,6 +88,7 @@ class DocFactoryNode(PipelineNode):
         return False
 
 
+@dataclass
 class SourceNode(PipelineNode):
     """
     Encapsulated logic to pull from a data source via base ingest docs
@@ -106,6 +117,7 @@ class PartitionNode(PipelineNode):
         return (Path(self.pipeline_config.get_working_dir()) / "partitioned").resolve()
 
 
+@dataclass
 class ReformatNode(PipelineNode):
     """
     Encapsulated any logic to reformat the output List[Element]
@@ -115,5 +127,17 @@ class ReformatNode(PipelineNode):
     pass
 
 
+@dataclass
 class WriteNode(PipelineNode):
-    pass
+    dest_doc_connector: BaseDestinationConnector
+
+    @abstractmethod
+    def run(self, json_paths: t.List[str]):
+        pass
+
+    def initialize(self):
+        super().initialize()
+        self.dest_doc_connector.initialize()
+
+    def supported_multiprocessing(self) -> bool:
+        return False

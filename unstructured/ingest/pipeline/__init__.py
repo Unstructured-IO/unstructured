@@ -4,5 +4,14 @@ from .partition import Partitioner
 from .pipeline import Pipeline
 from .reformat.embedding import Embedder
 from .source import Reader
+from .write import Writer
 
-__all__ = ["DocFactory", "Partitioner", "Reader", "Embedder", "PipelineContext", "Pipeline"]
+__all__ = [
+    "DocFactory",
+    "Partitioner",
+    "Reader",
+    "Embedder",
+    "PipelineContext",
+    "Pipeline",
+    "Writer",
+]
