@@ -1,3 +1,5 @@
+import json
+import os
 import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -364,7 +366,7 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         if self.connector_config.application_id_rbac:
             rbac_client = self.connector_config.get_rbac_client()
             if rbac_client:
-                rbac_client.print_all_permissions()
+                rbac_client.write_all_permissions(self.partition_config.output_dir)
 
         if not base_site_client.is_tenant:
             return self._ingest_site_docs(base_site_client)
@@ -469,17 +471,18 @@ class ConnectorRBAC:
 
         return self.validated_response(response)
 
-    def print_all_permissions(self):
+    def write_all_permissions(self, output_dir):
         sites = [(site["id"], site["webUrl"]) for site in self.get_sites()["value"]]
         drive_ids = []
 
+        print("Obtaining drive data for sites for RBAC")
         for site_id, site_url in sites:
             drives = self.get_drives(site_id)
             if drives:
-                print(f"Obtaining RBAC data for site: {site_url}")
                 drives_for_site = drives["value"]
                 drive_ids.extend([(site_id, drive["id"]) for drive in drives_for_site])
 
+        print("Obtaining item data from drives for RBAC")
         item_ids = []
         for site, drive_id in drive_ids:
             drive_items = self.get_drive_items(site, drive_id)
@@ -488,10 +491,12 @@ class ConnectorRBAC:
                     [(site, drive_id, item["id"], item["name"]) for item in drive_items["value"]],
                 )
 
-        from pprint import PrettyPrinter
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
 
-        p = PrettyPrinter(indent=2)
+        print("Writing RBAC data to disk")
         for site, drive_id, item_id, item_name in item_ids:
             print(item_name)
-            p.pprint(self.get_permissions_for_drive_item(site, drive_id, item_id)["value"])
-            print("\n\n")
+            with open(output_dir + "/" + item_id + ".json", "w") as f:
+                res = self.get_permissions_for_drive_item(site, drive_id, item_id)["value"]
+                json.dump(res, f)
