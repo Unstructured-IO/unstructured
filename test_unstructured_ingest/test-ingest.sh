@@ -56,7 +56,7 @@ trap print_last_run EXIT
 
 for script in "${scripts[@]}"; do
   CURRENT_SCRIPT=$script
-  if [[ "$CURRENT_SCRIPT" == "test-ingest-notion.sh" ]] || [[ "$CURRENT_SCRIPT" == "test-ingest-delta-table.sh" ]]; then
+  if [[ "$CURRENT_SCRIPT" == "test-ingest-notion.sh" ]]; then
     echo "--------- RUNNING SCRIPT $script --- IGNORING FAILURES"
     set +e
     echo "Running ./test_unstructured_ingest/$script"
