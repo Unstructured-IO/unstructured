@@ -1,5 +1,5 @@
 from tempfile import SpooledTemporaryFile
-from typing import IO, BinaryIO, List, Optional, Tuple, Union, cast
+from typing import IO, Any, BinaryIO, Dict, List, Optional, Tuple, Union, cast
 
 import numpy as np
 import pandas as pd
@@ -23,8 +23,7 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
-
-# from unstructured.partition.lang import detect_languages
+from unstructured.partition.lang import detect_languages
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
@@ -40,6 +39,7 @@ def partition_xlsx(
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
+    languages: List[str] = ["auto"],
     metadata_last_modified: Optional[str] = None,
     include_header: bool = False,
     **kwargs,
@@ -54,12 +54,18 @@ def partition_xlsx(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_metadata
         Determines whether or not metadata is included in the output.
+    languages
+        The list of languages present in the document.
     metadata_last_modified
         The day of the last modification
     include_header
         Determines whether or not header info info is included in text and medatada.text_as_html
     """
     exactly_one(filename=filename, file=file)
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
     last_modification_date = None
     header = 0 if include_header else None
 
@@ -92,11 +98,9 @@ def partition_xlsx(
 
             # NOTE(klaijan) - need to explicitly define the condition to avoid the case of 0
             if front_non_consecutive is not None and last_non_consecutive is not None:
-                first_row = front_non_consecutive - max_x
-                last_row = max_x - last_non_consecutive
+                first_row = int(front_non_consecutive - max_x)
+                last_row = int(max_x - last_non_consecutive)
                 subtable = _get_sub_subtable(subtable, (first_row, last_row))
-
-            # detect_languages
 
             if include_metadata:
                 metadata = ElementMetadata(
@@ -111,7 +115,9 @@ def partition_xlsx(
             if front_non_consecutive is not None:
                 for content in single_non_empty_row_contents[: front_non_consecutive + 1]:
                     element = _check_content_element_type(str(content))
+                    languages = detect_languages(str(content), languages)
                     element.metadata = metadata
+                    element.metadata.languages = languages
                     elements.append(element)
 
             if subtable is not None and len(subtable) == 1:
@@ -123,8 +129,10 @@ def partition_xlsx(
                 # parse subtables as html
                 html_text = subtable.to_html(index=False, header=include_header, na_rep="")
                 text = soupparser_fromstring(html_text).text_content()
+                languages = detect_languages(text, languages)
 
                 table_metadata = metadata
+                table_metadata.languages = languages
                 table_metadata.text_as_html = html_text
 
                 subtable = Table(text=text, metadata=table_metadata)
@@ -135,13 +143,36 @@ def partition_xlsx(
                     front_non_consecutive + 1 :  # noqa: E203
                 ]:
                     element = _check_content_element_type(str(content))
+                    languages = detect_languages(str(content), languages)
                     element.metadata = metadata
+                    element.metadata.languages = languages
                     elements.append(element)
 
     return elements
 
 
-def _get_connected_components(sheet, filter=True):
+def _get_connected_components(
+    sheet: pd.DataFrame,
+    filter: bool = True,
+):
+    """
+    Identify connected components of non-empty cells in an excel sheet.
+
+    Args:
+        sheet: an excel sheet read in DataFrame.
+        filter (bool, optional): If True (default), filters out overlapping components
+        to return distinct components.
+
+    Returns:
+        A list of tuples, each containing:
+            - A list of tuples representing the connected component's cell coordinates.
+            - A tuple with the min and max x and y coordinates bounding the connected component.
+
+    Note:
+        This function performs a depth-first search (DFS) to identify connected components of
+        non-empty cells in the sheet. If 'filter' is set to True, it also filters out
+        overlapping components to return distinct components.
+    """
     max_row, max_col = sheet.shape
     visited = set()
     connected_components = []
@@ -179,7 +210,7 @@ def _get_connected_components(sheet, filter=True):
                         "min_y": min_y,
                         "max_x": max_x,
                         "max_y": max_y,
-                    }
+                    },
                 )
     if filter:
         connected_components = _filter_overlapping_tables(connected_components)
@@ -197,7 +228,12 @@ def _get_connected_components(sheet, filter=True):
     ]
 
 
-def _filter_overlapping_tables(connected_components):
+def _filter_overlapping_tables(
+    connected_components: List[Dict[Any, Any]],
+) -> List[Dict[Any, Any]]:
+    """
+    Filter out overlapping connected components to return distinct components.
+    """
     sorted_components = sorted(connected_components, key=lambda x: x["min_x"])
     merged_components: List[dict] = []
     current_component = None
@@ -231,11 +267,12 @@ def _filter_overlapping_tables(connected_components):
     return merged_components
 
 
-def _check_overlaps_components(min_max_coord1, min_max_coord2):
-    return
-
-
-def _find_min_max_coord(connected_component):
+def _find_min_max_coord(
+    connected_component: List[Dict[Any, Any]],
+) -> Tuple[Union[int, float], Union[int, float], Union[int, float], Union[int, float]]:
+    """
+    Find the minimum and maximum coordinates (bounding box) of a connected component.
+    """
     min_x, min_y, max_x, max_y = float("inf"), float("inf"), float("-inf"), float("-inf")
     for _x, _y in connected_component:
         if _x < min_x:
@@ -250,6 +287,9 @@ def _find_min_max_coord(connected_component):
 
 
 def _get_sub_subtable(subtable: pd.DataFrame, first_and_last_row: Tuple[int, int]) -> pd.DataFrame:
+    """
+    Extract a sub-subtable from a given subtable based on the first and last row range.
+    """
     # TODO(klaijan) - to further check for sub subtable, we could check whether
     # two consecutive rows contains full row of cells.
     # if yes, it might not be a header. We should check the length.
@@ -262,6 +302,9 @@ def _get_sub_subtable(subtable: pd.DataFrame, first_and_last_row: Tuple[int, int
 def _find_first_and_last_non_consecutive_row(
     row_indices: List[int],
 ) -> Tuple[Optional[int], Optional[int]]:
+    """
+    Find the indices of the first and last non-consecutive rows in a list of row indices.
+    """
     # NOTE(klaijan) - only consider non-table rows for consecutive top or bottom rows
     if len(row_indices) == 1:
         return row_indices[0], row_indices[0]
@@ -280,6 +323,9 @@ def _find_first_and_last_non_consecutive_row(
 
 
 def _single_non_empty_rows(subtable) -> Tuple[List[int], List[str]]:
+    """
+    Identify single non-empty rows in a subtable and extract their row indices and contents.
+    """
     single_non_empty_rows = []
     single_non_empty_row_contents = []
     for index, row in subtable.iterrows():
@@ -290,6 +336,9 @@ def _single_non_empty_rows(subtable) -> Tuple[List[int], List[str]]:
 
 
 def _check_content_element_type(text: str) -> Element:
+    """
+    Classify the type of content element based on its text.
+    """
     if is_bulleted_text(text):
         return ListItem(
             text=clean_bullets(text),
