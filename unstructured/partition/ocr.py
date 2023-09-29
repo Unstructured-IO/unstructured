@@ -26,7 +26,7 @@ SUBREGION_THRESHOLD_FOR_OCR = 0.5
 
 
 def process_data_with_ocr(
-    data: Optional[Union[bytes, BinaryIO]],
+    data: Union[bytes, BinaryIO],
     is_image: bool = False,
     ocr_languages: str = "eng",
     pdf_image_dpi: int = 200,
