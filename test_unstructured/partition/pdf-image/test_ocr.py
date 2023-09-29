@@ -10,9 +10,9 @@ from unstructured.partition import ocr
 @pytest.fixture()
 def mock_ocr_regions():
     return [
-        EmbeddedTextRegion(10, 10, 90, 90, text="0", source=None),
-        EmbeddedTextRegion(200, 200, 300, 300, text="1", source=None),
-        EmbeddedTextRegion(500, 320, 600, 350, text="3", source=None),
+        EmbeddedTextRegion(10, 10, 90, 90, text="0"),
+        EmbeddedTextRegion(200, 200, 300, 300, text="1"),
+        EmbeddedTextRegion(500, 320, 600, 350, text="3"),
     ]
 
 
@@ -25,7 +25,6 @@ def mock_inferred_layout(mock_embedded_text_regions):
             r.x2,
             r.y2,
             text=None,
-            source=None,
             type="Text",
         )
         for r in mock_embedded_text_regions
@@ -203,7 +202,6 @@ def test_merge_inferred_layout_with_ocr_layout(mock_inferred_layout, mock_ocr_re
             r.x2,
             r.y2,
             text=r.text,
-            source=None,
             type="UncategorizedText",
         )
         for r in mock_ocr_regions
