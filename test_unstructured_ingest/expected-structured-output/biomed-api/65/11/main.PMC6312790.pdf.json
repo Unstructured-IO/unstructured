@@ -580,14 +580,14 @@
     "text": "Fig. 2. Corrosion rate versus exposure time for stainless steel immersed in 0.5 M H2SO4 solution in the absence and presence of ES."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
+    "type": "Title",
+    "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "%"
+    "text": "i"
   },
   {
     "type": "NarrativeText",
@@ -600,16 +600,6 @@
     "text": ") r a e y / m m"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "("
-  },
-  {
     "type": "NarrativeText",
     "element_id": "49e7364ce1027887460959b2a757b184",
     "metadata": {
@@ -620,36 +610,6 @@
     "text": "( e t a r n o s o r r o C"
   },
   {
-    "type": "Title",
-    "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "i"
-  },
-  {
-    "type": "Title",
-    "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "i"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ba5ec51d07a4ac0e951608704431d59a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": ")"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "74599fca46202613cccb12e97774b306",
     "metadata": {
@@ -658,6 +618,16 @@
       "page_number": 3
     },
     "text": "E n o i t i b h n I"
+  },
+  {
+    "type": "Title",
+    "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "i"
   },
   {
     "type": "Title",
@@ -681,13 +651,33 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "525fbe4b6760bd759bfeeae2ee487f12",
+    "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "(mm/year) 100 4 80 4 Efficiency (%) 1 _—__. —o— SS v- —a— 74 —~X_ Senn, —y— ~~. —6~ —__, ~ —o- ol, T T T T T T T 1"
+    "text": "("
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "%"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ba5ec51d07a4ac0e951608704431d59a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": ")"
   },
   {
     "type": "UncategorizedText",
@@ -731,6 +721,16 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "525fbe4b6760bd759bfeeae2ee487f12",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "(mm/year) 100 4 80 4 Efficiency (%) 1 _—__. —o— SS v- —a— 74 —~X_ Senn, —y— ~~. —6~ —__, ~ —o- ol, T T T T T T T 1"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "4a44dc15364204a80fe80e9039455cc1",
     "metadata": {
       "data_source": {},
@@ -738,16 +738,6 @@
       "page_number": 3
     },
     "text": "10"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "20"
   },
   {
     "type": "UncategorizedText",
@@ -761,6 +751,26 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "20"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "69f59c273b6e669ac32a6dd5e1b2cb63",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "90"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "d59eced1ded07f84c145592f65bdf854",
     "metadata": {
       "data_source": {},
@@ -768,6 +778,16 @@
       "page_number": 3
     },
     "text": "40"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "48449a14a4ff7d79bb7a1b6f3d488eba",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "80"
   },
   {
     "type": "UncategorizedText",
@@ -798,36 +818,6 @@
       "page_number": 3
     },
     "text": "60"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "48449a14a4ff7d79bb7a1b6f3d488eba",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "80"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "69f59c273b6e669ac32a6dd5e1b2cb63",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "90"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "5feceb66ffc86f38d952786c6d696c79",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "0"
   },
   {
     "type": "UncategorizedText",
@@ -938,6 +928,16 @@
       "page_number": 3
     },
     "text": "2g 4g 6g 8g 10g"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "5feceb66ffc86f38d952786c6d696c79",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "0"
   },
   {
     "type": "UncategorizedText",
@@ -1110,14 +1110,14 @@
     "text": "Table 1 Potentiodynamic polarization data for stainless steel in the absence and presence of ES in 0.5 M H2SO4 solution."
   },
   {
-    "type": "Table",
-    "element_id": "9270ab0a1b3ba26a16991abcd0b45dfe",
+    "type": "UncategorizedText",
+    "element_id": "9492908fadeab22ca81f18f2ba4f4f35",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Inhibitor be (V/dec) ba (V/dec) Ecorr (V) icorr (A/cm?) Polarization Corrosion concentration (g) resistance (Q) rate (mm/year) oO 0.0335 0.0409 0.0003 24.0910 2.8163 2 1.9460 0.0596 0.0002 121.440 1.5054 4 0.0163 0.2369 0.0001 42.121 0.9476 6 0.3233 0.0540 5.39E-05 373.180 0.4318 8 0.1240 0.0556 5.46E-05 305.650 0.3772 10 0.0382 0.0086 1.24E-05 246.080 0.0919"
+    "text": "0 2 4 6 8 10"
   },
   {
     "type": "Title",
@@ -1130,24 +1130,14 @@
     "text": "Inhibitor concentration (g)"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "9492908fadeab22ca81f18f2ba4f4f35",
+    "type": "Table",
+    "element_id": "9270ab0a1b3ba26a16991abcd0b45dfe",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "0 2 4 6 8 10"
-  },
-  {
-    "type": "Title",
-    "element_id": "bcf00b4904f5661d6baef52e7e09e9b1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "bc (V/dec)"
+    "text": "Inhibitor be (V/dec) ba (V/dec) Ecorr (V) icorr (A/cm?) Polarization Corrosion concentration (g) resistance (Q) rate (mm/year) oO 0.0335 0.0409 0.0003 24.0910 2.8163 2 1.9460 0.0596 0.0002 121.440 1.5054 4 0.0163 0.2369 0.0001 42.121 0.9476 6 0.3233 0.0540 5.39E-05 373.180 0.4318 8 0.1240 0.0556 5.46E-05 305.650 0.3772 10 0.0382 0.0086 1.24E-05 246.080 0.0919"
   },
   {
     "type": "UncategorizedText",
@@ -1161,13 +1151,13 @@
   },
   {
     "type": "Title",
-    "element_id": "12e486f4a9b3a1805bf7e95b5d01847b",
+    "element_id": "bcf00b4904f5661d6baef52e7e09e9b1",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "ba (V/dec)"
+    "text": "bc (V/dec)"
   },
   {
     "type": "UncategorizedText",
@@ -1178,6 +1168,16 @@
       "page_number": 4
     },
     "text": "0.0409 0.0596 0.2369 0.0540 0.0556 0.0086"
+  },
+  {
+    "type": "Title",
+    "element_id": "12e486f4a9b3a1805bf7e95b5d01847b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "ba (V/dec)"
   },
   {
     "type": "Title",
@@ -1200,16 +1200,6 @@
     "text": "(cid:3) 0.9393 (cid:3) 0.8276 (cid:3) 0.8825 (cid:3) 0.8027 (cid:3) 0.5896 (cid:3) 0.5356"
   },
   {
-    "type": "Title",
-    "element_id": "6978574f5e6e70a2883ea5ea51aa34f7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "icorr (A/cm2)"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "d71f426079cb8c2bb3d960ce1e23d290",
     "metadata": {
@@ -1221,13 +1211,13 @@
   },
   {
     "type": "Title",
-    "element_id": "7507a06cf675785949d6312f1776e444",
+    "element_id": "6978574f5e6e70a2883ea5ea51aa34f7",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Polarization resistance (Ω)"
+    "text": "icorr (A/cm2)"
   },
   {
     "type": "UncategorizedText",
@@ -1241,13 +1231,13 @@
   },
   {
     "type": "Title",
-    "element_id": "6d9d421c5383a3abfc3ff6f15c0b16cc",
+    "element_id": "7507a06cf675785949d6312f1776e444",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Corrosion rate (mm/year)"
+    "text": "Polarization resistance (Ω)"
   },
   {
     "type": "UncategorizedText",
@@ -1258,6 +1248,16 @@
       "page_number": 4
     },
     "text": "2.8163 1.5054 0.9476 0.4318 0.3772 0.0919"
+  },
+  {
+    "type": "Title",
+    "element_id": "6d9d421c5383a3abfc3ff6f15c0b16cc",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Corrosion rate (mm/year)"
   },
   {
     "type": "NarrativeText",
@@ -1331,16 +1331,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "2"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "a0dfa682f99b0794f40f195f9a7adfcd",
     "metadata": {
       "data_source": {},
@@ -1358,6 +1348,16 @@
       "page_number": 4
     },
     "text": "C/0"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "2"
   },
   {
     "type": "UncategorizedText",
