@@ -77,6 +77,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         from discord.ext import commands
 
         messages: t.List[discord.Message] = []
+        jumpurl: t.List[str] = []
         intents = discord.Intents.default()
         intents.message_content = True
         bot = commands.Bot(command_prefix=">", intents=intents)
@@ -88,15 +89,17 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 if self.days:
                     after_date = dt.datetime.utcnow() - dt.timedelta(days=self.days)
                 channel = bot.get_channel(int(self.channel))
+                jumpurl.append(channel.jump_url)  # type: ignore
                 async for msg in channel.history(after=after_date):  # type: ignore
                     messages.append(msg)
                 await bot.close()
             except Exception:
                 logger.error("Error fetching messages")
                 await bot.close()
+                raise
 
         bot.run(self.token)
-        jump_url = bot.get_channel(int(self.channel)).jump_url  # type: ignore
+        jump_url = None if len(jumpurl) < 1 else jumpurl[0]
         return messages, jump_url
 
     def update_source_metadata(self, **kwargs):
