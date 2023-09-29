@@ -200,16 +200,6 @@
     "text": "Specifications table"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "d73eb61849f82eb6a4ebf54e3dea2205",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Subject area Operations research More specific subject area Vehicle scheduling Type of data Tables, text files How data were acquired Artificially generated"
-  },
-  {
     "type": "Title",
     "element_id": "41e0fa358cefcadbb2633ec45ff2d129",
     "metadata": {
@@ -231,13 +221,13 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "5c3978ebc42ea4f11240c221ac3be1cf",
+    "element_id": "d73eb61849f82eb6a4ebf54e3dea2205",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Subject area Operations research More speciﬁc subject area Vehicle scheduling Type of data How data were acquired"
+    "text": "Subject area Operations research More specific subject area Vehicle scheduling Type of data Tables, text files How data were acquired Artificially generated"
   },
   {
     "type": "ListItem",
@@ -270,16 +260,6 @@
     "text": "© The dataset contains 60 different problem instances of the MDVSP that can be used to evaluate the"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "64caae148856359a1f67a7e3e1d3ef0f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "© The data provide all the information that is required to model the MDVSP by using the existing"
-  },
-  {
     "type": "Title",
     "element_id": "bd7d750cb9f652c80c17a264072b8858",
     "metadata": {
@@ -291,13 +271,13 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "f3c5ed1c1de057195ad9a900adbbb7f3",
+    "element_id": "64caae148856359a1f67a7e3e1d3ef0f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "e All the problem instances are available for use without any restrictions. e The benchmark solutions and solution time for the problem instances are presented in [3] and can"
+    "text": "© The data provide all the information that is required to model the MDVSP by using the existing"
   },
   {
     "type": "Title",
@@ -311,13 +291,13 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7c65dd387d814178eedf5ad13d1cf394",
+    "element_id": "f3c5ed1c1de057195ad9a900adbbb7f3",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "© The dataset includes a program that can generate similar problem instances of different sizes."
+    "text": "e All the problem instances are available for use without any restrictions. e The benchmark solutions and solution time for the problem instances are presented in [3] and can"
   },
   {
     "type": "NarrativeText",
@@ -331,13 +311,13 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1c1d6b35ac0925a35ea3bb4d018e675f",
+    "element_id": "7c65dd387d814178eedf5ad13d1cf394",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "(cid:2) The dataset includes a program that can generate similar problem instances of different sizes."
+    "text": "© The dataset includes a program that can generate similar problem instances of different sizes."
   },
   {
     "type": "ListItem",
@@ -611,16 +591,6 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ec1c912bb5d60d59cf12b77e79f6a49c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "The dataset also includes a program ‘Generatelnstance.cpp’ that can be used to generate new instances. The program takes three inputs, the number of depots (m), the number of trips (n), and the number of instances for each size (m,n)."
-  },
-  {
-    "type": "NarrativeText",
     "element_id": "31fe8ed4674c8889ee9c149871681148",
     "metadata": {
       "data_source": {},
@@ -641,13 +611,13 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e731dc92fddc0512e142bfb2bed62bbf",
+    "element_id": "ec1c912bb5d60d59cf12b77e79f6a49c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "The dataset also includes a program ‘GenerateInstance.cpp’ that can be used to generate new instances. The program takes three inputs, the number of depots ðmÞ, the number of trips ðnÞ, and the number of instances for each size ðm; nÞ."
+    "text": "The dataset also includes a program ‘Generatelnstance.cpp’ that can be used to generate new instances. The program takes three inputs, the number of depots (m), the number of trips (n), and the number of instances for each size (m,n)."
   },
   {
     "type": "UncategorizedText",
@@ -700,8 +670,8 @@
     "text": "568.40 672.80 923.40 977.00 566.00 732.60 875.00 1119.60 581.80 778.00 879.00 1087.20"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "1cb85e5f94671526c0cf38dc533f87e0",
+    "type": "Title",
+    "element_id": "47a68d3aa70030f2e7886e3f1cb07c69",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1021,16 +991,6 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "53970060a94f98b02ba4346e8fbb86a7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "[4] A.S. Pepin, G. Desaulniers, A. Hertz, D. Huisman, A comparison of five heuristics for the multiple depot vehicle scheduling"
-  },
-  {
-    "type": "NarrativeText",
     "element_id": "5be1ebcceece0eff157903caf44c20a0",
     "metadata": {
       "data_source": {},
@@ -1041,13 +1001,13 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "16c341408703257ff517dcc76140e2c0",
+    "element_id": "53970060a94f98b02ba4346e8fbb86a7",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "[4] A.S. Pepin, G. Desaulniers, A. Hertz, D. Huisman, A comparison of ﬁve heuristics for the multiple depot vehicle scheduling"
+    "text": "[4] A.S. Pepin, G. Desaulniers, A. Hertz, D. Huisman, A comparison of five heuristics for the multiple depot vehicle scheduling"
   },
   {
     "type": "UncategorizedText",

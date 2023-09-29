@@ -855,25 +855,6 @@
     "text": "Workforce"
   },
   {
-    "type": "Title",
-    "element_id": "ca978112ca1bbdcafac231b39a23dc4d",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
-        "version": 167189396509615428390709838081557906335,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
-        },
-        "date_created": "2023-03-10T09:32:44+00:00",
-        "date_modified": "2023-03-10T09:32:44+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "a"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "cdc3773cb12cf99d302b9f00c48ae1e8",
     "metadata": {
@@ -891,6 +872,25 @@
       "page_number": 2
     },
     "text": "required of"
+  },
+  {
+    "type": "Title",
+    "element_id": "ca978112ca1bbdcafac231b39a23dc4d",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
+        "version": 167189396509615428390709838081557906335,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "date_created": "2023-03-10T09:32:44+00:00",
+        "date_modified": "2023-03-10T09:32:44+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "a"
   },
   {
     "type": "NarrativeText",
