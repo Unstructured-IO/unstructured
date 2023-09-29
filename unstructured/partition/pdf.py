@@ -317,7 +317,7 @@ def _partition_pdf_or_image_local(
     include_page_breaks: bool = False,
     languages: List[str] = ["eng"],
     ocr_mode: str = "entire_page",
-    model_name: Optional[str] = "detectron2_onnx",
+    model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
@@ -329,7 +329,11 @@ def _partition_pdf_or_image_local(
 
     ocr_languages = prepare_languages_for_tesseract(languages)
 
-    model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
+    model_name = (
+        model_name
+        if model_name
+        else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", "detectron2_onnx")
+    )
     pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
     extract_images_in_pdf = kwargs.get("extract_images_in_pdf", False)
     image_output_dir_path = kwargs.get("image_output_dir_path", None)
