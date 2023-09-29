@@ -205,6 +205,10 @@ class ElementMetadata:
             _dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
         if self.coordinates:
             _dict["coordinates"] = cast(CoordinatesMetadata, self.coordinates).to_dict()
+        if self.link_texts:
+            self.link_texts = [
+                link for link in self.link_texts if link is not None and isinstance(link, str)
+            ]
         return _dict
 
     @classmethod
