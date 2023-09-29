@@ -85,11 +85,11 @@ def recursive_xy_cut(boxes: np.ndarray, indices: np.ndarray, res: List[int]):
 
     Args:
         boxes: (N, 4)
-        indices: 递归过程中始终表示 box 在原始数据中的索引
-        res: 保存输出结果
+        indices: during the recursion process, the index of box in the original data is always represented.
+        res: save output
 
     """
-    # 向 y 轴投影
+    # project to the y-axis
     assert len(boxes) == len(indices)
 
     _indices = boxes[:, 1].argsort()
@@ -105,7 +105,8 @@ def recursive_xy_cut(boxes: np.ndarray, indices: np.ndarray, res: List[int]):
 
     arr_y0, arr_y1 = pos_y
     for r0, r1 in zip(arr_y0, arr_y1):
-        # [r0, r1] 表示按照水平切分，有 bbox 的区域，对这些区域会再进行垂直切分
+        # [r0, r1] means that the areas with bbox will be divided horizontally, and these areas
+        # will be divided vertically.
         _indices = (r0 <= y_sorted_boxes[:, 1]) & (y_sorted_boxes[:, 1] < r1)
 
         y_sorted_boxes_chunk = y_sorted_boxes[_indices]
@@ -115,7 +116,7 @@ def recursive_xy_cut(boxes: np.ndarray, indices: np.ndarray, res: List[int]):
         x_sorted_boxes_chunk = y_sorted_boxes_chunk[_indices]
         x_sorted_indices_chunk = y_sorted_indices_chunk[_indices]
 
-        # 往 x 方向投影
+        # project in the x direction
         x_projection = projection_by_bboxes(boxes=x_sorted_boxes_chunk, axis=0)
         pos_x = split_projection_profile(x_projection, 0, 1)
         if not pos_x:
@@ -123,11 +124,11 @@ def recursive_xy_cut(boxes: np.ndarray, indices: np.ndarray, res: List[int]):
 
         arr_x0, arr_x1 = pos_x
         if len(arr_x0) == 1:
-            # x 方向无法切分
+            # x-direction cannot be divided
             res.extend(x_sorted_indices_chunk)
             continue
 
-        # x 方向上能分开，继续递归调用
+        # can be separated in the x-direction and continue to call recursively
         for c0, c1 in zip(arr_x0, arr_x1):
             _indices = (c0 <= x_sorted_boxes_chunk[:, 0]) & (x_sorted_boxes_chunk[:, 0] < c1)
             recursive_xy_cut(
