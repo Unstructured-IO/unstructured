@@ -296,6 +296,10 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
             Path(self.partition_config.output_dir) / self.grouping_folder_name / output_file
         ).resolve()
 
+    @property
+    def version(self) -> t.Optional[str]:
+        return None
+
     def update_source_metadata(self, **kwargs) -> None:
         exists = bool(self.issue)
         if not exists:
@@ -303,11 +307,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
                 exists=exists,
             )
             return
-        # NOTE: The response dict contains a key named `versions` which is a list of dictionaries.
-        #  Validation is TBD.
-        version = None
-        if len(self.parsed_fields["versions"]) >= 1:
-            version = self.parsed_fields["versions"][-1].get("id")
+
         self.source_metadata = SourceMetadata(
             date_created=datetime.strptime(
                 self.parsed_fields["created"],
@@ -317,7 +317,6 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
                 self.parsed_fields["updated"],
                 "%Y-%m-%dT%H:%M:%S.%f%z",
             ).isoformat(),
-            version=version,
             source_url=f"{self.connector_config.url}/browse/{self.file_meta.issue_key}",
             exists=exists,
         )
