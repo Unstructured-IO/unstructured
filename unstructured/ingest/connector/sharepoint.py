@@ -163,7 +163,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 file = site_client.web.get_file_by_server_relative_url(self.server_path)
                 if properties_only:
                     file = file.get().execute_query()
-
         except ClientRequestException as e:
             if e.response.status_code == 404:
                 return None
@@ -186,8 +185,10 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return page
 
     def update_rbac_data(self):
-        print(self.file_path)
-        print(os.listdir(self.partition_config.output_dir))
+        for filename in os.listdir(self.partition_config.output_dir):
+            if self.file_path.split("/")[-1] in filename:
+                with open(os.path.join(self.partition_config.output_dir, filename)) as f:
+                    self.source_metadata.rbac_data = json.loads(f.read())
         return
 
     def update_source_metadata(self, **kwargs):
@@ -227,11 +228,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _download_page(self):
         """Formats and saves locally page content"""
         content = self._fetch_file()
-        if content.to_json():
-            import pdb
-
-            pdb.set_trace()
-
         self.update_source_metadata()
         self.update_rbac_data()
         pld = (content.properties.get("LayoutWebpartsContent1", "") or "") + (
@@ -256,11 +252,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def _download_file(self):
         file = self._fetch_file()
-        if file.to_json():
-            import pdb
-
-            pdb.set_trace()
-
         self.update_source_metadata()
         self.update_rbac_data()
         fsize = file.length
@@ -514,7 +505,7 @@ class ConnectorRBAC:
         print("Writing RBAC data to disk")
         for site, drive_id, item_id, item_name in item_ids:
             print(item_name)
-            with open(output_dir + "/" + item_id + ".json", "w") as f:
+            with open(output_dir + "/" + item_name + "_" + item_id + ".json", "w") as f:
                 res = self.get_permissions_for_drive_item(site, drive_id, item_id)
                 if res:
                     json.dump(res["value"], f)
