@@ -199,7 +199,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "9c4387f669c689e9af0a712fd494b2d7",
+    "element_id": "e18242a460d9d495ea7cffee38c1e647",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -213,43 +213,7 @@
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "The need for harmony in the nuclear regulatory environment"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "93e7dedc9d334470067ad2de1f9ee788",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "The need for a holistic safety paradigm for the whole electricity system."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "3cc3e847449fed4fa13bbd94f86e43a9",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "The need to create a level playing field that values reliability and energy security"
+    "text": "° The need to create a level playing field that values reliability and energy security ° The need for harmony in the nuclear regulatory environment ° The need for a holistic safety paradigm for the whole electricity system."
   },
   {
     "type": "UncategorizedText",
@@ -3439,7 +3403,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "338d3e15917414641f2b559473f168f8",
+    "element_id": "0ad07326f56e66781da5dbb9488eaa67",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -3453,7 +3417,7 @@
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "Figure 6. The lasting decarbonization of French electricity and nuclear’s ability to meet growing demand x"
+    "text": "Figure 6. The lasting decarbonization of French electricity and nuclear’s ability to meet growing demand”"
   },
   {
     "type": "NarrativeText",
@@ -3474,8 +3438,8 @@
     "text": "The incredible energy density of uranium means that just a few kilos is all that is required to provide one person with enough power for a lifetime. Uranium is abundant and can be found in many parts of the world, as well as in seawater. Furthermore, spent nuclear fuel is well managed and can in most cases be recycled to produce even more power. By using nuclear energy, countries are able to take charge of their own destinies by decreasing their reliance on imported energy – enhanced independence and security in uncertain times."
   },
   {
-    "type": "FigureCaption",
-    "element_id": "eeda9f9210dfe4be7e82b4385290d3ca",
+    "type": "Image",
+    "element_id": "36ca9b7cdbbcba729a46487cf86c07eb",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -3636,8 +3600,8 @@
     "text": "i"
   },
   {
-    "type": "Title",
-    "element_id": "5d7f49449ab22deac22d767b89549c55",
+    "type": "ListItem",
+    "element_id": "ffc47b19bb43cce8c23421b5c78b17b4",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -3651,223 +3615,7 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "ii"
-  },
-  {
-    "type": "Title",
-    "element_id": "f5557d4fcf727a981a3c315aca733eef",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "iii"
-  },
-  {
-    "type": "Title",
-    "element_id": "0ab306823035661bb8dba21cc2535231",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "iv"
-  },
-  {
-    "type": "Title",
-    "element_id": "d3fc2842ddfad4c8d3859f84d4439bfd",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "Vv"
-  },
-  {
-    "type": "Title",
-    "element_id": "4c94485e0c21ae6c41ce1dfe7b6bface",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "v"
-  },
-  {
-    "type": "Title",
-    "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "vi"
-  },
-  {
-    "type": "Title",
-    "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "vi"
-  },
-  {
-    "type": "Title",
-    "element_id": "c1d2906220d1eef1b17422b7132872a8",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "vii"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "de72de35f0092bdd3107011f3be18dc0",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "International Energy Agency (2018), World Energy Outlook 2018. Data accessed from https://www.iea.org/weo/ – Based on the New Policies Scenario, which incorporates existing energy policies as well as an assessment of the results likely to stem from the implementation of announced policy intentions – with visual modification by World Nuclear Association. International Energy Agency (n.d.), Statistics. Accessed from: https://www.iea.org/statistics/?country=WORLD&year=2016&category=Electricity&indicator=ElecGenByFuel&mode =chart&dataTable=ELECTRICITYANDHEAT – with visual modifications by World Nuclear Association. International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ Intergovernmental Panel on Climate Change (2018), Special Report on Global Warming of 1.5 °C. Accessed from: https://www.ipcc.ch/sr15/ International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ International Energy Agency & OECD Nuclear Energy Agency (2015), Projected Costs of generating Electricity – 2015 Edition. Accessed from: https://www.oecd-nea.org/ndd/pubs/2015/7057-proj-costs-electricity-2015.pdf International Atomic Energy Agency (2015), Technical challenges in the application and licensing of digital instrumentation and control systems in nuclear power plants. Accessed from: https://www-pub.iaea.org/MTCD/ Publications/PDF/P1695_web.pdf"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "b6396ecd6f60e3dcca17c045c00846c1",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "viii Paul-Scherrer Institute. Data for nuclear accidents modified to reflect UNSCEAR findings/recommendations (2012)"
-  },
-  {
-    "type": "Title",
-    "element_id": "ed171375d0bf81eaa5512140c3a29b8f",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "ix"
-  },
-  {
-    "type": "Title",
-    "element_id": "2d711642b726b04401627ca9fbac32f5",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "x"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "5897aff759a5cc8d94710101c73af296",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "and NRC SOARCA study 2015 International Energy Agency (2018), Electricity Information 2018 https://webstore.iea.org/electricity-information-2018-overview Ibid."
+    "text": "i nternational Energy Agency (20 results Nuclear Association. ii nternational iii nternational Energy Agency (20 publications/nuclear/ 8), World Energy Outloo! Energy Agency (n.d.), Statistics. Accessed from: https://www.iea.org/statistics/?country=>WORLD&year=20 =chart&dataTable=ELECTRICITYANDHEAT - with visual modifications by World Nuclear Association. 9), Nuclear Power in a CI 2018. Data accessed from https://www.iea.org/weo/ — Based on the New Policies Scenario, which incorporates existing energy policies as well as an assessment of the ikely to stem from the implementation of announced policy intentions — with visual modification by World 6&category=Electricity&indicator=ElecGenByFuel&mode lean Energy System. Accessed from: https://www.iea.org/ iv Intergovernmental Panel on Climate Change (2018), Special Report on Global Warming of 1.5 °C. Accessed from: https:/Awww.ipce.ch/sr15/ Vv nternational Energy Agency (20 publications/nuclear/ vi nternational vii International Publications/PDF/P1695_web.pdf and NRC SOARCA study 2015 ix nternational x bid. 9), Nuclear Power in a CI Energy Agency & OECD Nuclear Energy Agency (2015), Projected Costs o 2015 Edition. Accessed from: https:/Awww.oecd-nea.org/ndd/pubs/2015/7057-proj-costs-electricity-2015.pdf Atomic Energy Agency (2015), Technical challenges in the application and instrumentation and control systems in nuclear power plants. Accessed from: https://www-pub.iaea.org/MTCD/ Energy Agency (2018), Electricity Information 2018 https://webstore.iea.org/electricity-information-2018-overview lean Energy System. Accessed from: https://www.iea.org/ generating Electricity — icensing of digital Paul-Scherrer Institute. Data for nuclear accidents modified to reflect UNSCEAR findings/recommendations (2012)"
   },
   {
     "type": "NarrativeText",
