@@ -35,6 +35,7 @@ jobs:
           source .venv/bin/activate
           [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
           make install-ci
+          git clone -b  yuming/remove_ocr_code --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
 
   update-fixtures-and-pr:
     runs-on: ubuntu-latest
@@ -56,6 +57,7 @@ jobs:
           source .venv/bin/activate
           mkdir "$NLTK_DATA"
           make install-ci
+          git clone -b  yuming/remove_ocr_code --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
       - name: Update test fixtures
         env:
           AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
@@ -119,7 +121,6 @@ jobs:
           make install-ingest-wikipedia
           make install-ingest-notion
           make install-ingest-delta-table
-          git clone -b  yuming/remove_ocr_code --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
           ./test_unstructured_ingest/test-ingest.sh
 
       - name: Save branch name to environment file
