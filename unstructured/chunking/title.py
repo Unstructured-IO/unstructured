@@ -20,43 +20,30 @@ def chunk_table_element(
     element: Table,
     max_characters: Optional[int] = 1500,
 ) -> List[Union[Table, TableChunk]]:
+    text = element.text
+    html = getattr(element, 'text_as_html', None)
+
+    if len(text) <= max_characters and (html is None or len(html) <= max_characters):
+        return [element]
+
     chunks = []
+    metadata = copy.copy(element.metadata)
+    is_continuation = False
 
-    element_char_len = len(element.text)
+    while text or html:
+        text_chunk, text = text[:max_characters], text[max_characters:]
+        table_chunk = TableChunk(text=text_chunk, metadata=copy.copy(metadata))
 
-    html_table = element.text_as_html if hasattr(element, "text_as_html") else None
-    if html_table:
-        element_char_len = len(html_table)
-    if element_char_len <= max_characters:  # type: ignore
-        chunks.append(element)
-    else:
-        text = element.text
-        text_as_html = element.text_as_html if hasattr(element, "text_as_html") else None
-        i = 0
-        metadata = element.metadata
-        while text or text_as_html:
-            text_chunk = text[:max_characters]
-            table_chunk = TableChunk(
-                text=text_chunk,
-                metadata=copy.copy(metadata),
-            )
-            if text_as_html:
-                text_as_html_chunk = text_as_html[:max_characters]
-                table_chunk.metadata.text_as_html = text_as_html_chunk
-                # Remove the processed chunk from text_as_html
-                text_as_html = text_as_html[max_characters:]
-            if i > 0:
-                table_chunk.metadata.is_continuation = True
+        if html:
+            html_chunk, html = html[:max_characters], html[max_characters:]
+            table_chunk.metadata.text_as_html = html_chunk
 
-            chunks.append(table_chunk)
-            i += 1
+        if is_continuation:
+            table_chunk.metadata.is_continuation = True
 
-            # Remove the processed chunk from text
-            text = text[max_characters:]
+        chunks.append(table_chunk)
+        is_continuation = True
 
-            # Ensure that text and text_as_html are not empty before continuing
-            if not text and not text_as_html:
-                break
     return chunks
 
 
@@ -110,48 +97,38 @@ def chunk_by_title(
     for section in sections:
         if not section:
             continue
-        if not isinstance(section[0], Text):
+
+        first_element = section[0]
+
+        if not isinstance(first_element, Text):
             chunked_elements.extend(section)
+            continue
 
-        elif isinstance(section[0], Text):
-            if isinstance(section[0], Table):
-                chunked_elements.extend(chunk_table_element(section[0], max_characters))
+        elif isinstance(first_element, Table):
+            chunked_elements.extend(chunk_table_element(section[0], max_characters))
+            continue
 
-            else:
-                text = ""
-                metadata = section[0].metadata
+        text = ""
+        metadata = first_element.metadata
+        start_char = 0
+        for element in section:
+            if isinstance(element, Text):
+                text += "\n\n" if text else ""
+                start_char = len(text)
+                text += element.text
+            for attr, value in vars(element.metadata).items():
+                if isinstance(value, list):
+                    _value = getattr(metadata, attr, []) or []
 
-                for i, element in enumerate(section):
-                    if isinstance(element, Text):
-                        text += "\n\n" if text else ""
-                        start_char = len(text)
-                        text += element.text
+                    if attr == "regex_metadata":
+                        for item in value:
+                            item["start"] += start_char
+                            item["end"] += start_char
 
-                    for attr, value in vars(element.metadata).items():
-                        if not isinstance(value, list):
-                            continue
+                    _value.extend(item for item in value if item not in _value)
+                    setattr(metadata, attr, _value)
 
-                        _value = getattr(metadata, attr, [])
-                        if _value is None:
-                            _value = []
-
-                        if attr == "regex_metadata":
-                            for item in value:
-                                item["start"] += start_char
-                                item["end"] += start_char
-
-                        if i > 0:
-                            # NOTE(newelh): Previously, _value was extended with value.
-                            # This caused a memory error if the content was a list of strings
-                            # with a large number of elements -- doubling the list size each time.
-                            # This now instead ensures that the _value list is unique and updated.
-                            for item in value:
-                                if item not in _value:
-                                    _value.append(item)
-
-                            setattr(metadata, attr, _value)
-
-                chunked_elements.append(CompositeElement(text=text, metadata=metadata))
+        chunked_elements.append(CompositeElement(text=text, metadata=metadata))
 
     return chunked_elements
 

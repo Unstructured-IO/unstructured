@@ -258,7 +258,7 @@ def test_add_chunking_strategy_raises_error_for_invalid_n_chars():
         CheckBox(),
     ]
     with pytest.raises(ValueError):
-        chunk_by_title(elements, combine_text_under_n_chars=1, max_characters=0)
+        chunk_by_title(elements, combine_text_under_n_chars=1, new_after_n_chars=0)
 
 
 def test_chunk_by_title_drops_extra_metadata():
