@@ -185,6 +185,11 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return None
         return page
 
+    def update_rbac_data(self):
+        print(self.file_path)
+        print(os.listdir(self.partition_config.output_dir))
+        return
+
     def update_source_metadata(self, **kwargs):
         if self.is_page:
             page = self._fetch_page()
@@ -222,7 +227,13 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _download_page(self):
         """Formats and saves locally page content"""
         content = self._fetch_file()
+        if content.to_json():
+            import pdb
+
+            pdb.set_trace()
+
         self.update_source_metadata()
+        self.update_rbac_data()
         pld = (content.properties.get("LayoutWebpartsContent1", "") or "") + (
             content.properties.get("CanvasContent1", "") or ""
         )
@@ -245,7 +256,13 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def _download_file(self):
         file = self._fetch_file()
+        if file.to_json():
+            import pdb
+
+            pdb.set_trace()
+
         self.update_source_metadata()
+        self.update_rbac_data()
         fsize = file.length
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -498,5 +515,6 @@ class ConnectorRBAC:
         for site, drive_id, item_id, item_name in item_ids:
             print(item_name)
             with open(output_dir + "/" + item_id + ".json", "w") as f:
-                res = self.get_permissions_for_drive_item(site, drive_id, item_id)["value"]
-                json.dump(res, f)
+                res = self.get_permissions_for_drive_item(site, drive_id, item_id)
+                if res:
+                    json.dump(res["value"], f)
