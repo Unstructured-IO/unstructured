@@ -23,10 +23,12 @@ def chunk_table_element(
     text = element.text
     html = getattr(element, "text_as_html", None)
 
-    if len(text) <= max_characters and (html is None or len(html) <= max_characters):
+    if len(text) <= max_characters and (  # type: ignore
+        html is None or len(html) <= max_characters  # type: ignore
+    ):
         return [element]
 
-    chunks = []
+    chunks: List[Union[Table, TableChunk]] = []
     metadata = copy.copy(element.metadata)
     is_continuation = False
 
@@ -105,7 +107,7 @@ def chunk_by_title(
             continue
 
         elif isinstance(first_element, Table):
-            chunked_elements.extend(chunk_table_element(section[0], max_characters))
+            chunked_elements.extend(chunk_table_element(first_element, max_characters))
             continue
 
         text = ""
