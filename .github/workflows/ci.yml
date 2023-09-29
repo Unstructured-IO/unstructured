@@ -38,6 +38,7 @@ jobs:
         source .venv/bin/activate
         [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
         make install-ci
+        git clone -b  yuming/remove_ocr_code --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
 
   check-deps:
     strategy:
@@ -94,6 +95,7 @@ jobs:
         python${{ matrix.python-version }} -m venv .venv
         source .venv/bin/activate
         make install-ci
+        git clone -b  yuming/remove_ocr_code --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
     - name: Lint
       run: |
         source .venv/bin/activate
@@ -134,6 +136,7 @@ jobs:
         source .venv/bin/activate
         mkdir "$NLTK_DATA"
         make install-ci
+        git clone -b  yuming/remove_ocr_code --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
@@ -147,6 +150,7 @@ jobs:
         tesseract --version
         # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
         make install-ci
+        git clone -b  yuming/remove_ocr_code --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
         make test CI=true
         make check-coverage
 
@@ -255,6 +259,7 @@ jobs:
         source .venv/bin/activate
         mkdir "$NLTK_DATA"
         make install-ci
+        git clone -b  yuming/remove_ocr_code --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
     - name: Test Ingest (unit)
       run: |
         source .venv/bin/activate
@@ -359,12 +364,14 @@ jobs:
         source .venv/bin/activate
         mkdir "$NLTK_DATA"
         make install-ci
+        git clone -b  yuming/remove_ocr_code --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
     - name: Test Unstructured API Unit
       if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
       run: |
         source .venv/bin/activate
         # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
         make install-ci
+        git clone -b  yuming/remove_ocr_code --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
         sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
         make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
