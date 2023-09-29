@@ -114,6 +114,7 @@ class SourceMetadata(DataClassJsonMixin, ABC):
     version: t.Optional[str] = None
     source_url: t.Optional[str] = None
     exists: t.Optional[bool] = None
+    rbac: t.Optional[dict] = None
 
 
 @dataclass

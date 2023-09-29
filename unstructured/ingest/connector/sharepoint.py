@@ -1,3 +1,5 @@
+import json
+import os
 import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -35,6 +37,9 @@ CONTENT_LABELS = ["CanvasContent1", "LayoutWebpartsContent1", "TimeCreated"]
 class SimpleSharepointConfig(BaseConnectorConfig):
     client_id: str
     client_credential: str = field(repr=False)
+    application_id_rbac: str
+    client_cred_rbac: str = field(repr=False)
+    rbac_tenant: str
     site_url: str
     path: str
     process_pages: bool = False
@@ -60,6 +65,18 @@ class SimpleSharepointConfig(BaseConnectorConfig):
             logger.error("Couldn't set Sharepoint client.")
             raise
         return site_client
+
+    def get_rbac_client(self):
+        try:
+            rbac_connector = ConnectorRBAC(
+                self.rbac_tenant,
+                self.application_id_rbac,
+                self.client_cred_rbac,
+            )
+            assert rbac_connector.access_token
+            return rbac_connector
+        except Exception as e:
+            logger.error("Couldn't obtain Sharepoint RBAC ingestion access token:", e)
 
 
 @dataclass
@@ -146,7 +163,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 file = site_client.web.get_file_by_server_relative_url(self.server_path)
                 if properties_only:
                     file = file.get().execute_query()
-
         except ClientRequestException as e:
             if e.response.status_code == 404:
                 return None
@@ -167,6 +183,13 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             logger.error(e)
             return None
         return page
+
+    def update_rbac_data(self):
+        for filename in os.listdir(self.partition_config.output_dir):
+            if self.file_path.split("/")[-1] in filename:
+                with open(os.path.join(self.partition_config.output_dir, filename)) as f:
+                    self.source_metadata.rbac_data = json.loads(f.read())
+        return
 
     def update_source_metadata(self, **kwargs):
         if self.is_page:
@@ -206,6 +229,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Formats and saves locally page content"""
         content = self._fetch_file()
         self.update_source_metadata()
+        # self.update_rbac_data()
         pld = (content.properties.get("LayoutWebpartsContent1", "") or "") + (
             content.properties.get("CanvasContent1", "") or ""
         )
@@ -229,6 +253,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _download_file(self):
         file = self._fetch_file()
         self.update_source_metadata()
+        # self.update_rbac_data()
         fsize = file.length
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -345,6 +370,12 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 
     def get_ingest_docs(self):
         base_site_client = self.connector_config.get_site_client()
+
+        if self.connector_config.application_id_rbac:
+            rbac_client = self.connector_config.get_rbac_client()
+            if rbac_client:
+                rbac_client.write_all_permissions(self.partition_config.output_dir)
+
         if not base_site_client.is_tenant:
             return self._ingest_site_docs(base_site_client)
         tenant = base_site_client.tenant
@@ -356,3 +387,125 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
             site_client = self.connector_config.get_site_client(site_url)
             ingest_docs = ingest_docs + self._ingest_site_docs(site_client)
         return ingest_docs
+
+
+class ConnectorRBAC:
+    def __init__(self, rbac_tenant, application_id_rbac, client_cred_rbac):
+        self.rbac_tenant = rbac_tenant
+        self.application_id_rbac = application_id_rbac
+        self.client_cred_rbac = client_cred_rbac
+        self.access_token = self.get_access_token()
+
+    @requires_dependencies(["requests"], extras="sharepoint")
+    def get_access_token(self):
+        import requests
+
+        url = f"https://login.microsoftonline.com/{self.rbac_tenant}/oauth2/v2.0/token"
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+
+        data = {
+            "client_id": self.application_id_rbac,
+            "scope": "https://graph.microsoft.com/.default",
+            "client_secret": self.client_cred_rbac,
+            "grant_type": "client_credentials",
+        }
+
+        response = requests.post(url, headers=headers, data=data)
+        return response.json()["access_token"]
+
+    def validated_response(self, response):
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"Request failed with status code {response.status_code}:")
+            print(response.text)
+
+    @requires_dependencies(["requests"], extras="sharepoint")
+    def get_sites(self):
+        import requests
+
+        url = "https://graph.microsoft.com/v1.0/sites"
+        params = {
+            "$select": "webUrl, id",
+        }
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+        }
+
+        response = requests.get(url, params=params, headers=headers)
+        return self.validated_response(response)
+
+    @requires_dependencies(["requests"], extras="sharepoint")
+    def get_drives(self, site):
+        import requests
+
+        url = f"https://graph.microsoft.com/v1.0/sites/{site}/drives"
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+        }
+
+        response = requests.get(url, headers=headers)
+
+        return self.validated_response(response)
+
+    @requires_dependencies(["requests"], extras="sharepoint")
+    def get_drive_items(self, site, drive_id):
+        import requests
+
+        url = f"https://graph.microsoft.com/v1.0/sites/{site}/drives/{drive_id}/root/children"
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+        }
+
+        response = requests.get(url, headers=headers)
+
+        return self.validated_response(response)
+
+    @requires_dependencies(["requests"], extras="sharepoint")
+    def get_permissions_for_drive_item(self, site, drive_id, item_id):
+        import requests
+
+        url = f"https://graph.microsoft.com/v1.0/sites/ \
+        {site}/drives/{drive_id}/items/{item_id}/permissions"
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+        }
+
+        response = requests.get(url, headers=headers)
+
+        return self.validated_response(response)
+
+    def write_all_permissions(self, output_dir):
+        sites = [(site["id"], site["webUrl"]) for site in self.get_sites()["value"]]
+        drive_ids = []
+
+        print("Obtaining drive data for sites for RBAC")
+        for site_id, site_url in sites:
+            drives = self.get_drives(site_id)
+            if drives:
+                drives_for_site = drives["value"]
+                drive_ids.extend([(site_id, drive["id"]) for drive in drives_for_site])
+
+        print("Obtaining item data from drives for RBAC")
+        item_ids = []
+        for site, drive_id in drive_ids:
+            drive_items = self.get_drive_items(site, drive_id)
+            if drive_items:
+                item_ids.extend(
+                    [(site, drive_id, item["id"], item["name"]) for item in drive_items["value"]],
+                )
+
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        print("Writing RBAC data to disk")
+        for site, drive_id, item_id, item_name in item_ids:
+            print(item_name)
+            with open(output_dir + "/" + item_name + "_" + item_id + ".json", "w") as f:
+                res = self.get_permissions_for_drive_item(site, drive_id, item_id)
+                if res:
+                    json.dump(res["value"], f)
