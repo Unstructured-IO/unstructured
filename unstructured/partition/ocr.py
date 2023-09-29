@@ -4,6 +4,8 @@ from typing import BinaryIO, List, Optional, Union, cast
 
 import numpy as np
 import pdf2image
+
+# TODO(yuming): update pytesseract to unst forked pytesseract
 import pytesseract
 from PIL import Image as PILImage
 from PIL import ImageSequence
