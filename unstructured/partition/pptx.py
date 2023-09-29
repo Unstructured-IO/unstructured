@@ -217,7 +217,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         if not notes_text:
             return
 
-        yield NarrativeText(text=notes_text, metadata=self._text_metadata)
+        yield NarrativeText(text=notes_text, metadata=self._text_metadata())
 
     def _iter_paragraph_elements(self, shape: Shape) -> Iterator[Element]:
         """Generate Text or subtype element for each paragraph in `shape`."""
@@ -230,16 +230,19 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             text = paragraph.text
             if text.strip() == "":
                 continue
+
+            metadata = self._text_metadata(getattr(paragraph, "level", 0))
+
             if self._is_bulleted_paragraph(paragraph):
-                yield ListItem(text=text, metadata=self._text_metadata)
+                yield ListItem(text=text, metadata=metadata)
             elif is_email_address(text):
                 yield EmailAddress(text=text)
             elif is_possible_narrative_text(text):
-                yield NarrativeText(text=text, metadata=self._text_metadata)
+                yield NarrativeText(text=text, metadata=metadata)
             elif is_possible_title(text):
-                yield Title(text=text, metadata=self._text_metadata)
+                yield Title(text=text, metadata=metadata)
             else:
-                yield Text(text=text, metadata=self._text_metadata)
+                yield Text(text=text, metadata=metadata)
 
     def _iter_table_element(self, graphfrm: GraphicFrame) -> Iterator[Table]:
         """Generate zero-or-one Table element for the table in `shape`.
@@ -305,11 +308,11 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             text_as_html=text_as_html,
         )
 
-    @property
-    def _text_metadata(self):
+    def _text_metadata(self, category_depth: int = 0) -> ElementMetadata:
         """ElementMetadata instance suitable for use with Text and subtypes."""
         return ElementMetadata(
             filename=self._filename,
             last_modified=self._last_modified,
             page_number=self._page_number,
+            category_depth=category_depth,
         )
