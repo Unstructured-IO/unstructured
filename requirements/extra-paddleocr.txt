@@ -33,7 +33,7 @@ cssselect==1.2.0
     # via premailer
 cssutils==2.7.1
     # via premailer
-cycler==0.11.0
+cycler==0.12.0
     # via matplotlib
 cython==3.0.2
     # via unstructured-paddleocr

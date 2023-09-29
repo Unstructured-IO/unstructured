@@ -11,7 +11,7 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-cffi==1.15.1
+cffi==1.16.0
     # via cryptography
 charset-normalizer==3.2.0
     # via
@@ -24,7 +24,7 @@ contourpy==1.1.1
     # via matplotlib
 cryptography==41.0.4
     # via pdfminer-six
-cycler==0.11.0
+cycler==0.12.0
     # via matplotlib
 effdet==0.4.1
     # via layoutparser
