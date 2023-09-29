@@ -21,7 +21,7 @@ def chunk_table_element(
     max_characters: Optional[int] = 1500,
 ) -> List[Union[Table, TableChunk]]:
     text = element.text
-    html = getattr(element, 'text_as_html', None)
+    html = getattr(element, "text_as_html", None)
 
     if len(text) <= max_characters and (html is None or len(html) <= max_characters):
         return [element]
