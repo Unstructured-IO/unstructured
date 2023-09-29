@@ -1091,8 +1091,8 @@ def get_word_bounding_box_from_element(
         word = ""
         x1, y1, x2, y2 = None, None, None, None
         start_index = 0
-        set_alnum = False
         for index, character in enumerate(text_line):
+            breakpoint()
             if isinstance(character, LTChar):
                 characters.append(character)
                 char = character.get_text()
@@ -1106,11 +1106,9 @@ def get_word_bounding_box_from_element(
 
                 # TODO(klaijan) - isalnum() only works with A-Z, a-z and 0-9
                 # will need to switch to some pattern matching once we support more languages
-                if not set_alnum:
+                if not word:
                     isalnum = char.isalnum()
-                    set_alnum = True
-
-                if char.isalnum() != isalnum:
+                if word and char.isalnum() != isalnum:
                     isalnum = char.isalnum()
                     words.append(
                         {"text": word, "bbox": (x1, y1, x2, y2), "start_index": start_index},
