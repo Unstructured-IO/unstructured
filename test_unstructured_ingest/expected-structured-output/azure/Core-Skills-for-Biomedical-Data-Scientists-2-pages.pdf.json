@@ -266,25 +266,6 @@
     "text": "Executive Summary"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "2364a6d2f9a3858d51d91b817732e6c9",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
-        "version": 167189396509615428390709838081557906335,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
-        },
-        "date_created": "2023-03-10T09:32:44+00:00",
-        "date_modified": "2023-03-10T09:32:44+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "This report provides recommendations for a scientists based on analysis that draws on opinions of data scientists, curricula for existing science requirements science jobs."
-  },
-  {
     "type": "Title",
     "element_id": "6712d87f1d156abf6171f700e2875889",
     "metadata": {
@@ -302,6 +283,25 @@
       "page_number": 1
     },
     "text": "biomedical"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "2364a6d2f9a3858d51d91b817732e6c9",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
+        "version": 167189396509615428390709838081557906335,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "date_created": "2023-03-10T09:32:44+00:00",
+        "date_modified": "2023-03-10T09:32:44+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "This report provides recommendations for a scientists based on analysis that draws on opinions of data scientists, curricula for existing science requirements science jobs."
   },
   {
     "type": "Title",
@@ -836,25 +836,6 @@
     "text": "The"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "cdc3773cb12cf99d302b9f00c48ae1e8",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
-        "version": 167189396509615428390709838081557906335,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
-        },
-        "date_created": "2023-03-10T09:32:44+00:00",
-        "date_modified": "2023-03-10T09:32:44+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "required of"
-  },
-  {
     "type": "Title",
     "element_id": "aa3b88196a6407c3866c85acdcc8c981",
     "metadata": {
@@ -891,6 +872,25 @@
       "page_number": 2
     },
     "text": "a"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "cdc3773cb12cf99d302b9f00c48ae1e8",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
+        "version": 167189396509615428390709838081557906335,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "date_created": "2023-03-10T09:32:44+00:00",
+        "date_modified": "2023-03-10T09:32:44+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "required of"
   },
   {
     "type": "NarrativeText",
@@ -1102,25 +1102,6 @@
     "text": "b)"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "1117af46b0a22dd02d3869ab9738a8a8",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
-        "version": 167189396509615428390709838081557906335,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
-        },
-        "date_created": "2023-03-10T09:32:44+00:00",
-        "date_modified": "2023-03-10T09:32:44+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Data science skills taught in BD2K-funded training programs. A qualitative content analysis applied to the descriptions of required offered under the BD2kK-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized four major categories: (1) statistics and math skills; (2) computer science; (3) subject knowledge; (4) general skills, like communication and teamwork. The coding schema is detailed in Appendix A."
-  },
-  {
     "type": "Title",
     "element_id": "6b847a0ed0b2c484c73f2749e29b4db5",
     "metadata": {
@@ -1138,6 +1119,25 @@
       "page_number": 2
     },
     "text": "into"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "1117af46b0a22dd02d3869ab9738a8a8",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
+        "version": 167189396509615428390709838081557906335,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "date_created": "2023-03-10T09:32:44+00:00",
+        "date_modified": "2023-03-10T09:32:44+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Data science skills taught in BD2K-funded training programs. A qualitative content analysis applied to the descriptions of required offered under the BD2kK-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized four major categories: (1) statistics and math skills; (2) computer science; (3) subject knowledge; (4) general skills, like communication and teamwork. The coding schema is detailed in Appendix A."
   },
   {
     "type": "NarrativeText",
@@ -1216,8 +1216,8 @@
     "text": "c)"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "961a38da2886c3cc25091d912769aa0d",
+    "type": "Title",
+    "element_id": "6d0607a7a2ac9823f9fb2a62ea2b7385",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -1232,7 +1232,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "job job government (8.5%), (42.4%), industry (83.9%), and nonprofit (15.3%) were sampled from websites like Glassdoor, Linkedin, and Ziprecruiter. The content analysis methodology and coding schema in analyzing the training programs were applied to the job descriptions. Because many job ads mentioned the same skill more than once, each occurrence of the skill was coded, therefore weighting single ad."
+    "text": "Desired"
   },
   {
     "type": "NarrativeText",
@@ -1254,8 +1254,8 @@
     "text": "important skills that were mentioned multiple times in"
   },
   {
-    "type": "Title",
-    "element_id": "6d0607a7a2ac9823f9fb2a62ea2b7385",
+    "type": "NarrativeText",
+    "element_id": "961a38da2886c3cc25091d912769aa0d",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -1270,7 +1270,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Desired"
+    "text": "job job government (8.5%), (42.4%), industry (83.9%), and nonprofit (15.3%) were sampled from websites like Glassdoor, Linkedin, and Ziprecruiter. The content analysis methodology and coding schema in analyzing the training programs were applied to the job descriptions. Because many job ads mentioned the same skill more than once, each occurrence of the skill was coded, therefore weighting single ad."
   },
   {
     "type": "Title",

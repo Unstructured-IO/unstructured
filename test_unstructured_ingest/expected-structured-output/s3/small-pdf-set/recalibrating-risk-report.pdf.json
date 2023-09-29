@@ -289,7 +289,7 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "4523540f1504cd17100c4835e85b7eef",
+    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -303,7 +303,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "17"
+    "text": "30"
   },
   {
     "type": "UncategorizedText",
@@ -321,7 +321,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "30"
+    "text": "17"
   },
   {
     "type": "UncategorizedText",
@@ -415,24 +415,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": 306475068461766865312866697521104206816,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "date_modified": "2023-02-12T10:09:32"
-      },
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "1"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "4b227777d4dd1fc61c6f884f48641d02",
     "metadata": {
       "data_source": {
@@ -523,6 +505,24 @@
   },
   {
     "type": "Title",
+    "element_id": "ed3861e631428b9b77e2bdc0384d2cbe",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Vaccinations"
+  },
+  {
+    "type": "Title",
     "element_id": "602d25f25cca4ebb709f8b48f54d99d9",
     "metadata": {
       "data_source": {
@@ -556,6 +556,24 @@
       "page_number": 4
     },
     "text": "Nuclear power"
+  },
+  {
+    "type": "Title",
+    "element_id": "1656c455012b016fbac5eac0a38397bd",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Electric power (non-nuclear)"
   },
   {
     "type": "Title",
@@ -736,6 +754,24 @@
       "page_number": 4
     },
     "text": "2"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": ""
   },
   {
     "type": "NarrativeText",
@@ -1080,6 +1116,24 @@
     "text": "10"
   },
   {
+    "type": "Title",
+    "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "a t a F"
+  },
+  {
     "type": "UncategorizedText",
     "element_id": "ef2d127de37b942baad06145e54b0c61",
     "metadata": {
@@ -1114,6 +1168,42 @@
       "page_number": 5
     },
     "text": "46"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c020bad937ece011339d7447ee0ac9fa",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "2.8"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "5feceb66ffc86f38d952786c6d696c79",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "0"
   },
   {
     "type": "Title",
@@ -1999,7 +2089,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "b6c39a9b3890b5132e4310c83d06b310",
+    "element_id": "9a236889bced20048d1619798291d194",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -2013,7 +2103,7 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "Photo credits: Front cover & pages 1, 4, 6 left, 7 bottom: Adobe Stock; page 6 right: Getty Images; page 7 top: Uniper."
+    "text": "vii World Health Organization. (2016). Updated tables 2016 for ‘Preventing disease through health environments: a"
   },
   {
     "type": "NarrativeText",
@@ -2143,6 +2233,24 @@
   },
   {
     "type": "Title",
+    "element_id": "86c0a0cef7faa217f386f75ead17dbec",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "sheets/detail/climate-change-and-health"
+  },
+  {
+    "type": "Title",
     "element_id": "7267222b91f507e040c69dad9af7941f",
     "metadata": {
       "data_source": {
@@ -2161,7 +2269,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e72fdf383c0b4d8cba0284d4f7ff06d5",
+    "element_id": "2ef1e8614bc32af635d2a0c894b2ed3c",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -2175,11 +2283,11 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "World Health Organization (2020). Road traffic injuries. Available at: https://www.who.int/news-room/fact-sheets/ detail/road-traffic-injuries"
+    "text": "Slovic, P., 2010. The Psychology of risk. Saúde e Sociedade, 19(4), pp. 731-747."
   },
   {
-    "type": "Title",
-    "element_id": "86c0a0cef7faa217f386f75ead17dbec",
+    "type": "NarrativeText",
+    "element_id": "e4d7c811a799c3c8e706125556f8a370",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -2193,7 +2301,7 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "sheets/detail/climate-change-and-health"
+    "text": "BBC (2020). Plane crash fatalities fell more than 50% in 2019. Available at: https://www.bbc.co.uk/news/ business-50953712"
   },
   {
     "type": "NarrativeText",

@@ -360,6 +360,42 @@
     "text": "40,000"
   },
   {
+    "type": "Title",
+    "element_id": "d04999bf99ea28fc8a6b20318caac58c",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": " CSP"
+  },
+  {
+    "type": "Title",
+    "element_id": "563a2980d46c81119e1d7d952b375a41",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "h W T"
+  },
+  {
     "type": "UncategorizedText",
     "element_id": "4ebe55cc1aee6dd892d7182d797d105a",
     "metadata": {
@@ -882,6 +918,114 @@
     "text": "Coal"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "5feceb66ffc86f38d952786c6d696c79",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "0"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "81a83544cf93c245178cbc1620030f11",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "2000"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "7d12ba56e9f8b3dc64f77c87318c4f37",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "2010"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "73a2af8864fc500fa49048bf3003776c",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "2020"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "8e1f192fe25ad49be764c3f55c68beb3",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "2030"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "df34d853f2f2f1f14b92359f695426dc",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "2040"
+  },
+  {
     "type": "NarrativeText",
     "element_id": "66b8b3d92630592d2aa5cf7a9bd29feb",
     "metadata": {
@@ -970,6 +1114,24 @@
       "page_number": 4
     },
     "text": "30,000,000"
+  },
+  {
+    "type": "Title",
+    "element_id": "a5d60fc4dbbd484074d8389c35703cf7",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "h W G"
   },
   {
     "type": "UncategorizedText",
@@ -1078,6 +1240,24 @@
       "page_number": 4
     },
     "text": "|_| High-carbon HE Low-carbon"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "5feceb66ffc86f38d952786c6d696c79",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "0"
   },
   {
     "type": "UncategorizedText",
@@ -1909,6 +2089,24 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "e7ac0786668e0ff0f02b62bd04f45ff6",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": ":"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "b725d20650649a5221675144bab5946e",
     "metadata": {
       "data_source": {
@@ -2071,6 +2269,24 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "cdb4ee2aea69cc6a83331bbe96dc2caa",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "."
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
     "metadata": {
       "data_source": {
@@ -2088,8 +2304,8 @@
     "text": "1"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "cdb4ee2aea69cc6a83331bbe96dc2caa",
+    "type": "Title",
+    "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -2103,7 +2319,187 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "."
+    "text": "a t a F"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d59eced1ded07f84c145592f65bdf854",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "40"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "e7ac0786668e0ff0f02b62bd04f45ff6",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": ":"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "911bc18af1665a604b4fa4a97d47f477",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "“99 :"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "20"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "5feceb66ffc86f38d952786c6d696c79",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "0"
+  },
+  {
+    "type": "Title",
+    "element_id": "6c25ebfc9ffd2510c4c41d4bd5cb7ea9",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "C oal"
+  },
+  {
+    "type": "Title",
+    "element_id": "2378bdd2cf4f491cf401e6b215cbb4fd",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "Oil"
+  },
+  {
+    "type": "Title",
+    "element_id": "4fabb98454d019811a732c4a09f31bf0",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "N atural gas"
+  },
+  {
+    "type": "Title",
+    "element_id": "593cbe414f10662e62c0da03ce3302b8",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "fe)"
+  },
+  {
+    "type": "Title",
+    "element_id": "77cf83b127020f3a465005abc747e63f",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "Offshore wind"
   },
   {
     "type": "UncategorizedText",
@@ -2322,24 +2718,6 @@
     "text": "100"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "69f59c273b6e669ac32a6dd5e1b2cb63",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "90"
-  },
-  {
     "type": "Title",
     "element_id": "d435e2a355ab7c01ea88ee60fcf8502e",
     "metadata": {
@@ -2356,6 +2734,24 @@
       "page_number": 8
     },
     "text": "IB Coal"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "69f59c273b6e669ac32a6dd5e1b2cb63",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "90"
   },
   {
     "type": "Title",
@@ -3096,24 +3492,6 @@
     "text": "Figure 6. The lasting decarbonization of French electricity and nuclear’s ability to meet growing demand”"
   },
   {
-    "type": "FigureCaption",
-    "element_id": "eeda9f9210dfe4be7e82b4385290d3ca",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "One fuel pellet contains as much energy as a tonne of coal"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "edf37116e01e19dd7e27cc6f915b81d2",
     "metadata": {
@@ -3130,6 +3508,24 @@
       "page_number": 9
     },
     "text": "The incredible energy density of uranium means that just a few kilos is all that is required to provide one person with enough power for a lifetime. Uranium is abundant and can be found in many parts of the world, as well as in seawater. Furthermore, spent nuclear fuel is well managed and can in most cases be recycled to produce even more power. By using nuclear energy, countries are able to take charge of their own destinies by decreasing their reliance on imported energy — enhanced independence and security in uncertain times."
+  },
+  {
+    "type": "FigureCaption",
+    "element_id": "eeda9f9210dfe4be7e82b4385290d3ca",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "One fuel pellet contains as much energy as a tonne of coal"
   },
   {
     "type": "NarrativeText",
