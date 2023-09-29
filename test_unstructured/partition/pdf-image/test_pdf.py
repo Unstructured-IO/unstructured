@@ -479,7 +479,7 @@ def test_partition_pdf_fast_groups_text_in_text_box():
             system=expected_coordinate_system_3,
         ),
     )
-    assert elements[3] == Text("2.5", metadata=expected_elem_metadata_3)
+    assert elements[2] == Text("2.5", metadata=expected_elem_metadata_3)
 
 
 def test_partition_pdf_with_metadata_filename(
