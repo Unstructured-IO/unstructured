@@ -1,3 +1,12 @@
+## 0.10.19-dev0
+
+### Enhancements
+* **Refactor OCR code** add me....
+
+### Features
+
+### Fixes
+
 ## 0.10.18
 
 ### Enhancements
