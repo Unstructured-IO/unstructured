@@ -335,8 +335,11 @@ def _partition_pdf_or_image_local(
 
     ocr_languages = prepare_languages_for_tesseract(languages)
 
-    model_name = model_name if model_name else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME")
-
+    model_name = (
+        model_name
+        if model_name
+        else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", "detectron2_onnx")
+    )
     pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
     if pdf_image_dpi is None:
         pdf_image_dpi = 300 if model_name == "chipper" else 200

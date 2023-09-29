@@ -33,7 +33,7 @@ cssselect==1.2.0
     # via premailer
 cssutils==2.7.1
     # via premailer
-cycler==0.11.0
+cycler==0.12.0
     # via matplotlib
 cython==3.0.2
     # via unstructured-paddleocr
@@ -112,9 +112,12 @@ numpy==1.24.4
     #   unstructured-paddleocr
     #   visualdl
 opencv-contrib-python==4.8.0.76
-    # via unstructured-paddleocr
+    # via
+    #   -c requirements/constraints.in
+    #   unstructured-paddleocr
 opencv-python==4.8.0.76
     # via
+    #   -c requirements/constraints.in
     #   imgaug
     #   unstructured-paddleocr
 openpyxl==3.1.2

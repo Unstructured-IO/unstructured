@@ -161,17 +161,17 @@
   },
   {
     "type": "Title",
-    "element_id": "b877cc5d670d770084dcc0bb41ac73a0",
+    "element_id": "ac89a2886224c42ad15982cd34421ff8",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Subject area More specific subject area Type of data"
+    "text": "Subject area More speciﬁc subject area Surface science and engineering Type of data"
   },
   {
-    "type": "Title",
-    "element_id": "b27e559f6c00d2bde61efba5db252e31",
+    "type": "NarrativeText",
+    "element_id": "0a789b33a0101a46f5a01d22d9a6ce2b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -438,16 +438,6 @@
       "page_number": 2
     },
     "text": "Exposure Time (Hours)"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "25db7b1d2f5780559e1034d72bcb4050",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Fig. 1. Weight loss versus exposure time for stainless steel presence of ES."
   },
   {
     "type": "NarrativeText",
@@ -770,14 +760,14 @@
     "text": "O. Sanni, A.P.. Popoola / Data in Brief 22 (2019) 451-457"
   },
   {
-    "type": "FigureCaption",
-    "element_id": "27b45633a0f31b9e01d179d70d7dc282",
+    "type": "Image",
+    "element_id": "b5ee6af3d776b0bbd2e581a3ab2ab2e1",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "5 1 os = — 10; =o ° © —\" 205 i —~é é —ip a5 — Control -2 — & 2.5 T T T 0.0000001 + —-0.00001 0.001 O14 Current Density (A/cm2)"
+    "text": "Potential (Vv)nm°in°}aryT T T0.00001 0.001 olCurrent Density (A/cm2)"
   },
   {
     "type": "UncategorizedText",
@@ -1060,34 +1050,34 @@
     "text": "455"
   },
   {
-    "type": "FigureCaption",
-    "element_id": "273fb301b173075f79b2cbdab962e2ff",
+    "type": "Image",
+    "element_id": "caa364fead90039aae1f13d64dcb8b37",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEM HV: Q0KY WD: 14.89 rmrm ‘9EM MAO: 209 x Det: DOE Pectomsence In nanospact"
+    "text": "SEM HV: Q0KY WD: 14.89 rmrm‘DEM MAO: 209 x ‘Dor Pecforsence In nenospact"
   },
   {
-    "type": "FigureCaption",
-    "element_id": "520d1da08c86ce165cd2843e2dc27f98",
+    "type": "Image",
+    "element_id": "a0463ca888a6f2c8c3ba40ba47be0f2f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEMHV: 20.0KV WD: 15.54 mm EM ING: ACO x Dei: OSE"
+    "text": "gEOOwaeSemny. z00RV | WD: 1424 renn rtirint VEoa3 Tescan20 yin Fertormaros in nancepace|"
   },
   {
-    "type": "FigureCaption",
-    "element_id": "d04d110c16a4ebc184fa130f09b8d423",
+    "type": "Image",
+    "element_id": "88301d6b47b17df03b78789b9890a6f1",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "Sem ny. 200 Rv"
+    "text": "°@¢Naafe«MgsSEM HY: 20.0KV 7 ETOP LU ULL UL OCT 0BEM IAAG: 400 x a"
   },
   {
     "type": "NarrativeText",
@@ -1140,7 +1130,7 @@
     "text": "O. Sanni, A.P.. Popoola / Data in Brief 22 (2019) 451-457"
   },
   {
-    "type": "ListItem",
+    "type": "Title",
     "element_id": "a80826543c9e0d0e9f6c2108ae3c3f73",
     "metadata": {
       "data_source": {},
@@ -1170,17 +1160,7 @@
     "text": "Austenitic stainless steel Type 316 was used in this study with chemical composition reported in [1,2]. The chemicals used were of annular grade. The inhibitor concentrations are in the range of 2, 4, 6, 8 and 10 g [3-5]. The structural formula of egg shell powder is shown in Fig. 9."
   },
   {
-    "type": "FigureCaption",
-    "element_id": "060e14f01e484ba252e902cd5c6f94f9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6
-    },
-    "text": "ou H,;COCHNY OH"
-  },
-  {
-    "type": "Title",
+    "type": "NarrativeText",
     "element_id": "1dc2692eee9b01e9a960f80c4dabe07b",
     "metadata": {
       "data_source": {},

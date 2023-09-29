@@ -382,6 +382,9 @@ def test_auto_partition_formats_languages_for_tesseract():
             # TODO(yuming): add this back when support ocr_mode
             # ocr_mode="entire_page",
             pdf_image_dpi=200,
+            # ocr_mode="entire_page",
+            # extract_tables=False,
+            # model_name="detectron2_onnx",
         )
 
 

@@ -409,7 +409,7 @@ def test_partition_pdf_with_dpi():
             filename,
             is_image=False,
             extract_tables=False,
-            model_name=None,
+            model_name="detectron2_onnx",
             pdf_image_dpi=100,
         )
 
@@ -859,7 +859,7 @@ def test_partition_pdf_formats_languages_for_tesseract():
             is_image=False,
             pdf_image_dpi=200,
             extract_tables=False,
-            model_name=None,
+            model_name="detectron2_onnx",
         )
 
 

@@ -3096,8 +3096,8 @@
     "text": "The incredible energy density of uranium means that just a few kilos is all that is required to provide one person with enough power for a lifetime. Uranium is abundant and can be found in many parts of the world, as well as in seawater. Furthermore, spent nuclear fuel is well managed and can in most cases be recycled to produce even more power. By using nuclear energy, countries are able to take charge of their own destinies by decreasing their reliance on imported energy — enhanced independence and security in uncertain times."
   },
   {
-    "type": "FigureCaption",
-    "element_id": "eeda9f9210dfe4be7e82b4385290d3ca",
+    "type": "Image",
+    "element_id": "36ca9b7cdbbcba729a46487cf86c07eb",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -3240,8 +3240,8 @@
     "text": "i"
   },
   {
-    "type": "Title",
-    "element_id": "5d7f49449ab22deac22d767b89549c55",
+    "type": "ListItem",
+    "element_id": "ffc47b19bb43cce8c23421b5c78b17b4",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",

@@ -445,7 +445,7 @@ def test_partition_image_formats_languages_for_tesseract():
             is_image=True,
             pdf_image_dpi=200,
             extract_tables=False,
-            model_name=None,
+            model_name="detectron2_onnx",
         )
 
 

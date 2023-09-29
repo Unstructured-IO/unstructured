@@ -486,7 +486,7 @@
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5,
-      "text_as_html": "<table><thead><th>Dataset</th><th>| Base Model'|</th><th>Large Model</th><th>Notes</th></thead><tr><td>PubLayNet B8]|</td><td>F/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td></td><td>M</td><td>-</td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td></td><td>F</td><td>-</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>F</td><td>nd business document. Table region on modern scientific</td></tr><tr><td>HJDataset</td><td>F/M</td><td>-</td><td>Layouts of history Japanese documents</td></tr></table>"
+      "text_as_html": "<table><thead><th>Dataset</th><th>| Base Model'|</th><th>Large Model</th><th>| Notes</th></thead><tr><td>PubLayNet B8]|</td><td>F/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td></td><td>M</td><td>-</td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td></td><td>F</td><td>-</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>F</td><td>nd business document. Table region on modern scientific</td></tr><tr><td>HJDataset</td><td>F/M</td><td>-</td><td>Layouts of history Japanese documents</td></tr></table>"
     },
     "text": "Dataset | Base Model'| Large Model | Notes PubLayNet B8]| F/M M Layouts of modern scientific documents PRImA M - nned modern magazines and scientific reports Newspapei F - canned US newspapers from the 20th century TableBank F F Table region on modern scientific and business document HJDataset F/M - Layouts of history Japanese documents"
   },
@@ -641,14 +641,14 @@
     "text": "Z. Shen et al."
   },
   {
-    "type": "FigureCaption",
-    "element_id": "185e67615d123b35d38ea72e0cdb6d99",
+    "type": "Image",
+    "element_id": "2f498bdd91739a7083490999507420a5",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 6
     },
-    "text": "- ° . 3 a a 4 a 3 oo er ‘ 2 § 8 a 8 3 3 ‘ £ 4 A g a 9 ‘ 3 ¥ Coordinate g 4 5 3 + § 3 H Extra Features [O=\") [Bo] eaing i Text | | Type | | ower ° & a ¢ o [ coordinatel textblock1, 3 3 ’ g Q 3 , textblock2 , layoutl ] 4 q ® A list of the layout elements Ff"
+    "text": "33§3 fectange vada8883 Coordinate83 +*Block | [Block | [Read8 Extra features Tet | [Tye | [oder[ coordinatel textblock1 |» , see383 , textblock2 , layout] ]4A list of the layout elementsThe same transformation and operation APIs"
   },
   {
     "type": "Title",
@@ -1082,14 +1082,14 @@
     "text": "9"
   },
   {
-    "type": "FigureCaption",
-    "element_id": "975d6cb141cb0a0313375630ae063fa8",
+    "type": "Image",
+    "element_id": "6df6057f894a166cf24fd34f64267f09",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "x09 Burpunog uayor Aeydsiq 1 vondo 10g Guypunog usyoy apir:z uondo Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR'd Text at the Correspoding Position"
+    "text": "a ESStee eaeoooMode I: Showing Layout on the Original ImageMode Il: Drawing OCR'd Text at the Correspoding Position10g Bpunog vayoy feyds1q :1 vondo‘xog Burpunog vay apiH z word"
   },
   {
     "type": "NarrativeText",
@@ -1152,14 +1152,14 @@
     "text": "Z. Shen et al."
   },
   {
-    "type": "FigureCaption",
-    "element_id": "2680b3c7a55754a3ba2738cb3d9d5e8b",
+    "type": "Image",
+    "element_id": "cd0055b04f6049e9d9bf49a4f309f7e9",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "et Intra-column reading order Token Categories tie (Adress 2) tee (NE sumber Variable HEE company type Column Categories (J tite we) adaress —_ (7) section Header by ‘e * Column reading order a a (a) Illustration of the original Japanese Maximum Allowed Height BRE B>e EER eR (b) Illustration of the recreated document with dense text structure for better OCR performance"
+    "text": "Text‘Token CategoriestieAddress(Numberig:3pio Bupeas uwunjog(a) Illustration of the original Japanese document with detected layout elements highlighted in colored boxesColumn CategoriesCRE) OR REKER te setPikes enceee+41ybiay pamoyy wnwrxey(b) Illustration of the recreated document with dense text structure for better OCR performance"
   },
   {
     "type": "NarrativeText",
@@ -1282,14 +1282,14 @@
     "text": "The digitization of historical documents can unlock valuable data that can shed ight on many important social, economic, and historical questions. Yet due to scan noises, page wearing, and the prevalence of complicated layout structures, ob- aining a structured representation of historical document scans is often extremely complicated. In this example, LayoutParser was used to develop a comprehensive pipeline, shown in Figure 5} to gener- ate high-quality structured data from (spe peepee, os : 7 . ‘Active Learning Layout historical Japanese firm financial ta- Annotate Layout Dataset | + ‘Annotation Toolkit bles with complicated layouts. The ¥ pipeline applies two layout models to a Deep Leaming Layout identify different levels of document Model Training & Inference, structures and two customized OCR ¥ engines for optimized character recog- ; Handy Data Structures & 2 Post-processing El Apis for Layout Det nition accuracy. a LAR ror tye eats)"
   },
   {
-    "type": "FigureCaption",
-    "element_id": "b33b2bc3b9c416673c7f74c6a00c49d8",
+    "type": "Image",
+    "element_id": "d32d5d93079c0053b7ef655185e47bb4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "(spe peepee, ‘Active Learning Layout Annotate Layout Dataset | + ‘Annotation Toolkit ¥ a Deep Leaming Layout Model Training & Inference, ¥ ; Handy Data Structures & Post-processing El Apis for Layout Det a LAR ror tye eats) 4 Text Recognition | <—— Default ane Customized ¥ ee Layout Structure Visualization & Export | <—— | visualization & Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules"
+    "text": "Annotate Layout Dataset(spe peepee,Active Learning LayoutAnnotation Toolkit4Layout Detection<—Deep Learning LayoutModel Training & Inference,4Post-processin Handy Data Structures &pl 9 APIs for Layout DataText Recognition Default and Customized: r OCR ModelsVisualization & Export |], bayou StructureVisualization & StorageThe Japanese DocumentDigitization PipelineHelpful LayoutParserModules"
   },
   {
     "type": "NarrativeText",
@@ -1392,8 +1392,8 @@
     "text": "Overall, it is possible to create an intricate and highly accurate digitization pipeline for large-scale digitization using LayoutParser. The pipeline avoids specifying the complicated rules used in traditional methods, is straightforwar o develop, and is robust to outliers. The DL models also generate fine-graine results that enable creative approaches like page reorganization for OCR."
   },
   {
-    "type": "NarrativeText",
-    "element_id": "d11adbfd88959ce24fbfdc7f8155e777",
+    "type": "ListItem",
+    "element_id": "122f0a4bde97c6e10e95c6e54479e34e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1452,14 +1452,14 @@
     "text": "3"
   },
   {
-    "type": "FigureCaption",
-    "element_id": "7d42bb6af1404a95a6e8870d5c4d07bf",
+    "type": "Image",
+    "element_id": "f58d47bde7ebddd81c4a678c918a8f1b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 13
     },
-    "text": "(@) Partial table at the bottom (&) Full page table (6) Partial table at the top (d) Mis-detected tet line"
+    "text": "(2) Partial table atthe bottom (&) Full page table (6) Partial table at the top (d) Mis-detected tet line"
   },
   {
     "type": "NarrativeText",

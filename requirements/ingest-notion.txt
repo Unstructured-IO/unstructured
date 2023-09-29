@@ -4,33 +4,35 @@
 #
 #    pip-compile requirements/ingest-notion.in
 #
+anyio==3.7.1
+    # via
+    #   -c requirements/constraints.in
+    #   httpcore
 certifi==2023.7.22
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
+    #   httpcore
     #   httpx
-charset-normalizer==3.2.0
-    # via
-    #   -c requirements/base.txt
-    #   httpx
-h11==0.12.0
+exceptiongroup==1.1.3
+    # via anyio
+h11==0.14.0
     # via httpcore
 htmlbuilder==1.0.0
     # via -r requirements/ingest-notion.in
-httpcore==0.13.3
+httpcore==0.18.0
     # via httpx
-httpx==0.20.0
+httpx==0.25.0
     # via notion-client
 idna==3.4
     # via
     #   -c requirements/base.txt
+    #   anyio
     #   httpx
-    #   rfc3986
 notion-client==2.0.0
     # via -r requirements/ingest-notion.in
-rfc3986[idna2008]==1.5.0
-    # via httpx
 sniffio==1.3.0
     # via
+    #   anyio
     #   httpcore
     #   httpx
