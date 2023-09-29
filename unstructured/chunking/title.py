@@ -16,84 +16,60 @@ from unstructured.documents.elements import (
 )
 
 
-def chunk_by_characters(
-    elements: List[Element],
-    num_characters: Optional[int] = 200,
-) -> List[Element]:
-    """Uses num_characters to return elements within a document in specific sizes.
-    Currently only applies to Table elements.
-     Parameters
-    ----------
-    elements
-        A list of unstructured elements. Usually the output of a partition functions.
-    num_characters
-        Splits elements text field so that a section matches the desired length."""
-
-    chunked_elements: List[Element] = []
-
-    for element in elements:
-        if isinstance(element, Table):
-            char_len = len(element.text)
-            html_table = element.text_as_html if hasattr(element, "text_as_html") else None
-            if html_table:
-                char_len = len(html_table)
-            if char_len > num_characters:  # type: ignore
-                chunked_elements.extend(chunk_table_element(element, num_characters))
-            else:
-                chunked_elements.append(element)
-            # create TableChunk element if text is more than num chars
-        else:
-            # TODO (Amanda): extend to other element types
-            chunked_elements.append(element)
-
-    return chunked_elements
-
-
 def chunk_table_element(
     element: Table,
-    num_characters: Optional[int] = 200,
+    max_characters: Optional[int] = 1500,
 ) -> List[TableChunk]:
     chunks = []
-    text = element.text
-    text_as_html = element.text_as_html if hasattr(element, "text_as_html") else None
-    i = 0
-    metadata = element.metadata
-    while text or text_as_html:
-        text_chunk = text[:num_characters]
-        table_chunk = TableChunk(
-            text=text_chunk,
-            metadata=copy.copy(metadata),
-        )
-        if text_as_html:
-            text_as_html_chunk = text_as_html[:num_characters]
-            table_chunk.metadata.text_as_html = text_as_html_chunk
-            # Remove the processed chunk from text_as_html
-            text_as_html = text_as_html[num_characters:]
-        if i > 0:
-            table_chunk.metadata.is_continuation = True
 
-        chunks.append(table_chunk)
-        i += 1
+    element_char_len = len(element.text)
 
-        # Remove the processed chunk from text
-        text = text[num_characters:]
+    html_table = element.text_as_html if hasattr(element, "text_as_html") else None
+    if html_table:
+        element_char_len = len(html_table)
+    if element_char_len <= max_characters:
+        chunks.append(element)
+    else:
+        text = element.text
+        text_as_html = element.text_as_html if hasattr(element, "text_as_html") else None
+        i = 0
+        metadata = element.metadata
+        while text or text_as_html:
+            text_chunk = text[:max_characters]
+            table_chunk = TableChunk(
+                text=text_chunk,
+                metadata=copy.copy(metadata),
+            )
+            if text_as_html:
+                text_as_html_chunk = text_as_html[:max_characters]
+                table_chunk.metadata.text_as_html = text_as_html_chunk
+                # Remove the processed chunk from text_as_html
+                text_as_html = text_as_html[max_characters:]
+            if i > 0:
+                table_chunk.metadata.is_continuation = True
 
-        # Ensure that text and text_as_html are not empty before continuing
-        if not text and not text_as_html:
-            break
+            chunks.append(table_chunk)
+            i += 1
+
+            # Remove the processed chunk from text
+            text = text[max_characters:]
+
+            # Ensure that text and text_as_html are not empty before continuing
+            if not text and not text_as_html:
+                break
     return chunks
 
 
 def chunk_by_title(
     elements: List[Element],
     multipage_sections: bool = True,
-    combine_under_n_chars: int = 500,
-    new_after_n_chars: int = 1500,
+    combine_text_under_n_chars: int = 500,
+    max_characters: int = 1500,
 ) -> List[Element]:
     """Uses title elements to identify sections within the document for chunking. Splits
     off into a new section when a title is detected or if metadata changes, which happens
     when page numbers or sections change. Cuts off sections once they have exceeded
-    a character length of new_after_n_chars.
+    a character length of max_characters.
 
     Parameters
     ----------
@@ -101,74 +77,77 @@ def chunk_by_title(
         A list of unstructured elements. Usually the output of a partition functions.
     multipage_sections
         If True, sections can span multiple pages. Defaults to True.
-    combine_under_n_chars
+    combine_text_under_n_chars
         Combines elements (for example a series of titles) until a section reaches
         a length of n characters.
-    new_after_n_chars
+    max_characters
         Cuts off new sections once they reach a length of n characters
     """
     if (
-        combine_under_n_chars is not None
-        and new_after_n_chars is not None
+        combine_text_under_n_chars is not None
+        and max_characters is not None
         and (
-            combine_under_n_chars > new_after_n_chars
-            or combine_under_n_chars < 0
-            or new_after_n_chars < 0
+            combine_text_under_n_chars > max_characters
+            or combine_text_under_n_chars < 0
+            or max_characters < 0
         )
     ):
         raise ValueError(
-            "Invalid values for combine_under_n_chars and/or new_after_n_chars.",
+            "Invalid values for combine_text_under_n_chars and/or max_characters.",
         )
 
     chunked_elements: List[Element] = []
     sections = _split_elements_by_title_and_table(
         elements,
         multipage_sections=multipage_sections,
-        combine_under_n_chars=combine_under_n_chars,
-        new_after_n_chars=new_after_n_chars,
+        combine_text_under_n_chars=combine_text_under_n_chars,
+        max_characters=max_characters,
     )
-
     for section in sections:
         if not section:
             continue
-        if not isinstance(section[0], Text) or isinstance(section[0], Table):
+        if not isinstance(section[0], Text):
             chunked_elements.extend(section)
 
         elif isinstance(section[0], Text):
-            text = ""
-            metadata = section[0].metadata
+            if isinstance(section[0], Table):
+                chunked_elements.extend(chunk_table_element(section[0], max_characters))
 
-            for i, element in enumerate(section):
-                if isinstance(element, Text):
-                    text += "\n\n" if text else ""
-                    start_char = len(text)
-                    text += element.text
+            else:
+                text = ""
+                metadata = section[0].metadata
 
-                for attr, value in vars(element.metadata).items():
-                    if not isinstance(value, list):
-                        continue
+                for i, element in enumerate(section):
+                    if isinstance(element, Text):
+                        text += "\n\n" if text else ""
+                        start_char = len(text)
+                        text += element.text
 
-                    _value = getattr(metadata, attr, [])
-                    if _value is None:
-                        _value = []
+                    for attr, value in vars(element.metadata).items():
+                        if not isinstance(value, list):
+                            continue
 
-                    if attr == "regex_metadata":
-                        for item in value:
-                            item["start"] += start_char
-                            item["end"] += start_char
+                        _value = getattr(metadata, attr, [])
+                        if _value is None:
+                            _value = []
 
-                    if i > 0:
-                        # NOTE(newelh): Previously, _value was extended with value.
-                        # This caused a memory error if the content was a list of strings
-                        # with a large number of elements -- doubling the list size each time.
-                        # This now instead ensures that the _value list is unique and updated.
-                        for item in value:
-                            if item not in _value:
-                                _value.append(item)
+                        if attr == "regex_metadata":
+                            for item in value:
+                                item["start"] += start_char
+                                item["end"] += start_char
 
-                        setattr(metadata, attr, _value)
+                        if i > 0:
+                            # NOTE(newelh): Previously, _value was extended with value.
+                            # This caused a memory error if the content was a list of strings
+                            # with a large number of elements -- doubling the list size each time.
+                            # This now instead ensures that the _value list is unique and updated.
+                            for item in value:
+                                if item not in _value:
+                                    _value.append(item)
 
-            chunked_elements.append(CompositeElement(text=text, metadata=metadata))
+                            setattr(metadata, attr, _value)
+
+                chunked_elements.append(CompositeElement(text=text, metadata=metadata))
 
     return chunked_elements
 
@@ -176,8 +155,8 @@ def chunk_by_title(
 def _split_elements_by_title_and_table(
     elements: List[Element],
     multipage_sections: bool = True,
-    combine_under_n_chars: int = 500,
-    new_after_n_chars: int = 1500,
+    combine_text_under_n_chars: int = 500,
+    max_characters: int = 1500,
 ) -> List[List[Element]]:
     sections: List[List[Element]] = []
     section: List[Element] = []
@@ -193,11 +172,11 @@ def _split_elements_by_title_and_table(
             )
 
         section_length = sum([len(str(element)) for element in section])
-        new_section = (isinstance(element, Title) and section_length > combine_under_n_chars) or (
-            not metadata_matches or section_length > new_after_n_chars
+        new_section = (isinstance(element, Title) and section_length > combine_text_under_n_chars) or (
+            not metadata_matches or section_length > max_characters
         )
 
-        if isinstance(element, Table) or not isinstance(element, Text):
+        if not isinstance(element, Text) or isinstance(element, Table):
             sections.append(section)
             sections.append([element])
             section = []
@@ -255,7 +234,7 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
     """Decorator for chuncking text. Uses title elements to identify sections within the document
     for chunking. Splits off a new section when a title is detected or if metadata changes,
     which happens when page numbers or sections change. Cuts off sections once they have exceeded
-    a character length of new_after_n_chars."""
+    a character length of max_characters."""
 
     def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
         if func.__doc__ and (
@@ -269,10 +248,10 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
                 + "\n\tAdditional Parameters:"
                 + "\n\t\tmultipage_sections"
                 + "\n\t\t\tIf True, sections can span multiple pages. Defaults to True."
-                + "\n\t\tcombine_under_n_chars"
+                + "\n\t\tcombine_text_under_n_chars"
                 + "\n\t\t\tCombines elements (for example a series of titles) until a section"
                 + "\n\t\t\treaches a length of n characters."
-                + "\n\t\tnew_after_n_chars"
+                + "\n\t\tmax_characters"
                 + "\n\t\t\tCuts off new sections once they reach a length of n characters"
             )
 
@@ -288,13 +267,8 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
                 elements = chunk_by_title(
                     elements,
                     multipage_sections=params.get("multipage_sections", True),
-                    combine_under_n_chars=params.get("combine_under_n_chars", 500),
-                    new_after_n_chars=params.get("new_after_n_chars", 1500),
-                )
-            if params.get("chunking_strategy") == "by_num_characters":
-                elements = chunk_by_characters(
-                    elements,
-                    num_characters=params.get("num_characters", 200),
+                    combine_text_under_n_chars=params.get("combine_text_under_n_chars", 500),
+                    max_characters=params.get("max_characters", 1500),
                 )
             return elements
 

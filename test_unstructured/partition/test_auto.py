@@ -9,7 +9,7 @@ import docx
 import pytest
 
 from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT
-from unstructured.chunking.title import chunk_by_characters, chunk_by_title
+from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
@@ -936,19 +936,11 @@ def test_get_partition_with_extras_prompts_for_install_if_missing():
     assert 'Install the pdf dependencies with pip install "unstructured[pdf]"' in msg
 
 
-@pytest.mark.parametrize(
-    ("chunking_strategy"),
-    ["title", "chars"],
-)
-def test_add_chunking_strategy_on_partition_auto(chunking_strategy):
+def test_add_chunking_strategy_on_partition_auto():
     filename = "example-docs/example-10k-1p.html"
     elements = partition(filename)
-    if chunking_strategy == "title":
-        chunk_elements = partition(filename, chunking_strategy="by_title")
-        chunks = chunk_by_title(elements)
-    elif chunking_strategy == "chars":
-        chunk_elements = partition(filename, chunking_strategy="by_num_characters")
-        chunks = chunk_by_characters(elements)
+    chunk_elements = partition(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
 
@@ -959,24 +951,24 @@ def test_add_chunking_strategy_title_on_partition_auto_respects_multipage():
         filename,
         chunking_strategy="by_title",
         multipage_sections=False,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
     )
     partitioned_elements_multipage_true_combine_chars_0 = partition(
         filename,
         chunking_strategy="by_title",
         multipage_sections=True,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
     )
     elements = partition(filename)
     cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(
         elements,
         multipage_sections=False,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
     )
     cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(
         elements,
         multipage_sections=True,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
     )
     assert (
         partitioned_elements_multipage_false_combine_chars_0
@@ -991,7 +983,7 @@ def test_add_chunking_strategy_title_on_partition_auto_respects_multipage():
     )
 
 
-def test_add_chunking_strategy_chars_on_partition_auto_respects_char_num():
+def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
     filename = "example-docs/example-10k-1p.html"
 
     # default chunk size in chars is 200
@@ -999,19 +991,22 @@ def test_add_chunking_strategy_chars_on_partition_auto_respects_char_num():
         e
         for e in partition(
             filename,
-            chunking_strategy="by_num_characters",
+            chunking_strategy="by_title",
+            max_characters=200,
+            combine_text_under_n_chars=5,
         )
-        if isinstance(e, Table)
+        if isinstance(e, Table) or isinstance(e, TableChunk)
     ]
 
     partitioned_table_elements_5_chars = [
         e
         for e in partition(
             filename,
-            chunking_strategy="by_num_characters",
-            num_characters=5,
+            chunking_strategy="by_title",
+            max_characters=5,
+            combine_text_under_n_chars=5,
         )
-        if isinstance(e, Table)
+        if isinstance(e, Table) or isinstance(e, TableChunk)
     ]
 
     elements = partition(filename)
@@ -1023,6 +1018,7 @@ def test_add_chunking_strategy_chars_on_partition_auto_respects_char_num():
 
     assert len(partitioned_table_elements_5_chars[0].text) == 5
     assert len(partitioned_table_elements_5_chars[0].metadata.text_as_html) == 5
+
     # the first table element is under 200 chars so doesn't get chunked!
     assert table_elements[0] == partitioned_table_elements_200_chars[0]
     assert len(partitioned_table_elements_200_chars[0].text) < 200

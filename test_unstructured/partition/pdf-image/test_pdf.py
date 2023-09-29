@@ -6,7 +6,7 @@ import pytest
 from PIL import Image
 from unstructured_inference.inference import layout
 
-from unstructured.chunking.title import chunk_by_characters, chunk_by_title
+from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
@@ -845,18 +845,6 @@ def test_add_chunking_strategy_by_title_on_partition_pdf(
     chunk_elements = pdf.partition_pdf(filename, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
-    assert chunk_elements == chunks
-
-
-def test_add_chunking_strategy_by_chars_on_partition_pdf_changes_nothing(
-    # File has no Table elements
-    filename="example-docs/layout-parser-paper-fast.pdf",
-):
-    # We're only chunking Tables so output should be unchanged
-    elements = pdf.partition_pdf(filename=filename)
-    chunk_elements = pdf.partition_pdf(filename, chunking_strategy="by_num_characters")
-    chunks = chunk_by_characters(elements)
-    assert chunk_elements == elements
     assert chunk_elements == chunks
 
 

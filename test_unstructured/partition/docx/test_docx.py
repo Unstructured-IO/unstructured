@@ -9,7 +9,7 @@ import docx
 import pytest
 from docx.document import Document
 
-from unstructured.chunking.title import chunk_by_characters, chunk_by_title
+from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     Address,
     Element,
@@ -422,14 +422,6 @@ def test_partition_docx_with_json(mock_document, expected_elements, tmpdir):
         assert elements[i] == test_elements[i]
 
 
-def test_add_chunking_strategy_by_title_on_partition_docx(filename="example-docs/handbook-1p.docx"):
-    chunk_elements = partition_docx(filename, chunking_strategy="by_title")
-    elements = partition_docx(filename)
-    chunks = chunk_by_title(elements)
-    assert chunk_elements != elements
-    assert chunk_elements == chunks
-
-
 def test_parse_category_depth_by_style():
     partitioner = _DocxPartitioner("example-docs/category-level.docx", None, None, False, None)
 
@@ -491,15 +483,25 @@ def test_parse_category_depth_by_style_ilvl():
     assert partitioner._parse_category_depth_by_style_ilvl() == 0
 
 
-def test_add_chunking_strategy_by_chars_on_partition_docx(
+def test_add_chunking_strategy_on_partition_docx_default_args(filename="example-docs/handbook-1p.docx"):
+    chunk_elements = partition_docx(filename, chunking_strategy="by_title")
+    elements = partition_docx(filename)
+    chunks = chunk_by_title(elements)
+
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_add_chunking_strategy_on_partition_docx(
     filename="example-docs/fake-doc-emphasized-text.docx",
 ):
     chunk_elements = partition_docx(
         filename,
-        chunking_strategy="by_num_characters",
-        num_characters=9,
+        chunking_strategy="by_title",
+        max_characters=9,
+        combine_text_under_n_chars=5
     )
     elements = partition_docx(filename)
-    chunks = chunk_by_characters(elements, 9)
+    chunks = chunk_by_title(elements, max_characters=9, combine_text_under_n_chars=5)
     assert chunk_elements != elements
     assert chunk_elements == chunks

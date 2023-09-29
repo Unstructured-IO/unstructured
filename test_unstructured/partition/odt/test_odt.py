@@ -1,8 +1,8 @@
 import os
 import pathlib
 
-from unstructured.chunking.title import chunk_by_characters, chunk_by_title
-from unstructured.documents.elements import Table, Title
+from unstructured.chunking.title import chunk_by_title
+from unstructured.documents.elements import Table, Title, TableChunk
 from unstructured.partition.json import partition_json
 from unstructured.partition.odt import partition_odt
 from unstructured.staging.base import elements_to_json
@@ -161,7 +161,7 @@ def test_partition_odt_with_json(
         assert elements[i] == test_elements[i]
 
 
-def test_add_chunking_strategy_title_on_partition_odt(
+def test_add_chunking_strategy_on_partition_odt(
     filename="example-docs/fake.odt",
 ):
     elements = partition_odt(filename=filename)
@@ -171,14 +171,21 @@ def test_add_chunking_strategy_title_on_partition_odt(
     assert chunk_elements == chunks
 
 
-def test_add_chunking_strategy_chars_on_partition_odt():
+def test_add_chunking_strategy_on_partition_odt_non_default():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
     elements = partition_odt(filename=filename)
     chunk_elements = partition_odt(
         filename,
-        chunking_strategy="by_num_characters",
-        num_characters=7,
+        chunking_strategy="by_title",
+        max_characters=7,
+        combine_text_under_n_chars=5,
     )
-    chunks = chunk_by_characters(elements, 7)
+    chunks = chunk_by_title(elements,
+                            max_characters=7,
+                            combine_text_under_n_chars=5,
+                            )
+    for chunk in chunk_elements:
+        if isinstance(chunk, TableChunk):
+            assert len(chunk.text) <= 7
     assert chunk_elements != elements
     assert chunk_elements == chunks
