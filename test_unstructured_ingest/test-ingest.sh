@@ -9,6 +9,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 export OMP_THREAD_LIMIT=1
 
 scripts=(
+'test-ingest-elasticsearch.sh'
 'test-ingest-s3.sh'
 'test-ingest-azure.sh'
 'test-ingest-box.sh'
@@ -26,7 +27,6 @@ scripts=(
 'test-ingest-gcs.sh'
 'test-ingest-onedrive.sh'
 'test-ingest-outlook.sh'
-'test-ingest-elasticsearch.sh'
 'test-ingest-confluence-diff.sh'
 'test-ingest-confluence-large.sh'
 'test-ingest-airtable-diff.sh'
