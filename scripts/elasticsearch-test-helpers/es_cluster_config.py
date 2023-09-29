@@ -1,5 +1,5 @@
 DATA_PATH = "scripts/elasticsearch-test-helpers/wiki_movie_plots_small.csv"
-CLUSTER_URL = "http://localhost:9200"
+CLUSTER_URL = "http://localhost:9201"
 INDEX_NAME = "movies"
 
 MAPPINGS = {

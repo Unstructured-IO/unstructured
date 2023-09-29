@@ -3,7 +3,7 @@
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 
 # Create the Elasticsearch cluster and get the container id
-docker run -d --rm -p 9200:9200 -p 9300:9300 -e "xpack.security.enabled=false" -e "discovery.type=single-node" --name es-test docker.elastic.co/elasticsearch/elasticsearch:8.7.0
+docker run -d --rm -p 9201:9200 -p 9300:9300 -e "xpack.security.enabled=false" -e "discovery.type=single-node" --name es-test docker.elastic.co/elasticsearch/elasticsearch:8.7.0
 
 # Wait for Elasticsearch container to start
 echo "Waiting for Elasticsearch container to start..."
