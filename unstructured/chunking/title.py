@@ -64,6 +64,7 @@ def chunk_by_title(
     elements: List[Element],
     multipage_sections: bool = True,
     combine_text_under_n_chars: int = 500,
+    new_after_n_chars: int = 1000,
     max_characters: int = 1500,
 ) -> List[Element]:
     """Uses title elements to identify sections within the document for chunking. Splits
@@ -80,16 +81,19 @@ def chunk_by_title(
     combine_text_under_n_chars
         Combines elements (for example a series of titles) until a section reaches
         a length of n characters.
+    new_after_n_chars
+        Cuts off new sections once they reach a length of n characters (soft max)
     max_characters
-        Cuts off new sections once they reach a length of n characters
+        Chunks table elements text and text_as_html into chunks of length n characters (hard max)
+        TODO: (amanda) extend to other elements
     """
     if (
         combine_text_under_n_chars is not None
-        and max_characters is not None
+        and new_after_n_chars is not None
         and (
-            combine_text_under_n_chars > max_characters
+            combine_text_under_n_chars > new_after_n_chars
             or combine_text_under_n_chars < 0
-            or max_characters < 0
+            or new_after_n_chars < 0
         )
     ):
         raise ValueError(
@@ -101,7 +105,7 @@ def chunk_by_title(
         elements,
         multipage_sections=multipage_sections,
         combine_text_under_n_chars=combine_text_under_n_chars,
-        max_characters=max_characters,
+        new_after_n_chars=new_after_n_chars,
     )
     for section in sections:
         if not section:
@@ -156,7 +160,7 @@ def _split_elements_by_title_and_table(
     elements: List[Element],
     multipage_sections: bool = True,
     combine_text_under_n_chars: int = 500,
-    max_characters: int = 1500,
+    new_after_n_chars: int = 1000,
 ) -> List[List[Element]]:
     sections: List[List[Element]] = []
     section: List[Element] = []
@@ -174,7 +178,7 @@ def _split_elements_by_title_and_table(
         section_length = sum([len(str(element)) for element in section])
         new_section = (
             isinstance(element, Title) and section_length > combine_text_under_n_chars
-        ) or (not metadata_matches or section_length > max_characters)
+        ) or (not metadata_matches or section_length > new_after_n_chars)
 
         if not isinstance(element, Text) or isinstance(element, Table):
             sections.append(section)
@@ -268,6 +272,7 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
                     elements,
                     multipage_sections=params.get("multipage_sections", True),
                     combine_text_under_n_chars=params.get("combine_text_under_n_chars", 500),
+                    new_after_n_chars=params.get("new_after_n_chars", 1000),
                     max_characters=params.get("max_characters", 1500),
                 )
             return elements
