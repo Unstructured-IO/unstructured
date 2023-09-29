@@ -995,7 +995,7 @@ def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
             max_characters=200,
             combine_text_under_n_chars=5,
         )
-        if isinstance(e, Table) or isinstance(e, TableChunk)
+        if isinstance(e, (Table, TableChunk))
     ]
 
     partitioned_table_elements_5_chars = [
@@ -1006,7 +1006,7 @@ def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
             max_characters=5,
             combine_text_under_n_chars=5,
         )
-        if isinstance(e, Table) or isinstance(e, TableChunk)
+        if isinstance(e, (Table, TableChunk))
     ]
 
     elements = partition(filename)

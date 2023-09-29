@@ -205,9 +205,10 @@ def test_add_chunking_strategy_on_partition_epub_non_default(
         max_characters=5,
         combine_text_under_n_chars=0,
     )
-    chunks = chunk_by_title(elements,
-                            max_characters=5,
-                            combine_text_under_n_chars=0,
-                            )
+    chunks = chunk_by_title(
+        elements,
+        max_characters=5,
+        combine_text_under_n_chars=0,
+    )
     assert chunk_elements != elements
     assert chunk_elements == chunks

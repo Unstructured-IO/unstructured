@@ -1,7 +1,7 @@
 import copy
 import functools
 import inspect
-from typing import Any, Callable, Dict, List, Optional, TypeVar
+from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
 
 from typing_extensions import ParamSpec
 
@@ -19,7 +19,7 @@ from unstructured.documents.elements import (
 def chunk_table_element(
     element: Table,
     max_characters: Optional[int] = 1500,
-) -> List[TableChunk]:
+) -> List[Union[Table, TableChunk]]:
     chunks = []
 
     element_char_len = len(element.text)
@@ -27,7 +27,7 @@ def chunk_table_element(
     html_table = element.text_as_html if hasattr(element, "text_as_html") else None
     if html_table:
         element_char_len = len(html_table)
-    if element_char_len <= max_characters:
+    if element_char_len <= max_characters:  # type: ignore
         chunks.append(element)
     else:
         text = element.text
@@ -172,9 +172,9 @@ def _split_elements_by_title_and_table(
             )
 
         section_length = sum([len(str(element)) for element in section])
-        new_section = (isinstance(element, Title) and section_length > combine_text_under_n_chars) or (
-            not metadata_matches or section_length > max_characters
-        )
+        new_section = (
+            isinstance(element, Title) and section_length > combine_text_under_n_chars
+        ) or (not metadata_matches or section_length > max_characters)
 
         if not isinstance(element, Text) or isinstance(element, Table):
             sections.append(section)

@@ -483,7 +483,9 @@ def test_parse_category_depth_by_style_ilvl():
     assert partitioner._parse_category_depth_by_style_ilvl() == 0
 
 
-def test_add_chunking_strategy_on_partition_docx_default_args(filename="example-docs/handbook-1p.docx"):
+def test_add_chunking_strategy_on_partition_docx_default_args(
+    filename="example-docs/handbook-1p.docx",
+):
     chunk_elements = partition_docx(filename, chunking_strategy="by_title")
     elements = partition_docx(filename)
     chunks = chunk_by_title(elements)
@@ -499,7 +501,7 @@ def test_add_chunking_strategy_on_partition_docx(
         filename,
         chunking_strategy="by_title",
         max_characters=9,
-        combine_text_under_n_chars=5
+        combine_text_under_n_chars=5,
     )
     elements = partition_docx(filename)
     chunks = chunk_by_title(elements, max_characters=9, combine_text_under_n_chars=5)

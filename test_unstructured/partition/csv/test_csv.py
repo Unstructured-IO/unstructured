@@ -202,7 +202,6 @@ def test_add_chunking_strategy_to_partition_csv_non_default():
         max_characters=9,
         combine_text_under_n_chars=0,
     )
-    chunks = chunk_by_title(elements, max_characters=9,
-        combine_text_under_n_chars=0,)
+    chunks = chunk_by_title(elements, max_characters=9, combine_text_under_n_chars=0)
     assert chunk_elements != elements
     assert chunk_elements == chunks
