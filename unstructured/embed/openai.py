@@ -39,16 +39,9 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
         elements_w_embedding = []
 
         for i, element in enumerate(elements):
-            original_method = element.to_dict
-
-            def new_to_dict(self):
-                d = original_method()
-                d["embeddings"] = self.embeddings
-                return d
-
             element.embeddings = embeddings[i]
             elements_w_embedding.append(element)
-            element.to_dict = types.MethodType(new_to_dict, element)
+
         return elements
 
     @EmbeddingEncoderConnectionError.wrap
