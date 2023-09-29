@@ -1041,18 +1041,18 @@ def check_annotations_within_element(
     Filter annotations that are within or highly overlap with a specified element on a page.
 
     Args:
-        annotation_list (List[dict]): A list of dictionaries, each containing information 
+        annotation_list (List[dict]): A list of dictionaries, each containing information
             about an annotation.
-        element_bbox (Tuple[float, float, float, float]): The bounding box coordinates of the 
+        element_bbox (Tuple[float, float, float, float]): The bounding box coordinates of the
             specified element in the bbox format (x1, y1, x2, y2).
         page_number (int): The page number to which the annotations and element belong.
-        threshold (float, optional): The threshold value (between 0.0 and 1.0) that determines 
-            the minimum overlap required for an annotation to be considered within the element. 
+        threshold (float, optional): The threshold value (between 0.0 and 1.0) that determines
+            the minimum overlap required for an annotation to be considered within the element.
             Default is 0.9.
 
     Returns:
-        List[dict]: A list of dictionaries containing information about annotations that are 
-        within or highly overlap with the specified element on the given page, based on the 
+        List[dict]: A list of dictionaries containing information about annotations that are
+        within or highly overlap with the specified element on the given page, based on the
         specified threshold.
     """
     annotations_within_element = []
@@ -1184,8 +1184,8 @@ def try_argmin(array: np.ndarray) -> int:
         array (np.ndarray): The NumPy array in which to find the minimum value's index.
 
     Returns:
-        int: The index of the minimum value in the array. If the array is empty or an IndexError occurs,
-        it returns -1.
+        int: The index of the minimum value in the array. If the array is empty or an
+        IndexError occurs, it returns -1.
     """
     try:
         return int(np.argmin(array))
