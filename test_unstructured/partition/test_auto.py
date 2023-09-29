@@ -381,7 +381,7 @@ def test_auto_partition_formats_languages_for_tesseract():
             ocr_languages="chi_sim+chi_sim_vert+chi_tra+chi_tra_vert",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name=None,
+            model_name="detectron2_onnx",
         )
 
 

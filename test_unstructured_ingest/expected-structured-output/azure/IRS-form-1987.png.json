@@ -266,25 +266,6 @@
     "text": "Changes to Accounting Methods Required Under the Tax Reform Act of 1986"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "b07efea243933525e9ec04a90622508d",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "cash method.—If you are required to change your method of accounting under section, 263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (imiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (\"Act\"), the change is treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to cchange from the cash method under section 448 have 10 years to take the adjustments into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required"
-  },
-  {
     "type": "Title",
     "element_id": "11c98a9cbd6a200fbc5b93fed15007ac",
     "metadata": {
@@ -302,6 +283,25 @@
       "page_number": 1
     },
     "text": "Uniform capitalization rules and limitation on"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "b07efea243933525e9ec04a90622508d",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "cash method.—If you are required to change your method of accounting under section, 263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (imiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (\"Act\"), the change is treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to cchange from the cash method under section 448 have 10 years to take the adjustments into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required"
   },
   {
     "type": "NarrativeText",
@@ -359,25 +359,6 @@
       "page_number": 1
     },
     "text": "Long-term contracts.—If you are required to change your method of accounting for long-term contracts under section 460, see Notice 87-61 (9/21/87), 1987-38 IRB 40, for the notification procedures that must be followed. Other methods. —Unless the Service has published a regulation or procedure to the contrary, all other changes in accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of mcome attributable to the sale or furnishing of utility services no later than the year in which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these changes."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "7685df2334a5f6c8c8099dea61a8f1b4",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "Long-term contracts.—If you are required to change your method of accounting for long-term contracts under section 460, see Notice 87-61 (9/21/87), 1987-38 IRB 40, for the notification procedures that must be followed."
   },
   {
     "type": "Title",
@@ -475,25 +456,6 @@
     "text": "If your application is filed after the 180-day period, itis late. The application will be considered for processing only upon a showing of “good cause” and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev. Proc. 79-63."
   },
   {
-    "type": "NarrativeText",
-    "element_id": "ec3c2d03b846d2a186fc9a8f318f688b",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "Individuals. —An individual should enter his or her social security number in this block. If the application is made on behalf of a husband and wife who file their income tax return jointly, enter the social security numbers of both."
-  },
-  {
     "type": "Title",
     "element_id": "025a65465b6fd9635316e92633b24c7e",
     "metadata": {
@@ -511,6 +473,25 @@
       "page_number": 1
     },
     "text": "Identifying Number"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ec3c2d03b846d2a186fc9a8f318f688b",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "Individuals. —An individual should enter his or her social security number in this block. If the application is made on behalf of a husband and wife who file their income tax return jointly, enter the social security numbers of both."
   },
   {
     "type": "NarrativeText",
@@ -532,25 +513,6 @@
     "text": "Others.-—The employer identification number of an applicant other than an individual should be entered in this block,"
   },
   {
-    "type": "ListItem",
-    "element_id": "f8e8c87d2e958a23153d7f25b159f0ee",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "Individuals.—An individual desiring the change should sign the application. Ifthe application pertains to a husband and wife filing a joint Income tax return, the names of both should appear in the heading and both should sign Partnerships.—The form should be signed with the partnership name followed by the signature of one of the general partners and the words “General Partner.” Corporations, cooperatives, and insurance companies.—The form should show the name of the corporation, cooperative, or insurance Company and the signature of the president, vice president, treasurer, assistant treasurer, or chief accounting officer (such as tax officer) authorized tosign, and his or her official title. Receivers, trustees, or assignees must sign any application they are required to file, For a subsidiary corporation filing a consolidated return with its parent, the form should be signed by an officer of the parent corporation, Fiduciaries.—The-form should show the name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrx, etc’, having legal authority to'sign, and his or her ttle. Preparer other than partner, officer, etc.—The signature of the individual preparing the application should appear in the space provided on page 6."
-  },
-  {
     "type": "Title",
     "element_id": "55d4f33b09f24dd3b27865a5f34bfeb9",
     "metadata": {
@@ -568,6 +530,25 @@
       "page_number": 1
     },
     "text": "Signature tea"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "f8e8c87d2e958a23153d7f25b159f0ee",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "Individuals.—An individual desiring the change should sign the application. Ifthe application pertains to a husband and wife filing a joint Income tax return, the names of both should appear in the heading and both should sign Partnerships.—The form should be signed with the partnership name followed by the signature of one of the general partners and the words “General Partner.” Corporations, cooperatives, and insurance companies.—The form should show the name of the corporation, cooperative, or insurance Company and the signature of the president, vice president, treasurer, assistant treasurer, or chief accounting officer (such as tax officer) authorized tosign, and his or her official title. Receivers, trustees, or assignees must sign any application they are required to file, For a subsidiary corporation filing a consolidated return with its parent, the form should be signed by an officer of the parent corporation, Fiduciaries.—The-form should show the name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrx, etc’, having legal authority to'sign, and his or her ttle. Preparer other than partner, officer, etc.—The signature of the individual preparing the application should appear in the space provided on page 6."
   },
   {
     "type": "NarrativeText",
