@@ -91,6 +91,8 @@ def process_file_with_ocr(
                         "Environment variable ENTIRE_PAGE_OCR",
                         " must be set to 'tesseract' or 'paddle'.",
                     )
+                # TODO(yuming): add tests for paddle with ENTIRE_PAGE_OCR env
+                # see core CORE-1886
                 if entrie_page_ocr == "paddle":
                     logger.info("Processing entrie page OCR with paddle...")
                     from unstructured.partition.utils.ocr_models import paddle_ocr
