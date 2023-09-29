@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Installation" href="../installing.html" /><link rel="prev" title="Key Concepts" href="key_concepts.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Getting Started - Unstructured 0.10.16 documentation</title>
+  <title>Getting Started - Unstructured 0.10.17 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -297,7 +297,7 @@
 </a>
 <div class="social social--sidebar" style="margin-top: 1em; display: flex; justify-content: right; gap: 8px">
   <a
-    href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1x7cgo0pg-PTptXWylzPQF9xZolzCnwQ"
+    href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-23kciff0y-bvzXxJkgtbXe5POo_rxMkw"
     class="button--primary" target="_blank">Join <span aria-label="slack" class="slack-icon"></span></span></a>
     <div class="github-stars github-stars--sidebar"></div>
 </div><form class="sidebar-search-container" method="get" action="../search.html" role="search">
@@ -308,7 +308,9 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../introduction.html">Introduction</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Introduction</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html#key-concepts">Key Concepts</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../introduction.html#getting-started">Getting Started</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Getting Started</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="key_concepts.html">Key Concepts</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Getting Started</a></li>
@@ -357,6 +359,7 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../destination_connectors.html">Destination Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Destination Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../destination_connectors/delta_table.html">Delta Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../metadata.html">Metadata</a></li>
@@ -416,7 +419,7 @@
         </div>
         <article role="main">
           <div class="social social--main" style="margin-top: 1em; display: flex; justify-content: right; gap: 8px">
-            <a href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1x7cgo0pg-PTptXWylzPQF9xZolzCnwQ"
+            <a href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-23kciff0y-bvzXxJkgtbXe5POo_rxMkw"
               class="button--primary" target="_blank">Join <span aria-label="slack"
                 class="slack-icon"></span></span></a>
             <div class="github-stars github-stars--top-page"></div>
@@ -580,8 +583,8 @@ pass in <code class="docutils literal notranslate"><span class="pre">infer_table
 </pre></div>
 </div>
 </section>
-<section id="converting-elements-to-a-dictionary-or-json">
-<h2>Converting elements to a dictionary or JSON<a class="headerlink" href="#converting-elements-to-a-dictionary-or-json" title="Permalink to this heading"></a></h2>
+<section id="converting-elements-to-dictionary-or-json">
+<h2>Converting Elements to Dictionary or JSON<a class="headerlink" href="#converting-elements-to-dictionary-or-json" title="Permalink to this heading"></a></h2>
 <p>The final step in the process for most users is to convert the output to JSON.
 You can convert a list of document elements to a list of dictionaries using the <code class="docutils literal notranslate"><span class="pre">convert_to_dict</span></code> function.
 The workflow for using <code class="docutils literal notranslate"><span class="pre">convert_to_dict</span></code> appears below.</p>
@@ -600,8 +603,9 @@ a list of elements from JSON, as seen in the snippet below</p>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">elements_from_json</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
 <section id="unique-element-ids">
-<h3>Unique Element IDs<a class="headerlink" href="#unique-element-ids" title="Permalink to this heading"></a></h3>
+<h2>Unique Element IDs<a class="headerlink" href="#unique-element-ids" title="Permalink to this heading"></a></h2>
 <p>By default, the element ID is a SHA-256 hash of the element text. This is to ensure that
 the ID is deterministic. One downside is that the ID is not guaranteed to be unique.
 Different elements with the same text will have the same ID, and there could also
@@ -614,7 +618,6 @@ if you’d like to use the IDs as a primary key in a database, for example.</p>
 <span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
 </pre></div>
 </div>
-</section>
 </section>
 <section id="wrapping-it-all-up">
 <h2>Wrapping it all up<a class="headerlink" href="#wrapping-it-all-up" title="Permalink to this heading"></a></h2>
@@ -694,10 +697,8 @@ looks like the following:</p>
 <li><a class="reference internal" href="#partitioning-a-document">Partitioning a document</a></li>
 <li><a class="reference internal" href="#document-elements">Document elements</a></li>
 <li><a class="reference internal" href="#tables">Tables</a></li>
-<li><a class="reference internal" href="#converting-elements-to-a-dictionary-or-json">Converting elements to a dictionary or JSON</a><ul>
+<li><a class="reference internal" href="#converting-elements-to-dictionary-or-json">Converting Elements to Dictionary or JSON</a></li>
 <li><a class="reference internal" href="#unique-element-ids">Unique Element IDs</a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#wrapping-it-all-up">Wrapping it all up</a></li>
 </ul>
 </li>

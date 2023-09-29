@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Getting Started" href="getting_started.html" /><link rel="prev" title="Overview" href="overview.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Key Concepts - Unstructured 0.10.16 documentation</title>
+  <title>Key Concepts - Unstructured 0.10.17 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -297,7 +297,7 @@
 </a>
 <div class="social social--sidebar" style="margin-top: 1em; display: flex; justify-content: right; gap: 8px">
   <a
-    href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1x7cgo0pg-PTptXWylzPQF9xZolzCnwQ"
+    href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-23kciff0y-bvzXxJkgtbXe5POo_rxMkw"
     class="button--primary" target="_blank">Join <span aria-label="slack" class="slack-icon"></span></span></a>
     <div class="github-stars github-stars--sidebar"></div>
 </div><form class="sidebar-search-container" method="get" action="../search.html" role="search">
@@ -308,7 +308,9 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../introduction.html">Introduction</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Introduction</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html#key-concepts">Key Concepts</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../introduction.html#getting-started">Getting Started</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Getting Started</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Key Concepts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
@@ -357,6 +359,7 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../destination_connectors.html">Destination Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Destination Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../destination_connectors/delta_table.html">Delta Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../metadata.html">Metadata</a></li>
@@ -416,7 +419,7 @@
         </div>
         <article role="main">
           <div class="social social--main" style="margin-top: 1em; display: flex; justify-content: right; gap: 8px">
-            <a href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-1x7cgo0pg-PTptXWylzPQF9xZolzCnwQ"
+            <a href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-23kciff0y-bvzXxJkgtbXe5POo_rxMkw"
               class="button--primary" target="_blank">Join <span aria-label="slack"
                 class="slack-icon"></span></span></a>
             <div class="github-stars github-stars--top-page"></div>
@@ -428,9 +431,8 @@
 <section id="data-ingestion">
 <h2>Data Ingestion<a class="headerlink" href="#data-ingestion" title="Permalink to this heading"></a></h2>
 <p>Unstructured’s <code class="docutils literal notranslate"><span class="pre">upstream</span> <span class="pre">connectors</span></code> make data ingestion easy. They ensure that your data is accessible, up to date, and usable for any downstream task. If you’d like to read more on our upstream connectors, you can find details <a class="reference external" href="../upstream_connectors.html">here</a>.</p>
-</section>
 <section id="data-preprocessing">
-<h2>Data Preprocessing<a class="headerlink" href="#data-preprocessing" title="Permalink to this heading"></a></h2>
+<h3>Data Preprocessing<a class="headerlink" href="#data-preprocessing" title="Permalink to this heading"></a></h3>
 <p>Before the core analysis, raw data often requires significant preprocessing:</p>
 <ul class="simple">
 <li><p><strong>Partitioning</strong>: Segregating data into smaller, manageable segments or partitions.</p></li>
@@ -439,28 +441,28 @@
 <p>Preprocessing ensures data integrity and can significantly influence the outcomes of subsequent tasks.</p>
 </section>
 <section id="chunking-text-for-vector-databases">
-<h2>Chunking Text for Vector Databases<a class="headerlink" href="#chunking-text-for-vector-databases" title="Permalink to this heading"></a></h2>
+<h3>Chunking Text for Vector Databases<a class="headerlink" href="#chunking-text-for-vector-databases" title="Permalink to this heading"></a></h3>
 <p>Vector databases often require data to be in smaller, consistent chunks for efficient storage and retrieval. Chunking involves dividing lengthy texts into smaller segments or chunks, ensuring that each piece retains enough context to be meaningful.</p>
 </section>
 <section id="embeddings">
-<h2>Embeddings<a class="headerlink" href="#embeddings" title="Permalink to this heading"></a></h2>
+<h3>Embeddings<a class="headerlink" href="#embeddings" title="Permalink to this heading"></a></h3>
 <p>Embeddings convert textual data into fixed-size vectors, preserving semantic context. These vector representations can then be used for a myriad of tasks, including similarity searches, clustering, and classification. Different embeddings might prioritize different aspects of the text, from semantic meaning to sentence structure.</p>
 </section>
 <section id="vector-databases">
-<h2>Vector Databases<a class="headerlink" href="#vector-databases" title="Permalink to this heading"></a></h2>
+<h3>Vector Databases<a class="headerlink" href="#vector-databases" title="Permalink to this heading"></a></h3>
 <p>Vector databases store embeddings in a manner optimized for high-speed similarity searches. Given a query embedding, these databases can quickly retrieve the most similar vectors, facilitating tasks like recommendation, anomaly detection, and clustering.</p>
 <p>These foundational concepts provide the groundwork for more advanced NLP methodologies and pipelines. Proper understanding and implementation can vastly improve the outcomes of NLP projects.</p>
 </section>
 <section id="tokens">
-<h2>Tokens<a class="headerlink" href="#tokens" title="Permalink to this heading"></a></h2>
+<h3>Tokens<a class="headerlink" href="#tokens" title="Permalink to this heading"></a></h3>
 <p>Tokenization decomposes texts into smaller units, called tokens. A token might represent a word, part of a word, or even a single character. This process helps in analyzing and processing the text, making it digestible for models and algorithms.</p>
 </section>
 <section id="large-language-models-llms">
-<h2>Large Language Models (LLMs)<a class="headerlink" href="#large-language-models-llms" title="Permalink to this heading"></a></h2>
+<h3>Large Language Models (LLMs)<a class="headerlink" href="#large-language-models-llms" title="Permalink to this heading"></a></h3>
 <p>LLMs, like GPT, are trained on vast amounts of data and have the capacity to comprehend and generate human-like text. They have achieved state-of-the-art results across a multitude of NLP tasks and can be fine-tuned to cater to specific domains or requirements.</p>
 </section>
 <section id="retrieval-augmented-generation">
-<h2>Retrieval Augmented Generation<a class="headerlink" href="#retrieval-augmented-generation" title="Permalink to this heading"></a></h2>
+<h3>Retrieval Augmented Generation<a class="headerlink" href="#retrieval-augmented-generation" title="Permalink to this heading"></a></h3>
 <p>Large Language Models (LLMs) like OpenAI’s ChatGPT and Anthropic’s Claude have revolutionized the AI landscape with their prowess. However, they inherently suffer from significant drawbacks. One major issue is their static nature, which means they’re “frozen in time”.
 For instance, ChatGPT’s knowledge is limited up to September 2021, leaving it blind to any developments or information post that period. Despite this, LLMs might often respond to newer queries with unwarranted confidence, a phenomenon known as “hallucination”.
 Such errors can be highly detrimental, especially when these models serve critical real-world applications.</p>
@@ -479,6 +481,7 @@ is particularly beneficial for organizations that lack the means to develop and 
 <li><p><strong>LLM Generation</strong>: Once you’ve retrieved your relevant chunks you pass the prompt + the context to the LLM for the LLM to generate a more accurate response.</p></li>
 </ol>
 <p>For a full guide on how to implement RAG check out this <a class="reference external" href="https://medium.com/unstructured-io/effortless-document-extraction-a-guide-to-using-unstructured-api-and-data-connectors-6c2659eda4af">blog post</a></p>
+</section>
 </section>
 </section>
 
@@ -538,7 +541,7 @@ is particularly beneficial for organizations that lack the means to develop and 
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Key Concepts</a><ul>
-<li><a class="reference internal" href="#data-ingestion">Data Ingestion</a></li>
+<li><a class="reference internal" href="#data-ingestion">Data Ingestion</a><ul>
 <li><a class="reference internal" href="#data-preprocessing">Data Preprocessing</a></li>
 <li><a class="reference internal" href="#chunking-text-for-vector-databases">Chunking Text for Vector Databases</a></li>
 <li><a class="reference internal" href="#embeddings">Embeddings</a></li>
@@ -546,6 +549,8 @@ is particularly beneficial for organizations that lack the means to develop and 
 <li><a class="reference internal" href="#tokens">Tokens</a></li>
 <li><a class="reference internal" href="#large-language-models-llms">Large Language Models (LLMs)</a></li>
 <li><a class="reference internal" href="#retrieval-augmented-generation">Retrieval Augmented Generation</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
