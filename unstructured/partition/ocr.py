@@ -29,6 +29,9 @@ def process_data_with_ocr(
     ocr_languages: str = "eng",
     pdf_image_dpi: int = 200,
 ) -> List[List[TextRegion]]:
+    """
+    Retrieve OCR layout information as one document from given file data
+    """
     with tempfile.NamedTemporaryFile() as tmp_file:
         tmp_file.write(data.read() if hasattr(data, "read") else data)
         tmp_file.flush()
@@ -47,6 +50,9 @@ def process_file_with_ocr(
     ocr_languages: str = "eng",
     pdf_image_dpi: int = 200,
 ) -> List[List[TextRegion]]:
+    """
+    Retrieve OCR layout information as one document from given filename
+    """
     if is_image:
         try:
             with PILImage.open(filename) as image:
@@ -189,6 +195,9 @@ def merge_inferred_layouts_with_ocr_layouts(
 ) -> "DocumentLayout":
     merged_layouts = inferred_layouts
     pages = inferred_layouts.pages
+    """
+    Merge the inferred layouts with the OCR-detected text regions on document level
+    """
     for i in range(len(pages)):
         inferred_layout = pages[i].elements
         ocr_layout = ocr_layouts[i]
@@ -203,7 +212,7 @@ def merge_inferred_layout_with_ocr_layout(
     supplement_with_ocr_elements: bool = True,
 ) -> List[LayoutElement]:
     """
-    Merge the inferred layout with the OCR-detected text regions.
+    Merge the inferred layout with the OCR-detected text regions on page level.
 
     This function iterates over each inferred layout element and aggregates the
     associated text from the OCR layout using the specified threshold. The inferred
