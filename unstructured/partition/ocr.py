@@ -18,6 +18,8 @@ from unstructured_inference.inference.layoutelement import (
     LayoutElement,
 )
 
+from unstructured.logger import logger
+
 SUBREGION_THRESHOLD_FOR_OCR = 0.5
 
 
@@ -77,14 +79,30 @@ def process_file_with_ocr(
             image_paths = cast(List[str], _image_paths)
             ocr_layouts = []
             for image_path in image_paths:
-                with PILImage.open(image_path) as image:
-                    ocr_data = pytesseract.image_to_data(
-                        np.array(image),
-                        lang=ocr_languages,
-                        output_type=Output.DICT,
+                entrie_page_ocr = os.getenv("ENTIRE_PAGE_OCR", "tesseract").lower()
+                if entrie_page_ocr not in ["paddle", "tesseract"]:
+                    raise ValueError(
+                        "Environment variable ENTIRE_PAGE_OCR",
+                        " must be set to 'tesseract' or 'paddle'.",
                     )
-                    ocr_layout = parse_ocr_data_tesseract(ocr_data)
+                if entrie_page_ocr == "paddle":
+                    logger.info("Processing entrie page OCR with paddle...")
+                    from unstructured.partition.utils.ocr_models import paddle_ocr
+
+                    # TODO(yuming): pass in language parameter once we
+                    # have the mapping for paddle lang code
+                    ocr_data = paddle_ocr.load_agent().ocr(np.array(image), cls=True)
+                    ocr_layout = parse_ocr_data_paddle(ocr_data)
                     ocr_layouts.append(ocr_layout)
+                else:
+                    with PILImage.open(image_path) as image:
+                        ocr_data = pytesseract.image_to_data(
+                            np.array(image),
+                            lang=ocr_languages,
+                            output_type=Output.DICT,
+                        )
+                        ocr_layout = parse_ocr_data_tesseract(ocr_data)
+                        ocr_layouts.append(ocr_layout)
             return ocr_layouts
 
 

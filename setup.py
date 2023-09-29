@@ -109,8 +109,8 @@ setup(
     install_requires=[
         # (Trevor): This is a simple hello world package that is used to track
         # download count for this package using scarf.
-        'scarf @ https://packages.unstructured.io/scarf.tgz',
-        load_requirements()
+        "scarf @ https://packages.unstructured.io/scarf.tgz",
+        load_requirements(),
     ],
     extras_require={
         # Document specific extra requirements
