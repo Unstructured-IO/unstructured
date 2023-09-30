@@ -451,6 +451,12 @@ def _has_break_tags(tag_elem: etree._Element) -> bool:  # pyright: ignore[report
 
 def _unfurl_break_tags(tag_elem: etree.Element) -> List[etree.Element]:
     unfurled = []
+
+    if tag_elem.text:
+        _tag_elem = etree.Element(tag_elem.tag)
+        _tag_elem.text = tag_elem.text
+        unfurled.append(_tag_elem)
+        
     children = tag_elem.getchildren()
     for child in children:
         if not _has_break_tags(child):
