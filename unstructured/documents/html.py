@@ -417,7 +417,7 @@ def _is_container_with_text(tag_elem: etree.Element) -> bool:
         <div>Please read my message!</div>
     </div>
     """
-    if tag_elem.tag not in SECTION_TAGS or len(tag_elem) == 0:
+    if tag_elem.tag not in SECTION_TAGS + ["body"] or len(tag_elem) == 0:
         return False
 
     if tag_elem.text is None or tag_elem.text.strip() == "":
