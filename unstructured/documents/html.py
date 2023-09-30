@@ -480,7 +480,7 @@ def _is_text_tag(tag_elem: etree.Element, max_predecessor_len: int = 5) -> bool:
     if len(tag_elem) > max_predecessor_len + empty_elems_len:
         return False
 
-    if tag_elem.tag in TEXT_TAGS + HEADING_TAGS:
+    if tag_elem.tag in TEXT_TAGS + HEADING_TAGS + TEXTBREAK_TAGS:
         return True
 
     # NOTE(robinson) - This indicates that a div tag has no children. If that's the
