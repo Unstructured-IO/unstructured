@@ -292,3 +292,9 @@ def test_add_chunking_strategy_on_partition_doc(filename="example-docs/fake.doc"
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_doc_element_metadata_has_languages():
+    filename = "example-docs/fake-doc-emphasized-text.doc"
+    elements = partition_doc(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]

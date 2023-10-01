@@ -26,6 +26,7 @@ def partition_doc(
     metadata_last_modified: Optional[str] = None,
     libre_office_filter: Optional[str] = "MS Word 2007 XML",
     chunking_strategy: Optional[str] = None,
+    languages: List[str] = ["auto"],
     **kwargs: Any,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
@@ -42,11 +43,18 @@ def partition_doc(
         The filter to use when coverting to .doc. The default is the
         filter that is required when using LibreOffice7. Pass in None
         if you do not want to apply any filter.
+    languages
+        The list of languages present in the document.
     """
     # Verify that only one of the arguments was provided
     if filename is None:
         filename = ""
     exactly_one(filename=filename, file=file)
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
 
     if len(filename) > 0:
         _, filename_no_path = os.path.split(os.path.abspath(filename))
@@ -80,6 +88,7 @@ def partition_doc(
             include_page_breaks=include_page_breaks,
             include_metadata=include_metadata,
             metadata_last_modified=metadata_last_modified or last_modification_date,
+            languages=languages,
         )
         # remove tmp.name from filename if parsing file
         if file:
