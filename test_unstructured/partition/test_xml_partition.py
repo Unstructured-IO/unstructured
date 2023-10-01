@@ -288,3 +288,9 @@ def test_add_chunking_strategy_on_partition_xml(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_xml_element_metadata_has_languages():
+    filename = "example-docs/factbook.xml"
+    elements = partition_xml(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]

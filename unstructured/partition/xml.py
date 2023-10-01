@@ -13,6 +13,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
@@ -89,6 +90,7 @@ def partition_xml(
     encoding: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
+    languages: List[str] = ["auto"],
     **kwargs,
 ) -> List[Element]:
     """Partitions an XML document into its document elements.
@@ -100,21 +102,29 @@ def partition_xml(
     file
         A file-like object using "rb" mode --> open(filename, "rb").
     text
-        The text of the XML file
+        The text of the XML file.
     xml_keep_tags
         If True, will retain the XML tags in the output. Otherwise it will simply extract
         the text from within the tags.
     xml_path
-        The xml_path to use for extracting the text. Only used if xml_keep_tags=False
+        The xml_path to use for extracting the text. Only used if xml_keep_tags=False.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     include_metadata
         Determines whether or not metadata is included in the metadata attribute on the
         elements in the output.
     metadata_last_modified
-        The day of the last modification
+        The day of the last modification.
+    languages
+        The list of languages present in the document.
     """
     exactly_one(filename=filename, file=file, text=text)
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
+
     elements: List[Element] = []
 
     last_modification_date = None
@@ -159,5 +169,12 @@ def partition_xml(
                 element = element_from_text(leaf_element)
                 element.metadata = metadata
                 elements.append(element)
+
+    elements = list(
+        apply_lang_metadata(
+            elements=elements,
+            languages=languages,
+        ),
+    )
 
     return elements
