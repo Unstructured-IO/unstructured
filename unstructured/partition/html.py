@@ -12,6 +12,7 @@ from unstructured.file_utils.filetype import (
     FileType,
     add_metadata_with_filetype,
 )
+from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.partition.common import (
     document_to_element_list,
     exactly_one,
@@ -43,6 +44,7 @@ def partition_html(
     metadata_last_modified: Optional[str] = None,
     skip_headers_and_footers: bool = False,
     chunking_strategy: Optional[str] = None,
+    languages: List[str] = ["auto"],
     **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -78,7 +80,8 @@ def partition_html(
         The last modified date for the document.
     skip_headers_and_footers
         If True, ignores any content that is within <header> or <footer> tags
-
+    languages
+        The list of languages present in the document.
     """
     if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
@@ -124,13 +127,19 @@ def partition_html(
 
     if skip_headers_and_footers:
         document = filter_footer_and_header(document)
-    return document_to_element_list(
-        document,
-        sortable=False,
-        include_page_breaks=include_page_breaks,
-        last_modification_date=metadata_last_modified or last_modification_date,
-        source_format=source_format if source_format else None,
-        **kwargs,
+
+    return list(
+        apply_lang_metadata(
+            document_to_element_list(
+                document,
+                sortable=False,
+                include_page_breaks=include_page_breaks,
+                last_modification_date=metadata_last_modified or last_modification_date,
+                source_format=source_format if source_format else None,
+                **kwargs,
+            ),
+            languages=languages,
+        ),
     )
 
 

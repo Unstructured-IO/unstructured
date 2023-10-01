@@ -645,3 +645,9 @@ def test_add_chunking_strategy_on_partition_html(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_html_element_metadata_has_languages():
+    filename = "example-docs/example-10k.html"
+    elements = partition_html(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
