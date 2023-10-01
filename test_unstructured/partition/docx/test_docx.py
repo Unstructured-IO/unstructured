@@ -489,3 +489,9 @@ def test_parse_category_depth_by_style_name():
 def test_parse_category_depth_by_style_ilvl():
     partitioner = _DocxPartitioner(None, None, None, False, None)
     assert partitioner._parse_category_depth_by_style_ilvl() == 0
+
+
+def test_partition_docx_element_metadata_has_languages():
+    filename = "example-docs/handbook-1p.docx"
+    elements = partition_docx(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]

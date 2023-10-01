@@ -56,6 +56,7 @@ from unstructured.documents.elements import (
     process_metadata,
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.partition.common import (
     convert_ms_office_table_to_text,
     exactly_one,
@@ -155,10 +156,11 @@ def partition_docx(
     file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
-    include_metadata: bool = True,
+    include_metadata: bool = True,  # used by decorator
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,
-    **kwargs: Any,
+    chunking_strategy: Optional[str] = None,  # used by decorator
+    languages: List[str] = ["auto"],
+    **kwargs: Any,  # used by decorator
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
 
@@ -173,19 +175,26 @@ def partition_docx(
         to .docx before partition. We want the original source filename in the metadata.
     metadata_last_modified
         The last modified date for the document.
+    languages
+        The list of languages present in the document.
     """
     # -- verify that only one file-specifier argument was provided --
     exactly_one(filename=filename, file=file)
 
-    return list(
-        _DocxPartitioner.iter_document_elements(
-            filename,
-            file,
-            metadata_filename,
-            include_page_breaks,
-            metadata_last_modified,
+    elements = list(
+        apply_lang_metadata(
+            elements=_DocxPartitioner.iter_document_elements(
+                filename,
+                file,
+                metadata_filename,
+                include_page_breaks,
+                metadata_last_modified,
+            ),
+            languages=languages,
         ),
     )
+
+    return elements
 
 
 class _DocxPartitioner:
@@ -220,6 +229,7 @@ class _DocxPartitioner:
         metadata_filename: Optional[str],
         include_page_breaks: bool,
         metadata_last_modified: Optional[str],
+        # languages: List[str],
     ) -> None:
         self._filename = filename
         self._file = file
@@ -227,6 +237,7 @@ class _DocxPartitioner:
         self._include_page_breaks = include_page_breaks
         self._metadata_last_modified = metadata_last_modified
         self._page_counter: int = 1
+        # self._languages: languages
 
     @classmethod
     def iter_document_elements(
@@ -236,18 +247,34 @@ class _DocxPartitioner:
         metadata_filename: Optional[str] = None,
         include_page_breaks: bool = True,
         metadata_last_modified: Optional[str] = None,
+        # languages: List[str] = ["auto"],
     ) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
-        return cls(
+        return cls(  # returning the iterator, not the items
             filename,
             file,
             metadata_filename,
             include_page_breaks,
             metadata_last_modified,
+            # languages,
         )._iter_document_elements()
 
     def _iter_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in (docx) `document` in document order."""
+        # -- This implementation composes a collection of iterators into a "combined" iterator
+        # -- return value using `yield from`. You can think of the return value as an Element
+        # -- stream and each `yield from` as "add elements found by this function to the stream".
+        # -- This is functionally analogous to declaring `elements: List[Element] = []` at the top
+        # -- and using `elements.extend()` for the results of each of the function calls, but is
+        # -- more perfomant, uses less memory (avoids producing and then garbage-collecting all
+        # -- those small lists), is more flexible for later iterator operations like filter,
+        # -- chain, map, etc. and is perhaps more elegant and simpler to read once you have the
+        # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
+        # -- functions like `._iter_paragraph_elements()` where the "just return when done"
+        # -- characteristic of a generator avoids repeated code to form interim results into lists.
+
+        # full_text = ""
+
         for section_idx, section in enumerate(self._document.sections):
             yield from self._iter_section_page_breaks(section_idx, section)
             yield from self._iter_section_headers(section)
@@ -470,11 +497,10 @@ class _DocxPartitioner:
         # -- predict when two page breaks will be needed and emit one of them. The second will be
         # -- emitted by the rendered page-break to follow.
 
-        if start_type == WD_SECTION_START.EVEN_PAGE:
+        if start_type == WD_SECTION_START.EVEN_PAGE and not page_is_odd():
             # -- on an even page we need two total, add one to supplement the rendered page break
             # -- to follow. There is no "first-document-page" special case because 1 is odd.
-            if not page_is_odd():
-                yield from self._increment_page_number()
+            yield from self._increment_page_number()
 
         elif start_type == WD_SECTION_START.ODD_PAGE:
             # -- the first page of the document is an implicit "new" odd-page, so no page-break --
