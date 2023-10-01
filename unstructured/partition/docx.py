@@ -88,6 +88,7 @@ def convert_and_partition_docx(
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    languages: List[str] = ["auto"],
 ) -> List[Element]:
     """Converts a document to DOCX and then partitions it using partition_docx.
 
@@ -104,6 +105,8 @@ def convert_and_partition_docx(
     include_metadata
         Determines whether or not metadata is included in the metadata attribute on the elements in
         the output.
+    languages
+        The list of languages present in the document.
     """
     exactly_one(filename=filename, file=file)
 
@@ -143,6 +146,7 @@ def convert_and_partition_docx(
             metadata_filename=metadata_filename,
             include_metadata=include_metadata,
             metadata_last_modified=metadata_last_modified,
+            languages=languages,
         )
 
     return elements

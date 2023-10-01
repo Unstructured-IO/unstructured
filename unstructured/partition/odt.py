@@ -20,6 +20,7 @@ def partition_odt(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
+    languages: List[str] = ["auto"],
     **kwargs: Any,
 ) -> List[Element]:
     """Partitions Open Office Documents in .odt format into its document elements.
@@ -32,7 +33,14 @@ def partition_odt(
         A file-like object using "rb" mode --> open(filename, "rb").
     metadata_last_modified
         The last modified date for the document.
+    languages
+        The list of languages present in the document.
     """
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
 
     last_modification_date = None
     if filename:
@@ -46,4 +54,5 @@ def partition_odt(
         file=file,
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified or last_modification_date,
+        languages=languages,
     )
