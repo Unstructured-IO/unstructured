@@ -17,6 +17,7 @@ def partition_rtf(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
+    languages: List[str] = ["auto"],
     **kwargs,
 ) -> List[Element]:
     """Partitions an RTF document. The document is first converted to HTML and then
@@ -32,6 +33,8 @@ def partition_rtf(
         If True, the output will include page breaks if the filetype supports it
     metadata_last_modified
         The last modified date for the document.
+    languages
+        The list of languages present in the document.
     """
     return convert_and_partition_html(
         source_format="rtf",
@@ -40,4 +43,5 @@ def partition_rtf(
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified,
+        languages=languages,
     )

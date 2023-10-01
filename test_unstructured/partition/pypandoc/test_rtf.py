@@ -161,3 +161,9 @@ def test_add_chunking_strategy_on_partition_rtf(filename="example-docs/fake-doc.
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_rtf_element_metadata_has_languages():
+    filename = "example-docs/fake-doc.rtf"
+    elements = partition_rtf(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
