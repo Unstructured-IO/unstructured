@@ -28,7 +28,7 @@ Office365-REST-Python-Client<2.4.3
 # unstructured-inference
 # NOTE(klaijan) - Moved pin from test.in
 # pinning to avoid error in argilla library
-pydantic<2
+pydantic<3
 # unable to build wheel for arm on 0.3.3+
 safetensors<=0.3.2
 # use the known compatible version of weaviate and unstructured.pytesseract
