@@ -35,6 +35,7 @@ def partition_md(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
+    languages: List[str] = ["auto"],
     **kwargs,
 ) -> List[Element]:
     """Partitions a markdown file into its constituent elements
@@ -57,6 +58,8 @@ def partition_md(
         The parser to use for parsing the markdown document. If None, default parser will be used.
     metadata_last_modified
         The last modified date for the document.
+    languages
+        The list of languages present in the document.
     """
     # Verify that only one of the arguments was provided
     if text is None:
@@ -96,4 +99,5 @@ def partition_md(
         source_format="md",
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified or last_modification_date,
+        languages=languages,
     )

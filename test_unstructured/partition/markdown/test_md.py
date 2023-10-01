@@ -284,3 +284,9 @@ def test_add_chunking_strategy_on_partition_md(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_md_element_metadata_has_languages():
+    filename = "example-docs/README.md"
+    elements = partition_md(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
