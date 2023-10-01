@@ -11,6 +11,7 @@ from unstructured.documents.elements import (
     process_metadata,
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
@@ -28,6 +29,7 @@ def partition_xlsx(
     include_metadata: bool = True,
     metadata_last_modified: Optional[str] = None,
     include_header: bool = True,
+    languages: List[str] = ["auto"],
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .xlsx format into its document elements.
@@ -44,8 +46,16 @@ def partition_xlsx(
         The day of the last modification
     include_header
         Determines whether or not header info info is included in text and medatada.text_as_html
+    languages
+        The list of languages present in the document.
     """
     exactly_one(filename=filename, file=file)
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
+
     last_modification_date = None
     if filename:
         sheets = pd.read_excel(filename, sheet_name=None)
@@ -78,5 +88,12 @@ def partition_xlsx(
 
         table = Table(text=text, metadata=metadata)
         elements.append(table)
+
+    elements = list(
+        apply_lang_metadata(
+            elements=elements,
+            languages=languages,
+        ),
+    )
 
     return elements

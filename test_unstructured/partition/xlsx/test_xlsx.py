@@ -205,3 +205,9 @@ def test_partition_xlsx_with_json(filename="example-docs/stanley-cups.xlsx"):
 
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+
+
+def test_partition_xlsx_element_metadata_has_languages():
+    filename = "example-docs/stanley-cups.xlsx"
+    elements = partition_xlsx(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
