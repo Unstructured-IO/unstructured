@@ -26,7 +26,7 @@ def partition_json(
     metadata_last_modified: Optional[str] = None,
     **kwargs: Any,
 ) -> List[Element]:
-    """Partitions an .json document into its constituent elements.
+    """Partitions serialized Unstructured output into its constituent elements.
 
     Parameters
     ----------
