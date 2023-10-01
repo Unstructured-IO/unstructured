@@ -1092,7 +1092,6 @@ def get_word_bounding_box_from_element(
         x1, y1, x2, y2 = None, None, None, None
         start_index = 0
         for index, character in enumerate(text_line):
-            breakpoint()
             if isinstance(character, LTChar):
                 characters.append(character)
                 char = character.get_text()
