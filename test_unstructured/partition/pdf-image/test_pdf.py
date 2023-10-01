@@ -953,6 +953,3 @@ def test_partition_pdf_uses_model_name():
         mockpartition.assert_called_once()
         assert "model_name" in mockpartition.call_args.kwargs
         assert mockpartition.call_args.kwargs["model_name"]
-
-
-# def test_partition_pdf_
