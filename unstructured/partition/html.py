@@ -150,6 +150,7 @@ def convert_and_partition_html(
     include_page_breaks: bool = False,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    languages: List[str] = ["auto"],
 ) -> List[Element]:
     """Converts a document to HTML and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -168,6 +169,8 @@ def convert_and_partition_html(
         The filename to use in element metadata.
     metadata_last_modified
         The last modified date for the document.
+    languages
+        The list of languages present in the document.
     """
 
     last_modification_date = None
@@ -189,6 +192,7 @@ def convert_and_partition_html(
         encoding="unicode",
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified or last_modification_date,
+        languages=languages,
     )
 
 

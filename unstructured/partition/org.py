@@ -16,6 +16,7 @@ def partition_org(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
+    languages: List[str] = ["auto"],
 ) -> List[Element]:
     """Partitions an org document. The document is first converted to HTML and then
     partitioned using partition_html.
@@ -30,7 +31,15 @@ def partition_org(
         If True, the output will include page breaks if the filetype supports it
     metadata_last_modified
         The last modified date for the document.
+    languages
+        The list of languages present in the document.
     """
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
+
     return convert_and_partition_html(
         source_format="org",
         filename=filename,
@@ -38,4 +47,5 @@ def partition_org(
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified,
+        languages=languages,
     )
