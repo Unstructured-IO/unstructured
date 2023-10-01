@@ -19,6 +19,7 @@ from unstructured.partition.common import (
     convert_to_bytes,
     exactly_one,
 )
+from unstructured.partition.lang import detect_languages
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -113,6 +114,7 @@ def build_email_metadata(
     msg: Message,
     filename: Optional[str],
     metadata_last_modified: Optional[str] = None,
+    languages: List[str] = ["auto"],
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     header_dict = dict(msg.raw_items())
@@ -134,6 +136,7 @@ def build_email_metadata(
         subject=header_dict.get("Subject"),
         last_modified=metadata_last_modified or email_date,
         filename=filename,
+        languages=languages,
     )
 
 
@@ -258,6 +261,7 @@ def partition_email(
     attachment_partitioner: Optional[Callable] = None,
     min_partition: Optional[int] = 0,
     chunking_strategy: Optional[str] = None,
+    languages: List[str] = ["auto"],
     **kwargs,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
@@ -289,6 +293,8 @@ def partition_email(
     min_partition
         The minimum number of characters to include in a partition. Only applies if
         processing the text/plain content.
+    languages
+        The list of languages present in the document.
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
@@ -298,6 +304,11 @@ def partition_email(
 
     if text is not None and text.strip() == "" and not file and not filename:
         return []
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
@@ -343,6 +354,9 @@ def partition_email(
         content_map[content_type] = part.get_payload()
 
     content = content_map.get(content_source, "")
+
+    if content:
+        languages = detect_languages(content, languages)
 
     elements: List[Element] = []
 
@@ -421,6 +435,7 @@ def partition_email(
         msg,
         filename=metadata_filename or filename,
         metadata_last_modified=metadata_last_modified,
+        languages=languages,
     )
     for element in all_elements:
         element.metadata = metadata

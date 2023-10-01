@@ -600,3 +600,9 @@ def test_add_chunking_strategy_on_partition_email(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_email_element_metadata_has_languages():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    elements = partition_email(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
