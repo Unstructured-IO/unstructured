@@ -38,7 +38,7 @@ jobs:
       with:
         driver: ${{ matrix.docker-platform == 'linux/amd64' && 'docker' || 'docker-container' }}
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Login to Quay.io
       uses: docker/login-action@v2
       with:
@@ -81,7 +81,7 @@ jobs:
     steps:
     - uses: docker/setup-buildx-action@v1
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Login to Quay.io
       uses: docker/login-action@v1
       with:

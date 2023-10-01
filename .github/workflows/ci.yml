@@ -20,7 +20,7 @@ jobs:
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/cache@v3
       id: virtualenv-cache
       with:
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/cache/restore@v3
       id: virtualenv-cache
       with:
@@ -76,7 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/cache/restore@v3
       id: virtualenv-cache
       with:
@@ -102,7 +102,7 @@ jobs:
   shellcheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: ShellCheck
         uses: ludeeus/action-shellcheck@master
 
@@ -115,7 +115,7 @@ jobs:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/cache/restore@v3
       id: virtualenv-cache
       with:
@@ -159,7 +159,7 @@ jobs:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -196,7 +196,7 @@ jobs:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint, test_unit_no_extras]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -236,7 +236,7 @@ jobs:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/cache/restore@v3
       id: virtualenv-cache
       with:
@@ -334,7 +334,7 @@ jobs:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/cache/restore@v3
       id: virtualenv-cache
       with:
@@ -393,7 +393,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ setup, lint ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/cache/restore@v3
         id: virtualenv-cache
         with:
