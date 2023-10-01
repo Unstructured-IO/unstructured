@@ -11,6 +11,7 @@ from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.email import convert_to_iso_8601
 from unstructured.partition.html import partition_html
+from unstructured.partition.lang import detect_languages
 from unstructured.partition.text import partition_text
 
 
@@ -28,6 +29,7 @@ def partition_msg(
     attachment_partitioner: Optional[Callable] = None,
     min_partition: Optional[int] = 0,
     chunking_strategy: Optional[str] = None,
+    languages: List[str] = ["auto"],
     **kwargs,
 ) -> List[Element]:
     """Partitions a MSFT Outlook .msg file
@@ -56,6 +58,11 @@ def partition_msg(
     """
     exactly_one(filename=filename, file=file)
 
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
+
     if filename is not None:
         msg_obj = msg_parser.MsOxMessage(filename)
     elif file is not None:
@@ -71,6 +78,7 @@ def partition_msg(
     is_encrypted = "encrypted" in content_type
 
     text = msg_obj.body
+    languages = detect_languages(text, languages)
     elements: List[Element] = []
     if is_encrypted:
         logger.warning(
@@ -91,6 +99,7 @@ def partition_msg(
         msg_obj,
         metadata_filename or filename,
         metadata_last_modified=metadata_last_modified,
+        languages=languages,
     )
     for element in elements:
         element.metadata = metadata
@@ -124,6 +133,7 @@ def build_msg_metadata(
     msg_obj: msg_parser.MsOxMessage,
     filename: Optional[str],
     metadata_last_modified: Optional[str],
+    languages: List[str] = ["auto"],
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     email_date = getattr(msg_obj, "sent_date", None)
@@ -144,6 +154,7 @@ def build_msg_metadata(
         subject=getattr(msg_obj, "subject", None),
         last_modified=metadata_last_modified or email_date,
         filename=filename,
+        languages=languages,
     )
 
 
