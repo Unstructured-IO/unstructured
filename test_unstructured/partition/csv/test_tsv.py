@@ -190,3 +190,9 @@ def test_partition_tsv_with_json(filename):
 
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+
+
+def test_partition_tsv_element_metadata_has_languages():
+    filename = "example-docs/stanley-cups-with-emoji.tsv"
+    elements = partition_tsv(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
