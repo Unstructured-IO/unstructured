@@ -55,7 +55,7 @@ jobs:
           --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
           -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
+      uses: docker/setup-qemu-action@v3
     - name: Test images
       run: |
         echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
