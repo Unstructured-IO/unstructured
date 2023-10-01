@@ -181,6 +181,11 @@ def partition_docx(
     # -- verify that only one file-specifier argument was provided --
     exactly_one(filename=filename, file=file)
 
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
+
     elements = list(
         apply_lang_metadata(
             elements=_DocxPartitioner.iter_document_elements(
@@ -229,7 +234,6 @@ class _DocxPartitioner:
         metadata_filename: Optional[str],
         include_page_breaks: bool,
         metadata_last_modified: Optional[str],
-        # languages: List[str],
     ) -> None:
         self._filename = filename
         self._file = file
@@ -237,7 +241,6 @@ class _DocxPartitioner:
         self._include_page_breaks = include_page_breaks
         self._metadata_last_modified = metadata_last_modified
         self._page_counter: int = 1
-        # self._languages: languages
 
     @classmethod
     def iter_document_elements(
@@ -247,7 +250,6 @@ class _DocxPartitioner:
         metadata_filename: Optional[str] = None,
         include_page_breaks: bool = True,
         metadata_last_modified: Optional[str] = None,
-        # languages: List[str] = ["auto"],
     ) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
         return cls(  # returning the iterator, not the items
@@ -256,7 +258,6 @@ class _DocxPartitioner:
             metadata_filename,
             include_page_breaks,
             metadata_last_modified,
-            # languages,
         )._iter_document_elements()
 
     def _iter_document_elements(self) -> Iterator[Element]:
