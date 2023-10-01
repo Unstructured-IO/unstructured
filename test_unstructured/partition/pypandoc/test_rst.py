@@ -155,3 +155,9 @@ def test_add_chunking_strategy_on_partition_rst(filename="example-docs/README.rs
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_rst_element_metadata_has_languages():
+    filename = "example-docs/README.rst"
+    elements = partition_rst(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
