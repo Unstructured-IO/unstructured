@@ -17,6 +17,7 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
+from unstructured.partition.lang import detect_languages
 
 
 @process_metadata()
@@ -27,6 +28,7 @@ def partition_csv(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     include_metadata: bool = True,
+    languages: List[str] = ["auto"],
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .csv format into its document elements.
@@ -43,8 +45,15 @@ def partition_csv(
         The last modified date for the document.
     include_metadata
         Determines whether or not metadata is included in the output.
+    languages
+        The list of languages present in the document.
     """
     exactly_one(filename=filename, file=file)
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
 
     if filename:
         table = pd.read_csv(filename)
@@ -59,12 +68,14 @@ def partition_csv(
 
     html_text = table.to_html(index=False, header=False, na_rep="")
     text = soupparser_fromstring(html_text).text_content()
+    languages = detect_languages(text, languages)
 
     if include_metadata:
         metadata = ElementMetadata(
             text_as_html=html_text,
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
+            languages=languages,
         )
     else:
         metadata = ElementMetadata()

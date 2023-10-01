@@ -189,3 +189,9 @@ def test_partition_csv_with_json(filename, expected_text, expected_table):
     assert elements[0].metadata.filename == test_elements[0].metadata.filename
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+
+
+def test_partition_csv_element_metadata_has_languages():
+    filename = "example-docs/stanley-cups.csv"
+    elements = partition_csv(filename=filename, strategy="fast")
+    assert elements[0].metadata.languages == ["eng"]
