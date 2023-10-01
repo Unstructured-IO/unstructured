@@ -193,3 +193,9 @@ def test_add_chunking_strategy_on_partition_epub(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_docx_element_metadata_has_languages():
+    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub")
+    elements = partition_epub(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]

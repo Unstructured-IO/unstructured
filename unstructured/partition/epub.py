@@ -7,6 +7,7 @@ from ebooklib import epub
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
@@ -27,6 +28,7 @@ def partition_epub(
     metadata_last_modified: Optional[str] = None,
     encoding: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
+    languages: List[str] = ["auto"],
     **kwargs,
 ) -> List[Element]:
     """Partitions an EPUB document. The document is first converted to HTML and then
@@ -45,8 +47,15 @@ def partition_epub(
         The last modified date for the document.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
+    languages
+        The list of languages present in the document.
     """
     exactly_one(filename=filename, file=file)
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
 
     if filename is not None:
         last_modification_date = get_last_modified_date(filename)
@@ -99,5 +108,9 @@ def partition_epub(
         )
 
         elements.extend(section_elements)
+    import pdb
+
+    pdb.set_trace()
+    elements = list(apply_lang_metadata(elements, languages=languages))
 
     return elements
