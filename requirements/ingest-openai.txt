@@ -25,7 +25,7 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   aiohttp
@@ -50,7 +50,7 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.304
+langchain==0.0.305
     # via -r requirements/ingest-openai.in
 langsmith==0.0.41
     # via langchain
@@ -76,7 +76,7 @@ numpy==1.24.4
     #   numexpr
 openai==0.28.1
     # via -r requirements/ingest-openai.in
-packaging==23.1
+packaging==23.2
     # via
     #   -c requirements/base.txt
     #   marshmallow
