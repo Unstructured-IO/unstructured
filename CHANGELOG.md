@@ -1,8 +1,10 @@
-## 0.10.19-dev1
+## 0.10.19-dev0
 
 ### Enhancements
 
 * **bump `unstructured-inference` to `0.6.6`** The updated version of `unstructured-inference` makes table extraction in `hi_res` mode configurable to fine tune table extraction performance; it also improves element detection by adding a deduplication post processing step in the `hi_res` partitioning of pdfs and images.
+* **Improve title detection in pptx documents** The default title textboxes on a pptx slide are now categorized as titles.
+* **Improve hierarchy detection in pptx documents** List items, and other slide text are properly nested under the slide title. This will enable better chunking of pptx documents.
 
 ### Features
 
