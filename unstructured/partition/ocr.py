@@ -7,6 +7,8 @@ import pdf2image
 
 # TODO(yuming): update pytesseract to unst forked pytesseract
 import pytesseract
+
+# rename PIL.Image to avoid conflict with unstructured.documents.elements.Image
 from PIL import Image as PILImage
 from PIL import ImageSequence
 from pytesseract import Output
@@ -18,7 +20,7 @@ from unstructured_inference.inference.elements import (
     TextRegion,
     partition_groups_from_regions,
 )
-from unstructured_inference.inference.layout import DocumentLayout
+from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
 )
@@ -30,50 +32,57 @@ SUBREGION_THRESHOLD_FOR_OCR = 0.5
 
 def process_data_with_ocr(
     data: Union[bytes, BinaryIO],
+    inferred_layout: "DocumentLayout",
     is_image: bool = False,
     ocr_languages: str = "eng",
+    ocr_mode: str = "entire_page",
     pdf_image_dpi: int = 200,
 ) -> List[List[TextRegion]]:
     """
     Retrieve OCR layout information as one document from given file data
+    TODO(yuming): add me... (more information on each parameter ect)
     """
     with tempfile.NamedTemporaryFile() as tmp_file:
         tmp_file.write(data.read() if hasattr(data, "read") else data)
         tmp_file.flush()
-        ocr_layouts = process_file_with_ocr(
+        merged_layouts = process_file_with_ocr(
             filename=tmp_file.name,
+            inferred_layout=inferred_layout,
             is_image=is_image,
             ocr_languages=ocr_languages,
+            ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
         )
-        return ocr_layouts
+        return merged_layouts
 
 
 def process_file_with_ocr(
-    filename: str = "",
+    filename: str,
+    inferred_layout: "DocumentLayout",
     is_image: bool = False,
     ocr_languages: str = "eng",
+    ocr_mode: str = "entire_page",
     pdf_image_dpi: int = 200,
 ) -> List[List[TextRegion]]:
     """
     Retrieve OCR layout information as one document from given filename
+    TODO(yuming): add me... (more information on each parameter ect)
     """
+    merged_page_layouts = []
     if is_image:
         try:
-            with PILImage.open(filename) as image:
-                format = image.format
-                ocr_layouts = []
-                for im in ImageSequence.Iterator(image):
-                    im = im.convert("RGB")
-                    im.format = format
-                    ocr_data = pytesseract.image_to_data(
-                        np.array(im),
-                        lang=ocr_languages,
-                        output_type=Output.DICT,
+            with PILImage.open(filename) as images:
+                format = images.format
+                for i, image in enumerate(ImageSequence.Iterator(images)):
+                    image = image.convert("RGB")
+                    image.format = format
+                    merged_page_layout = supplement_page_layout_with_ocr(
+                        inferred_layout[i],
+                        image,
+                        ocr_languages=ocr_languages,
+                        ocr_mode=ocr_mode,
                     )
-                    ocr_layout = parse_ocr_data_tesseract(ocr_data)
-                    ocr_layouts.append(ocr_layout)
-            return ocr_layouts
+                    merged_page_layouts.append(merged_page_layout)
         except Exception as e:
             if os.path.isdir(filename) or os.path.isfile(filename):
                 raise e
@@ -88,35 +97,83 @@ def process_file_with_ocr(
                 paths_only=True,
             )
             image_paths = cast(List[str], _image_paths)
-            ocr_layouts = []
             for image_path in image_paths:
-                entrie_page_ocr = os.getenv("ENTIRE_PAGE_OCR", "tesseract").lower()
-                if entrie_page_ocr not in ["paddle", "tesseract"]:
-                    raise ValueError(
-                        "Environment variable ENTIRE_PAGE_OCR",
-                        " must be set to 'tesseract' or 'paddle'.",
+                with PILImage.open(image_path) as image:
+                    merged_page_layout = supplement_page_layout_with_ocr(
+                        inferred_layout[i],
+                        image,
+                        ocr_languages=ocr_languages,
+                        ocr_mode=ocr_mode,
                     )
-                # TODO(yuming): add tests for paddle with ENTIRE_PAGE_OCR env
-                # see core CORE-1886
-                if entrie_page_ocr == "paddle":
-                    logger.info("Processing entrie page OCR with paddle...")
-                    from unstructured.partition.utils.ocr_models import paddle_ocr
+                    merged_page_layouts.append(merged_page_layout)
+    return DocumentLayout.from_pages(merged_page_layouts)
 
-                    # TODO(yuming): pass in language parameter once we
-                    # have the mapping for paddle lang code
-                    ocr_data = paddle_ocr.load_agent().ocr(np.array(image), cls=True)
-                    ocr_layout = parse_ocr_data_paddle(ocr_data)
-                    ocr_layouts.append(ocr_layout)
-                else:
-                    with PILImage.open(image_path) as image:
-                        ocr_data = pytesseract.image_to_data(
-                            np.array(image),
-                            lang=ocr_languages,
-                            output_type=Output.DICT,
-                        )
-                        ocr_layout = parse_ocr_data_tesseract(ocr_data)
-                        ocr_layouts.append(ocr_layout)
-            return ocr_layouts
+
+def supplement_page_layout_with_ocr(
+    inferred_page_layout: "PageLayout",
+    image: PILImage,
+    ocr_languages: str = "eng",
+    ocr_mode: str = "entire_page",
+) -> "PageLayout":
+    entrie_page_ocr = os.getenv("ENTIRE_PAGE_OCR", "tesseract").lower()
+    # TODO(yuming): add tests for paddle with ENTIRE_PAGE_OCR env
+    # see core CORE-1886
+    if entrie_page_ocr not in ["paddle", "tesseract"]:
+        raise ValueError(
+            "Environment variable ENTIRE_PAGE_OCR",
+            " must be set to 'tesseract' or 'paddle'.",
+        )
+    if ocr_mode == "entire_page":
+        ocr_layout = get_ocr_layout_from_image(
+            image,
+            ocr_languages=ocr_languages,
+            entrie_page_ocr=entrie_page_ocr,
+        )
+        merged_page_layout = merge_inferred_layout_with_ocr_layout(inferred_page_layout, ocr_layout)
+        return merged_page_layout
+    elif ocr_mode == "individual_blocks":
+        elements = inferred_page_layout.elements
+        for i, element in enumerate(elements):
+            if element.text == "":
+                cropped_image = image.crop((element.x1, element.y1, element.x2, element.y2))
+                ocr_layout = get_ocr_layout_from_image(
+                    cropped_image,
+                    ocr_languages=ocr_languages,
+                    entrie_page_ocr=entrie_page_ocr,
+                )
+                text_from_ocr = ""
+                for text_region in ocr_layout:
+                    text_from_ocr += text_region.text
+                elements[i].text = text_from_ocr
+        inferred_page_layout.elements = elements
+        return inferred_page_layout
+    else:
+        raise ValueError(
+            "Invalid OCR mode. Parameter `ocr_mode` must be `entire_page` or individual_blocks`.",
+        )
+
+
+def get_ocr_layout_from_image(
+    image: PILImage,
+    ocr_languages: str = "eng",
+    entrie_page_ocr: str = "tesseract",
+) -> List[TextRegion]:
+    if entrie_page_ocr == "paddle":
+        logger.info("Processing entrie page OCR with paddle...")
+        from unstructured.partition.utils.ocr_models import paddle_ocr
+
+        # TODO(yuming): pass in language parameter once we
+        # have the mapping for paddle lang code
+        ocr_data = paddle_ocr.load_agent().ocr(np.array(image), cls=True)
+        ocr_layout = parse_ocr_data_paddle(ocr_data)
+    else:
+        ocr_data = pytesseract.image_to_data(
+            np.array(image),
+            lang=ocr_languages,
+            output_type=Output.DICT,
+        )
+        ocr_layout = parse_ocr_data_tesseract(ocr_data)
+    return ocr_layout
 
 
 def parse_ocr_data_tesseract(ocr_data: dict) -> List[TextRegion]:
@@ -194,23 +251,6 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
                 text_regions.append(text_region)
 
     return text_regions
-
-
-def merge_inferred_layouts_with_ocr_layouts(
-    inferred_layouts: "DocumentLayout",
-    ocr_layouts: List[List[TextRegion]],
-) -> "DocumentLayout":
-    merged_layouts = inferred_layouts
-    pages = inferred_layouts.pages
-    """
-    Merge the inferred layouts with the OCR-detected text regions on document level
-    """
-    for i in range(len(pages)):
-        inferred_layout = pages[i].elements
-        ocr_layout = ocr_layouts[i]
-        merged_layout = merge_inferred_layout_with_ocr_layout(inferred_layout, ocr_layout)
-        merged_layouts.pages[i].elements[:] = merged_layout
-    return merged_layouts
 
 
 def merge_inferred_layout_with_ocr_layout(

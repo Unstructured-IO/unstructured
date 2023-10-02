@@ -316,7 +316,7 @@ def _partition_pdf_or_image_local(
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
     languages: List[str] = ["eng"],
-    # ocr_mode: str = "entire_page",
+    ocr_mode: str = "entire_page",
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     **kwargs,
@@ -328,7 +328,6 @@ def _partition_pdf_or_image_local(
     )
 
     from unstructured.partition.ocr import (
-        merge_inferred_layouts_with_ocr_layouts,
         process_data_with_ocr,
         process_file_with_ocr,
     )
@@ -356,18 +355,20 @@ def _partition_pdf_or_image_local(
             "model_name": model_name,
             "pdf_image_dpi": pdf_image_dpi,
         }
-        inferenced_layouts = process_file_with_model(
+        inferred_layout = process_file_with_model(
             filename,
             **process_file_with_model_kwargs,
         )
-        ocr_layouts = process_file_with_ocr(
+        merged_layouts = process_file_with_ocr(
             filename,
+            inferred_layout,
             is_image=is_image,
             ocr_languages=ocr_languages,
+            ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
         )
     else:
-        inferenced_layouts = process_data_with_model(
+        inferred_layout = process_data_with_model(
             file,
             is_image=is_image,
             extract_tables=infer_table_structure,
@@ -376,14 +377,14 @@ def _partition_pdf_or_image_local(
         )
         if hasattr(file, "seek"):
             file.seek(0)
-        ocr_layouts = process_data_with_ocr(
+        merged_layouts = process_data_with_ocr(
             file,
+            inferred_layout,
             is_image=is_image,
             ocr_languages=ocr_languages,
+            ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
         )
-
-    merged_layouts = merge_inferred_layouts_with_ocr_layouts(inferenced_layouts, ocr_layouts)
 
     elements = document_to_element_list(
         merged_layouts,
