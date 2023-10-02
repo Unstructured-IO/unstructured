@@ -235,7 +235,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         if (shape.top and shape.left) and (shape.top < 0 or shape.left < 0):
             return
 
-        for paragraph in shape.text_frame.paragraphs:
+        for i, paragraph in enumerate(shape.text_frame.paragraphs):
             text = paragraph.text
             if text.strip() == "":
                 continue
@@ -248,7 +248,8 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             elif is_email_address(text):
                 yield EmailAddress(text=text)
             elif is_title_shape:
-                yield Title(text=text, metadata=metadata)
+                # increment the category depth by the paragraph increment in the shape
+                yield Title(text=text, metadata=self._text_metadata(category_depth=i))
             elif is_possible_narrative_text(text):
                 yield NarrativeText(text=text, metadata=metadata)
             elif is_possible_title(text):
