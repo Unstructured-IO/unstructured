@@ -255,11 +255,6 @@ jobs:
         source .venv/bin/activate
         mkdir "$NLTK_DATA"
         make install-ci
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      timeout-minutes: 15
-      with:
-        limit-access-to-actor: true
     - name: Test Ingest (unit)
       run: |
         source .venv/bin/activate
