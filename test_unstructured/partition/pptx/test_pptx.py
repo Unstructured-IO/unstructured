@@ -356,6 +356,12 @@ def test_partition_pptx_from_file_with_custom_metadata_date(mocker: MockFixture)
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
+def test_partition_pptx_element_metadata_has_languages():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
+    elements = partition_pptx(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
 # == DescribePptxPartitionerDownstreamBehaviors ==================================================
 
 

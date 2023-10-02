@@ -28,6 +28,7 @@ from unstructured.documents.elements import (
     process_metadata,
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.partition.common import (
     convert_ms_office_table_to_text,
     exactly_one,
@@ -54,6 +55,7 @@ def partition_pptx(
     metadata_last_modified: Optional[str] = None,
     include_slide_notes: bool = False,
     chunking_strategy: Optional[str] = None,
+    languages: List[str] = ["auto"],
     **kwargs: Any,
 ) -> List[Element]:
     """Partition PowerPoint document in .pptx format into its document elements.
@@ -74,9 +76,16 @@ def partition_pptx(
         The last modified date for the document.
     include_slide_notes
         If True, includes the slide notes as element
+    languages
+        The list of languages present in the document.
     """
     # -- verify only one source-file argument was provided --
     exactly_one(filename=filename, file=file)
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
 
     # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
     # -- exception when Zipfile tries to open it. Both the docx and pptx formats are zip archives,
@@ -89,12 +98,15 @@ def partition_pptx(
     assert source_file is not None
 
     return list(
-        _PptxPartitioner.iter_presentation_elements(
-            source_file,
-            include_page_breaks,
-            include_slide_notes,
-            metadata_filename,
-            metadata_last_modified,
+        apply_lang_metadata(
+            elements=_PptxPartitioner.iter_presentation_elements(
+                source_file,
+                include_page_breaks,
+                include_slide_notes,
+                metadata_filename,
+                metadata_last_modified,
+            ),
+            languages=languages,
         ),
     )
 
