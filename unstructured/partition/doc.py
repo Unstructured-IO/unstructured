@@ -44,7 +44,11 @@ def partition_doc(
         filter that is required when using LibreOffice7. Pass in None
         if you do not want to apply any filter.
     languages
-        The list of languages present in the document.
+        Detected language of a text using naive Bayesian filter. Multiple languages indicates text
+        could be in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     # Verify that only one of the arguments was provided
     if filename is None:

@@ -225,8 +225,8 @@ def detect_languages(
     # For example, partition_msg relies on partition_html and partition_text, but the metadata
     # gets overwritten after elements have been returned by _html and _text,
     # so `languages` would be detected twice.
-    if languages[0] is None:
-        return None
+    if languages[0] == "":
+        return [""]
 
     if text.strip() == "":
         return ["eng"]  # english as default

@@ -48,7 +48,11 @@ def partition_epub(
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     languages
-        The list of languages present in the document.
+        Detected language of a text using naive Bayesian filter. Multiple languages indicates text
+        could be in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     exactly_one(filename=filename, file=file)
 

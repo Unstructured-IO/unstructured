@@ -56,7 +56,11 @@ def partition_msg(
         The minimum number of characters to include in a partition. Only applies if
         processing text/plain content.
     languages
-        The list of languages present in the document.
+        Detected language of a text using naive Bayesian filter. Multiple languages indicates text
+        could be in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     exactly_one(filename=filename, file=file)
 
@@ -78,7 +82,6 @@ def partition_msg(
     # ref: https://www.ietf.org/rfc/rfc2015.txt
     content_type = msg_obj.header_dict.get("Content-Type", "")
     is_encrypted = "encrypted" in content_type
-
     text = msg_obj.body
     elements: List[Element] = []
     if is_encrypted:
@@ -90,14 +93,14 @@ def partition_msg(
     elif "<html>" in text or "</div>" in text:
         elements = partition_html(
             text=text,
-            languages=[None],
+            languages=[""],
         )
     else:
         elements = partition_text(
             text=text,
             max_partition=max_partition,
             min_partition=min_partition,
-            languages=[None],
+            languages=[""],
         )
 
     metadata = build_msg_metadata(

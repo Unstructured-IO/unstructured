@@ -81,7 +81,11 @@ def partition_html(
     skip_headers_and_footers
         If True, ignores any content that is within <header> or <footer> tags
     languages
-        The list of languages present in the document.
+        Detected language of a text using naive Bayesian filter. Multiple languages indicates text
+        could be in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
@@ -176,7 +180,11 @@ def convert_and_partition_html(
     metadata_last_modified
         The last modified date for the document.
     languages
-        The list of languages present in the document.
+        Detected language of a text using naive Bayesian filter. Multiple languages indicates text
+        could be in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
 
     last_modification_date = None

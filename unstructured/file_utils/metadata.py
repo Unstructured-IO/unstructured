@@ -162,8 +162,18 @@ def apply_lang_metadata(
     """Detect and apply metadata.languages to each element in `elements`."""
     # -- Note this function has a stream interface, but reads the full `elements` stream into memory
     # -- before emitting the first updated element as output.
+
+    # Skip language detection for partitioners that use other partitioners.
+    # For example, partition_msg relies on partition_html and partition_text, but the metadata
+    # gets overwritten after elements have been returned by _html and _text,
+    # so `languages` would be detected twice.
+    if languages == [""]:
+        yield from elements
+        return
+
     if not isinstance(elements, List):
         elements = list(elements)
+
     full_text = " ".join(e.text for e in elements if hasattr(e, "text"))
     languages = detect_languages(text=full_text, languages=languages)
     if languages is not None and len(languages) == 1:

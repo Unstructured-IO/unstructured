@@ -292,7 +292,11 @@ def partition_email(
         The minimum number of characters to include in a partition. Only applies if
         processing the text/plain content.
     languages
-        The list of languages present in the document.
+        Detected language of a text using naive Bayesian filter. Multiple languages indicates text
+        could be in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
@@ -377,7 +381,7 @@ def partition_email(
             text=content,
             include_metadata=False,
             metadata_filename=metadata_filename,
-            languages=[None],
+            languages=[""],
         )
         for element in elements:
             if isinstance(element, Text):
@@ -413,7 +417,7 @@ def partition_email(
             max_partition=max_partition,
             metadata_filename=metadata_filename or filename,
             min_partition=min_partition,
-            languages=[None],
+            languages=[""],
         )
 
     for idx, element in enumerate(elements):

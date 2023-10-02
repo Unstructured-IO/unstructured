@@ -77,7 +77,11 @@ def partition_pptx(
     include_slide_notes
         If True, includes the slide notes as element
     languages
-        The list of languages present in the document.
+        Detected language of a text using naive Bayesian filter. Multiple languages indicates text
+        could be in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     # -- verify only one source-file argument was provided --
     exactly_one(filename=filename, file=file)
