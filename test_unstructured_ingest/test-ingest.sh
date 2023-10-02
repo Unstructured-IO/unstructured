@@ -10,6 +10,7 @@ export OMP_THREAD_LIMIT=1
 
 scripts=(
 'test-ingest-s3.sh'
+'test-ingest-s3-minio.sh'
 'test-ingest-azure.sh'
 'test-ingest-biomed-api.sh'
 'test-ingest-biomed-path.sh'
