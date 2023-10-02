@@ -182,3 +182,9 @@ def test_add_chunking_strategy_on_partition_ppt(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_ppt_element_metadata_has_languages():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
+    elements = partition_ppt(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]

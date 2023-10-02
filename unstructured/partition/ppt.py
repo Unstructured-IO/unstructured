@@ -25,6 +25,7 @@ def partition_ppt(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
+    languages: List[str] = ["auto"],
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.
@@ -39,11 +40,18 @@ def partition_ppt(
         If True, includes a PageBreak element between slides
     metadata_last_modified
         The last modified date for the document.
+    languages
+        The list of languages present in the document.
     """
     # Verify that only one of the arguments was provided
     if filename is None:
         filename = ""
     exactly_one(filename=filename, file=file)
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
 
     last_modification_date = None
     if len(filename) > 0:
@@ -75,6 +83,7 @@ def partition_ppt(
             filename=pptx_filename,
             metadata_filename=metadata_filename,
             metadata_last_modified=metadata_last_modified or last_modification_date,
+            languages=languages,
         )
 
     # remove tmp.name from filename if parsing file
