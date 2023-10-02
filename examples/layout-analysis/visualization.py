@@ -3,11 +3,11 @@ import pathlib
 import sys
 
 import pdf2image
+from unstructured_inference.inference.elements import Rectangle
+from unstructured_inference.visualize import draw_bbox
 
 from unstructured.documents.elements import PageBreak
 from unstructured.partition.pdf import partition_pdf
-from unstructured_inference.inference.elements import Rectangle
-from unstructured_inference.visualize import draw_bbox
 
 CUR_DIR = pathlib.Path(__file__).parent.resolve()
 
