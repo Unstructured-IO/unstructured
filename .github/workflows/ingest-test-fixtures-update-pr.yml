@@ -37,7 +37,7 @@ jobs:
           make install-ci
 
   update-fixtures-and-pr:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup]
