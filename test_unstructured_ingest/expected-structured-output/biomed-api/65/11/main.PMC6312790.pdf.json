@@ -161,13 +161,13 @@
   },
   {
     "type": "Title",
-    "element_id": "ac89a2886224c42ad15982cd34421ff8",
+    "element_id": "188408ad3575b107d0af4a0133f1a1b5",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Subject area More speciﬁc subject area Surface science and engineering Type of data"
+    "text": "Subject area Materials engineering More specific subject area Surface science and engineering Type of data Table and figure"
   },
   {
     "type": "NarrativeText",
@@ -177,47 +177,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Materials engineering"
-  },
-  {
-    "type": "Title",
-    "element_id": "a2c3879ecb580742973c6a914fb905bb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Surface science and engineering"
-  },
-  {
-    "type": "Title",
-    "element_id": "2d2224a0fd42fd962f195297e92227d2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Table and figure"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "97c2a9b16d11ebeb7f85251ef239d5ef",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Corresponding author. tayo.sanni@yahoo.com; SanniO@tut.ac.za"
-  },
-  {
-    "type": "Title",
-    "element_id": "e102dc7c1db28c29d5e4bde8062592ed",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "E-mail address: tayo.sanni@yahoo.com (O. Sanni)."
+    "text": "* Corresponding author. tayo.sanni@yahoo.com; SanniO@tut.ac.za E-mail address: tayo.sanni@yahoo.com (O. Sanni)."
   },
   {
     "type": "NarrativeText",
@@ -310,44 +270,14 @@
     "text": "Value of the data"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "0a5e0daaca13b106a726e9fb433a15c2",
+    "type": "ListItem",
+    "element_id": "7def44ffc91f3f064b85dc04b23767ec",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "© Data presented here provide optimum conditions of waste material as inhibitor for stainless steel Type 316 in 0.5M H2SO4 medium. The given data describe the inhibitive performance of eco-friendly egg shell powder on austenitic stainless steel Type 316 corrosion in sulphuric acid environment."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "28938e90004a4b030475499143a6d663",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "© The data obtained for the inhibition of waste product (egg shell powder) on stainless steel Type 316 can be used as basis in determining the inhibitive performance of the same inhibitor in other environments."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "0a0d8eb63ea1c62df0cefe57546932e3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "© The data can be used to examine the relationship between the process variable as it affect the"
-  },
-  {
-    "type": "Title",
-    "element_id": "1ddde62c3188f81dfc835b6f036f1734",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "nature of inhibition of metals."
+    "text": "© Data presented here provide optimum conditions of waste material as inhibitor for stainless steel Type 316 in 0.5M H2SO4 medium. The given data describe the inhibitive performance of eco-friendly egg shell powder on austenitic stainless steel Type 316 corrosion in sulphuric acid environment. © The data obtained for the inhibition of waste product (egg shell powder) on stainless steel Type 316 can be used as basis in determining the inhibitive performance of the same inhibitor in other environments. © The data can be used to examine the relationship between the process variable as it affect the nature of inhibition of metals."
   },
   {
     "type": "Title",
@@ -441,13 +371,13 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a6ac8b6459528ccae6c803a78945c861",
+    "element_id": "45cd54c64e38abe8c1128a5979ca8cd5",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "immersed in 0.5M H2SO, solution in the absence and"
+    "text": "Fig. 1. Weight loss versus exposure time for stainless steel immersed in 0.5M H2SO, solution in the absence and presence of ES."
   },
   {
     "type": "NarrativeText",
@@ -761,13 +691,13 @@
   },
   {
     "type": "Image",
-    "element_id": "b5ee6af3d776b0bbd2e581a3ab2ab2e1",
+    "element_id": "27b45633a0f31b9e01d179d70d7dc282",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Potential (Vv)nm°in°}aryT T T0.00001 0.001 olCurrent Density (A/cm2)"
+    "text": "    5 1 os = — 10; =o ° © —\" 205 i —~é é —ip a5 — Control -2 — & 2.5 T T T 0.0000001 + —-0.00001 0.001 O14 Current Density (A/cm2)"
   },
   {
     "type": "UncategorizedText",
@@ -1051,33 +981,23 @@
   },
   {
     "type": "Image",
-    "element_id": "caa364fead90039aae1f13d64dcb8b37",
+    "element_id": "273fb301b173075f79b2cbdab962e2ff",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEM HV: Q0KY WD: 14.89 rmrm‘DEM MAO: 209 x ‘Dor Pecforsence In nenospact"
+    "text": "SEM HV: Q0KY WD: 14.89 rmrm ‘9EM MAO: 209 x Det: DOE Pectomsence In nanospact"
   },
   {
     "type": "Image",
-    "element_id": "a0463ca888a6f2c8c3ba40ba47be0f2f",
+    "element_id": "520d1da08c86ce165cd2843e2dc27f98",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "gEOOwaeSemny. z00RV | WD: 1424 renn rtirint VEoa3 Tescan20 yin Fertormaros in nancepace|"
-  },
-  {
-    "type": "Image",
-    "element_id": "88301d6b47b17df03b78789b9890a6f1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "°@¢Naafe«MgsSEM HY: 20.0KV 7 ETOP LU ULL UL OCT 0BEM IAAG: 400 x a"
+    "text": "SEMHV: 20.0KV WD: 15.54 mm EM ING: ACO x Dei: OSE"
   },
   {
     "type": "NarrativeText",
@@ -1460,74 +1380,14 @@
     "text": "References"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "1d19fe372e22371844685b58154e3c15",
+    "type": "ListItem",
+    "element_id": "86174db2f99ff948055caeda83334bb7",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "[1] 0. Sanni, A.P.I. Popoola, O.S.I. Fayomi, Enhanced corrosion resistance of stainless steel type 316 in sulphuric acid solution"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "ec07c8cce6911e22e11b4db0db4abe90",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "using eco-friendly waste product, Results Phys. 9 (2018) 225-230."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "7e9cfcc1c32c353e319aae7d9be537bd",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "[2] O. Sanni, A.P.I. Popoola, A. Kolesnikov, Constitutive modeling for prediction of optimal process parameters in corrosion"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "f04c847514475ab5abc5f457c7687a3f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "inhibition of austenitic stainless steel (Type 316)/acidic medium, Mater. Res. Express. 5 (10) (2018) 1-15."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "1d76a4bb6ba7984cea4548ab574beb8f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "[3] O. Sanni, A.P.I. Popoola, O.S.I. Fayomi, The inhibitive study of egg shell powder on UNS N08904 austenitic stainless steel"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "28c935072cd296fb22de995e6b61a0b0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "corrosion in chloride solution, Def. Technol. 14 (2018) 463-468."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "abce488ae87959229a146498bfc85c65",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "[4] O. Sanni, A.P.I. Popoola, 0.S.I. Fayomi, C.A. Loto, A comparative study of inhibitive effect of waste product on stainless steel corrosion in sodium chloride/sulfuric acid environments, Metallogr. Microstruct. Anal. (2018) 1-17. https://doi.org/10.1007/ $13632-018-0495-5,"
+    "text": "[1] 0. Sanni, A.P.I. Popoola, O.S.I. Fayomi, Enhanced corrosion resistance of stainless steel type 316 in sulphuric acid solution using eco-friendly waste product, Results Phys. 9 (2018) 225-230. [2] O. Sanni, A.P.I. Popoola, A. Kolesnikov, Constitutive modeling for prediction of optimal process parameters in corrosion inhibition of austenitic stainless steel (Type 316)/acidic medium, Mater. Res. Express. 5 (10) (2018) 1-15. [3] O. Sanni, A.P.I. Popoola, O.S.I. Fayomi, The inhibitive study of egg shell powder on UNS N08904 austenitic stainless steel corrosion in chloride solution, Def. Technol. 14 (2018) 463-468. [4] O. Sanni, A.P.I. Popoola, 0.S.I. Fayomi, C.A. Loto, A comparative study of inhibitive effect of waste product on stainless steel corrosion in sodium chloride/sulfuric acid environments, Metallogr. Microstruct. Anal. (2018) 1-17. https://doi.org/10.1007/ $13632-018-0495-5, [5] O. Sanni, A-P.I. Popoola, O.S.1. Fayomi, Inhibition of engineering material in sulphuric acid solution using waste product, Contributed Papers from Materials Science and Technology (MS&T18), 2018. (lnttps://doi.org/10.7449/2018/MST_2018_254 261)."
   },
   {
     "type": "NarrativeText",
