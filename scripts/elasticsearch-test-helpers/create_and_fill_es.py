@@ -10,7 +10,7 @@ from es_cluster_config import (
 )
 
 print("Connecting to the Elasticsearch cluster.")
-es = Elasticsearch(CLUSTER_URL, request_timeout=30)
+es = Elasticsearch(CLUSTER_URL, request_timeout=60)
 print(es.info())
 df = pd.read_csv(DATA_PATH).dropna().reset_index()
 
