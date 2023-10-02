@@ -11,6 +11,10 @@ export OMP_THREAD_LIMIT=1
 scripts=(
 'test-ingest-s3.sh'
 'test-ingest-azure.sh'
+'test-ingest-biomed-api.sh'
+'test-ingest-biomed-path.sh'
+## NOTE(yuming): The following test should be put after any tests with --preserve-downloads option
+'test-ingest-pdf-fast-reprocess.sh'
 'test-ingest-box.sh'
 'test-ingest-discord.sh'
 'test-ingest-dropbox.sh'
@@ -18,8 +22,6 @@ scripts=(
 'test-ingest-gitlab.sh'
 'test-ingest-google-drive.sh'
 'test-ingest-wikipedia.sh'
-'test-ingest-biomed-api.sh'
-'test-ingest-biomed-path.sh'
 'test-ingest-local.sh'
 'test-ingest-slack.sh'
 'test-ingest-against-api.sh'
@@ -39,8 +41,6 @@ scripts=(
 'test-ingest-delta-table.sh'
 'test-ingest-salesforce.sh'
 'test-ingest-jira.sh'
-## NOTE(yuming): The following test should be put after any tests with --preserve-downloads option
-'test-ingest-pdf-fast-reprocess.sh'
 'test-ingest-sharepoint.sh'
 )
 

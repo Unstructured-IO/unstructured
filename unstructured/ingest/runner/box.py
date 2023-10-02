@@ -23,7 +23,7 @@ def box(
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
 
     read_config.download_dir = update_download_dir_remote_url(
-        connector_name="azure",
+        connector_name="box",
         read_config=read_config,
         remote_url=remote_url,
         logger=logger,
