@@ -332,7 +332,7 @@ def _partition_pdf_or_image_local(
     model_name = (
         model_name
         if model_name
-        else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", "detectron2_onnx")
+        else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", "yolox_quantized")
     )
     pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
     extract_images_in_pdf = kwargs.get("extract_images_in_pdf", False)
