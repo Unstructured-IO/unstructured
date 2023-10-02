@@ -514,3 +514,9 @@ def test_add_chunking_strategy_on_partition_text(filename="example-docs/norwich-
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_text_element_metadata_has_languages():
+    filename = "example-docs/norwich-city.txt"
+    elements = partition_text(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
