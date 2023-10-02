@@ -407,7 +407,7 @@ def test_partition_pdf_with_dpi():
             ocr_languages="eng",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name=None,
+            model_name="detectron2_onnx",
             pdf_image_dpi=100,
         )
 
@@ -858,7 +858,7 @@ def test_partition_pdf_formats_languages_for_tesseract():
             ocr_languages="eng",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name=None,
+            model_name="detectron2_onnx",
         )
 
 
