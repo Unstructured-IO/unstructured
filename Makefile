@@ -21,7 +21,10 @@ install-base: install-base-pip-packages install-nltk-models
 install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test
+install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test install-local-inference
+
+.PHONY: install-local-inference
+install-local-inference: git clone -b  yuming/remove_ocr_code --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
 
 .PHONY: install-base-ci
 install-base-ci: install-base-pip-packages install-nltk-models install-test
