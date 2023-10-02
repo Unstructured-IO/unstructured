@@ -115,9 +115,9 @@ def test_partition_image_with_auto_strategy(
     filename="example-docs/layout-parser-paper-fast.jpg",
 ):
     elements = image.partition_image(filename=filename, strategy="auto")
-    titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
-    title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    assert titles[0].text == title
+    headers = [el for el in elements if el.category == "Header"]
+    expected_header = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    assert headers[0].text == expected_header
     assert elements[0].metadata.detection_class_prob is not None
     assert isinstance(elements[0].metadata.detection_class_prob, float)
 
@@ -440,7 +440,7 @@ def test_partition_image_formats_languages_for_tesseract():
             ocr_languages="jpn_vert",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name="detectron2_onnx",
+            model_name="yolox_quantized",
         )
 
 
