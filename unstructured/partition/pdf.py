@@ -893,6 +893,8 @@ def get_uris_from_annots(
                 uri = try_resolve(try_resolve(uri_dict["URI"])).decode("utf-8")
             if uri_type == "/'GoTo'":
                 uri = try_resolve(try_resolve(uri_dict["D"])).decode("utf-8")
+            else:
+                uri = None
         except (KeyError, AttributeError, TypeError, UnicodeDecodeError):
             uri = None
 
