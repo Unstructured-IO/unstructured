@@ -10,6 +10,7 @@ from unstructured_inference.inference import layout
 from unstructured.chunking.title import chunk_by_title
 from unstructured.partition import image, pdf
 from unstructured.partition.json import partition_json
+from unstructured.partition.utils.constants import DEFAULT_HI_RES_MODEL_NAME
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -116,7 +117,9 @@ def test_partition_image_with_auto_strategy(
 ):
     elements = image.partition_image(filename=filename, strategy="auto")
     headers = [el for el in elements if el.category == "Header"]
-    expected_header = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    expected_header = (
+        "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    )
     assert headers[0].text == expected_header
     assert elements[0].metadata.detection_class_prob is not None
     assert isinstance(elements[0].metadata.detection_class_prob, float)
@@ -440,7 +443,7 @@ def test_partition_image_formats_languages_for_tesseract():
             ocr_languages="jpn_vert",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name="yolox_quantized",
+            model_name=DEFAULT_HI_RES_MODEL_NAME,
         )
 
 

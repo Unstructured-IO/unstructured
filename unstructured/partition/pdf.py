@@ -60,7 +60,11 @@ from unstructured.partition.lang import (
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
-from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
+from unstructured.partition.utils.constants import (
+    DEFAULT_HI_RES_MODEL_NAME,
+    SORT_MODE_BASIC,
+    SORT_MODE_XY_CUT,
+)
 from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     sort_page_elements,
@@ -332,7 +336,7 @@ def _partition_pdf_or_image_local(
     model_name = (
         model_name
         if model_name
-        else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", "yolox_quantized")
+        else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", DEFAULT_HI_RES_MODEL_NAME)
     )
     pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
     extract_images_in_pdf = kwargs.get("extract_images_in_pdf", False)
