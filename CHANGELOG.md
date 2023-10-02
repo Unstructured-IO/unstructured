@@ -1,4 +1,4 @@
-## 0.10.19-dev3
+## 0.10.19-dev4
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 
 ### Fixes
 
+* **Fixes issue where the default layout model was not updated** Problem: the default layout model was not updated to the latest `unstructured-inference` default model.
 
 ## 0.10.18
 
