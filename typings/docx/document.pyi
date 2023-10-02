@@ -11,7 +11,7 @@ from docx.text.paragraph import Paragraph
 
 class Document(BlockItemContainer):
     def add_paragraph(
-        self, text: str = "", style: Union[_ParagraphStyle, str, None] = None
+        self, text: str = "", style: Union[_ParagraphStyle, str, None] = None,
     ) -> Paragraph: ...
     @property
     def element(self) -> CT_Document: ...
