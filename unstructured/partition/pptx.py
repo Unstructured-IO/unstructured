@@ -164,7 +164,10 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                     yield from self._iter_table_element(shape)
                 elif shape.has_text_frame:
                     assert isinstance(shape, Shape)
-                    yield from self._iter_paragraph_elements(shape, shape == title_shape)
+                    yield from self._iter_paragraph_elements(
+                        shape,
+                        is_title_shape=bool(shape == title_shape),
+                    )
                 # -- otherwise ditch it, this would include pictures, charts, connectors (lines),
                 # -- and free-form shapes (squiggly lines). Lines don't have text.
 
@@ -286,7 +289,9 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         return get_last_modified_date_from_file(file)
 
     def _order_shapes(self, slide: Slide) -> Tuple[Sequence[BaseShape], Optional[BaseShape]]:
-        """Orders the shapes on `slide` from top to bottom and left to right."""
+        """Orders the shapes on `slide` from top to bottom and left to right.
+
+        Returns the ordered shapes and the title shape if it exists."""
 
         def iter_shapes(shapes: _BaseGroupShapes) -> Iterator[BaseShape]:
             for shape in shapes:
