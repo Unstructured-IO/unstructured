@@ -15,7 +15,11 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+function cleanup() {
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$DOWNLOAD_DIR"
+}
+trap cleanup EXIT
 
 if [ -z "$AIRTABLE_PERSONAL_ACCESS_TOKEN" ]; then
    echo "Skipping Airtable ingest test because the AIRTABLE_PERSONAL_ACCESS_TOKEN is not set."

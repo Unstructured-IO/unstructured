@@ -21,6 +21,7 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   cleanup_dir "$DESTINATION_TABLE"
   cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$DOWNLOAD_DIR"
 }
 
 trap cleanup EXIT

@@ -21,6 +21,7 @@ function cleanup() {
   fi
 
   cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$DOWNLOAD_DIR"
 }
 
 trap cleanup EXIT

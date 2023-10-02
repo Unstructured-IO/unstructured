@@ -14,7 +14,11 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+function cleanup() {
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$DOWNLOAD_DIR"
+}
+trap cleanup EXIT
 
 if [ -z "$SALESFORCE_PRIVATE_KEY" ] && [ -z "$SALESFORCE_PRIVATE_KEY_PATH" ]; then
    echo "Skipping Salesforce ingest test because neither SALESFORCE_PRIVATE_KEY nor SALESFORCE_PRIVATE_KEY_PATH env vars are set."

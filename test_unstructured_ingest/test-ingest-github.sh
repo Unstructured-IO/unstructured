@@ -11,7 +11,11 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+function cleanup() {
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$DOWNLOAD_DIR"
+}
+trap cleanup EXIT
 
 GH_READ_ONLY_ACCESS_TOKEN=${GH_READ_ONLY_ACCESS_TOKEN:-none}
 

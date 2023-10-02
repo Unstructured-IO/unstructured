@@ -14,7 +14,11 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+function cleanup() {
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$DOWNLOAD_DIR"
+}
+trap cleanup EXIT
 
 VARIED_DATA_BASE_ID="app5YQxSfp220fWtm"
 VARIED_DATA_BASE_ID_2="appJ43QmP8I17zu88"

@@ -27,6 +27,9 @@ if [ -z "$AZURE_SEARCH_ENDPOINT" ] && [ -z "$AZURE_SEARCH_API_KEY" ]; then
    exit 0
 fi
 
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+
 function cleanup {
   response_code=$(curl -s -o /dev/null -w "%{http_code}" \
   "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
@@ -41,6 +44,9 @@ function cleanup {
   else
     echo "Index $DESTINATION_INDEX does not exist, nothing to delete"
   fi
+
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$DOWNLOAD_DIR"
 }
 
 trap cleanup EXIT
