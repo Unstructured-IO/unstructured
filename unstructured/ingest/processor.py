@@ -110,7 +110,7 @@ def process_documents(
     process_document_with_partition_args = partial(
         process_document,
         strategy=partition_config.strategy,
-        ocr_languages=partition_config.ocr_languages,
+        languages=partition_config.ocr_languages,
         encoding=partition_config.encoding,
         pdf_infer_table_structure=partition_config.pdf_infer_table_structure,
     )
