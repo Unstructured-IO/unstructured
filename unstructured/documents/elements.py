@@ -20,6 +20,7 @@ from unstructured.documents.coordinates import (
     CoordinateSystem,
     RelativeCoordinateSystem,
 )
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
 class NoID(abc.ABC):
@@ -140,7 +141,6 @@ class Link(TypedDict):
 class ElementMetadata:
     coordinates: Optional[CoordinatesMetadata] = None
     data_source: Optional[DataSourceMetadata] = None
-    data_origin: Optional[str] = None
     filename: Optional[str] = None
     file_directory: Optional[str] = None
     last_modified: Optional[str] = None
@@ -188,6 +188,9 @@ class ElementMetadata:
 
     # Detection Model Class Probabilities from Unstructured-Inference Hi-Res
     detection_class_prob: Optional[float] = None
+
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        data_origin: Optional[str] = None
 
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
