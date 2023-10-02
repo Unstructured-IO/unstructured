@@ -685,3 +685,28 @@ def test_sample_doc_with_emoji():
     # NOTE(robinson) - unclear why right now, but the output is the emoji on the test runners
     # and the byte string representation when running locally on mac
     assert doc.elements[0].text in ["Hello again ð\x9f\x98\x80", "Hello again 😀"]
+
+
+def test_only_plain_text_in_body():
+    raw_html = "<body>Hello</body>"
+    doc = HTMLDocument.from_string(raw_html)
+    assert doc.elements[0].text == "Hello"
+
+
+def test_plain_text_before_anything_in_body():
+    raw_html = "<body>Hello<p>World</p></body>"
+    doc = HTMLDocument.from_string(raw_html)
+    assert doc.elements[0].text == "Hello" and doc.elements[1].text == "World"
+
+
+def test_line_break_in_container():
+    raw_html = "<div>Hello<br/>World</div>"
+    doc = HTMLDocument.from_string(raw_html)
+    assert doc.elements[0].text == "Hello" and doc.elements[1].text == "World"
+
+
+@pytest.mark.parametrize("tag", TEXT_TAGS)
+def test_line_break_in_text_tag(tag):
+    raw_html = f"<{tag}>Hello<br/>World</{tag}>"
+    doc = HTMLDocument.from_string(raw_html)
+    assert doc.elements[0].text == "Hello" and doc.elements[1].text == "World"
