@@ -3,6 +3,8 @@ from typing import List, Optional
 
 import numpy as np
 
+from langchain.embeddings import HuggingFaceEmbeddings
+
 from unstructured.documents.elements import (
     Element,
 )
@@ -14,29 +16,25 @@ from unstructured.utils import requires_dependencies
 class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
     def __init__(
         self,
-        model_name: Optional[str] = "sentence-transformers/all-mpnet-base-v2",
+        model_name: Optional[str] = "sentence-transformers/all-MiniLM-L6-v2",
         model_kwargs: Optional[dict] = {"device": "cpu"},
         encode_kwargs: Optional[dict] = {"normalize_embeddings": False},
     ):
         self.model_name = model_name
         self.model_kwargs = model_kwargs
         self.encode_kwargs = encode_kwargs
+
         self.initialize()
 
-    @EmbeddingEncoderConnectionError.wrap
-    @requires_dependencies(
-        ["langchain", "huggingface", "tiktoken"],
-        extras="huggingface",
-    )
     def initialize(self):
         """Creates a langchain HuggingFace object to embed elements."""
-        from langchain.embeddings import HuggingFaceEmbeddings
 
         self.hf = HuggingFaceEmbeddings(
-            model=self.model_name,
+            model_name=self.model_name,
             model_kwargs=self.model_kwargs,
             encode_kwargs=self.encode_kwargs,
         )
+
         self.examplary_embedding = self.hf.embed_query("Q")
 
         return self.hf
