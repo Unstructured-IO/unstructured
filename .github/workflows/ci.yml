@@ -256,7 +256,6 @@ jobs:
         mkdir "$NLTK_DATA"
         make install-ci
     - name: Setup tmate session
-      if: ${{ failure() }}
       uses: mxschmitt/action-tmate@v3
       timeout-minutes: 15
       with:
