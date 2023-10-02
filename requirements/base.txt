@@ -50,8 +50,6 @@ regex==2023.8.8
     # via nltk
 requests==2.31.0
     # via -r requirements/base.in
-scarf @ https://packages.unstructured.io/scarf.tgz
-    # via -r requirements/base.in
 six==1.16.0
     # via langdetect
 soupsieve==2.5

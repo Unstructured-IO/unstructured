@@ -407,7 +407,7 @@ def test_partition_pdf_with_dpi():
             ocr_languages="eng",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name=None,
+            model_name="detectron2_onnx",
             pdf_image_dpi=100,
         )
 
@@ -479,7 +479,7 @@ def test_partition_pdf_fast_groups_text_in_text_box():
             system=expected_coordinate_system_3,
         ),
     )
-    assert elements[3] == Text("2.5", metadata=expected_elem_metadata_3)
+    assert elements[2] == Text("2.5", metadata=expected_elem_metadata_3)
 
 
 def test_partition_pdf_with_metadata_filename(
@@ -858,7 +858,7 @@ def test_partition_pdf_formats_languages_for_tesseract():
             ocr_languages="eng",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name=None,
+            model_name="detectron2_onnx",
         )
 
 
