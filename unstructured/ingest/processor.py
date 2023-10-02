@@ -107,10 +107,11 @@ def process_documents(
     verbose: bool,
     dest_doc_connector: t.Optional[BaseDestinationConnector] = None,
 ) -> None:
+    languages = partition_config.ocr_languages.split("+") if partition_config.ocr_languages else []
     process_document_with_partition_args = partial(
         process_document,
         strategy=partition_config.strategy,
-        ocr_languages=partition_config.ocr_languages,
+        languages=languages,
         encoding=partition_config.encoding,
         pdf_infer_table_structure=partition_config.pdf_infer_table_structure,
     )
