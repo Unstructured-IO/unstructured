@@ -7,11 +7,11 @@ import msg_parser
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, ElementMetadata, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.email import convert_to_iso_8601
 from unstructured.partition.html import partition_html
-from unstructured.partition.lang import detect_languages
 from unstructured.partition.text import partition_text
 
 
@@ -55,6 +55,8 @@ def partition_msg(
     min_partition
         The minimum number of characters to include in a partition. Only applies if
         processing text/plain content.
+    languages
+        The list of languages present in the document.
     """
     exactly_one(filename=filename, file=file)
 
@@ -78,7 +80,6 @@ def partition_msg(
     is_encrypted = "encrypted" in content_type
 
     text = msg_obj.body
-    languages = detect_languages(text, languages)
     elements: List[Element] = []
     if is_encrypted:
         logger.warning(
@@ -87,19 +88,22 @@ def partition_msg(
     elif text is None:
         pass
     elif "<html>" in text or "</div>" in text:
-        elements = partition_html(text=text)
+        elements = partition_html(
+            text=text,
+            languages=[None],
+        )
     else:
         elements = partition_text(
             text=text,
             max_partition=max_partition,
             min_partition=min_partition,
+            languages=[None],
         )
 
     metadata = build_msg_metadata(
         msg_obj,
         metadata_filename or filename,
         metadata_last_modified=metadata_last_modified,
-        languages=languages,
     )
     for element in elements:
         element.metadata = metadata
@@ -126,7 +130,12 @@ def partition_msg(
                     element.metadata.attached_to_filename = metadata_filename or filename
                     elements.append(element)
 
-    return elements
+    return list(
+        apply_lang_metadata(
+            elements=elements,
+            languages=languages,
+        ),
+    )
 
 
 def build_msg_metadata(

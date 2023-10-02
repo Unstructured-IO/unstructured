@@ -221,6 +221,13 @@ def detect_languages(
     Detects the list of languages present in the text (in the default "auto" mode),
     or formats and passes through the user inputted document languages if provided.
     """
+    # Skip language detection for partitioners that use other partitioners.
+    # For example, partition_msg relies on partition_html and partition_text, but the metadata
+    # gets overwritten after elements have been returned by _html and _text,
+    # so `languages` would be detected twice.
+    if languages[0] is None:
+        return None
+
     if text.strip() == "":
         return ["eng"]  # english as default
 

@@ -166,7 +166,7 @@ def apply_lang_metadata(
         elements = list(elements)
     full_text = " ".join(e.text for e in elements if hasattr(e, "text"))
     languages = detect_languages(text=full_text, languages=languages)
-    if len(languages) == 1:
+    if languages is not None and len(languages) == 1:
         # -- apply detected languge to each metadata --
         for e in elements:
             e.metadata.languages = languages
