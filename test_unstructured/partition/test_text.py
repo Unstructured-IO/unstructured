@@ -520,3 +520,9 @@ def test_partition_text_element_metadata_has_languages():
     filename = "example-docs/norwich-city.txt"
     elements = partition_text(filename=filename)
     assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_text_element_metadata_detects_languages():
+    filename = "example-docs/norwich-city.txt"
+    elements = partition_text(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
