@@ -486,7 +486,7 @@ def _is_text_tag(tag_elem: etree.Element, max_predecessor_len: int = 5) -> bool:
     # NOTE(robinson) - This indicates that a div tag has no children. If that's the
     # case and the tag has text, its potential a text tag
     children = tag_elem.getchildren()
-    if tag_elem.tag in SECTION_TAGS and len(children) == 0:
+    if tag_elem.tag in SECTION_TAGS + ["body"] and len(children) == 0:
         return True
 
     if _has_adjacent_bulleted_spans(tag_elem, children):
