@@ -9,12 +9,15 @@ OUTPUT_FOLDER_NAME=pdf-fast-reprocess
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 INPUT_PATH=$SCRIPT_DIR/download
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
+CI=${CI:-"false"}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
-  cleanup_dir "$INPUT_PATH"
+  if [ "$CI" == "true" ]; then
+    cleanup_dir "$INPUT_PATH"
+  fi
 }
 trap cleanup EXIT
 
