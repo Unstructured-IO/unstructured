@@ -64,7 +64,13 @@ def partition_md(
     # Verify that only one of the arguments was provided
     if text is None:
         text = ""
+
     exactly_one(filename=filename, file=file, text=text, url=url)
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
 
     last_modification_date = None
     if filename is not None:
