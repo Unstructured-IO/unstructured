@@ -55,6 +55,7 @@ def test_partition_msg_from_filename():
             subject="Test Email",
             filetype="application/vnd.ms-outlook",
             parent_id=parent_id,
+            languages=["eng"],
         ).to_dict()
     )
     for element in elements:

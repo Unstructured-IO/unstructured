@@ -320,6 +320,7 @@ def test_partition_email_from_filename_has_metadata():
             subject="Test Email",
             filetype="message/rfc822",
             parent_id=parent_id,
+            languages=["eng"],
         ).to_dict()
     )
     expected_dt = datetime.datetime.fromisoformat("2022-12-16T17:04:16-05:00")
