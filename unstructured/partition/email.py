@@ -14,12 +14,12 @@ from unstructured.file_utils.encoding import (
     read_txt_file,
     validate_encoding,
 )
+from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.logger import logger
 from unstructured.partition.common import (
     convert_to_bytes,
     exactly_one,
 )
-from unstructured.partition.lang import detect_languages
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -114,7 +114,6 @@ def build_email_metadata(
     msg: Message,
     filename: Optional[str],
     metadata_last_modified: Optional[str] = None,
-    languages: List[str] = ["auto"],
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     header_dict = dict(msg.raw_items())
@@ -136,7 +135,6 @@ def build_email_metadata(
         subject=header_dict.get("Subject"),
         last_modified=metadata_last_modified or email_date,
         filename=filename,
-        languages=languages,
     )
 
 
@@ -355,9 +353,6 @@ def partition_email(
 
     content = content_map.get(content_source, "")
 
-    if content:
-        languages = detect_languages(content, languages)
-
     elements: List[Element] = []
 
     if is_encrypted:
@@ -382,6 +377,7 @@ def partition_email(
             text=content,
             include_metadata=False,
             metadata_filename=metadata_filename,
+            languages=[None],
         )
         for element in elements:
             if isinstance(element, Text):
@@ -417,6 +413,7 @@ def partition_email(
             max_partition=max_partition,
             metadata_filename=metadata_filename or filename,
             min_partition=min_partition,
+            languages=[None],
         )
 
     for idx, element in enumerate(elements):
@@ -435,7 +432,6 @@ def partition_email(
         msg,
         filename=metadata_filename or filename,
         metadata_last_modified=metadata_last_modified,
-        languages=languages,
     )
     for element in all_elements:
         element.metadata = metadata
@@ -462,4 +458,9 @@ def partition_email(
                     element.metadata.attached_to_filename = metadata_filename or filename
                     all_elements.append(element)
 
-    return all_elements
+    return list(
+        apply_lang_metadata(
+            elements=all_elements,
+            languages=languages,
+        ),
+    )
