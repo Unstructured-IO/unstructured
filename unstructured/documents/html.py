@@ -456,7 +456,7 @@ def _unfurl_break_tags(tag_elem: etree.Element) -> List[etree.Element]:
         _tag_elem = etree.Element(tag_elem.tag)
         _tag_elem.text = tag_elem.text
         unfurled.append(_tag_elem)
-        
+
     children = tag_elem.getchildren()
     for child in children:
         if not _has_break_tags(child):
