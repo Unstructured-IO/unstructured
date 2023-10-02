@@ -108,9 +108,7 @@ def partition_epub(
         )
 
         elements.extend(section_elements)
-    import pdb
 
-    pdb.set_trace()
     elements = list(apply_lang_metadata(elements, languages=languages))
 
     return elements
