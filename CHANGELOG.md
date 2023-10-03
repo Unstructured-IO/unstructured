@@ -1,3 +1,14 @@
+## 0.10.20-dev4
+
+### Enhancements
+
+### Features
+
+* **Adds HuggingFaceEmbeddingEncoder** The HuggingFace Embedding Encoder uses a local embedding model as opposed to using an API. 
+
+### Fixes
+
+
 ## 0.10.19-dev3
 
 ### Enhancements
