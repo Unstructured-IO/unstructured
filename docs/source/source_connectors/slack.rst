@@ -30,30 +30,22 @@ Run Locally
 
       .. code:: python
 
-        import subprocess
+        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
+        from unstructured.ingest.runner.slack import slack
 
-        command = [
-          "unstructured-ingest",
-            "slack",
-            "--channels", "12345678",
-            "--token", "12345678",
-            "--download-dir", "slack-ingest-download",
-            "--output-dir", "slack-ingest-output",
-            "--start-date", "2023-04-01T01:00:00-08:00",
-            "--end-date", "2023-04-02"
-        ]
-
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            slack(
+                verbose=True,
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
+                    output_dir="slack-ingest-download",
+                    num_processes=2,
+                ),
+                channels=["12345678"],
+                token="12345678",
+                start_date="2023-04-01T01:00:00-08:00",
+                end_date="2023-04-02,",
+            )
 
 Run via the API
 ---------------
@@ -81,32 +73,26 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
       .. code:: python
 
-        import subprocess
+        import os
 
-        command = [
-          "unstructured-ingest",
-            "slack",
-            "--channels", "12345678",
-            "--token", "12345678",
-            "--download-dir", "slack-ingest-download",
-            "--output-dir", "slack-ingest-output",
-            "--start-date", "2023-04-01T01:00:00-08:00",
-            "--end-date", "2023-04-02",
-            "--partition-by-api",
-            "--api-key", "<UNSTRUCTURED-API-KEY>",
-        ]
+        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
+        from unstructured.ingest.runner.slack import slack
 
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            slack(
+                verbose=True,
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
+                    output_dir="slack-ingest-download",
+                    num_processes=2,
+                    partition_by_api=True,
+                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
+                ),
+                channels=["12345678"],
+                token="12345678",
+                start_date="2023-04-01T01:00:00-08:00",
+                end_date="2023-04-02,",
+            )
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 
