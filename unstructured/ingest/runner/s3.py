@@ -15,6 +15,7 @@ def s3(
     verbose: bool = False,
     recursive: bool = False,
     anonymous: bool = False,
+    endpoint_url: t.Optional[str] = None,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,
@@ -31,11 +32,14 @@ def s3(
 
     from unstructured.ingest.connector.s3 import S3SourceConnector, SimpleS3Config
 
+    access_kwargs: t.Dict[str, t.Any] = {"anon": anonymous}
+    if endpoint_url:
+        access_kwargs["endpoint_url"] = endpoint_url
     source_doc_connector = S3SourceConnector(  # type: ignore
         connector_config=SimpleS3Config(
             path=remote_url,
             recursive=recursive,
-            access_kwargs={"anon": anonymous},
+            access_kwargs=access_kwargs,
         ),
         read_config=read_config,
         partition_config=partition_config,
