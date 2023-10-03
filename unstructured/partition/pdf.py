@@ -65,6 +65,7 @@ from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     sort_page_elements,
 )
+from unstructured.partition.utils.constants import SORT_MODE_DONT
 from unstructured.utils import requires_dependencies
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
@@ -366,6 +367,10 @@ def _partition_pdf_or_image_local(
             file,
             **process_with_model_kwargs,
         )
+    # NOTE(alan): chipperv2 sorts the elements itself.
+    if model_name == "chipperv2":
+        kwargs["sort_mode"] = SORT_MODE_DONT
+
     elements = document_to_element_list(
         layout,
         sortable=True,
