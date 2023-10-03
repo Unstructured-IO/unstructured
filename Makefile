@@ -241,11 +241,13 @@ uninstall-project-local:
 #################
 
 export CI ?= false
+export UNSTRUCTURED_INCLUDE_DEBUG_METADATA ?= false
 
 ## test:                    runs all unittests
 .PHONY: test
 test:
-	PYTHONPATH=. CI=$(CI) UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
+	PYTHONPATH=. CI=$(CI) \
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
 
 .PHONY: test-unstructured-api-unit
 test-unstructured-api-unit:
@@ -254,7 +256,8 @@ test-unstructured-api-unit:
 .PHONY: test-no-extras
 # TODO(newelh) Add json test when fixed
 test-no-extras:
-	PYTHONPATH=. CI=$(CI) UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true pytest \
+	PYTHONPATH=. CI=$(CI) \
+		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest \
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
 		test_${PACKAGE_NAME}/partition/test_html_partition.py \
