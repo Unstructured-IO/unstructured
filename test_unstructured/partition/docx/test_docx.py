@@ -517,9 +517,15 @@ def test_add_chunking_strategy_on_partition_docx(
     assert chunk_elements != elements
     assert chunk_elements == chunks
 
-    
+
 def test_partition_docx_element_metadata_has_languages():
     filename = "example-docs/handbook-1p.docx"
     elements = partition_docx(filename=filename)
     assert elements[0].metadata.languages == ["eng"]
-    
+
+
+def test_partition_docx_detects_multiple_elements_in_other_language():
+    filename = "example-docs/language-docs/eng_spa_mult.docx"
+    elements = partition_docx(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]

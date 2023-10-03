@@ -539,8 +539,8 @@ def test_partition_text_element_metadata_has_languages():
 def test_partition_text_detects_multiple_elements_in_other_language():
     filename = "example-docs/language-docs/eng_spa_mult.txt"
     elements = partition_text(filename=filename, detect_language_per_element=True)
-    langs = {element.metadata.languages[0] for element in elements}
-    assert langs == {"eng", "spa"}
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
 
 
 def test_partition_text_detects_more_than_3_languages():
