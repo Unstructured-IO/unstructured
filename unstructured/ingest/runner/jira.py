@@ -10,15 +10,15 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def jira(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     url: str,
     user_email: str,
     api_token: str,
-    projects: t.Optional[t.List[str]],
-    boards: t.Optional[t.List[str]],
-    issues: t.Optional[t.List[str]],
+    verbose: bool = False,
+    projects: t.Optional[t.List[str]] = None,
+    boards: t.Optional[t.List[str]] = None,
+    issues: t.Optional[t.List[str]] = None,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,
