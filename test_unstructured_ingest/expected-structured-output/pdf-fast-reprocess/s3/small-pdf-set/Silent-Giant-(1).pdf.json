@@ -154,6 +154,17 @@
     "text": "1"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "2"
+  },
+  {
     "type": "Title",
     "element_id": "2960604e965650bbf4215790bc9db0c1",
     "metadata": {
@@ -682,17 +693,6 @@
     "text": "Figure 2. Worldwide electricity generation by fuel (1990-2016)ii"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "2"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "a72a816f8588c0dc2d089d7a0a44ecaa",
     "metadata": {
@@ -735,6 +735,17 @@
       "links": []
     },
     "text": "3"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6,
+      "links": []
+    },
+    "text": "4"
   },
   {
     "type": "NarrativeText",
@@ -801,17 +812,6 @@
       "links": []
     },
     "text": "In regard to the need for a level playing field, we see that many of the world’s electricity markets operate in an unsustainable fashion, dominated by short-term thinking. Electricity supply which is affordable, reliable and available 24/7 generates broad societal benefits, and as seen in Figure 3, nuclear is one of the most affordable electricity sources."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6,
-      "links": []
-    },
-    "text": "4"
   },
   {
     "type": "UncategorizedText",
@@ -902,17 +902,6 @@
     "text": "0"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "4b5ebf5890b9c61b43c5daf4c40cbab0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7,
-      "links": []
-    },
-    "text": "C o m"
-  },
-  {
     "type": "Title",
     "element_id": "8fd5206adbbb7a132889e4161057d4cf",
     "metadata": {
@@ -922,6 +911,17 @@
       "links": []
     },
     "text": "m ercial Photovoltaic"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4b5ebf5890b9c61b43c5daf4c40cbab0",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7,
+      "links": []
+    },
+    "text": "C o m"
   },
   {
     "type": "Title",
@@ -1043,6 +1043,17 @@
       "links": []
     },
     "text": "5"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "e7f6c011776e8db7cd330b54174fd76f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "6"
   },
   {
     "type": "NarrativeText",
@@ -1298,17 +1309,6 @@
     "text": "Offshore wind"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "77e43ef38dbfcec0511535d9c7dbee5c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "(U K)"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "50a78acc78a3c5b4acc8c439af743a0a",
     "metadata": {
@@ -1318,6 +1318,17 @@
       "links": []
     },
     "text": "O nshore wind (G erm any)"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "77e43ef38dbfcec0511535d9c7dbee5c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "(U K)"
   },
   {
     "type": "UncategorizedText",
@@ -1640,17 +1651,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "e7f6c011776e8db7cd330b54174fd76f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "6"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "284b7e6d788f363f910f7beb1910473e",
     "metadata": {
       "data_source": {},
@@ -1914,48 +1914,15 @@
     "text": "7"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "3c6336f12bcbf4d1ca36bef92d77efea",
+    "type": "UncategorizedText",
+    "element_id": "2c624232cdd221771294dfbb310aca00",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
     },
-    "text": "Nuclear energy can be relied upon to power the new mobility revolution taking place. Every day, we use almost 20 million barrels of oil to power our vehicles. By swapping to an electric or hydrogen-powered transport fleet – all powered by the atom – we are able to address one of the key challenges to a sustainable economy."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "f3e39d107b4601c15dbb3d83ed7a7d9c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "We cannot afford to wait – we need every part of the puzzle to contribute towards solving some of the greatest challenges faced by humankind in a very long time. The impacts of climate change will hit the poorest and most vulnerable first, and failing to act will have significant humanitarian consequences."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "d263fe9467aa7876c4d5009c3125176b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "Nuclear power is the silent giant of today’s energy system – it runs quietly in the background, capable of delivering immense amounts of power, regardless of weather or season, allowing us to focus on everything else in life. It is a technology that is available now, and can be expanded quickly across the world to help us solve some of the most defining challenges we face. Nuclear energy holds the potential to herald a new, cleaner and truly sustainable world – enabling us to pass on a cleaner planet to our children."
-  },
-  {
-    "type": "Title",
-    "element_id": "69824d3b0e70ca6aaa0da1613b65fd91",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "References"
+    "text": "8"
   },
   {
     "type": "Title",
@@ -2035,28 +2002,6 @@
     "text": "vii"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "de72de35f0092bdd3107011f3be18dc0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "International Energy Agency (2018), World Energy Outlook 2018. Data accessed from https://www.iea.org/weo/ – Based on the New Policies Scenario, which incorporates existing energy policies as well as an assessment of the results likely to stem from the implementation of announced policy intentions – with visual modification by World Nuclear Association. International Energy Agency (n.d.), Statistics. Accessed from: https://www.iea.org/statistics/?country=WORLD&year=2016&category=Electricity&indicator=ElecGenByFuel&mode =chart&dataTable=ELECTRICITYANDHEAT – with visual modifications by World Nuclear Association. International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ Intergovernmental Panel on Climate Change (2018), Special Report on Global Warming of 1.5 °C. Accessed from: https://www.ipcc.ch/sr15/ International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ International Energy Agency & OECD Nuclear Energy Agency (2015), Projected Costs of generating Electricity – 2015 Edition. Accessed from: https://www.oecd-nea.org/ndd/pubs/2015/7057-proj-costs-electricity-2015.pdf International Atomic Energy Agency (2015), Technical challenges in the application and licensing of digital instrumentation and control systems in nuclear power plants. Accessed from: https://www-pub.iaea.org/MTCD/ Publications/PDF/P1695_web.pdf"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "b6396ecd6f60e3dcca17c045c00846c1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "viii Paul-Scherrer Institute. Data for nuclear accidents modified to reflect UNSCEAR findings/recommendations (2012)"
-  },
-  {
     "type": "Title",
     "element_id": "ed171375d0bf81eaa5512140c3a29b8f",
     "metadata": {
@@ -2079,6 +2024,72 @@
     "text": "x"
   },
   {
+    "type": "NarrativeText",
+    "element_id": "3c6336f12bcbf4d1ca36bef92d77efea",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "Nuclear energy can be relied upon to power the new mobility revolution taking place. Every day, we use almost 20 million barrels of oil to power our vehicles. By swapping to an electric or hydrogen-powered transport fleet – all powered by the atom – we are able to address one of the key challenges to a sustainable economy."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f3e39d107b4601c15dbb3d83ed7a7d9c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "We cannot afford to wait – we need every part of the puzzle to contribute towards solving some of the greatest challenges faced by humankind in a very long time. The impacts of climate change will hit the poorest and most vulnerable first, and failing to act will have significant humanitarian consequences."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "d263fe9467aa7876c4d5009c3125176b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "Nuclear power is the silent giant of today’s energy system – it runs quietly in the background, capable of delivering immense amounts of power, regardless of weather or season, allowing us to focus on everything else in life. It is a technology that is available now, and can be expanded quickly across the world to help us solve some of the most defining challenges we face. Nuclear energy holds the potential to herald a new, cleaner and truly sustainable world – enabling us to pass on a cleaner planet to our children."
+  },
+  {
+    "type": "Title",
+    "element_id": "69824d3b0e70ca6aaa0da1613b65fd91",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "References"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "de72de35f0092bdd3107011f3be18dc0",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "International Energy Agency (2018), World Energy Outlook 2018. Data accessed from https://www.iea.org/weo/ – Based on the New Policies Scenario, which incorporates existing energy policies as well as an assessment of the results likely to stem from the implementation of announced policy intentions – with visual modification by World Nuclear Association. International Energy Agency (n.d.), Statistics. Accessed from: https://www.iea.org/statistics/?country=WORLD&year=2016&category=Electricity&indicator=ElecGenByFuel&mode =chart&dataTable=ELECTRICITYANDHEAT – with visual modifications by World Nuclear Association. International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ Intergovernmental Panel on Climate Change (2018), Special Report on Global Warming of 1.5 °C. Accessed from: https://www.ipcc.ch/sr15/ International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ International Energy Agency & OECD Nuclear Energy Agency (2015), Projected Costs of generating Electricity – 2015 Edition. Accessed from: https://www.oecd-nea.org/ndd/pubs/2015/7057-proj-costs-electricity-2015.pdf International Atomic Energy Agency (2015), Technical challenges in the application and licensing of digital instrumentation and control systems in nuclear power plants. Accessed from: https://www-pub.iaea.org/MTCD/ Publications/PDF/P1695_web.pdf"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "b6396ecd6f60e3dcca17c045c00846c1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "viii Paul-Scherrer Institute. Data for nuclear accidents modified to reflect UNSCEAR findings/recommendations (2012)"
+  },
+  {
     "type": "UncategorizedText",
     "element_id": "5897aff759a5cc8d94710101c73af296",
     "metadata": {
@@ -2099,17 +2110,6 @@
       "links": []
     },
     "text": "Photo credits: Front cover: Mike Baird; page 2: Vattenfall; page 4: Getty Images; page 5: Adobe Stock; page 6: Rosatom; page 8: Dean Calma, IAEA; page 10: Kazatomprom; page 11: EDF."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "2c624232cdd221771294dfbb310aca00",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "8"
   },
   {
     "type": "UncategorizedText",

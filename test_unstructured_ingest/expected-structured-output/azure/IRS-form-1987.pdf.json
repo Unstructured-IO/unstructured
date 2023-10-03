@@ -171,6 +171,25 @@
     "text": "File this form to request a change in your accounting method, including the accounting treatment of any item. If you are requesting a change in accounting period, use Form 1128, Application for Change in Accounting Period. For more information, see Publication 538, Accounting Periods and Methods. When filing Form 3115, taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115),"
   },
   {
+    "type": "ListItem",
+    "element_id": "7b7c33680de5c4a7cb165c103752579e",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Long-term contracts. —If you are required to change your method of accounting for long-term contracts under section 460, see Notice 87-61 (9/21/87), 1987-38 IRB 40, for the notification procedures that must be followed. Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes !n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of income attributable to the sale or furnishing of utility services no later than the year In which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these changes."
+  },
+  {
     "type": "NarrativeText",
     "element_id": "84e7e32f584e2ee9f47ba593bf86c559",
     "metadata": {
@@ -245,63 +264,6 @@
       "page_number": 1
     },
     "text": "Uniform capitalization rules and limitation on cash method.—If you are required to change your method of accounting under section,263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change 1s treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustrnents into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required. Disregard the instructions under Time and"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "eb076cfd3d47e546c28611750afedc49",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "ee134711b01cac75692565ae4f785fd4",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method—Section 448\"). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "7b7c33680de5c4a7cb165c103752579e",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Long-term contracts. —If you are required to change your method of accounting for long-term contracts under section 460, see Notice 87-61 (9/21/87), 1987-38 IRB 40, for the notification procedures that must be followed. Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes !n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of income attributable to the sale or furnishing of utility services no later than the year In which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these changes."
   },
   {
     "type": "Title",
@@ -435,6 +397,44 @@
       "page_number": 1
     },
     "text": "If your application is filed after the 180-day period, it is late. The application will be considered for processing only upon a showing of “good cause” and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev, Proc. 79-63."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "eb076cfd3d47e546c28611750afedc49",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ee134711b01cac75692565ae4f785fd4",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method—Section 448\"). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information."
   },
   {
     "type": "Title",
@@ -741,101 +741,6 @@
     "text": "Item 13, page 2.—Insert the actual number of tax years. Use of the term “since inception” 1s not acceptable. However, “more than 6 years” Is acceptable."
   },
   {
-    "type": "NarrativeText",
-    "element_id": "64758ada28beed36481b14ce8dc67472",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "substantially all of the stock of which is owned by employees performing the services, retired employees who had performed the services, any estate of any individual who had performed the services listed above, or any person who acquired stock of the corporation as a result of the death of an employee or retiree described above if the acquisition occurred within 2 years of death. (3) Entities with gross receipts of $5,000,000 or less. —To qualify for this exception, the C corporation's or partnership’s annual average gross receipts for the three years ending with the prior tax year may not exceed $5,000,000. If the corporation or partnership was not in existence for the entire 3-year period, the period of existence is used to determine whether the corporation or partnership qualifies. If any tax year in the 3-year period is a short tax year, the corporation or partnership must annualize the gross receipts by multiplying the gross receipts by 12 and dividing the result by the number of months in the short period. For more information, see section 448 and Temporary Regulations section 1.448-1T."
-  },
-  {
-    "type": "Title",
-    "element_id": "53e33d10c9df4a570490182ccef0cd95",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Section C"
-  },
-  {
-    "type": "Title",
-    "element_id": "8d6743276d5bc8e32d0b05ba0b232db8",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Section E"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "86fab9f7b35d56a2d48baf0782b7c53d",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Section 460(f) provides that the term “long-term contract” means any contract for the manufacturing, building, installation, or construction of property that is not completed within the tax year in which it 1s entered into. However, a manufacturing contract will not qualify as a long-term contract unless the contract involves the manufacture of: (1) a unique item not normally included in your finished goods inventory, or (2) any item that normally requires more than 12 calendar months to complete."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "84cea2af17bb3760234b42f4ea78e175",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "All long-term contracts entered into after February 28, 1986, except for real property construction contracts expected to be completed within 2 years by contractors whose average annual gross receipts for the 3 prior tax years do not exceed $10,000,000, must be accounted for using either the percentage of completion- capitalized cost method or the percentage of completion method. See section 460. Caution: At the time these instructions were printed, Congress was considering legislation that would repeal the use of the percentage of completion-capitalized cost method for certain long-term contracts."
-  },
-  {
     "type": "Title",
     "element_id": "136a59b0c53731bc299206fda46e0888",
     "metadata": {
@@ -970,6 +875,101 @@
   },
   {
     "type": "NarrativeText",
+    "element_id": "0607edfa2419dd0cdc80f457872fe238",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "(2) Qualified personal service corporations. — A “qualified personal service corporation” is any corporation: (a) substantially all of the activities of which involve the performance of services in the fields of health, law,"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "50d16fd6b40a428c3befaf6dd19c2dcd",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "engineering, architecture, accounting, actuarial science, performing arts, or consulting, and (b)"
+  },
+  {
+    "type": "Title",
+    "element_id": "794f7062cf3f56f2c7d70702bd3d13e1",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Page 2"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "64758ada28beed36481b14ce8dc67472",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "substantially all of the stock of which is owned by employees performing the services, retired employees who had performed the services, any estate of any individual who had performed the services listed above, or any person who acquired stock of the corporation as a result of the death of an employee or retiree described above if the acquisition occurred within 2 years of death. (3) Entities with gross receipts of $5,000,000 or less. —To qualify for this exception, the C corporation's or partnership’s annual average gross receipts for the three years ending with the prior tax year may not exceed $5,000,000. If the corporation or partnership was not in existence for the entire 3-year period, the period of existence is used to determine whether the corporation or partnership qualifies. If any tax year in the 3-year period is a short tax year, the corporation or partnership must annualize the gross receipts by multiplying the gross receipts by 12 and dividing the result by the number of months in the short period. For more information, see section 448 and Temporary Regulations section 1.448-1T."
+  },
+  {
+    "type": "Title",
+    "element_id": "53e33d10c9df4a570490182ccef0cd95",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Section C"
+  },
+  {
+    "type": "NarrativeText",
     "element_id": "6d2d2cfa00e5a8caec71ba799f60f8c6",
     "metadata": {
       "data_source": {
@@ -1062,139 +1062,6 @@
       "page_number": 2
     },
     "text": "Section D"
-  },
-  {
-    "type": "Title",
-    "element_id": "32786e68a6fd82dc356d2d58bf283dc4",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Section G"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "fa41a857716f30d6bbee384eada72a90",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "This section Is to be used only to request a change in a method of accounting for depreciation under section 167. Rev. Proc. 74-11 provides a procedure whereby applicants are considered to have obtained the consent of the Commissioner to change their method of accounting for depreciation. You must file Form 3115 with the Service Center where your return will be filed within the first 180 days of the tax year in which it is desired to make the change. Attach a copy of the form to the income tax return for the tax year of the change. Note: Do not use Form 3115 to make an election under section 168. Such an election may be made only on the tax return for the year in which the property 1s placed in service. In addition, Form 3115 is not to be used to request approval to revoke an election made under section 168. Such a request must be made in accordance with Rev. Proc. 87-1 (updated annually)."
-  },
-  {
-    "type": "Title",
-    "element_id": "a8155ab3bed92cc259ab58331619e0e1",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Section H"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "cb1f664a186a87f6560cde136d70b558",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Generally, this section should be used for requesting changes In a method of accounting for which provision has not been made elsewhere on this form. Attach additional pages if more space ts needed for a full explanation of the present method used and the proposed change requested."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "86d11953bb813a770ecd242ff97d4e43",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "If you are making an election under section 458, show the applicable information under Regulations section 1.458-10."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "0607edfa2419dd0cdc80f457872fe238",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "(2) Qualified personal service corporations. — A “qualified personal service corporation” is any corporation: (a) substantially all of the activities of which involve the performance of services in the fields of health, law,"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "50d16fd6b40a428c3befaf6dd19c2dcd",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "engineering, architecture, accounting, actuarial science, performing arts, or consulting, and (b)"
   },
   {
     "type": "NarrativeText",
@@ -1312,7 +1179,7 @@
   },
   {
     "type": "Title",
-    "element_id": "794f7062cf3f56f2c7d70702bd3d13e1",
+    "element_id": "8d6743276d5bc8e32d0b05ba0b232db8",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1327,6 +1194,139 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Page 2"
+    "text": "Section E"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "86fab9f7b35d56a2d48baf0782b7c53d",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Section 460(f) provides that the term “long-term contract” means any contract for the manufacturing, building, installation, or construction of property that is not completed within the tax year in which it 1s entered into. However, a manufacturing contract will not qualify as a long-term contract unless the contract involves the manufacture of: (1) a unique item not normally included in your finished goods inventory, or (2) any item that normally requires more than 12 calendar months to complete."
+  },
+  {
+    "type": "ListItem",
+    "element_id": "84cea2af17bb3760234b42f4ea78e175",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "All long-term contracts entered into after February 28, 1986, except for real property construction contracts expected to be completed within 2 years by contractors whose average annual gross receipts for the 3 prior tax years do not exceed $10,000,000, must be accounted for using either the percentage of completion- capitalized cost method or the percentage of completion method. See section 460. Caution: At the time these instructions were printed, Congress was considering legislation that would repeal the use of the percentage of completion-capitalized cost method for certain long-term contracts."
+  },
+  {
+    "type": "Title",
+    "element_id": "32786e68a6fd82dc356d2d58bf283dc4",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Section G"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "fa41a857716f30d6bbee384eada72a90",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "This section Is to be used only to request a change in a method of accounting for depreciation under section 167. Rev. Proc. 74-11 provides a procedure whereby applicants are considered to have obtained the consent of the Commissioner to change their method of accounting for depreciation. You must file Form 3115 with the Service Center where your return will be filed within the first 180 days of the tax year in which it is desired to make the change. Attach a copy of the form to the income tax return for the tax year of the change. Note: Do not use Form 3115 to make an election under section 168. Such an election may be made only on the tax return for the year in which the property 1s placed in service. In addition, Form 3115 is not to be used to request approval to revoke an election made under section 168. Such a request must be made in accordance with Rev. Proc. 87-1 (updated annually)."
+  },
+  {
+    "type": "Title",
+    "element_id": "a8155ab3bed92cc259ab58331619e0e1",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Section H"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "cb1f664a186a87f6560cde136d70b558",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Generally, this section should be used for requesting changes In a method of accounting for which provision has not been made elsewhere on this form. Attach additional pages if more space ts needed for a full explanation of the present method used and the proposed change requested."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "86d11953bb813a770ecd242ff97d4e43",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "If you are making an election under section 458, show the applicable information under Regulations section 1.458-10."
   }
 ]
