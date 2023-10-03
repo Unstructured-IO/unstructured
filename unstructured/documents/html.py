@@ -417,7 +417,7 @@ def _is_container_with_text(tag_elem: etree.Element) -> bool:
         <div>Please read my message!</div>
     </div>
     """
-    if tag_elem.tag not in SECTION_TAGS or len(tag_elem) == 0:
+    if tag_elem.tag not in SECTION_TAGS + ["body"] or len(tag_elem) == 0:
         return False
 
     if tag_elem.text is None or tag_elem.text.strip() == "":
@@ -456,6 +456,12 @@ def _has_break_tags(tag_elem: etree._Element) -> bool:  # pyright: ignore[report
 
 def _unfurl_break_tags(tag_elem: etree.Element) -> List[etree.Element]:
     unfurled = []
+
+    if tag_elem.text:
+        _tag_elem = etree.Element(tag_elem.tag)
+        _tag_elem.text = tag_elem.text
+        unfurled.append(_tag_elem)
+
     children = tag_elem.getchildren()
     for child in children:
         if not _has_break_tags(child):
@@ -479,13 +485,13 @@ def _is_text_tag(tag_elem: etree.Element, max_predecessor_len: int = 5) -> bool:
     if len(tag_elem) > max_predecessor_len + empty_elems_len:
         return False
 
-    if tag_elem.tag in TEXT_TAGS + HEADING_TAGS:
+    if tag_elem.tag in TEXT_TAGS + HEADING_TAGS + TEXTBREAK_TAGS:
         return True
 
     # NOTE(robinson) - This indicates that a div tag has no children. If that's the
     # case and the tag has text, its potential a text tag
     children = tag_elem.getchildren()
-    if tag_elem.tag in SECTION_TAGS and len(children) == 0:
+    if tag_elem.tag in SECTION_TAGS + ["body"] and len(children) == 0:
         return True
 
     if _has_adjacent_bulleted_spans(tag_elem, children):
