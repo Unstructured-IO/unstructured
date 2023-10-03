@@ -14,8 +14,11 @@ cd "$SCRIPT_DIR"/.. || exit 1
     --client-cred "$SHAREPOINT_CRED" \
     --client-id "$SHAREPOINT_CLIENT_ID" \
     --site "$SHAREPOINT_SITE" \
+    --application-id-rbac "$SHAREPOINT_RBAC_CLIENT_APPLICATION_ID" \
+    --client-cred-rbac "$SHAREPOINT_RBAC_CLIENT_SECRET" \
+    --rbac-tenant "$SHAREPOINT_RBAC_TENANT" \
     --path "Shared Documents" \
     --recursive \
-    --embedding-api-key "$OPENAI_API_KEY" \
     --chunk-elements \
     --chunk-multipage-sections \
+# --embedding-api-key "$OPENAI_API_KEY" \
