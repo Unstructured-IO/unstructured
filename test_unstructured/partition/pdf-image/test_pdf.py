@@ -84,6 +84,7 @@ class MockDocumentLayout(layout.DocumentLayout):
     def pages(self):
         return [
             MockPageLayout(number=0, image=Image.new("1", (1, 1))),
+            MockPageLayout(number=1, image=Image.new("1", (1, 1))),
         ]
 
 

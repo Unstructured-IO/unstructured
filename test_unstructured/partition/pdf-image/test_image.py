@@ -438,15 +438,13 @@ def test_partition_image_with_ocr_coordinates_are_not_nan_from_filename(
 
 def test_partition_image_formats_languages_for_tesseract():
     filename = "example-docs/jpn-vert.jpeg"
-    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
+    with mock.patch(
+        "unstructured.partition.ocr.process_file_with_ocr",
+    ) as mock_process_file_with_model:
         image.partition_image(filename=filename, strategy="hi_res", languages=["jpn_vert"])
-        mock_process.assert_called_once_with(
-            filename,
-            is_image=True,
-            pdf_image_dpi=200,
-            extract_tables=False,
-            model_name="detectron2_onnx",
-        )
+        _, kwargs = mock_process_file_with_model.call_args_list[0]
+        assert "ocr_languages" in kwargs
+        assert kwargs["ocr_languages"] == "jpn_vert"
 
 
 def test_partition_image_warns_with_ocr_languages(caplog):

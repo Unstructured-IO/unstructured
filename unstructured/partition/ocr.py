@@ -77,7 +77,7 @@ def process_file_with_ocr(
                     image = image.convert("RGB")
                     image.format = format
                     merged_page_layout = supplement_page_layout_with_ocr(
-                        inferred_layout[i],
+                        inferred_layout.pages[i],
                         image,
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
@@ -97,10 +97,10 @@ def process_file_with_ocr(
                 paths_only=True,
             )
             image_paths = cast(List[str], _image_paths)
-            for image_path in image_paths:
+            for i, image_path in enumerate(image_paths):
                 with PILImage.open(image_path) as image:
                     merged_page_layout = supplement_page_layout_with_ocr(
-                        inferred_layout[i],
+                        inferred_layout.pages[i],
                         image,
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
@@ -129,8 +129,12 @@ def supplement_page_layout_with_ocr(
             ocr_languages=ocr_languages,
             entrie_page_ocr=entrie_page_ocr,
         )
-        merged_page_layout = merge_inferred_layout_with_ocr_layout(inferred_page_layout, ocr_layout)
-        return merged_page_layout
+        merged_page_layout_elements = merge_inferred_layout_with_ocr_layout(
+            inferred_page_layout.elements,
+            ocr_layout,
+        )
+        inferred_page_layout.elements[:] = merged_page_layout_elements
+        return inferred_page_layout
     elif ocr_mode == "individual_blocks":
         elements = inferred_page_layout.elements
         for i, element in enumerate(elements):
@@ -145,7 +149,7 @@ def supplement_page_layout_with_ocr(
                 for text_region in ocr_layout:
                     text_from_ocr += text_region.text
                 elements[i].text = text_from_ocr
-        inferred_page_layout.elements = elements
+        inferred_page_layout.elements[:] = elements
         return inferred_page_layout
     else:
         raise ValueError(
