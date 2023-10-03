@@ -391,19 +391,26 @@ def test_partition_pptx_title_shape_detection(tmp_path: pathlib.Path):
     title_shape.text = (
         "This is a title, it's a bit long so we can make sure it's not narrative text"
     )
+    title_shape.text_frame.add_paragraph().text = "this is a subtitle"
 
     prs.save(filename)
 
     # partition the PowerPoint presentation and get the first element
     elements = partition_pptx(filename)
-    first_element = elements[0]
+    title = elements[0]
+    subtitle = elements[1]
 
-    # assert that the first element is a title and has the correct text
-    assert isinstance(first_element, Title)
+    # assert that the first line is a title and has the correct text and depth
+    assert isinstance(title, Title)
     assert (
-        first_element.text
-        == "This is a title, it's a bit long so we can make sure it's not narrative text"
+        title.text == "This is a title, it's a bit long so we can make sure it's not narrative text"
     )
+    assert title.metadata.category_depth == 0
+
+    # assert that the first line is the subtitle and has the correct text and depth
+    assert isinstance(subtitle, Title)
+    assert subtitle.text == "this is a subtitle"
+    assert subtitle.metadata.category_depth == 1
 
 
 def test_partition_pptx_level_detection(tmp_path: pathlib.Path):
