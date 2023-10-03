@@ -1,8 +1,8 @@
+from dataclasses import dataclass
 import pytest
 from PIL import Image
 from unstructured_inference.inference import layout
-from unstructured_inference.inference.layout import LayoutElement
-from unstructured_inference.inference.layoutelement import LocationlessLayoutElement
+from unstructured_inference.inference.layout import LayoutElement, DocumentLayout, PageLayout
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
@@ -31,10 +31,7 @@ class MockPageLayout(layout.PageLayout):
     @property
     def elements(self):
         return [
-            LocationlessLayoutElement(
-                type="Headline",
-                text="Charlie Brown and the Great Pumpkin",
-            ),
+            LayoutElement(type="Headline", text="Charlie Brown and the Great Pumpkin", bbox=None)
         ]
 
 
@@ -141,7 +138,7 @@ def test_normalize_layout_element_dict_misc():
 
 
 def test_normalize_layout_element_layout_element():
-    layout_element = LayoutElement(
+    layout_element = LayoutElement.from_coords(
         type="Text",
         x1=1,
         y1=2,
@@ -162,7 +159,7 @@ def test_normalize_layout_element_layout_element():
 
 
 def test_normalize_layout_element_layout_element_narrative_text():
-    layout_element = LayoutElement(
+    layout_element = LayoutElement.from_coords(
         type="NarrativeText",
         x1=1,
         y1=2,
@@ -183,7 +180,7 @@ def test_normalize_layout_element_layout_element_narrative_text():
 
 
 def test_normalize_layout_element_checked_box():
-    layout_element = LayoutElement(
+    layout_element = LayoutElement.from_coords(
         type="Checked",
         x1=1,
         y1=2,
@@ -204,7 +201,7 @@ def test_normalize_layout_element_checked_box():
 
 
 def test_normalize_layout_element_unchecked_box():
-    layout_element = LayoutElement(
+    layout_element = LayoutElement.from_coords(
         type="Unchecked",
         x1=1,
         y1=2,
@@ -225,7 +222,7 @@ def test_normalize_layout_element_unchecked_box():
 
 
 def test_normalize_layout_element_enumerated_list():
-    layout_element = LayoutElement(
+    layout_element = LayoutElement.from_coords(
         type="List",
         x1=1,
         y1=2,
@@ -258,7 +255,7 @@ def test_normalize_layout_element_enumerated_list():
 
 
 def test_normalize_layout_element_bulleted_list():
-    layout_element = LayoutElement(
+    layout_element = LayoutElement.from_coords(
         type="List",
         x1=1,
         y1=2,
@@ -330,6 +327,9 @@ def test_contains_emoji(text, expected):
 
 def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
     layout_elem_absent_coordinates = MockDocumentLayout()
+    for page in layout_elem_absent_coordinates.pages:
+        for el in page.elements:
+            el.bbox = None
     elements = document_to_element_list(layout_elem_absent_coordinates)
     assert elements[0].metadata.coordinates is None
 
@@ -405,3 +405,32 @@ def test_set_element_hierarchy_custom_rule_set():
     assert (
         elements[5].metadata.parent_id == elements[4].id
     ), "FigureCaption should be child of Title 2"
+
+
+@dataclass
+class MockImage:
+    width = 640
+    height = 480
+    format = "JPG"
+
+
+def test_document_to_element_list_handles_parent():
+    block1 = LayoutElement.from_coords(1, 2, 3, 4, text="block 1", type="NarrativeText")
+    block2 = LayoutElement.from_coords(
+        1,
+        2,
+        3,
+        4,
+        text="block 2",
+        parent=block1,
+        type="NarrativeText",
+    )
+    page = PageLayout(
+        number=1,
+        image=MockImage(),
+        layout=None,
+    )
+    page.elements = [block1, block2]
+    doc = DocumentLayout.from_pages([page])
+    el1, el2 = document_to_element_list(doc)
+    assert el2.metadata.parent_id == el1.id
