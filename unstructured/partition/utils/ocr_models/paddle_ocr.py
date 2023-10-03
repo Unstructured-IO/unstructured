@@ -1,12 +1,13 @@
 import functools
 
-import paddle
 from unstructured_inference.logger import logger
-from unstructured_paddleocr import PaddleOCR
 
 
 @functools.lru_cache(maxsize=None)
 def load_agent(language: str = "en"):
+    import paddle
+    from unstructured_paddleocr import PaddleOCR
+
     """Loads the PaddleOCR agent as a global variable to ensure that we only load it once."""
 
     # Disable signal handlers at C++ level upon failing

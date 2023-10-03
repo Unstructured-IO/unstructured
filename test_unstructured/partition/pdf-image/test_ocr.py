@@ -9,6 +9,7 @@ from unstructured_inference.inference.layoutelement import (
 )
 
 from unstructured.partition import ocr
+from unstructured.partition.utils.ocr_models import paddle_ocr
 
 
 @pytest.mark.parametrize(
@@ -40,7 +41,6 @@ def test_process_file_with_ocr_invalid_image_filename(is_image):
     with pytest.raises(FileNotFoundError):
         _ = ocr.process_file_with_ocr(
             filename=invalid_filename,
-            is_image=is_image,
             inferred_layout=DocumentLayout(),
         )
 
@@ -99,7 +99,7 @@ def mock_ocr(*args, **kwargs):
     ]
 
 
-def mock_load_agent():
+def monkeypatch_load_agent():
     class MockAgent:
         def __init__(self):
             self.ocr = mock_ocr
@@ -107,10 +107,12 @@ def mock_load_agent():
     return MockAgent()
 
 
-def test_get_ocr_layout_from_image_paddle(mocker):
-    mock_paddle_ocr = mocker.MagicMock()
-    mock_paddle_ocr.load_agent = mock_load_agent
-    mocker.patch("unstructured.partition.utils.ocr_models.paddle_ocr", mock_paddle_ocr)
+def test_get_ocr_layout_from_image_paddle(monkeypatch):
+    monkeypatch.setattr(
+        paddle_ocr,
+        "load_agent",
+        monkeypatch_load_agent,
+    )
 
     image = Image.new("RGB", (100, 100))
 
@@ -138,10 +140,12 @@ def test_get_ocr_text_from_image_tesseract(monkeypatch):
     assert ocr_text == "Hello World"
 
 
-def test_get_ocr_text_from_image_paddle(mocker):
-    mock_paddle_ocr = mocker.MagicMock()
-    mock_paddle_ocr.load_agent = mock_load_agent
-    mocker.patch("unstructured.partition.utils.ocr_models.paddle_ocr", mock_paddle_ocr)
+def test_get_ocr_text_from_image_paddle(monkeypatch):
+    monkeypatch.setattr(
+        paddle_ocr,
+        "load_agent",
+        monkeypatch_load_agent,
+    )
 
     image = Image.new("RGB", (100, 100))
 
