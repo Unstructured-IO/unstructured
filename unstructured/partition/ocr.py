@@ -1,15 +1,9 @@
 import os
-import tempfile
-from typing import BinaryIO, List, Optional, Union, cast
+from typing import List, Optional, cast
 
 import numpy as np
-import pdf2image
+import PIL
 import unstructured_pytesseract
-
-# NOTE(yuming): Rename PIL.Image to avoid conflict with
-# unstructured.documents.elements.Image
-from PIL import Image as PILImage
-from PIL import ImageSequence
 from unstructured_inference.inference.elements import (
     Rectangle,
     TextRegion,
@@ -26,25 +20,16 @@ from unstructured.logger import logger
 SUBREGION_THRESHOLD_FOR_OCR = 0.5
 
 
-def process_data_with_ocr(
-    data: Union[bytes, BinaryIO],
+def supplement_inferred_document_layout_with_ocr(
     inferred_layout: "DocumentLayout",
-    is_image: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = "entire_page",
-    pdf_image_dpi: int = 200,
 ) -> "DocumentLayout":
     """
-    Process OCR data from a given data and supplement the inferred DocumentLayout with ocr.
+    Process OCR data from a given file and supplement the inferred DocumentLayout with OCR.
 
     Parameters:
-    - data (Union[bytes, BinaryIO]): The input file data,
-        which can be either bytes or a BinaryIO object.
-
     - inferred_layout (DocumentLayout): The inferred layout from unsturcutrued-inference.
-
-    - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).
-        Defaults to False.
 
     - ocr_languages (str, optional): The languages for OCR processing. Defaults to "eng" (English).
 
@@ -52,101 +37,25 @@ def process_data_with_ocr(
         Defaults to "entire_page". If choose "entire_page" OCR, OCR processes the entire image
         page and will be merged with the inferred layout. If choose "individual_blocks" OCR,
         OCR is performed on individual elements by cropping the image.
-
-    - pdf_image_dpi (int, optional): DPI (dots per inch) for processing PDF images. Defaults to 200.
-
-    Returns:
-        DocumentLayout: The merged layout information obtained after OCR processing.
-    """
-    with tempfile.NamedTemporaryFile() as tmp_file:
-        tmp_file.write(data.read() if hasattr(data, "read") else data)
-        tmp_file.flush()
-        merged_layouts = process_file_with_ocr(
-            filename=tmp_file.name,
-            inferred_layout=inferred_layout,
-            is_image=is_image,
-            ocr_languages=ocr_languages,
-            ocr_mode=ocr_mode,
-            pdf_image_dpi=pdf_image_dpi,
-        )
-        return merged_layouts
-
-
-def process_file_with_ocr(
-    filename: str,
-    inferred_layout: "DocumentLayout",
-    is_image: bool = False,
-    ocr_languages: str = "eng",
-    ocr_mode: str = "entire_page",
-    pdf_image_dpi: int = 200,
-) -> "DocumentLayout":
-    """
-    Process OCR data from a given file and supplement the inferred DocumentLayout with ocr.
-
-    Parameters:
-    - filename (str): The path to the input file, which can be an image or a PDF.
-
-    - inferred_layout (DocumentLayout): The inferred layout from unsturcutrued-inference.
-
-    - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).
-        Defaults to False.
-
-    - ocr_languages (str, optional): The languages for OCR processing. Defaults to "eng" (English).
-
-    - ocr_mode (str, optional): The OCR processing mode, e.g., "entire_page" or "individual_blocks".
-        Defaults to "entire_page". If choose "entire_page" OCR, OCR processes the entire image
-        page and will be merged with the inferred layout. If choose "individual_blocks" OCR,
-        OCR is performed on individual elements by cropping the image.
-
-    - pdf_image_dpi (int, optional): DPI (dots per inch) for processing PDF images. Defaults to 200.
 
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
     merged_page_layouts = []
-    if is_image:
-        try:
-            with PILImage.open(filename) as images:
-                format = images.format
-                for i, image in enumerate(ImageSequence.Iterator(images)):
-                    image = image.convert("RGB")
-                    image.format = format
-                    merged_page_layout = supplement_page_layout_with_ocr(
-                        inferred_layout.pages[i],
-                        image,
-                        ocr_languages=ocr_languages,
-                        ocr_mode=ocr_mode,
-                    )
-                    merged_page_layouts.append(merged_page_layout)
-        except Exception as e:
-            if os.path.isdir(filename) or os.path.isfile(filename):
-                raise e
-            else:
-                raise FileNotFoundError(f'File "{filename}" not found!') from e
-    else:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            _image_paths = pdf2image.convert_from_path(
-                filename,
-                dpi=pdf_image_dpi,
-                output_folder=temp_dir,
-                paths_only=True,
-            )
-            image_paths = cast(List[str], _image_paths)
-            for i, image_path in enumerate(image_paths):
-                with PILImage.open(image_path) as image:
-                    merged_page_layout = supplement_page_layout_with_ocr(
-                        inferred_layout.pages[i],
-                        image,
-                        ocr_languages=ocr_languages,
-                        ocr_mode=ocr_mode,
-                    )
-                    merged_page_layouts.append(merged_page_layout)
+    for page in inferred_layout.pages:
+        merged_page_layout = supplement_inferred_page_layout_with_ocr(
+            page,
+            page.image,
+            ocr_languages=ocr_languages,
+            ocr_mode=ocr_mode,
+        )
+        merged_page_layouts.append(merged_page_layout)
     return DocumentLayout.from_pages(merged_page_layouts)
 
 
-def supplement_page_layout_with_ocr(
+def supplement_inferred_page_layout_with_ocr(
     inferred_page_layout: "PageLayout",
-    image: PILImage,
+    image: PIL.Image,
     ocr_languages: str = "eng",
     ocr_mode: str = "entire_page",
 ) -> "PageLayout":
@@ -198,7 +107,7 @@ def supplement_page_layout_with_ocr(
 
 
 def get_ocr_layout_from_image(
-    image: PILImage,
+    image: PIL.Image,
     ocr_languages: str = "eng",
     entrie_page_ocr: str = "tesseract",
 ) -> List[TextRegion]:
@@ -225,7 +134,7 @@ def get_ocr_layout_from_image(
 
 
 def get_ocr_text_from_image(
-    image: PILImage,
+    image: PIL.Image,
     ocr_languages: str = "eng",
     entrie_page_ocr: str = "tesseract",
 ) -> str:
