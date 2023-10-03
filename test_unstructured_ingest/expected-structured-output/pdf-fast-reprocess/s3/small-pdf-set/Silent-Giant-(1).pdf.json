@@ -1079,17 +1079,6 @@
   },
   {
     "type": "Title",
-    "element_id": "f83714d89302473e0e4f5399bd50e7a9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "W T"
-  },
-  {
-    "type": "Title",
     "element_id": "3f79bb7b435b05321651daefd374cdc6",
     "metadata": {
       "data_source": {},
@@ -1098,28 +1087,6 @@
       "links": []
     },
     "text": "e"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "f9bb49945b60897227abdd75b5f8d39b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "r e p s e i t i l"
-  },
-  {
-    "type": "Title",
-    "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "a t a F"
   },
   {
     "type": "UncategorizedText",
@@ -1142,6 +1109,61 @@
       "links": []
     },
     "text": "100"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "2abaca4911e68fa9bfbf3482ee797fd5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "120"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "b725d20650649a5221675144bab5946e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "99.5"
+  },
+  {
+    "type": "Title",
+    "element_id": "f83714d89302473e0e4f5399bd50e7a9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "W T"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f9bb49945b60897227abdd75b5f8d39b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "r e p s e i t i l"
+  },
+  {
+    "type": "Title",
+    "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "a t a F"
   },
   {
     "type": "UncategorizedText",
@@ -1178,6 +1200,17 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "ce3201efc2e495241a85e4fc84575f50",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "71.9"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
     "metadata": {
       "data_source": {},
@@ -1199,17 +1232,6 @@
     "text": "0"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "2abaca4911e68fa9bfbf3482ee797fd5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "120"
-  },
-  {
     "type": "Title",
     "element_id": "6c25ebfc9ffd2510c4c41d4bd5cb7ea9",
     "metadata": {
@@ -1221,17 +1243,6 @@
     "text": "C oal"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "b725d20650649a5221675144bab5946e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "99.5"
-  },
-  {
     "type": "Title",
     "element_id": "2378bdd2cf4f491cf401e6b215cbb4fd",
     "metadata": {
@@ -1241,17 +1252,6 @@
       "links": []
     },
     "text": "Oil"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ce3201efc2e495241a85e4fc84575f50",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "71.9"
   },
   {
     "type": "Title",
@@ -1694,17 +1694,6 @@
     "text": "ren. & waste"
   },
   {
-    "type": "Title",
-    "element_id": "563a2980d46c81119e1d7d952b375a41",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9,
-      "links": []
-    },
-    "text": "h W T"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "26d228663f13a88592a12d16cf9587ca",
     "metadata": {
@@ -1714,17 +1703,6 @@
       "links": []
     },
     "text": "400"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "983bd614bb5afece5ab3b6023f71147c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9,
-      "links": []
-    },
-    "text": "300"
   },
   {
     "type": "Title",
@@ -1747,6 +1725,28 @@
       "links": []
     },
     "text": " Natural gas"
+  },
+  {
+    "type": "Title",
+    "element_id": "563a2980d46c81119e1d7d952b375a41",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9,
+      "links": []
+    },
+    "text": "h W T"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "983bd614bb5afece5ab3b6023f71147c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 9,
+      "links": []
+    },
+    "text": "300"
   },
   {
     "type": "Title",

@@ -15,6 +15,7 @@ exclude_metadata_keys = (
     "regex_metadata",
     "emphasized_texts",
     "detection_class_prob",
+    "is_continuation",
 )
 
 

@@ -1,7 +1,30 @@
-## 0.10.17-dev15
+## 0.10.19-dev7
 
 ### Enhancements
 
+* **bump `unstructured-inference` to `0.6.6`** The updated version of `unstructured-inference` makes table extraction in `hi_res` mode configurable to fine tune table extraction performance; it also improves element detection by adding a deduplication post processing step in the `hi_res` partitioning of pdfs and images.
+* **Detect text in HTML Heading Tags as Titles** This will increase the accuracy of hierarchies in HTML documents and provide more accurate element categorization. If text is in an HTML heading tag and is not a list item, address, or narrative text, categorize it as a title.
+* **Update python-based docs** Refactor docs to use the actual unstructured code rather than using the subprocess library to run the cli command itself.
+* * **Adds data source properties to SharePoint, Outlook, Onedrive, Reddit, and Slack connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+* **Adds Table support for the `add_chunking_strategy` decorator to partition functions.** In addition to combining elements under Title elements, user's can now specify the `max_characters=<n>` argument to chunk Table elements into TableChunk elements with `text` and `text_as_html` of length <n> characters. This means partitioned Table results are ready for use in downstream applications without any post processing.
+
+
+### Features 
+
+### Fixes
+
+* **Fixes partition_pdf is_alnum reference bug** Problem: The `partition_pdf` when attempt to get bounding box from element experienced a reference before assignment error when the first object is not text extractable.  Fix: Switched to a flag when the condition is met. Importance: Crucial to be able to partition with pdf.
+* **Fix various cases of HTML text missing after partition**
+  Problem: Under certain circumstances, text immediately after some HTML tags will be misssing from partition result.
+  Fix: Updated code to deal with these cases.
+  Importance: This will ensure the correctness when partitioning HTML and Markdown documents.
+
+## 0.10.18
+
+### Enhancements
+
+* **Better detection of natural reading order in images and PDF's** The elements returned by partition better reflect natural reading order in some cases, particularly in complicated multi-column layouts, leading to better chunking and retrieval for downstream applications. Achieved by improving the `xy-cut` sorting to preprocess bboxes, shrinking all bounding boxes by 90% along x and y axes (still centered around the same center point), which allows projection lines to be drawn where not possible before if layout bboxes overlapped.
+* **Improves `partition_xml` to be faster and more memory efficient when partitioning large XML files** The new behavior is to partition iteratively to prevent loading the entire XML tree into memory at once in most use cases.
 * **Adds data source properties to SharePoint, Outlook, Onedrive, Reddit, Slack, and DeltaTable connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
 * **Add functionality to save embedded images in PDF's separately as images** This allows users to save embedded images in PDF's separately as images, given some directory path. The saved image path is written to the metadata for the Image element. Downstream applications may benefit by providing users with image links from relevant "hits."
 * **Azure Cognite Search destination connector** New Azure Cognitive Search destination connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to an Azure Cognitive Search index.
@@ -28,6 +51,8 @@ should be generated, however the Formula class inherits from Element instead of 
 allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
 * **Fixes Sphinx errors.** Fixes errors when running Sphinx `make html` and installs library to suppress warnings.
 * **Fixes a metadata backwards compatibility error** Problem: When calling `partition_via_api`, the hosted api may return an element schema that's newer than the current `unstructured`. In this case, metadata fields were added which did not exist in the local `ElementMetadata` dataclass, and `__init__()` threw an error. Fix: remove nonexistent fields before instantiating in `ElementMetadata.from_json()`. Importance: Crucial to avoid breaking changes when adding fields.
+* **Fixes issue with Discord connector when a channel returns `None`** Problem: Getting the `jump_url` from a nonexistent Discord `channel` fails. Fix: property `jump_url` is now retrieved within the same context as the messages from the channel. Importance: Avoids cascading issues when the connector fails to fetch information about a Discord channel.
+* **Fixes occasionally SIGABTR when writing table with `deltalake` on Linux** Problem: occasionally on Linux ingest can throw a `SIGABTR` when writing `deltalake` table even though the table was written correctly. Fix: put the writing function into a `Process` to ensure its execution to the fullest extent before returning to the main process. Importance: Improves stability of connectors using `deltalake`
 
 
 ## 0.10.16

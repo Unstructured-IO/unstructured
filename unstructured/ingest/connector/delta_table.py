@@ -3,6 +3,7 @@ import os
 import typing as t
 from dataclasses import dataclass
 from datetime import datetime as dt
+from multiprocessing import Process
 from pathlib import Path
 
 import pandas as pd
@@ -182,8 +183,17 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
             f"writing {len(json_list)} rows to destination "
             f"table at {self.connector_config.table_uri}",
         )
-        write_deltalake(
-            table_or_uri=self.connector_config.table_uri,
-            data=pd.DataFrame(data={self.write_config.write_column: json_list}),
-            mode=self.write_config.mode,
+        # NOTE: deltalake writer on Linux sometimes can finish but still trigger a SIGABRT and cause
+        # ingest to fail, even though all tasks are completed normally. Putting the writer into a
+        # process mitigates this issue by ensuring python interpreter waits properly for deltalake's
+        # rust backend to finish
+        writer = Process(
+            target=write_deltalake,
+            kwargs={
+                "table_or_uri": self.connector_config.table_uri,
+                "data": pd.DataFrame(data={self.write_config.write_column: json_list}),
+                "mode": self.write_config.mode,
+            },
         )
+        writer.start()
+        writer.join()

@@ -229,25 +229,6 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "eb076cfd3d47e546c28611750afedc49",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and"
-  },
-  {
-    "type": "NarrativeText",
     "element_id": "0b320308ba52d4a9625d29cadfc941a9",
     "metadata": {
       "data_source": {
@@ -264,6 +245,25 @@
       "page_number": 1
     },
     "text": "Uniform capitalization rules and limitation on cash method.—If you are required to change your method of accounting under section,263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change 1s treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustrnents into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required. Disregard the instructions under Time and"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "eb076cfd3d47e546c28611750afedc49",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and"
   },
   {
     "type": "NarrativeText",
@@ -305,25 +305,6 @@
   },
   {
     "type": "Title",
-    "element_id": "af8bdf713f162b09567c8d1a3a2d4de7",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Generally, applicants must file this form within the first 180 days of the tax year in which it is desired to make the change."
-  },
-  {
-    "type": "Title",
     "element_id": "5756fb398995bb6518a87637f24f426e",
     "metadata": {
       "data_source": {
@@ -340,6 +321,25 @@
       "page_number": 1
     },
     "text": "Time and Place for Filing"
+  },
+  {
+    "type": "Title",
+    "element_id": "af8bdf713f162b09567c8d1a3a2d4de7",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Generally, applicants must file this form within the first 180 days of the tax year in which it is desired to make the change."
   },
   {
     "type": "NarrativeText",
@@ -494,25 +494,6 @@
     "text": "Others.-—The employer identification number of an applicant other than an individual should be entered in this block."
   },
   {
-    "type": "ListItem",
-    "element_id": "ede9004eceddf828c2c928f62d0687a0",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Signature Individuals. —An individual desiring the change should sign the application. If the application pertains to a husband and wife filing a joint income tax return, the names of both should appear in the heading and both should sign. Partnerships.—The form should be signed with the partnership name followed by the signature of one of the general partners and the words “General Partner.” Corporations, cooperatives, and insurance companies.—The form should show the name of the corporation, cooperative, or insurance company and the signature of the president, vice president, treasurer, assistant treasurer, or chief accounting officer (such as tax officer) authorized to sign, and his or her official title. Receivers, trustees, or assignees must sign any application they are required to file. For a subsidiary corporation filing a consolidated return with its parent, the form should be signed by an officer of the parent corporation. Fiduciaries.—The-form should show the name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrix, etc., having legal authority to sign, and his or her title. Preparer other than partner, officer, etc.—The signature of the individual preparing the application should appear in the space provided on page 6. If the individual or firm is also authorized to"
-  },
-  {
     "type": "Title",
     "element_id": "f1a73e2204a114077f988c9da98d7f8b",
     "metadata": {
@@ -530,6 +511,25 @@
       "page_number": 1
     },
     "text": "Signature"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "ede9004eceddf828c2c928f62d0687a0",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Signature Individuals. —An individual desiring the change should sign the application. If the application pertains to a husband and wife filing a joint income tax return, the names of both should appear in the heading and both should sign. Partnerships.—The form should be signed with the partnership name followed by the signature of one of the general partners and the words “General Partner.” Corporations, cooperatives, and insurance companies.—The form should show the name of the corporation, cooperative, or insurance company and the signature of the president, vice president, treasurer, assistant treasurer, or chief accounting officer (such as tax officer) authorized to sign, and his or her official title. Receivers, trustees, or assignees must sign any application they are required to file. For a subsidiary corporation filing a consolidated return with its parent, the form should be signed by an officer of the parent corporation. Fiduciaries.—The-form should show the name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrix, etc., having legal authority to sign, and his or her title. Preparer other than partner, officer, etc.—The signature of the individual preparing the application should appear in the space provided on page 6. If the individual or firm is also authorized to"
   },
   {
     "type": "Title",
@@ -704,6 +704,25 @@
   },
   {
     "type": "NarrativeText",
+    "element_id": "678ecc0340dc8848f891bf12a555a3fd",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "If IRS later examines your return for the year of the change or for later years, it has the right to verify your statement at that time."
+  },
+  {
+    "type": "NarrativeText",
     "element_id": "751abc8c6a0fa412c3e8c18345f57f95",
     "metadata": {
       "data_source": {
@@ -723,7 +742,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "678ecc0340dc8848f891bf12a555a3fd",
+    "element_id": "64758ada28beed36481b14ce8dc67472",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -738,7 +757,83 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "If IRS later examines your return for the year of the change or for later years, it has the right to verify your statement at that time."
+    "text": "substantially all of the stock of which is owned by employees performing the services, retired employees who had performed the services, any estate of any individual who had performed the services listed above, or any person who acquired stock of the corporation as a result of the death of an employee or retiree described above if the acquisition occurred within 2 years of death. (3) Entities with gross receipts of $5,000,000 or less. —To qualify for this exception, the C corporation's or partnership’s annual average gross receipts for the three years ending with the prior tax year may not exceed $5,000,000. If the corporation or partnership was not in existence for the entire 3-year period, the period of existence is used to determine whether the corporation or partnership qualifies. If any tax year in the 3-year period is a short tax year, the corporation or partnership must annualize the gross receipts by multiplying the gross receipts by 12 and dividing the result by the number of months in the short period. For more information, see section 448 and Temporary Regulations section 1.448-1T."
+  },
+  {
+    "type": "Title",
+    "element_id": "53e33d10c9df4a570490182ccef0cd95",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Section C"
+  },
+  {
+    "type": "Title",
+    "element_id": "8d6743276d5bc8e32d0b05ba0b232db8",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Section E"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "86fab9f7b35d56a2d48baf0782b7c53d",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Section 460(f) provides that the term “long-term contract” means any contract for the manufacturing, building, installation, or construction of property that is not completed within the tax year in which it 1s entered into. However, a manufacturing contract will not qualify as a long-term contract unless the contract involves the manufacture of: (1) a unique item not normally included in your finished goods inventory, or (2) any item that normally requires more than 12 calendar months to complete."
+  },
+  {
+    "type": "ListItem",
+    "element_id": "84cea2af17bb3760234b42f4ea78e175",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "All long-term contracts entered into after February 28, 1986, except for real property construction contracts expected to be completed within 2 years by contractors whose average annual gross receipts for the 3 prior tax years do not exceed $10,000,000, must be accounted for using either the percentage of completion- capitalized cost method or the percentage of completion method. See section 460. Caution: At the time these instructions were printed, Congress was considering legislation that would repeal the use of the percentage of completion-capitalized cost method for certain long-term contracts."
   },
   {
     "type": "Title",
@@ -875,82 +970,6 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "0607edfa2419dd0cdc80f457872fe238",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "(2) Qualified personal service corporations. — A “qualified personal service corporation” is any corporation: (a) substantially all of the activities of which involve the performance of services in the fields of health, law,"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "50d16fd6b40a428c3befaf6dd19c2dcd",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "engineering, architecture, accounting, actuarial science, performing arts, or consulting, and (b)"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "64758ada28beed36481b14ce8dc67472",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "substantially all of the stock of which is owned by employees performing the services, retired employees who had performed the services, any estate of any individual who had performed the services listed above, or any person who acquired stock of the corporation as a result of the death of an employee or retiree described above if the acquisition occurred within 2 years of death. (3) Entities with gross receipts of $5,000,000 or less. —To qualify for this exception, the C corporation's or partnership’s annual average gross receipts for the three years ending with the prior tax year may not exceed $5,000,000. If the corporation or partnership was not in existence for the entire 3-year period, the period of existence is used to determine whether the corporation or partnership qualifies. If any tax year in the 3-year period is a short tax year, the corporation or partnership must annualize the gross receipts by multiplying the gross receipts by 12 and dividing the result by the number of months in the short period. For more information, see section 448 and Temporary Regulations section 1.448-1T."
-  },
-  {
-    "type": "Title",
-    "element_id": "53e33d10c9df4a570490182ccef0cd95",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Section C"
-  },
-  {
-    "type": "NarrativeText",
     "element_id": "6d2d2cfa00e5a8caec71ba799f60f8c6",
     "metadata": {
       "data_source": {
@@ -1043,82 +1062,6 @@
       "page_number": 2
     },
     "text": "Section D"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "a8e72799229bc2d754f44ea167a6e7d6",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Applicants requesting to change their method of valuing property produced, property acquired for resale, or long-term contracts under section 263A or 460 MUST complete section D showing the treatment under both the present and proposed methods."
-  },
-  {
-    "type": "Title",
-    "element_id": "8d6743276d5bc8e32d0b05ba0b232db8",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Section E"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "86fab9f7b35d56a2d48baf0782b7c53d",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Section 460(f) provides that the term “long-term contract” means any contract for the manufacturing, building, installation, or construction of property that is not completed within the tax year in which it 1s entered into. However, a manufacturing contract will not qualify as a long-term contract unless the contract involves the manufacture of: (1) a unique item not normally included in your finished goods inventory, or (2) any item that normally requires more than 12 calendar months to complete."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "84cea2af17bb3760234b42f4ea78e175",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "All long-term contracts entered into after February 28, 1986, except for real property construction contracts expected to be completed within 2 years by contractors whose average annual gross receipts for the 3 prior tax years do not exceed $10,000,000, must be accounted for using either the percentage of completion- capitalized cost method or the percentage of completion method. See section 460. Caution: At the time these instructions were printed, Congress was considering legislation that would repeal the use of the percentage of completion-capitalized cost method for certain long-term contracts."
   },
   {
     "type": "Title",
@@ -1214,6 +1157,63 @@
       "page_number": 2
     },
     "text": "If you are making an election under section 458, show the applicable information under Regulations section 1.458-10."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "0607edfa2419dd0cdc80f457872fe238",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "(2) Qualified personal service corporations. — A “qualified personal service corporation” is any corporation: (a) substantially all of the activities of which involve the performance of services in the fields of health, law,"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "50d16fd6b40a428c3befaf6dd19c2dcd",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "engineering, architecture, accounting, actuarial science, performing arts, or consulting, and (b)"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "a8e72799229bc2d754f44ea167a6e7d6",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Applicants requesting to change their method of valuing property produced, property acquired for resale, or long-term contracts under section 263A or 460 MUST complete section D showing the treatment under both the present and proposed methods."
   },
   {
     "type": "UncategorizedText",
