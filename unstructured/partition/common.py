@@ -36,7 +36,6 @@ from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 from unstructured.partition.utils.constants import (
     SORT_MODE_XY_CUT,
-    UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
 )
 from unstructured.utils import dependency_exists
 
@@ -156,9 +155,8 @@ def normalize_layout_element(
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=class_prob_metadata,
+                data_origin=origin,
             )
-            if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-                setattr(item.metadata, "data_origin", origin)
             return item
 
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
@@ -168,9 +166,8 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
+            data_origin=origin,
         )
-        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            setattr(_element_class.metadata, "data_origin", origin)
         if element_type == "Headline":
             _element_class.metadata.category_depth = 1
         elif element_type == "Subheadline":
@@ -182,9 +179,8 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
+            data_origin=origin,
         )
-        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            setattr(checkbox.metadata, "data_origin", origin)
         return checkbox
     elif element_type == "Unchecked":
         checkbox = CheckBox(
@@ -192,9 +188,8 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
+            data_origin=origin,
         )
-        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            setattr(checkbox.metadata, "data_origin", origin)
         return checkbox
     else:
         text = Text(
@@ -202,9 +197,8 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
+            data_origin=origin,
         )
-        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            setattr(text.metadata, "data_origin", origin)
         return text
 
 
@@ -231,9 +225,8 @@ def layout_list_to_list_items(
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=metadata,
+                data_origin=data_origin,
             )
-            if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-                setattr(item.metadata, "data_origin", data_origin)
             list_items.append(item)
 
     return list_items
@@ -345,9 +338,8 @@ def _add_element_metadata(
         section=section,
         category_depth=depth,
         image_path=image_path,
+        data_origin=data_origin,
     )
-    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-        setattr(metadata, "data_origin", data_origin)
     # NOTE(newel) - Element metadata is being merged into
     # newly constructed metadata, not the other way around
     # TODO? Make this more expected behavior?

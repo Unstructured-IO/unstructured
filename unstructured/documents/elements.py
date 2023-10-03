@@ -192,6 +192,12 @@ class ElementMetadata:
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
         data_origin: Optional[str] = None
 
+    def __setattr__(self, key, value):
+        if not UNSTRUCTURED_INCLUDE_DEBUG_METADATA and key == "data_origin":
+            return
+        else:
+            super().__setattr__(key, value)
+
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
             self.filename = str(self.filename)
@@ -344,9 +350,7 @@ class Element(abc.ABC):
         data_origin: Optional[str] = None,
     ):
         if metadata is None:
-            metadata = ElementMetadata()
-            if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-                setattr(metadata, "data_origin", data_origin)
+            metadata = ElementMetadata(data_origin=data_origin)
         self.id: Union[str, uuid.UUID, NoID, UUID] = element_id
         coordinates_metadata = (
             None
@@ -414,9 +418,8 @@ class CheckBox(Element):
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=metadata,
+            data_origin=data_origin,
         )
-        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            setattr(self.metadata, "data_origin", data_origin)
         self.checked: bool = checked
 
     def __eq__(self, other):
@@ -461,9 +464,8 @@ class Text(Element):
             metadata=metadata,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
+            data_origin=data_origin,
         )
-        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            setattr(self.metadata, "data_origin", data_origin)
 
     def __str__(self):
         return self.text

@@ -17,7 +17,6 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
 @process_metadata()
@@ -66,9 +65,8 @@ def partition_csv(
             text_as_html=html_text,
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
+            data_origin="csv",
         )
-        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            setattr(metadata, "data_origin", "csv")
     else:
         metadata = ElementMetadata()
 

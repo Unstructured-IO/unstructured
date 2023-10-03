@@ -17,7 +17,6 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
 @process_metadata()
@@ -73,11 +72,10 @@ def partition_xlsx(
                 page_number=page_number,
                 filename=metadata_filename or filename,
                 last_modified=metadata_last_modified or last_modification_date,
+                data_origin="xlsx",
             )
         else:
             metadata = ElementMetadata()
-        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            setattr(metadata, "data_origin", "xlsx")
         table = Table(text=text, metadata=metadata)
         elements.append(table)
 

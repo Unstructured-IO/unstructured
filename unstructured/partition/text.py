@@ -37,7 +37,6 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
-from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
 def split_by_paragraph(
@@ -173,7 +172,7 @@ def partition_text(
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
-    data_source: Optional[str] = "text",
+    data_origin: Optional[str] = "text",
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.
@@ -258,12 +257,11 @@ def partition_text(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
             languages=languages,
+            data_origin=data_origin,
         )
         if include_metadata
         else ElementMetadata()
     )
-    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA and include_metadata:  # WEIRD
-        setattr(metadata, "data_origin", data_source)
     for ctext in file_content:
         ctext = ctext.strip()
 

@@ -69,7 +69,6 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
-from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.utils import dependency_exists, lazyproperty, requires_dependencies
 
 if dependency_exists("pypandoc"):
@@ -335,35 +334,23 @@ class _DocxPartitioner:
         if self._is_list_item(paragraph):
             clean_text = clean_bullets(text).strip()
             if clean_text:
-                item = ListItem(text=clean_text, metadata=metadata)
-                if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-                    setattr(item.metadata, "data_origin", "docx")
-                yield item
+                yield ListItem(text=clean_text, metadata=metadata, data_origin="docx")
             return
 
         # -- determine element-type from an explicit Word paragraph-style if possible --
         TextSubCls = self._style_based_element_type(paragraph)
         if TextSubCls:
-            text_subcls = TextSubCls(text=text, metadata=metadata)
-            if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-                setattr(text_subcls.metadata, "data_origin", "docx")
-            yield text
+            yield TextSubCls(text=text, metadata=metadata, data_origin="docx")
             return
 
         # -- try to recognize the element type by parsing its text --
         TextSubCls = self._parse_paragraph_text_for_element_type(paragraph)
         if TextSubCls:
-            text_subcls = TextSubCls(text=text, metadata=metadata)
-            if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-                setattr(text_subcls.metadata, "data_origin", "docx")
-            yield text_subcls
+            yield TextSubCls(text=text, metadata=metadata, data_origin="docx")
             return
 
         # -- if all that fails we give it the default `Text` element-type --
-        text = Text(text, metadata=metadata)
-        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            setattr(text.metadata, "data_origin", "docx")
-        yield text
+        yield Text(text, metadata=metadata, data_origin="docx")
 
     def _iter_maybe_paragraph_page_breaks(self, paragraph: Paragraph) -> Iterator[PageBreak]:
         """Generate a `PageBreak` document element for each page-break in `paragraph`.
@@ -419,17 +406,15 @@ class _DocxPartitioner:
             text = "\n".join([p.text for p in footer.paragraphs])
             if not text:
                 return
-            footer = Footer(
+            yield Footer(
                 text=text,
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
                     category_depth=0,
+                    data_origin="docx",
                 ),
             )
-            if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-                setattr(footer.metadata, "data_origin", "docx")
-            yield footer
 
         yield from iter_footer(section.footer, "primary")
         if section.different_first_page_header_footer:
@@ -450,17 +435,15 @@ class _DocxPartitioner:
             text = "\n".join([p.text for p in header.paragraphs])
             if not text:
                 return
-            Header(
+            yield Header(
                 text=text,
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
-                    category_depth=0,  # -- headers are always at the root level
+                    category_depth=0,  # -- headers are always at the root level}
+                    data_origin="docx",
                 ),
             )
-            if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-                setattr(header.metadata, "data_origin", "docx")
-            yield header
 
         yield from iter_header(section.header, "primary")
         if section.different_first_page_header_footer:
@@ -515,7 +498,7 @@ class _DocxPartitioner:
         text_table = convert_ms_office_table_to_text(table, as_html=False)
         emphasized_text_contents, emphasized_text_tags = self._table_emphasis(table)
 
-        table = Table(
+        yield Table(
             text_table,
             metadata=ElementMetadata(
                 text_as_html=html_table,
@@ -524,11 +507,9 @@ class _DocxPartitioner:
                 last_modified=self._last_modified,
                 emphasized_text_contents=emphasized_text_contents or None,
                 emphasized_text_tags=emphasized_text_tags or None,
+                data_origin="docx",
             ),
         )
-        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            setattr(table.metadata, "data_origin", "docx")
-        yield table
 
     def _iter_table_emphasis(self, table: DocxTable) -> Iterator[Dict[str, str]]:
         """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`."""
@@ -586,9 +567,8 @@ class _DocxPartitioner:
             emphasized_text_contents=emphasized_text_contents or None,
             emphasized_text_tags=emphasized_text_tags or None,
             category_depth=category_depth,
+            data_origin="docx",
         )
-        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            setattr(element_metadata, "data_origin", "docx")
         return element_metadata
 
     def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
