@@ -34,7 +34,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
-from unstructured.partition.utils.constants import SORT_MODE_XY_CUT
+from unstructured.partition.utils.constants import SORT_MODE_DONT, SORT_MODE_XY_CUT
 from unstructured.utils import dependency_exists, first
 
 if dependency_exists("docx") and dependency_exists("docx.table"):
@@ -604,7 +604,7 @@ def document_to_element_list(
                 )
                 element.metadata.parent_id = element_parent.id
         sorted_page_elements = page_elements
-        if sortable and sort_mode == SORT_MODE_XY_CUT:
+        if sortable and sort_mode != SORT_MODE_DONT:
             sorted_page_elements = sort_page_elements(page_elements, sort_mode)
 
         if include_page_breaks and i < num_pages - 1:
