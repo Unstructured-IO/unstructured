@@ -184,14 +184,19 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return None
         return page
 
+    # todo: improve rbac - ingestdoc matching logic
+    # todo: better folder management for writing down the rbac data
+    # todo: obtain rbac_data field as a python dict and serialise after, rather than a direct str
     def update_rbac_data(self):
-        for filename in os.listdir(self.partition_config.output_dir):
-            if self.file_path.split("/")[-1] in filename:
-                with open(os.path.join(self.partition_config.output_dir, filename)) as f:
-                    self.source_metadata.rbac_data = json.loads(f.read())
-        return
+        self._rbac_data = ""
+        if self.output_dir.is_dir():
+            for filename in os.listdir(self.partition_config.output_dir):
+                if self.file_path.split("/")[-1] in filename:
+                    with open(os.path.join(self.partition_config.output_dir, filename)) as f:
+                        self._rbac_data = f.read()
 
     def update_source_metadata(self, **kwargs):
+        self.update_rbac_data()
         if self.is_page:
             page = self._fetch_page()
             if page is None:
@@ -205,6 +210,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 version=page.get_property("Version", ""),
                 source_url=page.absolute_url,
                 exists=True,
+                rbac_data=self._rbac_data,
             )
             return
 
@@ -223,13 +229,13 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             version=file.major_version,
             source_url=file.properties.get("LinkingUrl", None),
             exists=True,
+            rbac_data=self._rbac_data,
         )
 
     def _download_page(self):
         """Formats and saves locally page content"""
         content = self._fetch_file()
         self.update_source_metadata()
-        self.update_rbac_data()
         pld = (content.properties.get("LayoutWebpartsContent1", "") or "") + (
             content.properties.get("CanvasContent1", "") or ""
         )
@@ -253,7 +259,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _download_file(self):
         file = self._fetch_file()
         self.update_source_metadata()
-        self.update_rbac_data()
         fsize = file.length
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -504,7 +509,6 @@ class ConnectorRBAC:
 
         print("Writing RBAC data to disk")
         for site, drive_id, item_id, item_name in item_ids:
-            print(item_name)
             with open(output_dir + "/" + item_name + "_" + item_id + ".json", "w") as f:
                 res = self.get_permissions_for_drive_item(site, drive_id, item_id)
                 if res:

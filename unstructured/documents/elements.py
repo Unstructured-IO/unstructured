@@ -44,6 +44,7 @@ class DataSourceMetadata:
     date_created: Optional[str] = None
     date_modified: Optional[str] = None
     date_processed: Optional[str] = None
+    rbac_data: Optional[str] = None
 
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
@@ -205,6 +206,10 @@ class ElementMetadata:
             _dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
         if self.coordinates:
             _dict["coordinates"] = cast(CoordinatesMetadata, self.coordinates).to_dict()
+        if self.link_texts:
+            self.link_texts = [
+                link for link in self.link_texts if link is not None and isinstance(link, str)
+            ]
         return _dict
 
     @classmethod
@@ -465,6 +470,8 @@ class Text(Element):
         out["element_id"] = self.id
         out["type"] = self.category
         out["text"] = self.text
+        if hasattr(self, "embeddings"):
+            out["embeddings"] = self.embeddings
         return out
 
     def apply(self, *cleaners: Callable):
