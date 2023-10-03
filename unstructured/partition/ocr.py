@@ -4,17 +4,12 @@ from typing import BinaryIO, List, Optional, Union, cast
 
 import numpy as np
 import pdf2image
+import unstructured_pytesseract
 
-# TODO(yuming): update pytesseract to unst forked pytesseract
-import pytesseract
-
-# rename PIL.Image to avoid conflict with unstructured.documents.elements.Image
+# NOTE(yuming): Rename PIL.Image to avoid conflict with
+# unstructured.documents.elements.Image
 from PIL import Image as PILImage
 from PIL import ImageSequence
-from pytesseract import Output
-
-# TODO(yuming): check this if need to separate any ocr
-from unstructured_inference.constants import Source
 from unstructured_inference.inference.elements import (
     Rectangle,
     TextRegion,
@@ -24,6 +19,7 @@ from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
 )
+from unstructured_pytesseract import Output
 
 from unstructured.logger import logger
 
@@ -37,10 +33,30 @@ def process_data_with_ocr(
     ocr_languages: str = "eng",
     ocr_mode: str = "entire_page",
     pdf_image_dpi: int = 200,
-) -> List[List[TextRegion]]:
+) -> "DocumentLayout":
     """
-    Retrieve OCR layout information as one document from given file data
-    TODO(yuming): add me... (more information on each parameter ect)
+    Process OCR data from a given data and supplement the inferred DocumentLayout with ocr.
+
+    Parameters:
+    - data (Union[bytes, BinaryIO]): The input file data,
+        which can be either bytes or a BinaryIO object.
+
+    - inferred_layout (DocumentLayout): The inferred layout from unsturcutrued-inference.
+
+    - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).
+        Defaults to False.
+
+    - ocr_languages (str, optional): The languages for OCR processing. Defaults to "eng" (English).
+
+    - ocr_mode (str, optional): The OCR processing mode, e.g., "entire_page" or "individual_blocks".
+        Defaults to "entire_page". If choose "entire_page" OCR, OCR processes the entire image
+        page and will be merged with the inferred layout. If choose "individual_blocks" OCR,
+        OCR is performed on individual elements by cropping the image.
+
+    - pdf_image_dpi (int, optional): DPI (dots per inch) for processing PDF images. Defaults to 200.
+
+    Returns:
+        DocumentLayout: The merged layout information obtained after OCR processing.
     """
     with tempfile.NamedTemporaryFile() as tmp_file:
         tmp_file.write(data.read() if hasattr(data, "read") else data)
@@ -63,10 +79,29 @@ def process_file_with_ocr(
     ocr_languages: str = "eng",
     ocr_mode: str = "entire_page",
     pdf_image_dpi: int = 200,
-) -> List[List[TextRegion]]:
+) -> "DocumentLayout":
     """
-    Retrieve OCR layout information as one document from given filename
-    TODO(yuming): add me... (more information on each parameter ect)
+    Process OCR data from a given file and supplement the inferred DocumentLayout with ocr.
+
+    Parameters:
+    - filename (str): The path to the input file, which can be an image or a PDF.
+
+    - inferred_layout (DocumentLayout): The inferred layout from unsturcutrued-inference.
+
+    - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).
+        Defaults to False.
+
+    - ocr_languages (str, optional): The languages for OCR processing. Defaults to "eng" (English).
+
+    - ocr_mode (str, optional): The OCR processing mode, e.g., "entire_page" or "individual_blocks".
+        Defaults to "entire_page". If choose "entire_page" OCR, OCR processes the entire image
+        page and will be merged with the inferred layout. If choose "individual_blocks" OCR,
+        OCR is performed on individual elements by cropping the image.
+
+    - pdf_image_dpi (int, optional): DPI (dots per inch) for processing PDF images. Defaults to 200.
+
+    Returns:
+        DocumentLayout: The merged layout information obtained after OCR processing.
     """
     merged_page_layouts = []
     if is_image:
@@ -115,9 +150,16 @@ def supplement_page_layout_with_ocr(
     ocr_languages: str = "eng",
     ocr_mode: str = "entire_page",
 ) -> "PageLayout":
+    """
+    Supplement an inferred PageLayout with OCR results depending on OCR mode.
+    If mode is "entire_page", we get the OCR layout for the entire image and
+    merge it with inferred PageLayout.
+    If mode is "individual_blocks", we find the elements from inferred PageLayout
+    with no text and add text from OCR to each element.
+    """
     entrie_page_ocr = os.getenv("ENTIRE_PAGE_OCR", "tesseract").lower()
     # TODO(yuming): add tests for paddle with ENTIRE_PAGE_OCR env
-    # see core CORE-1886
+    # see CORE-1886
     if entrie_page_ocr not in ["paddle", "tesseract"]:
         raise ValueError(
             "Environment variable ENTIRE_PAGE_OCR",
@@ -140,14 +182,11 @@ def supplement_page_layout_with_ocr(
         for i, element in enumerate(elements):
             if element.text == "":
                 cropped_image = image.crop((element.x1, element.y1, element.x2, element.y2))
-                ocr_layout = get_ocr_layout_from_image(
+                text_from_ocr = get_ocr_text_from_image(
                     cropped_image,
                     ocr_languages=ocr_languages,
                     entrie_page_ocr=entrie_page_ocr,
                 )
-                text_from_ocr = ""
-                for text_region in ocr_layout:
-                    text_from_ocr += text_region.text
                 elements[i].text = text_from_ocr
         inferred_page_layout.elements[:] = elements
         return inferred_page_layout
@@ -163,6 +202,9 @@ def get_ocr_layout_from_image(
     ocr_languages: str = "eng",
     entrie_page_ocr: str = "tesseract",
 ) -> List[TextRegion]:
+    """
+    Get the OCR layout from image as a list of text regions with paddle or tesseract.
+    """
     if entrie_page_ocr == "paddle":
         logger.info("Processing entrie page OCR with paddle...")
         from unstructured.partition.utils.ocr_models import paddle_ocr
@@ -173,13 +215,42 @@ def get_ocr_layout_from_image(
         ocr_data = paddle_ocr.load_agent().ocr(np.array(image), cls=True)
         ocr_layout = parse_ocr_data_paddle(ocr_data)
     else:
-        ocr_data = pytesseract.image_to_data(
+        ocr_data = unstructured_pytesseract.image_to_data(
             np.array(image),
             lang=ocr_languages,
             output_type=Output.DICT,
         )
         ocr_layout = parse_ocr_data_tesseract(ocr_data)
     return ocr_layout
+
+
+def get_ocr_text_from_image(
+    image: PILImage,
+    ocr_languages: str = "eng",
+    entrie_page_ocr: str = "tesseract",
+) -> str:
+    """
+    Get the OCR text from image as a string with paddle or tesseract.
+    """
+    if entrie_page_ocr == "paddle":
+        logger.info("Processing entrie page OCR with paddle...")
+        from unstructured.partition.utils.ocr_models import paddle_ocr
+
+        # TODO(yuming): pass in language parameter once we
+        # have the mapping for paddle lang code
+        # see CORE-2034
+        ocr_data = paddle_ocr.load_agent().ocr(np.array(image), cls=True)
+        ocr_layout = parse_ocr_data_paddle(ocr_data)
+        text_from_ocr = ""
+        for text_region in ocr_layout:
+            text_from_ocr += text_region.text
+    else:
+        text_from_ocr = unstructured_pytesseract.image_to_string(
+            np.array(image),
+            lang=ocr_languages,
+            output_type=Output.DICT,
+        )
+    return text_from_ocr
 
 
 def parse_ocr_data_tesseract(ocr_data: dict) -> List[TextRegion]:
@@ -217,7 +288,7 @@ def parse_ocr_data_tesseract(ocr_data: dict) -> List[TextRegion]:
         (x1, y1, x2, y2) = l, t, l + w, t + h
         text = ocr_data["text"][i]
         if text:
-            text_region = TextRegion(x1, y1, x2, y2, text=text, source=Source.OCR_TESSERACT)
+            text_region = TextRegion(x1, y1, x2, y2, text=text, source="OCR-tesseract")
             text_regions.append(text_region)
 
     return text_regions
@@ -253,7 +324,7 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
             y2 = max([i[1] for i in line[0]])
             text = line[1][0]
             if text:
-                text_region = TextRegion(x1, y1, x2, y2, text, source=Source.OCR_PADDLE)
+                text_region = TextRegion(x1, y1, x2, y2, text, source="OCR-paddle")
                 text_regions.append(text_region)
 
     return text_regions
