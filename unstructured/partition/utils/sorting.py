@@ -32,7 +32,7 @@ def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> Tuple[int, int, int
 
 def shrink_bbox(bbox: Tuple[int, int, int, int], shrink_factor) -> Tuple[int, int, int, int]:
     """
-    Shrink a bounding box by a given shrink factor while maintaining its center.
+    Shrink a bounding box by a given shrink factor while maintaining its top and left.
 
     Parameters:
         bbox (Tuple[int, int, int, int]): The original bounding box represented by
@@ -49,14 +49,12 @@ def shrink_bbox(bbox: Tuple[int, int, int, int], shrink_factor) -> Tuple[int, in
     height = bottom - top
     new_width = width * shrink_factor
     new_height = height * shrink_factor
-    dw = (width - new_width) / 2
-    dh = (height - new_height) / 2
+    dw = width - new_width
+    dh = height - new_height
 
-    new_left = left + dw
     new_right = right - dw
-    new_top = top + dh
     new_bottom = bottom - dh
-    return int(new_left), int(new_top), int(new_right), int(new_bottom)
+    return int(left), int(top), int(new_right), int(new_bottom)
 
 
 def coord_has_valid_points(coordinates: CoordinatesMetadata) -> bool:
