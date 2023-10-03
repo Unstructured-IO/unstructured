@@ -210,10 +210,6 @@ class ElementMetadata:
             _dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
         if self.coordinates:
             _dict["coordinates"] = cast(CoordinatesMetadata, self.coordinates).to_dict()
-        if self.link_texts:
-            self.link_texts = [
-                link for link in self.link_texts if link is not None and isinstance(link, str)
-            ]
         return _dict
 
     @classmethod
@@ -474,8 +470,6 @@ class Text(Element):
         out["element_id"] = self.id
         out["type"] = self.category
         out["text"] = self.text
-        if hasattr(self, "embeddings"):
-            out["embeddings"] = self.embeddings
         return out
 
     def apply(self, *cleaners: Callable):
