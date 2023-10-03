@@ -35,7 +35,7 @@ from unstructured.documents.elements import (
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 from unstructured.partition.utils.constants import SORT_MODE_XY_CUT
-from unstructured.utils import dependency_exists
+from unstructured.utils import dependency_exists, first
 
 if dependency_exists("docx") and dependency_exists("docx.table"):
     from docx.table import Table as docxtable
@@ -48,10 +48,8 @@ if dependency_exists("numpy") and dependency_exists("cv2"):
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout, PageLayout
-    from unstructured_inference.inference.layoutelement import (
-        LayoutElement,
-        LocationlessLayoutElement,
-    )
+    from unstructured_inference.inference.layoutelement import LayoutElement
+
 
 HIERARCHY_RULE_SET = {
     "Title": [
@@ -102,7 +100,6 @@ def get_last_modified_date_from_file(
 def normalize_layout_element(
     layout_element: Union[
         "LayoutElement",
-        "LocationlessLayoutElement",
         Element,
         Dict[str, Any],
     ],
@@ -225,6 +222,8 @@ def set_element_hierarchy(
     """
     stack: List[Element] = []
     for element in elements:
+        if element.metadata.parent_id is not None:
+            continue
         parent_id = None
         element_category = getattr(element, "category", None)
         element_category_depth = getattr(element.metadata, "category_depth", 0) or 0
@@ -549,8 +548,9 @@ def document_to_element_list(
         image_width = page_image_metadata.get("width")
         image_height = page_image_metadata.get("height")
 
+        translation_mapping: List[Tuple["LayoutElement", Element]] = []
         for layout_element in page.elements:
-            if image_width and image_height and hasattr(layout_element, "coordinates"):
+            if image_width and image_height and hasattr(layout_element.bbox, "coordinates"):
                 coordinate_system = PixelSpace(width=image_width, height=image_height)
             else:
                 coordinate_system = None
@@ -568,6 +568,7 @@ def document_to_element_list(
                         el.metadata.last_modified = last_modification_date
                     el.metadata.page_number = i + 1
                 page_elements.extend(element)
+                translation_mapping.extend([(layout_element, el) for el in element])
                 continue
             else:
                 if last_modification_date:
@@ -576,6 +577,7 @@ def document_to_element_list(
                     layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
                 )
                 page_elements.append(element)
+                translation_mapping.append((layout_element, element))
             coordinates = (
                 element.metadata.coordinates.points if element.metadata.coordinates else None
             )
@@ -595,6 +597,12 @@ def document_to_element_list(
                 **kwargs,
             )
 
+        for layout_element, element in translation_mapping:
+            if hasattr(layout_element, "parent") and layout_element.parent is not None:
+                element_parent = first(
+                    (el for l_el, el in translation_mapping if l_el is layout_element.parent),
+                )
+                element.metadata.parent_id = element_parent.id
         sorted_page_elements = page_elements
         if sortable and sort_mode == SORT_MODE_XY_CUT:
             sorted_page_elements = sort_page_elements(page_elements, sort_mode)
