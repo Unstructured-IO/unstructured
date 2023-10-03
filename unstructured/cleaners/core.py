@@ -6,6 +6,8 @@ from typing import Tuple
 
 import numpy as np
 
+import nltkfrom nltk.corpus import stopwords
+
 from unstructured.file_utils.encoding import (
     format_encoding_str,
 )
@@ -458,3 +460,15 @@ def clean_extra_whitespace_with_index_run(text: str) -> Tuple[str, np.ndarray]:
 
 def index_adjustment_after_clean_extra_whitespace(index, moved_indices) -> int:
     return int(index - moved_indices[index])
+
+
+def bag_of_words(text: str, remove_stop_words: bool) -> List[Text]:
+    words = set(remove_punctuation(text.lower()).split())
+
+    clean_words = []
+    if remove_stop_words:
+        for word in words:
+            if word not in stopwords.words('english'):
+                clean_words.append(word)
+
+    
