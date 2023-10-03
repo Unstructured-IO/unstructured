@@ -29,29 +29,20 @@ Run Locally
 
       .. code:: python
 
-        import subprocess
+        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
+        from unstructured.ingest.runner.gitlab import gitlab
 
-        command = [
-          "unstructured-ingest",
-          "gitlab",
-          "--url", "Unstructured-IO/unstructured",
-          "--git-branch", "v0.0.7",
-          "--output-dir",  "gitlab-ingest-output",
-          "--num-processes", "2",
-          "--verbose",
-        ]
-
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            gitlab(
+                verbose=True,
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
+                    output_dir="gitlab-ingest-output",
+                    num_processes=2,
+                ),
+                url="https://gitlab.com/gitlab-com/content-sites/docsy-gitlab",
+                git_branch="v0.0.7",
+            )
 
 Run via the API
 ---------------
@@ -78,31 +69,24 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
       .. code:: python
 
-        import subprocess
+        import os
 
-        command = [
-          "unstructured-ingest",
-          "gitlab",
-          "--url", "Unstructured-IO/unstructured",
-          "--git-branch", "v0.0.7",
-          "--output-dir",  "gitlab-ingest-output",
-          "--num-processes", "2",
-          "--verbose",
-          "--partition-by-api",
-          "--api-key", "<UNSTRUCTURED-API-KEY>",
-        ]
+        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
+        from unstructured.ingest.runner.gitlab import gitlab
 
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            gitlab(
+                verbose=True,
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
+                    output_dir="gitlab-ingest-output",
+                    num_processes=2,
+                    partition_by_api=True,
+                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
+                ),
+                url="https://gitlab.com/gitlab-com/content-sites/docsy-gitlab",
+                git_branch="v0.0.7",
+            )
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 

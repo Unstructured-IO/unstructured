@@ -1,14 +1,30 @@
-## 0.10.19-dev3
+## 0.10.19-dev6
 
 ### Enhancements
 
 * **bump `unstructured-inference` to `0.6.6`** The updated version of `unstructured-inference` makes table extraction in `hi_res` mode configurable to fine tune table extraction performance; it also improves element detection by adding a deduplication post processing step in the `hi_res` partitioning of pdfs and images.
+* **Update python-based docs** Refactor docs to use the actual unstructured code rather than using the subprocess library to run the cli command itself.
+
+### Features 
+
+### Fixes
+
+* **Fixes partition_pdf is_alnum reference bug** Problem: The `partition_pdf` when attempt to get bounding box from element experienced a reference before assignment error when the first object is not text extractable.  Fix: Switched to a flag when the condition is met. Importance: Crucial to be able to partition with pdf.
+
+## 0.10.17-dev3
+
+### Enhancements
+
+* **Adds data source properties to SharePoint, Outlook, Onedrive, Reddit, and Slack connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
 
 ### Features
 
 ### Fixes
 
-* **Fixes partition_pdf is_alnum reference bug** Problem: The `partition_pdf` when attempt to get bounding box from element experienced a reference before assignment error when the first object is not text extractable.  Fix: Switched to a flag when the condition is met. Importance: Crucial to be able to partition with pdf.
+* **Fix various cases of HTML text missing after partition**
+  Problem: Under certain circumstances, text immediately after some HTML tags will be misssing from partition result.
+  Fix: Updated code to deal with these cases.
+  Importance: This will ensure the correctness when partitioning HTML and Markdown documents.
 
 ## 0.10.18
 
