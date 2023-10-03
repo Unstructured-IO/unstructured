@@ -8,7 +8,7 @@ from requests.models import Response
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import ListItem, NarrativeText, Table, Title
+from unstructured.documents.elements import EmailAddress, ListItem, NarrativeText, Table, Title
 from unstructured.documents.html import HTMLTitle
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
@@ -647,6 +647,28 @@ def test_add_chunking_strategy_on_partition_html(
     assert chunk_elements == chunks
 
 
+def test_html_heading_title_detection():
+    html_text = """
+    <p>This is a section of narrative text, it's long, flows and has meaning</p>
+    <h1>This is a section of narrative text, it's long, flows and has meaning</h1>
+    <h2>A heading that is at the second level</h2>
+    <h3>Finally, the third heading</h3>
+    <h2>December 1-17, 2017</h2>
+    <h3>email@example.com</h3>
+    <h3><li>- bulleted item</li></h3>
+    """
+    elements = partition_html(text=html_text)
+    assert elements == [
+        NarrativeText("This is a section of narrative text, it's long, flows and has meaning"),
+        Title("This is a section of narrative text, it's long, flows and has meaning"),
+        Title("A heading that is at the second level"),
+        Title("Finally, the third heading"),
+        Title("December 1-17, 2017"),
+        EmailAddress("email@example.com"),
+        ListItem("- bulleted item"),
+    ]
+
+    
 def test_partition_html_element_metadata_has_languages():
     filename = "example-docs/example-10k.html"
     elements = partition_html(filename=filename)

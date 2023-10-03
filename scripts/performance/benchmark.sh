@@ -44,9 +44,9 @@ if [[ "$DOCKER_TEST" == "true" ]]; then
     -e GIT_HASH="$GIT_HASH" \
     -e SLOW_FILES="${SLOW_FILES[*]}" \
     -e HI_RES_STRATEGY_FILES="${HI_RES_STRATEGY_FILES[*]}" \
-    -v "${SCRIPT_DIR}":/home/scripts/performance \
+    -v "${SCRIPT_DIR}":/home/notebook-user/scripts/performance \
     unstructured:perf-test \
-    bash /home/scripts/performance/benchmark-local.sh 2>&1 | tee >(while IFS= read -r line; do
+    bash /home/notebook-user/scripts/performance/benchmark-local.sh 2>&1 | tee >(while IFS= read -r line; do
         read_benchmark_logs_for_results
     done)
 else
