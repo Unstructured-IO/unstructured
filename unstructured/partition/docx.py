@@ -538,30 +538,6 @@ class _DocxPartitioner:
             else:
                 yield from self._increment_page_number()
 
-    def _iter_maybe_paragraph_page_breaks(self, paragraph: Paragraph) -> Iterator[PageBreak]:
-        """Generate a `PageBreak` document element for each page-break in `paragraph`.
-
-        Checks for both "hard" page breaks (page breaks explicitly inserted by the user)
-        and "soft" page breaks, which are sometimes inserted by the MS Word renderer.
-        Note that soft page breaks aren't always present. Whether or not pages are
-        tracked may depend on your Word renderer.
-        """
-
-        def has_page_break_implementation_we_have_so_far() -> bool:
-            """Needs to become more sophisticated."""
-            page_break_indicators = [
-                ["lastRenderedPageBreak"],  # "Soft" page break inserted by renderer
-            ]
-            for indicators in page_break_indicators:
-                if all(indicator in paragraph._p.xml for indicator in indicators):
-                    return True
-            return False
-
-        if not has_page_break_implementation_we_have_so_far():
-            return
-
-        yield from self._increment_page_number()
-
     def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[Dict[str, str]]:
         """Generate e.g. {"text": "MUST", "tag": "b"} for each emphasis in `paragraph`."""
         for run in paragraph.runs:
