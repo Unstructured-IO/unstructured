@@ -2,7 +2,6 @@ import types
 from typing import List, Optional
 
 import numpy as np
-
 from langchain.embeddings import HuggingFaceEmbeddings
 
 from unstructured.documents.elements import (
@@ -24,6 +23,7 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
         self.model_name = model_name
         self.model_kwargs = model_kwargs
         self.encode_kwargs = encode_kwargs
+        self.cache_folder = cache_folder
 
         self.initialize()
 
@@ -34,6 +34,7 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
             model_name=self.model_name,
             model_kwargs=self.model_kwargs,
             encode_kwargs=self.encode_kwargs,
+            cache_folder=self.cache_folder,
         )
 
         self.examplary_embedding = self.hf.embed_query("Q")
