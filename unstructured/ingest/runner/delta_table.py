@@ -11,12 +11,12 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def delta_table(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     table_uri: t.Union[str, Path],
     version: t.Optional[int] = None,
     storage_options: t.Optional[str] = None,
+    verbose: bool = False,
     without_files: bool = False,
     columns: t.Optional[t.List[str]] = None,
     writer_type: t.Optional[str] = None,

@@ -9,7 +9,7 @@ env:
 
 jobs:
   setup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-m
     if: |
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'push' && contains(github.event.head_commit.message, 'ingest-test-fixtures-update'))
@@ -56,6 +56,10 @@ jobs:
           source .venv/bin/activate
           mkdir "$NLTK_DATA"
           make install-ci
+      - name: Setup docker-compose
+        uses: KengoTODA/actions-setup-docker-compose@v1
+        with:
+          version: '2.22.0'
       - name: Update test fixtures
         env:
           AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
@@ -91,6 +95,7 @@ jobs:
           TABLE_OCR: "tesseract"
           ENTIRE_PAGE_OCR: "tesseract"
           OVERWRITE_FIXTURES: "true"
+          CI: "true"
         run: |
           source .venv/bin/activate
           sudo apt-get update
