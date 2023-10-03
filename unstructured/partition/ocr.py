@@ -102,7 +102,7 @@ def supplement_inferred_page_layout_with_ocr(
     else:
         raise ValueError(
             "Invalid OCR mode. Parameter `ocr_mode` "
-            "must be set to `entire_page` or individual_blocks`.",
+            "must be set to `entire_page` or `individual_blocks`.",
         )
 
 
@@ -158,7 +158,7 @@ def get_ocr_text_from_image(
             np.array(image),
             lang=ocr_languages,
             output_type=Output.DICT,
-        )
+        )["text"]
     return text_from_ocr
 
 
