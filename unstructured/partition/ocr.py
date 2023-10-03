@@ -104,8 +104,8 @@ def process_file_with_ocr(
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
     merged_page_layouts = []
-    if is_image:
-        try:
+    try:
+        if is_image:
             with PILImage.open(filename) as images:
                 format = images.format
                 for i, image in enumerate(ImageSequence.Iterator(images)):
@@ -118,30 +118,31 @@ def process_file_with_ocr(
                         ocr_mode=ocr_mode,
                     )
                     merged_page_layouts.append(merged_page_layout)
-        except Exception as e:
-            if os.path.isdir(filename) or os.path.isfile(filename):
-                raise e
-            else:
-                raise FileNotFoundError(f'File "{filename}" not found!') from e
-    else:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            _image_paths = pdf2image.convert_from_path(
-                filename,
-                dpi=pdf_image_dpi,
-                output_folder=temp_dir,
-                paths_only=True,
-            )
-            image_paths = cast(List[str], _image_paths)
-            for i, image_path in enumerate(image_paths):
-                with PILImage.open(image_path) as image:
-                    merged_page_layout = supplement_page_layout_with_ocr(
-                        inferred_layout.pages[i],
-                        image,
-                        ocr_languages=ocr_languages,
-                        ocr_mode=ocr_mode,
-                    )
-                    merged_page_layouts.append(merged_page_layout)
-    return DocumentLayout.from_pages(merged_page_layouts)
+                return DocumentLayout.from_pages(merged_page_layouts)
+        else:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                _image_paths = pdf2image.convert_from_path(
+                    filename,
+                    dpi=pdf_image_dpi,
+                    output_folder=temp_dir,
+                    paths_only=True,
+                )
+                image_paths = cast(List[str], _image_paths)
+                for i, image_path in enumerate(image_paths):
+                    with PILImage.open(image_path) as image:
+                        merged_page_layout = supplement_page_layout_with_ocr(
+                            inferred_layout.pages[i],
+                            image,
+                            ocr_languages=ocr_languages,
+                            ocr_mode=ocr_mode,
+                        )
+                        merged_page_layouts.append(merged_page_layout)
+                return DocumentLayout.from_pages(merged_page_layouts)
+    except Exception as e:
+        if os.path.isdir(filename) or os.path.isfile(filename):
+            raise e
+        else:
+            raise FileNotFoundError(f'File "{filename}" not found!') from e
 
 
 def supplement_page_layout_with_ocr(
