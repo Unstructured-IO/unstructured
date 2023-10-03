@@ -11,6 +11,8 @@
 
 ### Features 
 
+### Features
+
 ### Fixes
 
 * **Fixes partition_pdf is_alnum reference bug** Problem: The `partition_pdf` when attempt to get bounding box from element experienced a reference before assignment error when the first object is not text extractable.  Fix: Switched to a flag when the condition is met. Importance: Crucial to be able to partition with pdf.
