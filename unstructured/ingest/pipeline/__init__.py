@@ -2,6 +2,7 @@ from .doc_factory import DocFactory
 from .interfaces import PipelineContext
 from .partition import Partitioner
 from .pipeline import Pipeline
+from .reformat.chunking import Chunker
 from .reformat.embedding import Embedder
 from .source import Reader
 from .write import Writer
@@ -14,4 +15,5 @@ __all__ = [
     "PipelineContext",
     "Pipeline",
     "Writer",
+    "Chunker",
 ]

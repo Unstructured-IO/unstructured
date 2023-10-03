@@ -1,3 +1,4 @@
+import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -16,7 +17,11 @@ class Partitioner(PartitionNode):
     def run(self, ingest_doc_json) -> str:
         doc = create_ingest_doc_from_json(ingest_doc_json)
         doc_filename_hash = get_ingest_doc_hash(ingest_doc_json)
-        doc_filename = f"{doc_filename_hash}.json"
+        hashed_filename = hashlib.sha256(
+            f"{self.create_hash()}{doc_filename_hash}".encode(),
+        ).hexdigest()[:32]
+        self.pipeline_config.ingest_docs_map[hashed_filename] = ingest_doc_json
+        doc_filename = f"{hashed_filename}.json"
         json_path = (Path(self.get_path()) / doc_filename).resolve()
         if not self.partition_config.reprocess and json_path.is_file() and json_path.stat().st_size:
             logger.debug(f"File exists: {json_path}, skipping partition")

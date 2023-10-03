@@ -113,7 +113,7 @@ class PartitionNode(PipelineNode):
 
     def create_hash(self) -> str:
         hash_dict = self.partition_config.to_dict()
-        hash_dict.update(self.partition_kwargs)
+        hash_dict["partition_kwargs"] = self.partition_kwargs
         return hashlib.sha256(json.dumps(hash_dict, sort_keys=True).encode()).hexdigest()[:32]
 
     @abstractmethod
@@ -121,9 +121,7 @@ class PartitionNode(PipelineNode):
         pass
 
     def get_path(self) -> t.Optional[Path]:
-        return (
-            Path(self.pipeline_config.get_working_dir()) / "partitioned" / self.create_hash()
-        ).resolve()
+        return (Path(self.pipeline_config.get_working_dir()) / "partitioned").resolve()
 
 
 @dataclass
