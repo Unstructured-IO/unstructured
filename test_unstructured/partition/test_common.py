@@ -1,8 +1,10 @@
 from dataclasses import dataclass
+from unittest import mock
+
 import pytest
 from PIL import Image
 from unstructured_inference.inference import layout
-from unstructured_inference.inference.layout import LayoutElement, DocumentLayout, PageLayout
+from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
@@ -21,6 +23,7 @@ from unstructured.partition.common import (
     contains_emoji,
     document_to_element_list,
 )
+from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_DONT, SORT_MODE_XY_CUT
 
 
 class MockPageLayout(layout.PageLayout):
@@ -31,7 +34,7 @@ class MockPageLayout(layout.PageLayout):
     @property
     def elements(self):
         return [
-            LayoutElement(type="Headline", text="Charlie Brown and the Great Pumpkin", bbox=None)
+            LayoutElement(type="Headline", text="Charlie Brown and the Great Pumpkin", bbox=None),
         ]
 
 
@@ -434,3 +437,30 @@ def test_document_to_element_list_handles_parent():
     doc = DocumentLayout.from_pages([page])
     el1, el2 = document_to_element_list(doc)
     assert el2.metadata.parent_id == el1.id
+
+
+@pytest.mark.parametrize(
+    ("sort_mode", "call_count"),
+    [(SORT_MODE_DONT, 0), (SORT_MODE_BASIC, 1), (SORT_MODE_XY_CUT, 1)],
+)
+def test_document_to_element_list_doesnt_sort_on_sort_method(sort_mode, call_count):
+    block1 = LayoutElement.from_coords(1, 2, 3, 4, text="block 1", type="NarrativeText")
+    block2 = LayoutElement.from_coords(
+        1,
+        2,
+        3,
+        4,
+        text="block 2",
+        parent=block1,
+        type="NarrativeText",
+    )
+    page = PageLayout(
+        number=1,
+        image=MockImage(),
+        layout=None,
+    )
+    page.elements = [block1, block2]
+    doc = DocumentLayout.from_pages([page])
+    with mock.patch.object(common, "sort_page_elements") as mock_sort_page_elements:
+        document_to_element_list(doc, sortable=True, sort_mode=sort_mode)
+    assert mock_sort_page_elements.call_count == call_count
