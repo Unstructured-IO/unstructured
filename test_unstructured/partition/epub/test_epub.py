@@ -195,7 +195,28 @@ def test_add_chunking_strategy_on_partition_epub(
     assert chunk_elements == chunks
 
 
+def test_add_chunking_strategy_on_partition_epub_non_default(
+    filename=os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub"),
+):
+    elements = partition_epub(filename=filename)
+    chunk_elements = partition_epub(
+        filename,
+        chunking_strategy="by_title",
+        max_characters=5,
+        new_after_n_chars=5,
+        combine_text_under_n_chars=0,
+    )
+    chunks = chunk_by_title(
+        elements,
+        max_characters=5,
+        new_after_n_chars=5,
+        combine_text_under_n_chars=0,
+    )
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+    
 def test_partition_epub_element_metadata_has_languages():
     filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub")
     elements = partition_epub(filename=filename)
-    assert elements[0].metadata.languages == ["eng"]
+    assert elements[0].metadata.languages == ["eng"]    

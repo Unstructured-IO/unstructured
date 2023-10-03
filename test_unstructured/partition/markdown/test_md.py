@@ -276,7 +276,7 @@ def test_partition_md_with_json(
         assert elements[i] == test_elements[i]
 
 
-def test_add_chunking_strategy_on_partition_md(
+def test_add_chunking_strategy_by_title_on_partition_md(
     filename="example-docs/README.md",
 ):
     elements = partition_md(filename=filename)

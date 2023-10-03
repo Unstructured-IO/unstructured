@@ -136,7 +136,7 @@ def test_partition_org_with_json(filename="example-docs/README.org"):
         assert elements[i] == test_elements[i]
 
 
-def test_add_chunking_strategy_on_partition_org(
+def test_add_chunking_strategy_by_title_on_partition_org(
     filename="example-docs/README.org",
 ):
     elements = partition_org(filename=filename)

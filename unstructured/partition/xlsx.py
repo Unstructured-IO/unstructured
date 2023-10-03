@@ -4,6 +4,7 @@ from typing import IO, BinaryIO, List, Optional, Union, cast
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -22,6 +23,7 @@ from unstructured.partition.common import (
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.XLSX)
+@add_chunking_strategy()
 def partition_xlsx(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
