@@ -373,9 +373,9 @@ def test_auto_partition_formats_languages_for_tesseract():
     filename = "example-docs/chi_sim_image.jpeg"
     with patch(
         "unstructured.partition.ocr.process_file_with_ocr",
-    ) as mock_process_file_with_model:
+    ) as mock_process_file_with_ocr:
         partition(filename, strategy="hi_res", languages=["zh"])
-        _, kwargs = mock_process_file_with_model.call_args_list[0]
+        _, kwargs = mock_process_file_with_ocr.call_args_list[0]
         assert "ocr_languages" in kwargs
         assert kwargs["ocr_languages"] == "chi_sim+chi_sim_vert+chi_tra+chi_tra_vert"
 

@@ -440,9 +440,9 @@ def test_partition_image_formats_languages_for_tesseract():
     filename = "example-docs/jpn-vert.jpeg"
     with mock.patch(
         "unstructured.partition.ocr.process_file_with_ocr",
-    ) as mock_process_file_with_model:
+    ) as mock_process_file_with_ocr:
         image.partition_image(filename=filename, strategy="hi_res", languages=["jpn_vert"])
-        _, kwargs = mock_process_file_with_model.call_args_list[0]
+        _, kwargs = mock_process_file_with_ocr.call_args_list[0]
         assert "ocr_languages" in kwargs
         assert kwargs["ocr_languages"] == "jpn_vert"
 
