@@ -359,6 +359,3 @@ def _check_content_element_type(text: str) -> Element:
         return Text(
             text=text,
         )
-
-
-# add language
