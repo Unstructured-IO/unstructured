@@ -260,6 +260,7 @@ def partition_email(
     min_partition: Optional[int] = 0,
     chunking_strategy: Optional[str] = None,
     languages: List[str] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
@@ -466,5 +467,6 @@ def partition_email(
         apply_lang_metadata(
             elements=all_elements,
             languages=languages,
+            detect_language_per_element=detect_language_per_element,
         ),
     )

@@ -30,6 +30,7 @@ def partition_xlsx(
     metadata_last_modified: Optional[str] = None,
     include_header: bool = True,
     languages: List[str] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .xlsx format into its document elements.
@@ -93,11 +94,10 @@ def partition_xlsx(
         table = Table(text=text, metadata=metadata)
         elements.append(table)
 
-    elements = list(
+    return list(
         apply_lang_metadata(
             elements=elements,
             languages=languages,
+            detect_language_per_element=detect_language_per_element,
         ),
     )
-
-    return elements

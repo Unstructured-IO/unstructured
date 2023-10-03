@@ -158,6 +158,7 @@ def _get_exif_datetime(exif_dict: Dict[str, Any], key: str) -> Optional[datetime
 def apply_lang_metadata(
     elements: Union[Iterable[Element], List[Element]],
     languages: List[str],
+    detect_language_per_element: bool = False,
 ) -> Iterator[Element]:
     """Detect and apply metadata.languages to each element in `elements`."""
     # -- Note this function has a stream interface, but reads the full `elements` stream into memory
@@ -176,7 +177,7 @@ def apply_lang_metadata(
 
     full_text = " ".join(e.text for e in elements if hasattr(e, "text"))
     languages = detect_languages(text=full_text, languages=languages)
-    if languages is not None and len(languages) == 1:
+    if languages is not None and len(languages) == 1 and detect_language_per_element is False:
         # -- apply detected languge to each metadata --
         for e in elements:
             e.metadata.languages = languages

@@ -89,6 +89,7 @@ def convert_and_partition_docx(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     languages: List[str] = ["auto"],
+    detect_language_per_element: bool = False,
 ) -> List[Element]:
     """Converts a document to DOCX and then partitions it using partition_docx.
 
@@ -151,6 +152,7 @@ def convert_and_partition_docx(
             include_metadata=include_metadata,
             metadata_last_modified=metadata_last_modified,
             languages=languages,
+            detect_language_per_element=detect_language_per_element,
         )
 
     return elements
@@ -168,6 +170,7 @@ def partition_docx(
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,  # used by decorator
     languages: List[str] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs: Any,  # used by decorator
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -208,6 +211,7 @@ def partition_docx(
                 metadata_last_modified,
             ),
             languages=languages,
+            detect_language_per_element=detect_language_per_element,
         ),
     )
 

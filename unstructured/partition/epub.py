@@ -29,6 +29,7 @@ def partition_epub(
     encoding: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
     languages: List[str] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an EPUB document. The document is first converted to HTML and then
@@ -113,6 +114,12 @@ def partition_epub(
 
         elements.extend(section_elements)
 
-    elements = list(apply_lang_metadata(elements, languages=languages))
+    elements = list(
+        apply_lang_metadata(
+            elements,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+        ),
+    )
 
     return elements

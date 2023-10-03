@@ -27,6 +27,7 @@ def partition_doc(
     libre_office_filter: Optional[str] = "MS Word 2007 XML",
     chunking_strategy: Optional[str] = None,
     languages: List[str] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs: Any,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
@@ -93,6 +94,7 @@ def partition_doc(
             include_metadata=include_metadata,
             metadata_last_modified=metadata_last_modified or last_modification_date,
             languages=languages,
+            detect_language_per_element=detect_language_per_element,
         )
         # remove tmp.name from filename if parsing file
         if file:

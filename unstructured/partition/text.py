@@ -21,6 +21,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.nlp.tokenize import sent_tokenize
 from unstructured.partition.common import (
@@ -28,7 +29,6 @@ from unstructured.partition.common import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
-from unstructured.partition.lang import detect_languages
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -172,6 +172,7 @@ def partition_text(
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.
@@ -236,8 +237,6 @@ def partition_text(
     elif text is not None:
         file_text = str(text)
 
-    languages = detect_languages(file_text, languages)
-
     if paragraph_grouper is False:
         pass
     elif paragraph_grouper is not None:
@@ -272,7 +271,13 @@ def partition_text(
             element.metadata = metadata
             elements.append(element)
 
-    return elements
+    return list(
+        apply_lang_metadata(
+            elements=elements,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+        ),
+    )
 
 
 def element_from_text(

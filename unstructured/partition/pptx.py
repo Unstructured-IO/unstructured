@@ -56,6 +56,7 @@ def partition_pptx(
     include_slide_notes: bool = False,
     chunking_strategy: Optional[str] = None,
     languages: List[str] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs: Any,
 ) -> List[Element]:
     """Partition PowerPoint document in .pptx format into its document elements.
@@ -111,6 +112,7 @@ def partition_pptx(
                 metadata_last_modified,
             ),
             languages=languages,
+            detect_language_per_element=detect_language_per_element,
         ),
     )
 

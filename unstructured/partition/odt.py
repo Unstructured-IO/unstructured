@@ -21,6 +21,7 @@ def partition_odt(
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
     languages: List[str] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs: Any,
 ) -> List[Element]:
     """Partitions Open Office Documents in .odt format into its document elements.
@@ -59,4 +60,5 @@ def partition_odt(
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified or last_modification_date,
         languages=languages,
+        detect_language_per_element=detect_language_per_element,
     )

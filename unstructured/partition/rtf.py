@@ -18,6 +18,7 @@ def partition_rtf(
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
     languages: List[str] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an RTF document. The document is first converted to HTML and then
@@ -53,4 +54,5 @@ def partition_rtf(
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified,
         languages=languages,
+        detect_language_per_element=detect_language_per_element,
     )

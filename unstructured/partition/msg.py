@@ -30,6 +30,7 @@ def partition_msg(
     min_partition: Optional[int] = 0,
     chunking_strategy: Optional[str] = None,
     languages: List[str] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions a MSFT Outlook .msg file
@@ -137,6 +138,7 @@ def partition_msg(
         apply_lang_metadata(
             elements=elements,
             languages=languages,
+            detect_language_per_element=detect_language_per_element,
         ),
     )
 

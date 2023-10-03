@@ -11,13 +11,13 @@ from unstructured.documents.elements import (
     process_metadata,
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.lang import detect_languages
 
 
 @process_metadata()
@@ -29,6 +29,7 @@ def partition_tsv(
     metadata_last_modified: Optional[str] = None,
     include_metadata: bool = True,
     languages: List[str] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions TSV files into document elements.
@@ -70,7 +71,6 @@ def partition_tsv(
 
     html_text = table.to_html(index=False, header=False, na_rep="")
     text = soupparser_fromstring(html_text).text_content()
-    languages = detect_languages(text, languages)
 
     if include_metadata:
         metadata = ElementMetadata(
@@ -82,4 +82,10 @@ def partition_tsv(
     else:
         metadata = ElementMetadata()
 
-    return [Table(text=text, metadata=metadata)]
+    return list(
+        apply_lang_metadata(
+            [Table(text=text, metadata=metadata)],
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+        ),
+    )

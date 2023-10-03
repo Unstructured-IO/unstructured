@@ -36,6 +36,7 @@ def partition_md(
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
     languages: List[str] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions a markdown file into its constituent elements
@@ -110,4 +111,5 @@ def partition_md(
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified or last_modification_date,
         languages=languages,
+        detect_language_per_element=detect_language_per_element,
     )

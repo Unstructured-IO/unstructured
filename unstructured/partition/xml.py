@@ -91,6 +91,7 @@ def partition_xml(
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
     languages: List[str] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an XML document into its document elements.
@@ -174,11 +175,10 @@ def partition_xml(
                 element.metadata = metadata
                 elements.append(element)
 
-    elements = list(
+    return list(
         apply_lang_metadata(
             elements=elements,
             languages=languages,
+            detect_language_per_element=detect_language_per_element,
         ),
     )
-
-    return elements
