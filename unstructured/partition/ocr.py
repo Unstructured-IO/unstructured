@@ -169,6 +169,7 @@ def get_ocr_layout_from_image(
 
         # TODO(yuming): pass in language parameter once we
         # have the mapping for paddle lang code
+        # see CORE-2034
         ocr_data = paddle_ocr.load_agent().ocr(np.array(image), cls=True)
         ocr_layout = parse_ocr_data_paddle(ocr_data)
     else:
