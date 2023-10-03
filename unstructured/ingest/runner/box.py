@@ -9,12 +9,12 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def box(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     remote_url: str,
-    recursive: bool,
-    box_app_config: t.Optional[str],
+    verbose: bool = False,
+    recursive: bool = False,
+    box_app_config: t.Optional[str] = None,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,
