@@ -9,14 +9,14 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def azure(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     account_name: t.Optional[str],
     account_key: t.Optional[str],
     connection_string: t.Optional[str],
     remote_url: str,
-    recursive: bool,
+    verbose: bool = False,
+    recursive: bool = False,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,
