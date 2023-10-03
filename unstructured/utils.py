@@ -3,7 +3,20 @@ import importlib
 import json
 from datetime import datetime
 from functools import wraps
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, cast
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+    cast,
+)
 
 from typing_extensions import ParamSpec
 
@@ -189,3 +202,29 @@ def validate_date_args(date: Optional[str] = None):
         f"The argument {date} does not satisfy the format: "
         "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
     )
+
+
+def _first_and_remaining_iterator(it: Iterable) -> Tuple[Any, Iterator]:
+    iterator = iter(it)
+    try:
+        out = next(iterator)
+    except StopIteration:
+        raise ValueError(
+            "Expected at least 1 element in iterable from which to retrieve first, got empty "
+            "iterable.",
+        )
+    return out, iterator
+
+
+def first(it: Iterable) -> Any:
+    out, _ = _first_and_remaining_iterator(it)
+    return out
+
+
+def only(it: Iterable) -> Any:
+    out, iterator = _first_and_remaining_iterator(it)
+    if any(True for _ in iterator):
+        raise ValueError(
+            "Expected only 1 element in passed argument, instead there are at least 2 elements.",
+        )
+    return out
