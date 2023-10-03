@@ -19,6 +19,7 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
         model_name: Optional[str] = "sentence-transformers/all-MiniLM-L6-v2",
         model_kwargs: Optional[dict] = {"device": "cpu"},
         encode_kwargs: Optional[dict] = {"normalize_embeddings": False},
+        cache_folder: Optional[dict] = None,
     ):
         self.model_name = model_name
         self.model_kwargs = model_kwargs
