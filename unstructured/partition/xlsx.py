@@ -6,6 +6,7 @@ import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
 
 from unstructured.cleaners.core import clean_bullets
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -34,6 +35,7 @@ from unstructured.partition.text_type import (
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.XLSX)
+@add_chunking_strategy()
 def partition_xlsx(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
