@@ -1,13 +1,33 @@
 import pytest
 import unstructured_pytesseract
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion
+from unstructured_inference.inference.layout import DocumentLayout
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
 )
 
 from unstructured.partition import ocr
 from unstructured.partition.utils.ocr_models import paddle_ocr
+
+
+def test_process_data_with_ocr_invalid_image_file_data():
+    invalid_image_data = b"i am not a valid image file"
+    with pytest.raises(UnidentifiedImageError):
+        _ = ocr.process_data_with_ocr(
+            data=invalid_image_data,
+            is_image=True,
+            inferred_layout=DocumentLayout(),
+        )
+
+
+def test_process_file_with_ocr_invalid_filename():
+    invalid_filename = "i am not a valid file name"
+    with pytest.raises(FileNotFoundError):
+        _ = ocr.process_file_with_ocr(
+            filename=invalid_filename,
+            inferred_layout=DocumentLayout(),
+        )
 
 
 def test_get_ocr_layout_from_image_tesseract(monkeypatch):

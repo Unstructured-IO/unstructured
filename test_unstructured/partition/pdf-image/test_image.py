@@ -479,3 +479,23 @@ def test_partition_image_uses_model_name():
         print(mockpartition.call_args)
         assert "model_name" in mockpartition.call_args.kwargs
         assert mockpartition.call_args.kwargs["model_name"]
+
+
+@pytest.mark.parametrize(
+    ("ocr_mode"),
+    [
+        ("entire_page"),
+        ("individual_blocks"),
+    ],
+)
+def test_partition_image_hi_res_ocr_mode(ocr_mode):
+    filename = "example-docs/layout-parser-paper-fast.jpg"
+    elements = image.partition_image(filename=filename, ocr_mode=ocr_mode, strategy="hi_res")
+    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    assert elements[0].text == first_line
+
+
+def test_partition_image_hi_res_invalid_ocr_mode():
+    filename = "example-docs/layout-parser-paper-fast.jpg"
+    with pytest.raises(ValueError):
+        _ = image.partition_image(filename=filename, ocr_mode="invalid_ocr_mode", strategy="hi_res")
