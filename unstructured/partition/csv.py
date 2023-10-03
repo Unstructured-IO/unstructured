@@ -66,8 +66,6 @@ def partition_csv(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
         )
-        metadata.data_origin = "csv"
     else:
         metadata = ElementMetadata()
-
-    return [Table(text=text, metadata=metadata)]
+    return [Table(text=text, metadata=metadata, data_origin="csv")]

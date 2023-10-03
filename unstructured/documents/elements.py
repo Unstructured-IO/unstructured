@@ -366,6 +366,7 @@ class Element(abc.ABC):
         self.metadata = metadata.merge(
             ElementMetadata(coordinates=coordinates_metadata),
         )
+        self.metadata.data_origin = data_origin
 
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())
