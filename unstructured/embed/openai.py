@@ -27,7 +27,7 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
         return np.isclose(np.linalg.norm(self.examplary_embedding), 1.0)
 
     def embed_query(self, query):
-        return self.openai_client.embed_documents([str(query)])
+        return self.openai_client.embed_documents(str(query))
 
     def embed_documents(self, elements: List[Element]) -> List[Element]:
         embeddings = self.openai_client.embed_documents([str(e) for e in elements])
