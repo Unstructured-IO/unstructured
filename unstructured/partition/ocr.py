@@ -149,7 +149,8 @@ def supplement_page_layout_with_ocr(
         return inferred_page_layout
     else:
         raise ValueError(
-            "Invalid OCR mode. Parameter `ocr_mode` must be `entire_page` or individual_blocks`.",
+            "Invalid OCR mode. Parameter `ocr_mode` "
+            "must be set to `entire_page` or individual_blocks`.",
         )
 
 
