@@ -1,13 +1,23 @@
-## 0.10.19-dev5
+## 0.10.19-dev7
 
 ### Enhancements
 
 * **bump `unstructured-inference` to `0.6.6`** The updated version of `unstructured-inference` makes table extraction in `hi_res` mode configurable to fine tune table extraction performance; it also improves element detection by adding a deduplication post processing step in the `hi_res` partitioning of pdfs and images.
+* **Detect text in HTML Heading Tags as Titles** This will increase the accuracy of hierarchies in HTML documents and provide more accurate element categorization. If text is in an HTML heading tag and is not a list item, address, or narrative text, categorize it as a title.
+* **Update python-based docs** Refactor docs to use the actual unstructured code rather than using the subprocess library to run the cli command itself.
+* * **Adds data source properties to SharePoint, Outlook, Onedrive, Reddit, and Slack connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+* **Adds Table support for the `add_chunking_strategy` decorator to partition functions.** In addition to combining elements under Title elements, user's can now specify the `max_characters=<n>` argument to chunk Table elements into TableChunk elements with `text` and `text_as_html` of length <n> characters. This means partitioned Table results are ready for use in downstream applications without any post processing.
 
-### Features
+
+### Features 
 
 ### Fixes
 
+* **Fixes partition_pdf is_alnum reference bug** Problem: The `partition_pdf` when attempt to get bounding box from element experienced a reference before assignment error when the first object is not text extractable.  Fix: Switched to a flag when the condition is met. Importance: Crucial to be able to partition with pdf.
+* **Fix various cases of HTML text missing after partition**
+  Problem: Under certain circumstances, text immediately after some HTML tags will be misssing from partition result.
+  Fix: Updated code to deal with these cases.
+  Importance: This will ensure the correctness when partitioning HTML and Markdown documents.
 
 ## 0.10.18
 
@@ -24,7 +34,6 @@
 * **Embeddings support for the SharePoint SourceConnector via unstructured-ingest CLI** The SharePoint connector can now optionally create embeddings from the elements it pulls out during partition and upload those embeddings to Azure Cognitive Search index.
 * **Improves hierarchy from docx files by leveraging natural hierarchies built into docx documents**  Hierarchy can now be detected from an indentation level for list bullets/numbers and by style name (e.g. Heading 1, List Bullet 2, List Number).
 * **Chunking support for the SharePoint SourceConnector via unstructured-ingest CLI** The SharePoint connector can now optionally chunk the elements pulled out during partition via the chunking unstructured brick. This can be used as a stage before creating embeddings.
-* **Adds Table support for the `add_chunking_strategy` decorator to partition functions.** In addition to combining elements under Title elements, user's can now specify the `max_characters=<n>` argument to chunk Table elements into TableChunk elements with `text` and `text_as_html` of length <n> characters. This means partitioned Table results are ready for use in downstream applications without any post processing.
 
 ### Features
 

@@ -10,16 +10,16 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def onedrive(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     tenant: str,
     user_pname: str,
     client_id: str,
     client_cred: str,
-    authority_url: t.Optional[str],
-    path: t.Optional[str],
-    recursive: bool,
+    verbose: bool = False,
+    authority_url: t.Optional[str] = None,
+    path: t.Optional[str] = None,
+    recursive: bool = False,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,

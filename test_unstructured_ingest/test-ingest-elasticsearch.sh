@@ -16,10 +16,8 @@ source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
   # Kill the container so the script can be repeatedly run using the same ports
-  if docker ps --filter "name=es-test"; then
-    echo "Stopping Elasticsearch Docker container"
-    docker stop es-test
-  fi
+  echo "Stopping Elasticsearch Docker container"
+  docker-compose -f scripts/elasticsearch-test-helpers/docker-compose.yaml down --remove-orphans -v
 
   cleanup_dir "$OUTPUT_DIR"
   if [ "$CI" == "true" ]; then
