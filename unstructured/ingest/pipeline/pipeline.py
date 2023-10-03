@@ -3,6 +3,7 @@ import typing as t
 from dataclasses import dataclass, field
 
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.pipeline.copy import Copier
 from unstructured.ingest.pipeline.interfaces import (
     DocFactoryNode,
     PartitionNode,
@@ -38,6 +39,13 @@ class Pipeline:
         for reformat_node in self.reformat_nodes:
             reformatted_jsons = reformat_node(iterable=partitioned_jsons)
             partitioned_jsons = reformatted_jsons
+
+        # Copy the final destination to the desired location
+        copier = Copier(
+            pipeline_config=self.pipeline_config,
+            output_dir=self.doc_factory_node.source_doc_connector.read_config.output_dir,
+        )
+        copier(iterable=partitioned_jsons)
 
         if self.write_node:
             self.write_node(iterable=partitioned_jsons)

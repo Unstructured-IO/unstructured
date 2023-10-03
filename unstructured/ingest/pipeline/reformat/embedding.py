@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os.path
 import typing as t
@@ -17,6 +18,10 @@ class Embedder(ReformatNode):
     embedder_config: EmbeddingConfig
     reprocess: bool = False
 
+    def create_hash(self) -> str:
+        hash_dict = self.embedder_config.to_dict()
+        return hashlib.sha256(json.dumps(hash_dict, sort_keys=True).encode()).hexdigest()[:32]
+
     def run(self, elements_json: str) -> str:
         elements_json_filename = os.path.basename(elements_json)
         json_path = (Path(self.get_path()) / elements_json_filename).resolve()
@@ -33,4 +38,6 @@ class Embedder(ReformatNode):
         return str(json_path)
 
     def get_path(self) -> t.Optional[Path]:
-        return (Path(self.pipeline_config.get_working_dir()) / "embedded").resolve()
+        return (
+            Path(self.pipeline_config.get_working_dir()) / "embedded" / self.create_hash()
+        ).resolve()

@@ -1,3 +1,5 @@
+import hashlib
+import json
 import multiprocessing as mp
 import typing as t
 from abc import ABC, abstractmethod
@@ -109,12 +111,19 @@ class PartitionNode(PipelineNode):
     partition_config: PartitionConfig
     partition_kwargs: dict = field(default_factory=dict)
 
+    def create_hash(self) -> str:
+        hash_dict = self.partition_config.to_dict()
+        hash_dict.update(self.partition_kwargs)
+        return hashlib.sha256(json.dumps(hash_dict, sort_keys=True).encode()).hexdigest()[:32]
+
     @abstractmethod
     def run(self, json_path: str) -> str:
         pass
 
     def get_path(self) -> t.Optional[Path]:
-        return (Path(self.pipeline_config.get_working_dir()) / "partitioned").resolve()
+        return (
+            Path(self.pipeline_config.get_working_dir()) / "partitioned" / self.create_hash()
+        ).resolve()
 
 
 @dataclass
@@ -141,3 +150,12 @@ class WriteNode(PipelineNode):
 
     def supported_multiprocessing(self) -> bool:
         return False
+
+
+@dataclass
+class CopyNode(PipelineNode):
+    output_dir: str
+
+    @abstractmethod
+    def run(self, json_paths: t.List[str]):
+        pass

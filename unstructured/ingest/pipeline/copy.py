@@ -1,0 +1,17 @@
+import os
+import shutil
+
+from unstructured.ingest.connector.registry import create_ingest_doc_from_json
+from unstructured.ingest.logger import logger
+from unstructured.ingest.pipeline.interfaces import CopyNode
+
+
+class Copier(CopyNode):
+    def run(self, json_path: str):
+        filename = os.path.basename(json_path)
+        doc_hash = os.path.splitext(filename)[0]
+        ingest_doc_json = self.pipeline_config.ingest_docs_map[doc_hash]
+        ingest_doc = create_ingest_doc_from_json(ingest_doc_json)
+        desired_output = ingest_doc._output_filename
+        logger.info(f"Copying {json_path} -> {desired_output}")
+        shutil.copy(json_path, desired_output)

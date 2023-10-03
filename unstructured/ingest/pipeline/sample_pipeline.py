@@ -1,5 +1,3 @@
-import os
-
 from unstructured.ingest.connector.s3 import (
     S3SourceConnector,
     SimpleS3Config,
@@ -43,7 +41,9 @@ if __name__ == "__main__":
     partitioner = Partitioner(pipeline_config=pipeline_config, partition_config=partition_config)
     embedder = Embedder(
         pipeline_config=pipeline_config,
-        embedder_config=EmbeddingConfig(api_key=os.getenv("OPENAI_API_KEY")),
+        embedder_config=EmbeddingConfig(
+            api_key="FILLIN",
+        ),
     )
     writer = Writer(
         pipeline_config=pipeline_config,
