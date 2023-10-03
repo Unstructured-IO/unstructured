@@ -82,7 +82,7 @@ def chunk_by_title(
         and max_characters is not None
         and (
             combine_text_under_n_chars > new_after_n_chars
-            or combine_text_under_n_chars <= 0
+            or combine_text_under_n_chars < 0
             or new_after_n_chars < 0
             or max_characters <= 0
             or combine_text_under_n_chars > max_characters
