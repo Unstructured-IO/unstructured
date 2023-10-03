@@ -10,12 +10,12 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def elasticsearch(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     url: str,
     index_name: str,
-    jq_query: t.Optional[str],
+    verbose: bool = False,
+    jq_query: t.Optional[str] = None,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,

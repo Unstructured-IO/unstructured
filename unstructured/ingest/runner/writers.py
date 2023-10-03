@@ -9,6 +9,7 @@ from unstructured.utils import requires_dependencies
 def s3_writer(
     remote_url: str,
     anonymous: bool,
+    endpoint_url: t.Optional[str] = None,
     verbose: bool = False,
     **kwargs,
 ):
@@ -17,11 +18,15 @@ def s3_writer(
         SimpleS3Config,
     )
 
+    access_kwargs: t.Dict[str, t.Any] = {"anon": anonymous}
+    if endpoint_url:
+        access_kwargs["endpoint_url"] = endpoint_url
+
     return S3DestinationConnector(
         write_config=WriteConfig(),
         connector_config=SimpleS3Config(
             path=remote_url,
-            access_kwargs={"anon": anonymous},
+            access_kwargs=access_kwargs,
         ),
     )
 

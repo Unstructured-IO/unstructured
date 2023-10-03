@@ -887,6 +887,23 @@ def get_uris(
     coordinate_system: Union[PixelSpace, PointSpace],
     page_number: int,
 ) -> List[dict]:
+    """
+    Extracts URI annotations from a single or a list of PDF object references on a specific page.
+    The type of annots (list or not) depends on the pdf formatting. The function detectes the type
+    of annots and then pass on to get_uris_from_annots function as a List.
+
+    Args:
+        annots (Union[PDFObjRef, List[PDFObjRef]]): A single or a list of PDF object references
+            representing annotations on the page.
+        height (float): The height of the page in the specified coordinate system.
+        coordinate_system (Union[PixelSpace, PointSpace]): The coordinate system used to represent
+            the annotations' coordinates.
+        page_number (int): The page number from which to extract annotations.
+
+    Returns:
+        List[dict]: A list of dictionaries, each containing information about a URI annotation,
+        including its coordinates, bounding box, type, URI link, and page number.
+    """
     if isinstance(annots, List):
         return get_uris_from_annots(annots, height, coordinate_system, page_number)
     return get_uris_from_annots(annots.resolve(), height, coordinate_system, page_number)
@@ -898,6 +915,21 @@ def get_uris_from_annots(
     coordinate_system: Union[PixelSpace, PointSpace],
     page_number: int,
 ) -> List[dict]:
+    """
+    Extracts URI annotations from a list of PDF object references.
+
+    Args:
+        annots (List[PDFObjRef]): A list of PDF object references representing annotations on
+            a page.
+        height (Union[int, float]): The height of the page in the specified coordinate system.
+        coordinate_system (Union[PixelSpace, PointSpace]): The coordinate system used to represent
+            the annotations' coordinates.
+        page_number (int): The page number from which to extract annotations.
+
+    Returns:
+        List[dict]: A list of dictionaries, each containing information about a URI annotation,
+        including its coordinates, bounding box, type, URI link, and page number.
+    """
     annotation_list = []
     for annotation in annots:
         annotation_dict = try_resolve(annotation)
@@ -935,6 +967,10 @@ def get_uris_from_annots(
 
 
 def try_resolve(annot: PDFObjRef):
+    """
+    Attempt to resolve a PDF object reference. If successful, returns the resolved object;
+    otherwise, returns the original reference.
+    """
     try:
         return annot.resolve()
     except Exception:
@@ -945,6 +981,19 @@ def rect_to_bbox(
     rect: Tuple[float, float, float, float],
     height: float,
 ) -> Tuple[float, float, float, float]:
+    """
+    Converts a PDF rectangle coordinates (x1, y1, x2, y2) to a bounding box in the specified
+    coordinate system where the vertical axis is measured from the top of the page.
+
+    Args:
+        rect (Tuple[float, float, float, float]): A tuple representing a PDF rectangle
+            coordinates (x1, y1, x2, y2).
+        height (float): The height of the page in the specified coordinate system.
+
+    Returns:
+        Tuple[float, float, float, float]: A tuple representing the bounding box coordinates
+        (x1, y1, x2, y2) with the y-coordinates adjusted to be measured from the top of the page.
+    """
     x1, y2, x2, y1 = rect
     y1 = height - y1
     y2 = height - y2
@@ -955,6 +1004,19 @@ def calculate_intersection_area(
     bbox1: Tuple[float, float, float, float],
     bbox2: Tuple[float, float, float, float],
 ) -> float:
+    """
+    Calculate the area of intersection between two bounding boxes.
+
+    Args:
+        bbox1 (Tuple[float, float, float, float]): The coordinates of the first bounding box
+            in the format (x1, y1, x2, y2).
+        bbox2 (Tuple[float, float, float, float]): The coordinates of the second bounding box
+            in the format (x1, y1, x2, y2).
+
+    Returns:
+        float: The area of intersection between the two bounding boxes. If there is no
+        intersection, the function returns 0.0.
+    """
     x1_1, y1_1, x2_1, y2_1 = bbox1
     x1_2, y1_2, x2_2, y2_2 = bbox2
 
@@ -973,6 +1035,16 @@ def calculate_intersection_area(
 
 
 def calculate_bbox_area(bbox: Tuple[float, float, float, float]) -> float:
+    """
+    Calculate the area of a bounding box.
+
+    Args:
+        bbox (Tuple[float, float, float, float]): The coordinates of the bounding box
+            in the format (x1, y1, x2, y2).
+
+    Returns:
+        float: The area of the bounding box, computed as the product of its width and height.
+    """
     x1, y1, x2, y2 = bbox
     area = (x2 - x1) * (y2 - y1)
     return area
@@ -984,6 +1056,24 @@ def check_annotations_within_element(
     page_number: int,
     threshold: float = 0.9,
 ) -> List[dict]:
+    """
+    Filter annotations that are within or highly overlap with a specified element on a page.
+
+    Args:
+        annotation_list (List[dict]): A list of dictionaries, each containing information
+            about an annotation.
+        element_bbox (Tuple[float, float, float, float]): The bounding box coordinates of the
+            specified element in the bbox format (x1, y1, x2, y2).
+        page_number (int): The page number to which the annotations and element belong.
+        threshold (float, optional): The threshold value (between 0.0 and 1.0) that determines
+            the minimum overlap required for an annotation to be considered within the element.
+            Default is 0.9.
+
+    Returns:
+        List[dict]: A list of dictionaries containing information about annotations that are
+        within or highly overlap with the specified element on the given page, based on the
+        specified threshold.
+    """
     annotations_within_element = []
     for annotation in annotation_list:
         if annotation["page_number"] == page_number and (
@@ -999,6 +1089,19 @@ def get_word_bounding_box_from_element(
     obj: LTTextBox,
     height: float,
 ) -> Tuple[List[LTChar], List[dict]]:
+    """
+    Extracts characters and word bounding boxes from a PDF text element.
+
+    Args:
+        obj (LTTextBox): The PDF text element from which to extract characters and words.
+        height (float): The height of the page in the specified coordinate system.
+
+    Returns:
+        Tuple[List[LTChar], List[dict]]: A tuple containing two lists:
+            - List[LTChar]: A list of LTChar objects representing individual characters.
+            - List[dict]: A list of dictionaries, each containing information about a word,
+              including its text, bounding box, and start index in the element's text.
+    """
     characters = []
     words = []
     text_len = 0
@@ -1021,10 +1124,9 @@ def get_word_bounding_box_from_element(
 
                 # TODO(klaijan) - isalnum() only works with A-Z, a-z and 0-9
                 # will need to switch to some pattern matching once we support more languages
-                if index == 0:
+                if not word:
                     isalnum = char.isalnum()
-
-                if char.isalnum() != isalnum:
+                if word and char.isalnum() != isalnum:
                     isalnum = char.isalnum()
                     words.append(
                         {"text": word, "bbox": (x1, y1, x2, y2), "start_index": start_index},
@@ -1047,6 +1149,19 @@ def get_word_bounding_box_from_element(
 
 
 def map_bbox_and_index(words: List[dict], annot: dict):
+    """
+    Maps a bounding box annotation to the corresponding text and start index within a list of words.
+
+    Args:
+        words (List[dict]): A list of dictionaries, each containing information about a word,
+            including its text, bounding box, and start index.
+        annot (dict): The annotation dictionary to be mapped, which will be updated with "text" and
+            "start_index" fields.
+
+    Returns:
+        dict: The updated annotation dictionary with "text" representing the mapped text and
+            "start_index" representing the start index of the mapped text in the list of words.
+    """
     if len(words) == 0:
         annot["text"] = ""
         annot["start_index"] = -1
@@ -1078,6 +1193,16 @@ def map_bbox_and_index(words: List[dict], annot: dict):
 
 
 def try_argmin(array: np.ndarray) -> int:
+    """
+    Attempt to find the index of the minimum value in a NumPy array.
+
+    Args:
+        array (np.ndarray): The NumPy array in which to find the minimum value's index.
+
+    Returns:
+        int: The index of the minimum value in the array. If the array is empty or an
+        IndexError occurs, it returns -1.
+    """
     try:
         return int(np.argmin(array))
     except IndexError:

@@ -470,6 +470,25 @@ def test_add_chunking_strategy_on_partition_image(
     assert chunk_elements == chunks
 
 
+def test_add_chunking_strategy_on_partition_image_hi_res(
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    elements = image.partition_image(
+        filename=filename,
+        strategy="hi_res",
+        infer_table_structure=True,
+    )
+    chunk_elements = image.partition_image(
+        filename,
+        strategy="hi_res",
+        infer_table_structure=True,
+        chunking_strategy="by_title",
+    )
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
 def test_partition_image_uses_model_name():
     with mock.patch.object(
         pdf,
