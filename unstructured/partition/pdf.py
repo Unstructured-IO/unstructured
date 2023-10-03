@@ -326,7 +326,10 @@ def _partition_pdf_or_image_local(
         process_file_with_model,
     )
 
-    from unstructured.partition.ocr import supplement_inferred_document_layout_with_ocr
+    from unstructured.partition.ocr import (
+        process_data_with_ocr,
+        process_file_with_ocr,
+    )
 
     ocr_languages = prepare_languages_for_tesseract(languages)
 
@@ -355,6 +358,14 @@ def _partition_pdf_or_image_local(
             filename,
             **process_file_with_model_kwargs,
         )
+        merged_layouts = process_file_with_ocr(
+            filename,
+            inferred_layout,
+            is_image=is_image,
+            ocr_languages=ocr_languages,
+            ocr_mode=ocr_mode,
+            pdf_image_dpi=pdf_image_dpi,
+        )
     else:
         inferred_layout = process_data_with_model(
             file,
@@ -363,12 +374,16 @@ def _partition_pdf_or_image_local(
             model_name=model_name,
             pdf_image_dpi=pdf_image_dpi,
         )
-
-    merged_layouts = supplement_inferred_document_layout_with_ocr(
-        inferred_layout,
-        ocr_languages=ocr_languages,
-        ocr_mode=ocr_mode,
-    )
+        if hasattr(file, "seek"):
+            file.seek(0)
+        merged_layouts = process_data_with_ocr(
+            file,
+            inferred_layout,
+            is_image=is_image,
+            ocr_languages=ocr_languages,
+            ocr_mode=ocr_mode,
+            pdf_image_dpi=pdf_image_dpi,
+        )
 
     elements = document_to_element_list(
         merged_layouts,
