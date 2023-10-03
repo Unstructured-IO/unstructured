@@ -81,14 +81,11 @@ class MockDocumentLayout(layout.DocumentLayout):
         ]
 
 
-# TODO(yuming): update the file test with mock ocr. Currently failing on pillow.Image.open
-# since the file is not a valid image, also see error from process_data_with_model
-# if remove the mock...
 @pytest.mark.parametrize(
     ("filename", "file"),
     [
         ("example-docs/example.jpg", None),
-        # (None, b"0000"),
+        (None, b"0000"),
     ],
 )
 def test_partition_image_local(monkeypatch, filename, file):
@@ -100,6 +97,16 @@ def test_partition_image_local(monkeypatch, filename, file):
     monkeypatch.setattr(
         layout,
         "process_file_with_model",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
+        ocr,
+        "process_data_with_ocr",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
+        ocr,
+        "process_data_with_ocr",
         lambda *args, **kwargs: MockDocumentLayout(),
     )
 
