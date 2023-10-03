@@ -955,11 +955,11 @@ def test_partition_pdf_uses_model_name():
         assert mockpartition.call_args.kwargs["model_name"]
 
 
-def test_partition_pdf_word_bbox_not_char(    
+def test_partition_pdf_word_bbox_not_char(
     filename="example-docs/interface-config-guide-p93.pdf",
 ):
     try:
         elements = pdf.partition_pdf(filename=filename)
     except Exception as e:
-        self.fail("Partitioning fail: %s" % e)
+        raise ("Partitioning fail: %s" % e)
     assert len(elements) == 17
