@@ -12,6 +12,7 @@ from unstructured.partition.common import exactly_one
 from unstructured.partition.email import convert_to_iso_8601
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
 @process_metadata()
@@ -139,14 +140,16 @@ def build_msg_metadata(
     if sent_to is not None:
         sent_to = [str(recipient) for recipient in sent_to]
 
-    return ElementMetadata(
+    element_metadata = ElementMetadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=getattr(msg_obj, "subject", None),
         last_modified=metadata_last_modified or email_date,
         filename=filename,
-        data_origin="msg",
     )
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        setattr(element_metadata, "data_origin", "msg")
+    return element_metadata
 
 
 def extract_msg_attachment_info(

@@ -19,6 +19,7 @@ from unstructured.partition.common import (
     convert_to_bytes,
     exactly_one,
 )
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -128,14 +129,16 @@ def build_email_metadata(
     if sent_to is not None:
         sent_to = [recipient.strip() for recipient in sent_to.split(",")]
 
-    return ElementMetadata(
+    element_metadata = ElementMetadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=header_dict.get("Subject"),
         last_modified=metadata_last_modified or email_date,
         filename=filename,
-        data_origin="email",
     )
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        setattr(element_metadata, "data_origin", "email")
+    return element_metadata
 
 
 def convert_to_iso_8601(time: str) -> Optional[str]:
@@ -213,7 +216,10 @@ def find_embedded_image(
     image_info = clean_extra_whitespace(image_raw_info.split(":")[1])
     element.text = element.text.replace("[image: " + image_info[:-1] + "]", "")
 
-    return Image(text=image_info[:-1], data_origin="email"), element
+    image = Image(text=image_info[:-1])
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        setattr(image.metadata, "data_origin", "email")
+    return image, element
 
 
 def parse_email(

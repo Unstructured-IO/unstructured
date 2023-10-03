@@ -60,7 +60,11 @@ from unstructured.partition.lang import (
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
-from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
+from unstructured.partition.utils.constants import (
+    SORT_MODE_BASIC,
+    SORT_MODE_XY_CUT,
+    UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
+)
 from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     sort_page_elements,
@@ -549,8 +553,9 @@ def _process_pdfminer_pages(
                         coordinates=coordinates_metadata,
                         last_modified=metadata_last_modified,
                         links=links,
-                        data_origin="pdfminer",
                     )
+                    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+                        setattr(element.metadata, "data_origin", "pdfminer")
                     page_elements.append(element)
         list_item = 0
         updated_page_elements = []  # type: ignore
@@ -787,8 +792,9 @@ def _partition_pdf_or_image_with_ocr(
                 page_number=page_number,
                 last_modified=metadata_last_modified,
                 languages=languages,
-                data_origin="OCR",
             )
+            if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+                setattr(metadata, "data_origin", "OCR")
             _text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,
                 extensions=["txt", "box"],

@@ -39,6 +39,7 @@ from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_possible_title,
 )
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.utils import lazyproperty
 
 
@@ -298,20 +299,24 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
 
     def _table_metadata(self, text_as_html: str):
         """ElementMetadata instance suitable for use with Table element."""
-        return ElementMetadata(
+        element_metadata = ElementMetadata(
             filename=self._filename,
             last_modified=self._last_modified,
             page_number=self._page_number,
             text_as_html=text_as_html,
-            data_origin="pptx",
         )
+        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+            setattr(element_metadata, "data_origin", "pptx")
+        return element_metadata
 
     @property
     def _text_metadata(self):
         """ElementMetadata instance suitable for use with Text and subtypes."""
-        return ElementMetadata(
+        element_metadata = ElementMetadata(
             filename=self._filename,
             last_modified=self._last_modified,
             page_number=self._page_number,
-            data_origin="pptx",
         )
+        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+            setattr(element_metadata, "data_origin", "pptx")
+        return element_metadata

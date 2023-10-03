@@ -20,6 +20,7 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.text import element_from_text
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
 def get_leaf_elements(
@@ -127,11 +128,12 @@ def partition_xml(
         ElementMetadata(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
-            data_origin="xml",
         )
         if include_metadata
         else ElementMetadata()
     )
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:  # WEIRD
+        setattr(metadata, "data_origin", "xml")
 
     if xml_keep_tags:
         if filename:

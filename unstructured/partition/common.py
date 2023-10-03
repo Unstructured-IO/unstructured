@@ -34,7 +34,10 @@ from unstructured.documents.elements import (
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
-from unstructured.partition.utils.constants import SORT_MODE_XY_CUT
+from unstructured.partition.utils.constants import (
+    SORT_MODE_XY_CUT,
+    UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
+)
 from unstructured.utils import dependency_exists
 
 if dependency_exists("docx") and dependency_exists("docx.table"):
@@ -148,13 +151,15 @@ def normalize_layout_element(
                 data_origin=origin,
             )
         else:
-            return ListItem(
+            item = ListItem(
                 text=text if text else "",
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=class_prob_metadata,
-                data_origin=origin,
             )
+            if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+                setattr(item.metadata, "data_origin", origin)
+            return item
 
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
         _element_class = TYPE_TO_TEXT_ELEMENT_MAP[element_type]
@@ -163,37 +168,44 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
-            data_origin=origin,
         )
+        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+            setattr(_element_class.metadata, "data_origin", origin)
         if element_type == "Headline":
             _element_class.metadata.category_depth = 1
         elif element_type == "Subheadline":
             _element_class.metadata.category_depth = 2
         return _element_class
     elif element_type == "Checked":
-        return CheckBox(
+        checkbox = CheckBox(
             checked=True,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
-            data_origin=origin,
         )
+        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+            setattr(checkbox.metadata, "data_origin", origin)
+        return checkbox
     elif element_type == "Unchecked":
-        return CheckBox(
+        checkbox = CheckBox(
             checked=False,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
-            data_origin=origin,
         )
+        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+            setattr(checkbox.metadata, "data_origin", origin)
+        return checkbox
     else:
-        return Text(
+        text = Text(
             text=text if text else "",
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
-            data_origin=origin,
         )
+        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+            setattr(text.metadata, "data_origin", origin)
+        return text
 
 
 def layout_list_to_list_items(
@@ -214,15 +226,15 @@ def layout_list_to_list_items(
         if len(text_segment.strip()) > 0:
             # Both `coordinates` and `coordinate_system` must be present
             # in order to add coordinates metadata to the element.
-            list_items.append(
-                ListItem(
-                    text=text_segment.strip(),
-                    coordinates=coordinates,
-                    coordinate_system=coordinate_system,
-                    metadata=metadata,
-                    data_origin=data_origin,
-                ),
+            item = ListItem(
+                text=text_segment.strip(),
+                coordinates=coordinates,
+                coordinate_system=coordinate_system,
+                metadata=metadata,
             )
+            if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+                setattr(item.metadata, "data_origin", data_origin)
+            list_items.append(item)
 
     return list_items
 
@@ -333,8 +345,9 @@ def _add_element_metadata(
         section=section,
         category_depth=depth,
         image_path=image_path,
-        data_origin=data_origin,
     )
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        setattr(metadata, "data_origin", data_origin)
     # NOTE(newel) - Element metadata is being merged into
     # newly constructed metadata, not the other way around
     # TODO? Make this more expected behavior?
