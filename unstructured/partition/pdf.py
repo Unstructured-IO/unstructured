@@ -556,8 +556,8 @@ def _process_pdfminer_pages(
                         coordinates=coordinates_metadata,
                         last_modified=metadata_last_modified,
                         links=links,
-                        data_origin="pdfminer",
                     )
+                    element.metadata.data_origin = "pdfminer"
                     page_elements.append(element)
         list_item = 0
         updated_page_elements = []  # type: ignore
@@ -794,8 +794,8 @@ def _partition_pdf_or_image_with_ocr(
                 page_number=page_number,
                 last_modified=metadata_last_modified,
                 languages=languages,
-                data_origin="OCR",
             )
+            metadata.data_origin = "OCR"
             _text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,
                 extensions=["txt", "box"],

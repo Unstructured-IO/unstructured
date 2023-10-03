@@ -134,8 +134,8 @@ def build_email_metadata(
         subject=header_dict.get("Subject"),
         last_modified=metadata_last_modified or email_date,
         filename=filename,
-        data_origin="email",
     )
+    element_metadata.data_origin = "email"
     return element_metadata
 
 

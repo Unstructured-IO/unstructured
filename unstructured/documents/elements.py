@@ -350,7 +350,8 @@ class Element(abc.ABC):
         data_origin: Optional[str] = None,
     ):
         if metadata is None:
-            metadata = ElementMetadata(data_origin=data_origin)
+            metadata = ElementMetadata()
+            metadata.data_origin = data_origin
         self.id: Union[str, uuid.UUID, NoID, UUID] = element_id
         coordinates_metadata = (
             None

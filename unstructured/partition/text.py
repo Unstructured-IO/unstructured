@@ -252,16 +252,16 @@ def partition_text(
     )
 
     elements: List[Element] = []
-    metadata = (
-        ElementMetadata(
+    if include_metadata:
+        metadata = ElementMetadata(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
             languages=languages,
-            data_origin=data_origin,
         )
-        if include_metadata
-        else ElementMetadata()
-    )
+        metadata.data_origin = data_origin
+    else:
+        metadata = ElementMetadata()
+
     for ctext in file_content:
         ctext = ctext.strip()
 

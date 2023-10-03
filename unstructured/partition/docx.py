@@ -305,7 +305,7 @@ class _DocxPartitioner:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
         self._page_counter += 1
         if self._include_page_breaks:
-            yield PageBreak("")
+            yield PageBreak("", data_origin="docx")
 
     def _is_list_item(self, paragraph: Paragraph) -> bool:
         """True when `paragraph` can be identified as a list-item."""
@@ -408,11 +408,11 @@ class _DocxPartitioner:
                 return
             yield Footer(
                 text=text,
+                data_origin="docx",
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
                     category_depth=0,
-                    data_origin="docx",
                 ),
             )
 
@@ -437,11 +437,11 @@ class _DocxPartitioner:
                 return
             yield Header(
                 text=text,
+                data_origin="docx",
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
                     category_depth=0,  # -- headers are always at the root level}
-                    data_origin="docx",
                 ),
             )
 
@@ -500,6 +500,7 @@ class _DocxPartitioner:
 
         yield Table(
             text_table,
+            data_origin="docx",
             metadata=ElementMetadata(
                 text_as_html=html_table,
                 filename=self._metadata_filename,
@@ -507,7 +508,6 @@ class _DocxPartitioner:
                 last_modified=self._last_modified,
                 emphasized_text_contents=emphasized_text_contents or None,
                 emphasized_text_tags=emphasized_text_tags or None,
-                data_origin="docx",
             ),
         )
 
@@ -567,8 +567,8 @@ class _DocxPartitioner:
             emphasized_text_contents=emphasized_text_contents or None,
             emphasized_text_tags=emphasized_text_tags or None,
             category_depth=category_depth,
-            data_origin="docx",
         )
+        element_metadata.data_origin = "docx"
         return element_metadata
 
     def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:

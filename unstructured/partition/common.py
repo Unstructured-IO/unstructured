@@ -338,8 +338,8 @@ def _add_element_metadata(
         section=section,
         category_depth=depth,
         image_path=image_path,
-        data_origin=data_origin,
     )
+    metadata.data_origin = data_origin
     # NOTE(newel) - Element metadata is being merged into
     # newly constructed metadata, not the other way around
     # TODO? Make this more expected behavior?

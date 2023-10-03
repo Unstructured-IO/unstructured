@@ -72,8 +72,8 @@ def partition_xlsx(
                 page_number=page_number,
                 filename=metadata_filename or filename,
                 last_modified=metadata_last_modified or last_modification_date,
-                data_origin="xlsx",
             )
+            metadata.data_origin = "xlsx"
         else:
             metadata = ElementMetadata()
         table = Table(text=text, metadata=metadata)

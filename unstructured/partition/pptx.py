@@ -303,8 +303,8 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             last_modified=self._last_modified,
             page_number=self._page_number,
             text_as_html=text_as_html,
-            data_origin="pptx",
         )
+        element_metadata.data_origin = "pptx"
         return element_metadata
 
     @property
@@ -314,6 +314,6 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             filename=self._filename,
             last_modified=self._last_modified,
             page_number=self._page_number,
-            data_origin="pptx",
         )
+        element_metadata.data_origin = "pptx"
         return element_metadata

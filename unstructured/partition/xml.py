@@ -123,15 +123,14 @@ def partition_xml(
     elif file:
         last_modification_date = get_last_modified_date_from_file(file)
 
-    metadata = (
-        ElementMetadata(
+    if include_metadata:
+        metadata = ElementMetadata(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
-            data_origin="xml",
         )
-        if include_metadata
-        else ElementMetadata()
-    )
+        metadata.data_origin = "xml"
+    else:
+        metadata = ElementMetadata()
 
     if xml_keep_tags:
         if filename:
