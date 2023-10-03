@@ -8,8 +8,6 @@ from unstructured.documents.elements import (
     Element,
 )
 from unstructured.embed.interfaces import BaseEmbeddingEncoder
-from unstructured.ingest.error import EmbeddingEncoderConnectionError
-from unstructured.utils import requires_dependencies
 
 
 class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
@@ -70,3 +68,4 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
             element.embeddings = embeddings[i]
             elements_w_embedding.append(element)
             element.to_dict = types.MethodType(new_to_dict, element)
+        return elements
