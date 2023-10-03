@@ -12,6 +12,7 @@ from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
 from unstructured.partition.csv import partition_csv
 from unstructured.partition.json import partition_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 EXPECTED_FILETYPE = "text/csv"
@@ -59,7 +60,8 @@ def test_partition_csv_from_file(filename, expected_text, expected_table):
     assert elements[0].metadata.text_as_html == expected_table
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
     assert elements[0].metadata.filename is None
-    assert {element.metadata.data_origin for element in elements} == {"csv"}
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.data_origin for element in elements} == {"csv"}
 
 
 def test_partition_csv_from_file_with_metadata_filename(filename="example-docs/stanley-cups.csv"):

@@ -13,6 +13,7 @@ from unstructured.partition.text import (
     partition_text,
     split_content_to_fit_max,
 )
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -67,7 +68,8 @@ def test_partition_text_from_filename(filename, encoding):
     assert elements == EXPECTED_OUTPUT
     for element in elements:
         assert element.metadata.filename == filename
-    assert {element.metadata.data_origin for element in elements} == {"text"}
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.data_origin for element in elements} == {"text"}
 
 
 def test_partition_text_from_filename_with_metadata_filename():

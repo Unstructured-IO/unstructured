@@ -5,6 +5,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Table, Text
 from unstructured.partition.epub import partition_epub
 from unstructured.partition.json import partition_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -33,7 +34,8 @@ def test_partition_epub_from_filename():
         assert element.metadata.section is not None
         all_sections.add(element.metadata.section)
     assert all_sections == expected_sections
-    assert {element.metadata.data_origin for element in elements} == {"epub"}
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.data_origin for element in elements} == {"epub"}
 
 
 def test_partition_epub_from_filename_returns_table_in_elements():

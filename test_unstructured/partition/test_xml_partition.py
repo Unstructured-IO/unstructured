@@ -6,6 +6,7 @@ import pytest
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import NarrativeText, Title
 from unstructured.partition.json import partition_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.partition.xml import partition_xml
 from unstructured.staging.base import elements_to_json
 
@@ -22,7 +23,8 @@ def test_partition_xml_from_filename(filename):
 
     assert elements[0].text == "United States"
     assert elements[0].metadata.filename == filename
-    assert {element.metadata.data_origin for element in elements} == {"xml"}
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.data_origin for element in elements} == {"xml"}
 
 
 def test_partition_xml_from_filename_with_metadata_filename():

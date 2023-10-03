@@ -9,6 +9,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Title
 from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -21,7 +22,8 @@ def test_partition_md_from_filename():
     assert len(elements) > 0
     for element in elements:
         assert element.metadata.filename == "README.md"
-    assert {element.metadata.data_origin for element in elements} == {"md"}
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.data_origin for element in elements} == {"md"}
 
 
 def test_partition_md_from_filename_returns_uns_elements():

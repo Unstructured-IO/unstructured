@@ -14,6 +14,7 @@ from unstructured.documents.elements import (
 from unstructured.partition.json import partition_json
 from unstructured.partition.msg import extract_msg_attachment_info, partition_msg
 from unstructured.partition.text import partition_text
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -55,12 +56,12 @@ def test_partition_msg_from_filename():
             subject="Test Email",
             filetype="application/vnd.ms-outlook",
             parent_id=parent_id,
-            data_origin="msg",
         ).to_dict()
     )
     for element in elements:
         assert element.metadata.filename == "fake-email.msg"
-    assert {element.metadata.data_origin for element in elements} == {"msg"}
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.data_origin for element in elements} == {"msg"}
 
 
 def test_partition_msg_from_filename_returns_uns_elements():
