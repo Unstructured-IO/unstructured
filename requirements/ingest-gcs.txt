@@ -47,7 +47,7 @@ google-api-core==2.12.0
     # via
     #   google-cloud-core
     #   google-cloud-storage
-google-auth==2.23.0
+google-auth==2.23.2
     # via
     #   gcsfs
     #   google-api-core
@@ -107,7 +107,6 @@ urllib3==1.26.16
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
-    #   google-auth
     #   requests
 yarl==1.9.2
     # via aiohttp

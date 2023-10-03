@@ -441,7 +441,7 @@ def test_partition_image_formats_languages_for_tesseract():
             ocr_languages="jpn_vert",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name=None,
+            model_name="detectron2_onnx",
         )
 
 

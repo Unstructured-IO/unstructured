@@ -30,8 +30,8 @@
     "text": "Data in Brief"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "9234133787d0a6b3976b16569c0b5cf3",
+    "type": "Title",
+    "element_id": "0ca3f075fdccf9232449ff461b63ceb9",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -250,6 +250,16 @@
     "text": "Value of the data"
   },
   {
+    "type": "ListItem",
+    "element_id": "510d0bce379a0d3ba5ff46d536bdb7c5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "© The dataset contains 60 different problem instances of the MDVSP that can be used to evaluate the performance of the algorithms for the MDVSP. © The data provide all the information that is required to model the MDVSP by using the existing mathematical formulations. e All the problem instances are available for use without any restrictions. e The benchmark solutions and solution time for the problem instances are presented in [3] and can be used for the comparison. © The dataset includes a program that can generate similar problem instances of different sizes."
+  },
+  {
     "type": "NarrativeText",
     "element_id": "f2fdefc49840022ffb3a88bd4a3512d0",
     "metadata": {
@@ -261,66 +271,6 @@
   },
   {
     "type": "Title",
-    "element_id": "bd7d750cb9f652c80c17a264072b8858",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "performance of the algorithms for the MDVSP."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "7c8bc2811f71480b433eb6fee2a3bb33",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "(cid:2) The data provide all the information that is required to model the MDVSP by using the existing"
-  },
-  {
-    "type": "Title",
-    "element_id": "68d39f7bcfe99749cc221fa901314626",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "mathematical formulations."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "e69dab6e2bc16d11cfd2d80a804d89fb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "(cid:2) All the problem instances are available for use without any restrictions. (cid:2) The benchmark solutions and solution time for the problem instances are presented in [3] and can"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "24d7f2ed4386a169639b93a5bf03fd79",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "be used for the comparison."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "1c1d6b35ac0925a35ea3bb4d018e675f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "(cid:2) The dataset includes a program that can generate similar problem instances of different sizes."
-  },
-  {
-    "type": "ListItem",
     "element_id": "c2b2b778d53cc9a1cb4dc340476bc5aa",
     "metadata": {
       "data_source": {},
@@ -330,134 +280,24 @@
     "text": "1. Data"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "41ce7670e476aaf9a595bc28c13dbba0",
+    "type": "ListItem",
+    "element_id": "86e53159056da85c215281a9c68d46b9",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "The dataset contains 60 different problem instances of the multiple depot vehicle scheduling pro- blem (MDVSP). Each problem instance is provided in a separate file. Each file is named as ‘RN-m-n-k.dat’, where ‘m’, ‘n’, and ‘k’ denote the number of depots, the number of trips, and the instance number"
-  },
-  {
-    "type": "Title",
-    "element_id": "10c22bcf4c768b515be4e94bcafc71bf",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "for"
+    "text": "For each problem instance, the following information is provided: The number of depots (m), The number of trips (n), The number of locations (I), The number of vehicles at each depot, For each tripie 1,2,...,n,a start time, ft}, an end time, ff, a start location, i, and an end location, i, and"
   },
   {
     "type": "NarrativeText",
-    "element_id": "a18c70d23b71c51ddfe33311232c241c",
+    "element_id": "07732da32c53fed3ffd5342c61ab643b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "‘RN-8-1500-01.dat’, is the first problem instance with 8 depots and 1500 trips. For the number of depots, m, we used three values, 8, 12, and 16. The four values for the number of trips, n, are 1500, 2000, 2500, and 3000. For each size, (m,n), five instances are provided. The dataset can be downloaded from https://orlib.uqcloud.net."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "aea66a7c89c6de4d3e3ed6c1ada31104",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "the size,"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "e0feab8a8888b2955af1cc1a2acff883",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "‘ðm; nÞ’,"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "0b113c91aaaf031e5d7b74747e1b4153",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "respectively. For example,"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6dd3e9101394a1fbacb451c4c9ba03b9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "the problem instance,"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "33d26eae1edf215a9677101c7147d671",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "For each problem instance, the following information is provided: The number of depots mð The number of trips ðnÞ, The number of locations ðlÞ, The number of vehicles at each depot, For each trip i A 1; 2; …; n, a start time, ts"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c6490fc185478150e7816c45ef8a48d5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Þ,"
-  },
-  {
-    "type": "Title",
-    "element_id": "5a15b4000add06e52b66591cd8cac950",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "i , an end time, te"
-  },
-  {
-    "type": "Title",
-    "element_id": "7798ae4daad9264de38e67c98f2bd624",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "i , a start location, ls"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "801a0d00a5b76dbd0f039368ee45eda3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "i , and an end location, le i ,"
-  },
-  {
-    "type": "Title",
-    "element_id": "6201111b83a0cb5b0922cb37cc442b9a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "and"
+    "text": "The dataset contains 60 different problem instances of the multiple depot vehicle scheduling pro- blem (MDVSP). Each problem instance is provided in a separate ﬁle. Each ﬁle is named as ‘RN-m-n-k.dat’, where ‘m’, ‘n’, and ‘k’ denote the number of depots, the number of trips, and the instance number ‘RN-8–1500-01.dat’, for is the ﬁrst problem instance with 8 depots and 1500 trips. For the number of depots, m, we used three values, 8, 12, and 16. The four values for the number of trips, n, are 1500, 2000, 2500, and 3000. For each size, ðm; nÞ, ﬁve instances are provided. The dataset can be downloaded from https://orlib.uqcloud.net."
   },
   {
     "type": "NarrativeText",
@@ -511,13 +351,13 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "faee1001fc912565a74ea2d69fa0d689",
+    "element_id": "694b9c582265698bf49806b056c64adc",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "travel empty from —¢). Aschedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to determine the minimum number of schedules to cover all trips that minimizes total time in waiting and empty travel. The following requirements must be satisfied:"
+    "text": "j , the vehicle must travel empty from le j (cid:3)te i Þ. A schedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to determine the minimum number of schedules to cover all trips that minimizes total time in waiting and empty travel. The following requirements must be satisﬁed:"
   },
   {
     "type": "NarrativeText",
@@ -528,76 +368,6 @@
       "page_number": 3
     },
     "text": "A trip j can be covered after trip i by the same vehicle, if ts j"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "3e549e73bba49a63f20841b5821cfda9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "i to ls"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "43dad32a26a446c5a2c74f3f2328b849",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": ". If le i ls le i j , otherwise, the vehicle may require waiting at le i for the duration of ðts"
-  },
-  {
-    "type": "Title",
-    "element_id": "3feb623147ddb3265b5968ce2efb8f6b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Z te"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "5201e1037409ea15055e320409a9f5eb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "i þδ"
-  },
-  {
-    "type": "Title",
-    "element_id": "189f40034be7a199f1fa9891668ee3ab",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "j"
-  },
-  {
-    "type": "Title",
-    "element_id": "a10959d132f2b0d3723ae6b8b77f86b7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "a ls"
-  },
-  {
-    "type": "Title",
-    "element_id": "4137b01e139589b7a1d3b3fc4da031d8",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "must"
   },
   {
     "type": "ListItem",
@@ -630,56 +400,6 @@
     "text": "A sufﬁcient number of vehicles are provided to maintain the feasibility of an instance. For each instance size ðm; nÞ, Table 1 provides the average of the number of locations, the number of times, the number of vehicles, and the number of possible empty travels, over ﬁve instances. The number of locations includes m distinct locations for depots and the number of locations at which various trips start or end. The number of times includes the start and the end time of the planning horizon and the start/end times for the trips. The number of vehicles is the total number of vehicles from all the depots. The number of possible empty travels is the number of possible connections between trips that require a vehicle travelling empty between two consecutive trips in a schedule."
   },
   {
-    "type": "Title",
-    "element_id": "252f10c83610ebca1a059c0bae8255eb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "f"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "928fa0dcad70f173bc989ee5715375c5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "The description of the ﬁle for each problem instance is presented in Table 2. The ﬁrst line in the ﬁle provides the number of depots ðmÞ, the number of trips, ðnÞ, and the number of locations ðlÞ, in the problem instance. The next n lines present the information for n trips. Each line corresponds to a trip, i A 1; …; n g, and provides the start location, the start time, the end location, and the end time of trip i. The next l lines present the travel times between any two locations, i; jA 1; …; l"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "89507815c6b4a6f31e6d3da7fca6b561",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "(cid:1)"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "33a2b57b388470db1cb13defbe73dc18",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "(cid:3)"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "cdb4ee2aea69cc6a83331bbe96dc2caa",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "."
-  },
-  {
     "type": "NarrativeText",
     "element_id": "e731dc92fddc0512e142bfb2bed62bbf",
     "metadata": {
@@ -688,6 +408,16 @@
       "page_number": 3
     },
     "text": "The dataset also includes a program ‘GenerateInstance.cpp’ that can be used to generate new instances. The program takes three inputs, the number of depots ðmÞ, the number of trips ðnÞ, and the number of instances for each size ðm; nÞ."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "92b491d0e108ec13f263b16646ecac65",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "The description of the file for each problem instance is presented in Table 2. The first line in the file provides the number of depots (m), the number of trips, (n), and the number of locations (I), in the problem instance. The next n lines present the information for n trips. Each line corresponds to a trip, ie{1,...,n}, and provides the start location, the start time, the end location, and the end time of trip i. The next | lines present the travel times between any two locations, i,j e {1, wal}. The dataset also includes a program ‘Generatelnstance.cpp’ that can be used to generate new instances. The program takes three inputs, the number of depots (m), the number of trips (n), and the"
   },
   {
     "type": "UncategorizedText",
@@ -850,34 +580,14 @@
     "text": "Table 2 Description of ﬁle format for each problem instance."
   },
   {
-    "type": "Title",
-    "element_id": "151e509ce97fe40eecae3822c78adcf5",
+    "type": "NarrativeText",
+    "element_id": "444f48f6d4f0ee6d3a04b7bf76218980",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Number of lines"
-  },
-  {
-    "type": "Title",
-    "element_id": "0d42fdb9458af19413eee0a1227f415c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Number of columns in each line"
-  },
-  {
-    "type": "Title",
-    "element_id": "526e0087cc3f254d9f86f6c7d8e23d95",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Description"
+    "text": "Number of Number of columns in Description lines each line"
   },
   {
     "type": "UncategorizedText",
@@ -920,47 +630,17 @@
     "text": "l"
   },
   {
-    "type": "Title",
-    "element_id": "336074805fc853987abe6f7fe3ad97a6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "time"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "78f6ff03dfac8dfb7f319de1e369590d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "The number of depots, the number of trips, and the number of locations. The number of vehicles rg at each depot d. One line for each trip, i= 1,2, ...,n. Each line provides the start location and the end time ¢¢ for the corresponding trip. Each element, 6j, where i,j ¢ 1,2, ...,1, refers to the travel time between location i and location j."
-  },
-  {
-    "type": "Title",
-    "element_id": "8ee69286d5f681913dbfdeb60bedc572",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "i , the end location le"
-  },
-  {
-    "type": "Title",
-    "element_id": "08238905e7bba7115b7d7d58fef13ec6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "i , the start"
-  },
-  {
     "type": "ListItem",
+    "element_id": "f096a8499e50cac1f45ceb8340dace5a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "The number of depots, the number of trips, and the number of locations. The number of vehicles rd at each depot d. One line for each trip, i ¼ 1; 2; …; n. Each line provides the start location ls time ts i and the end time te i for the corresponding trip. Each element, δij; where i; j A 1; 2; …; l, refers to the travel time between location i and location j."
+  },
+  {
+    "type": "Title",
     "element_id": "764eef872135149aaf95224bab69c844",
     "metadata": {
       "data_source": {},
@@ -1031,102 +711,12 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "5a1d84f7d74fc4ceeacb634d524cc041",
+    "element_id": "ba0af0b44e7cc27de119a1771c07dfc2",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "[1] G. Carpaneto, M. Dell'Amico, M. Fischetti, P. Toth, A branch and bound algorithm for the multiple depot vehicle scheduling"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "bec40b25a277a08de3415e33284fc76d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "problem, Networks 19 (5) (1989) 531–548."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "19dee0a4e8fd073350e234b4352b8af6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "[2] N. Kliewer, T. Mellouli, L. Suhl, A time–space network based exact optimization model for multi-depot bus scheduling, Eur."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "5f5ca82752a3220998c06ea0c44eb80e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "J. Oper. Res. 175 (3) (2006) 1616–1627."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "64cd13c78330953bd999d37dacbeaf0e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "[3] S. Kulkarni, M. Krishnamoorthy, A. Ranade, A.T. Ernst, R. Patil, A new formulation and a column generation-based heuristic"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "c4f2c64b5f38feaa921647abceebaec8",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "for the multiple depot vehicle scheduling problem, Transp. Res. Part B Methodol. 118 (2018) 457–487."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "16c341408703257ff517dcc76140e2c0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "[4] A.S. Pepin, G. Desaulniers, A. Hertz, D. Huisman, A comparison of ﬁve heuristics for the multiple depot vehicle scheduling"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "aa252076bc877d1ba2b95aa13b73ff72",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "problem, J. Sched. 12 (1) (2009) 17."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "2e00441177bee9377583470218bea299",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "[5] C.C. Ribeiro, F. Soumis, A column generation approach to the multiple-depot vehicle scheduling problem, Oper. Res. 42 (1)"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4b1b8c9df00f25e26176a85d84c8c927",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "(1994) 41–52."
+    "text": "[1] G. Carpaneto, M. Dell'Amico, M. Fischetti, P. Toth, A branch and bound algorithm for the multiple depot vehicle scheduling problem, Networks 19 (5) (1989) 531-548. [2] N. Kliewer, T. Mellouli, L. Suhl, A time-space network based exact optimization model for multi-depot bus scheduling, Eur. J. Oper. Res. 175 (3) (2006) 1616-1627. [3] S. Kulkarni, M. Krishnamoorthy, A. Ranade, A.T. Ernst, R. Patil, A new formulation and a column generation-based heuristic for the multiple depot vehicle scheduling problem, Transp. Res. Part B Methodol. 118 (2018) 457-487. [4] A.S. Pepin, G. Desaulniers, A. Hertz, D. Huisman, A comparison of five heuristics for the multiple depot vehicle scheduling problem, J. Sched. 12 (1) (2009) 17. [5] C.C. Ribeiro, F. Soumis, A column generation approach to the multiple-depot vehicle scheduling problem, Oper. Res. 42 (1) (1994) 41-52."
   }
 ]

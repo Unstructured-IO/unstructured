@@ -1,4 +1,15 @@
-## 0.10.17-dev17
+## 0.10.19-dev4
+
+### Enhancements
+
+* **bump `unstructured-inference` to `0.6.6`** The updated version of `unstructured-inference` makes table extraction in `hi_res` mode configurable to fine tune table extraction performance; it also improves element detection by adding a deduplication post processing step in the `hi_res` partitioning of pdfs and images.
+
+### Features
+
+### Fixes
+
+
+## 0.10.18
 
 ### Enhancements
 

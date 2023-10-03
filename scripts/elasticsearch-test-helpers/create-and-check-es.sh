@@ -9,7 +9,7 @@ docker run -d --rm -p 9200:9200 -p 9300:9300 -e "xpack.security.enabled=false" -
 echo "Waiting for Elasticsearch container to start..."
 sleep 1
 
-url="http://localhost:9200/_cluster/health"
+url="http://localhost:9200/_cluster/health?wait_for_status=green&timeout=50s"
 status_code=0
 retry_count=0
 max_retries=6
