@@ -263,7 +263,9 @@ def test_add_chunking_strategy_on_partition_html_respects_multipage():
     ],
 )
 def test_add_chunking_strategy_raises_error_for_invalid_n_chars(
-    combine_text_under_n_chars, new_after_n_chars, max_characters
+    combine_text_under_n_chars,
+    new_after_n_chars,
+    max_characters,
 ):
     elements = [
         Title("A Great Day"),

@@ -18,6 +18,7 @@ from unstructured.documents.elements import (
     ListItem,
     NarrativeText,
     Table,
+    TableChunk,
     Text,
     Title,
 )
@@ -505,5 +506,13 @@ def test_add_chunking_strategy_on_partition_docx(
     )
     elements = partition_docx(filename)
     chunks = chunk_by_title(elements, max_characters=9, combine_text_under_n_chars=5)
+    # remove the last element of the TableChunk list because it will be the leftover slice
+    # and not necessarily the max_characters len
+    table_chunks = [chunk for chunk in chunks if isinstance(chunk, TableChunk)][:-1]
+    other_chunks = [chunk for chunk in chunks if not isinstance(chunk, TableChunk)]
+    for table_chunk in table_chunks:
+        assert len(table_chunk.text) == 9
+    for chunk in other_chunks:
+        assert len(chunk.text) >= 5
     assert chunk_elements != elements
     assert chunk_elements == chunks
