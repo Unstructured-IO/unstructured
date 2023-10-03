@@ -213,23 +213,31 @@ def test_add_chunking_strategy_on_partition_html_respects_multipage():
         chunking_strategy="by_title",
         multipage_sections=False,
         combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     partitioned_elements_multipage_true_combine_chars_0 = partition_html(
         filename,
         chunking_strategy="by_title",
         multipage_sections=True,
         combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     elements = partition_html(filename)
     cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(
         elements,
         multipage_sections=False,
         combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(
         elements,
         multipage_sections=True,
         combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     assert (
         partitioned_elements_multipage_false_combine_chars_0
@@ -244,7 +252,19 @@ def test_add_chunking_strategy_on_partition_html_respects_multipage():
     )
 
 
-def test_add_chunking_strategy_raises_error_for_invalid_n_chars():
+@pytest.mark.parametrize(
+    ("combine_text_under_n_chars", "new_after_n_chars", "max_characters"),
+    [
+        (-1, -1, -1),
+        (0, 0, 0),
+        (-5666, -6777, -8999),
+        (-5, 40, 50),
+        (50, 100, 20),
+    ],
+)
+def test_add_chunking_strategy_raises_error_for_invalid_n_chars(
+    combine_text_under_n_chars, new_after_n_chars, max_characters
+):
     elements = [
         Title("A Great Day"),
         Text("Today is a great day."),
@@ -258,7 +278,12 @@ def test_add_chunking_strategy_raises_error_for_invalid_n_chars():
         CheckBox(),
     ]
     with pytest.raises(ValueError):
-        chunk_by_title(elements, combine_text_under_n_chars=1, new_after_n_chars=0)
+        chunk_by_title(
+            elements,
+            combine_text_under_n_chars=combine_text_under_n_chars,
+            new_after_n_chars=new_after_n_chars,
+            max_characters=max_characters,
+        )
 
 
 def test_chunk_by_title_drops_extra_metadata():

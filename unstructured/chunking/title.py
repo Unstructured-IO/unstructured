@@ -18,7 +18,7 @@ from unstructured.documents.elements import (
 
 def chunk_table_element(
     element: Table,
-    max_characters: Optional[int] = 1500,
+    max_characters: Optional[int] = 500,
 ) -> List[Union[Table, TableChunk]]:
     text = element.text
     html = getattr(element, "text_as_html", None)
@@ -53,8 +53,8 @@ def chunk_by_title(
     elements: List[Element],
     multipage_sections: bool = True,
     combine_text_under_n_chars: int = 500,
-    new_after_n_chars: int = 1000,
-    max_characters: int = 1500,
+    new_after_n_chars: int = 500,
+    max_characters: int = 500,
 ) -> List[Element]:
     """Uses title elements to identify sections within the document for chunking. Splits
     off into a new section when a title is detected or if metadata changes, which happens
@@ -79,10 +79,13 @@ def chunk_by_title(
     if (
         combine_text_under_n_chars is not None
         and new_after_n_chars is not None
+        and max_characters is not None
         and (
             combine_text_under_n_chars > new_after_n_chars
-            or combine_text_under_n_chars < 0
+            or combine_text_under_n_chars <= 0
             or new_after_n_chars < 0
+            or max_characters <= 0
+            or combine_text_under_n_chars > max_characters
         )
     ):
         raise ValueError(
@@ -139,7 +142,7 @@ def _split_elements_by_title_and_table(
     elements: List[Element],
     multipage_sections: bool = True,
     combine_text_under_n_chars: int = 500,
-    new_after_n_chars: int = 1000,
+    new_after_n_chars: int = 500,
 ) -> List[List[Element]]:
     sections: List[List[Element]] = []
     section: List[Element] = []
@@ -234,8 +237,12 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
                 + "\n\t\tcombine_text_under_n_chars"
                 + "\n\t\t\tCombines elements (for example a series of titles) until a section"
                 + "\n\t\t\treaches a length of n characters."
+                + "\n\t\tnew_after_n_chars"
+                + "\n\t\t\t Cuts off new sections once they reach a length of n characters"
+                + "\n\t\t\t a soft max."
                 + "\n\t\tmax_characters"
-                + "\n\t\t\tCuts off new sections once they reach a length of n characters"
+                + "\n\t\t\tChunks table elements text and text_as_html into chunks"
+                + "\n\t\t\tof length n characters, a hard max."
             )
 
         @functools.wraps(func)
@@ -251,8 +258,8 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
                     elements,
                     multipage_sections=params.get("multipage_sections", True),
                     combine_text_under_n_chars=params.get("combine_text_under_n_chars", 500),
-                    new_after_n_chars=params.get("new_after_n_chars", 1000),
-                    max_characters=params.get("max_characters", 1500),
+                    new_after_n_chars=params.get("new_after_n_chars", 500),
+                    max_characters=params.get("max_characters", 500),
                 )
             return elements
 

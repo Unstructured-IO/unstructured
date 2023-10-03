@@ -952,23 +952,31 @@ def test_add_chunking_strategy_title_on_partition_auto_respects_multipage():
         chunking_strategy="by_title",
         multipage_sections=False,
         combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     partitioned_elements_multipage_true_combine_chars_0 = partition(
         filename,
         chunking_strategy="by_title",
         multipage_sections=True,
         combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     elements = partition(filename)
     cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(
         elements,
         multipage_sections=False,
         combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(
         elements,
         multipage_sections=True,
         combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     assert (
         partitioned_elements_multipage_false_combine_chars_0
