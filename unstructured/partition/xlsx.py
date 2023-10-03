@@ -5,8 +5,8 @@ import numpy as np
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
 
-from unstructured.cleaners.core import clean_bullets
 from unstructured.chunking.title import add_chunking_strategy
+from unstructured.cleaners.core import clean_bullets
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
