@@ -1,3 +1,4 @@
+import copy
 import re
 import textwrap
 from typing import IO, Callable, List, Optional, Tuple
@@ -268,16 +269,17 @@ def partition_text(
 
         if ctext:
             element = element_from_text(ctext)
-            element.metadata = metadata
+            element.metadata = copy.deepcopy(metadata)
             elements.append(element)
 
-    return list(
+    elements = list(
         apply_lang_metadata(
             elements=elements,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
         ),
     )
+    return elements
 
 
 def element_from_text(
