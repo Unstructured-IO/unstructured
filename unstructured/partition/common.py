@@ -461,7 +461,8 @@ def convert_to_bytes(
 
 
 def convert_ms_office_table_to_text(
-    table: Union["docxtable", "pptxtable"], as_html: bool = True
+    table: Union["docxtable", "pptxtable"],
+    as_html: bool = True,
 ) -> str:
     """
     Convert a table object from a Word document to an HTML table string using the tabulate library.

@@ -9,6 +9,7 @@ from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
+    CliChunkingConfig,
     CliEmbeddingsConfig,
     CliMixin,
     CliPartitionConfig,
@@ -74,6 +75,7 @@ def azure_cognitive_search_dest(ctx: click.Context, **options):
         read_config = CliReadConfig.from_dict(parent_options)
         partition_config = CliPartitionConfig.from_dict(parent_options)
         embedding_config = CliEmbeddingsConfig.from_dict(parent_options)
+        chunking_config = CliChunkingConfig.from_dict(parent_options)
         # Run for schema validation
         AzureCognitiveSearchCliWriteConfig.from_dict(options)
         runner = runner_map[source_cmd]
@@ -93,6 +95,7 @@ def azure_cognitive_search_dest(ctx: click.Context, **options):
                 writer_type="azure_cognitive_search",
                 writer_kwargs=options,
                 embedding_config=embedding_config,
+                chunking_config=chunking_config,
             )
             runner_instance.run(
                 **parent_options,

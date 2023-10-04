@@ -36,6 +36,10 @@ mypy-extensions==1.0.0
     # via typing-inspect
 nltk==3.8.1
     # via -r requirements/base.in
+numpy==1.24.4
+    # via
+    #   -c requirements/constraints.in
+    #   -r requirements/base.in
 packaging==23.1
     # via marshmallow
 python-iso639==2023.6.15
@@ -45,8 +49,6 @@ python-magic==0.4.27
 regex==2023.8.8
     # via nltk
 requests==2.31.0
-    # via -r requirements/base.in
-scarf @ https://packages.unstructured.io/scarf.tgz
     # via -r requirements/base.in
 six==1.16.0
     # via langdetect

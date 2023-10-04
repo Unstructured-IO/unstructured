@@ -10,15 +10,15 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def reddit(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     subreddit_name: str,
-    client_id: t.Optional[str],
-    client_secret: t.Optional[str],
     user_agent: str,
-    search_query: t.Optional[str],
     num_posts: int,
+    verbose: bool = False,
+    client_id: t.Optional[str] = None,
+    client_secret: t.Optional[str] = None,
+    search_query: t.Optional[str] = None,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,
