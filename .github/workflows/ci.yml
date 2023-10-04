@@ -327,6 +327,7 @@ jobs:
         make install-ingest-wikipedia
         make install-ingest-notion
         make install-ingest-delta-table
+        make install-local-inference-branch
         ./test_unstructured_ingest/test-ingest.sh
 
   test_unstructured_api_unit:
