@@ -1854,24 +1854,6 @@
     "text": "References"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "2f9b2ba9ed7265891caea2b618d2968c",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": 306475068461766865312866697521104206816,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "date_modified": "2023-02-12T10:09:32"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "VIL World Health Organization. (2016). Updated tables 2016 for ‘Preventing disease through health environments: a global assessment of the burden of disease from environmental risks’. Available at: https://www.who.int/data/gho/ data/themes/public-health-and-environment [Accessed on 8 April 2021]"
-  },
-  {
     "type": "ListItem",
     "element_id": "158d56841d65947a9a91a3ca34163a4c",
     "metadata": {
