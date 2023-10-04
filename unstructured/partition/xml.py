@@ -1,3 +1,4 @@
+import copy
 from io import BytesIO
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, Iterator, List, Optional, Union, cast
@@ -173,7 +174,7 @@ def partition_xml(
         for leaf_element in leaf_elements:
             if leaf_element:
                 element = element_from_text(leaf_element)
-                element.metadata = metadata
+                element.metadata = copy.deepcopy(metadata)
                 elements.append(element)
 
     return list(

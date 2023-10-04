@@ -294,3 +294,10 @@ def test_partition_xml_element_metadata_has_languages():
     filename = "example-docs/factbook.xml"
     elements = partition_xml(filename=filename)
     assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_xml_detects_multiple_elements_in_other_language():
+    filename = "example-docs/language-docs/eng_spa_mult.xml"
+    elements = partition_xml(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
