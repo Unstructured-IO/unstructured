@@ -187,10 +187,10 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     # todo: improve permissions - ingestdoc matching logic
     def update_permissions_data(self):
         self._permissions_data = ""
-        permissions_dir = self.output_dir / "permissions_data"
+        permissions_dir = Path(self.partition_config.output_dir) / "permissions_data"
         if permissions_dir.is_dir():
-            for filename in os.listdir(self.permissions_dir):
-                if self.file_path.split("/")[-1] in filename:
+            for filename in os.listdir(permissions_dir):
+                if self.file_path.split("/")[-1] == os.path.splitext(filename)[0]:
                     with open(permissions_dir / filename) as f:
                         self._permissions_data = json.loads(f.read())
 
@@ -509,7 +509,7 @@ class PermissionsConnector:
 
         print("Writing permissions data to disk")
         for site, drive_id, item_id, item_name in item_ids:
-            with open(permissions_dir / f"{item_name}_{item_id}.json", "w") as f:
+            with open(permissions_dir / f"{item_name}.json", "w") as f:
                 res = self.get_permissions_for_drive_item(site, drive_id, item_id)
                 if res:
                     json.dump(res["value"], f)
