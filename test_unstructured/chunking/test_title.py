@@ -287,6 +287,7 @@ def test_add_chunking_strategy_raises_error_for_invalid_n_chars(
             max_characters=max_characters,
         )
 
+
 def test_chunk_by_title_drops_detection_class_prob():
     elements = [
         Title(
@@ -325,7 +326,6 @@ def test_chunk_by_title_drops_detection_class_prob():
         CompositeElement("A Great Day\n\nToday is a great day.\n\nIt is sunny outside."),
     )
     assert str(chunks[1]) == str(CompositeElement("An Okay Day\n\nToday is an okay day."))
-
 
 
 def test_chunk_by_title_drops_extra_metadata():
