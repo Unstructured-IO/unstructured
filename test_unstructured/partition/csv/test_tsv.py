@@ -192,8 +192,8 @@ def test_partition_tsv_with_json(filename):
         assert elements[i] == test_elements[i]
 
 
-# NOTE (jennings) partition_tsv returns a single TableElement,
-# so we can only detect the language of that single element
+# NOTE (jennings) partition_tsv returns a single TableElement per sheet,
+# so no adding tests for multiple languages like the other partitions
 def test_partition_tsv_element_metadata_has_languages():
     filename = "example-docs/stanley-cups-with-emoji.tsv"
     elements = partition_tsv(filename=filename)

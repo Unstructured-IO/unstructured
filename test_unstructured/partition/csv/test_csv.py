@@ -207,8 +207,8 @@ def test_add_chunking_strategy_to_partition_csv_non_default():
     assert chunk_elements == chunks
 
 
-# NOTE (jennings) partition_csv returns a single TableElement,
-# so we can only detect the language of that single element
+# NOTE (jennings) partition_csv returns a single TableElement per sheet,
+# so no adding tests for multiple languages like the other partitions
 def test_partition_csv_element_metadata_has_languages():
     filename = "example-docs/stanley-cups.csv"
     elements = partition_csv(filename=filename, strategy="fast")
