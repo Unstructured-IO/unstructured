@@ -1,3 +1,4 @@
+import io
 import os
 from tempfile import SpooledTemporaryFile
 from unittest import mock
@@ -112,7 +113,7 @@ def test_partition_pdf_local_raises_with_no_filename():
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
 
 
-@pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
+@pytest.mark.parametrize("file_mode", ["filename", "rb", "spool", "named_io"])
 @pytest.mark.parametrize(
     ("strategy", "expected"),
     # fast: can't capture the "intentionally left blank page" page
@@ -138,6 +139,12 @@ def test_partition_pdf(
     elif file_mode == "rb":
         with open(filename, "rb") as f:
             result = pdf.partition_pdf(file=f, strategy=strategy)
+            _test(result)
+    elif file_mode == "named_io":
+        with open(filename, "rb") as test_file:
+            file = io.BytesIO(test_file.read())
+            file.name = "super.pdf"
+            result = pdf.partition_pdf(file=file, strategy=strategy)
             _test(result)
     else:
         with open(filename, "rb") as test_file:
