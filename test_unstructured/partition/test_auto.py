@@ -25,6 +25,7 @@ from unstructured.file_utils.filetype import FILETYPE_TO_MIMETYPE, FileType
 from unstructured.partition import auto
 from unstructured.partition.auto import _get_partition_with_extras, partition
 from unstructured.partition.common import convert_office_doc
+from unstructured.partition.pdf import default_hi_res_model
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -382,7 +383,7 @@ def test_auto_partition_formats_languages_for_tesseract():
             ocr_languages="chi_sim+chi_sim_vert+chi_tra+chi_tra_vert",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name="detectron2_onnx",
+            model_name=default_hi_res_model(),
         )
 
 
