@@ -287,6 +287,46 @@ def test_add_chunking_strategy_raises_error_for_invalid_n_chars(
             max_characters=max_characters,
         )
 
+def test_chunk_by_title_drops_detection_class_prob():
+    elements = [
+        Title(
+            "A Great Day",
+            metadata=ElementMetadata(
+                detection_class_prob=0.5,
+            ),
+        ),
+        Text(
+            "Today is a great day.",
+            metadata=ElementMetadata(
+                detection_class_prob=0.62,
+            ),
+        ),
+        Text(
+            "It is sunny outside.",
+            metadata=ElementMetadata(
+                detection_class_prob=0.73,
+            ),
+        ),
+        Title(
+            "An Okay Day",
+            metadata=ElementMetadata(
+                detection_class_prob=0.84,
+            ),
+        ),
+        Text(
+            "Today is an okay day.",
+            metadata=ElementMetadata(
+                detection_class_prob=0.95,
+            ),
+        ),
+    ]
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
+    assert str(chunks[0]) == str(
+        CompositeElement("A Great Day\n\nToday is a great day.\n\nIt is sunny outside."),
+    )
+    assert str(chunks[1]) == str(CompositeElement("An Okay Day\n\nToday is an okay day."))
+
+
 
 def test_chunk_by_title_drops_extra_metadata():
     elements = [
