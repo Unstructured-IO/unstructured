@@ -31,7 +31,6 @@ def partition_csv(
     metadata_last_modified: Optional[str] = None,
     include_metadata: bool = True,
     languages: List[str] = ["auto"],
-    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .csv format into its document elements.
@@ -49,11 +48,9 @@ def partition_csv(
     include_metadata
         Determines whether or not metadata is included in the output.
     languages
-        Detected language of a text using naive Bayesian filter. Multiple languages indicates text
-        could be in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
     """
     exactly_one(filename=filename, file=file)
 
@@ -75,11 +72,6 @@ def partition_csv(
 
     html_text = table.to_html(index=False, header=False, na_rep="")
     text = soupparser_fromstring(html_text).text_content()
-    # languages = detect_languages(
-    #     text=text,
-    #     languages=languages,
-    #     detect_language_per_element=detect_language_per_element,
-    # )
 
     if include_metadata:
         metadata = ElementMetadata(
@@ -95,6 +87,5 @@ def partition_csv(
         apply_lang_metadata(
             [Table(text=text, metadata=metadata)],
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
         ),
     )

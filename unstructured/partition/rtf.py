@@ -35,8 +35,9 @@ def partition_rtf(
     metadata_last_modified
         The last modified date for the document.
     languages
-        Detected language of a text using naive Bayesian filter. Multiple languages indicates text
-        could be in either language.
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.

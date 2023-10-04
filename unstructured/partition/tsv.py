@@ -29,7 +29,6 @@ def partition_tsv(
     metadata_last_modified: Optional[str] = None,
     include_metadata: bool = True,
     languages: List[str] = ["auto"],
-    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions TSV files into document elements.
@@ -45,11 +44,9 @@ def partition_tsv(
     metadata_last_modified
         The day of the last modification.
     languages
-        Detected language of a text using naive Bayesian filter. Multiple languages indicates text
-        could be in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
     """
     exactly_one(filename=filename, file=file)
 
@@ -86,6 +83,5 @@ def partition_tsv(
         apply_lang_metadata(
             [Table(text=text, metadata=metadata)],
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
         ),
     )
