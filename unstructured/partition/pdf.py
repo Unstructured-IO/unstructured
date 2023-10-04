@@ -70,6 +70,13 @@ from unstructured.utils import requires_dependencies
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
 
+def default_hi_res_model() -> str:
+    # a light config for the hi res model; this is not defined as a constant so that no setting of
+    # the default hi res model name is done on importing of this submodule; this allows (if user
+    # prefers) for setting env after importing the sub module and changing the default model name
+    return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", "yolox_quantized")
+
+
 @process_metadata()
 @add_metadata_with_filetype(FileType.PDF)
 @add_chunking_strategy()
@@ -331,11 +338,7 @@ def _partition_pdf_or_image_local(
 
     ocr_languages = prepare_languages_for_tesseract(languages)
 
-    model_name = (
-        model_name
-        if model_name
-        else os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", "detectron2_onnx")
-    )
+    model_name = model_name or default_hi_res_model()
     pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
     extract_images_in_pdf = kwargs.get("extract_images_in_pdf", False)
     image_output_dir_path = kwargs.get("image_output_dir_path", None)
