@@ -147,7 +147,7 @@ def normalize_layout_element(
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=class_prob_metadata,
-                data_origin=origin,
+                detection_origin=origin,
             )
         else:
             item = ListItem(
@@ -155,7 +155,7 @@ def normalize_layout_element(
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=class_prob_metadata,
-                data_origin=origin,
+                detection_origin=origin,
             )
             return item
 
@@ -166,7 +166,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
-            data_origin=origin,
+            detection_origin=origin,
         )
         if element_type == "Headline":
             _element_class.metadata.category_depth = 1
@@ -179,7 +179,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
-            data_origin=origin,
+            detection_origin=origin,
         )
         return checkbox
     elif element_type == "Unchecked":
@@ -188,7 +188,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
-            data_origin=origin,
+            detection_origin=origin,
         )
         return checkbox
     else:
@@ -197,7 +197,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
-            data_origin=origin,
+            detection_origin=origin,
         )
         return text
 
@@ -207,7 +207,7 @@ def layout_list_to_list_items(
     coordinates: Optional[Tuple[Tuple[float, float], ...]],
     coordinate_system: Optional[CoordinateSystem],
     metadata=Optional[ElementMetadata],
-    data_origin=Optional[str],
+    detection_origin=Optional[str],
 ) -> List[Element]:
     """Converts a list LayoutElement to a list of ListItem elements."""
     split_items = ENUMERATED_BULLETS_RE.split(text) if text else []
@@ -225,7 +225,7 @@ def layout_list_to_list_items(
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=metadata,
-                data_origin=data_origin,
+                detection_origin=detection_origin,
             )
             list_items.append(item)
 
@@ -290,7 +290,7 @@ def _add_element_metadata(
     coordinate_system: Optional[CoordinateSystem] = None,
     section: Optional[str] = None,
     image_path: Optional[str] = None,
-    data_origin: Optional[str] = None,
+    detection_origin: Optional[str] = None,
     **kwargs,
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
@@ -339,7 +339,7 @@ def _add_element_metadata(
         category_depth=depth,
         image_path=image_path,
     )
-    metadata.data_origin = data_origin
+    metadata.detection_origin = detection_origin
     # NOTE(newel) - Element metadata is being merged into
     # newly constructed metadata, not the other way around
     # TODO? Make this more expected behavior?
@@ -553,7 +553,7 @@ def document_to_element_list(
     last_modification_date: Optional[str] = None,
     infer_list_items: bool = True,
     source_format: Optional[str] = None,
-    data_origin: Optional[str] = None,
+    detection_origin: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
@@ -612,7 +612,7 @@ def document_to_element_list(
                 coordinate_system=coordinate_system,
                 category_depth=element.metadata.category_depth,
                 image_path=el_image_path,
-                data_origin=data_origin,
+                detection_origin=detection_origin,
                 **kwargs,
             )
 

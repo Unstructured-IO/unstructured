@@ -38,5 +38,5 @@ def partition_org(
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified,
-        data_origin="org",
+        detection_origin="org",
     )

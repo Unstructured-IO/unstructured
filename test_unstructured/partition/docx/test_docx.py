@@ -109,7 +109,7 @@ def test_partition_docx_from_filename(
     for element in elements:
         assert element.metadata.filename == "mock_document.docx"
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-        assert {element.metadata.data_origin for element in elements} == {"docx"}
+        assert {element.metadata.detection_origin for element in elements} == {"docx"}
 
 
 def test_partition_docx_from_filename_with_metadata_filename(mock_document, tmpdir):

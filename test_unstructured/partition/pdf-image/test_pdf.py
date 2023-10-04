@@ -134,7 +134,7 @@ def test_partition_pdf(
         # check that the pdf has multiple different page numbers
         assert {element.metadata.page_number for element in result} == expected
         if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            assert {element.metadata.data_origin for element in result} == {origin}
+            assert {element.metadata.detection_origin for element in result} == {origin}
 
     if file_mode == "filename":
         result = pdf.partition_pdf(filename=filename, strategy=strategy)

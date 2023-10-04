@@ -23,7 +23,7 @@ def test_partition_md_from_filename():
     for element in elements:
         assert element.metadata.filename == "README.md"
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-        assert {element.metadata.data_origin for element in elements} == {"md"}
+        assert {element.metadata.detection_origin for element in elements} == {"md"}
 
 
 def test_partition_md_from_filename_returns_uns_elements():

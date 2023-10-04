@@ -63,7 +63,7 @@ def partition_tsv(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
         )
-        metadata.data_origin = "tsv"
+        metadata.detection_origin = "tsv"
     else:
         metadata = ElementMetadata()
 

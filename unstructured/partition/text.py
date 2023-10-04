@@ -172,7 +172,7 @@ def partition_text(
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
-    data_origin: Optional[str] = "text",
+    detection_origin: Optional[str] = "text",
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.
@@ -258,7 +258,7 @@ def partition_text(
             last_modified=metadata_last_modified or last_modification_date,
             languages=languages,
         )
-        metadata.data_origin = data_origin
+        metadata.detection_origin = detection_origin
     else:
         metadata = ElementMetadata()
 

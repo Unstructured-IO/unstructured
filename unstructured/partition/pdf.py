@@ -381,7 +381,7 @@ def _partition_pdf_or_image_local(
         # block with NLP rules. Otherwise, the assumptions in
         # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
         infer_list_items=False,
-        data_origin="image" if is_image else "pdf",
+        detection_origin="image" if is_image else "pdf",
         **kwargs,
     )
 
@@ -560,7 +560,7 @@ def _process_pdfminer_pages(
                         last_modified=metadata_last_modified,
                         links=links,
                     )
-                    element.metadata.data_origin = "pdfminer"
+                    element.metadata.detection_origin = "pdfminer"
                     page_elements.append(element)
         list_item = 0
         updated_page_elements = []  # type: ignore
@@ -777,7 +777,7 @@ def _partition_pdf_or_image_with_ocr(
             max_partition=max_partition,
             min_partition=min_partition,
             metadata_last_modified=metadata_last_modified,
-            data_origin="OCR",
+            detection_origin="OCR",
         )
         width, height = image.size
         _add_pytesseract_bboxes_to_elements(
@@ -798,7 +798,7 @@ def _partition_pdf_or_image_with_ocr(
                 last_modified=metadata_last_modified,
                 languages=languages,
             )
-            metadata.data_origin = "OCR"
+            metadata.detection_origin = "OCR"
             _text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,
                 extensions=["txt", "box"],

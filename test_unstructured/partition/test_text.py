@@ -69,7 +69,7 @@ def test_partition_text_from_filename(filename, encoding):
     for element in elements:
         assert element.metadata.filename == filename
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-        assert {element.metadata.data_origin for element in elements} == {"text"}
+        assert {element.metadata.detection_origin for element in elements} == {"text"}
 
 
 def test_partition_text_from_filename_with_metadata_filename():

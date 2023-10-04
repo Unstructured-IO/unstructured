@@ -135,7 +135,7 @@ def build_email_metadata(
         last_modified=metadata_last_modified or email_date,
         filename=filename,
     )
-    element_metadata.data_origin = "email"
+    element_metadata.detection_origin = "email"
     return element_metadata
 
 
@@ -213,7 +213,7 @@ def find_embedded_image(
     image_raw_info = element.text[start:end]
     image_info = clean_extra_whitespace(image_raw_info.split(":")[1])
     element.text = element.text.replace("[image: " + image_info[:-1] + "]", "")
-    return Image(text=image_info[:-1], data_origin="email"), element
+    return Image(text=image_info[:-1], detection_origin="email"), element
 
 
 def parse_email(
@@ -369,7 +369,7 @@ def partition_email(
             text=content,
             include_metadata=False,
             metadata_filename=metadata_filename,
-            data_origin="email",
+            detection_origin="email",
         )
         for element in elements:
             if isinstance(element, Text):
@@ -405,7 +405,7 @@ def partition_email(
             max_partition=max_partition,
             metadata_filename=metadata_filename or filename,
             min_partition=min_partition,
-            data_origin="email",
+            detection_origin="email",
         )
 
     for idx, element in enumerate(elements):

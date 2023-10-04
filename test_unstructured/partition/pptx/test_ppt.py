@@ -30,7 +30,7 @@ def test_partition_ppt_from_filename():
     for element in elements:
         assert element.metadata.filename == "fake-power-point.ppt"
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-        assert {element.metadata.data_origin for element in elements} == {"pptx"}
+        assert {element.metadata.detection_origin for element in elements} == {"pptx"}
 
 
 def test_partition_ppt_from_filename_with_metadata_filename():

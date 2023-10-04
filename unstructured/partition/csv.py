@@ -70,4 +70,4 @@ def partition_csv(
         )
     else:
         metadata = ElementMetadata()
-    return [Table(text=text, metadata=metadata, data_origin="csv")]
+    return [Table(text=text, metadata=metadata, detection_origin="csv")]

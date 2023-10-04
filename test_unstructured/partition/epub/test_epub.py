@@ -35,7 +35,7 @@ def test_partition_epub_from_filename():
         all_sections.add(element.metadata.section)
     assert all_sections == expected_sections
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-        assert {element.metadata.data_origin for element in elements} == {"epub"}
+        assert {element.metadata.detection_origin for element in elements} == {"epub"}
 
 
 def test_partition_epub_from_filename_returns_table_in_elements():

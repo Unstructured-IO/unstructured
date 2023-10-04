@@ -40,5 +40,5 @@ def partition_rtf(
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified,
-        data_origin="rtf",
+        detection_origin="rtf",
     )

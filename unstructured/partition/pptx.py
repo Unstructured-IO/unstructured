@@ -185,7 +185,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             return
         # -- only emit page-breaks when enabled --
         if self._include_page_breaks:
-            yield PageBreak("", data_origin="pptx")
+            yield PageBreak("", detection_origin="pptx")
 
     def _is_bulleted_paragraph(self, paragraph: _Paragraph) -> bool:
         """True when `paragraph` has a bullet-charcter prefix.
@@ -217,7 +217,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         if not notes_text:
             return
 
-        yield NarrativeText(text=notes_text, metadata=self._text_metadata, data_origin="pptx")
+        yield NarrativeText(text=notes_text, metadata=self._text_metadata, detection_origin="pptx")
 
     def _iter_paragraph_elements(self, shape: Shape) -> Iterator[Element]:
         """Generate Text or subtype element for each paragraph in `shape`."""
@@ -231,15 +231,17 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             if text.strip() == "":
                 continue
             if self._is_bulleted_paragraph(paragraph):
-                yield ListItem(text=text, metadata=self._text_metadata, data_origin="pptx")
+                yield ListItem(text=text, metadata=self._text_metadata, detection_origin="pptx")
             elif is_email_address(text):
-                yield EmailAddress(text=text, data_origin="pptx")
+                yield EmailAddress(text=text, detection_origin="pptx")
             elif is_possible_narrative_text(text):
-                yield NarrativeText(text=text, metadata=self._text_metadata, data_origin="pptx")
+                yield NarrativeText(
+                    text=text, metadata=self._text_metadata, detection_origin="pptx"
+                )
             elif is_possible_title(text):
-                yield Title(text=text, metadata=self._text_metadata, data_origin="pptx")
+                yield Title(text=text, metadata=self._text_metadata, detection_origin="pptx")
             else:
-                yield Text(text=text, metadata=self._text_metadata, data_origin="pptx")
+                yield Text(text=text, metadata=self._text_metadata, detection_origin="pptx")
 
     def _iter_table_element(self, graphfrm: GraphicFrame) -> Iterator[Table]:
         """Generate zero-or-one Table element for the table in `shape`.
@@ -250,7 +252,9 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         if not text_table:
             return
         html_table = convert_ms_office_table_to_text(graphfrm.table, as_html=True)
-        yield Table(text=text_table, metadata=self._table_metadata(html_table), data_origin="pptx")
+        yield Table(
+            text=text_table, metadata=self._table_metadata(html_table), detection_origin="pptx"
+        )
 
     @lazyproperty
     def _last_modified(self) -> Optional[str]:
@@ -304,7 +308,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             page_number=self._page_number,
             text_as_html=text_as_html,
         )
-        element_metadata.data_origin = "pptx"
+        element_metadata.detection_origin = "pptx"
         return element_metadata
 
     @property
@@ -315,5 +319,5 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             last_modified=self._last_modified,
             page_number=self._page_number,
         )
-        element_metadata.data_origin = "pptx"
+        element_metadata.detection_origin = "pptx"
         return element_metadata

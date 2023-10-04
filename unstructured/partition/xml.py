@@ -128,7 +128,7 @@ def partition_xml(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
         )
-        metadata.data_origin = "xml"
+        metadata.detection_origin = "xml"
     else:
         metadata = ElementMetadata()
 

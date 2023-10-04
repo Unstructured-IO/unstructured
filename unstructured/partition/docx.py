@@ -305,7 +305,7 @@ class _DocxPartitioner:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
         self._page_counter += 1
         if self._include_page_breaks:
-            yield PageBreak("", data_origin="docx")
+            yield PageBreak("", detection_origin="docx")
 
     def _is_list_item(self, paragraph: Paragraph) -> bool:
         """True when `paragraph` can be identified as a list-item."""
@@ -334,23 +334,23 @@ class _DocxPartitioner:
         if self._is_list_item(paragraph):
             clean_text = clean_bullets(text).strip()
             if clean_text:
-                yield ListItem(text=clean_text, metadata=metadata, data_origin="docx")
+                yield ListItem(text=clean_text, metadata=metadata, detection_origin="docx")
             return
 
         # -- determine element-type from an explicit Word paragraph-style if possible --
         TextSubCls = self._style_based_element_type(paragraph)
         if TextSubCls:
-            yield TextSubCls(text=text, metadata=metadata, data_origin="docx")
+            yield TextSubCls(text=text, metadata=metadata, detection_origin="docx")
             return
 
         # -- try to recognize the element type by parsing its text --
         TextSubCls = self._parse_paragraph_text_for_element_type(paragraph)
         if TextSubCls:
-            yield TextSubCls(text=text, metadata=metadata, data_origin="docx")
+            yield TextSubCls(text=text, metadata=metadata, detection_origin="docx")
             return
 
         # -- if all that fails we give it the default `Text` element-type --
-        yield Text(text, metadata=metadata, data_origin="docx")
+        yield Text(text, metadata=metadata, detection_origin="docx")
 
     def _iter_maybe_paragraph_page_breaks(self, paragraph: Paragraph) -> Iterator[PageBreak]:
         """Generate a `PageBreak` document element for each page-break in `paragraph`.
@@ -408,7 +408,7 @@ class _DocxPartitioner:
                 return
             yield Footer(
                 text=text,
-                data_origin="docx",
+                detection_origin="docx",
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
@@ -437,7 +437,7 @@ class _DocxPartitioner:
                 return
             yield Header(
                 text=text,
-                data_origin="docx",
+                detection_origin="docx",
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
@@ -500,7 +500,7 @@ class _DocxPartitioner:
 
         yield Table(
             text_table,
-            data_origin="docx",
+            detection_origin="docx",
             metadata=ElementMetadata(
                 text_as_html=html_table,
                 filename=self._metadata_filename,
@@ -568,7 +568,7 @@ class _DocxPartitioner:
             emphasized_text_tags=emphasized_text_tags or None,
             category_depth=category_depth,
         )
-        element_metadata.data_origin = "docx"
+        element_metadata.detection_origin = "docx"
         return element_metadata
 
     def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:

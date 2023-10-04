@@ -61,7 +61,7 @@ def test_partition_msg_from_filename():
     for element in elements:
         assert element.metadata.filename == "fake-email.msg"
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-        assert {element.metadata.data_origin for element in elements} == {"msg"}
+        assert {element.metadata.detection_origin for element in elements} == {"msg"}
 
 
 def test_partition_msg_from_filename_returns_uns_elements():

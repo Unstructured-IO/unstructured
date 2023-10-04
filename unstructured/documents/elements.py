@@ -194,10 +194,10 @@ class ElementMetadata:
     detection_class_prob: Optional[float] = None
 
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-        data_origin: Optional[str] = None
+        detection_origin: Optional[str] = None
 
     def __setattr__(self, key, value):
-        if not UNSTRUCTURED_INCLUDE_DEBUG_METADATA and key == "data_origin":
+        if not UNSTRUCTURED_INCLUDE_DEBUG_METADATA and key == "detection_origin":
             return
         else:
             super().__setattr__(key, value)
@@ -215,7 +215,7 @@ class ElementMetadata:
         _dict = {
             key: value
             for key, value in self.__dict__.items()
-            if value is not None and key != "data_origin"
+            if value is not None and key != "detection_origin"
         }
         if "regex_metadata" in _dict and not _dict["regex_metadata"]:
             _dict.pop("regex_metadata")
@@ -351,11 +351,11 @@ class Element(abc.ABC):
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
-        data_origin: Optional[str] = None,
+        detection_origin: Optional[str] = None,
     ):
         if metadata is None:
             metadata = ElementMetadata()
-            metadata.data_origin = data_origin
+            metadata.detection_origin = detection_origin
         self.id: Union[str, uuid.UUID, NoID, UUID] = element_id
         coordinates_metadata = (
             None
@@ -370,7 +370,7 @@ class Element(abc.ABC):
         self.metadata = metadata.merge(
             ElementMetadata(coordinates=coordinates_metadata),
         )
-        self.metadata.data_origin = data_origin
+        self.metadata.detection_origin = detection_origin
 
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())
@@ -416,7 +416,7 @@ class CheckBox(Element):
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
         metadata: Optional[ElementMetadata] = None,
-        data_origin: Optional[str] = None,
+        detection_origin: Optional[str] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         super().__init__(
@@ -424,7 +424,7 @@ class CheckBox(Element):
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=metadata,
-            data_origin=data_origin,
+            detection_origin=detection_origin,
         )
         self.checked: bool = checked
 
@@ -453,7 +453,7 @@ class Text(Element):
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
-        data_origin: Optional[str] = None,
+        detection_origin: Optional[str] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
@@ -470,7 +470,7 @@ class Text(Element):
             metadata=metadata,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
-            data_origin=data_origin,
+            detection_origin=detection_origin,
         )
 
     def __str__(self):
