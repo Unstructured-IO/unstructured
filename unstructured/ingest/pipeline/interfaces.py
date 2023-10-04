@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 import multiprocessing as mp
 import typing as t
 from abc import ABC, abstractmethod
@@ -14,7 +15,7 @@ from unstructured.ingest.interfaces import (
     PartitionConfig,
     ProcessorConfig,
 )
-from unstructured.ingest.logger import logger
+from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 
 @dataclass
@@ -47,6 +48,8 @@ class PipelineNode(DataClassJsonMixin, ABC):
             )
             with mp.Pool(
                 processes=self.pipeline_context.num_processes,
+                initializer=ingest_log_streaming_init,
+                initargs=(logging.DEBUG if self.pipeline_context.verbose else logging.INFO,),
             ) as pool:
                 self.result = pool.map(self.run, iterable)
         return self.result
@@ -165,6 +168,10 @@ class WriteNode(PipelineNode):
 
 @dataclass
 class CopyNode(PipelineNode):
+    def initialize(self):
+        logger.info("Running copy node to move content to desired output location")
+        super().initialize()
+
     @abstractmethod
     def run(self, json_paths: t.List[str]):
         pass

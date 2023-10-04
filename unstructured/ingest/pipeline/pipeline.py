@@ -35,6 +35,7 @@ class Pipeline(DataClassJsonMixin):
         nodes.extend(self.reformat_nodes)
         if self.write_node:
             nodes.append(self.write_node)
+        nodes.append(Copier(pipeline_context=self.pipeline_context))
         return " -> ".join([node.__class__.__name__ for node in nodes])
 
     def run(self):
