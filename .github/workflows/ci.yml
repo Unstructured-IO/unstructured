@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
+    outputs:
+      skip_no_code_changes: ${{ steps.has_code_changes.outputs.should_skip }}
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache@v3
@@ -38,6 +40,10 @@ jobs:
         source .venv/bin/activate
         [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
         make install-ci
+    - id: has_code_changes
+      uses: fkirc/skip-duplicate-actions@v5
+      with:
+        paths_ignore: '["unstructured/__version__.py", "CHANGELOG.py"]'
 
   check-deps:
     strategy:
@@ -45,6 +51,7 @@ jobs:
         python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     needs: setup
+    if: needs.setup.outputs.skip_no_code_changes != 'true'
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache/restore@v3
@@ -75,6 +82,7 @@ jobs:
         python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     needs: setup
+    if: needs.setup.outputs.skip_no_code_changes != 'true'
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache/restore@v3
@@ -101,6 +109,8 @@ jobs:
 
   shellcheck:
     runs-on: ubuntu-latest
+    needs: setup
+    if: needs.setup.outputs.skip_no_code_changes != 'true'
     steps:
       - uses: actions/checkout@v3
       - name: ShellCheck
@@ -114,6 +124,7 @@ jobs:
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
+    if: needs.setup.outputs.skip_no_code_changes != 'true'
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache/restore@v3
@@ -158,6 +169,7 @@ jobs:
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
+    if: needs.setup.outputs.skip_no_code_changes != 'true'
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -195,6 +207,7 @@ jobs:
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint, test_unit_no_extras]
+    if: needs.setup.outputs.skip_no_code_changes != 'true'
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -235,6 +248,7 @@ jobs:
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
+    if: needs.setup.outputs.skip_no_code_changes != 'true'
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache/restore@v3
@@ -338,6 +352,7 @@ jobs:
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
+    if: needs.setup.outputs.skip_no_code_changes != 'true'
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache/restore@v3
@@ -380,6 +395,8 @@ jobs:
 
   changelog:
     runs-on: ubuntu-latest
+    needs: setup
+    if: needs.setup.outputs.skip_no_code_changes != 'true'
     steps:
     - if: github.ref != 'refs/heads/main'
       uses: dorny/paths-filter@v2
@@ -397,6 +414,7 @@ jobs:
   test_dockerfile:
     runs-on: ubuntu-latest
     needs: [ setup, lint ]
+    if: needs.setup.outputs.skip_no_code_changes != 'true'
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache/restore@v3
