@@ -21,7 +21,7 @@ install-base: install-base-pip-packages install-nltk-models
 install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test install-local-inference-branch
+install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test
 
 .PHONY: install-local-inference-branch
 install-local-inference-branch:
