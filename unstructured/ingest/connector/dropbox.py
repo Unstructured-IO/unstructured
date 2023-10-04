@@ -48,14 +48,14 @@ class DropboxIngestDoc(FsspecIngestDoc):
         # creates some complications in path joining so a custom path is created here.
         # Dropbox uses an empty string `""`, or a space `" "`` or a `" /"` to list root
         if self.connector_config.dir_path == " ":
-            return Path(self.partition_config.output_dir) / re.sub(
+            return Path(self.processor_config.output_dir) / re.sub(
                 "^/",
                 "",
                 f"{self.remote_file_path}.json",
             )
         else:
             return (
-                Path(self.partition_config.output_dir)
+                Path(self.processor_config.output_dir)
                 / f"{self.remote_file_path.replace(f'/{self.connector_config.dir_path}/', '')}.json"
             )
 

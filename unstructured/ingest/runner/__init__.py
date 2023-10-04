@@ -7,7 +7,7 @@ from .box import Box
 from .confluence import Confluence
 from .delta_table import DeltaTable
 from .discord import Discord
-from .dropbox import dropbox
+from .dropbox import Dropbox
 from .elasticsearch import elasticsearch
 from .fsspec import fsspec
 from .gcs import gcs
@@ -34,7 +34,7 @@ runner_map: t.Dict[str, t.Callable] = {
     "confluence": Confluence,
     "delta_table": DeltaTable,
     "discord": Discord,
-    "dropbox": dropbox,
+    "dropbox": Dropbox,
     "elasticsearch": elasticsearch,
     "fsspec": fsspec,
     "gcs": gcs,
@@ -63,7 +63,7 @@ __all__ = [
     "Confluence",
     "DeltaTable",
     "Discord",
-    "dropbox",
+    "Dropbox",
     "elasticsearch",
     "fsspec",
     "gcs",
