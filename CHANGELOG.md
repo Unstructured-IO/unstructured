@@ -7,6 +7,7 @@
 * **Adds data source properties to the Jira connector** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
 * **Improve title detection in pptx documents** The default title textboxes on a pptx slide are now categorized as titles.
 * **Improve hierarchy detection in pptx documents** List items, and other slide text are properly nested under the slide title. This will enable better chunking of pptx documents.
+* **Refactor of ingest cli workflow** The new approach uses a dynamically set pipeline with a snapshot along each step to save progress and allow to continue from there if an error occurred. Also allows to dynamically set any number of steps to modify the partition content before it gets written to a destination.
 
 ### Features
 
