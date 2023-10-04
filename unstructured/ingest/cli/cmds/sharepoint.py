@@ -4,18 +4,14 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import Group, conform_click_options
 from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
-    CliChunkingConfig,
-    CliEmbeddingsConfig,
     CliMixin,
-    CliPartitionConfig,
-    CliReadConfig,
     CliRecursiveConfig,
 )
+from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import SharePoint
@@ -84,18 +80,9 @@ def sharepoint_source(ctx: click.Context, **options):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
     log_options(options, verbose=verbose)
     try:
-        read_config = CliReadConfig.from_dict(options)
-        partition_config = CliPartitionConfig.from_dict(options)
-        embedding_config = CliEmbeddingsConfig.from_dict(options)
-        chunking_config = CliChunkingConfig.from_dict(options)
-        # Run for schema validation
-        SharepointCliConfig.from_dict(options)
+        configs = extract_configs(data=options, validate=[SharepointCliConfig])
         sharepoint_runner = SharePoint(
-            read_config=read_config,
-            partition_config=partition_config,
-            verbose=verbose,
-            embedding_config=embedding_config,
-            chunking_config=chunking_config,
+            **configs,
         )
         sharepoint_runner.run(**options)
     except Exception as e:
@@ -105,13 +92,5 @@ def sharepoint_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = sharepoint_source
-    SharepointCliConfig.add_cli_options(cmd)
-    CliRecursiveConfig.add_cli_options(cmd)
-
-    # Common CLI configs
-    CliReadConfig.add_cli_options(cmd)
-    CliPartitionConfig.add_cli_options(cmd)
-    CliEmbeddingsConfig.add_cli_options(cmd)
-    CliChunkingConfig.add_cli_options(cmd)
-    cmd.params.append(click.Option(["-v", "--verbose"], is_flag=True, default=False))
+    add_options(cmd, extras=[SharepointCliConfig, CliRecursiveConfig])
     return cmd

@@ -6,33 +6,26 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from dataclasses_json import DataClassJsonMixin
+
 from unstructured.ingest.interfaces import (
     BaseDestinationConnector,
     BaseSourceConnector,
     PartitionConfig,
+    ProcessorConfig,
 )
 from unstructured.ingest.logger import logger
 
 
 @dataclass
-class PipelineContext:
-    num_processes: int = 2
-    working_dir: t.Optional[str] = None
-    ingest_docs_map: dict = field(default_factory=dict)
-
-    def get_working_dir(self) -> Path:
-        if self.working_dir:
-            return (Path(self.working_dir)).resolve()
-        else:
-            cache_path = Path.home() / ".cache" / "unstructured" / "ingest" / "pipeline"
-            if not cache_path.exists():
-                cache_path.mkdir(parents=True, exist_ok=True)
-            return cache_path.resolve()
+class PipelineContext(ProcessorConfig):
+    def __post_init__(self):
+        self.ingest_docs_map: mp.managers.DictProxy = None
 
 
 @dataclass
-class PipelineNode(ABC):
-    pipeline_config: PipelineContext
+class PipelineNode(DataClassJsonMixin, ABC):
+    pipeline_context: PipelineContext
 
     def __call__(self, iterable: t.Iterable[t.Any] = None):
         iterable = iterable if iterable else []
@@ -42,7 +35,7 @@ class PipelineNode(ABC):
                 self.result = self.run(iterable)
             else:
                 self.result = self.run()
-        elif self.pipeline_config.num_processes == 1:
+        elif self.pipeline_context.num_processes == 1:
             if iterable:
                 self.result = [self.run(it) for it in iterable]
             else:
@@ -50,10 +43,10 @@ class PipelineNode(ABC):
         else:
             logger.info(
                 f"processing {len(iterable)} items via "
-                f"{self.pipeline_config.num_processes} processes",
+                f"{self.pipeline_context.num_processes} processes",
             )
             with mp.Pool(
-                processes=self.pipeline_config.num_processes,
+                processes=self.pipeline_context.num_processes,
             ) as pool:
                 self.result = pool.map(self.run, iterable)
         return self.result
@@ -79,6 +72,10 @@ class DocFactoryNode(PipelineNode):
     source_doc_connector: BaseSourceConnector
 
     def initialize(self):
+        logger.info(
+            f"Running doc factory to generate ingest docs. "
+            f"Source connector: {self.source_doc_connector.to_json()}",
+        )
         super().initialize()
         self.source_doc_connector.initialize()
 
@@ -97,6 +94,10 @@ class SourceNode(PipelineNode):
     Output of logic expected to be the json outputs of the data itself
     """
 
+    def initialize(self):
+        logger.info("Running source node to download data associated with ingest docs")
+        super().initialize()
+
     @abstractmethod
     def run(self, ingest_doc_json: str) -> str:
         pass
@@ -111,6 +112,14 @@ class PartitionNode(PipelineNode):
     partition_config: PartitionConfig
     partition_kwargs: dict = field(default_factory=dict)
 
+    def initialize(self):
+        logger.info(
+            f"Running partition node to extract content from json files. "
+            f"Config: {self.partition_config.to_json()}, "
+            f"partition kwargs: {json.dumps(self.partition_kwargs)}]",
+        )
+        super().initialize()
+
     def create_hash(self) -> str:
         hash_dict = self.partition_config.to_dict()
         hash_dict["partition_kwargs"] = self.partition_kwargs
@@ -121,7 +130,7 @@ class PartitionNode(PipelineNode):
         pass
 
     def get_path(self) -> t.Optional[Path]:
-        return (Path(self.pipeline_config.get_working_dir()) / "partitioned").resolve()
+        return (Path(self.pipeline_context.work_dir) / "partitioned").resolve()
 
 
 @dataclass
@@ -143,6 +152,10 @@ class WriteNode(PipelineNode):
         pass
 
     def initialize(self):
+        logger.info(
+            f"Running write node to upload content. "
+            f"Destination connector: {self.dest_doc_connector.to_json()}]",
+        )
         super().initialize()
         self.dest_doc_connector.initialize()
 
@@ -152,8 +165,6 @@ class WriteNode(PipelineNode):
 
 @dataclass
 class CopyNode(PipelineNode):
-    output_dir: str
-
     @abstractmethod
     def run(self, json_paths: t.List[str]):
         pass

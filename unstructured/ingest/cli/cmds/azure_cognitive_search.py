@@ -4,17 +4,17 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import conform_click_options
 from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
     CliChunkingConfig,
-    CliEmbeddingsConfig,
+    CliEmbeddingConfig,
     CliMixin,
     CliPartitionConfig,
     CliReadConfig,
 )
+from unstructured.ingest.cli.utils import conform_click_options
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import runner_map
@@ -74,7 +74,7 @@ def azure_cognitive_search_dest(ctx: click.Context, **options):
     try:
         read_config = CliReadConfig.from_dict(parent_options)
         partition_config = CliPartitionConfig.from_dict(parent_options)
-        embedding_config = CliEmbeddingsConfig.from_dict(parent_options)
+        embedding_config = CliEmbeddingConfig.from_dict(parent_options)
         chunking_config = CliChunkingConfig.from_dict(parent_options)
         # Run for schema validation
         AzureCognitiveSearchCliWriteConfig.from_dict(options)

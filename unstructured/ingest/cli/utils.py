@@ -1,8 +1,19 @@
 import typing as t
 from gettext import gettext as _
-from gettext import ngettext
 
 import click
+
+from unstructured.ingest.cli.interfaces import (
+    CliChunkingConfig,
+    CliEmbeddingConfig,
+    CliMixin,
+    CliPartitionConfig,
+    CliProcessorConfig,
+    CliReadConfig,
+)
+from unstructured.ingest.interfaces import (
+    BaseConfig,
+)
 
 
 def conform_click_options(options: dict):
@@ -12,39 +23,31 @@ def conform_click_options(options: dict):
             options[k] = list(v)
 
 
-class DelimitedString(click.ParamType):
-    name = "delimited-string"
+def extract_configs(data: dict, validate: t.List[t.Type[BaseConfig]]) -> t.Dict[str, BaseConfig]:
+    res = {
+        "read_config": CliReadConfig.from_dict(data),
+        "partition_config": CliPartitionConfig.from_dict(data),
+        "embedding_config": CliEmbeddingConfig.from_dict(data),
+        "chunking_config": CliChunkingConfig.from_dict(data),
+        "processor_config": CliProcessorConfig.from_dict(data),
+    }
+    for v in validate:
+        v.from_dict(data)
+    return res
 
-    def __init__(self, delimiter: str = ",", choices: t.Optional[t.List[str]] = None):
-        self.choices = choices if choices else []
-        self.delimiter = delimiter
 
-    def convert(
-        self,
-        value: t.Any,
-        param: t.Optional[click.Parameter],
-        ctx: t.Optional[click.Context],
-    ) -> t.Any:
-        # In case a list is provided as the default, will not break
-        if isinstance(value, list):
-            split = [str(v).strip() for v in value]
-        else:
-            split = [v.strip() for v in value.split(self.delimiter)]
-        if not self.choices:
-            return split
-        choices_str = ", ".join(map(repr, self.choices))
-        for s in split:
-            if s not in self.choices:
-                self.fail(
-                    ngettext(
-                        "{value!r} is not {choice}.",
-                        "{value!r} is not one of {choices}.",
-                        len(self.choices),
-                    ).format(value=s, choice=choices_str, choices=choices_str),
-                    param,
-                    ctx,
-                )
-        return split
+def add_options(cmd: click.Command, extras=t.List[t.Type[CliMixin]]) -> click.Command:
+    configs: t.List[t.Type[CliMixin]] = [
+        CliPartitionConfig,
+        CliReadConfig,
+        CliEmbeddingConfig,
+        CliChunkingConfig,
+        CliProcessorConfig,
+    ]
+    configs.extend(extras)
+    for config in configs:
+        config.add_cli_options(cmd)
+    return cmd
 
 
 class Group(click.Group):

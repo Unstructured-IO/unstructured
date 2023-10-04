@@ -16,7 +16,12 @@ from unstructured.staging.base import convert_to_dict, elements_from_json
 @dataclass
 class Chunker(ReformatNode):
     chunking_config: ChunkingConfig
-    reprocess: bool = False
+
+    def initialize(self):
+        logger.info(
+            f"Running chunking node. Chunking config: {self.chunking_config.to_json()}]",
+        )
+        super().initialize()
 
     def create_hash(self) -> str:
         hash_dict = self.chunking_config.to_dict()
@@ -31,10 +36,10 @@ class Chunker(ReformatNode):
         ]
         json_filename = f"{hashed_filename}.json"
         json_path = (Path(self.get_path()) / json_filename).resolve()
-        self.pipeline_config.ingest_docs_map[
+        self.pipeline_context.ingest_docs_map[
             hashed_filename
-        ] = self.pipeline_config.ingest_docs_map[filename]
-        if not self.reprocess and json_path.is_file() and json_path.stat().st_size:
+        ] = self.pipeline_context.ingest_docs_map[filename]
+        if not self.pipeline_context.reprocess and json_path.is_file() and json_path.stat().st_size:
             logger.debug(f"File exists: {json_path}, skipping embedding")
             return str(json_path)
         elements = elements_from_json(filename=elements_json)
@@ -46,4 +51,4 @@ class Chunker(ReformatNode):
         return str(json_path)
 
     def get_path(self) -> t.Optional[Path]:
-        return (Path(self.pipeline_config.get_working_dir()) / "chunked").resolve()
+        return (Path(self.pipeline_context.work_dir) / "chunked").resolve()

@@ -82,7 +82,9 @@ class DropboxIngestDoc(FsspecIngestDoc):
 @dataclass
 class DropboxSourceConnector(FsspecSourceConnector):
     connector_config: SimpleDropboxConfig
-    ingest_doc_cls: Type[DropboxIngestDoc] = DropboxIngestDoc
+
+    def __post_init__(self):
+        self.ingest_doc_cls: Type[DropboxIngestDoc] = DropboxIngestDoc
 
     @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
     def initialize(self):

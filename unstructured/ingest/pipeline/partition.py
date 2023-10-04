@@ -20,16 +20,21 @@ class Partitioner(PartitionNode):
         hashed_filename = hashlib.sha256(
             f"{self.create_hash()}{doc_filename_hash}".encode(),
         ).hexdigest()[:32]
-        self.pipeline_config.ingest_docs_map[hashed_filename] = ingest_doc_json
+        self.pipeline_context.ingest_docs_map[hashed_filename] = ingest_doc_json
         doc_filename = f"{hashed_filename}.json"
         json_path = (Path(self.get_path()) / doc_filename).resolve()
-        if not self.partition_config.reprocess and json_path.is_file() and json_path.stat().st_size:
-            logger.debug(f"File exists: {json_path}, skipping partition")
+        if not self.pipeline_context.reprocess and json_path.is_file() and json_path.stat().st_size:
+            logger.info(f"File exists: {json_path}, skipping partition")
             return str(json_path)
+        languages = (
+            self.partition_config.ocr_languages.split("+")
+            if self.partition_config.ocr_languages
+            else []
+        )
         elements = doc.partition_file(
             partition_config=self.partition_config,
             strategy=self.partition_config.strategy,
-            ocr_languages=self.partition_config.ocr_languages,
+            languages=languages,
             encoding=self.partition_config.encoding,
             pdf_infer_table_structure=self.partition_config.pdf_infer_table_structure,
         )

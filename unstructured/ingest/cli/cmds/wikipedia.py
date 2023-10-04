@@ -3,7 +3,6 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import Group, conform_click_options
 from unstructured.ingest.cli.common import (
     log_options,
 )
@@ -12,6 +11,7 @@ from unstructured.ingest.cli.interfaces import (
     CliPartitionConfig,
     CliReadConfig,
 )
+from unstructured.ingest.cli.utils import Group, conform_click_options
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import wikipedia as wikipedia_fn

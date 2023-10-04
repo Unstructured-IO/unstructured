@@ -36,20 +36,20 @@ if __name__ == "__main__":
         read_config=read_config,
     )
     doc_factory = DocFactory(
-        pipeline_config=pipeline_config,
+        pipeline_context=pipeline_config,
         source_doc_connector=source_doc_connector,
     )
-    reader = Reader(pipeline_config=pipeline_config)
-    partitioner = Partitioner(pipeline_config=pipeline_config, partition_config=partition_config)
+    reader = Reader(pipeline_context=pipeline_config)
+    partitioner = Partitioner(pipeline_context=pipeline_config, partition_config=partition_config)
     embedder = Embedder(
-        pipeline_config=pipeline_config,
+        pipeline_context=pipeline_config,
         embedder_config=EmbeddingConfig(
             api_key="FILL IN",
         ),
         reprocess=partition_config.reprocess,
     )
     chunker = Chunker(
-        pipeline_config=pipeline_config,
+        pipeline_context=pipeline_config,
         chunking_config=ChunkingConfig(
             chunk_elements=True,
             new_after_n_chars=1499,
@@ -57,7 +57,7 @@ if __name__ == "__main__":
         reprocess=partition_config.reprocess,
     )
     writer = Writer(
-        pipeline_config=pipeline_config,
+        pipeline_context=pipeline_config,
         dest_doc_connector=s3_writer(
             remote_url="s3://utic-dev-tech-fixtures/small-pdf-set/",
             anonymous=True,
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     )
     pipeline = Pipeline(
         verbose=True,
-        pipeline_config=pipeline_config,
+        pipeline_context=pipeline_config,
         doc_factory_node=doc_factory,
         source_node=reader,
         partition_node=partitioner,

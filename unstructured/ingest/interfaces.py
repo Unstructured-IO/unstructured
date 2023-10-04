@@ -50,7 +50,15 @@ class PartitionConfig(BaseConfig):
     partition_endpoint: t.Optional[str] = None
     partition_by_api: bool = False
     api_key: t.Optional[str] = None
+
+
+@dataclass
+class ProcessorConfig(BaseConfig):
     reprocess: bool = False
+    verbose: bool = False
+    work_dir: str = str((Path.home() / ".cache" / "unstructured" / "ingest" / "pipeline").resolve())
+    output_dir: str = "structured-output"
+    num_processes: int = 2
 
 
 @dataclass
@@ -61,8 +69,6 @@ class ReadConfig(BaseConfig):
     preserve_downloads: bool = False
     download_only: bool = False
     max_docs: t.Optional[int] = None
-    output_dir: str = "structured-output"
-    num_processes: int = 2
 
 
 @dataclass
@@ -127,17 +133,11 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     Crucially, it is not responsible for the actual processing of the raw document.
     """
 
+    processor_config: ProcessorConfig
     read_config: ReadConfig
     connector_config: BaseConnectorConfig
     source_metadata: t.Optional[SourceMetadata] = field(init=False, default=None)
     _date_processed: t.Optional[str] = field(init=False, default=None)
-
-    def run_chunking(self, elements: t.List[Element]) -> t.List[Element]:
-        return elements
-
-    @property
-    def embedder(self) -> t.Optional[BaseEmbeddingEncoder]:
-        return None
 
     @property
     def date_created(self) -> t.Optional[str]:
@@ -247,15 +247,6 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
         """Determine if structured output for this doc already exists."""
         return self._output_filename.is_file() and self._output_filename.stat().st_size
 
-    # def write_result(self):
-    #     """Write the structured json result for this doc. result must be json serializable."""
-    #     if self.read_config.download_only:
-    #         return
-    #     self._output_filename.parent.mkdir(parents=True, exist_ok=True)
-    #     with open(self._output_filename, "w", encoding="utf8") as output_f:
-    #         json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
-    #     logger.info(f"Wrote {self._output_filename}")
-
     @PartitionError.wrap
     def partition_file(
         self,
@@ -354,6 +345,7 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
 class BaseSourceConnector(DataClassJsonMixin, ABC):
     """Abstract Base Class for a connector to a remote source, e.g. S3 or Google Drive."""
 
+    processor_config: ProcessorConfig
     read_config: ReadConfig
     connector_config: BaseConnectorConfig
 

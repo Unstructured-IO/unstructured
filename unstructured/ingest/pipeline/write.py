@@ -13,6 +13,6 @@ class Writer(WriteNode):
         for json_path in json_paths:
             filename = os.path.basename(json_path)
             doc_hash = os.path.splitext(filename)[0]
-            ingest_doc_json = self.pipeline_config.ingest_docs_map[doc_hash]
+            ingest_doc_json = self.pipeline_context.ingest_docs_map[doc_hash]
             ingest_docs.append(create_ingest_doc_from_json(ingest_doc_json))
         self.dest_doc_connector.write(docs=ingest_docs)

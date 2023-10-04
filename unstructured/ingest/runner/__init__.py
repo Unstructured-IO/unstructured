@@ -20,7 +20,7 @@ from .notion import notion
 from .onedrive import onedrive
 from .outlook import outlook
 from .reddit import reddit
-from .s3 import s3
+from .s3 import S3
 from .salesforce import salesforce
 from .sharepoint import SharePoint
 from .slack import slack
@@ -48,7 +48,7 @@ runner_map: t.Dict[str, t.Callable] = {
     "onedrive": onedrive,
     "outlook": outlook,
     "reddit": reddit,
-    "s3": s3,
+    "s3": S3,
     "salesforce": salesforce,
     "sharepoint": SharePoint,
     "slack": slack,
@@ -76,7 +76,7 @@ __all__ = [
     "onedrive",
     "outlook",
     "reddit",
-    "s3",
+    "S3",
     "salesforce",
     "SharePoint",
     "slack",

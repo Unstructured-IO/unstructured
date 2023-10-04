@@ -100,7 +100,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         return (
-            Path(self.read_config.output_dir)
+            Path(self.processor_config.output_dir)
             / f"{self.remote_file_path.replace(f'{self.connector_config.dir_path}/', '')}.json"
         )
 
@@ -171,7 +171,9 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching document(s) from"""
 
     connector_config: SimpleFsspecConfig
-    ingest_doc_cls: t.Type[FsspecIngestDoc] = FsspecIngestDoc
+
+    def __post_init__(self):
+        self.ingest_doc_cls: t.Type[FsspecIngestDoc] = FsspecIngestDoc
 
     def initialize(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
@@ -212,6 +214,7 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     def get_ingest_docs(self):
         return [
             self.ingest_doc_cls(
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 connector_config=self.connector_config,
                 remote_file_path=file,
