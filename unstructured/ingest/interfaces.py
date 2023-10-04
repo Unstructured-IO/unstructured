@@ -114,7 +114,7 @@ class SourceMetadata(DataClassJsonMixin, ABC):
     version: t.Optional[str] = None
     source_url: t.Optional[str] = None
     exists: t.Optional[bool] = None
-    rbac_data: t.Optional[t.Dict[str, t.Any]] = None
+    permissions_data: t.Optional[t.Dict[str, t.Any]] = None
 
 
 @dataclass
@@ -203,11 +203,11 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         return self.source_metadata.version  # type: ignore
 
     @property
-    def rbac_data(self) -> t.Optional[str]:
+    def permissions_data(self) -> t.Optional[str]:
         """Role based access control data, aka permissions or sharing, from the source system."""
         if self.source_metadata is None:
             self.update_source_metadata()
-        return self.source_metadata.rbac_data  # type: ignore
+        return self.source_metadata.permissions_data  # type: ignore
 
     @abstractmethod
     def cleanup_file(self):
@@ -237,11 +237,11 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         """Sets the SourceMetadata and the  properties for the doc"""
         self.source_metadata = SourceMetadata()
 
-    def update_rbac_data(self):
-        """Sets the _rbac_data property for the doc.
-        This property is later used to fill the corresponding SourceMetadata.rbac_data field,
-        and after that carries on to the rbac_data property."""
-        self._rbac_data = ""
+    def update_permissions_data(self):
+        """Sets the _permissions_data property for the doc.
+        This property is later used to fill the corresponding SourceMetadata.permissions_data field,
+        and after that carries on to the permissions_data property."""
+        self._permissions_data = ""
 
     # NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
     # in addition to or instead of get_file()
@@ -277,7 +277,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
                     date_created=self.date_created,
                     date_modified=self.date_modified,
                     date_processed=self.date_processed,
-                    rbac_data=self.rbac_data,
+                    permissions_data=self.permissions_data,
                 ),
                 **partition_kwargs,
             )

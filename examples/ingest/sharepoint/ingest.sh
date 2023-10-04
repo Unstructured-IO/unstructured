@@ -21,10 +21,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     sharepoint \
     --client-id $SHAREPOINT_CLIENT_ID \
     --client-cred $SHAREPOINT_CRED \
-    --application-id-rbac $SHAREPOINT_RBAC_CLIENT_APPLICATION_ID \
-    --client-cred-rbac $SHAREPOINT_RBAC_CLIENT_SECRET \
+    --permissions-application-id $SHAREPOINT_RBAC_CLIENT_APPLICATION_ID \
+    --permissions-client-cred $SHAREPOINT_RBAC_CLIENT_SECRET \
     --site $SHAREPOINT_SITE \
-    --rbac-tenant $SHAREPOINT_RBAC_TENANT \
+    --permissions-tenant $SHAREPOINT_RBAC_TENANT \
     --output-dir sharepoint-ingest-output \
     --num-processes 2 \
     --path "Shared Documents" \

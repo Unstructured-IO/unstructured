@@ -37,9 +37,9 @@ CONTENT_LABELS = ["CanvasContent1", "LayoutWebpartsContent1", "TimeCreated"]
 class SimpleSharepointConfig(BaseConnectorConfig):
     client_id: str
     client_credential: str = field(repr=False)
-    application_id_rbac: str
-    client_cred_rbac: str = field(repr=False)
-    rbac_tenant: str
+    permissions_application_id: str
+    permissions_client_cred: str = field(repr=False)
+    permissions_tenant: str
     site_url: str
     path: str
     process_pages: bool = False
@@ -66,17 +66,17 @@ class SimpleSharepointConfig(BaseConnectorConfig):
             raise
         return site_client
 
-    def get_rbac_client(self):
+    def get_permissions_client(self):
         try:
-            rbac_connector = ConnectorRBAC(
-                self.rbac_tenant,
-                self.application_id_rbac,
-                self.client_cred_rbac,
+            permissions_connector = PermissionsConnector(
+                self.permissions_tenant,
+                self.permissions_application_id,
+                self.permissions_client_cred,
             )
-            assert rbac_connector.access_token
-            return rbac_connector
+            assert permissions_connector.access_token
+            return permissions_connector
         except Exception as e:
-            logger.error("Couldn't obtain Sharepoint RBAC ingestion access token:", e)
+            logger.error("Couldn't obtain Sharepoint permissions ingestion access token:", e)
 
 
 @dataclass
@@ -184,19 +184,19 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return None
         return page
 
-    # todo: improve rbac - ingestdoc matching logic
-    # todo: better folder management for writing down the rbac data
-    # todo: obtain rbac_data field as a python dict and serialise after, rather than a direct str
-    def update_rbac_data(self):
-        self._rbac_data = ""
+    # todo: improve permissions - ingestdoc matching logic
+    # todo: better folder management for writing down the permissions data
+    # todo: obtain permissions_data field as a python dict rather than a direct str
+    def update_permissions_data(self):
+        self._permissions_data = ""
         if self.output_dir.is_dir():
             for filename in os.listdir(self.partition_config.output_dir):
                 if self.file_path.split("/")[-1] in filename:
                     with open(os.path.join(self.partition_config.output_dir, filename)) as f:
-                        self._rbac_data = f.read()
+                        self._permissions_data = f.read()
 
     def update_source_metadata(self, **kwargs):
-        self.update_rbac_data()
+        self.update_permissions_data()
         if self.is_page:
             page = self._fetch_page()
             if page is None:
@@ -210,7 +210,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 version=page.get_property("Version", ""),
                 source_url=page.absolute_url,
                 exists=True,
-                rbac_data=self._rbac_data,
+                permissions_data=self._permissions_data,
             )
             return
 
@@ -229,7 +229,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             version=file.major_version,
             source_url=file.properties.get("LinkingUrl", None),
             exists=True,
-            rbac_data=self._rbac_data,
+            permissions_data=self._permissions_data,
         )
 
     def _download_page(self):
@@ -376,10 +376,10 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
     def get_ingest_docs(self):
         base_site_client = self.connector_config.get_site_client()
 
-        if self.connector_config.application_id_rbac:
-            rbac_client = self.connector_config.get_rbac_client()
-            if rbac_client:
-                rbac_client.write_all_permissions(self.partition_config.output_dir)
+        if self.connector_config.permissions_application_id:
+            permissions_client = self.connector_config.get_permissions_client()
+            if permissions_client:
+                permissions_client.write_all_permissions(self.partition_config.output_dir)
 
         if not base_site_client.is_tenant:
             return self._ingest_site_docs(base_site_client)
@@ -394,24 +394,24 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         return ingest_docs
 
 
-class ConnectorRBAC:
-    def __init__(self, rbac_tenant, application_id_rbac, client_cred_rbac):
-        self.rbac_tenant = rbac_tenant
-        self.application_id_rbac = application_id_rbac
-        self.client_cred_rbac = client_cred_rbac
+class PermissionsConnector:
+    def __init__(self, permissions_tenant, permissions_application_id, permissions_client_cred):
+        self.permissions_tenant = permissions_tenant
+        self.permissions_application_id = permissions_application_id
+        self.permissions_client_cred = permissions_client_cred
         self.access_token = self.get_access_token()
 
     @requires_dependencies(["requests"], extras="sharepoint")
     def get_access_token(self):
         import requests
 
-        url = f"https://login.microsoftonline.com/{self.rbac_tenant}/oauth2/v2.0/token"
+        url = f"https://login.microsoftonline.com/{self.permissions_tenant}/oauth2/v2.0/token"
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
         data = {
-            "client_id": self.application_id_rbac,
+            "client_id": self.permissions_application_id,
             "scope": "https://graph.microsoft.com/.default",
-            "client_secret": self.client_cred_rbac,
+            "client_secret": self.permissions_client_cred,
             "grant_type": "client_credentials",
         }
 
@@ -488,14 +488,14 @@ class ConnectorRBAC:
         sites = [(site["id"], site["webUrl"]) for site in self.get_sites()["value"]]
         drive_ids = []
 
-        print("Obtaining drive data for sites for RBAC")
+        print("Obtaining drive data for sites for permissions (rbac)")
         for site_id, site_url in sites:
             drives = self.get_drives(site_id)
             if drives:
                 drives_for_site = drives["value"]
                 drive_ids.extend([(site_id, drive["id"]) for drive in drives_for_site])
 
-        print("Obtaining item data from drives for RBAC")
+        print("Obtaining item data from drives for permissions (rbac)")
         item_ids = []
         for site, drive_id in drive_ids:
             drive_items = self.get_drive_items(site, drive_id)
@@ -507,7 +507,7 @@ class ConnectorRBAC:
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        print("Writing RBAC data to disk")
+        print("Writing permissions data to disk")
         for site, drive_id, item_id, item_name in item_ids:
             with open(output_dir + "/" + item_name + "_" + item_id + ".json", "w") as f:
                 res = self.get_permissions_for_drive_item(site, drive_id, item_id)

@@ -25,9 +25,9 @@ from unstructured.ingest.runner import SharePoint
 class SharepointCliConfig(BaseConfig, CliMixin):
     client_id: t.Optional[str] = None
     client_cred: t.Optional[str] = None
-    application_id_rbac: t.Optional[str] = None
-    client_cred_rbac: t.Optional[str] = None
-    rbac_tenant: t.Optional[str] = None
+    permissions_application_id: t.Optional[str] = None
+    permissions_client_cred: t.Optional[str] = None
+    permissions_tenant: t.Optional[str] = None
     site: t.Optional[str] = None
     path: str = "Shared Documents"
     files_only: bool = False
@@ -59,22 +59,22 @@ class SharepointCliConfig(BaseConfig, CliMixin):
                     This requires the app to be registered at a tenant level",
             ),
             click.Option(
-                ["--application-id-rbac"],
+                ["--permissions-application-id"],
                 default=None,
                 type=str,
-                help="Application id for ingesting RBAC data",
+                help="Application id for ingesting permission (rbac) data",
             ),
             click.Option(
-                ["--client-cred-rbac"],
+                ["--permissions-client-cred"],
                 default=None,
                 type=str,
-                help="Credentials for ingesting RBAC data",
+                help="Credentials for ingesting permission (rbac) data",
             ),
             click.Option(
-                ["--rbac-tenant"],
+                ["--permissions-tenant"],
                 default=None,
                 type=str,
-                help="Sharepoint rbac tenant name, such as: abcde.onmicrosoft.com",
+                help="Sharepoint permission (rbac) tenant name, such as: abcde.onmicrosoft.com",
             ),
             click.Option(
                 ["--path"],
