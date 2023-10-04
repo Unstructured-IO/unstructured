@@ -109,8 +109,6 @@ jobs:
 
   shellcheck:
     runs-on: ubuntu-latest
-    needs: setup
-    if: needs.setup.outputs.skip_no_code_changes != 'true'
     steps:
       - uses: actions/checkout@v3
       - name: ShellCheck
@@ -395,8 +393,6 @@ jobs:
 
   changelog:
     runs-on: ubuntu-latest
-    needs: setup
-    if: needs.setup.outputs.skip_no_code_changes != 'true'
     steps:
     - if: github.ref != 'refs/heads/main'
       uses: dorny/paths-filter@v2
