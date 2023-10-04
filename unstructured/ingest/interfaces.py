@@ -203,7 +203,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         return self.source_metadata.version  # type: ignore
 
     @property
-    def permissions_data(self) -> t.Optional[str]:
+    def permissions_data(self) -> t.Optional[t.List[t.Dict[str, t.Any]]]:
         """Role based access control data, aka permissions or sharing, from the source system."""
         if self.source_metadata is None:
             self.update_source_metadata()
@@ -241,7 +241,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         """Sets the _permissions_data property for the doc.
         This property is later used to fill the corresponding SourceMetadata.permissions_data field,
         and after that carries on to the permissions_data property."""
-        self._permissions_data: t.List[t.Dict] = [{}]
+        self._permissions_data: t.Optional[t.List[t.Dict]] = None
 
     # NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
     # in addition to or instead of get_file()
