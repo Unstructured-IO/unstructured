@@ -19,7 +19,7 @@ from .local import Local
 from .notion import Notion
 from .onedrive import OneDrive
 from .outlook import Outlook
-from .reddit import reddit
+from .reddit import Reddit
 from .s3 import S3
 from .salesforce import salesforce
 from .sharepoint import SharePoint
@@ -47,7 +47,7 @@ runner_map: t.Dict[str, t.Callable] = {
     "notion": Notion,
     "onedrive": OneDrive,
     "outlook": Outlook,
-    "reddit": reddit,
+    "reddit": Reddit,
     "s3": S3,
     "salesforce": salesforce,
     "sharepoint": SharePoint,
@@ -75,7 +75,7 @@ __all__ = [
     "Notion",
     "OneDrive",
     "Outlook",
-    "reddit",
+    "Reddit",
     "S3",
     "salesforce",
     "SharePoint",
