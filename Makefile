@@ -23,6 +23,10 @@ install: install-base-pip-packages install-dev install-nltk-models install-test 
 .PHONY: install-ci
 install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test
 
+.PHONY: install-local-inference-branch
+install-local-inference-branch:
+	git clone -b  feat/chipper-v2 --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
+
 .PHONY: install-base-ci
 install-base-ci: install-base-pip-packages install-nltk-models install-test
 
