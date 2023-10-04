@@ -13,7 +13,7 @@ from .fsspec import Fsspec
 from .gcs import GCS
 from .github import Github
 from .gitlab import Gitlab
-from .google_drive import gdrive
+from .google_drive import GoogleDrive
 from .jira import jira
 from .local import local
 from .notion import notion
@@ -40,8 +40,8 @@ runner_map: t.Dict[str, t.Callable] = {
     "gcs": GCS,
     "github": Github,
     "gitlab": Gitlab,
-    "gdrive": gdrive,
-    "google_drive": gdrive,
+    "gdrive": GoogleDrive,
+    "google_drive": GoogleDrive,
     "jira": jira,
     "local": local,
     "notion": notion,
@@ -67,7 +67,7 @@ __all__ = [
     "ElasticSearch",
     "Fsspec",
     "GCS",
-    "gdrive",
+    "GoogleDrive",
     "Github",
     "Gitlab",
     "jira",

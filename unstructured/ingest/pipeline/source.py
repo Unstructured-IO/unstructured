@@ -1,10 +1,12 @@
+import typing as t
 from dataclasses import dataclass
 
 from unstructured.ingest.connector.registry import create_ingest_doc_from_json
-from unstructured.ingest.interfaces import (
-    IngestDocSessionHandleMixin,
-)
+from unstructured.ingest.interfaces import BaseSessionHandle, IngestDocSessionHandleMixin
 from unstructured.ingest.pipeline.interfaces import SourceNode
+
+# module-level variable to store session handle
+session_handle: t.Optional[BaseSessionHandle] = None
 
 
 @dataclass
