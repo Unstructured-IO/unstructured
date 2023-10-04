@@ -186,6 +186,7 @@ def supplement_page_layout_with_ocr(
         elements = inferred_page_layout.elements
         for i, element in enumerate(elements):
             if element.text == "":
+                element = pad_element_bboxes(element, padding=12)
                 cropped_image = image.crop((element.x1, element.y1, element.x2, element.y2))
                 text_from_ocr = get_ocr_text_from_image(
                     cropped_image,
@@ -200,6 +201,19 @@ def supplement_page_layout_with_ocr(
             "Invalid OCR mode. Parameter `ocr_mode` "
             "must be set to `entire_page` or `individual_blocks`.",
         )
+
+
+def pad_element_bboxes(
+    element: "LayoutElement",
+    padding: Union[int, float],
+) -> "LayoutElement":
+    """Increases (or decreases, if padding is negative) the size of the bounding
+    boxes of the element by extending the boundary outward (resp. inward)"""
+    element.x1 -= padding
+    element.x2 += padding
+    element.y1 -= padding
+    element.y2 += padding
+    return element
 
 
 def get_ocr_layout_from_image(
