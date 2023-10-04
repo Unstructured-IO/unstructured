@@ -270,7 +270,7 @@ class _DocxPartitioner:
         metadata_last_modified: Optional[str] = None,
     ) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
-        return cls(  # returning the iterator, not the items
+        return cls(
             filename,
             file,
             metadata_filename,
