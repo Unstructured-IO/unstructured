@@ -19,14 +19,11 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     sharepoint \
-    --client-id $SHAREPOINT_CLIENT_ID \
-    --client-cred $SHAREPOINT_CRED \
-    --permissions-application-id $SHAREPOINT_RBAC_CLIENT_APPLICATION_ID \
-    --permissions-client-cred $SHAREPOINT_RBAC_CLIENT_SECRET \
-    --site $SHAREPOINT_SITE \
-    --permissions-tenant $SHAREPOINT_RBAC_TENANT \
+    --client-id "<Microsoft Sharepoint app client-id>" \
+    --client-cred "<Microsoft Sharepoint app client-secret>" \
+    --site "<e.g https://contoso.sharepoint.com or https://contoso.admin.sharepoint.com to process all sites within tenant>" \
+    --files-only "Flag to process only files within the site(s)" \
     --output-dir sharepoint-ingest-output \
-    --num-processes 1 \
+    --num-processes 2 \
     --path "Shared Documents" \
     --verbose
-# --files-only "Flag to process only files within the site(s)" \
