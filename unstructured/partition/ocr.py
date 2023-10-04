@@ -10,6 +10,8 @@ import unstructured_pytesseract
 # unstructured.documents.elements.Image
 from PIL import Image as PILImage
 from PIL import ImageSequence
+
+from unstructured.partition.utils.constants import OCRMode
 from unstructured_inference.inference.elements import (
     Rectangle,
     TextRegion,
@@ -31,7 +33,7 @@ def process_data_with_ocr(
     inferred_layout: "DocumentLayout",
     is_image: bool = False,
     ocr_languages: str = "eng",
-    ocr_mode: str = "entire_page",
+    ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
 ) -> "DocumentLayout":
     """
@@ -77,7 +79,7 @@ def process_file_with_ocr(
     inferred_layout: "DocumentLayout",
     is_image: bool = False,
     ocr_languages: str = "eng",
-    ocr_mode: str = "entire_page",
+    ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
 ) -> "DocumentLayout":
     """
@@ -149,7 +151,7 @@ def supplement_page_layout_with_ocr(
     inferred_page_layout: "PageLayout",
     image: PILImage,
     ocr_languages: str = "eng",
-    ocr_mode: str = "entire_page",
+    ocr_mode: str = OCRMode.FULL_PAGE.value,
 ) -> "PageLayout":
     """
     Supplement an inferred PageLayout with OCR results depending on OCR mode.
@@ -166,7 +168,7 @@ def supplement_page_layout_with_ocr(
             "Environment variable ENTIRE_PAGE_OCR",
             " must be set to 'tesseract' or 'paddle'.",
         )
-    if ocr_mode == "entire_page":
+    if ocr_mode == OCRMode.FULL_PAGE.value:
         ocr_layout = get_ocr_layout_from_image(
             image,
             ocr_languages=ocr_languages,
@@ -178,7 +180,7 @@ def supplement_page_layout_with_ocr(
         )
         inferred_page_layout.elements[:] = merged_page_layout_elements
         return inferred_page_layout
-    elif ocr_mode == "individual_blocks":
+    elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
         elements = inferred_page_layout.elements
         for i, element in enumerate(elements):
             if element.text == "":
