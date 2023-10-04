@@ -10,8 +10,6 @@ import unstructured_pytesseract
 # unstructured.documents.elements.Image
 from PIL import Image as PILImage
 from PIL import ImageSequence
-
-from unstructured.partition.utils.constants import OCRMode
 from unstructured_inference.inference.elements import (
     Rectangle,
     TextRegion,
@@ -24,8 +22,12 @@ from unstructured_inference.inference.layoutelement import (
 from unstructured_pytesseract import Output
 
 from unstructured.logger import logger
+from unstructured.partition.utils.constants import SUBREGION_THRESHOLD_FOR_OCR, OCRMode
 
-SUBREGION_THRESHOLD_FOR_OCR = 0.5
+# Force tesseract to be single threaded,
+# otherwise we see major performance problems
+if "OMP_THREAD_LIMIT" not in os.environ:
+    os.environ["OMP_THREAD_LIMIT"] = "1"
 
 
 def process_data_with_ocr(

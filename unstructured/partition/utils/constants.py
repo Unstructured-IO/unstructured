@@ -8,3 +8,5 @@ class OCRMode(Enum):
 
 SORT_MODE_XY_CUT = "xy-cut"
 SORT_MODE_BASIC = "basic"
+
+SUBREGION_THRESHOLD_FOR_OCR = 0.5
