@@ -1,6 +1,6 @@
 [
   {
-    "type": "UncategorizedText",
+    "type": "Header",
     "element_id": "f2011dae707ee9b1141a0de1147a115f",
     "metadata": {
       "data_source": {},
@@ -10,7 +10,7 @@
     "text": "$32"
   },
   {
-    "type": "Title",
+    "type": "Header",
     "element_id": "00be4eb55de586df1ad07739dfed3f8c",
     "metadata": {
       "data_source": {},
@@ -40,7 +40,7 @@
     "text": "Discussion: Our data confirm previous findings on reduced slow wave density in FEP, and expand them to acute subjects, before any treatment is prescribed. This is in line with available data on diffuse abnormalities of cortico-cortical and cortico-thalamic networks in these patients. Interestingly, our data also offer preliminary evidence that this deficit is specific for SCZ, as it appears to differentiate patients who developed SCZ from those with other diagnoses at follow-up. Given the traveling properties of slow waves, future research should establish their potential as markers of connectivity in SCZ."
   },
   {
-    "type": "Title",
+    "type": "NarrativeText",
     "element_id": "15ef5407945d4d6b7863b5afaeb5ccb7",
     "metadata": {
       "data_source": {},
@@ -100,7 +100,7 @@
     "text": "Background: Meta-analytic evidence showed increased levels of periph- eral endocannabinoid metabolites in psychotic illness. Alterations in the endocannabinoid system are believed to compromise glutamate and do- pamine transmission, which play a central role in pathophysiological models of psychosis. I will present preliminary data from an ongoing high-field proton magnetic resonance spectroscopy (MRS) study aimed at investigating the association between peripheral levels of endocannabinoid system metabolites and central glutamate metabolism in individuals at their first non-affective psychotic episode (NA-FEP) and healthy controls. Methods: We expect to recruit 17 NA-FEP and 20 healthy controls by January 2020. Currently, we recruited 12 NA-FEP and 18 healthy controls from two different research facilities (Imperial College London and University of Oxford) as part of a cross-sectional study. Participants un- derwent MRS scanning at 7-T with voxels placed in right dorsolateral prefrontal cortex (right-DLPFC), anterior cingulate cortex (ACC), and oc- cipital cortex. Neuro-metabolites will be calculated using the unsuppressed water signal as reference. Endocannabinoid metabolites were quantified from serum samples, collected during the same imaging session. Results: Analyses are ongoing. Based on previous evidence, expected findings are: (i) reduced glutamate levels in the ACC and right-DLPFC of NA-FEP compared to controls; (ii) increased peripheral endocannabinoid metabolites in NA-FEP compared to controls; and (iii) inverse association between peripheral endocannabinoid metabolites and glutamate levels in ACC and right-DLPFC in NA-FEP Discussion: This study will help clarifying the contribution of peripheral endocannabinoid system to central brain mechanisms of key relevance for psychotic illness. It will also add further evidence on the limited literature on high-resolution characterisation of brain metabolites in early psychosis. Strengths of the study include: (i) use of high-field MRS, which allows the estimation of glutamate-related compounds at higher precision than at lower field strength; (ii) reduced heterogeneity of the clinical sample (only male and NA-FEP). Limitations: small sample size and cross-sectional design."
   },
   {
-    "type": "Title",
+    "type": "NarrativeText",
     "element_id": "293c0c67a9c6c574a94be8259b569b8f",
     "metadata": {
       "data_source": {},
