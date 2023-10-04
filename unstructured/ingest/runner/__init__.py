@@ -24,7 +24,7 @@ from .s3 import S3
 from .salesforce import Salesforce
 from .sharepoint import SharePoint
 from .slack import Slack
-from .wikipedia import wikipedia
+from .wikipedia import Wikipedia
 
 runner_map: t.Dict[str, t.Callable] = {
     "airtable": Airtable,
@@ -52,7 +52,7 @@ runner_map: t.Dict[str, t.Callable] = {
     "salesforce": Salesforce,
     "sharepoint": SharePoint,
     "slack": Slack,
-    "wikipedia": wikipedia,
+    "wikipedia": Wikipedia,
 }
 
 __all__ = [
@@ -80,6 +80,6 @@ __all__ = [
     "Salesforce",
     "SharePoint",
     "Slack",
-    "wikipedia",
+    "Wikipedia",
     "runner_map",
 ]
