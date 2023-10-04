@@ -3,7 +3,7 @@ import re
 import typing as t
 from contextlib import suppress
 from dataclasses import dataclass, field
-from pathlib import Path
+from pathlib import Path, PurePath
 
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
@@ -246,11 +246,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         for doc in docs:
             s3_file_path = doc.base_filename
             s3_folder = self.connector_config.path
-            if s3_folder[-1] != "/":
-                s3_folder = f"{s3_file_path}/"
-            if s3_file_path[0] == "/":
-                s3_file_path = s3_file_path[1:]
 
-            s3_output_path = s3_folder + s3_file_path
+            s3_output_path = str(PurePath(s3_folder, s3_file_path)) if s3_file_path else s3_folder
             logger.debug(f"Uploading {doc._output_filename} -> {s3_output_path}")
             fs.put_file(lpath=doc._output_filename, rpath=s3_output_path)

@@ -60,7 +60,7 @@ def azure_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=[AzureCliConfig])
         runner = Azure(
-            **configs,
+            **configs,  # type: ignore
         )
         runner.run(**options)
     except Exception as e:

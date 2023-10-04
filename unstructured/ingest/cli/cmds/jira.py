@@ -89,7 +89,7 @@ def jira_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=([JiraCliConfig]))
         runner = Jira(
-            **configs,
+            **configs,  # type: ignore
         )
         runner.run(**options)
     except Exception as e:

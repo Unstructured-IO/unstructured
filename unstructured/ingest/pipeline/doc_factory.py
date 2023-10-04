@@ -9,7 +9,7 @@ class DocFactory(DocFactoryNode):
     def initialize(self):
         self.source_doc_connector.initialize()
 
-    def run(self) -> t.Iterable[str]:
+    def run(self, *args, **kwargs) -> t.Iterable[str]:
         docs = self.source_doc_connector.get_ingest_docs()
         json_docs = [doc.to_json() for doc in docs]
         return json_docs

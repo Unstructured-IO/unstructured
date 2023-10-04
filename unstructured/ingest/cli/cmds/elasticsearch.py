@@ -63,7 +63,7 @@ def elasticsearch_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=[ElasticsearchCliConfig])
         runner = ElasticSearch(
-            **configs,
+            **configs,  # type: ignore
         )
         runner.run(**options)
     except Exception as e:

@@ -18,6 +18,7 @@ from unstructured.ingest.pipeline import (
     Pipeline,
     PipelineContext,
     Reader,
+    ReformatNode,
     Writer,
 )
 
@@ -40,7 +41,7 @@ def process_documents(
     )
     reader = Reader(pipeline_context=pipeline_config)
     partitioner = Partitioner(pipeline_context=pipeline_config, partition_config=partition_config)
-    reformat_nodes = []
+    reformat_nodes: t.List[ReformatNode] = []
     if embedder_config:
         reformat_nodes.append(
             Embedder(

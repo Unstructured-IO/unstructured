@@ -21,14 +21,20 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 @dataclass
 class PipelineContext(ProcessorConfig):
     def __post_init__(self):
-        self.ingest_docs_map: mp.managers.DictProxy = None
+        self._ingest_docs_map: t.Optional[mp.managers.DictProxy] = None
+
+    @property
+    def ingest_docs_map(self) -> mp.managers.DictProxy:
+        if not self._ingest_docs_map:
+            raise ValueError("ingest_docs_map never initialized")
+        return self._ingest_docs_map
 
 
 @dataclass
 class PipelineNode(DataClassJsonMixin, ABC):
     pipeline_context: PipelineContext
 
-    def __call__(self, iterable: t.Iterable[t.Any] = None):
+    def __call__(self, iterable: t.Optional[t.Iterable[t.Any]] = None) -> t.Any:
         iterable = iterable if iterable else []
         self.initialize()
         if not self.supported_multiprocessing():
@@ -42,10 +48,6 @@ class PipelineNode(DataClassJsonMixin, ABC):
             else:
                 self.result = self.run()
         else:
-            logger.info(
-                f"processing {len(iterable)} items via "
-                f"{self.pipeline_context.num_processes} processes",
-            )
             with mp.Pool(
                 processes=self.pipeline_context.num_processes,
                 initializer=ingest_log_streaming_init,
@@ -58,7 +60,7 @@ class PipelineNode(DataClassJsonMixin, ABC):
         return True
 
     @abstractmethod
-    def run(self):
+    def run(self, *args, **kwargs) -> t.Optional[t.Any]:
         pass
 
     def initialize(self):
@@ -83,7 +85,7 @@ class DocFactoryNode(PipelineNode):
         self.source_doc_connector.initialize()
 
     @abstractmethod
-    def run(self) -> t.Iterable[str]:
+    def run(self, *args, **kwargs) -> t.Iterable[str]:
         pass
 
     def supported_multiprocessing(self) -> bool:
@@ -132,12 +134,12 @@ class PartitionNode(PipelineNode):
     def run(self, json_path: str) -> str:
         pass
 
-    def get_path(self) -> t.Optional[Path]:
+    def get_path(self) -> Path:
         return (Path(self.pipeline_context.work_dir) / "partitioned").resolve()
 
 
 @dataclass
-class ReformatNode(PipelineNode):
+class ReformatNode(PipelineNode, ABC):
     """
     Encapsulated any logic to reformat the output List[Element]
     content from partition before writing it
@@ -173,5 +175,5 @@ class CopyNode(PipelineNode):
         super().initialize()
 
     @abstractmethod
-    def run(self, json_paths: t.List[str]):
+    def run(self, json_path: str):
         pass

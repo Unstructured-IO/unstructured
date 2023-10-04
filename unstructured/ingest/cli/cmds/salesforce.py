@@ -73,7 +73,7 @@ def salesforce_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=([SalesforceCliConfig]))
         runner = Salesforce(
-            **configs,
+            **configs,  # type: ignore
         )
         runner.run(**options)
     except Exception as e:

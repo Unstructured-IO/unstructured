@@ -72,7 +72,7 @@ def slack_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(data=options, validate=[SlackCliConfig])
         sharepoint_runner = Slack(
-            **configs,
+            **configs,  # type: ignore
         )
         sharepoint_runner.run(**options)
     except Exception as e:

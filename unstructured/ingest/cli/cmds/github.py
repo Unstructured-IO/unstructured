@@ -72,7 +72,7 @@ def github_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=([GithubCliConfig]))
         runner = Github(
-            **configs,
+            **configs,  # type: ignore
         )
         runner.run(**options)
     except Exception as e:

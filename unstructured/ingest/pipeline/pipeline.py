@@ -23,7 +23,7 @@ class Pipeline(DataClassJsonMixin):
     pipeline_context: PipelineContext
     doc_factory_node: DocFactoryNode
     source_node: SourceNode
-    partition_node: t.Optional[PartitionNode] = None
+    partition_node: PartitionNode
     write_node: t.Optional[WriteNode] = None
     reformat_nodes: t.List[ReformatNode] = field(default_factory=list)
 
@@ -42,8 +42,12 @@ class Pipeline(DataClassJsonMixin):
         logger.info(f"running pipeline: {self.get_nodes_str()}")
         self.initialize()
         manager = mp.Manager()
-        self.pipeline_context.ingest_docs_map = manager.dict()
+        self.pipeline_context._ingest_docs_map = manager.dict()
         json_docs = self.doc_factory_node()
+        logger.info(
+            f"processing {len(json_docs)} docs via "
+            f"{self.pipeline_context.num_processes} processes",
+        )
         for doc in json_docs:
             self.pipeline_context.ingest_docs_map[get_ingest_doc_hash(doc)] = doc
         self.source_node(iterable=json_docs)

@@ -1,5 +1,5 @@
 from .doc_factory import DocFactory
-from .interfaces import PipelineContext
+from .interfaces import PipelineContext, ReformatNode
 from .partition import Partitioner
 from .pipeline import Pipeline
 from .reformat.chunking import Chunker
@@ -16,4 +16,5 @@ __all__ = [
     "Pipeline",
     "Writer",
     "Chunker",
+    "ReformatNode",
 ]

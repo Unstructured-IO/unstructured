@@ -47,7 +47,7 @@ def box_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=[BoxCliConfig])
         runner = Box(
-            **configs,
+            **configs,  # type: ignore
         )
         runner.run(**options)
     except Exception as e:

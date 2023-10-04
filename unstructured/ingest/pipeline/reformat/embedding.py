@@ -1,7 +1,6 @@
 import hashlib
 import json
 import os.path
-import typing as t
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -48,5 +47,5 @@ class Embedder(ReformatNode):
             json.dump(elements_dict, output_f, ensure_ascii=False, indent=2)
         return str(json_path)
 
-    def get_path(self) -> t.Optional[Path]:
+    def get_path(self) -> Path:
         return (Path(self.pipeline_context.work_dir) / "embedded").resolve()

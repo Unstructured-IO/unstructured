@@ -82,7 +82,7 @@ def airtable_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=[AirtableCliConfig])
         runner = Airtable(
-            **configs,
+            **configs,  # type: ignore
         )
         runner.run(**options)
     except Exception as e:

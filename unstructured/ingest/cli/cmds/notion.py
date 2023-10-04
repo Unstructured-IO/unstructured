@@ -62,7 +62,7 @@ def notion_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=([NotionCliConfig]))
         runner = Notion(
-            **configs,
+            **configs,  # type: ignore
         )
         runner.run(**options)
     except Exception as e:

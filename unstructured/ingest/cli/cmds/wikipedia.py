@@ -53,7 +53,7 @@ def wikipedia_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(data=options, validate=[WikipediaCliConfig])
         sharepoint_runner = Wikipedia(
-            **configs,
+            **configs,  # type: ignore
         )
         sharepoint_runner.run(**options)
     except Exception as e:

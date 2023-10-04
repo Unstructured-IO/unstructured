@@ -59,7 +59,7 @@ def s3_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=[S3CliConfig])
         s3_runner = S3(
-            **configs,
+            **configs,  # type: ignore
         )
         s3_runner.run(**options)
     except Exception as e:
@@ -79,7 +79,7 @@ def s3_dest(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=[S3CliConfig])
         s3_runner = S3(
-            **configs,
+            **configs,  # type: ignore
             writer_type="s3",
             writer_kwargs=options,
         )

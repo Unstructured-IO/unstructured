@@ -83,7 +83,7 @@ def onedrive_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=([OnedriveCliConfig]))
         runner = OneDrive(
-            **configs,
+            **configs,  # type: ignore
         )
         runner.run(**options)
     except Exception as e:

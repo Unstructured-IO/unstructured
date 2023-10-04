@@ -23,7 +23,11 @@ def conform_click_options(options: dict):
             options[k] = list(v)
 
 
-def extract_configs(data: dict, validate: t.List[t.Type[BaseConfig]]) -> t.Dict[str, BaseConfig]:
+def extract_configs(
+    data: dict,
+    validate: t.Optional[t.List[t.Type[BaseConfig]]] = None,
+) -> t.Dict[str, BaseConfig]:
+    validate = validate if validate else []
     res = {
         "read_config": CliReadConfig.from_dict(data),
         "partition_config": CliPartitionConfig.from_dict(data),

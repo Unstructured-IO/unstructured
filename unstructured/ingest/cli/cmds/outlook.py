@@ -84,7 +84,7 @@ def outlook_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=([OutlookCliConfig]))
         runner = Outlook(
-            **configs,
+            **configs,  # type: ignore
         )
         runner.run(**options)
     except Exception as e:

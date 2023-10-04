@@ -61,7 +61,7 @@ def google_drive_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=([GoogleDriveCliConfig]))
         runner = GoogleDrive(
-            **configs,
+            **configs,  # type: ignore
         )
         runner.run(**options)
     except Exception as e:
