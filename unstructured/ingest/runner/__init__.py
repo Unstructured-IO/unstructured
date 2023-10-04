@@ -18,7 +18,7 @@ from .jira import Jira
 from .local import Local
 from .notion import Notion
 from .onedrive import OneDrive
-from .outlook import outlook
+from .outlook import Outlook
 from .reddit import reddit
 from .s3 import S3
 from .salesforce import salesforce
@@ -46,7 +46,7 @@ runner_map: t.Dict[str, t.Callable] = {
     "local": Local,
     "notion": Notion,
     "onedrive": OneDrive,
-    "outlook": outlook,
+    "outlook": Outlook,
     "reddit": reddit,
     "s3": S3,
     "salesforce": salesforce,
@@ -74,7 +74,7 @@ __all__ = [
     "Local",
     "Notion",
     "OneDrive",
-    "outlook",
+    "Outlook",
     "reddit",
     "S3",
     "salesforce",
