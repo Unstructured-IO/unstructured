@@ -185,7 +185,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return page
 
     # todo: improve permissions - ingestdoc matching logic
-    # todo: better folder management for writing down the permissions data
     def update_permissions_data(self):
         self._permissions_data = ""
         permissions_dir = self.output_dir / "permissions_data"
