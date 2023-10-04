@@ -73,7 +73,7 @@ RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 def default_hi_res_model() -> str:
     # a light config for the hi res model; this is not defined as a constant so that no setting of
     # the default hi res model name is done on importing of this submodule; this allows (if user
-    # perfers) for setting env after importing the sub module and change the default model name
+    # prefers) for setting env after importing the sub module and changing the default model name
     return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", "yolox_quantized")
 
 
