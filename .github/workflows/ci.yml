@@ -20,7 +20,7 @@ jobs:
     - id: has_code_changes
       uses: fkirc/skip-duplicate-actions@v5
       with:
-        paths_ignore: '["unstructured/__version__.py", "CHANGELOG.py"]'
+        paths_ignore: '["unstructured/__version__.py", "CHANGELOG.md"]'
   setup:
     needs: pre-job
     if: needs.pre-job.outputs.skip_no_code_changes == 'false'
