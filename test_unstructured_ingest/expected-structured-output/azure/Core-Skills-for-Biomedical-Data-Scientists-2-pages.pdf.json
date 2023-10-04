@@ -286,25 +286,6 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "77162f0e50911686ff277d8f132430b3",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
-        "version": 167189396509615428390709838081557906335,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
-        },
-        "date_created": "2023-03-10T09:32:44+00:00",
-        "date_modified": "2023-03-10T09:32:44+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "b) Data science skills taught in BD2K-funded training programs. A qualitative content analysis was applied to the descriptions of required courses offered under the 12 BD2kK-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized into four major categories: (1) statistics and math skills; (2) computer science; (3) subject knowledge; (4) general skills, like communication and teamwork. The coding schema is detailed in Appendix A."
-  },
-  {
-    "type": "NarrativeText",
     "element_id": "537553a92c985f257ddf026fb12cc547",
     "metadata": {
       "data_source": {
@@ -321,25 +302,6 @@
       "page_number": 2
     },
     "text": "c) Desired skills identified from data science-related job ads. 59 job ads from government (8.5%), academia (42.4%), industry (83.9%), and the nonprofit sector (15.3%) were sampled from websites like Glassdoor, Linkedin, and Ziprecruiter. The content analysis methodology and coding schema utilized in analyzing the training programs were applied to the job descriptions. Because many job ads mentioned the same skill more than once, each occurrence of the skill was coded, therefore weighting important skills that were mentioned multiple times in a single ad."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "77162f0e50911686ff277d8f132430b3",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
-        "version": 167189396509615428390709838081557906335,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
-        },
-        "date_created": "2023-03-10T09:32:44+00:00",
-        "date_modified": "2023-03-10T09:32:44+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "b) Data science skills taught in BD2K-funded training programs. A qualitative content analysis was applied to the descriptions of required courses offered under the 12 BD2kK-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized into four major categories: (1) statistics and math skills; (2) computer science; (3) subject knowledge; (4) general skills, like communication and teamwork. The coding schema is detailed in Appendix A."
   },
   {
     "type": "NarrativeText",

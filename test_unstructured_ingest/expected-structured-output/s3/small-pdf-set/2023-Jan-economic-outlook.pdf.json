@@ -2899,7 +2899,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "69366e1bead17d5a2d2b54e8080541ed",
+    "element_id": "961dbf6bd6e3513d6fd4d4acd92c8f52",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
@@ -2913,7 +2913,7 @@
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "e = Pent-up demand boost: Fueled by the stock of excess private savings from the pandemic fiscal support and, in many cases, still-tight labor markets and solid wage growth, pent-up demand remains an upside risk to the growth outlook. In some advanced economies, recent data show that households are still on net adding to their stock of excess savings (as in some euro area countries and the United Kingdom) or have ample savings left (as in the United States). This leaves scope for a further boost to consumption—partticularly of services, including tourism."
+    "text": "e = Pent-up demand boost: Fueled by the stock of excess private savings from the pandemic fiscal"
   },
   {
     "type": "ListItem",
@@ -3007,24 +3007,6 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "b535e5cbde2adfbef2a3436008c8d24a",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": 265756457651539296174748931590365722430,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "date_modified": "2023-02-14T07:31:28"
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "e Faster disinflation: An easing in labor market pressures in some advanced economies due to falling vacancies could cool wage inflation without necessarily increasing unemployment. A sharp fall in the prices of goods, as consumers shift back to services, could further push down inflation. Such developments could imply a “softer” landing with less monetary tightening."
-  },
-  {
-    "type": "NarrativeText",
     "element_id": "aafc2da65217ef3b0f5042129996a98e",
     "metadata": {
       "data_source": {
@@ -3058,24 +3040,6 @@
       "page_number": 8
     },
     "text": "© = China’s recovery stalling: Amid still-low population immunity levels and insufficient hospital capacity, especially outside the major urban areas, significant health consequences could hamper the recovery. A deepening crisis in the real estate market remains a major source of vulnerability, with risks of widespread defaults by developers and resulting financial sector instability. Spillovers to the rest of the world would operate primarily through lower demand and potentially renewed supply chain problems. e = =War in Ukraine escalating: An escalation of the war in Ukraine remains a major source of vulnerability, particularly for Europe and lower-income countries. Europe is facing lower-than- anticipated gas prices, having stored enough gas to make shortages unlikely this winter. However, refilling storage with much-diminished Russian flows will be challenging ahead of next winter, particularly if it is a very cold one and China’s energy demand picks up, causing ptice spikes. A possible increase in food prices from a failed extension of the Black Sea grain initiative would put further pressure on lower-income countries that are experiencing food insecurity and have limited budgetary room to cushion the impact on households and businesses. With elevated food and fuel prices, social unrest may increase. e Debt distress: Since October, sovereign spreads for emerging market and developing economies have modestly declined on the back of an easing in global financial conditions (Box 1) and dollar depreciation. About 15 percent of low-income countries are estimated to be in debt distress, with an additional 45 percent at high risk of debt distress and about 25 percent of emerging market economies also at high risk. The combination of high debt levels from the pandemic, lower growth, and higher borrowing costs exacerbates the vulnerability of these economies, especially those with significant near-term dollar financing needs. e = Inflation persisting: Persistent labor market tightness could translate into stronger-than-expected wage growth. Higher-than-expected oil, gas, and food prices from the war in Ukraine or from a faster rebound in China’s growth could again raise headline inflation and pass through into underlying inflation. Such developments could cause inflation expectations to de-anchor and require an even tighter monetary policy. e = Sudden financial market repricing: A prematute easing in financial conditions in response to lower headline inflation data could complicate anti-inflation policies and necessitate additional monetary tightening. For the same reason, unfavorable inflation data releases could trigger sudden repricing of assets and increase volatility in financial markets. Such movements could strain liquidity and the functioning of critical markets, with ripple effects on the real economy. © Geopolitical fragmentation: The wat in Ukraine and the related international sanctions aimed at e pressuring Russia to end hostilities are splitting the world economy into blocs and reinforcing earlier geopolitical tensions, such as those associated with the US-China trade dispute."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "71addfa87f11395357957db8972334ed",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": 265756457651539296174748931590365722430,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "date_modified": "2023-02-14T07:31:28"
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "= China’s recovery stalling: Amid still-low population immunity levels and insufficient hospital capacity, especially outside the major urban areas, significant health consequences could hamper the recovery. A deepening crisis in the real estate market remains a major source of vulnerability, with risks of widespread defaults by developers and resulting financial sector instability. Spillovers to the rest of the world would operate primarily through lower demand and potentially renewed supply chain problems."
   },
   {
     "type": "Title",
@@ -3400,42 +3364,6 @@
       "page_number": 10
     },
     "text": "e = Restraining the pandemic: Global coordination is needed to resolve bottlenecks in the global distribution of vaccines and treatments. Public support for the development of new vaccine technologies and the design of systematic responses to future epidemics also remains essential. e = Addressing debt distress: Progress has been made for countries that requested debt treatment under the Group of Twenty’s Common Framework initiative, and more will be needed to strengthen it. It is also necessary to agree on mechanisms to resolve debt in a broader set of economies, including middle-income countries that are not eligible under the Common Framework. Non— Paris Club and private creditors have a crucial role to play in ensuring coordinated, effective, and timely debt resolution processes. e — Strengthening global trade: Strengthening the global trading system would address risks associated with trade fragmentation. This can be achieved by rolling back restrictions on food exports and other essential items such as medicine, upgrading World Trade Organization (WTO) rules in critical areas such as agricultural and industrial subsidies, concluding and implementing new WTO-based agreements, and fully restoring the WTO dispute settlement system. e Using the global financial safety net: With the cascading of shocks to the global economy, using the global financial safety net to its fullest extent is appropriate, including by proactively utilizing the IMF’s precautionary financial arrangements and channeling aid from the international community to low-income countries facing shocks. e Speeding the green transition: To meet governments’ climate change goals, it is necessary to swiftly implement credible mitigation policies. International coordination on carbon pricing or equivalent policies would facilitate faster decarbonization. Global cooperation is needed to build resilience to climate shocks, including through aid to vulnerable countries."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "ae1139aeb86f22ba0cf3ca7b86322424",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": 265756457651539296174748931590365722430,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "date_modified": "2023-02-14T07:31:28"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "e = Restraining pandemic: to global distribution of vaccines and treatments. Public support for the development of new vaccine technologies and the design of systematic responses to future epidemics also remains essential. e = Addressing debt distress: Progress has been made for countries that requested debt treatment under the Group of Twenty’s Common Framework initiative, and more will be needed to strengthen it. It is also necessary to agree on mechanisms to resolve debt in a broader set of economies, including middle-income countries that are not eligible under the Common Framework. Non— Paris Club and private creditors have a crucial role to play in ensuring coordinated, effective, and timely debt resolution processes."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "e0ee0812ef9249e53d6425e299200f5c",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": 265756457651539296174748931590365722430,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "date_modified": "2023-02-14T07:31:28"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "e — Strengthening global trade: Strengthening the global trading system would address risks associated with trade fragmentation. This can be achieved by rolling back restrictions on food exports and other essential items such as medicine, upgrading World Trade Organization (WTO) rules in critical areas such as agricultural and industrial subsidies, concluding and implementing new WTO-based agreements, and fully restoring the WTO dispute settlement system."
   },
   {
     "type": "Title",
