@@ -114,7 +114,7 @@ class SourceMetadata(DataClassJsonMixin, ABC):
     version: t.Optional[str] = None
     source_url: t.Optional[str] = None
     exists: t.Optional[bool] = None
-    permissions_data: t.Optional[t.Dict[str, t.Any]] = None
+    permissions_data: t.Optional[t.List[t.Dict[str, t.Any]]] = None
 
 
 @dataclass

@@ -193,7 +193,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             for filename in os.listdir(self.partition_config.output_dir):
                 if self.file_path.split("/")[-1] in filename:
                     with open(os.path.join(self.partition_config.output_dir, filename)) as f:
-                        self._permissions_data = f.read()
+                        self._permissions_data = json.loads(f.read())
 
     def update_source_metadata(self, **kwargs):
         self.update_permissions_data()
