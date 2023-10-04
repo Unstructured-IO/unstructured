@@ -173,11 +173,13 @@ def partition_xlsx(
                         element.metadata.languages = languages
                         elements.append(element)
 
-    elements = apply_lang_metadata(
-        elements=elements,
-        languages=languages,
+    elements = list(
+        apply_lang_metadata(
+            elements=elements,
+            languages=languages,
+        ),
     )
-    return list(elements)
+    return elements
 
 
 def _get_connected_components(

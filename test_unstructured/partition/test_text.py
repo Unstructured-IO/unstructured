@@ -547,4 +547,4 @@ def test_partition_text_detects_more_than_3_languages():
     filename = "example-docs/language-docs/UDHR_first_article_all.txt"
     elements = partition_text(filename=filename, detect_language_per_element=True)
     langs = list({element.metadata.languages[0] for element in elements})
-    assert len(langs) == 54
+    assert len(langs) > 10

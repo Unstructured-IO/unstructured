@@ -1,7 +1,7 @@
 import datetime
 import io
 from dataclasses import dataclass, field
-from typing import IO, Any, Dict, Final, Iterable, Iterator, List, Optional, Union
+from typing import IO, Any, Dict, Final, Iterable, Iterator, List, Optional
 
 import docx
 import openpyxl
@@ -156,8 +156,7 @@ def _get_exif_datetime(exif_dict: Dict[str, Any], key: str) -> Optional[datetime
 
 
 def apply_lang_metadata(
-    # redundant hinting, but was raising linting error in CI
-    elements: Union[Iterable[Element], List[Element]],
+    elements: Iterable[Element],
     languages: List[str],
     detect_language_per_element: bool = False,
 ) -> Iterator[Element]:
