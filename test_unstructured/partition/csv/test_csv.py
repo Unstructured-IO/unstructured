@@ -206,9 +206,8 @@ def test_add_chunking_strategy_to_partition_csv_non_default():
     assert chunk_elements != elements
     assert chunk_elements == chunks
 
-    
+
 def test_partition_csv_element_metadata_has_languages():
     filename = "example-docs/stanley-cups.csv"
     elements = partition_csv(filename=filename, strategy="fast")
     assert elements[0].metadata.languages == ["eng"]
-    

@@ -668,7 +668,7 @@ def test_html_heading_title_detection():
         ListItem("- bulleted item"),
     ]
 
-    
+
 def test_partition_html_element_metadata_has_languages():
     filename = "example-docs/example-10k.html"
     elements = partition_html(filename=filename)
