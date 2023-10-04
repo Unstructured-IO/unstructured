@@ -9,7 +9,7 @@ from .delta_table import DeltaTable
 from .discord import Discord
 from .dropbox import Dropbox
 from .elasticsearch import ElasticSearch
-from .fsspec import fsspec
+from .fsspec import Fsspec
 from .gcs import gcs
 from .github import github
 from .gitlab import gitlab
@@ -36,7 +36,7 @@ runner_map: t.Dict[str, t.Callable] = {
     "discord": Discord,
     "dropbox": Dropbox,
     "elasticsearch": ElasticSearch,
-    "fsspec": fsspec,
+    "fsspec": Fsspec,
     "gcs": gcs,
     "github": github,
     "gitlab": gitlab,
@@ -65,7 +65,7 @@ __all__ = [
     "Discord",
     "Dropbox",
     "ElasticSearch",
-    "fsspec",
+    "Fsspec",
     "gcs",
     "gdrive",
     "github",
