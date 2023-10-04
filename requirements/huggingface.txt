@@ -50,6 +50,7 @@ networkx==3.1
     # via torch
 numpy==1.24.4
     # via
+    #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   transformers
 packaging==23.1
@@ -96,7 +97,7 @@ tqdm==4.66.1
     #   huggingface-hub
     #   sacremoses
     #   transformers
-transformers==4.33.2
+transformers==4.33.3
     # via -r requirements/huggingface.in
 typing-extensions==4.8.0
     # via

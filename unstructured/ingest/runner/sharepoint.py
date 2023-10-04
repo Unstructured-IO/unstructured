@@ -14,9 +14,9 @@ class SharePoint(Runner):
         site: str,
         client_id: str,
         client_cred: str,
-        files_only: bool,
         path: str,
-        recursive: bool,
+        files_only: bool = False,
+        recursive: bool = False,
         **kwargs,
     ):
         writer_kwargs = self.writer_kwargs if self.writer_kwargs else {}
@@ -51,6 +51,7 @@ class SharePoint(Runner):
             read_config=self.read_config,
             partition_config=self.partition_config,
             embedding_config=self.embedding_config,
+            chunking_config=self.chunking_config,
         )
 
         dest_doc_connector = None

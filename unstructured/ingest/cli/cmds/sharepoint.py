@@ -9,6 +9,7 @@ from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
+    CliChunkingConfig,
     CliEmbeddingsConfig,
     CliMixin,
     CliPartitionConfig,
@@ -86,6 +87,7 @@ def sharepoint_source(ctx: click.Context, **options):
         read_config = CliReadConfig.from_dict(options)
         partition_config = CliPartitionConfig.from_dict(options)
         embedding_config = CliEmbeddingsConfig.from_dict(options)
+        chunking_config = CliChunkingConfig.from_dict(options)
         # Run for schema validation
         SharepointCliConfig.from_dict(options)
         sharepoint_runner = SharePoint(
@@ -93,6 +95,7 @@ def sharepoint_source(ctx: click.Context, **options):
             partition_config=partition_config,
             verbose=verbose,
             embedding_config=embedding_config,
+            chunking_config=chunking_config,
         )
         sharepoint_runner.run(**options)
     except Exception as e:
@@ -109,5 +112,6 @@ def get_source_cmd() -> click.Group:
     CliReadConfig.add_cli_options(cmd)
     CliPartitionConfig.add_cli_options(cmd)
     CliEmbeddingsConfig.add_cli_options(cmd)
+    CliChunkingConfig.add_cli_options(cmd)
     cmd.params.append(click.Option(["-v", "--verbose"], is_flag=True, default=False))
     return cmd

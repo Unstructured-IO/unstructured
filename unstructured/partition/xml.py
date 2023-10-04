@@ -1,6 +1,8 @@
-import xml.etree.ElementTree as ET
+from io import BytesIO
 from tempfile import SpooledTemporaryFile
-from typing import IO, BinaryIO, List, Optional, Union, cast
+from typing import IO, BinaryIO, Iterator, List, Optional, Union, cast
+
+from lxml import etree
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import (
@@ -20,41 +22,57 @@ from unstructured.partition.common import (
 from unstructured.partition.text import element_from_text
 
 
-def is_leaf(elem):
-    return not bool(elem)
-
-
-def is_string(elem):
-    return isinstance(elem, str) or (hasattr(elem, "text") and isinstance(elem.text, str))
-
-
 def get_leaf_elements(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     text: Optional[str] = None,
-    xml_path: str = ".",
-    xml_keep_tags: bool = False,
-) -> List[Optional[str]]:
+    xml_path: Optional[str] = None,
+) -> Iterator[Optional[str]]:
+    """Get leaf elements from the XML tree defined in filename, file, or text."""
     exactly_one(filename=filename, file=file, text=text)
     if filename:
-        _, raw_text = read_txt_file(filename=filename)
+        return _get_leaf_elements(filename, xml_path=xml_path)
     elif file:
-        f = spooled_to_bytes_io_if_needed(
-            cast(Union[BinaryIO, SpooledTemporaryFile], file),
+        f = cast(
+            IO[bytes],
+            spooled_to_bytes_io_if_needed(
+                cast(Union[BinaryIO, SpooledTemporaryFile], file),
+            ),
         )
-        _, raw_text = read_txt_file(file=f)
-    elif text:
-        raw_text = text
+        return _get_leaf_elements(f, xml_path=xml_path)
+    else:
+        b = BytesIO(bytes(cast(str, text), encoding="utf-8"))
+        return _get_leaf_elements(b, xml_path=xml_path)
 
-    root = ET.fromstring(raw_text)
-    leaf_elements = []
 
-    for elem in root.findall(xml_path):
-        for subelem in elem.iter():
-            if is_leaf(subelem) and is_string(subelem.text):
-                leaf_elements.append(subelem.text)
+def _get_leaf_elements(
+    file: Union[str, IO[bytes]],
+    xml_path: Optional[str] = None,
+) -> Iterator[Optional[str]]:
+    """Parse the XML tree in a memory efficient manner if possible."""
+    element_stack = []
 
-    return leaf_elements
+    element_iterator = etree.iterparse(file, events=("start", "end"))
+    # NOTE(alan) If xml_path is used for filtering, I've yet to find a good way to stream
+    # elements through in a memory efficient way, so we bite the bullet and load it all into
+    # memory.
+    if xml_path is not None:
+        _, element = next(element_iterator)
+        compiled_path = etree.XPath(xml_path)
+        element_iterator = (("end", el) for el in compiled_path(element))
+
+    for event, element in element_iterator:
+        if event == "start":
+            element_stack.append(element)
+
+        if event == "end":
+            if element.text is not None and element.text.strip():
+                yield element.text
+
+            element.clear()
+
+        while element_stack and element_stack[-1].getparent() is None:
+            element_stack.pop()
 
 
 @process_metadata()
@@ -65,7 +83,7 @@ def partition_xml(
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     text: Optional[str] = None,
     xml_keep_tags: bool = False,
-    xml_path: str = ".",
+    xml_path: Optional[str] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     encoding: Optional[str] = None,
