@@ -6,7 +6,7 @@ from .biomed import Biomed
 from .box import Box
 from .confluence import Confluence
 from .delta_table import DeltaTable
-from .discord import discord
+from .discord import Discord
 from .dropbox import dropbox
 from .elasticsearch import elasticsearch
 from .fsspec import fsspec
@@ -33,7 +33,7 @@ runner_map: t.Dict[str, t.Callable] = {
     "box": Box,
     "confluence": Confluence,
     "delta_table": DeltaTable,
-    "discord": discord,
+    "discord": Discord,
     "dropbox": dropbox,
     "elasticsearch": elasticsearch,
     "fsspec": fsspec,
@@ -62,7 +62,7 @@ __all__ = [
     "Box",
     "Confluence",
     "DeltaTable",
-    "discord",
+    "Discord",
     "dropbox",
     "elasticsearch",
     "fsspec",
