@@ -30,8 +30,15 @@ class Pipeline(DataClassJsonMixin):
     def initialize(self):
         ingest_log_streaming_init(logging.DEBUG if self.pipeline_context.verbose else logging.INFO)
 
+    def get_nodes_str(self):
+        nodes = [self.doc_factory_node, self.source_node, self.partition_node]
+        nodes.extend(self.reformat_nodes)
+        if self.write_node:
+            nodes.append(self.write_node)
+        return " -> ".join([node.__class__.__name__ for node in nodes])
+
     def run(self):
-        logger.info("running pipeline")
+        logger.info(f"running pipeline: {self.get_nodes_str()}")
         self.initialize()
         manager = mp.Manager()
         self.pipeline_context.ingest_docs_map = manager.dict()
