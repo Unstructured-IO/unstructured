@@ -149,14 +149,14 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         # -- those small lists), is more flexible for later iterator operations like filter,
         # -- chain, map, etc. and is perhaps more elegant and simpler to read once you have the
         # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
-        # -- functions like `._iter_paragraph_elements()` where the "just return when done"
+        # -- functions like `._iter_shape_elements()` where the "just return when done"
         # -- characteristic of a generator avoids repeated code to form interim results into lists.
 
         for slide in self._presentation.slides:
             yield from self._increment_page_number()
             yield from self._iter_maybe_slide_notes(slide)
 
-            shapes, title_shape = self._order_shapes(slide)
+            title_shape, shapes = self._order_shapes(slide)
 
             for shape in shapes:
                 if shape.has_table:
@@ -164,10 +164,10 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                     yield from self._iter_table_element(shape)
                 elif shape.has_text_frame:
                     assert isinstance(shape, Shape)
-                    yield from self._iter_paragraph_elements(
-                        shape,
-                        is_title_shape=bool(shape == title_shape),
-                    )
+                    if shape == title_shape:
+                        yield from self._iter_title_shape_element(shape)
+                    else:
+                        yield from self._iter_shape_elements(shape)
                 # -- otherwise ditch it, this would include pictures, charts, connectors (lines),
                 # -- and free-form shapes (squiggly lines). Lines don't have text.
 
@@ -224,18 +224,31 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
 
         yield NarrativeText(text=notes_text, metadata=self._text_metadata())
 
-    def _iter_paragraph_elements(
-        self,
-        shape: Shape,
-        is_title_shape: bool = False,
-    ) -> Iterator[Element]:
-        """Generate Text or subtype element for each paragraph in `shape`."""
+    def _is_invalid_shape(self, shape: Shape) -> bool:
         # NOTE(robinson) - avoid processing shapes that are not on the actual slide
         # NOTE - skip check if no top or left position (shape displayed top left)
-        if (shape.top and shape.left) and (shape.top < 0 or shape.left < 0):
+        return bool((shape.top and shape.left) and (shape.top < 0 or shape.left < 0))
+
+    def _iter_title_shape_element(self, shape: Shape) -> Iterator[Element]:
+        """Generate Text or subtype element for each paragraph in `shape`."""
+        if self._is_invalid_shape(shape):
             return
 
-        for i, paragraph in enumerate(shape.text_frame.paragraphs):
+        depth = 0
+        for paragraph in shape.text_frame.paragraphs:
+            text = paragraph.text
+            if text.strip() == "":
+                continue
+            # increment the category depth by the paragraph increment in the shape
+            yield Title(text=text, metadata=self._text_metadata(category_depth=depth))
+            depth += 1  # Cannot enumerate because we want to skip empty paragraphs
+
+    def _iter_shape_elements(self, shape: Shape) -> Iterator[Element]:
+        """Generate Text or subtype element for each paragraph in `shape`."""
+        if self._is_invalid_shape(shape):
+            return
+
+        for paragraph in shape.text_frame.paragraphs:
             text = paragraph.text
             if text.strip() == "":
                 continue
@@ -247,9 +260,6 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                 yield ListItem(text=text, metadata=metadata)
             elif is_email_address(text):
                 yield EmailAddress(text=text)
-            elif is_title_shape:
-                # increment the category depth by the paragraph increment in the shape
-                yield Title(text=text, metadata=self._text_metadata(category_depth=i))
             elif is_possible_narrative_text(text):
                 yield NarrativeText(text=text, metadata=metadata)
             elif is_possible_title(text):
@@ -289,10 +299,10 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         # -- can just send us "abc.pptx" instead.
         return get_last_modified_date_from_file(file)
 
-    def _order_shapes(self, slide: Slide) -> Tuple[Sequence[BaseShape], Optional[BaseShape]]:
+    def _order_shapes(self, slide: Slide) -> Tuple[Optional[Shape], Sequence[BaseShape]]:
         """Orders the shapes on `slide` from top to bottom and left to right.
 
-        Returns the ordered shapes and the title shape if it exists."""
+        Returns the the title shape if it exists and the ordered shapes."""
 
         def iter_shapes(shapes: _BaseGroupShapes) -> Iterator[BaseShape]:
             for shape in shapes:
@@ -304,7 +314,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         def sort_key(shape: BaseShape) -> Tuple[int, int]:
             return shape.top or 0, shape.left or 0
 
-        return sorted(iter_shapes(slide.shapes), key=sort_key), getattr(slide.shapes, "title", None)
+        return slide.shapes.title, sorted(iter_shapes(slide.shapes), key=sort_key)
 
     @property
     def _page_number(self) -> Optional[int]:
