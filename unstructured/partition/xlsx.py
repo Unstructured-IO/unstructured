@@ -113,17 +113,20 @@ def partition_xlsx(
                 single_non_empty_rows, single_non_empty_row_contents = _single_non_empty_rows(
                     subtable,
                 )
-                front_non_consecutive, last_non_consecutive = _find_first_and_last_non_consecutive_row(
+                (
+                    front_non_consecutive,
+                    last_non_consecutive,
+                ) = _find_first_and_last_non_consecutive_row(
                     single_non_empty_rows,
                 )
 
                 metadata = _get_metadata(
-                                include_metadata,
-                                sheet_name,
-                                page_number,
-                                metadata_filename or filename,
-                                metadata_last_modified or last_modification_date,
-                            )
+                    include_metadata,
+                    sheet_name,
+                    page_number,
+                    metadata_filename or filename,
+                    metadata_last_modified or last_modification_date,
+                )
 
                 # NOTE(klaijan) - need to explicitly define the condition to avoid the case of 0
                 if front_non_consecutive is not None and last_non_consecutive is not None:
@@ -372,9 +375,9 @@ def _check_content_element_type(text: str) -> Element:
 
 def _get_metadata(
     include_metadata: bool = True,
-    sheet_name: str = "", 
-    page_number: int = -1, 
-    filename: str = "", 
+    sheet_name: Optional[str] = None,
+    page_number: Optional[int] = -1,
+    filename: Optional[str] = None,
     last_modification_date: Union[str, None] = None,
 ) -> ElementMetadata:
     """Returns metadata depending on `include_metadata` flag"""
