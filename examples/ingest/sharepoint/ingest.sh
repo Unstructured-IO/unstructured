@@ -26,7 +26,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --site $SHAREPOINT_SITE \
     --permissions-tenant $SHAREPOINT_RBAC_TENANT \
     --output-dir sharepoint-ingest-output \
-    --num-processes 2 \
+    --num-processes 1 \
     --path "Shared Documents" \
     --verbose
 # --files-only "Flag to process only files within the site(s)" \

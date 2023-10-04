@@ -186,13 +186,13 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     # todo: improve permissions - ingestdoc matching logic
     # todo: better folder management for writing down the permissions data
-    # todo: obtain permissions_data field as a python dict rather than a direct str
     def update_permissions_data(self):
         self._permissions_data = ""
-        if self.output_dir.is_dir():
-            for filename in os.listdir(self.partition_config.output_dir):
+        permissions_dir = self.output_dir / "permissions_data"
+        if permissions_dir.is_dir():
+            for filename in os.listdir(self.permissions_dir):
                 if self.file_path.split("/")[-1] in filename:
-                    with open(os.path.join(self.partition_config.output_dir, filename)) as f:
+                    with open(permissions_dir / filename) as f:
                         self._permissions_data = json.loads(f.read())
 
     def update_source_metadata(self, **kwargs):
@@ -504,12 +504,13 @@ class PermissionsConnector:
                     [(site, drive_id, item["id"], item["name"]) for item in drive_items["value"]],
                 )
 
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+        permissions_dir = Path(output_dir) / "permissions_data"
+        if not permissions_dir.is_dir():
+            os.makedirs(permissions_dir)
 
         print("Writing permissions data to disk")
         for site, drive_id, item_id, item_name in item_ids:
-            with open(output_dir + "/" + item_name + "_" + item_id + ".json", "w") as f:
+            with open(permissions_dir / f"{item_name}_{item_id}.json", "w") as f:
                 res = self.get_permissions_for_drive_item(site, drive_id, item_id)
                 if res:
                     json.dump(res["value"], f)
