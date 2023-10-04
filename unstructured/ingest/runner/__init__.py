@@ -23,7 +23,7 @@ from .reddit import Reddit
 from .s3 import S3
 from .salesforce import Salesforce
 from .sharepoint import SharePoint
-from .slack import slack
+from .slack import Slack
 from .wikipedia import wikipedia
 
 runner_map: t.Dict[str, t.Callable] = {
@@ -51,7 +51,7 @@ runner_map: t.Dict[str, t.Callable] = {
     "s3": S3,
     "salesforce": Salesforce,
     "sharepoint": SharePoint,
-    "slack": slack,
+    "slack": Slack,
     "wikipedia": wikipedia,
 }
 
@@ -79,7 +79,7 @@ __all__ = [
     "S3",
     "Salesforce",
     "SharePoint",
-    "slack",
+    "Slack",
     "wikipedia",
     "runner_map",
 ]
