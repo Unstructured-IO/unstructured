@@ -236,7 +236,9 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                 yield EmailAddress(text=text, detection_origin="pptx")
             elif is_possible_narrative_text(text):
                 yield NarrativeText(
-                    text=text, metadata=self._text_metadata, detection_origin="pptx"
+                    text=text,
+                    metadata=self._text_metadata,
+                    detection_origin="pptx",
                 )
             elif is_possible_title(text):
                 yield Title(text=text, metadata=self._text_metadata, detection_origin="pptx")
@@ -253,7 +255,9 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             return
         html_table = convert_ms_office_table_to_text(graphfrm.table, as_html=True)
         yield Table(
-            text=text_table, metadata=self._table_metadata(html_table), detection_origin="pptx"
+            text=text_table,
+            metadata=self._table_metadata(html_table),
+            detection_origin="pptx",
         )
 
     @lazyproperty
