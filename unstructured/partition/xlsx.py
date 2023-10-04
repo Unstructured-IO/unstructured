@@ -66,7 +66,7 @@ def partition_xlsx(
     include_header
         Determines whether or not header info info is included in text and medatada.text_as_html
     languages
-        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        User defined value for metadata.languages if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
         in either language.
     """
