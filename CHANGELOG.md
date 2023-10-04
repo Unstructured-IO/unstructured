@@ -1,4 +1,4 @@
-## 0.10.19-dev9
+## 0.10.19-dev10
 
 ### Enhancements
 
@@ -20,6 +20,7 @@
   Problem: Under certain circumstances, text immediately after some HTML tags will be misssing from partition result.
   Fix: Updated code to deal with these cases.
   Importance: This will ensure the correctness when partitioning HTML and Markdown documents.
+* **Fixes chunking when `detection_class_prob` appears in Element metadata** Problem: when `detection_class_prob` appears in Element metadata, Elements will only be combined by chunk_by_title if they have the same `detection_class_prob` value (which is rare). This is unlikely a case we ever need to support and most often results in no chunking. Fix: `detection_class_prob` is included in the chunking list of metadata keys excluded for similarity comparison. Importance: This change allows `chunk_by_title` to operate as intended for documents which include `detection_class_prob` metadata in their Elements.
 
 ## 0.10.18
 
