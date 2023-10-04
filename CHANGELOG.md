@@ -1,4 +1,4 @@
-## 0.10.19-dev9
+## 0.10.19-dev10
 
 ### Enhancements
 
@@ -9,8 +9,7 @@
 * **Adds data source properties to SharePoint, Outlook, Onedrive, Reddit, and Slack connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
 * **Adds Table support for the `add_chunking_strategy` decorator to partition functions.** In addition to combining elements under Title elements, user's can now specify the `max_characters=<n>` argument to chunk Table elements into TableChunk elements with `text` and `text_as_html` of length <n> characters. This means partitioned Table results are ready for use in downstream applications without any post processing.
 * **Expose endpoint url for s3 connectors** By allowing for the endpoint url to be explicitly overwritten, this allows for any non-AWS data providers supporting the s3 protocol to be supported (i.e. minio).
-
-### Features 
+* **change default `hi_res` model for pdf/image partition to `yolox`** Now partitioning pdf/image using `hi_res` strategy utilizes `yolox_quantized` model isntead of `detectron2_onnx` model. This new default model has better recall for tables and produces more detailed categories for elements.
 
 * **XLSX can now reads subtables within one sheet** Problem: Many .xlsx files are not created to be read as one full table per sheet. There are subtables, text and header along with more informations to extract from each sheet. Feature: This `partition_xlsx` now can reads subtable(s) within one .xlsx sheet, along with extracting other title and narrative texts. Importance: This enhance the power of .xlsx reading to not only one table per sheet, allowing user to capture more data tables from the file, if exists.
 
