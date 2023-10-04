@@ -207,6 +207,8 @@ def test_partition_xlsx_with_json(filename="example-docs/stanley-cups.xlsx"):
         assert elements[i] == test_elements[i]
 
 
+# NOTE (jennings) partition_xlsx returns a single TableElement,
+# so we can only detect the language of that single element
 def test_partition_xlsx_element_metadata_has_languages():
     filename = "example-docs/stanley-cups.xlsx"
     elements = partition_xlsx(filename=filename)

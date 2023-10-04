@@ -1,3 +1,4 @@
+import copy
 import datetime
 import email
 import os
@@ -439,7 +440,7 @@ def partition_email(
         metadata_last_modified=metadata_last_modified,
     )
     for element in all_elements:
-        element.metadata = metadata
+        element.metadata = copy.deepcopy(metadata)
 
     if process_attachments:
         with TemporaryDirectory() as tmpdir:

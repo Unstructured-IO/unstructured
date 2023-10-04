@@ -362,6 +362,17 @@ def test_partition_pptx_element_metadata_has_languages():
     assert elements[0].metadata.languages == ["eng"]
 
 
+def test_partition_pptx_detects_multiple_elements_in_other_language():
+    filename = "example-docs/language-docs/eng_spa_mult.pptx"
+    elements = partition_pptx(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    # languages other than English and Spanish are detected by this partitioner,
+    # so this test is slightly different from the other partition tests
+    langs = {element.metadata.languages[0] for element in elements}
+    assert "eng" in langs
+    assert "spa" in langs
+
+
 # == DescribePptxPartitionerDownstreamBehaviors ==================================================
 
 

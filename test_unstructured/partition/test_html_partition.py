@@ -673,3 +673,10 @@ def test_partition_html_element_metadata_has_languages():
     filename = "example-docs/example-10k.html"
     elements = partition_html(filename=filename)
     assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_html_detects_multiple_elements_in_other_language():
+    filename = "example-docs/language-docs/eng_spa_mult.html"
+    elements = partition_html(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
