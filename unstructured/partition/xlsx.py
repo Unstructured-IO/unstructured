@@ -44,6 +44,7 @@ def partition_xlsx(
     languages: List[str] = ["auto"],
     metadata_last_modified: Optional[str] = None,
     include_header: bool = False,
+    find_subtable: bool = True,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .xlsx format into its document elements.
@@ -86,26 +87,13 @@ def partition_xlsx(
     page_number = 0
     for sheet_name, sheet in sheets.items():
         page_number += 1
-        _connected_components = _get_connected_components(sheet)
-        for _connected_component, _min_max_coords in _connected_components:
-            min_x, min_y, max_x, max_y = _min_max_coords
-
-            subtable = sheet.iloc[min_x : max_x + 1, min_y : max_y + 1]  # noqa: E203
-            single_non_empty_rows, single_non_empty_row_contents = _single_non_empty_rows(
-                subtable,
-            )
-            front_non_consecutive, last_non_consecutive = _find_first_and_last_non_consecutive_row(
-                single_non_empty_rows,
-            )
-
-            # NOTE(klaijan) - need to explicitly define the condition to avoid the case of 0
-            if front_non_consecutive is not None and last_non_consecutive is not None:
-                first_row = int(front_non_consecutive - max_x)
-                last_row = int(max_x - last_non_consecutive)
-                subtable = _get_sub_subtable(subtable, (first_row, last_row))
+        if not find_subtable:
+            html_text = sheet.to_html(index=False, header=include_header, na_rep="")
+            text = soupparser_fromstring(html_text).text_content()
 
             if include_metadata:
                 metadata = ElementMetadata(
+                    text_as_html=html_text,
                     page_name=sheet_name,
                     page_number=page_number,
                     filename=metadata_filename or filename,
@@ -114,41 +102,67 @@ def partition_xlsx(
             else:
                 metadata = ElementMetadata()
 
-            if front_non_consecutive is not None:
-                for content in single_non_empty_row_contents[: front_non_consecutive + 1]:
-                    element = _check_content_element_type(str(content))
-                    languages = detect_languages(str(content), languages)
-                    element.metadata = metadata
-                    element.metadata.languages = languages
+            table = Table(text=text, metadata=metadata)
+            elements.append(table)
+        else:
+            _connected_components = _get_connected_components(sheet)
+            for _connected_component, _min_max_coords in _connected_components:
+                min_x, min_y, max_x, max_y = _min_max_coords
+
+                subtable = sheet.iloc[min_x : max_x + 1, min_y : max_y + 1]  # noqa: E203
+                single_non_empty_rows, single_non_empty_row_contents = _single_non_empty_rows(
+                    subtable,
+                )
+                front_non_consecutive, last_non_consecutive = _find_first_and_last_non_consecutive_row(
+                    single_non_empty_rows,
+                )
+
+                metadata = _get_metadata(
+                                include_metadata,
+                                sheet_name,
+                                page_number,
+                                metadata_filename or filename,
+                                metadata_last_modified or last_modification_date,
+                            )
+
+                # NOTE(klaijan) - need to explicitly define the condition to avoid the case of 0
+                if front_non_consecutive is not None and last_non_consecutive is not None:
+                    first_row = int(front_non_consecutive - max_x)
+                    last_row = int(max_x - last_non_consecutive)
+                    subtable = _get_sub_subtable(subtable, (first_row, last_row))
+
+                if front_non_consecutive is not None:
+                    for content in single_non_empty_row_contents[: front_non_consecutive + 1]:
+                        languages = detect_languages(str(content), languages)
+                        element = _check_content_element_type(str(content))
+                        element.metadata = metadata
+                        element.metadata.languages = languages
+                        elements.append(element)
+
+                if subtable is not None and len(subtable) == 1:
+                    element = _check_content_element_type(str(subtable.iloc[0].values[0]))
                     elements.append(element)
 
-            if subtable is not None and len(subtable) == 1:
-                element = _check_content_element_type(str(subtable.iloc[0].values[0]))
-                element.metadata = metadata
-                elements.append(element)
+                elif subtable is not None:
+                    # parse subtables as html
+                    html_text = subtable.to_html(index=False, header=include_header, na_rep="")
+                    text = soupparser_fromstring(html_text).text_content()
+                    languages = detect_languages(text, languages)
+                    subtable = Table(text=text)
+                    subtable.metadata = metadata
+                    subtable.metadata.text_as_html = html_text
+                    subtable.metadata.languages = languages
+                    elements.append(subtable)
 
-            elif subtable is not None:
-                # parse subtables as html
-                html_text = subtable.to_html(index=False, header=include_header, na_rep="")
-                text = soupparser_fromstring(html_text).text_content()
-                languages = detect_languages(text, languages)
-
-                table_metadata = metadata
-                table_metadata.languages = languages
-                table_metadata.text_as_html = html_text
-
-                subtable = Table(text=text, metadata=table_metadata)
-                elements.append(subtable)
-
-            if front_non_consecutive is not None and last_non_consecutive is not None:
-                for content in single_non_empty_row_contents[
-                    front_non_consecutive + 1 :  # noqa: E203
-                ]:
-                    element = _check_content_element_type(str(content))
-                    languages = detect_languages(str(content), languages)
-                    element.metadata = metadata
-                    element.metadata.languages = languages
-                    elements.append(element)
+                if front_non_consecutive is not None and last_non_consecutive is not None:
+                    for content in single_non_empty_row_contents[
+                        front_non_consecutive + 1 :  # noqa: E203
+                    ]:
+                        languages = detect_languages(str(content), languages)
+                        element = _check_content_element_type(str(content))
+                        element.metadata = metadata
+                        element.metadata.languages = languages
+                        elements.append(element)
 
     return elements
 
@@ -246,13 +260,6 @@ def _filter_overlapping_tables(
             # Check if component overlaps with the current_component
             if component["min_x"] <= current_component["max_x"]:
                 # Merge the components and update min_x, max_x
-                current_component["component"].extend(component["component"])
-                current_component["min_x"] = min(current_component["min_x"], component["min_x"])
-                current_component["max_x"] = max(current_component["max_x"], component["max_x"])
-                current_component["min_y"] = min(current_component["min_y"], component["min_y"])
-                current_component["max_y"] = max(current_component["max_y"], component["max_y"])
-            if component["min_y"] <= current_component["max_y"]:
-                # Merge the components and update min_y, max_y
                 current_component["component"].extend(component["component"])
                 current_component["min_x"] = min(current_component["min_x"], component["min_x"])
                 current_component["max_x"] = max(current_component["max_x"], component["max_x"])
@@ -361,3 +368,23 @@ def _check_content_element_type(text: str) -> Element:
         return Text(
             text=text,
         )
+
+
+def _get_metadata(
+    include_metadata: bool = True,
+    sheet_name: str = "", 
+    page_number: int = -1, 
+    filename: str = "", 
+    last_modification_date: Union[str, None] = None,
+) -> ElementMetadata:
+    """Returns metadata depending on `include_metadata` flag"""
+    if include_metadata:
+        metadata = ElementMetadata(
+            page_name=sheet_name,
+            page_number=page_number,
+            filename=filename,
+            last_modified=last_modification_date,
+        )
+    else:
+        metadata = ElementMetadata()
+    return metadata

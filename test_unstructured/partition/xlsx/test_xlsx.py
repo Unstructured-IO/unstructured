@@ -216,10 +216,16 @@ def test_partition_xlsx_with_json(filename="example-docs/stanley-cups.xlsx"):
 
 
 @pytest.mark.skip("Needs to fix language detection for table. Currently detected as 'tur'")
-def test_metadata_language_from_filename(filename="example-docs/stanley-cups.xlsx"):
+def test_partition_xlsx_metadata_language_from_filename(filename="example-docs/stanley-cups.xlsx"):
     elements = partition_xlsx(filename=filename, include_header=False)
 
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert len(elements) == 4
 
     assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_xlsx_subtables(filename="example-docs/vodafone.xlsx"):
+    elements = partition_xlsx(filename)
+    assert sum(isinstance(element, Table) for element in elements) == 3
+    assert len(elements) == 6
