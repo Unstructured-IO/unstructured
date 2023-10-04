@@ -133,7 +133,7 @@ Additional Metadata Fields by Document Type
 +-------------------------+---------------------+--------------------------------------------------------+
 | ``link_texts``          | HTML                | The text associated with a link in a document.         |
 +-------------------------+---------------------+--------------------------------------------------------+
-| ``links``               | HTML                | List of {”text”: “<the text>, “url”: <the url>} items. |
+| ``links``               | HTML                | List of {”text”: “<the text>, “url”: <the url>} items. This element will be removed in the near future in favor of the above two rows |
 +-------------------------+---------------------+--------------------------------------------------------+
 | ``section``             | EPUB                | Book section title corresponding to table of contents  |
 +-------------------------+---------------------+--------------------------------------------------------+
