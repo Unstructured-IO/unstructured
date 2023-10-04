@@ -108,7 +108,8 @@ def sort_page_elements(
     )
 
     xy_cut_primary_direction = os.environ.get(
-        "UNSTRUCTURED_XY_CUT_PRIMARY_DIRECTION", xy_cut_primary_direction
+        "UNSTRUCTURED_XY_CUT_PRIMARY_DIRECTION",
+        xy_cut_primary_direction,
     )
 
     if not page_elements:

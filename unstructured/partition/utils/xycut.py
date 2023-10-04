@@ -14,16 +14,19 @@ from: https://github.com/Sanster/xy-cut
 
 def projection_by_bboxes(boxes: np.ndarray, axis: int) -> np.ndarray:
     """
-     通过一组 bbox 获得投影直方图，最后以 per-pixel 形式输出
+    Obtain the projection histogram through a set of bboxes and finally output it in per-pixel form
 
     Args:
         boxes: [N, 4]
-        axis: 0-x坐标向水平方向投影， 1-y坐标向垂直方向投影
+        axis: 0 - x coordinates are projected in the horizontal direction, 1 - y coordinates
+        are projected in the vertical direction
 
     Returns:
-        1D 投影直方图，长度为投影方向坐标的最大值(我们不需要图片的实际边长，因为只是要找文本框的间隔)
-
+        1D projection histogram, the length is the maximum value of the projection direction
+        coordinate (we don’t need the actual side length of the picture because we just
+        want to find the interval of the text box)
     """
+
     assert axis in [0, 1]
     length = np.max(boxes[:, axis::2])
     res = np.zeros(length, dtype=int)
