@@ -1,4 +1,5 @@
 import logging
+import typing as t
 from dataclasses import dataclass
 
 import click
@@ -22,6 +23,7 @@ from unstructured.ingest.runner import s3 as s3_fn
 @dataclass
 class S3CliConfig(BaseConfig, CliMixin):
     anonymous: bool = False
+    endpoint_url: t.Optional[str] = None
 
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:
@@ -31,6 +33,13 @@ class S3CliConfig(BaseConfig, CliMixin):
                 is_flag=True,
                 default=False,
                 help="Connect to s3 without local AWS credentials.",
+            ),
+            click.Option(
+                ["--endpoint-url"],
+                type=str,
+                default=None,
+                help="Use this endpoint_url, if specified. Needed for "
+                "connecting to non-AWS S3 buckets.",
             ),
         ]
         cmd.params.extend(options)
