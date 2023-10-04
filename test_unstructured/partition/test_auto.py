@@ -8,7 +8,7 @@ from unittest.mock import patch
 import docx
 import pytest
 
-from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT
+from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT, EXPECTED_TITLE
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
@@ -702,36 +702,51 @@ EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsh
 def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx"):
     elements = partition(filename=filename, include_header=False)
 
-    assert all(isinstance(element, Table) for element in elements)
-    assert len(elements) == 2
+    assert sum(isinstance(element, Table) for element in elements) == 2
+    assert sum(isinstance(element, Title) for element in elements) == 2
+    assert len(elements) == 4
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
-    assert elements[0].metadata.page_number == 1
-    assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE
+    assert elements[1].metadata.page_number == 1
+    assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
 def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
     with open(filename, "rb") as f:
         elements = partition(file=f, include_header=False)
 
-    assert all(isinstance(element, Table) for element in elements)
-    assert len(elements) == 2
+    assert sum(isinstance(element, Table) for element in elements) == 2
+    assert sum(isinstance(element, Title) for element in elements) == 2
+    assert len(elements) == 4
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
-    assert elements[0].metadata.page_number == 1
-    assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE
+    assert elements[1].metadata.page_number == 1
+    assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
-EXPECTED_XLS_TEXT_LEN = 507
+EXPECTED_XLS_TEXT_LEN = 550
 
 
-EXPECTED_XLS_INITIAL_45_CLEAN_TEXT = "MA What C datatypes are 8 bits? (assume i386)"
+EXPECTED_XLS_INITIAL_45_CLEAN_TEXT = "MC What is 2+2? 4 correct 3 incorrect MA What"
 
 EXPECTED_XLS_TABLE = (
     """<table border="1" class="dataframe">
   <tbody>
+    <tr>
+      <td>MC</td>
+      <td>What is 2+2?</td>
+      <td>4</td>
+      <td>correct</td>
+      <td>3</td>
+      <td>incorrect</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
     <tr>
       <td>MA</td>
       <td>What C datatypes are 8 bits? (assume i386)</td>
@@ -808,8 +823,8 @@ EXPECTED_XLS_TABLE = (
 def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.xls"):
     elements = partition(filename=filename, include_header=False)
 
-    assert all(isinstance(element, Table) for element in elements)
-    assert len(elements) == 3
+    assert sum(isinstance(element, Table) for element in elements) == 2
+    assert len(elements) == 18
 
     assert clean_extra_whitespace(elements[0].text)[:45] == EXPECTED_XLS_INITIAL_45_CLEAN_TEXT
     # NOTE(crag): if the beautifulsoup4 package is installed, some (but not all) additional

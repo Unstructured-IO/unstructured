@@ -9,7 +9,7 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   requests
@@ -53,7 +53,7 @@ numpy==1.24.4
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   transformers
-packaging==23.1
+packaging==23.2
     # via
     #   -c requirements/base.txt
     #   huggingface-hub
