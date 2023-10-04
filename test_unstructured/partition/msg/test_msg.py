@@ -288,7 +288,7 @@ def test_partition_msg_with_pgp_encrypted_message(
     assert "Encrypted email detected" in caplog.text
 
 
-def test_add_chunking_strategy_on_partition_msg(
+def test_add_chunking_strategy_by_title_on_partition_msg(
     filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg"),
 ):
     elements = partition_msg(filename=filename)

@@ -177,7 +177,7 @@ def test_partition_ppt_with_json(
         assert elements[i] == test_elements[i]
 
 
-def test_add_chunking_strategy_on_partition_ppt(
+def test_add_chunking_strategy_by_title_on_partition_ppt(
     filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt"),
 ):
     elements = partition_ppt(filename=filename)

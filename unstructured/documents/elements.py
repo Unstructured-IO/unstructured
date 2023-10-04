@@ -186,6 +186,10 @@ class ElementMetadata:
     # Metadata extracted via regex
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
 
+    # Chunking metadata fields
+    num_characters: Optional[int] = None
+    is_continuation: Optional[bool] = None
+
     # Detection Model Class Probabilities from Unstructured-Inference Hi-Res
     detection_class_prob: Optional[float] = None
 
@@ -581,6 +585,14 @@ class PageBreak(Text):
 
 class Table(Text):
     """An element for capturing tables."""
+
+    category = "Table"
+
+    pass
+
+
+class TableChunk(Table):
+    """An element for capturing chunks of tables."""
 
     category = "Table"
 
