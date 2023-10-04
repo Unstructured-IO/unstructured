@@ -3,7 +3,7 @@ import typing as t
 from .airtable import Airtable
 from .azure import Azure
 from .biomed import Biomed
-from .box import box
+from .box import Box
 from .confluence import confluence
 from .delta_table import delta_table
 from .discord import discord
@@ -30,7 +30,7 @@ runner_map: t.Dict[str, t.Callable] = {
     "airtable": Airtable,
     "azure": Azure,
     "biomed": Biomed,
-    "box": box,
+    "box": Box,
     "confluence": confluence,
     "delta_table": delta_table,
     "discord": discord,
@@ -59,7 +59,7 @@ __all__ = [
     "Airtable",
     "Azure",
     "Biomed",
-    "box",
+    "Box",
     "confluence",
     "delta_table",
     "discord",
