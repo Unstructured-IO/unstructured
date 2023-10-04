@@ -83,9 +83,9 @@ def partition_csv(
     else:
         metadata = ElementMetadata()
 
-    return list(
-        apply_lang_metadata(
-            [Table(text=text, metadata=metadata)],
-            languages=languages,
-        ),
+    elements = apply_lang_metadata(
+        [Table(text=text, metadata=metadata)],
+        languages=languages,
     )
+
+    return list(elements)

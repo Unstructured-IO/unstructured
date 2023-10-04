@@ -230,10 +230,10 @@ def test_partition_xlsx_subtables(filename="example-docs/vodafone.xlsx"):
     assert sum(isinstance(element, Table) for element in elements) == 3
     assert len(elements) == 6
 
-    
+
 # NOTE (jennings) partition_xlsx returns a single TableElement,
 # so we can only detect the language of that single element
 def test_partition_xlsx_element_metadata_has_languages():
     filename = "example-docs/stanley-cups.xlsx"
     elements = partition_xlsx(filename=filename)
-    assert elements[0].metadata.languages == ["eng"]    
+    assert elements[0].metadata.languages == ["eng"]

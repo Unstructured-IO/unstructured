@@ -1,7 +1,7 @@
 import datetime
 import io
 from dataclasses import dataclass, field
-from typing import IO, Any, Dict, Final, Iterable, Iterator, List, Optional, Union
+from typing import IO, Any, Dict, Final, Iterable, Iterator, List, Optional
 
 import docx
 import openpyxl
@@ -156,7 +156,7 @@ def _get_exif_datetime(exif_dict: Dict[str, Any], key: str) -> Optional[datetime
 
 
 def apply_lang_metadata(
-    elements: Union[Iterable[Element], List[Element]],
+    elements: Iterable[Element],
     languages: List[str],
     detect_language_per_element: bool = False,
 ) -> Iterator[Element]:
@@ -182,7 +182,7 @@ def apply_lang_metadata(
         and len(languages) == 1
         and detect_language_per_element is False
     ):
-        # -- apply detected languge to each metadata --
+        # -- apply detected language to each metadata --
         for e in elements:
             e.metadata.languages = detected_languages
             yield e

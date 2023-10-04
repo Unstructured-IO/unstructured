@@ -135,13 +135,12 @@ def partition_msg(
                     element.metadata.attached_to_filename = metadata_filename or filename
                     elements.append(element)
 
-    return list(
-        apply_lang_metadata(
-            elements=elements,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-        ),
+    elements = apply_lang_metadata(
+        elements=elements,
+        languages=languages,
+        detect_language_per_element=detect_language_per_element,
     )
+    return list(elements)
 
 
 def build_msg_metadata(

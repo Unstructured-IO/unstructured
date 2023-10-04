@@ -203,21 +203,19 @@ def partition_docx(
             'The language parameter must be a list of language codes as strings, ex. ["eng"]',
         )
 
-    elements = list(
-        apply_lang_metadata(
-            elements=_DocxPartitioner.iter_document_elements(
-                filename,
-                file,
-                metadata_filename,
-                include_page_breaks,
-                metadata_last_modified,
-            ),
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-        ),
+    elements = _DocxPartitioner.iter_document_elements(
+        filename,
+        file,
+        metadata_filename,
+        include_page_breaks,
+        metadata_last_modified,
     )
-
-    return elements
+    elements = apply_lang_metadata(
+        elements=elements,
+        languages=languages,
+        detect_language_per_element=detect_language_per_element,
+    )
+    return list(elements)
 
 
 class _DocxPartitioner:
@@ -291,8 +289,6 @@ class _DocxPartitioner:
         # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
         # -- functions like `._iter_paragraph_elements()` where the "just return when done"
         # -- characteristic of a generator avoids repeated code to form interim results into lists.
-
-        # full_text = ""
 
         for section_idx, section in enumerate(self._document.sections):
             yield from self._iter_section_page_breaks(section_idx, section)
@@ -516,10 +512,11 @@ class _DocxPartitioner:
         # -- predict when two page breaks will be needed and emit one of them. The second will be
         # -- emitted by the rendered page-break to follow.
 
-        if start_type == WD_SECTION_START.EVEN_PAGE and not page_is_odd():
+        if start_type == WD_SECTION_START.EVEN_PAGE:  # noqa
             # -- on an even page we need two total, add one to supplement the rendered page break
             # -- to follow. There is no "first-document-page" special case because 1 is odd.
-            yield from self._increment_page_number()
+            if not page_is_odd():
+                yield from self._increment_page_number()
 
         elif start_type == WD_SECTION_START.ODD_PAGE:
             # -- the first page of the document is an implicit "new" odd-page, so no page-break --

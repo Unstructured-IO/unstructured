@@ -465,10 +465,10 @@ def partition_email(
                     element.metadata.attached_to_filename = metadata_filename or filename
                     all_elements.append(element)
 
-    return list(
-        apply_lang_metadata(
-            elements=all_elements,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-        ),
+    elements = apply_lang_metadata(
+        elements=all_elements,
+        languages=languages,
+        detect_language_per_element=detect_language_per_element,
     )
+
+    return list(elements)

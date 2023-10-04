@@ -103,19 +103,19 @@ def partition_pptx(
     source_file = file or filename
     assert source_file is not None
 
-    return list(
-        apply_lang_metadata(
-            elements=_PptxPartitioner.iter_presentation_elements(
-                source_file,
-                include_page_breaks,
-                include_slide_notes,
-                metadata_filename,
-                metadata_last_modified,
-            ),
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-        ),
+    elements = _PptxPartitioner.iter_presentation_elements(
+        source_file,
+        include_page_breaks,
+        include_slide_notes,
+        metadata_filename,
+        metadata_last_modified,
     )
+    elements = apply_lang_metadata(
+        elements=elements,
+        languages=languages,
+        detect_language_per_element=detect_language_per_element,
+    )
+    return list(elements)
 
 
 class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]

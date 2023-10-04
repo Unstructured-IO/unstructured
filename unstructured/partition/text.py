@@ -273,14 +273,12 @@ def partition_text(
             element.metadata = copy.deepcopy(metadata)
             elements.append(element)
 
-    elements = list(
-        apply_lang_metadata(
-            elements=elements,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-        ),
+    elements = apply_lang_metadata(
+        elements=elements,
+        languages=languages,
+        detect_language_per_element=detect_language_per_element,
     )
-    return elements
+    return list(elements)
 
 
 def element_from_text(

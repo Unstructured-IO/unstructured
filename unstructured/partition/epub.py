@@ -115,12 +115,10 @@ def partition_epub(
 
         elements.extend(section_elements)
 
-    elements = list(
-        apply_lang_metadata(
-            elements,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-        ),
+    elements = apply_lang_metadata(
+        elements,
+        languages=languages,
+        detect_language_per_element=detect_language_per_element,
     )
 
-    return elements
+    return list(elements)
