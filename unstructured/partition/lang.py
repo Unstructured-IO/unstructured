@@ -1,3 +1,4 @@
+import re
 from typing import List
 
 import iso639
@@ -228,7 +229,8 @@ def detect_languages(
     if languages[0] == "":
         return [""]
 
-    if text.strip() == "" or len(text) < 20:
+    # Default to "eng" if text is empty or it has only ascii characters and is short
+    if text.strip() == "" or (re.match(r"^[\x00-\x7F]+$", text) and len(text) < 20):
         return ["eng"]  # english as default
 
     # set seed for deterministic langdetect outputs
