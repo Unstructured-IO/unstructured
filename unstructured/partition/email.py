@@ -418,9 +418,9 @@ def partition_email(
             text=content,
             encoding=encoding,
             max_partition=max_partition,
-            metadata_filename=metadata_filename or filename,
             min_partition=min_partition,
             languages=[""],
+            include_metadata=False,  # metadata is overwritten later, so no need to compute it here
         )
 
     for idx, element in enumerate(elements):

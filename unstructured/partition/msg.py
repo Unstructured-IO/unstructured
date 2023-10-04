@@ -96,6 +96,7 @@ def partition_msg(
         elements = partition_html(
             text=text,
             languages=[""],
+            include_metadata=False,  # metadata is overwritten later, so no need to compute it here
         )
     else:
         elements = partition_text(
@@ -103,6 +104,7 @@ def partition_msg(
             max_partition=max_partition,
             min_partition=min_partition,
             languages=[""],
+            include_metadata=False,  # metadata is overwritten later, so no need to compute it here
         )
 
     metadata = build_msg_metadata(
