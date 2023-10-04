@@ -1,7 +1,8 @@
-## 0.10.19-dev10
+## 0.10.19-dev11
 
 ### Enhancements
 
+* **Add document level language detection functionality.** Adds the "auto" default for the languages param to all partitioners. The primary language present in the document is detected using the `langdetect` package. Additional param `detect_language_per_element` is also added for partitioners that return multiple elements. Defaluts to `False`.
 * **Adds XLSX document level language detection** Enhancing on top of language detection functionality in previous release, we now support language detection within `.xlsx` file type at Element level.
 * **bump `unstructured-inference` to `0.6.6`** The updated version of `unstructured-inference` makes table extraction in `hi_res` mode configurable to fine tune table extraction performance; it also improves element detection by adding a deduplication post processing step in the `hi_res` partitioning of pdfs and images.
 * **Detect text in HTML Heading Tags as Titles** This will increase the accuracy of hierarchies in HTML documents and provide more accurate element categorization. If text is in an HTML heading tag and is not a list item, address, or narrative text, categorize it as a title.
