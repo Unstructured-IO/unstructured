@@ -72,7 +72,7 @@ The ``coordinates`` property of an ``ElementMetadata`` stores:
 * ``points`` : These specify the corners of the bounding box starting from the top left corner and
   proceeding counter-clockwise. The points represent pixels, the origin is in the top left and
   the ``y`` coordinate increases in the downward direction.
-* **system**: The points have an associated coordinate system. A typical example of a coordinate system is
+* ``system``: The points have an associated coordinate system. A typical example of a coordinate system is
   ``PixelSpace``, which is used for representing the coordinates of images. The coordinate system has a
   name, orientation, layout width, and layout height.
 
