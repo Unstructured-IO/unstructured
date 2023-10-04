@@ -10,7 +10,7 @@ from .discord import Discord
 from .dropbox import Dropbox
 from .elasticsearch import ElasticSearch
 from .fsspec import Fsspec
-from .gcs import gcs
+from .gcs import GCS
 from .github import github
 from .gitlab import gitlab
 from .google_drive import gdrive
@@ -37,7 +37,7 @@ runner_map: t.Dict[str, t.Callable] = {
     "dropbox": Dropbox,
     "elasticsearch": ElasticSearch,
     "fsspec": Fsspec,
-    "gcs": gcs,
+    "gcs": GCS,
     "github": github,
     "gitlab": gitlab,
     "gdrive": gdrive,
@@ -66,7 +66,7 @@ __all__ = [
     "Dropbox",
     "ElasticSearch",
     "Fsspec",
-    "gcs",
+    "GCS",
     "gdrive",
     "github",
     "gitlab",
