@@ -14,7 +14,7 @@ from .gcs import GCS
 from .github import Github
 from .gitlab import Gitlab
 from .google_drive import GoogleDrive
-from .jira import jira
+from .jira import Jira
 from .local import local
 from .notion import notion
 from .onedrive import onedrive
@@ -42,7 +42,7 @@ runner_map: t.Dict[str, t.Callable] = {
     "gitlab": Gitlab,
     "gdrive": GoogleDrive,
     "google_drive": GoogleDrive,
-    "jira": jira,
+    "jira": Jira,
     "local": local,
     "notion": notion,
     "onedrive": onedrive,
@@ -70,7 +70,7 @@ __all__ = [
     "GoogleDrive",
     "Github",
     "Gitlab",
-    "jira",
+    "Jira",
     "local",
     "notion",
     "onedrive",
