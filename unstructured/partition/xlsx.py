@@ -118,6 +118,7 @@ def partition_xlsx(
                     last_non_consecutive,
                 ) = _find_first_and_last_non_consecutive_row(
                     single_non_empty_rows,
+                    subtable.shape,
                 )
 
                 metadata = _get_metadata(
@@ -313,12 +314,14 @@ def _get_sub_subtable(subtable: pd.DataFrame, first_and_last_row: Tuple[int, int
 
 def _find_first_and_last_non_consecutive_row(
     row_indices: List[int],
+    table_shape: Tuple[int, int],
 ) -> Tuple[Optional[int], Optional[int]]:
     """
     Find the indices of the first and last non-consecutive rows in a list of row indices.
     """
-    # NOTE(klaijan) - only consider non-table rows for consecutive top or bottom rows
-    if len(row_indices) == 1:
+    # If the table is a single column with one or more rows
+    table_rows, table_cols = table_shape
+    if len(row_indices) == 1 or (len(row_indices) == table_rows and table_cols == 1):
         return row_indices[0], row_indices[0]
 
     arr = np.array(row_indices)

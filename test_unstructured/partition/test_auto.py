@@ -828,7 +828,7 @@ EXPECTED_XLS_TABLE = (
 def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.xls"):
     elements = partition(filename=filename, include_header=False)
 
-    assert sum(isinstance(element, Table) for element in elements) == 6
+    assert sum(isinstance(element, Table) for element in elements) == 2
     assert len(elements) == 10
 
     assert clean_extra_whitespace(elements[0].text)[:45] == EXPECTED_XLS_INITIAL_45_CLEAN_TEXT
