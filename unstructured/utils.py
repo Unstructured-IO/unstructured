@@ -217,11 +217,14 @@ def _first_and_remaining_iterator(it: Iterable) -> Tuple[Any, Iterator]:
 
 
 def first(it: Iterable) -> Any:
+    """Returns the first item from an iterable. Raises an error if the iterable is empty."""
     out, _ = _first_and_remaining_iterator(it)
     return out
 
 
 def only(it: Iterable) -> Any:
+    """Returns the only element from a singleton iterable. Raises an error if the iterable is not a
+    singleton."""
     out, iterator = _first_and_remaining_iterator(it)
     if any(True for _ in iterator):
         raise ValueError(
