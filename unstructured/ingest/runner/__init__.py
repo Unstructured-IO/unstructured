@@ -17,7 +17,7 @@ from .google_drive import GoogleDrive
 from .jira import Jira
 from .local import Local
 from .notion import Notion
-from .onedrive import onedrive
+from .onedrive import OneDrive
 from .outlook import outlook
 from .reddit import reddit
 from .s3 import S3
@@ -45,7 +45,7 @@ runner_map: t.Dict[str, t.Callable] = {
     "jira": Jira,
     "local": Local,
     "notion": Notion,
-    "onedrive": onedrive,
+    "onedrive": OneDrive,
     "outlook": outlook,
     "reddit": reddit,
     "s3": S3,
@@ -73,7 +73,7 @@ __all__ = [
     "Jira",
     "Local",
     "Notion",
-    "onedrive",
+    "OneDrive",
     "outlook",
     "reddit",
     "S3",
