@@ -10,15 +10,15 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def outlook(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     user_email: str,
-    client_id: t.Optional[str],
-    client_cred: t.Optional[str],
-    tenant: t.Optional[str],
-    authority_url: t.Optional[str],
-    recursive: bool,
+    verbose: bool = False,
+    recursive: bool = False,
+    client_id: t.Optional[str] = None,
+    client_cred: t.Optional[str] = None,
+    tenant: t.Optional[str] = None,
+    authority_url: t.Optional[str] = None,
     outlook_folders: t.Optional[t.List[str]] = None,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,

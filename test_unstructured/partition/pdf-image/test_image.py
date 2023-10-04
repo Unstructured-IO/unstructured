@@ -440,7 +440,7 @@ def test_partition_image_formats_languages_for_tesseract():
             ocr_languages="jpn_vert",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name="detectron2_onnx",
+            model_name=pdf.default_hi_res_model(),
         )
 
 
@@ -455,6 +455,25 @@ def test_add_chunking_strategy_on_partition_image(
 ):
     elements = image.partition_image(filename=filename)
     chunk_elements = image.partition_image(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_add_chunking_strategy_on_partition_image_hi_res(
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    elements = image.partition_image(
+        filename=filename,
+        strategy="hi_res",
+        infer_table_structure=True,
+    )
+    chunk_elements = image.partition_image(
+        filename,
+        strategy="hi_res",
+        infer_table_structure=True,
+        chunking_strategy="by_title",
+    )
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks

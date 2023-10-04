@@ -407,7 +407,7 @@ def test_partition_pdf_with_dpi():
             ocr_languages="eng",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name="detectron2_onnx",
+            model_name=pdf.default_hi_res_model(),
             pdf_image_dpi=100,
         )
 
@@ -838,7 +838,7 @@ def test_partition_pdf_with_ocr_coordinates_are_not_nan_from_file(
                     assert point[1] is not math.nan
 
 
-def test_add_chunking_strategy_on_partition_pdf(
+def test_add_chunking_strategy_by_title_on_partition_pdf(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename)
@@ -858,7 +858,7 @@ def test_partition_pdf_formats_languages_for_tesseract():
             ocr_languages="eng",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name="detectron2_onnx",
+            model_name=pdf.default_hi_res_model(),
         )
 
 
@@ -907,7 +907,7 @@ def test_combine_numbered_list(filename):
     "filename",
     ["example-docs/layout-parser-paper-fast.pdf"],
 )
-def test_hyperlinks(filename):
+def test_partition_pdf_hyperlinks(filename):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
     links = [
         {
@@ -933,7 +933,7 @@ def test_hyperlinks(filename):
     "filename",
     ["example-docs/embedded-link.pdf"],
 )
-def test_hyperlinks_multiple_lines(filename):
+def test_partition_pdf_hyperlinks_multiple_lines(filename):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
     assert elements[-1].metadata.links[-1]["text"] == "capturing"
     assert len(elements[-1].metadata.links) == 2
@@ -953,3 +953,13 @@ def test_partition_pdf_uses_model_name():
         mockpartition.assert_called_once()
         assert "model_name" in mockpartition.call_args.kwargs
         assert mockpartition.call_args.kwargs["model_name"]
+
+
+def test_partition_pdf_word_bbox_not_char(
+    filename="example-docs/interface-config-guide-p93.pdf",
+):
+    try:
+        elements = pdf.partition_pdf(filename=filename)
+    except Exception as e:
+        raise ("Partitioning fail: %s" % e)
+    assert len(elements) == 17

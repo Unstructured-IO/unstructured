@@ -389,7 +389,7 @@ def _text_to_element(
             links=links,
             emphasized_texts=emphasized_texts,
         )
-    elif is_possible_title(text):
+    elif is_heading_tag(tag) or is_possible_title(text):
         return HTMLTitle(
             text,
             tag=tag,
@@ -429,6 +429,11 @@ def _is_container_with_text(tag_elem: etree.Element) -> bool:
 def is_narrative_tag(text: str, tag: str) -> bool:
     """Uses tag information to infer whether text is narrative."""
     return tag not in HEADING_TAGS and is_possible_narrative_text(text)
+
+
+def is_heading_tag(tag: str) -> bool:
+    """Uses tag information to infer whether text is a heading."""
+    return tag in HEADING_TAGS
 
 
 def _construct_text(tag_elem: etree.Element, include_tail_text: bool = True) -> str:

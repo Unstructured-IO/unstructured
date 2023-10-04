@@ -185,6 +185,10 @@ class ElementMetadata:
     # Metadata extracted via regex
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
 
+    # Chunking metadata fields
+    num_characters: Optional[int] = None
+    is_continuation: Optional[bool] = None
+
     # Detection Model Class Probabilities from Unstructured-Inference Hi-Res
     detection_class_prob: Optional[float] = None
 
@@ -566,6 +570,14 @@ class Table(Text):
     pass
 
 
+class TableChunk(Table):
+    """An element for capturing chunks of tables."""
+
+    category = "Table"
+
+    pass
+
+
 class Header(Text):
     """An element for capturing document headers."""
 
@@ -605,7 +617,8 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "Page-footer": Footer,
     "Page-header": Header,  # Title?
     "Picture": Image,
-    "Section-header": Header,
+    # this mapping favors ensures yolox produces backward compatible categories
+    "Section-header": Title,
     "Headline": Title,
     "Subheadline": Title,
     "Abstract": NarrativeText,
