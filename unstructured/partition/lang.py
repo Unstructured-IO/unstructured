@@ -228,7 +228,7 @@ def detect_languages(
     if languages[0] == "":
         return [""]
 
-    if text.strip() == "":
+    if text.strip() == "" or len(text) < 20:
         return ["eng"]  # english as default
 
     # set seed for deterministic langdetect outputs
