@@ -241,7 +241,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         """Sets the _permissions_data property for the doc.
         This property is later used to fill the corresponding SourceMetadata.permissions_data field,
         and after that carries on to the permissions_data property."""
-        self._permissions_data = ""
+        self._permissions_data: t.List[t.Dict] = [{}]
 
     # NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
     # in addition to or instead of get_file()

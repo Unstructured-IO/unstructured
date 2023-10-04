@@ -186,7 +186,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     # todo: improve permissions - ingestdoc matching logic
     def update_permissions_data(self):
-        self._permissions_data = ""
+        self._permissions_data = None
         permissions_dir = Path(self.partition_config.output_dir) / "permissions_data"
         if permissions_dir.is_dir():
             for filename in os.listdir(permissions_dir):
@@ -395,13 +395,13 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 
 class PermissionsConnector:
     def __init__(self, permissions_tenant, permissions_application_id, permissions_client_cred):
-        self.permissions_tenant = permissions_tenant
-        self.permissions_application_id = permissions_application_id
-        self.permissions_client_cred = permissions_client_cred
-        self.access_token = self.get_access_token()
+        self.permissions_tenant: str = permissions_tenant
+        self.permissions_application_id: str = permissions_application_id
+        self.permissions_client_cred: str = permissions_client_cred
+        self.access_token: str = self.get_access_token()
 
     @requires_dependencies(["requests"], extras="sharepoint")
-    def get_access_token(self):
+    def get_access_token(self) -> str:
         import requests
 
         url = f"https://login.microsoftonline.com/{self.permissions_tenant}/oauth2/v2.0/token"
