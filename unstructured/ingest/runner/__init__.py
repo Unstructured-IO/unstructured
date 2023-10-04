@@ -21,7 +21,7 @@ from .onedrive import OneDrive
 from .outlook import Outlook
 from .reddit import Reddit
 from .s3 import S3
-from .salesforce import salesforce
+from .salesforce import Salesforce
 from .sharepoint import SharePoint
 from .slack import slack
 from .wikipedia import wikipedia
@@ -49,7 +49,7 @@ runner_map: t.Dict[str, t.Callable] = {
     "outlook": Outlook,
     "reddit": Reddit,
     "s3": S3,
-    "salesforce": salesforce,
+    "salesforce": Salesforce,
     "sharepoint": SharePoint,
     "slack": slack,
     "wikipedia": wikipedia,
@@ -77,7 +77,7 @@ __all__ = [
     "Outlook",
     "Reddit",
     "S3",
-    "salesforce",
+    "Salesforce",
     "SharePoint",
     "slack",
     "wikipedia",

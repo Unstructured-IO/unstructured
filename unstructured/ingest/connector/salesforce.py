@@ -102,7 +102,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self) -> Path:
         record_file = self.record_id + ".json"
-        return Path(self.partition_config.output_dir) / self.record_type / record_file
+        return Path(self.processor_config.output_dir) / self.record_type / record_file
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
@@ -225,7 +225,7 @@ class SalesforceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
                     ingest_docs.append(
                         SalesforceIngestDoc(
                             connector_config=self.connector_config,
-                            partition_config=self.partition_config,
+                            processor_config=self.processor_config,
                             read_config=self.read_config,
                             record_type=record_type,
                             record_id=record["Id"],
