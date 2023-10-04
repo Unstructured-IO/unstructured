@@ -46,7 +46,6 @@ def partition_xlsx(
     metadata_last_modified: Optional[str] = None,
     include_header: bool = False,
     find_subtable: bool = True,
-    languages: List[str] = ["auto"],
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .xlsx format into its document elements.
@@ -60,15 +59,13 @@ def partition_xlsx(
     include_metadata
         Determines whether or not metadata is included in the output.
     languages
-        The list of languages present in the document.
+        User defined value for metadata.languages if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
     metadata_last_modified
         The day of the last modification
     include_header
         Determines whether or not header info info is included in text and medatada.text_as_html
-    languages
-        User defined value for metadata.languages if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
     """
     exactly_one(filename=filename, file=file)
 
