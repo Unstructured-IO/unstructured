@@ -193,4 +193,3 @@ def apply_lang_metadata(
                 yield e
             else:
                 yield e
-                continue
