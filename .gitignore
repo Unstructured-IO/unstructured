@@ -137,6 +137,7 @@ dmypy.json
 
 # ingest outputs
 /structured-output
+test_unstructured_ingest/workdir/
 
 # suggested ingest mirror directory
 /mirror

@@ -17,7 +17,7 @@ function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
 }
-trap cleanup EXIT
+#trap cleanup EXIT
 
 "$SCRIPT_DIR"/check-num-files-expected-output.sh 3 $OUTPUT_FOLDER_NAME 20k
 

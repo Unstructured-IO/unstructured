@@ -8,7 +8,6 @@ from unstructured.ingest.error import PartitionError
 from unstructured.ingest.logger import logger
 from unstructured.ingest.pipeline.interfaces import PartitionNode
 from unstructured.ingest.pipeline.utils import get_ingest_doc_hash
-from unstructured.staging.base import convert_to_dict
 
 
 @dataclass
@@ -31,15 +30,14 @@ class Partitioner(PartitionNode):
             if self.partition_config.ocr_languages
             else []
         )
-        elements = doc.partition_file(
+        elements = doc.process_file(
             partition_config=self.partition_config,
             strategy=self.partition_config.strategy,
             languages=languages,
             encoding=self.partition_config.encoding,
             pdf_infer_table_structure=self.partition_config.pdf_infer_table_structure,
         )
-        elements_dict = convert_to_dict(elements)
         with open(json_path, "w", encoding="utf8") as output_f:
             logger.info(f"writing partitioned content to {json_path}")
-            json.dump(elements_dict, output_f, ensure_ascii=False, indent=2)
+            json.dump(elements, output_f, ensure_ascii=False, indent=2)
         return str(json_path)
