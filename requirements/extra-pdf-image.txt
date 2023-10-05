@@ -11,9 +11,9 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-cffi==1.15.1
+cffi==1.16.0
     # via cryptography
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   pdfminer-six
@@ -24,7 +24,7 @@ contourpy==1.1.1
     # via matplotlib
 cryptography==41.0.4
     # via pdfminer-six
-cycler==0.11.0
+cycler==0.12.0
     # via matplotlib
 effdet==0.4.1
     # via layoutparser
@@ -35,7 +35,7 @@ filelock==3.12.4
     #   transformers
 flatbuffers==23.5.26
     # via onnxruntime
-fonttools==4.42.1
+fonttools==4.43.0
     # via matplotlib
 fsspec==2023.9.1
     # via
@@ -74,6 +74,7 @@ networkx==3.1
     # via torch
 numpy==1.24.4
     # via
+    #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   contourpy
     #   layoutparser
@@ -94,9 +95,10 @@ onnxruntime==1.16.0
     # via unstructured-inference
 opencv-python==4.8.0.76
     # via
+    #   -c requirements/constraints.in
     #   layoutparser
     #   unstructured-inference
-packaging==23.1
+packaging==23.2
     # via
     #   -c requirements/base.txt
     #   huggingface-hub
@@ -212,7 +214,7 @@ tqdm==4.66.1
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.33.2
+transformers==4.33.3
     # via unstructured-inference
 typing-extensions==4.8.0
     # via
@@ -223,7 +225,7 @@ typing-extensions==4.8.0
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.5.31
+unstructured-inference==0.6.6
     # via -r requirements/extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via

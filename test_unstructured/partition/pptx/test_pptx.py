@@ -112,7 +112,7 @@ class DescribePptxPartitionerShapeOrderingBehaviors:
         elements = cast(
             Iterator[Text],
             _PptxPartitioner(
-                get_test_file_path("group-shapes-nested.pptx")
+                get_test_file_path("group-shapes-nested.pptx"),
             )._iter_presentation_elements(),
         )
 
@@ -371,8 +371,8 @@ def test_partition_pptx_with_json():
         assert elements[i] == test_elements[i]
 
 
-def test_add_chunking_strategy_on_partition_pptx():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
+def test_add_chunking_strategy_by_title_on_partition_pptx():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "science-exploration-1p.pptx")
     elements = partition_pptx(filename=filename)
     chunk_elements = partition_pptx(filename, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)

@@ -8,7 +8,7 @@ from unittest.mock import patch
 import docx
 import pytest
 
-from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT
+from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT, EXPECTED_TITLE
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
@@ -17,6 +17,7 @@ from unstructured.documents.elements import (
     ListItem,
     NarrativeText,
     Table,
+    TableChunk,
     Text,
     Title,
 )
@@ -24,6 +25,7 @@ from unstructured.file_utils.filetype import FILETYPE_TO_MIMETYPE, FileType
 from unstructured.partition import auto
 from unstructured.partition.auto import _get_partition_with_extras, partition
 from unstructured.partition.common import convert_office_doc
+from unstructured.partition.pdf import default_hi_res_model
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -381,7 +383,7 @@ def test_auto_partition_formats_languages_for_tesseract():
             ocr_languages="chi_sim+chi_sim_vert+chi_tra+chi_tra_vert",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name=None,
+            model_name=default_hi_res_model(),
         )
 
 
@@ -706,36 +708,51 @@ EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsh
 def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx"):
     elements = partition(filename=filename, include_header=False)
 
-    assert all(isinstance(element, Table) for element in elements)
-    assert len(elements) == 2
+    assert sum(isinstance(element, Table) for element in elements) == 2
+    assert sum(isinstance(element, Title) for element in elements) == 2
+    assert len(elements) == 4
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
-    assert elements[0].metadata.page_number == 1
-    assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE
+    assert elements[1].metadata.page_number == 1
+    assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
 def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
     with open(filename, "rb") as f:
         elements = partition(file=f, include_header=False)
 
-    assert all(isinstance(element, Table) for element in elements)
-    assert len(elements) == 2
+    assert sum(isinstance(element, Table) for element in elements) == 2
+    assert sum(isinstance(element, Title) for element in elements) == 2
+    assert len(elements) == 4
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
-    assert elements[0].metadata.page_number == 1
-    assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE
+    assert elements[1].metadata.page_number == 1
+    assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
-EXPECTED_XLS_TEXT_LEN = 507
+EXPECTED_XLS_TEXT_LEN = 550
 
 
-EXPECTED_XLS_INITIAL_45_CLEAN_TEXT = "MA What C datatypes are 8 bits? (assume i386)"
+EXPECTED_XLS_INITIAL_45_CLEAN_TEXT = "MC What is 2+2? 4 correct 3 incorrect MA What"
 
 EXPECTED_XLS_TABLE = (
     """<table border="1" class="dataframe">
   <tbody>
+    <tr>
+      <td>MC</td>
+      <td>What is 2+2?</td>
+      <td>4</td>
+      <td>correct</td>
+      <td>3</td>
+      <td>incorrect</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
     <tr>
       <td>MA</td>
       <td>What C datatypes are 8 bits? (assume i386)</td>
@@ -812,8 +829,8 @@ EXPECTED_XLS_TABLE = (
 def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.xls"):
     elements = partition(filename=filename, include_header=False)
 
-    assert all(isinstance(element, Table) for element in elements)
-    assert len(elements) == 3
+    assert sum(isinstance(element, Table) for element in elements) == 2
+    assert len(elements) == 18
 
     assert clean_extra_whitespace(elements[0].text)[:45] == EXPECTED_XLS_INITIAL_45_CLEAN_TEXT
     # NOTE(crag): if the beautifulsoup4 package is installed, some (but not all) additional
@@ -937,37 +954,45 @@ def test_get_partition_with_extras_prompts_for_install_if_missing():
 
 def test_add_chunking_strategy_on_partition_auto():
     filename = "example-docs/example-10k-1p.html"
-    chunk_elements = partition(filename, chunking_strategy="by_title")
     elements = partition(filename)
+    chunk_elements = partition(filename, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
 
 
-def test_add_chunking_strategy_on_partition_auto_respects_multipage():
+def test_add_chunking_strategy_title_on_partition_auto_respects_multipage():
     filename = "example-docs/example-10k-1p.html"
     partitioned_elements_multipage_false_combine_chars_0 = partition(
         filename,
         chunking_strategy="by_title",
         multipage_sections=False,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     partitioned_elements_multipage_true_combine_chars_0 = partition(
         filename,
         chunking_strategy="by_title",
         multipage_sections=True,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     elements = partition(filename)
     cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(
         elements,
         multipage_sections=False,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(
         elements,
         multipage_sections=True,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     assert (
         partitioned_elements_multipage_false_combine_chars_0
@@ -980,3 +1005,69 @@ def test_add_chunking_strategy_on_partition_auto_respects_multipage():
     assert len(partitioned_elements_multipage_true_combine_chars_0) != len(
         partitioned_elements_multipage_false_combine_chars_0,
     )
+
+
+def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
+    filename = "example-docs/example-10k-1p.html"
+
+    # default chunk size in chars is 200
+    partitioned_table_elements_200_chars = [
+        e
+        for e in partition(
+            filename,
+            chunking_strategy="by_title",
+            max_characters=200,
+            combine_text_under_n_chars=5,
+        )
+        if isinstance(e, (Table, TableChunk))
+    ]
+
+    partitioned_table_elements_5_chars = [
+        e
+        for e in partition(
+            filename,
+            chunking_strategy="by_title",
+            max_characters=5,
+            combine_text_under_n_chars=5,
+        )
+        if isinstance(e, (Table, TableChunk))
+    ]
+
+    elements = partition(filename)
+
+    table_elements = [e for e in elements if isinstance(e, Table)]
+
+    assert len(partitioned_table_elements_5_chars) != len(table_elements)
+    assert len(partitioned_table_elements_200_chars) != len(table_elements)
+
+    assert len(partitioned_table_elements_5_chars[0].text) == 5
+    assert len(partitioned_table_elements_5_chars[0].metadata.text_as_html) == 5
+
+    # the first table element is under 200 chars so doesn't get chunked!
+    assert table_elements[0] == partitioned_table_elements_200_chars[0]
+    assert len(partitioned_table_elements_200_chars[0].text) < 200
+    assert len(partitioned_table_elements_200_chars[1].text) == 200
+    assert len(partitioned_table_elements_200_chars[1].metadata.text_as_html) == 200
+
+
+def test_add_chunking_strategy_chars_on_partition_auto_adds_is_continuation():
+    filename = "example-docs/example-10k-1p.html"
+
+    # default chunk size in chars is 200
+    partitioned_table_elements_200_chars = [
+        e
+        for e in partition(
+            filename,
+            chunking_strategy="by_num_characters",
+        )
+        if isinstance(e, Table)
+    ]
+
+    i = 0
+    for table in partitioned_table_elements_200_chars:
+        # have to reset the counter to 0 here when we encounter a Table element
+        if isinstance(table, Table):
+            i = 0
+        if i > 0 and isinstance(table, TableChunk):
+            assert table.metadata.is_continuation is True
+            i += 1

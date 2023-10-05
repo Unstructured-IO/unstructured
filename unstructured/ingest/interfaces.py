@@ -13,7 +13,8 @@ from pathlib import Path
 import requests
 from dataclasses_json import DataClassJsonMixin
 
-from unstructured.documents.elements import DataSourceMetadata
+from unstructured.chunking.title import chunk_by_title
+from unstructured.documents.elements import DataSourceMetadata, Element
 from unstructured.embed.interfaces import BaseEmbeddingEncoder
 from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
@@ -79,6 +80,25 @@ class EmbeddingConfig(BaseConfig):
 
 
 @dataclass
+class ChunkingConfig(BaseConfig):
+    chunk_elements: bool = False
+    multipage_sections: bool = True
+    combine_text_under_n_chars: int = 500
+    max_characters: int = 1500
+
+    def chunk(self, elements: t.List[Element]) -> t.List[Element]:
+        if self.chunk_elements:
+            return chunk_by_title(
+                elements=elements,
+                multipage_sections=self.multipage_sections,
+                combine_text_under_n_chars=self.combine_text_under_n_chars,
+                max_characters=self.max_characters,
+            )
+        else:
+            return elements
+
+
+@dataclass
 class WriteConfig(BaseConfig):
     pass
 
@@ -114,6 +134,9 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._date_processed = None
+
+    def run_chunking(self, elements: t.List[Element]) -> t.List[Element]:
+        return elements
 
     @property
     def embedder(self) -> t.Optional[BaseEmbeddingEncoder]:
@@ -263,6 +286,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
             if response.status_code != 200:
                 raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
             elements = elements_from_json(text=json.dumps(response.json()))
+        elements = self.run_chunking(elements=elements)
         if self.embedder:
             logger.info("Running embedder to add vector content to elements")
             elements = self.embedder.embed_documents(elements)

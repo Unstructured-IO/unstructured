@@ -9,7 +9,7 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   requests
@@ -50,9 +50,10 @@ networkx==3.1
     # via torch
 numpy==1.24.4
     # via
+    #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   transformers
-packaging==23.1
+packaging==23.2
     # via
     #   -c requirements/base.txt
     #   huggingface-hub
@@ -96,7 +97,7 @@ tqdm==4.66.1
     #   huggingface-hub
     #   sacremoses
     #   transformers
-transformers==4.33.2
+transformers==4.33.3
     # via -r requirements/huggingface.in
 typing-extensions==4.8.0
     # via

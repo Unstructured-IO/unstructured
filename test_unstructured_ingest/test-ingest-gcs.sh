@@ -7,11 +7,18 @@ cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=gcs
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
-max_processes=${MAX_PROCESSES:=$(python -c "import os; print(os.cpu_count())")}
+max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
+CI=${CI:-"false"}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+function cleanup() {
+  cleanup_dir "$OUTPUT_DIR"
+  if [ "$CI" == "true" ]; then
+    cleanup_dir "$DOWNLOAD_DIR"
+  fi
+}
+trap cleanup EXIT
 
 if [ -z "$GCP_INGEST_SERVICE_KEY" ]; then
     echo "Skipping Google Drive ingest test because the GCP_INGEST_SERVICE_KEY env var is not set."

@@ -1,20 +1,24 @@
 # pyright: reportPrivateUsage=false
 
 import os
+import pathlib
 from tempfile import SpooledTemporaryFile
 from typing import Dict, List
 
 import docx
 import pytest
+from docx.document import Document
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     Address,
+    Element,
     Footer,
     Header,
     ListItem,
     NarrativeText,
     Table,
+    TableChunk,
     Text,
     Title,
 )
@@ -52,6 +56,14 @@ def mock_document():
 
 
 @pytest.fixture()
+def mock_document_filename(mock_document: Document, tmp_path: pathlib.Path) -> str:
+    filename = str(tmp_path / "mock_document.docx")
+    print(f"filename = {filename}")
+    mock_document.save(filename)
+    return filename
+
+
+@pytest.fixture()
 def expected_elements():
     return [
         Title("These are a few of my favorite things:"),
@@ -85,11 +97,12 @@ def expected_emphasized_text_tags():
     return ["b", "i", "b", "i"]
 
 
-def test_partition_docx_from_filename(mock_document, expected_elements, tmpdir):
-    filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    mock_document.save(filename)
+def test_partition_docx_from_filename(
+    mock_document_filename: str,
+    expected_elements: List[Element],
+):
+    elements = partition_docx(filename=mock_document_filename)
 
-    elements = partition_docx(filename=filename)
     assert elements == expected_elements
     assert elements[0].metadata.page_number is None
     for element in elements:
@@ -410,9 +423,96 @@ def test_partition_docx_with_json(mock_document, expected_elements, tmpdir):
         assert elements[i] == test_elements[i]
 
 
-def test_add_chunking_strategy_on_partition_docx(filename="example-docs/handbook-1p.docx"):
+def test_parse_category_depth_by_style():
+    partitioner = _DocxPartitioner("example-docs/category-level.docx", None, None, False, None)
+
+    # Category depths are 0-indexed and relative to the category type
+    # Title, list item, bullet, narrative text, etc.
+    test_cases = [
+        (0, "Call me Ishmael."),
+        (0, "A Heading 1"),
+        (0, "Whenever I find myself growing grim"),
+        (0, "A top level list item"),
+        (1, "Next level"),
+        (1, "Same"),
+        (0, "Second top-level list item"),
+        (0, "whenever I find myself involuntarily"),
+        (0, ""),  # Empty paragraph
+        (1, "A Heading 2"),
+        (0, "This is my substitute for pistol and ball"),
+        (0, "Another Heading 1"),
+        (0, "There now is your insular city"),
+    ]
+
+    paragraphs = partitioner._document.paragraphs
+    for idx, (depth, text) in enumerate(test_cases):
+        paragraph = paragraphs[idx]
+        actual_depth = partitioner._parse_category_depth_by_style(paragraph)
+        assert text in paragraph.text, f"paragraph[{[idx]}].text does not contain {text}"
+        assert (
+            actual_depth == depth
+        ), f"expected paragraph[{idx}] to have depth=={depth}, got {actual_depth}"
+
+
+def test_parse_category_depth_by_style_name():
+    partitioner = _DocxPartitioner(None, None, None, False, None)
+
+    test_cases = [
+        (0, "Heading 1"),
+        (1, "Heading 2"),
+        (2, "Heading 3"),
+        (1, "Subtitle"),
+        (0, "List"),
+        (1, "List 2"),
+        (2, "List 3"),
+        (0, "List Bullet"),
+        (1, "List Bullet 2"),
+        (2, "List Bullet 3"),
+        (0, "List Number"),
+        (1, "List Number 2"),
+        (2, "List Number 3"),
+    ]
+
+    for idx, (depth, text) in enumerate(test_cases):
+        assert (
+            partitioner._parse_category_depth_by_style_name(text) == depth
+        ), f"test case {test_cases[idx]} failed"
+
+
+def test_parse_category_depth_by_style_ilvl():
+    partitioner = _DocxPartitioner(None, None, None, False, None)
+    assert partitioner._parse_category_depth_by_style_ilvl() == 0
+
+
+def test_add_chunking_strategy_on_partition_docx_default_args(
+    filename="example-docs/handbook-1p.docx",
+):
     chunk_elements = partition_docx(filename, chunking_strategy="by_title")
     elements = partition_docx(filename)
     chunks = chunk_by_title(elements)
+
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_add_chunking_strategy_on_partition_docx(
+    filename="example-docs/fake-doc-emphasized-text.docx",
+):
+    chunk_elements = partition_docx(
+        filename,
+        chunking_strategy="by_title",
+        max_characters=9,
+        combine_text_under_n_chars=5,
+    )
+    elements = partition_docx(filename)
+    chunks = chunk_by_title(elements, max_characters=9, combine_text_under_n_chars=5)
+    # remove the last element of the TableChunk list because it will be the leftover slice
+    # and not necessarily the max_characters len
+    table_chunks = [chunk for chunk in chunks if isinstance(chunk, TableChunk)][:-1]
+    other_chunks = [chunk for chunk in chunks if not isinstance(chunk, TableChunk)]
+    for table_chunk in table_chunks:
+        assert len(table_chunk.text) == 9
+    for chunk in other_chunks:
+        assert len(chunk.text) >= 5
     assert chunk_elements != elements
     assert chunk_elements == chunks

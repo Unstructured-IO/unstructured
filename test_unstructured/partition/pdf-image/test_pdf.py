@@ -407,7 +407,7 @@ def test_partition_pdf_with_dpi():
             ocr_languages="eng",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name=None,
+            model_name=pdf.default_hi_res_model(),
             pdf_image_dpi=100,
         )
 
@@ -479,7 +479,7 @@ def test_partition_pdf_fast_groups_text_in_text_box():
             system=expected_coordinate_system_3,
         ),
     )
-    assert elements[3] == Text("2.5", metadata=expected_elem_metadata_3)
+    assert elements[2] == Text("2.5", metadata=expected_elem_metadata_3)
 
 
 def test_partition_pdf_with_metadata_filename(
@@ -838,7 +838,7 @@ def test_partition_pdf_with_ocr_coordinates_are_not_nan_from_file(
                     assert point[1] is not math.nan
 
 
-def test_add_chunking_strategy_on_partition_pdf(
+def test_add_chunking_strategy_by_title_on_partition_pdf(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename)
@@ -858,7 +858,7 @@ def test_partition_pdf_formats_languages_for_tesseract():
             ocr_languages="eng",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name=None,
+            model_name=pdf.default_hi_res_model(),
         )
 
 
@@ -875,7 +875,7 @@ def test_partition_pdf_or_image_warns_with_ocr_languages(caplog):
 
 
 def test_partition_categorization_backup():
-    text = "This is Clearly a Title."
+    text = "This is Clearly a Title"
     with mock.patch.object(pdf, "_partition_pdf_or_image_local", return_value=[Text(text)]):
         elements = pdf.partition_pdf_or_image(
             "example-docs/layout-parser-paper-fast.pdf",
@@ -898,7 +898,45 @@ def test_combine_numbered_list(filename):
             first_list_element = element
             break
     assert len(elements) < 28
-    assert first_list_element.text.endswith("(Section 3)")
+    assert first_list_element.text.endswith(
+        "character recognition, and other DIA tasks (Section 3)",
+    )
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-docs/layout-parser-paper-fast.pdf"],
+)
+def test_partition_pdf_hyperlinks(filename):
+    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    links = [
+        {
+            "text": "8",
+            "url": "cite.gardner2018allennlp",
+            "start_index": 138,
+        },
+        {
+            "text": "34",
+            "url": "cite.wolf2019huggingface",
+            "start_index": 141,
+        },
+        {
+            "text": "35",
+            "url": "cite.wu2019detectron2",
+            "start_index": 168,
+        },
+    ]
+    assert elements[-1].metadata.links == links
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-docs/embedded-link.pdf"],
+)
+def test_partition_pdf_hyperlinks_multiple_lines(filename):
+    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    assert elements[-1].metadata.links[-1]["text"] == "capturing"
+    assert len(elements[-1].metadata.links) == 2
 
 
 def test_partition_pdf_uses_model_name():
@@ -915,3 +953,13 @@ def test_partition_pdf_uses_model_name():
         mockpartition.assert_called_once()
         assert "model_name" in mockpartition.call_args.kwargs
         assert mockpartition.call_args.kwargs["model_name"]
+
+
+def test_partition_pdf_word_bbox_not_char(
+    filename="example-docs/interface-config-guide-p93.pdf",
+):
+    try:
+        elements = pdf.partition_pdf(filename=filename)
+    except Exception as e:
+        raise ("Partitioning fail: %s" % e)
+    assert len(elements) == 17

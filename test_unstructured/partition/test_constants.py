@@ -28,6 +28,7 @@ EXPECTED_TABLE = """<table border="1" class="dataframe">
   </tbody>
 </table>"""
 
+EXPECTED_TITLE = "Stanley Cups"
 
 EXPECTED_TEXT = (
     "Stanley Cups Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"

@@ -5,6 +5,7 @@ from html import unescape
 from pathlib import Path
 from urllib.parse import urlparse
 
+from unstructured.documents.elements import Element
 from unstructured.embed.interfaces import BaseEmbeddingEncoder
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.error import SourceConnectionError
@@ -12,6 +13,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSourceConnector,
+    ChunkingConfig,
     EmbeddingConfig,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -69,6 +71,19 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     file_path: str
     registry_name: str = "sharepoint"
     embedding_config: t.Optional[EmbeddingConfig] = None
+    chunking_config: t.Optional[ChunkingConfig] = None
+
+    def run_chunking(self, elements: t.List[Element]) -> t.List[Element]:
+        if self.chunking_config:
+            logger.info(
+                "Running chunking to split up elements with config: "
+                f"{self.chunking_config.to_dict()}",
+            )
+            chunked_elements = self.chunking_config.chunk(elements=elements)
+            logger.info(f"chunked {len(elements)} elements into {len(chunked_elements)}")
+            return chunked_elements
+        else:
+            return elements
 
     @property
     def embedder(self) -> t.Optional[BaseEmbeddingEncoder]:
@@ -244,6 +259,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleSharepointConfig
     embedding_config: t.Optional[EmbeddingConfig] = None
+    chunking_config: t.Optional[ChunkingConfig] = None
 
     @requires_dependencies(["office365"], extras="sharepoint")
     def _list_files(self, folder, recursive) -> t.List["File"]:
@@ -283,6 +299,7 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
             is_page=is_page,
             file_path=file_path,
             embedding_config=self.embedding_config,
+            chunking_config=self.chunking_config,
         )
 
     @requires_dependencies(["office365"], extras="sharepoint")

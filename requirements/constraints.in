@@ -39,5 +39,8 @@ matplotlib==3.7.2
 # NOTE(crag) - pin to available pandas for python 3.8 (at least in CI)
 fsspec==2023.9.1
 pandas<2.0.4
-# langchain limits this to 3.1.7
-anyio==3.1.7
+# langchain limits anyio to below 4.0
+anyio<4.0
+# pinned in unstructured paddleocr
+opencv-python==4.8.0.76
+opencv-contrib-python==4.8.0.76

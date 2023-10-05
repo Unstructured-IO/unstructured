@@ -2,6 +2,9 @@ import quopri
 import re
 import sys
 import unicodedata
+from typing import Tuple
+
+import numpy as np
 
 from unstructured.file_utils.encoding import (
     format_encoding_str,
@@ -412,3 +415,46 @@ def bytes_string_to_string(text: str, encoding: str = "utf-8"):
     text_bytes = bytes([ord(char) for char in text])
     formatted_encoding = format_encoding_str(encoding)
     return text_bytes.decode(formatted_encoding)
+
+
+def clean_extra_whitespace_with_index_run(text: str) -> Tuple[str, np.ndarray]:
+    """Cleans extra whitespace characters that appear between words.
+    Calculate distance between characters of original text and cleaned text.
+
+    Returns cleaned text along with array of indices it has moved from original.
+
+    Example
+    -------
+    ITEM 1.     BUSINESS -> ITEM 1. BUSINESS
+    array([0., 0., 0., 0., 0., 0., 0., 0., 4., 4., 4., 4., 4., 4., 4., 4., 4., 4., 4., 4.]))
+    """
+
+    cleaned_text = re.sub(r"[\xa0\n]", " ", text)
+    cleaned_text = re.sub(r"([ ]{2,})", " ", cleaned_text)
+
+    cleaned_text = cleaned_text.strip()
+
+    moved_indices = np.zeros(len(text))
+
+    distance, original_index, cleaned_index = 0, 0, 0
+    while cleaned_index < len(cleaned_text):
+        if text[original_index] == cleaned_text[cleaned_index] or (
+            bool(re.match("[\xa0\n]", text[original_index]))
+            and bool(re.match(" ", cleaned_text[cleaned_index]))
+        ):
+            moved_indices[cleaned_index] = distance
+            original_index += 1
+            cleaned_index += 1
+            continue
+
+        distance += 1
+        moved_indices[cleaned_index] = distance
+        original_index += 1
+
+    moved_indices[cleaned_index:] = distance
+
+    return cleaned_text, moved_indices
+
+
+def index_adjustment_after_clean_extra_whitespace(index, moved_indices) -> int:
+    return int(index - moved_indices[index])

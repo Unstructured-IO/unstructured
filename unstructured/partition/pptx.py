@@ -95,7 +95,7 @@ def partition_pptx(
             include_slide_notes,
             metadata_filename,
             metadata_last_modified,
-        )
+        ),
     )
 
 

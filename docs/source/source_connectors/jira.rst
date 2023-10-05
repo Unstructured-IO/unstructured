@@ -31,30 +31,22 @@ Run Locally
 
       .. code:: python
 
-        import subprocess
+        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
+        from unstructured.ingest.runner.jira import jira
 
-        command = [
-            "unstructured-ingest",
-            "jira",
-            "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
-            "--url", "https://unstructured-jira-connector-test.atlassian.net",
-            "--user-email", "12345678@unstructured.io",
-            "--api-token", "ABCDE1234ABDE1234ABCDE1234",
-            "--output-dir", "jira-ingest-output",
-            "--num-processes", "2",
-        ]
-
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            jira(
+                verbose=True,
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
+                    output_dir="jira-ingest-output",
+                    num_processes=2,
+                    metadata_exclude=["filename", "file_directory", "metadata.data_source.date_processed"],
+                ),
+                url="https://unstructured-jira-connector-test.atlassian.net",
+                user_email="12345678@unstructured.io",
+                api_token="ABCDE1234ABDE1234ABCDE1234",
+            )
 
 Run via the API
 ---------------
@@ -82,32 +74,26 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
       .. code:: python
 
-        import subprocess
+        import os
 
-        command = [
-          "unstructured-ingest",
-          "jira",
-          "--metadata-exclude", "filename,file_directory,metadata.data_source.date_processed",
-          "--url", "https://unstructured-jira-connector-test.atlassian.net",
-          "--user-email", "12345678@unstructured.io",
-          "--api-token", "ABCDE1234ABDE1234ABCDE1234",
-          "--output-dir", "jira-ingest-output",
-          "--num-processes", "2",
-          "--partition-by-api",
-          "--api-key", "<UNSTRUCTURED-API-KEY>",
-        ]
+        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
+        from unstructured.ingest.runner.jira import jira
 
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            jira(
+                verbose=True,
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
+                    output_dir="jira-ingest-output",
+                    num_processes=2,
+                    metadata_exclude=["filename", "file_directory", "metadata.data_source.date_processed"],
+                    partition_by_api=True,
+                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
+                ),
+                url="https://unstructured-jira-connector-test.atlassian.net",
+                user_email="12345678@unstructured.io",
+                api_token="ABCDE1234ABDE1234ABCDE1234",
+            )
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 
