@@ -21,5 +21,10 @@ def test_calculate_edit_distance(filename, similarity, percentage):
 
     score = calculate_edit_distance(output_cct, source_cct, return_as="score")
     distance = calculate_edit_distance(output_cct, source_cct, return_as="percentage")
+    
+    assert score >= 0
+    assert score <= 1.0
+    assert distance >= 0.0
+    assert distance <= 1.0
     assert round(score, 2) == similarity
     assert round(distance, 2) == percentage
