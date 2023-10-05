@@ -1,7 +1,7 @@
 [
   {
-    "type": "UncategorizedText",
-    "element_id": "055b9fd1463ee2c4481b4eb9e20d4b0f",
+    "type": "Header",
+    "element_id": "cda1ae2f061dbdafb3374e6411d3823e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -10,8 +10,8 @@
     "text": "S32"
   },
   {
-    "type": "Title",
-    "element_id": "b8b976f4707d2af116239c70acf8f2be",
+    "type": "Header",
+    "element_id": "d7106f2241a37dc4e61314f45da1ff5b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -21,7 +21,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "d16d8a1280ba2acf52f98e9d3c9c2301",
+    "element_id": "f7573da2765829e5fcbc8eed02057106",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -40,7 +40,7 @@
     "text": "Discussion: Our data confirm previous findings on reduced slow wave density in FEP, and expand them to acute subjects, before any treatment is prescribed. This is in line with available data on diffuse abnormalities of cortico-cortical and cortico-thalamic networks in these patients. Interestingly, our data also offer preliminary evidence that this deficit is specific for SCZ, as it appears to differentiate patients who developed SCZ from those with other diagnoses at follow-up. Given the traveling properties of slow waves, future research should establish their potential as markers of connectivity in SCZ."
   },
   {
-    "type": "Title",
+    "type": "NarrativeText",
     "element_id": "c02ccab64d2a356a96f5394a2b92fa0b",
     "metadata": {
       "data_source": {},
@@ -91,7 +91,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "6164e852cb79f9408e833e350240ac5c",
+    "element_id": "9e7cc386b1093b082bccf936861747aa",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -100,7 +100,7 @@
     "text": "Background: Meta-analytic evidence showed increased levels of periph- eral endocannabinoid metabolites in psychotic illness. Alterations in the endocannabinoid system are believed to compromise glutamate and do- pamine transmission, which play a central role in pathophysiological models of psychosis. I will present preliminary data from an ongoing high-field proton magnetic resonance spectroscopy (MRS) study aimed at investigating the association between peripheral levels of endocannabinoid system metabolites and central glutamate metabolism in individuals at their first non-affective psychotic episode (NA-FEP) and healthy controls. Methods: We expect to recruit 17 NA-FEP and 20 healthy controls by January 2020. Currently, we recruited 12 NA-FEP and 18 healthy controls from two different research facilities (Imperial College London and University of Oxford) as part of a cross-sectional study. Participants un- derwent MRS scanning at 7-T with voxels placed in right dorsolateral prefrontal cortex (right-DLPFC), anterior cingulate cortex (ACC), and oc- cipital cortex. Neuro-metabolites will be calculated using the unsuppressed water signal as reference. Endocannabinoid metabolites were quantified from serum samples, collected during the same imaging session. Results: Analyses are ongoing. Based on previous evidence, expected findings are: (i) reduced glutamate levels in the ACC and right-DLPFC of NA-FEP compared to controls; (ii) increased peripheral endocannabinoid metabolites in NA-FEP compared to controls; and (iii) inverse association between peripheral endocannabinoid metabolites and glutamate levels in ACC and right-DLPFC in NA-FEP Discussion: This study will help clarifying the contribution of peripheral endocannabinoid system to central brain mechanisms of key relevance for psychotic illness. It will also add further evidence on the limited literature on high-resolution characterisation of brain metabolites in early psychosis. Strengths of the study include: (i) use of high-field MRS, which allows the estimation of glutamate-related compounds at higher precision than at lower field strength; (ii) reduced heterogeneity of the clinical sample (only male and NA-FEP). Limitations: small sample size and cross-sectional design."
   },
   {
-    "type": "Title",
+    "type": "NarrativeText",
     "element_id": "80abb04ec613b1d325ce6b8d0bb3349d",
     "metadata": {
       "data_source": {},
@@ -120,8 +120,8 @@
     "text": "Camila Loureiro*1, Corsi-Zuelli Fabiana1, Fachim Helene Aparecida1, Shuhama Rosana1, Menezes Paulo Rossi1, Dalton Caroline F2,"
   },
   {
-    "type": "Title",
-    "element_id": "3aa954bd1e29835edef83b7cd04e9769",
+    "type": "NarrativeText",
+    "element_id": "117f7774fd093a60d964cc5b461f3e22",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -131,7 +131,7 @@
   },
   {
     "type": "Title",
-    "element_id": "574d62523bf0c0a56967c26c82840550",
+    "element_id": "44b59a545030365cd1ad225ed05ff22d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
