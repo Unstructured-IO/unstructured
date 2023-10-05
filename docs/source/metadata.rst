@@ -165,6 +165,7 @@ a header or footer applies to. Valid values are ``"primary"``, ``"even_only"``, 
 Data Connector Metadata Fields
 ##############################
 
+Documents processed through unstructured-ingest connectors include additional document metadata. These additional fields only ever appear if the source document was processed by a connector.
 Common Data Connector Metadata Fields
 -------------------------------------
 
