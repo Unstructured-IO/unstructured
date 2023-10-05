@@ -189,7 +189,7 @@ def supplement_page_layout_with_ocr(
             if element.text == "":
                 padded_element = pad_element_bboxes(element, padding=12)
                 cropped_image = image.crop(
-                    (padded_element.x1, padded_element.y1, padded_element.x2, padded_element.y2)
+                    (padded_element.x1, padded_element.y1, padded_element.x2, padded_element.y2),
                 )
                 text_from_ocr = get_ocr_text_from_image(
                     cropped_image,

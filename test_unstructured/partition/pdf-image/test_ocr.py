@@ -379,7 +379,13 @@ def test_merge_inferred_layout_with_ocr_layout(mock_inferred_layout, mock_ocr_re
 )
 def test_pad_element_bboxes(padding, expected_bbox):
     element = LayoutElement(
-        x1=10, y1=20, x2=30, y2=40, text="", source=None, type="UncategorizedText"
+        x1=10,
+        y1=20,
+        x2=30,
+        y2=40,
+        text="",
+        source=None,
+        type="UncategorizedText",
     )
     expected_original_element_bbox = (10, 20, 30, 40)
 
