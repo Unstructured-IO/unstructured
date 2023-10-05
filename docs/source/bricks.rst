@@ -19,3 +19,4 @@ After reading this section, you should understand the following:
    bricks/extracting
    bricks/staging
    bricks/chunking
+   bricks/embedding
