@@ -2,6 +2,7 @@ import quopri
 import re
 import sys
 import unicodedata
+from collections import Counter
 from typing import Tuple
 
 import numpy as np
@@ -458,3 +459,8 @@ def clean_extra_whitespace_with_index_run(text: str) -> Tuple[str, np.ndarray]:
 
 def index_adjustment_after_clean_extra_whitespace(index, moved_indices) -> int:
     return int(index - moved_indices[index])
+
+
+def bag_of_words(text: str) -> dict:
+    words = remove_punctuation(text.lower()).split()
+    return dict(Counter(words))
