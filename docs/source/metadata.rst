@@ -162,12 +162,6 @@ Headers and footers in Word documents include a ``header_footer_type`` indicatin
 a header or footer applies to. Valid values are ``"primary"``, ``"even_only"``, and ``"first_page"``.
 
 
-Webpages
----------
-
-Elements from webpages will include a ``url`` metadata field, corresponding to the URL for the webpage.
-
-
 ##############################
 Data Connector Metadata Fields
 ##############################
@@ -175,12 +169,6 @@ Data Connector Metadata Fields
 Common Data Connector Metadata Fields
 -------------------------------------
 
-- Source Metadata
-    - date created
-    - date modified
-    - version
-    - source url
-    - exists
 - Data Source metadata (on json output):
     - url
     - version
