@@ -10,13 +10,13 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def slack(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     channels: t.List[str],
     token: str,
-    start_date: t.Optional[str],
-    end_date: t.Optional[str],
+    verbose: bool = False,
+    start_date: t.Optional[str] = None,
+    end_date: t.Optional[str] = None,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,
     **kwargs,

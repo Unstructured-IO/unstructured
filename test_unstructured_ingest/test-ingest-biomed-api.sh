@@ -12,7 +12,10 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+function cleanup() {
+  cleanup_dir "$OUTPUT_DIR"
+}
+trap cleanup EXIT
 
 "$SCRIPT_DIR"/check-num-files-expected-output.sh 2 $OUTPUT_FOLDER_NAME 10k
 

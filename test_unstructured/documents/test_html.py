@@ -17,6 +17,7 @@ from unstructured.documents.elements import (
 from unstructured.documents.html import (
     HEADING_TAGS,
     LIST_ITEM_TAGS,
+    SECTION_TAGS,
     TABLE_TAGS,
     TEXT_TAGS,
     HTMLDocument,
@@ -41,8 +42,15 @@ TAGS = (
 
 TAGS = TAGS.replace(">", "").split("<")[1:]
 
-INCLUDED_TAGS = TEXT_TAGS + HEADING_TAGS + LIST_ITEM_TAGS + ["div"]
-EXCLUDED_TAGS = "tag", [tag for tag in TAGS if tag not in INCLUDED_TAGS]
+VOID_TAGS = "<area><base><br><col><embed><hr><img><input><link><meta><param><source><track><wbr>"
+VOID_TAGS = VOID_TAGS.replace(">", "").split("<")[1:]
+
+INCLUDED_TAGS = TEXT_TAGS + HEADING_TAGS + LIST_ITEM_TAGS + SECTION_TAGS
+EXCLUDED_TAGS = [
+    tag
+    for tag in TAGS
+    if tag not in (INCLUDED_TAGS + TABLE_TAGS + VOID_TAGS + ["html", "head", "body"])
+]
 
 
 @pytest.fixture()
@@ -685,3 +693,31 @@ def test_sample_doc_with_emoji():
     # NOTE(robinson) - unclear why right now, but the output is the emoji on the test runners
     # and the byte string representation when running locally on mac
     assert doc.elements[0].text in ["Hello again ð\x9f\x98\x80", "Hello again 😀"]
+
+
+def test_only_plain_text_in_body():
+    raw_html = "<body>Hello</body>"
+    doc = HTMLDocument.from_string(raw_html)
+    assert doc.elements[0].text == "Hello"
+
+
+def test_plain_text_before_anything_in_body():
+    raw_html = "<body>Hello<p>World</p></body>"
+    doc = HTMLDocument.from_string(raw_html)
+    assert doc.elements[0].text == "Hello"
+    assert doc.elements[1].text == "World"
+
+
+def test_line_break_in_container():
+    raw_html = "<div>Hello<br/>World</div>"
+    doc = HTMLDocument.from_string(raw_html)
+    assert doc.elements[0].text == "Hello"
+    assert doc.elements[1].text == "World"
+
+
+@pytest.mark.parametrize("tag", TEXT_TAGS)
+def test_line_break_in_text_tag(tag):
+    raw_html = f"<{tag}>Hello<br/>World</{tag}>"
+    doc = HTMLDocument.from_string(raw_html)
+    assert doc.elements[0].text == "Hello"
+    assert doc.elements[1].text == "World"

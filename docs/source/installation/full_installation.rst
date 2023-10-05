@@ -1,28 +1,45 @@
+.. role:: raw-html(raw)
+    :format: html
+
 Full Installation
 =================
 
-1. **Installing Extras for Specific Document Types**: 
-   If you're processing document types beyond the basics, you can install the necessary extras:
+**Basic Usage**
+
+For a complete set of extras catering to every document type, use:
+
+.. code-block:: bash
+
+  pip install "unstructured[all-docs]"
+
+**Installation for Specific Document Types**
+
+If you're processing document types beyond the basics, you can install the necessary extras:
 
    .. code-block:: bash
 
       pip install "unstructured[docx,pptx]"
 
-   For a complete set of extras catering to every document type, use:
+*Available document types:*
 
    .. code-block:: bash
 
-      pip install "unstructured[all-docs]"
+        "csv", "doc", "docx", "epub", "image", "md", "msg", "odt", "org", "pdf", "ppt", "pptx", "rtf", "rst", "tsv", "xlsx"
 
-2. **Note on Older Versions**:
-   For versions earlier than `unstructured<0.9.0`, the following installation pattern was recommended:
+:raw-html:`<br />`
+**Installation for Specific Data Connectors**
+
+To use any of the data connectors, you must install the specific dependency:
 
    .. code-block:: bash
 
-      pip install "unstructured[local-inference]"
+      pip install "unstructured[s3]"
 
-   While "local-inference" remains supported in newer versions for backward compatibility, it might be deprecated in future releases. It's advisable to transition to the "all-docs" extra for comprehensive support.
+*Available data connectors:*
 
+   .. code-block:: bash
+
+        "airtable", "azure", "azure-cognitive-search", "biomed", "box", "confluence", "delta-table", "discord", "dropbox", "elasticsearch", "gcs", "github", "gitlab", "google-drive", "jira", "notion", "onedrive", "outlook", "reddit", "s3", "sharepoint", "salesforce", "slack", "wikipedia"
 
 Installation with ``conda`` on Windows
 --------------------------------------
@@ -155,3 +172,14 @@ library. This is not included as an ``unstructured`` dependency because it only 
 to some tokenizers. See the
 `sentencepiece install instructions <https://github.com/google/sentencepiece#installation>`_ for
 information on how to install ``sentencepiece`` if your tokenizer requires it.
+
+Note on Older Versions
+----------------------
+   For versions earlier than `unstructured<0.9.0`, the following installation pattern was recommended:
+
+   .. code-block:: bash
+
+      pip install "unstructured[local-inference]"
+
+   While "local-inference" remains supported in newer versions for backward compatibility, it might be deprecated in future releases. It's advisable to transition to the "all-docs" extra for comprehensive support.
+

@@ -101,20 +101,41 @@ Document elements
 When we partition a document, the output is a list of document ``Element`` objects.
 These element objects represent different components of the source document. Currently, the ``unstructured`` library supports the following element types:
 
-* ``Element``
-	* ``Text``
-		* ``FigureCaption``
-		* ``NarrativeText``
-		* ``ListItem``
-		* ``Title``
-		* ``Address``
-		* ``Table``
-		* ``PageBreak``
-		* ``Header``
-		* ``Footer``
-        	* ``EmailAddress``
-	* ``CheckBox``
-	* ``Image``
+**Elements**
+^^^^^^^^^^^^
+
+* ``type``
+
+  * ``FigureCaption``
+
+  * ``NarrativeText``
+
+  * ``ListItem``
+
+  * ``Title``
+
+  * ``Address``
+
+  * ``Table``
+
+  * ``PageBreak``
+
+  * ``Header``
+
+  * ``Footer``
+
+  * ``UncategorizedText``
+
+  * ``Image``
+
+  * ``Formula``
+
+* ``element_id``
+
+* ``metadata`` - see: :ref:`Metadata page <metadata-label>`
+
+* ``text``
+
 
 Other element types that we will add in the future include tables and figures.
 Different partitioning functions use different methods for determining the element type and extracting the associated content.

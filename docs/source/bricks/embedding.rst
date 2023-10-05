@@ -1,21 +1,21 @@
-########
+#########
 Embedding
-########
+#########
 
-EmbeddingEncoder classes in ``unstructured`` use document elements detected
+Embedding encoder classes in ``unstructured`` use document elements detected
 with ``partition`` or document elements grouped with ``chunking`` to obtain
 embeddings for each element, for uses cases such as Retrieval Augmented Generation (RAG).
 
 
 ``BaseEmbeddingEncoder``
-------------------
+------------------------
 
 The ``BaseEmbeddingEncoder`` is an abstract base class that defines the methods to be implemented
 for each ``EmbeddingEncoder`` subclass.
 
 
 ``OpenAIEmbeddingEncoder``
-------------------
+--------------------------
 
 The ``OpenAIEmbeddingEncoder`` class uses langchain OpenAI integration under the hood
 to connect to the OpenAI Text&Embedding API to obtain embeddings for pieces of text.
