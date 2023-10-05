@@ -39,7 +39,10 @@ class Pipeline(DataClassJsonMixin):
         return " -> ".join([node.__class__.__name__ for node in nodes])
 
     def run(self):
-        logger.info(f"running pipeline: {self.get_nodes_str()}")
+        logger.info(
+            f"running pipeline: {self.get_nodes_str()} "
+            f"with config: {self.pipeline_context.to_json()}",
+        )
         self.initialize()
         manager = mp.Manager()
         self.pipeline_context.ingest_docs_map = manager.dict()

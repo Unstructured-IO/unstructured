@@ -118,7 +118,9 @@ def delta_table_dest(ctx: click.Context, **options):
     log_options(parent_options, verbose=verbose)
     log_options(options, verbose=verbose)
     try:
-        configs = extract_configs(options, validate=[DeltaTableCliConfig, DeltaTableCliWriteConfig])
+        configs = extract_configs(parent_options, validate=[DeltaTableCliConfig])
+        # Validate write configs
+        DeltaTableCliWriteConfig.from_dict(options)
         runner_cls = runner_map[source_cmd]
         runner = runner_cls(
             **configs,
