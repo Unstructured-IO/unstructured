@@ -79,7 +79,7 @@ def process_data_with_ocr(
 
 def process_file_with_ocr(
     filename: str,
-    inferred_layout: "DocumentLayout",
+    out_layout: "DocumentLayout",
     is_image: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
@@ -117,7 +117,7 @@ def process_file_with_ocr(
                     image = image.convert("RGB")
                     image.format = format
                     merged_page_layout = supplement_page_layout_with_ocr(
-                        inferred_layout.pages[i],
+                        out_layout.pages[i],
                         image,
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
@@ -136,7 +136,7 @@ def process_file_with_ocr(
                 for i, image_path in enumerate(image_paths):
                     with PILImage.open(image_path) as image:
                         merged_page_layout = supplement_page_layout_with_ocr(
-                            inferred_layout.pages[i],
+                            out_layout.pages[i],
                             image,
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
@@ -151,7 +151,7 @@ def process_file_with_ocr(
 
 
 def supplement_page_layout_with_ocr(
-    inferred_page_layout: "PageLayout",
+    page_layout: "PageLayout",
     image: PILImage,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
@@ -171,20 +171,21 @@ def supplement_page_layout_with_ocr(
             "Environment variable ENTIRE_PAGE_OCR",
             " must be set to 'tesseract' or 'paddle'.",
         )
+
+    elements = page_layout.elements
     if ocr_mode == OCRMode.FULL_PAGE.value:
         ocr_layout = get_ocr_layout_from_image(
             image,
             ocr_languages=ocr_languages,
             entire_page_ocr=entire_page_ocr,
         )
-        merged_page_layout_elements = merge_inferred_layout_with_ocr_layout(
-            inferred_page_layout.elements,
+        merged_page_layout_elements = merge_out_layout_with_ocr_layout(
+            elements,
             ocr_layout,
         )
-        inferred_page_layout.elements[:] = merged_page_layout_elements
-        return inferred_page_layout
+        elements[:] = merged_page_layout_elements
+        return page_layout
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
-        elements = inferred_page_layout.elements
         for element in elements:
             if element.text == "":
                 padded_element = pad_element_bboxes(element, padding=12)
@@ -197,8 +198,7 @@ def supplement_page_layout_with_ocr(
                     entire_page_ocr=entire_page_ocr,
                 )
                 element.text = text_from_ocr
-        inferred_page_layout.elements[:] = elements
-        return inferred_page_layout
+        return page_layout
     else:
         raise ValueError(
             "Invalid OCR mode. Parameter `ocr_mode` "
@@ -354,30 +354,35 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
     return text_regions
 
 
-def merge_inferred_layout_with_ocr_layout(
-    inferred_layout: List[LayoutElement],
+def merge_out_layout_with_ocr_layout(
+    out_layout: List[LayoutElement],
     ocr_layout: List[TextRegion],
     supplement_with_ocr_elements: bool = True,
 ) -> List[LayoutElement]:
     """
-    Merge the inferred layout with the OCR-detected text regions on page level.
+    Merge the out layout with the OCR-detected text regions on page level.
 
-    This function iterates over each inferred layout element and aggregates the
-    associated text from the OCR layout using the specified threshold. The inferred
-    layout's text attribute is then updated with this aggregated text.
+    This function iterates over each out layout element and aggregates the associated text from
+    the OCR layout using the specified threshold. The out layout's text attribute is then updated
+    with this aggregated text. If `supplement_with_ocr_elements` is `True`, the out layout will be
+    supplemented with the OCR layout.
     """
 
-    for inferred_region in inferred_layout:
-        inferred_region.text = aggregate_ocr_text_by_block(
+    out_regions_without_text = [
+        region for region in out_layout if not region.text
+    ]
+
+    for out_region in out_regions_without_text:
+        out_region.text = aggregate_ocr_text_by_block(
             ocr_layout,
-            inferred_region,
+            out_region,
             SUBREGION_THRESHOLD_FOR_OCR,
         )
 
     final_layout = (
-        supplement_layout_with_ocr_elements(inferred_layout, ocr_layout)
+        supplement_layout_with_ocr_elements(out_layout, ocr_layout)
         if supplement_with_ocr_elements
-        else inferred_layout
+        else out_layout
     )
 
     return final_layout

@@ -357,20 +357,22 @@ def _partition_pdf_or_image_local(
             "model_name": model_name,
             "pdf_image_dpi": pdf_image_dpi,
         }
-        inferred_layout = process_file_with_model(
+
+        # NOTE(christine): out_layout = extracted_layout + inferred_layout
+        out_layout = process_file_with_model(
             filename,
             **process_file_with_model_kwargs,
         )
-        merged_layouts = process_file_with_ocr(
+        final_layout = process_file_with_ocr(
             filename,
-            inferred_layout,
+            out_layout,
             is_image=is_image,
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
         )
     else:
-        inferred_layout = process_data_with_model(
+        out_layout = process_data_with_model(
             file,
             is_image=is_image,
             extract_tables=infer_table_structure,
@@ -379,9 +381,9 @@ def _partition_pdf_or_image_local(
         )
         if hasattr(file, "seek"):
             file.seek(0)
-        merged_layouts = process_data_with_ocr(
+        final_layout = process_data_with_ocr(
             file,
-            inferred_layout,
+            out_layout,
             is_image=is_image,
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
@@ -389,7 +391,7 @@ def _partition_pdf_or_image_local(
         )
 
     elements = document_to_element_list(
-        merged_layouts,
+        final_layout,
         sortable=True,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_last_modified,
