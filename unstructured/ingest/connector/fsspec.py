@@ -90,6 +90,9 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     connector_config: SimpleFsspecConfig
     remote_file_path: str
 
+    def __post_init__(self):
+        self.update_source_metadata_metadata()
+
     def _tmp_download_file(self):
         download_dir = self.read_config.download_dir if self.read_config.download_dir else ""
         return Path(download_dir) / self.remote_file_path.replace(
@@ -120,7 +123,6 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
-        self.update_source_metadata_metadata()
 
     @requires_dependencies(["fsspec"])
     def update_source_metadata_metadata(self):
