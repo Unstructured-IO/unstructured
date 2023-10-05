@@ -42,7 +42,7 @@ class Pipeline(DataClassJsonMixin):
         logger.info(f"running pipeline: {self.get_nodes_str()}")
         self.initialize()
         manager = mp.Manager()
-        self.pipeline_context._ingest_docs_map = manager.dict()
+        self.pipeline_context.ingest_docs_map = manager.dict()
         json_docs = self.doc_factory_node()
         logger.info(
             f"processing {len(json_docs)} docs via "

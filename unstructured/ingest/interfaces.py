@@ -21,7 +21,7 @@ from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.ingest_doc_json_mixin import IngestDocJsonMixin
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
-from unstructured.staging.base import elements_from_json
+from unstructured.staging.base import convert_to_dict, elements_from_json
 
 
 @dataclass
@@ -250,7 +250,7 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     @PartitionError.wrap
     def partition_file(
         self,
-        partition_config=PartitionConfig,
+        partition_config: PartitionConfig,
         **partition_kwargs,
     ) -> t.List[Element]:
         if not partition_config.partition_by_api:
@@ -291,7 +291,7 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
 
     def process_file(
         self,
-        partition_config=PartitionConfig,
+        partition_config: PartitionConfig,
         **partition_kwargs,
     ) -> t.Optional[t.List[t.Dict[str, t.Any]]]:
         self._date_processed = datetime.utcnow().isoformat()
@@ -299,7 +299,8 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
             return None
         logger.info(f"Processing {self.filename}")
 
-        isd_elems = self.partition_file(partition_config=partition_config, **partition_kwargs)
+        isd_elems_raw = self.partition_file(partition_config=partition_config, **partition_kwargs)
+        isd_elems = convert_to_dict(isd_elems_raw)
 
         self.isd_elems_no_filename: t.List[t.Dict[str, t.Any]] = []
         for elem in isd_elems:

@@ -26,9 +26,13 @@ class PipelineContext(ProcessorConfig):
 
     @property
     def ingest_docs_map(self) -> DictProxy:
-        if not self._ingest_docs_map:
+        if self._ingest_docs_map is None:
             raise ValueError("ingest_docs_map never initialized")
         return self._ingest_docs_map
+
+    @ingest_docs_map.setter
+    def ingest_docs_map(self, value: DictProxy):
+        self._ingest_docs_map = value
 
 
 @dataclass

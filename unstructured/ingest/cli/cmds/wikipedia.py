@@ -52,10 +52,10 @@ def wikipedia_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         configs = extract_configs(data=options, validate=[WikipediaCliConfig])
-        sharepoint_runner = Wikipedia(
+        runner = Wikipedia(
             **configs,  # type: ignore
         )
-        sharepoint_runner.run(**options)
+        runner.run(**options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
