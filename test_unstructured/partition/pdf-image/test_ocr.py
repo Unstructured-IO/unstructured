@@ -47,6 +47,16 @@ def test_process_file_with_ocr_invalid_filename(is_image):
         )
 
 
+# TODO(yuming): Add this for test coverage, please update/move it in CORE-1886
+def test_supplement_page_layout_with_ocr_invalid_ocr(monkeypatch):
+    monkeypatch.setenv("ENTIRE_PAGE_OCR", "invalid_ocr")
+    with pytest.raises(ValueError):
+        _ = ocr.supplement_page_layout_with_ocr(
+            page_layout=None,
+            image=None,
+        )
+
+
 def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     monkeypatch.setattr(
         unstructured_pytesseract,
