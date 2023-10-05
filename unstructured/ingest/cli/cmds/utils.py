@@ -1,6 +1,50 @@
+import typing as t
 from gettext import gettext as _
+from gettext import ngettext
 
 import click
+
+
+def conform_click_options(options: dict):
+    # Click sets all multiple fields as tuple, this needs to be updated to list
+    for k, v in options.items():
+        if isinstance(v, tuple):
+            options[k] = list(v)
+
+
+class DelimitedString(click.ParamType):
+    name = "delimited-string"
+
+    def __init__(self, delimiter: str = ",", choices: t.Optional[t.List[str]] = None):
+        self.choices = choices if choices else []
+        self.delimiter = delimiter
+
+    def convert(
+        self,
+        value: t.Any,
+        param: t.Optional[click.Parameter],
+        ctx: t.Optional[click.Context],
+    ) -> t.Any:
+        # In case a list is provided as the default, will not break
+        if isinstance(value, list):
+            split = [str(v).strip() for v in value]
+        else:
+            split = [v.strip() for v in value.split(self.delimiter)]
+        if not self.choices:
+            return split
+        choices_str = ", ".join(map(repr, self.choices))
+        for s in split:
+            if s not in self.choices:
+                self.fail(
+                    ngettext(
+                        "{value!r} is not {choice}.",
+                        "{value!r} is not one of {choices}.",
+                        len(self.choices),
+                    ).format(value=s, choice=choices_str, choices=choices_str),
+                    param,
+                    ctx,
+                )
+        return split
 
 
 class Group(click.Group):

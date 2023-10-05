@@ -1,8 +1,16 @@
 from abc import abstractmethod
 
 import click
+from dataclasses_json.core import Json, _decode_dataclass
 
-from unstructured.ingest.interfaces2 import BaseConfig, PartitionConfig, ReadConfig
+from unstructured.ingest.cli.cmds.utils import DelimitedString
+from unstructured.ingest.interfaces import (
+    BaseConfig,
+    ChunkingConfig,
+    EmbeddingConfig,
+    PartitionConfig,
+    ReadConfig,
+)
 
 
 class CliMixin:
@@ -104,9 +112,10 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
             ),
             click.Option(
                 ["--fields-include"],
-                multiple=True,
-                default=["element_id", "text", "type", "metadata"],
-                help="If set, include the specified top-level fields in an element. ",
+                type=DelimitedString(),
+                default=["element_id", "text", "type", "metadata", "embeddings"],
+                help="Comma-delimited list. If set, include the specified top-level "
+                "fields in an element.",
             ),
             click.Option(
                 ["--flatten-metadata"],
@@ -119,20 +128,29 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
             click.Option(
                 ["--metadata-include"],
                 default=[],
-                multiple=True,
-                help="If set, include the specified metadata fields if they exist "
-                "and drop all other fields. ",
+                type=DelimitedString(),
+                help="Comma-delimited list. If set, include the specified metadata "
+                "fields if they exist and drop all other fields. ",
             ),
             click.Option(
                 ["--metadata-exclude"],
                 default=[],
-                multiple=True,
-                help="If set, drop the specified metadata fields if they exist. ",
+                type=DelimitedString(),
+                help="Comma-delimited list. If set, drop the specified metadata "
+                "fields if they exist.",
+            ),
+            click.Option(
+                ["--partition-by-api"],
+                is_flag=True,
+                default=False,
+                help="Use a remote API to partition the files."
+                " Otherwise, use the function from partition.auto",
             ),
             click.Option(
                 ["--partition-endpoint"],
-                default=None,
-                help="If provided, will use api to run partition",
+                default="https://api.unstructured.io/general/v0/general",
+                help="If partitioning via api, use the following host. "
+                "Default: https://api.unstructured.io/general/v0/general",
             ),
             click.Option(
                 ["--api-key"],
@@ -173,3 +191,101 @@ class CliRemoteUrlConfig(BaseConfig, CliMixin):
             ),
         ]
         cmd.params.extend(options)
+
+
+class CliEmbeddingsConfig(EmbeddingConfig, CliMixin):
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--embedding-api-key"],
+                help="openai api key",
+            ),
+            click.Option(
+                ["--embedding-model-name"],
+                type=str,
+                default=None,
+            ),
+        ]
+        cmd.params.extend(options)
+
+    @classmethod
+    def from_dict(
+        cls,
+        kvs: Json,
+        *,
+        infer_missing=False,
+    ):
+        """
+        Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
+        This allows CLI arguments to be prepended with chunk_ during CLI invocation but
+        doesn't require that as part of the field names in this class
+        """
+        if isinstance(kvs, dict):
+            new_kvs = {
+                k[len("embedding-") :]: v  # noqa: E203
+                for k, v in kvs.items()
+                if k.startswith("embedding_")
+            }
+            if len(new_kvs.keys()) == 0:
+                return None
+            return _decode_dataclass(cls, new_kvs, infer_missing)
+        return _decode_dataclass(cls, kvs, infer_missing)
+
+
+class CliChunkingConfig(ChunkingConfig, CliMixin):
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--chunk-elements"],
+                is_flag=True,
+                default=False,
+            ),
+            click.Option(
+                ["--chunk-multipage-sections"],
+                is_flag=True,
+                default=False,
+            ),
+            click.Option(
+                ["--chunk-combine-under-n-chars"],
+                type=int,
+                default=500,
+                show_default=True,
+            ),
+            click.Option(
+                ["--chunk-new-after-n-chars"],
+                type=int,
+                default=1500,
+                show_default=True,
+            ),
+        ]
+        cmd.params.extend(options)
+
+    @classmethod
+    def from_dict(
+        cls,
+        kvs: Json,
+        *,
+        infer_missing=False,
+    ):
+        """
+        Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
+        This allows CLI arguments to be prepended with chunking_ during CLI invocation but
+        doesn't require that as part of the field names in this class
+        """
+        if isinstance(kvs, dict):
+            new_kvs = {}
+            if "chunk_elements" in kvs:
+                new_kvs["chunk_elements"] = kvs.pop("chunk_elements")
+            new_kvs.update(
+                {
+                    k[len("chunking_") :]: v  # noqa: E203
+                    for k, v in kvs.items()
+                    if k.startswith("chunking_")
+                },
+            )
+            if len(new_kvs.keys()) == 0:
+                return None
+            return _decode_dataclass(cls, new_kvs, infer_missing)
+        return _decode_dataclass(cls, kvs, infer_missing)

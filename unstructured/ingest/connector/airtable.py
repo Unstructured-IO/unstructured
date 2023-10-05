@@ -1,15 +1,17 @@
 import os
+import typing as t
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -25,17 +27,17 @@ class SimpleAirtableConfig(BaseConnectorConfig):
     """
 
     personal_access_token: str
-    list_of_paths: Optional[str]
+    list_of_paths: t.Optional[str]
 
 
 @dataclass
-class AirtableFileMeta:
+class AirtableTableMeta:
     """Metadata specifying a table id, a base id which the table is stored in,
-    and an optional view id in case particular rows and fields are to be ingested"""
+    and an t.Optional view id in case particular rows and fields are to be ingested"""
 
     base_id: str
     table_id: str
-    view_id: Optional[str] = None
+    view_id: t.Optional[str] = None
 
 
 @dataclass
@@ -47,39 +49,104 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     to fetch each document, rather than creating a it for each thread.
     """
 
-    config: SimpleAirtableConfig
-    file_meta: AirtableFileMeta
+    connector_config: SimpleAirtableConfig
+    table_meta: AirtableTableMeta
     registry_name: str = "airtable"
 
     @property
     def filename(self):
         return (
-            Path(self.standard_config.download_dir)
-            / self.file_meta.base_id
-            / f"{self.file_meta.table_id}.csv"
+            Path(self.read_config.download_dir)
+            / self.table_meta.base_id
+            / f"{self.table_meta.table_id}.csv"
         ).resolve()
 
     @property
     def _output_filename(self):
         """Create output file path based on output directory, base id, and table id"""
-        output_file = f"{self.file_meta.table_id}.json"
-        return Path(self.standard_config.output_dir) / self.file_meta.base_id / output_file
+        output_file = f"{self.table_meta.table_id}.json"
+        return Path(self.partition_config.output_dir) / self.table_meta.base_id / output_file
 
-    @requires_dependencies(["pyairtable", "pandas"], extras="airtable")
+    @property
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
+        return {
+            "base_id": self.table_meta.base_id,
+            "table_id": self.table_meta.table_id,
+            "view_id": self.table_meta.view_id,
+        }
+
+    @property
+    def version(self) -> t.Optional[str]:
+        return None
+
+    @requires_dependencies(["pyairtable"], extras="airtable")
+    def _get_table_rows(self):
+        from pyairtable import Api
+        from requests.exceptions import HTTPError
+
+        api = Api(self.connector_config.personal_access_token)
+        try:
+            table = api.table(self.table_meta.base_id, self.table_meta.table_id)
+            table_url = table.url
+            rows = table.all(
+                view=self.table_meta.view_id,
+            )
+        except HTTPError as e:
+            # TODO: more specific error handling?
+            if e.response.status_code >= 400 and e.response.status_code < 500:
+                return None, None
+            raise
+
+        if len(rows) == 0:
+            logger.info("Empty document, retrieved table but it has no rows.")
+        return rows, table_url
+
+    def update_source_metadata(self, **kwargs):
+        """Gets file metadata from the current table."""
+
+        rows, table_url = kwargs.get("rows_tuple", self._get_table_rows())
+        if rows is None or len(rows) < 1:
+            self.source_metadata = SourceMetadata(
+                exists=False,
+            )
+            return
+        dates = [r.get("createdTime", "") for r in rows]
+        dates.sort()
+
+        date_created = datetime.strptime(
+            dates[0],
+            "%Y-%m-%dT%H:%M:%S.%fZ",
+        ).isoformat()
+
+        date_modified = datetime.strptime(
+            dates[-1],
+            "%Y-%m-%dT%H:%M:%S.%fZ",
+        ).isoformat()
+
+        self.source_metadata = SourceMetadata(
+            date_created=date_created,
+            date_modified=date_modified,
+            source_url=table_url,
+            exists=True,
+        )
+
+    @SourceConnectionError.wrap
+    @requires_dependencies(["pandas"])
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-
-        # TODO: instead of having a separate connection object for each doc,
-        # have a separate connection object for each process
         import pandas as pd
-        from pyairtable import Api
 
-        self.api = Api(self.config.personal_access_token)
-        table = self.api.table(self.file_meta.base_id, self.file_meta.table_id)
-
+        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
+        rows, table_url = self._get_table_rows()
+        self.update_source_metadata(rows_tuple=(rows, table_url))
+        if rows is None:
+            raise ValueError(
+                "Failed to retrieve rows from table "
+                f"{self.table_meta.base_id}/{self.table_meta.table_id}. Check logs",
+            )
+        # NOTE: Might be a good idea to add pagination for large tables
         df = pd.DataFrame.from_dict(
-            [row["fields"] for row in table.all(view=self.file_meta.view_id)],
+            [row["fields"] for row in rows],
         ).sort_index(axis=1)
 
         self.document = df.to_csv()
@@ -131,27 +198,20 @@ def check_path_validity(path):
 
 
 @dataclass
-class AirtableConnector(ConnectorCleanupMixin, BaseConnector):
+class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Fetches tables or views from an Airtable org."""
 
-    config: SimpleAirtableConfig
-
-    def __init__(
-        self,
-        standard_config: StandardConnectorConfig,
-        config: SimpleAirtableConfig,
-    ):
-        super().__init__(standard_config, config)
+    connector_config: SimpleAirtableConfig
 
     @requires_dependencies(["pyairtable"], extras="airtable")
     def initialize(self):
         from pyairtable import Api
 
         self.base_ids_to_fetch_tables_from = []
-        if self.config.list_of_paths:
-            self.list_of_paths = self.config.list_of_paths.split()
+        if self.connector_config.list_of_paths:
+            self.list_of_paths = self.connector_config.list_of_paths.split()
 
-        self.api = Api(self.config.personal_access_token)
+        self.api = Api(self.connector_config.personal_access_token)
 
     @requires_dependencies(["pyairtable"], extras="airtable")
     def use_all_bases(self):
@@ -185,14 +245,14 @@ class AirtableConnector(ConnectorCleanupMixin, BaseConnector):
         """Fetches documents in an Airtable org."""
 
         # When no list of paths provided, the connector ingests everything.
-        if not self.config.list_of_paths:
+        if not self.connector_config.list_of_paths:
             self.use_all_bases()
             baseid_tableid_viewid_tuples = self.fetch_table_ids()
 
         # When there is a list of paths, the connector checks the validity
         # of the paths, and fetches table_ids to be ingested, based on the paths.
         else:
-            self.paths = self.config.list_of_paths.split()
+            self.paths = self.connector_config.list_of_paths.split()
             self.paths = [path.strip("/") for path in self.paths]
 
             [check_path_validity(path) for path in self.paths]
@@ -212,12 +272,12 @@ class AirtableConnector(ConnectorCleanupMixin, BaseConnector):
                     )
 
             baseid_tableid_viewid_tuples += self.fetch_table_ids()
-
         return [
             AirtableIngestDoc(
-                self.standard_config,
-                self.config,
-                AirtableFileMeta(base_id, table_id, view_id),
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                read_config=self.read_config,
+                table_meta=AirtableTableMeta(base_id, table_id, view_id),
             )
             for base_id, table_id, view_id in baseid_tableid_viewid_tuples
         ]

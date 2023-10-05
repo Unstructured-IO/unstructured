@@ -4,6 +4,7 @@ from tempfile import SpooledTemporaryFile
 import docx
 import pytest
 
+from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     Address,
     ListItem,
@@ -283,3 +284,11 @@ def test_partition_doc_with_json(mock_document, expected_elements, tmpdir, capsy
     assert elements[0].metadata.filename == test_elements[0].metadata.filename
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+
+
+def test_add_chunking_strategy_on_partition_doc(filename="example-docs/fake.doc"):
+    chunk_elements = partition_doc(filename, chunking_strategy="by_title")
+    elements = partition_doc(filename)
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks

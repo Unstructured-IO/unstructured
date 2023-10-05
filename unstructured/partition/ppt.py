@@ -2,6 +2,7 @@ import os
 import tempfile
 from typing import IO, List, Optional
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
@@ -15,6 +16,7 @@ from unstructured.partition.pptx import partition_pptx
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.PPT)
+@add_chunking_strategy()
 def partition_ppt(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -22,6 +24,7 @@ def partition_ppt(
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.

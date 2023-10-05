@@ -1,18 +1,19 @@
+import typing as t
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 import requests
 
 from unstructured.ingest.connector.git import (
-    GitConnector,
     GitIngestDoc,
+    GitSourceConnector,
     SimpleGitConfig,
 )
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
     from github.Repository import Repository
 
 
@@ -37,8 +38,9 @@ class SimpleGitHubConfig(SimpleGitConfig):
         # If there's no issues, store the core repository info
         self.repo_path = parsed_gh_url.path
 
+    @SourceConnectionError.wrap
     @requires_dependencies(["github"], extras="github")
-    def _get_repo(self) -> "Repository":
+    def get_repo(self) -> "Repository":
         from github import Github
 
         github = Github(self.access_token)
@@ -47,11 +49,11 @@ class SimpleGitHubConfig(SimpleGitConfig):
 
 @dataclass
 class GitHubIngestDoc(GitIngestDoc):
-    config: SimpleGitHubConfig
+    connector_config: SimpleGitHubConfig
     registry_name: str = "github"
 
     def _fetch_and_write(self) -> None:
-        content_file = self.config._get_repo().get_contents(self.path)
+        content_file = self.connector_config.get_repo().get_contents(self.path)
         contents = b""
         if (
             not content_file.content  # type: ignore
@@ -73,19 +75,24 @@ class GitHubIngestDoc(GitIngestDoc):
 
 @requires_dependencies(["github"], extras="github")
 @dataclass
-class GitHubConnector(GitConnector):
-    config: SimpleGitHubConfig
+class GitHubSourceConnector(GitSourceConnector):
+    connector_config: SimpleGitHubConfig
 
     def get_ingest_docs(self):
-        repo = self.config._get_repo()
+        repo = self.connector_config.get_repo()
         # Load the Git tree with all files, and then create Ingest docs
         # for all blobs, i.e. all files, ignoring directories
-        sha = self.config.branch or repo.default_branch
+        sha = self.connector_config.branch or repo.default_branch
         git_tree = repo.get_git_tree(sha, recursive=True)
         return [
-            GitHubIngestDoc(self.standard_config, self.config, element.path)
+            GitHubIngestDoc(
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                read_config=self.read_config,
+                path=element.path,
+            )
             for element in git_tree.tree
             if element.type == "blob"
             and self.is_file_type_supported(element.path)
-            and (not self.config.file_glob or self.does_path_match_glob(element.path))
+            and (not self.connector_config.file_glob or self.does_path_match_glob(element.path))
         ]

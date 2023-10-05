@@ -14,5 +14,3 @@ $(filter-out constraints.txt base.txt, %.txt): %.in base.txt constraints.in
 
 $(constraint_dependent): %.txt: %.in constraints.in
 	$(PIP)
-
-

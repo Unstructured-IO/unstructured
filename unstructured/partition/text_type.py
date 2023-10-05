@@ -15,6 +15,7 @@ from unstructured.nlp.english_words import ENGLISH_WORDS
 from unstructured.nlp.patterns import (
     EMAIL_ADDRESS_PATTERN_RE,
     ENDS_IN_PUNCT_RE,
+    NUMBERED_LIST_RE,
     UNICODE_BULLETS_RE,
     US_CITY_STATE_ZIP_RE,
     US_PHONE_NUMBERS_RE,
@@ -30,7 +31,7 @@ def is_possible_narrative_text(
     text: str,
     cap_threshold: float = 0.5,
     non_alpha_threshold: float = 0.5,
-    language: str = "en",
+    languages: List[str] = ["eng"],
     language_checks: bool = False,
 ) -> bool:
     """Checks to see if the text passes all of the checks for a narrative text section.
@@ -47,8 +48,8 @@ def is_possible_narrative_text(
     non_alpha_threshold
         The minimum proportion of alpha characters the text needs to be considered
         narrative text
-    language
-        The two letter language code for the text. defaults to "en" for English
+    languages
+        The list of languages present in the document. Defaults to ["eng"] for English
     language_checks
         If True, conducts checks that are specific to the chosen language. Turn on for more
         accurate partitioning and off for faster processing.
@@ -65,8 +66,7 @@ def is_possible_narrative_text(
         trace_logger.detail(f"Not narrative. Text is all numeric:\n\n{text}")  # type: ignore
         return False
 
-    language = os.environ.get("UNSTRUCTURED_LANGUAGE", language)
-    if language == "en" and language_checks and not contains_english_word(text):
+    if "eng" in languages and language_checks and not contains_english_word(text):
         return False
 
     # NOTE(robinson): it gets read in from the environment as a string so we need to
@@ -84,7 +84,7 @@ def is_possible_narrative_text(
     if under_non_alpha_ratio(text, threshold=non_alpha_threshold):
         return False
 
-    if (sentence_count(text, 3) < 2) and (not contains_verb(text)) and language == "en":
+    if "eng" in languages and (sentence_count(text, 3) < 2) and (not contains_verb(text)):
         trace_logger.detail(f"Not narrative. Text does not contain a verb:\n\n{text}")  # type: ignore # noqa: E501
         return False
 
@@ -96,7 +96,7 @@ def is_possible_title(
     sentence_min_length: int = 5,
     title_max_word_length: int = 12,
     non_alpha_threshold: float = 0.5,
-    language: str = "en",
+    languages: List[str] = ["eng"],
     language_checks: bool = False,
 ) -> bool:
     """Checks to see if the text passes all of the checks for a valid title.
@@ -111,8 +111,8 @@ def is_possible_title(
         The maximum number of words a title can contain
     non_alpha_threshold
         The minimum number of alpha characters the text needs to be considered a title
-    language
-        The two letter language code for the text. defaults to "en" for English
+    languages
+        The list of languages present in the document. Defaults to ["eng"] for English
     language_checks
         If True, conducts checks that are specific to the chosen language. Turn on for more
         accurate partitioning and off for faster processing.
@@ -146,8 +146,7 @@ def is_possible_title(
     if text.endswith(","):
         return False
 
-    language = os.environ.get("UNSTRUCTURED_LANGUAGE", language)
-    if language == "en" and not contains_english_word(text) and language_checks:
+    if "eng" in languages and not contains_english_word(text) and language_checks:
         return False
 
     if text.isnumeric():
@@ -227,7 +226,8 @@ def sentence_count(text: str, min_length: Optional[int] = None) -> int:
         words = [word for word in word_tokenize(sentence) if word != "."]
         if min_length and len(words) < min_length:
             trace_logger.detail(  # type: ignore
-                f"Skipping sentence because does not exceed {min_length} word tokens\n"
+                f"Sentence does not exceed {min_length} word tokens, it will not count toward "
+                "sentence count.\n"
                 f"{sentence}",
             )
             continue
@@ -295,7 +295,7 @@ def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:
     return ratio > threshold
 
 
-def is_us_city_state_zip(text) -> bool:
+def is_us_city_state_zip(text: str) -> bool:
     """Checks if the given text is in the format of US city/state/zip code.
 
     Examples
@@ -307,6 +307,11 @@ def is_us_city_state_zip(text) -> bool:
     return US_CITY_STATE_ZIP_RE.match(text.strip()) is not None
 
 
-def is_email_address(text) -> bool:
+def is_email_address(text: str) -> bool:
     """Check if the given text is the email address"""
     return EMAIL_ADDRESS_PATTERN_RE.match(text.strip()) is not None
+
+
+def is_possible_numbered_list(text) -> bool:
+    """Checks to see if the text is a potential numbered list."""
+    return NUMBERED_LIST_RE.match(text.strip()) is not None

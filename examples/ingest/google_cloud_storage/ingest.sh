@@ -11,7 +11,7 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
   gcs \
    --remote-url gs://utic-test-ingest-fixtures-public/ \
-   --structured-output-dir gcs-output \
+   --output-dir gcs-output \
    --num-processes 2 \
    --recursive \
    --verbose

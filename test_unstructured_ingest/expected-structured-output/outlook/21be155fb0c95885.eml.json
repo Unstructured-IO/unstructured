@@ -3,7 +3,16 @@
     "type": "Title",
     "element_id": "a0f48ad299334e5716f85d225bfe2a16",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "https://outlook.office365.com/owa/?ItemID=AAMkAGE2MmEwNzFlLWVjYzAtNDNhZS04ZGM1LTFjYmMzZDhiMmI0MABGAAAAAADc1MfJYetSQ6QZntYrI9k4BwDZYn%2FlfnvLSqIcW%2FYsN8ebAAATaI%2BsAADZYn%2FlfnvLSqIcW%2FYsN8ebAAATaJ9PAAA%3D&exvsurl=1&viewmodel=ReadMessageItem",
+        "version": "CQAAABYAAADZYn/lfnvLSqIcW/YsN8ebAAATYGBM",
+        "record_locator": {
+          "message_id": "AAMkAGE2MmEwNzFlLWVjYzAtNDNhZS04ZGM1LTFjYmMzZDhiMmI0MABGAAAAAADc1MfJYetSQ6QZntYrI9k4BwDZYn-lfnvLSqIcW-YsN8ebAAATaI_sAADZYn-lfnvLSqIcW-YsN8ebAAATaJ9PAAA=",
+          "user_email": "devops@unstructuredio.onmicrosoft.com"
+        },
+        "date_created": "2023-07-15T15:36:08",
+        "date_modified": "2023-07-15T15:38:57"
+      },
       "filename": "21be155fb0c95885.eml",
       "last_modified": "2023-07-15T08:35:51-07:00",
       "filetype": "message/rfc822",

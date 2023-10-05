@@ -1,22 +1,22 @@
 import os
+import typing as t
 import urllib.request
 from dataclasses import dataclass
 from ftplib import FTP, error_perm
 from pathlib import Path
-from typing import List, Optional
 
 import requests
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from urllib3.util import Retry
 
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import (
@@ -41,11 +41,11 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     """Connector config where path is the FTP directory path and
     id_, from_, until, format are API parameters."""
 
-    path: Optional[str]
+    path: t.Optional[str]
     # OA Web Service API Options
-    id_: Optional[str]
-    from_: Optional[str]
-    until: Optional[str]
+    id_: t.Optional[str]
+    from_: t.Optional[str]
+    until: t.Optional[str]
     max_retries: int = 5
     request_timeout: int = 45
     decay: float = 0.3
@@ -108,7 +108,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
 
 @dataclass
 class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
-    config: SimpleBiomedConfig
+    connector_config: SimpleBiomedConfig
     file_meta: BiomedFileMeta
     registry_name: str = "biomed"
 
@@ -122,13 +122,14 @@ class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def cleanup_file(self):
         if (
-            not self.standard_config.preserve_downloads
+            not self.read_config.preserve_downloads
             and self.filename.is_file()
-            and not self.standard_config.download_only
+            and not self.read_config.download_only
         ):
             logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
 
+    @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         download_path = self.file_meta.download_filepath  # type: ignore
@@ -145,19 +146,12 @@ class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         logger.debug(f"File downloaded: {self.file_meta.download_filepath}")
 
 
-class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
+class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching documents from Biomedical literature FTP directory"""
 
-    config: SimpleBiomedConfig
+    connector_config: SimpleBiomedConfig
 
-    def __init__(
-        self,
-        standard_config: StandardConnectorConfig,
-        config: SimpleBiomedConfig,
-    ):
-        super().__init__(standard_config, config)
-
-    def _list_objects_api(self):
+    def _list_objects_api(self) -> t.List[BiomedFileMeta]:
         def urls_to_metadata(urls):
             files = []
             for url in urls:
@@ -167,10 +161,10 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
                     files.append(
                         BiomedFileMeta(
                             ftp_path=url,
-                            download_filepath=(Path(self.standard_config.download_dir) / local_path)
+                            download_filepath=(Path(self.read_config.download_dir) / local_path)
                             .resolve()
                             .as_posix(),
-                            output_filepath=(Path(self.standard_config.output_dir) / local_path)
+                            output_filepath=(Path(self.partition_config.output_dir) / local_path)
                             .resolve()
                             .as_posix(),
                         ),
@@ -178,29 +172,29 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
 
             return files
 
-        files: List[BiomedFileMeta] = []
+        files: t.List[BiomedFileMeta] = []
 
         endpoint_url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?format=pdf"
 
-        if self.config.id_:
-            endpoint_url += f"&id={self.config.id_}"
+        if self.connector_config.id_:
+            endpoint_url += f"&id={self.connector_config.id_}"
 
-        if self.config.from_:
-            endpoint_url += f"&from={self.config.from_}"
+        if self.connector_config.from_:
+            endpoint_url += f"&from={self.connector_config.from_}"
 
-        if self.config.until:
-            endpoint_url += f"&until={self.config.until}"
+        if self.connector_config.until:
+            endpoint_url += f"&until={self.connector_config.until}"
 
         while endpoint_url:
             session = requests.Session()
             retries = Retry(
-                total=self.config.max_retries,
-                backoff_factor=self.config.decay,
+                total=self.connector_config.max_retries,
+                backoff_factor=self.connector_config.decay,
             )
             adapter = HTTPAdapter(max_retries=retries)
             session.mount("http://", adapter)
             session.mount("https://", adapter)
-            response = session.get(endpoint_url, timeout=self.config.request_timeout)
+            response = session.get(endpoint_url, timeout=self.connector_config.request_timeout)
             soup = BeautifulSoup(response.content, features="lxml")
             urls = [link["href"] for link in soup.find_all("link")]
 
@@ -215,12 +209,12 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
 
         return files
 
-    def _list_objects(self):
+    def _list_objects(self) -> t.List[BiomedFileMeta]:
         files = []
 
         # Conform to mypy, null check performed elsewhere.
         # Wouldn't be in this method unless self.config.path exists
-        path: str = self.config.path if self.config.path else ""
+        path: str = self.connector_config.path if self.connector_config.path else ""
 
         def traverse(path, download_dir, output_dir):
             full_path = Path(PMC_DIR) / path
@@ -248,12 +242,12 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
                         files.append(
                             BiomedFileMeta(
                                 ftp_path=ftp_path,
-                                download_filepath=(
-                                    Path(self.standard_config.download_dir) / local_path
-                                )
+                                download_filepath=(Path(self.read_config.download_dir) / local_path)
                                 .resolve()
                                 .as_posix(),
-                                output_filepath=(Path(self.standard_config.output_dir) / local_path)
+                                output_filepath=(
+                                    Path(self.partition_config.output_dir) / local_path
+                                )
                                 .resolve()
                                 .as_posix(),
                             ),
@@ -266,16 +260,16 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
             else:
                 raise ValueError(f"{full_path} is not a valid directory.")
 
-        ftp_path = f"{FTP_DOMAIN}/{PMC_DIR}/{self.config.path}"
-        if self.config.is_file:
+        ftp_path = f"{FTP_DOMAIN}/{PMC_DIR}/{self.connector_config.path}"
+        if self.connector_config.is_file:
             local_path = "/".join(path.split("/")[1:])
             return [
                 BiomedFileMeta(
                     ftp_path=ftp_path,
-                    download_filepath=(Path(self.standard_config.download_dir) / local_path)
+                    download_filepath=(Path(self.read_config.download_dir) / local_path)
                     .resolve()
                     .as_posix(),
-                    output_filepath=(Path(self.standard_config.output_dir) / local_path)
+                    output_filepath=(Path(self.partition_config.output_dir) / local_path)
                     .resolve()
                     .as_posix(),
                 ),
@@ -283,8 +277,8 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
         else:
             traverse(
                 Path(path),
-                Path(self.standard_config.download_dir),
-                Path(self.standard_config.output_dir),
+                Path(self.read_config.download_dir),
+                Path(self.partition_config.output_dir),
             )
 
         return files
@@ -293,5 +287,13 @@ class BiomedConnector(ConnectorCleanupMixin, BaseConnector):
         pass
 
     def get_ingest_docs(self):
-        files = self._list_objects_api() if self.config.is_api else self._list_objects()
-        return [BiomedIngestDoc(self.standard_config, self.config, file) for file in files]
+        files = self._list_objects_api() if self.connector_config.is_api else self._list_objects()
+        return [
+            BiomedIngestDoc(
+                connector_config=self.connector_config,
+                read_config=self.read_config,
+                partition_config=self.partition_config,
+                file_meta=file,
+            )
+            for file in files
+        ]

@@ -26,5 +26,5 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --url https://unstructured-ingest-test.atlassian.net \
         --user-email 12345678@unstructured.io \
         --api-token ABCDE1234ABDE1234ABCDE1234 \
-        --structured-output-dir confluence-ingest-output \
+        --output-dir confluence-ingest-output \
         --num-processes 2

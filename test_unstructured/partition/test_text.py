@@ -4,6 +4,7 @@ import pathlib
 
 import pytest
 
+from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import group_broken_paragraphs
 from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
 from unstructured.partition.json import partition_json
@@ -162,6 +163,12 @@ def test_partition_text_from_bytes_file_default_encoding(filename):
     assert elements == EXPECTED_OUTPUT
     for element in elements:
         assert element.metadata.filename is None
+
+
+def test_auto_partition_element_metadata_user_provided_languages():
+    filename = "example-docs/book-war-and-peace-1p.txt"
+    elements = partition_text(filename=filename, strategy="fast")
+    assert elements[0].metadata.languages == ["eng"]
 
 
 def test_partition_text_from_text():
@@ -499,3 +506,11 @@ def test_partition_text_with_json(filename, encoding):
     assert elements[0].metadata.filename == test_elements[0].metadata.filename
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+
+
+def test_add_chunking_strategy_on_partition_text(filename="example-docs/norwich-city.txt"):
+    elements = partition_text(filename=filename)
+    chunk_elements = partition_text(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks

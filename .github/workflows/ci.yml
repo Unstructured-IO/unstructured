@@ -145,10 +145,8 @@ jobs:
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        # NOTE(robinson) - Installing weaviate-client separately here because the requests
-        # version conflicts with label_studio_sdk
-        pip install weaviate-client
-        pip install argilla
+        # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
+        make install-ci
         make test CI=true
         make check-coverage
 
@@ -227,17 +225,13 @@ jobs:
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        # NOTE(robinson) - Installing weaviate-client separately here because the requests
-        # version conflicts with label_studio_sdk
-        pip install weaviate-client
-        pip install argilla
         make test-extra-${{ matrix.extra }} CI=true
 
   test_ingest:
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
@@ -261,6 +255,10 @@ jobs:
         source .venv/bin/activate
         mkdir "$NLTK_DATA"
         make install-ci
+    - name: Setup docker-compose
+      uses: KengoTODA/actions-setup-docker-compose@v1
+      with:
+        version: '2.22.0'
     - name: Test Ingest (unit)
       run: |
         source .venv/bin/activate
@@ -277,6 +275,8 @@ jobs:
         DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
         GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
         GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
+        JIRA_INGEST_API_TOKEN: ${{ secrets.JIRA_INGEST_API_TOKEN }}
+        JIRA_INGEST_USER_EMAIL: ${{ secrets.JIRA_INGEST_USER_EMAIL }}
         MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
         MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
         MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
@@ -293,6 +293,11 @@ jobs:
         NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+        AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
+        TABLE_OCR: "tesseract"
+        ENTIRE_PAGE_OCR: "tesseract"
+        CI: "true"
       run: |
         source .venv/bin/activate
         sudo apt-get update
@@ -314,6 +319,7 @@ jobs:
         make install-ingest-google-drive
         make install-ingest-github
         make install-ingest-gitlab
+        make install-ingest-jira
         make install-ingest-onedrive
         make install-ingest-outlook
         make install-ingest-salesforce
@@ -362,6 +368,8 @@ jobs:
       if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
       run: |
         source .venv/bin/activate
+        # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
+        make install-ci
         sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
         make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5

@@ -40,7 +40,7 @@ def get_os_version():
     return platform.platform()
 
 
-def is_python_package_installed(package_name):
+def is_python_package_installed(package_name: str):
     """
     Check if a Python package is installed
 
@@ -57,14 +57,10 @@ def is_python_package_installed(package_name):
         check=True,
     )
 
-    for line in result.stdout.splitlines():
-        if line.lower().startswith(package_name.lower()):
-            return True
-
-    return False
+    return any(line.lower().startswith(package_name.lower()) for line in result.stdout.splitlines())
 
 
-def is_brew_package_installed(package_name):
+def is_brew_package_installed(package_name: str):
     """
     Check if a Homebrew package is installed
 
@@ -95,11 +91,7 @@ def is_brew_package_installed(package_name):
         check=True,
     )
 
-    for line in result.stdout.splitlines():
-        if line.lower().startswith(package_name.lower()):
-            return True
-
-    return False
+    return any(line.lower().startswith(package_name.lower()) for line in result.stdout.splitlines())
 
 
 def get_python_package_version(package_name):
@@ -221,8 +213,7 @@ def main():
     ):
         print(
             "PaddleOCR version: ",
-            get_python_package_version("paddlepaddle")
-            or get_python_package_version("paddleocr"),
+            get_python_package_version("paddlepaddle") or get_python_package_version("paddleocr"),
         )
     else:
         print("PaddleOCR is not installed")

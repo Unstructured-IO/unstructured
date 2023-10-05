@@ -28,9 +28,7 @@ def _validate_prodigy_metadata(
         )
         if isinstance(id_error_index, int):
             raise ValueError(
-                'The key "id" is not allowed with metadata parameter at index: {index}'.format(
-                    index=id_error_index,
-                ),
+                f'The key "id" is not allowed with metadata parameter at index: {id_error_index}',
             )
         validated_metadata = metadata
     else:

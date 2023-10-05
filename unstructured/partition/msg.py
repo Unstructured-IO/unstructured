@@ -4,6 +4,7 @@ from typing import IO, Callable, Dict, List, Optional
 
 import msg_parser
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, ElementMetadata, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.logger import logger
@@ -15,6 +16,7 @@ from unstructured.partition.text import partition_text
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.MSG)
+@add_chunking_strategy()
 def partition_msg(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -25,6 +27,7 @@ def partition_msg(
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
     min_partition: Optional[int] = 0,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions a MSFT Outlook .msg file

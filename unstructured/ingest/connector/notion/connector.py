@@ -1,16 +1,14 @@
 import os
+import typing as t
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
-from uuid import UUID
 
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import (
@@ -22,16 +20,11 @@ from unstructured.utils import (
 class SimpleNotionConfig(BaseConnectorConfig):
     """Connector config to process all messages by channel id's."""
 
-    page_ids: List[str]
-    database_ids: List[str]
+    page_ids: t.List[str]
+    database_ids: t.List[str]
     recursive: bool
     api_key: str
     verbose: bool
-
-    @staticmethod
-    def parse_ids(ids_str: str) -> List[str]:
-        """Parses a comma separated list of ids into a list of UUID strings."""
-        return [str(UUID(x.strip())) for x in ids_str.split(",")]
 
 
 @dataclass
@@ -45,17 +38,17 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     page_id: str
     api_key: str
-    config: SimpleNotionConfig
+    connector_config: SimpleNotionConfig
     registry_name: str = "notion_page"
 
     def _tmp_download_file(self):
         page_file = self.page_id + ".html"
-        return Path(self.standard_config.download_dir) / page_file
+        return Path(self.read_config.download_dir) / page_file
 
     @property
     def _output_filename(self):
         page_file = self.page_id + ".json"
-        return Path(self.standard_config.output_dir) / page_file
+        return Path(self.partition_config.output_dir) / page_file
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
@@ -115,7 +108,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 logger.error(f"Error: {error}")
 
     @property
-    def date_created(self) -> Optional[str]:
+    def date_created(self) -> t.Optional[str]:
         """The date the document was created on the source system."""
         if not hasattr(self, "file_metadata") or not self.file_metadata:
             self.get_file_metadata()
@@ -123,7 +116,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self.file_metadata.created_time if self.file_metadata else None
 
     @property
-    def date_modified(self) -> Optional[str]:
+    def date_modified(self) -> t.Optional[str]:
         """The date the document was last modified on the source system."""
         if not hasattr(self, "file_metadata") or not self.file_metadata:
             self.get_file_metadata()
@@ -131,7 +124,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self.file_metadata.last_edited_time if self.file_metadata else None
 
     @property
-    def exists(self) -> Optional[bool]:
+    def exists(self) -> t.Optional[bool]:
         """Whether the document exists on the remote source."""
         if self.check_exists:
             return self.file_exists
@@ -157,17 +150,17 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     database_id: str
     api_key: str
-    config: SimpleNotionConfig
+    connector_config: SimpleNotionConfig
     registry_name: str = "notion_database"
 
     def _tmp_download_file(self):
         page_file = self.database_id + ".html"
-        return Path(self.standard_config.download_dir) / page_file
+        return Path(self.read_config.download_dir) / page_file
 
     @property
     def _output_filename(self):
         page_file = self.database_id + ".json"
-        return Path(self.standard_config.output_dir) / page_file
+        return Path(self.partition_config.output_dir) / page_file
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
@@ -229,7 +222,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 logger.error(f"Error: {error}")
 
     @property
-    def date_created(self) -> Optional[str]:
+    def date_created(self) -> t.Optional[str]:
         """The date the document was created on the source system."""
         if not hasattr(self, "file_metadata") or not self.file_metadata:
             self.get_file_metadata()
@@ -237,7 +230,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self.file_metadata.created_time if self.file_metadata else None
 
     @property
-    def date_modified(self) -> Optional[str]:
+    def date_modified(self) -> t.Optional[str]:
         """The date the document was last modified on the source system."""
         if not hasattr(self, "file_metadata") or not self.file_metadata:
             self.get_file_metadata()
@@ -245,7 +238,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self.file_metadata.last_edited_time if self.file_metadata else None
 
     @property
-    def exists(self) -> Optional[bool]:
+    def exists(self) -> t.Optional[bool]:
         """Whether the document exists on the remote source."""
         if self.check_exists:
             return self.file_exists
@@ -261,20 +254,11 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
 
 @requires_dependencies(dependencies=["notion_client"])
-class NotionConnector(ConnectorCleanupMixin, BaseConnector):
+@dataclass
+class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching document(s) from"""
 
-    config: SimpleNotionConfig
-
-    def __init__(
-        self,
-        standard_config: StandardConnectorConfig,
-        config: SimpleNotionConfig,
-    ):
-        super().__init__(
-            standard_config=standard_config,
-            config=config,
-        )
+    connector_config: SimpleNotionConfig
 
     @requires_dependencies(dependencies=["notion_client"])
     def initialize(self):
@@ -288,7 +272,7 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
             get_recursive_content_from_page,
         )
 
-        client = NotionClient(auth=self.config.api_key, logger=logger)
+        client = NotionClient(auth=self.connector_config.api_key, logger=logger)
 
         # sanity check that database id is valid
         resp_code = client.pages.retrieve_status(page_id=page_id)
@@ -310,7 +294,7 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
             get_recursive_content_from_page,
         )
 
-        client = NotionClient(auth=self.config.api_key, logger=logger)
+        client = NotionClient(auth=self.connector_config.api_key, logger=logger)
 
         child_content = get_recursive_content_from_page(
             client=client,
@@ -326,7 +310,7 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
             get_recursive_content_from_database,
         )
 
-        client = NotionClient(auth=self.config.api_key, logger=logger)
+        client = NotionClient(auth=self.connector_config.api_key, logger=logger)
 
         # sanity check that database id is valid
         resp_code = client.databases.retrieve_status(database_id=database_id)
@@ -343,47 +327,51 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
         return child_content
 
     def get_ingest_docs(self):
-        docs: List[BaseIngestDoc] = []
-        if self.config.page_ids:
+        docs: t.List[BaseIngestDoc] = []
+        if self.connector_config.page_ids:
             docs += [
                 NotionPageIngestDoc(
-                    standard_config=self.standard_config,
-                    config=self.config,
+                    connector_config=self.connector_config,
+                    partition_config=self.partition_config,
+                    read_config=self.read_config,
                     page_id=page_id,
-                    api_key=self.config.api_key,
+                    api_key=self.connector_config.api_key,
                 )
-                for page_id in self.config.page_ids
+                for page_id in self.connector_config.page_ids
             ]
-        if self.config.database_ids:
+        if self.connector_config.database_ids:
             docs += [
                 NotionDatabaseIngestDoc(
-                    standard_config=self.standard_config,
-                    config=self.config,
+                    connector_config=self.connector_config,
+                    partition_config=self.partition_config,
+                    read_config=self.read_config,
                     database_id=database_id,
-                    api_key=self.config.api_key,
+                    api_key=self.connector_config.api_key,
                 )
-                for database_id in self.config.database_ids
+                for database_id in self.connector_config.database_ids
             ]
-        if self.config.recursive:
+        if self.connector_config.recursive:
             logger.info("Getting recursive content")
             child_pages = []
             child_databases = []
-            for page_id in self.config.page_ids:
+            for page_id in self.connector_config.page_ids:
                 child_content = self.get_child_page_content(page_id=page_id)
                 child_pages.extend(child_content.child_pages)
                 child_databases.extend(child_content.child_databases)
 
-            for database_id in self.config.database_ids:
+            for database_id in self.connector_config.database_ids:
                 child_content = self.get_child_database_content(database_id=database_id)
                 child_pages.extend(child_content.child_pages)
                 child_databases.extend(child_content.child_databases)
 
             # Remove duplicates
             child_pages = list(set(child_pages))
-            child_pages = [c for c in child_pages if c not in self.config.page_ids]
+            child_pages = [c for c in child_pages if c not in self.connector_config.page_ids]
 
             child_databases = list(set(child_databases))
-            child_databases = [db for db in child_databases if db not in self.config.database_ids]
+            child_databases = [
+                db for db in child_databases if db not in self.connector_config.database_ids
+            ]
 
             if child_pages:
                 logger.info(
@@ -391,10 +379,11 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
                 )
                 docs += [
                     NotionPageIngestDoc(
-                        standard_config=self.standard_config,
-                        config=self.config,
+                        connector_config=self.connector_config,
+                        partition_config=self.partition_config,
+                        read_config=self.read_config,
                         page_id=page_id,
-                        api_key=self.config.api_key,
+                        api_key=self.connector_config.api_key,
                     )
                     for page_id in child_pages
                 ]
@@ -407,10 +396,11 @@ class NotionConnector(ConnectorCleanupMixin, BaseConnector):
                 )
                 docs += [
                     NotionDatabaseIngestDoc(
-                        standard_config=self.standard_config,
-                        config=self.config,
+                        connector_config=self.connector_config,
+                        partition_config=self.partition_config,
+                        read_config=self.read_config,
                         database_id=database_id,
-                        api_key=self.config.api_key,
+                        api_key=self.connector_config.api_key,
                     )
                     for database_id in child_databases
                 ]

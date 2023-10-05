@@ -2,6 +2,7 @@ from typing import IO, TYPE_CHECKING, Dict, List, Optional
 
 import requests
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.documents.html import HTMLDocument
 from unstructured.documents.xml import VALID_PARSERS
@@ -24,6 +25,7 @@ if TYPE_CHECKING:
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.HTML)
+@add_chunking_strategy()
 def partition_html(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -35,10 +37,12 @@ def partition_html(
     headers: Dict[str, str] = {},
     ssl_verify: bool = True,
     parser: VALID_PARSERS = None,
+    source_format: Optional[str] = None,
     html_assemble_articles: bool = False,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     skip_headers_and_footers: bool = False,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -67,6 +71,9 @@ def partition_html(
         in the HTTP request.
     parser
         The parser to use for parsing the HTML document. If None, default parser will be used.
+    source_format
+        The source of the original html. If None we will return HTMLElements but for example
+         partition_rst will pass a value of 'rst' so that we return Title vs HTMLTitle
     metadata_last_modified
         The last modified date for the document.
     skip_headers_and_footers
@@ -77,7 +84,6 @@ def partition_html(
         return []
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
-
     last_modification_date = None
     if filename is not None:
         last_modification_date = get_last_modified_date(filename)
@@ -118,12 +124,12 @@ def partition_html(
 
     if skip_headers_and_footers:
         document = filter_footer_and_header(document)
-
     return document_to_element_list(
         document,
         sortable=False,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_last_modified or last_modification_date,
+        source_format=source_format if source_format else None,
         **kwargs,
     )
 
@@ -169,6 +175,7 @@ def convert_and_partition_html(
     # ref: https://github.com/JessicaTegner/pypandoc#usage
     return partition_html(
         text=html_text,
+        source_format=source_format,
         include_page_breaks=include_page_breaks,
         encoding="unicode",
         metadata_filename=metadata_filename,

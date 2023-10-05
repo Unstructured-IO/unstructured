@@ -12,7 +12,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     github \
     --url Unstructured-IO/unstructured \
     --git-branch main \
-    --structured-output-dir github-ingest-output \
+    --output-dir github-ingest-output \
     --num-processes 2 \
     --verbose
 

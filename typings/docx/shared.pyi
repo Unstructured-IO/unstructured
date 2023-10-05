@@ -1,0 +1,16 @@
+from typing import Any, Callable, Generic, TypeVar
+
+from docx.oxml.xmlchemy import BaseOxmlElement
+
+_T = TypeVar("_T")
+
+class lazyproperty(Generic[_T]):
+    def __init__(self, fget: Callable[..., _T]) -> None: ...
+    def __get__(self, obj: Any, type: Any = None) -> _T: ...
+    def __set__(self, obj: Any, value: Any) -> None: ...
+
+class ElementProxy:
+    @property
+    def element(self) -> BaseOxmlElement: ...
+
+class Parented: ...

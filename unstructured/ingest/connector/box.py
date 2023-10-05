@@ -8,15 +8,16 @@ Maybe check 'Make api calls as the as-user header'
 REAUTHORIZE app after making any of the above changes
 """
 
+import typing as t
 from dataclasses import dataclass
-from typing import Type
 
 from unstructured.ingest.connector.fsspec import (
-    FsspecConnector,
+    FsspecDestinationConnector,
     FsspecIngestDoc,
+    FsspecSourceConnector,
     SimpleFsspecConfig,
 )
-from unstructured.ingest.interfaces import StandardConnectorConfig
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.utils import requires_dependencies
 
 
@@ -43,21 +44,21 @@ class SimpleBoxConfig(SimpleFsspecConfig):
 
 @dataclass
 class BoxIngestDoc(FsspecIngestDoc):
-    config: SimpleBoxConfig
+    connector_config: SimpleBoxConfig
     registry_name: str = "box"
 
+    @SourceConnectionError.wrap
     @requires_dependencies(["boxfs", "fsspec"], extras="box")
     def get_file(self):
         super().get_file()
 
 
-@requires_dependencies(["boxfs", "fsspec"], extras="box")
-class BoxConnector(FsspecConnector):
-    ingest_doc_cls: Type[BoxIngestDoc] = BoxIngestDoc
+@dataclass
+class BoxSourceConnector(FsspecSourceConnector):
+    connector_config: SimpleBoxConfig
+    ingest_doc_cls: t.Type[BoxIngestDoc] = BoxIngestDoc
 
-    def __init__(
-        self,
-        config: SimpleBoxConfig,
-        standard_config: StandardConnectorConfig,
-    ) -> None:
-        super().__init__(standard_config, config)
+
+@dataclass
+class BoxDestinationConnector(FsspecDestinationConnector):
+    connector_config: SimpleBoxConfig

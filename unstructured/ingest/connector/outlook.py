@@ -1,18 +1,19 @@
 import hashlib
 import os
+import typing as t
 from collections import defaultdict
 from dataclasses import dataclass, field
 from itertools import chain
 from pathlib import Path
-from typing import List, Optional
 
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
-    ConnectorCleanupMixin,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -28,12 +29,12 @@ class MissingFolderError(Exception):
 class SimpleOutlookConfig(BaseConnectorConfig):
     """This class is getting the token."""
 
-    client_id: Optional[str]
-    client_credential: Optional[str] = field(repr=False)
+    client_id: t.Optional[str]
+    client_credential: t.Optional[str] = field(repr=False)
     user_email: str
-    tenant: Optional[str] = field(repr=False)
-    authority_url: Optional[str] = field(repr=False)
-    ms_outlook_folders: List[str]
+    tenant: t.Optional[str] = field(repr=False)
+    authority_url: t.Optional[str] = field(repr=False)
+    ms_outlook_folders: t.List[str]
     recursive: bool = False
     registry_name: str = "outlook"
 
@@ -63,11 +64,6 @@ class SimpleOutlookConfig(BaseConnectorConfig):
             raise exc
         return token
 
-    @staticmethod
-    def parse_folders(folder_str: str) -> List[str]:
-        """Parses a comma separated string of Outlook folders into a list."""
-        return [x.strip() for x in folder_str.split(",")]
-
     @requires_dependencies(["office365"], extras="outlook")
     def _get_client(self):
         from office365.graph_client import GraphClient
@@ -77,7 +73,7 @@ class SimpleOutlookConfig(BaseConnectorConfig):
 
 @dataclass
 class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
-    config: SimpleOutlookConfig
+    connector_config: SimpleOutlookConfig
     message_id: str
     registry_name: str = "outlook"
 
@@ -90,8 +86,8 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def _set_download_paths(self) -> None:
         """Creates paths for downloading and parsing."""
-        download_path = Path(f"{self.standard_config.download_dir}")
-        output_path = Path(f"{self.standard_config.output_dir}")
+        download_path = Path(f"{self.read_config.download_dir}")
+        output_path = Path(f"{self.partition_config.output_dir}")
 
         self.download_dir = download_path
         self.download_filepath = (
@@ -109,12 +105,48 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _output_filename(self):
         return Path(self.output_filepath).resolve()
 
+    @property
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
+        return {
+            "message_id": self.message_id,
+            "user_email": self.connector_config.user_email,
+        }
+
+    @requires_dependencies(["office365"], extras="outlook")
+    def update_source_metadata(self, **kwargs):
+        from office365.runtime.client_request_exception import ClientRequestException
+
+        try:
+            client = self.connector_config._get_client()
+            msg = (
+                client.users[self.connector_config.user_email]
+                .messages[self.message_id]
+                .get()
+                .execute_query()
+            )
+        except ClientRequestException as e:
+            if e.response.status_code == 404:
+                self.source_metadata = SourceMetadata(
+                    exists=False,
+                )
+                return
+            raise
+        self.source_metadata = SourceMetadata(
+            date_created=msg.created_datetime.isoformat(),
+            date_modified=msg.last_modified_datetime.isoformat(),
+            version=msg.get_property("changeKey"),
+            source_url=msg.get_property("webLink"),
+            exists=True,
+        )
+
+    @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"], extras="outlook")
     def get_file(self):
         """Relies on Office365 python sdk message object to do the download."""
         try:
-            client = self.config._get_client()
+            client = self.connector_config._get_client()
+            self.update_source_metadata()
             if not self.download_dir.is_dir():
                 logger.debug(f"Creating directory: {self.download_dir}")
                 self.download_dir.mkdir(parents=True, exist_ok=True)
@@ -126,7 +158,7 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 ),
                 "wb",
             ) as local_file:
-                client.users[self.config.user_email].messages[self.message_id].download(
+                client.users[self.connector_config.user_email].messages[self.message_id].download(
                     local_file,
                 ).execute_query()
 
@@ -140,26 +172,19 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return
 
 
-class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
-    config: SimpleOutlookConfig
-
-    def __init__(
-        self,
-        standard_config: StandardConnectorConfig,
-        config: SimpleOutlookConfig,
-    ):
-        super().__init__(standard_config, config)
-        self.client = self.config._get_client()
-        self.get_folder_ids()
+@dataclass
+class OutlookSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
+    connector_config: SimpleOutlookConfig
 
     def initialize(self):
-        pass
+        self.client = self.connector_config._get_client()
+        self.get_folder_ids()
 
     def recurse_folders(self, folder_id, main_folder_dict):
         """We only get a count of subfolders for any folder.
         Have to make additional calls to get subfolder ids."""
         subfolders = (
-            self.client.users[self.config.user_email]
+            self.client.users[self.connector_config.user_email]
             .mail_folders[folder_id]
             .child_folders.get()
             .execute_query()
@@ -176,7 +201,7 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
         self.root_folders = defaultdict(list)
         root_folders_with_subfolders = []
         get_root_folders = (
-            self.client.users[self.config.user_email].mail_folders.get().execute_query()
+            self.client.users[self.connector_config.user_email].mail_folders.get().execute_query()
         )
 
         for folder in get_root_folders:
@@ -193,13 +218,14 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
                 [
                     v
                     for k, v in self.root_folders.items()
-                    if k.lower() in [x.lower() for x in self.config.ms_outlook_folders]
+                    if k.lower() in [x.lower() for x in self.connector_config.ms_outlook_folders]
                 ],
             ),
         )
         if not self.selected_folder_ids:
             raise MissingFolderError(
-                f"There are no root folders with the names: {self.config.ms_outlook_folders}",
+                "There are no root folders with the names: "
+                f"{self.connector_config.ms_outlook_folders}",
             )
 
     def get_ingest_docs(self):
@@ -209,7 +235,7 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
         # Get all the relevant messages in the selected folders/subfolders.
         for folder_id in self.selected_folder_ids:
             messages = (
-                self.client.users[self.config.user_email]
+                self.client.users[self.connector_config.user_email]
                 .mail_folders[folder_id]
                 .messages.get()
                 .top(MAX_NUM_EMAILS)  # Prevents the return from paging
@@ -219,6 +245,11 @@ class OutlookConnector(ConnectorCleanupMixin, BaseConnector):
             if messages:
                 filtered_messages.append(messages)
         return [
-            OutlookIngestDoc(self.standard_config, self.config, message.id)
+            OutlookIngestDoc(
+                connector_config=self.connector_config,
+                partition_config=self.partition_config,
+                read_config=self.read_config,
+                message_id=message.id,
+            )
             for message in list(chain.from_iterable(filtered_messages))
         ]
