@@ -1,6 +1,7 @@
 .. role:: raw-html(raw)
     :format: html
 
+.. _metadata-label:
 
 Metadata
 ========
