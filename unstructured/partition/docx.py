@@ -335,7 +335,9 @@ class _DocxPartitioner:
             clean_text = clean_bullets(text).strip()
             if clean_text:
                 yield ListItem(
-                    text=clean_text, metadata=metadata, detection_origin=DETECTION_ORIGIN
+                    text=clean_text,
+                    metadata=metadata,
+                    detection_origin=DETECTION_ORIGIN,
                 )
             return
 
