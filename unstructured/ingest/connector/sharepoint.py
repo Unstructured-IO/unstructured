@@ -186,12 +186,38 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     # todo: improve permissions - ingestdoc matching logic
     def update_permissions_data(self):
+        def parent_name_matches(parent_type, permissions_filename, ingest_doc_filepath):
+            permissions_filename = permissions_filename.split("_SEP_")
+            ingest_doc_filepath = ingest_doc_filepath.split("/")
+
+            if parent_type == "sites":
+                return permissions_filename[0] == ingest_doc_filepath[1]
+
+            elif parent_type == "SitePages" or parent_type == "Shared Documents":
+                return True
+
         self._permissions_data = None
         permissions_dir = Path(self.partition_config.output_dir) / "permissions_data"
+
         if permissions_dir.is_dir():
-            for filename in os.listdir(permissions_dir):
-                if self.file_path.split("/")[-1] == os.path.splitext(filename)[0]:
-                    with open(permissions_dir / filename) as f:
+            print("FILE_PATH", self.file_path)
+            parent_type = self.file_path.split("/")[0]
+
+            if parent_type == "sites":
+                read_dir = permissions_dir / "sites"
+            elif parent_type == "SitePages" or parent_type == "Shared Documents":
+                read_dir = permissions_dir / "other"
+
+            for filename in os.listdir(read_dir):
+                permissions_docname = os.path.splitext(filename)[0].split("_SEP_")[1]
+                ingestdoc_docname = self.file_path.split("/")[-1]
+
+                if ingestdoc_docname == permissions_docname and parent_name_matches(
+                    parent_type=parent_type,
+                    permissions_filename=filename,
+                    ingest_doc_filepath=self.file_path,
+                ):
+                    with open(read_dir / filename) as f:
                         self._permissions_data = json.loads(f.read())
 
     def update_source_metadata(self, **kwargs):
@@ -468,6 +494,26 @@ class PermissionsConnector:
 
         return self.validated_response(response)
 
+    def extract_site_name_from_weburl(self, weburl):
+        split_path = urlparse(weburl).path.lstrip("/").split("/")
+
+        if split_path[0] == "sites":
+            return "sites", split_path[1]
+
+        elif split_path[0] == "Shared%20Documents":
+            return "Shared Documents", "Shared Documents"
+
+        elif split_path[0] == "personal":
+            return "Personal", "Personal"
+
+        # if other weburl structures are found, additional logic might need to be implemented
+
+        logger.warning(
+            "Couldn't extract sitename, skipping RBAC ingestion \
+                           for the document with the URL:",
+            weburl,
+        )
+
     @requires_dependencies(["requests"], extras="sharepoint")
     def get_permissions_for_drive_item(self, site, drive_id, item_id):
         import requests
@@ -500,16 +546,29 @@ class PermissionsConnector:
             drive_items = self.get_drive_items(site, drive_id)
             if drive_items:
                 item_ids.extend(
-                    [(site, drive_id, item["id"], item["name"]) for item in drive_items["value"]],
+                    # [(site, drive_id, item["id"], item["name"]) for item in drive_items["value"]],
+                    [
+                        (site, drive_id, item["id"], item["name"], item["webUrl"])
+                        for item in drive_items["value"]
+                    ],
                 )
 
         permissions_dir = Path(output_dir) / "permissions_data"
-        if not permissions_dir.is_dir():
-            os.makedirs(permissions_dir)
 
         print("Writing permissions data to disk")
-        for site, drive_id, item_id, item_name in item_ids:
-            with open(permissions_dir / f"{item_name}.json", "w") as f:
-                res = self.get_permissions_for_drive_item(site, drive_id, item_id)
-                if res:
+        for site, drive_id, item_id, item_name, item_web_url in item_ids:
+            res = self.get_permissions_for_drive_item(site, drive_id, item_id)
+            if res:
+                parent_type, parent_name = self.extract_site_name_from_weburl(item_web_url)
+
+                if parent_type == "sites":
+                    write_path = permissions_dir / "sites" / f"{parent_name}_SEP_{item_name}.json"
+
+                if parent_type == "Personal" or parent_type == "Shared Documents":
+                    write_path = permissions_dir / "other" / f"{parent_name}_SEP_{item_name}.json"
+
+                if not Path(os.path.dirname(write_path)).is_dir():
+                    os.makedirs(os.path.dirname(write_path))
+
+                with open(write_path, "w") as f:
                     json.dump(res["value"], f)
