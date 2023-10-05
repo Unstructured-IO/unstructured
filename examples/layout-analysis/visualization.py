@@ -50,6 +50,8 @@ def run_partition_pdf(f_path, strategy, images, output_dir):
             img = draw_bbox(img, rect, color="red")
 
         output_image_path = os.path.join(output_dir, f"{strategy}-{idx + 1}.jpg")
+        print(f"output_image_path: {output_image_path}")
+
         img.save(output_image_path)
 
 
