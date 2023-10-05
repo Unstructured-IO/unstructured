@@ -350,18 +350,28 @@ def _partition_pdf_or_image_local(
             f"(currently {pdf_image_dpi}).",
         )
 
-    if file is None:
-        process_file_with_model_kwargs = {
-            "is_image": is_image,
-            "extract_tables": infer_table_structure,
-            "model_name": model_name,
-            "pdf_image_dpi": pdf_image_dpi,
-        }
+    # NOTE(christine): Need to extract images from PDF's
+    extract_images_in_pdf = kwargs.get("extract_images_in_pdf", False)
+    image_output_dir_path = kwargs.get("image_output_dir_path", None)
+    process_with_model_extra_kwargs = {
+        "extract_images_in_pdf": extract_images_in_pdf,
+        "image_output_dir_path": image_output_dir_path,
+    }
 
+    process_with_model_kwargs = {}
+    for key, value in process_with_model_extra_kwargs.items():
+        if value:
+            process_with_model_kwargs[key] = value
+
+    if file is None:
         # NOTE(christine): out_layout = extracted_layout + inferred_layout
         out_layout = process_file_with_model(
             filename,
-            **process_file_with_model_kwargs,
+            is_image=is_image,
+            extract_tables=infer_table_structure,
+            model_name=model_name,
+            pdf_image_dpi=pdf_image_dpi,
+            **process_with_model_kwargs,
         )
         final_layout = process_file_with_ocr(
             filename,
@@ -378,6 +388,7 @@ def _partition_pdf_or_image_local(
             extract_tables=infer_table_structure,
             model_name=model_name,
             pdf_image_dpi=pdf_image_dpi,
+            **process_with_model_kwargs,
         )
         if hasattr(file, "seek"):
             file.seek(0)
