@@ -313,6 +313,10 @@ def test_bytes_string_to_string():
             "i n t r o d u c t i o n",
             {"i": 2, "n": 2, "t": 2, "o": 2, "r": 1, "d": 1, "u": 1, "c": 1},
         ),
+        (
+            "Hello my name is H a r p e r, what's your name?",
+            {"hello": 1, "my": 1, "name": 2, "is": 1, "h a r p e r": 1, "whats": 1, "your": 1},
+        ),
     ],
 )
 def test_bag_of_words(text, expected):
