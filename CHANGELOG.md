@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-* **Add document level language detection functionality.** Adds the "auto" default for the languages param to all partitioners. The primary language present in the document is detected using the `langdetect` package. Additional param `detect_language_per_element` is also added for partitioners that return multiple elements. Defaluts to `False`.
+* **Add document level language detection functionality.** Adds the "auto" default for the languages param to all partitioners. The primary language present in the document is detected using the `langdetect` package. Additional param `detect_language_per_element` is also added for partitioners that return multiple elements. Defaults to `False`.
 * **Adds data source properties to the Jira connector** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
 * **Improve title detection in pptx documents** The default title textboxes on a pptx slide are now categorized as titles.
 * **Improve hierarchy detection in pptx documents** List items, and other slide text are properly nested under the slide title. This will enable better chunking of pptx documents.
