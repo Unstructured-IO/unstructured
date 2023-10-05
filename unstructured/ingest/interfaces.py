@@ -204,7 +204,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
 
     @property
     def permissions_data(self) -> t.Optional[t.List[t.Dict[str, t.Any]]]:
-        """Role based access control data, aka permissions or sharing, from the source system."""
+        """Access control data, aka permissions or sharing, from the source system."""
         if self.source_metadata is None:
             self.update_source_metadata()
         return self.source_metadata.permissions_data  # type: ignore
