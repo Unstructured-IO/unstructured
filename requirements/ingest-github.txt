@@ -47,7 +47,23 @@ typing-extensions==4.8.0
     # via
     #   -c requirements/base.txt
     #   pygithub
-urllib3==1.26.17
+six==1.16.0
+    # via
+    #   -c requirements/base.txt
+    #   python-dateutil
+typing-extensions==4.8.0
+    # via
+    #   -c requirements/base.txt
+    #   pygithub
+six==1.16.0
+    # via
+    #   -c requirements/base.txt
+    #   python-dateutil
+typing-extensions==4.8.0
+    # via
+    #   -c requirements/base.txt
+    #   pygithub
+urllib3==1.26.16
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
