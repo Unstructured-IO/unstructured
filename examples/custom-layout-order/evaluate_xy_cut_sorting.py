@@ -103,6 +103,7 @@ def draw_elements(elements, images, output_type, output_dir, base_name, label):
 def run_partition_pdf(
     pdf_path,
     strategy,
+    scope,
     images,
     output_type="plot",
     output_root_dir="",
@@ -113,13 +114,14 @@ def run_partition_pdf(
     output_dir = os.path.join(output_root_dir, strategy, f_base_name)
     os.makedirs(output_dir, exist_ok=True)
 
-    original_elements = partition_pdf(
-        filename=pdf_path,
-        strategy=strategy,
-        include_page_breaks=True,
-        sort_mode=SORT_MODE_BASIC,
-    )
-    draw_elements(original_elements, images, output_type, output_dir, f_base_name, "original")
+    if scope == "all":
+        original_elements = partition_pdf(
+            filename=pdf_path,
+            strategy=strategy,
+            include_page_breaks=True,
+            sort_mode=SORT_MODE_BASIC,
+        )
+        draw_elements(original_elements, images, output_type, output_dir, f_base_name, "original")
 
     ordered_elements = partition_pdf(
         filename=pdf_path,
@@ -134,6 +136,7 @@ def run_partition_pdf(
 def run():
     f_sub_path = sys.argv[1]
     strategy = sys.argv[2]
+    scope = sys.argv[3]
 
     base_dir = os.getcwd()
     output_root_dir = os.path.join(base_dir, "examples", "custom-layout-order", "output")
@@ -141,15 +144,19 @@ def run():
 
     f_path = os.path.join(base_dir, f_sub_path)
     images = pdf2image.convert_from_path(f_path)
-    run_partition_pdf(f_path, strategy, images, "image", output_root_dir)
+    run_partition_pdf(f_path, strategy, scope, images, "image", output_root_dir)
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 4:
         print(
-            "Please provide the path to the file name as the first argument and the strategy as the "
-            "second argument.",
+            "Please provide the path to the file name as the first argument, the strategy as the "
+            "second argument and the scope as the third argument.",
         )
+        sys.exit(1)
+
+    if sys.argv[3] not in ["all", "xycut_only"]:
+        print("Invalid scope")
         sys.exit(1)
 
     run()
