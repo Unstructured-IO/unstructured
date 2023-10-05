@@ -401,3 +401,133 @@ def test_add_chunking_strategy_by_title_on_partition_pptx():
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_pptx_title_shape_detection(tmp_path: pathlib.Path):
+    """This tests if the title attribute of a shape is correctly categorized as a title"""
+    filename = str(tmp_path / "test-title-shape.pptx")
+
+    # create a fake PowerPoint presentation with a slide containing a title shape
+    prs = pptx.Presentation()
+    slide = prs.slides.add_slide(prs.slide_layouts[0])
+    title_shape = slide.shapes.title
+    title_shape.text = (
+        "This is a title, it's a bit long so we can make sure it's not narrative text"
+    )
+    title_shape.text_frame.add_paragraph().text = "this is a subtitle"
+
+    prs.save(filename)
+
+    # partition the PowerPoint presentation and get the first element
+    elements = partition_pptx(filename)
+    title = elements[0]
+    subtitle = elements[1]
+
+    # assert that the first line is a title and has the correct text and depth
+    assert isinstance(title, Title)
+    assert (
+        title.text == "This is a title, it's a bit long so we can make sure it's not narrative text"
+    )
+    assert title.metadata.category_depth == 0
+
+    # assert that the first line is the subtitle and has the correct text and depth
+    assert isinstance(subtitle, Title)
+    assert subtitle.text == "this is a subtitle"
+    assert subtitle.metadata.category_depth == 1
+
+
+def test_partition_pptx_level_detection(tmp_path: pathlib.Path):
+    """This tests if the level attribute of a paragraph is correctly set as the category depth"""
+    filename = str(tmp_path / "test-category-depth.pptx")
+
+    prs = pptx.Presentation()
+    blank_slide_layout = prs.slide_layouts[1]
+
+    slide = prs.slides.add_slide(blank_slide_layout)
+    shapes = slide.shapes
+    title_shape = shapes.title
+    body_shape = shapes.placeholders[1]
+    title_shape.text = (
+        "This is a title, it's a bit long so we can make sure it's not narrative text"
+    )
+
+    tf = body_shape.text_frame
+    tf.text = "this is the root level bullet"
+
+    p = tf.add_paragraph()
+    p.text = "this is the level 1 bullet"
+    p.level = 1
+
+    p = tf.add_paragraph()
+    p.text = "this is the level 2 bullet"
+    p.level = 2
+
+    prs.slides[0].shapes
+
+    prs.save(filename)
+
+    # partition the PowerPoint presentation and get the first element
+    elements = partition_pptx(filename)
+
+    # NOTE(newelh) - python_pptx does not create full bullet xml, so unstructured will
+    #                not detect the paragraphs as bullets. This is fine for now, as
+    #                the level attribute is still set correctly, and what we're testing here
+    test_cases = [
+        (0, Title, "This is a title, it's a bit long so we can make sure it's not narrative text"),
+        (0, NarrativeText, "this is the root level bullet"),
+        (1, NarrativeText, "this is the level 1 bullet"),
+        (2, NarrativeText, "this is the level 2 bullet"),
+    ]
+
+    for element, test_case in zip(elements, test_cases):
+        assert element.text == test_case[2], f"expected {test_case[2]}, got {element.text}"
+        assert isinstance(
+            element,
+            test_case[1],
+        ), f"expected {test_case[1]}, got {element.category} for {element.text}"
+        assert (
+            element.metadata.category_depth == test_case[0]
+        ), f"expected {test_case[0]}, got {element.metadata.category_depth} for {element.text}"
+
+
+def test_partition_pptx_hierarchy_sample_document():
+    """This tests if the hierarchy of the sample document is correctly detected"""
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "sample-presentation.pptx")
+    elements = partition_pptx(filename=filename)
+
+    test_cases = [
+        # (expected category depth, parent id, child id)
+        (0, None, "8e924068ead7acb8b7217a9edbea21d4"),
+        (1, "8e924068ead7acb8b7217a9edbea21d4", "32dc828e353aa33bbdf112787389d5dd"),
+        (None, None, "e3b0c44298fc1c149afbf4c8996fb924"),
+        (0, None, "4485990848f79de686029af6e720eed0"),
+        (0, "4485990848f79de686029af6e720eed0", "b4e4ef35880d1f7e82272f7ae8194baa"),
+        (0, "4485990848f79de686029af6e720eed0", "44a398d215d79c2128055d2acfe8ab69"),
+        (1, "44a398d215d79c2128055d2acfe8ab69", "dbbf18a38f846b5790c75ba8ad649704"),
+        (1, "44a398d215d79c2128055d2acfe8ab69", "d75cf41cbf1c4421328729de8e467b02"),
+        (2, "d75cf41cbf1c4421328729de8e467b02", "27597b7305a7b8e066a6378413566d2e"),
+        (0, "4485990848f79de686029af6e720eed0", "1761b6f5d23781670b3c9b870804069f"),
+        (None, None, "e3b0c44298fc1c149afbf4c8996fb924"),
+        (0, None, "4a6dc2d15e7a98e9871a1eb60496059e"),
+        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "c4bac691bfd883bff86dce2d7a6b9943"),
+        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "61eda8e6c9b22845a1aa3d329cce15ef"),
+        (1, "61eda8e6c9b22845a1aa3d329cce15ef", "ad54bee56405cf3878f91f5c97a2395b"),
+        (1, "61eda8e6c9b22845a1aa3d329cce15ef", "4d85745729954cd77e0f49ceced49f32"),
+        (2, "4d85745729954cd77e0f49ceced49f32", "5cea03d706c6246b120034246b893101"),
+        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "cdf71e4210241bd78b1032e2f44d104f"),
+        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "ecb3d1d718b7fd75701a33e56fc131dd"),
+        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "cc598a5e8c911a7c5cecedf4959652aa"),
+        (1, "cc598a5e8c911a7c5cecedf4959652aa", "305ae9618b7f8ba84925c9e7e49034c2"),
+        (1, "cc598a5e8c911a7c5cecedf4959652aa", "cce1c1d6646a92ffdc883c573c765da9"),
+        (2, "cce1c1d6646a92ffdc883c573c765da9", "af8beec1131e6df4758e081e878bf775"),
+        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "ddf389d07353b7a3e03aa138f42dfd89"),
+        (None, None, "e3b0c44298fc1c149afbf4c8996fb924"),
+        (None, None, "2332cdaa45717e70444e2de313605e22"),
+        (0, None, "7ba0daa8739310f1b39736b3ffe3dea2"),
+    ]
+
+    # Zip the test cases with the elements
+    for element, test_case in zip(elements, test_cases):
+        assert element.metadata.category_depth == test_case[0]
+        assert element.metadata.parent_id == test_case[1]
+        assert element.id == test_case[2]
