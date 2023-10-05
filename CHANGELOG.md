@@ -1,3 +1,14 @@
+## 0.10.20-dev0
+
+### Enhancements
+
+### Fixes
+
+### Features
+
+* **Adds permissions(RBAC) data ingestion functionality for the Sharepoint connector.** Problem: Role based access control is an important component in many data storage systems. Users may need to pass permissions (RBAC) data to downstream systems when ingesting data. Feature: Added permissions data ingestion functionality to the Sharepoint connector.
+
+
 ## 0.10.19
 
 ### Enhancements
@@ -12,8 +23,6 @@
 * **change default `hi_res` model for pdf/image partition to `yolox`** Now partitioning pdf/image using `hi_res` strategy utilizes `yolox_quantized` model isntead of `detectron2_onnx` model. This new default model has better recall for tables and produces more detailed categories for elements.
 * **XLSX can now reads subtables within one sheet** Problem: Many .xlsx files are not created to be read as one full table per sheet. There are subtables, text and header along with more informations to extract from each sheet. Feature: This `partition_xlsx` now can reads subtable(s) within one .xlsx sheet, along with extracting other title and narrative texts. Importance: This enhance the power of .xlsx reading to not only one table per sheet, allowing user to capture more data tables from the file, if exists.
 * **Update Documentation on Element Types and Metadata**: We have updated the documentation according to the latest element types and metadata. It includes the common and additional metadata provided by the Partitions and Connectors.
-
-* **Adds permissions(RBAC) data ingestion functionality for the Sharepoint connector.** Problem: Role based access control is an important component in many data storage systems. Users may need to pass permissions (RBAC) data to downstream systems when ingesting data. Feature: Added permissions data ingestion functionality to the Sharepoint connector.
 
 ### Fixes
 
