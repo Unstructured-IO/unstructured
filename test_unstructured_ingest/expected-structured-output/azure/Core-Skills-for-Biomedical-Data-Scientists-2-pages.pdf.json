@@ -57,7 +57,7 @@
     "text": "Lisa Federer, MLIS, Data Science Training Coordinator"
   },
   {
-    "type": "Title",
+    "type": "NarrativeText",
     "element_id": "d9644fb4b85468d186b132c91ca64f31",
     "metadata": {
       "data_source": {
@@ -77,7 +77,7 @@
   },
   {
     "type": "Title",
-    "element_id": "53d548aa01fc3eb72da15a5be7f235e2",
+    "element_id": "c8e51fdc53c202393adad77f7f93ee5a",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -115,7 +115,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "d94c6241299e6eff20ee6499cb9f64de",
+    "element_id": "04ff84b51fab69c07381ac794b740243",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -130,11 +130,87 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "1. General biomedical subject matter knowledge: biomedical data scientists should have a general working knowledge of the principles of biology, bioinformatics, and basic clinical science; 2. Programming language expertise: biomedical data scientists should be fluent in at least one programming language (typically R and/or Python); 3. Predictive analytics, modeling, and machine learning: while a range of statistical methods may be useful, predictive analytics, modeling, and machine learning emerged as especially important skills in biomedical data science; 4. Team science and scientific communication: “soft” skills, like the ability to work well on teams and communicate effectively in both verbal and written venues, may be as important as the more technical skills typically associated with data science. 5. Responsible data stewardship: a successful data scientist must be able to implement best practices for data management and stewardship, as well as conduct research in an ethical manner that maintains data security and privacy."
+    "text": "1. General biomedical subject matter knowledge: biomedical data scientists should have a general working knowledge of the principles of biology, bioinformatics, and basic clinical science;"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "34b28172088bba51c6764df6d4e87674",
+    "type": "ListItem",
+    "element_id": "0b2857001b1a9eba5e46e26cba08e2ac",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
+        "version": 167189396509615428390709838081557906335,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "date_created": "2023-03-10T09:32:44+00:00",
+        "date_modified": "2023-03-10T09:32:44+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "2. Programming language expertise: biomedical data scientists should be fluent in at least one programming language (typically R and/or Python);"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "8b02f539eb8ccee5b3fc24f66858188c",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
+        "version": 167189396509615428390709838081557906335,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "date_created": "2023-03-10T09:32:44+00:00",
+        "date_modified": "2023-03-10T09:32:44+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "3. Predictive analytics, modeling, and machine learning: while a range of statistical methods may be useful, predictive analytics, modeling, and machine learning emerged as especially important skills in biomedical data science;"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "469e981f34d1e6f2b420574ed8e932d2",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
+        "version": 167189396509615428390709838081557906335,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "date_created": "2023-03-10T09:32:44+00:00",
+        "date_modified": "2023-03-10T09:32:44+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "4. Team science and scientific communication: “soft” skills, like the ability to work well on teams and communicate effectively in both verbal and written venues, may be as important as the more technical skills typically associated with data science."
+  },
+  {
+    "type": "ListItem",
+    "element_id": "4b8fc76cbba0e2fef79ff8bc668b1401",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
+        "version": 167189396509615428390709838081557906335,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "date_created": "2023-03-10T09:32:44+00:00",
+        "date_modified": "2023-03-10T09:32:44+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "5. Responsible data stewardship: a successful data scientist must be able to implement best practices for data management and stewardship, as well as conduct research in an ethical manner that maintains data security and privacy."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "69da7754428f154ee3b2906214d31ad9",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -153,7 +229,7 @@
   },
   {
     "type": "Title",
-    "element_id": "89b1f4c3df983454e25b233320781610",
+    "element_id": "37486ef32cbf05082d5dbff0581db762",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -209,7 +285,7 @@
     "text": "Core Skills for Biomedical Data Scientists _____________________________________________________________________________________________"
   },
   {
-    "type": "Title",
+    "type": "NarrativeText",
     "element_id": "edd5f2f5a60a83c8899e533ac8bcd03c",
     "metadata": {
       "data_source": {
@@ -247,7 +323,7 @@
     "text": "Methodology"
   },
   {
-    "type": "Title",
+    "type": "NarrativeText",
     "element_id": "987542acede56f098db655f02fb814a7",
     "metadata": {
       "data_source": {
@@ -267,7 +343,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "fdd38e2d80cc964e9bf3c7e09a760e21",
+    "element_id": "2e3cec7bff1e8c8d8e0087f0bcfa89f0",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -282,10 +358,29 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "a) Responses to a 2017 Kaggle' survey’ of over 16,000 self-identified data scientists working across many industries. Analysis of the Kaggle survey responses from the current data science workforce provided insights into the current generation of data scientists, including how they were trained and what programming and analysis skills they use. b) Data science skills taught in BD2K-funded training programs. A qualitative content analysis was applied to the descriptions of required courses offered under the 12 BD2kK-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized into four major categories: (1) statistics and math skills; (2) computer science; (3) subject knowledge; (4) general skills, like communication and teamwork. The coding schema is detailed in Appendix A. c) Desired skills identified from data science-related job ads. 59 job ads from government (8.5%), academia (42.4%), industry (83.9%), and the nonprofit sector (15.3%) were sampled from websites like Glassdoor, Linkedin, and Ziprecruiter. The"
+    "text": "a) Responses to a 2017 Kaggle1 survey2 of over 16,000 self-identified data scientists working across many industries. Analysis of the Kaggle survey responses from the current data science workforce provided insights into the current generation of data scientists, including how they were trained and what programming and analysis skills they use."
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
+    "element_id": "c6865d507571ccb14d37791134f27f61",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
+        "version": 167189396509615428390709838081557906335,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "date_created": "2023-03-10T09:32:44+00:00",
+        "date_modified": "2023-03-10T09:32:44+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "b) Data science skills taught in BD2K-funded training programs. A qualitative content analysis was applied to the descriptions of required courses offered under the 12 BD2K-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized into four major categories: (1) statistics and math skills; (2) computer science; (3) subject knowledge; (4) general skills, like communication and teamwork. The coding schema is detailed in Appendix A."
+  },
+  {
+    "type": "ListItem",
     "element_id": "3f14cc0782485365bad0539f7b1bbb22",
     "metadata": {
       "data_source": {
@@ -324,7 +419,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "8e6dc8d9bc74e032451cc1a6a0da4d10",
+    "element_id": "f39ddfa6365e505947527153b0ea60d8",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -343,6 +438,25 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
+        "version": 167189396509615428390709838081557906335,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "date_created": "2023-03-10T09:32:44+00:00",
+        "date_modified": "2023-03-10T09:32:44+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "2"
+  },
+  {
+    "type": "Footer",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
       "data_source": {

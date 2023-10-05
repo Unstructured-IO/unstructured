@@ -29,29 +29,21 @@ Run Locally
 
       .. code:: python
 
-        import subprocess
+        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
+        from unstructured.ingest.runner.biomed import biomed
 
-        command = [
-          "unstructured-ingest",
-          "biomed",
-          "--path", "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf",
-          "--output-dir", "/Output/Path/To/Files",
-          "--num-processes", "2",
-          "--verbose",
-          "--preserve-downloads",
-        ]
-
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            biomed(
+                verbose=True,
+                read_config=ReadConfig(
+                    preserve_downloads=True,
+                ),
+                partition_config=PartitionConfig(
+                    output_dir="biomed-ingest-output-path",
+                    num_processes=2,
+                ),
+                path="oa_pdf/07/07/sbaa031.073.PMC7234218.pdf",
+            )
 
 Run via the API
 ---------------
@@ -78,31 +70,25 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
       .. code:: python
 
-        import subprocess
+        import os
 
-        command = [
-          "unstructured-ingest",
-          "biomed",
-          "--path", "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf",
-          "--output-dir", "/Output/Path/To/Files",
-          "--num-processes", "2",
-          "--verbose",
-          "--preserve-downloads",
-          "--partition-by-api",
-          "--api-key", "<UNSTRUCTURED-API-KEY>",
-        ]
+        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
+        from unstructured.ingest.runner.biomed import biomed
 
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            biomed(
+                verbose=True,
+                read_config=ReadConfig(
+                    preserve_downloads=True,
+                ),
+                partition_config=PartitionConfig(
+                    output_dir="biomed-ingest-output-path",
+                    num_processes=2,
+                    partition_by_api=True,
+                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
+                ),
+                path="oa_pdf/07/07/sbaa031.073.PMC7234218.pdf",
+            )
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 
