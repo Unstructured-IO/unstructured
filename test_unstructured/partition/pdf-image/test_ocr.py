@@ -65,7 +65,7 @@ def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     ocr_layout = ocr.get_ocr_layout_from_image(
         image,
         ocr_languages="eng",
-        entrie_page_ocr="tesseract",
+        entire_page_ocr="tesseract",
     )
 
     expected_layout = [
@@ -117,7 +117,7 @@ def test_get_ocr_layout_from_image_paddle(monkeypatch):
 
     image = Image.new("RGB", (100, 100))
 
-    ocr_layout = ocr.get_ocr_layout_from_image(image, ocr_languages="eng", entrie_page_ocr="paddle")
+    ocr_layout = ocr.get_ocr_layout_from_image(image, ocr_languages="eng", entire_page_ocr="paddle")
 
     expected_layout = [
         TextRegion(10, 5, 25, 15, "Hello", source="OCR-paddle"),
@@ -136,7 +136,7 @@ def test_get_ocr_text_from_image_tesseract(monkeypatch):
     )
     image = Image.new("RGB", (100, 100))
 
-    ocr_text = ocr.get_ocr_text_from_image(image, ocr_languages="eng", entrie_page_ocr="tesseract")
+    ocr_text = ocr.get_ocr_text_from_image(image, ocr_languages="eng", entire_page_ocr="tesseract")
 
     assert ocr_text == "Hello World"
 
@@ -150,7 +150,7 @@ def test_get_ocr_text_from_image_paddle(monkeypatch):
 
     image = Image.new("RGB", (100, 100))
 
-    ocr_text = ocr.get_ocr_text_from_image(image, ocr_languages="eng", entrie_page_ocr="paddle")
+    ocr_text = ocr.get_ocr_text_from_image(image, ocr_languages="eng", entire_page_ocr="paddle")
 
     assert ocr_text == "HelloWorld!"
 

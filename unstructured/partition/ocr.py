@@ -163,10 +163,10 @@ def supplement_page_layout_with_ocr(
     If mode is "individual_blocks", we find the elements from inferred PageLayout
     with no text and add text from OCR to each element.
     """
-    entrie_page_ocr = os.getenv("ENTIRE_PAGE_OCR", "tesseract").lower()
+    entire_page_ocr = os.getenv("ENTIRE_PAGE_OCR", "tesseract").lower()
     # TODO(yuming): add tests for paddle with ENTIRE_PAGE_OCR env
     # see CORE-1886
-    if entrie_page_ocr not in ["paddle", "tesseract"]:
+    if entire_page_ocr not in ["paddle", "tesseract"]:
         raise ValueError(
             "Environment variable ENTIRE_PAGE_OCR",
             " must be set to 'tesseract' or 'paddle'.",
@@ -175,7 +175,7 @@ def supplement_page_layout_with_ocr(
         ocr_layout = get_ocr_layout_from_image(
             image,
             ocr_languages=ocr_languages,
-            entrie_page_ocr=entrie_page_ocr,
+            entire_page_ocr=entire_page_ocr,
         )
         merged_page_layout_elements = merge_inferred_layout_with_ocr_layout(
             inferred_page_layout.elements,
@@ -194,7 +194,7 @@ def supplement_page_layout_with_ocr(
                 text_from_ocr = get_ocr_text_from_image(
                     cropped_image,
                     ocr_languages=ocr_languages,
-                    entrie_page_ocr=entrie_page_ocr,
+                    entire_page_ocr=entire_page_ocr,
                 )
                 element.text = text_from_ocr
         inferred_page_layout.elements[:] = elements
@@ -224,12 +224,12 @@ def pad_element_bboxes(
 def get_ocr_layout_from_image(
     image: PILImage,
     ocr_languages: str = "eng",
-    entrie_page_ocr: str = "tesseract",
+    entire_page_ocr: str = "tesseract",
 ) -> List[TextRegion]:
     """
     Get the OCR layout from image as a list of text regions with paddle or tesseract.
     """
-    if entrie_page_ocr == "paddle":
+    if entire_page_ocr == "paddle":
         logger.info("Processing entrie page OCR with paddle...")
         from unstructured.partition.utils.ocr_models import paddle_ocr
 
@@ -251,12 +251,12 @@ def get_ocr_layout_from_image(
 def get_ocr_text_from_image(
     image: PILImage,
     ocr_languages: str = "eng",
-    entrie_page_ocr: str = "tesseract",
+    entire_page_ocr: str = "tesseract",
 ) -> str:
     """
     Get the OCR text from image as a string with paddle or tesseract.
     """
-    if entrie_page_ocr == "paddle":
+    if entire_page_ocr == "paddle":
         logger.info("Processing entrie page OCR with paddle...")
         from unstructured.partition.utils.ocr_models import paddle_ocr
 
