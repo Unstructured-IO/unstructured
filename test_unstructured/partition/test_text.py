@@ -499,3 +499,10 @@ def test_partition_text_with_json(filename, encoding):
     assert elements[0].metadata.filename == test_elements[0].metadata.filename
     for i in range(len(elements)):
         assert elements[i] == test_elements[i]
+
+
+def test_partition_text_skips_empty_bullets():
+    filename = "fake-memo-missing-bullet.txt"
+    filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    elements = partition_text(filename_path)
+    assert len([el for el in elements if el.category == "ListItem"]) == 2
