@@ -50,7 +50,7 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.305
+langchain==0.0.309
     # via -r requirements/ingest-openai.in
 langsmith==0.0.42
     # via langchain
