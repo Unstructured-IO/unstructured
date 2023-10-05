@@ -302,7 +302,7 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename, content_type, 
         strategy="hi_res",
     )
 
-    idx = 7
+    idx = 3
     assert isinstance(elements[idx], Title)
     assert elements[idx].text.startswith("LayoutParser")
 
@@ -363,7 +363,7 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
             strategy="hi_res",
         )
 
-    idx = 7
+    idx = 3
     assert isinstance(elements[idx], Title)
     assert elements[idx].text.startswith("LayoutParser")
 
