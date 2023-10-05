@@ -130,9 +130,10 @@ def test_partition_image_with_auto_strategy(
     elements = image.partition_image(filename=filename, strategy="auto")
     titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    idx = 2
     assert titles[0].text == title
-    assert elements[0].metadata.detection_class_prob is not None
-    assert isinstance(elements[0].metadata.detection_class_prob, float)
+    assert elements[idx].metadata.detection_class_prob is not None
+    assert isinstance(elements[idx].metadata.detection_class_prob, float)
 
 
 def test_partition_image_with_table_extraction(
@@ -253,11 +254,12 @@ def test_partition_image_default_strategy_hi_res():
     with open(filename, "rb") as f:
         elements = image.partition_image(file=f)
 
-    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[0].text == first_line
-    assert elements[0].metadata.coordinates is not None
-    assert elements[0].metadata.detection_class_prob is not None
-    assert isinstance(elements[0].metadata.detection_class_prob, float)
+    title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    idx = 2
+    assert elements[idx].text == title
+    assert elements[idx].metadata.coordinates is not None
+    assert elements[idx].metadata.detection_class_prob is not None
+    assert isinstance(elements[idx].metadata.detection_class_prob, float)
 
 
 def test_partition_image_metadata_date(

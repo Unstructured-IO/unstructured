@@ -1,23 +1,13 @@
 [
   {
     "type": "Header",
-    "element_id": "f2011dae707ee9b1141a0de1147a115f",
+    "element_id": "cda1ae2f061dbdafb3374e6411d3823e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "$32"
-  },
-  {
-    "type": "Header",
-    "element_id": "00be4eb55de586df1ad07739dfed3f8c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Poster Session |"
+    "text": "S32"
   },
   {
     "type": "NarrativeText",
@@ -30,8 +20,58 @@
     "text": "ns; 40 mg/day=3.6%, p<0.05; 80 mg/day=4.9%, p<0.01; 120 mg/day=9.3%, p<0.001, PM dosing group: 20 mg/day=-0.4%, ns; 40 mg/day=2.8%, p<0.05: 80 mg/day=0.2%, ns; 160 mg/day=5.8%, p<0.05). There was no clear dose-dependent trend associated with nausea and RD was similar between AM and PM dosing group (AM dosing group: 20 mg/ day=0.2% ns; 40 mg/day=3.8%, p<0.05; 80 mg/day=3.8%, ns; 120 mg/ day=6.6%, ns, PM dosing group: 20 mg/day=-1.6%, ns; 40 mg/day=-1.7%, ns; 80 mg/day=5.5%, p<0.01; 160 mg/day=2.8%, ns). Discussion: The risk of adverse events in the treatment of schizophrenia with lurasidone can vary depending on the timing of administration. In particular, for akathisia and somnolence, the incidence risks were reduced when lurasidone was administered in PM. Unlike with AM administration, the dose-dependence in the risks of these adverse events were not observed in lurasidone PM administration. The timing of lurasidone administration could be considered in effort to minimize potential adverse events."
   },
   {
+    "type": "Title",
+    "element_id": "0302f9e0f412cb4c63f13818e571c25c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "S6. SLEEP ENDOPHENOTYPES OF SCHIZOPHRENIA: A HIGH-DENSITY EEG STUDY IN DRUG-NAÏVE, FIRST EPISODE PSYCHOSIS PATIENTS"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "e97f1cf1c49f397732e68cf1efb2355e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Anna Castelnovo1, Cecilia Casetta2, Francesco Donati3, Renata del Giudice3, Caroline Zangani3, Simone Sarasso3, Armando D’Agostino*3 1Faculty of Biomedical Sciences, Università della Svizzera Italiana, Switzerland; 2Institute of Psychiatry, Psychology and Neuroscience, King’s College London, England; 3Università degli Studi di Milano, Italy"
+  },
+  {
     "type": "NarrativeText",
-    "element_id": "e77987c7b17439bcfe8150c849de15a9",
+    "element_id": "1252f8d8921acac5f706e4402e504a75",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Background: Slow waves, the hallmark of the deep nonrapid eye move- ment sleep electroencephalogram (EEG), are critical for restorative sleep and brain plasticity. They arise from the synchronous depolarization and hyperpolarization of millions of cortical neurons and their proper gen- eration and propagation relies upon the integrity of widespread cortico- thalamic networks. Slow wave abnormalities have been reported in patient with Schizophrenia, although with partially contradictory results, probably related to antipsychotic and sedative medications. Recently, their presence and delineation, have been convincingly shown in first-episode psychosis patients (FEP). However, clear evidence of this biomarker at the onset of the disease, prior to any psychopharmacological intervention, remains limited. Moreover, no attempt has been made to elucidate the prognostic meaning of this finding. Methods: We collected whole night sleep high–density electroencephalog- raphy recordings (64-channel BrainAmp, Brain Products GmbH, Gilching, Germany) in 20 drug-naive FEP patients and 20 healthy control subjects (HC). Several clinical psychometric scales as well as neurocognitive tests were administered to all subjects in order to better define psychopatholog- ical status and vulnerability. EEG slow wave activity (SWA, spectral power between 1 and 4 Hz) and several slow wave parameters were computed at each electrode location, including density and amplitude, at each electrode location. Along with a group analysis between FEP and HC, a subgroup analysis was also computed between patients who showed a progression of symptoms to full-blown Schizophrenia (SCZ, n = 10) over the next 12-month follow-up and those who did not (OTH, n = 10). Results: Sleep macro-architecture was globally preserved in FEP patients. SWA (1–4 Hz) was lower in FEP compared to HC but this difference didn’t reach statistical significance. Slow wave density was decreased in FEP compared to HC, with a significance that survived multiple comparison correction over a large fronto-central cluster. Mean amplitude was pre- served. At the subgroup analysis, these results were largely driven by the subgroup of patients with a confirmed diagnosis of SCZ at a 12-month fol- low-up. Indeed, no difference could be found between OTH and HC, while a strong significance was still evident between SCZ and HC."
+  },
+  {
+    "type": "Title",
+    "element_id": "44b59a545030365cd1ad225ed05ff22d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "SIRS 2020 Abstracts"
+  },
+  {
+    "type": "Header",
+    "element_id": "d7106f2241a37dc4e61314f45da1ff5b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Poster Session I"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "7ffd3b09cb23fc26ab2411d70e53838a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -41,7 +81,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "15ef5407945d4d6b7863b5afaeb5ccb7",
+    "element_id": "c02ccab64d2a356a96f5394a2b92fa0b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -50,44 +90,14 @@
     "text": "S7. INVESTIGATING THE LINK BETWEEN THE PERIPHERAL ENDOCANNABINOID SYSTEM AND CENTRAL GLUTAMATERGIC NEUROTRANSMISSION IN EARLY PSYCHOSIS: A 7T-MRS STUDY"
   },
   {
-    "type": "Title",
-    "element_id": "37e29d40913603a439416b8067586a10",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "S6. SLEEP ENDOPHENOTYPES OF SCHIZOPHRENIA: A HIGH-DENSITY EEG STUDY IN DRUG-NAIVE, FIRST EPISODE PSYCHOSIS PATIENTS"
-  },
-  {
     "type": "NarrativeText",
-    "element_id": "e5351c19bfdc16d7f836c3831aadfd84",
+    "element_id": "d981d6dfaa8794c0bb733db0965b2831",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Amedeo Minichino*!, Beata Godlewska', Philip Cowen', Philip Burnet!, Belinda Lennox! University of Oxford"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "9d2002e5bf118e95a75c8012a7fd10ef",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Anna Castelnovo!, Cecilia Casetta’, Francesco Donati’, Renata del Giudice’, Caroline Zangani*, Simone Sarasso’, Armando D’Agostino*? ‘Faculty of Biomedical Sciences, Universita della Svizzera Italiana, Switzerland, ?Institute of Psychiatry, Psychology and Neuroscience, King’s College London, England; * Universita degli Studi di Milano, Italy"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "d6e0fb8dceb2d11f9cd69071c491e4b3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Background: Slow waves, the hallmark of the deep nonrapid eye move- ment sleep electroencephalogram (EEG), are critical for restorative sleep and brain plasticity. They arise from the synchronous depolarization and hyperpolarization of millions of cortical neurons and their proper gen- eration and propagation relies upon the integrity of widespread cortico- thalamic networks. Slow wave abnormalities have been reported in patient with Schizophrenia, although with partially contradictory results, probably related to antipsychotic and sedative medications. Recently, their presence and delineation, have been convincingly shown in first-episode psychosis patients (FEP). However, clear evidence of this biomarker at the onset of the disease, prior to any psychopharmacological intervention, remains limited. Moreover, no attempt has been made to elucidate the prognostic meaning of this finding. Methods: We collected whole night sleep high-density electroencephalog- raphy recordings (64-channel BrainAmp, Brain Products GmbH, Gilching, Germany) in 20 drug-naive FEP patients and 20 healthy control subjects (HC). Several clinical psychometric scales as well as neurocognitive tests were administered to all subjects in order to better define psychopatholog- ical status and vulnerability. EEG slow wave activity (SWA, spectral power between | and 4 Hz) and several slow wave parameters were computed at each electrode location, including density and amplitude, at each electrode location. Along with a group analysis between FEP and HC, a subgroup analysis was also computed between patients who showed a progression of symptoms to full-blown Schizophrenia (SCZ, n = 10) over the next 12-month follow-up and those who did not (OTH, n = 10). Results: Sleep macro-architecture was globally preserved in FEP patients. SWA (1-4 Hz) was lower in FEP compared to HC but this difference didn’t reach statistical significance. Slow wave density was decreased in FEP compared to HC, with a significance that survived multiple comparison correction over a large fronto-central cluster. Mean amplitude was pre- served. At the subgroup analysis, these results were largely driven by the subgroup of patients with a confirmed diagnosis of SCZ at a 12-month fol- low-up. Indeed, no difference could be found between OTH and HC, while a strong significance was still evident between SCZ and HC."
+    "text": "Amedeo Minichino*1, Beata Godlewska1, Philip Cowen1, Philip Burnet1, Belinda Lennox1 1University of Oxford"
   },
   {
     "type": "NarrativeText",
@@ -101,32 +111,32 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "293c0c67a9c6c574a94be8259b569b8f",
+    "element_id": "80abb04ec613b1d325ce6b8d0bb3349d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "S8. GRIN] PROMOTER METHYLATION CHANGES IN BLOOD OF EARLY-ONSET PSYCHOTIC PATIENTS AND UNAFFECTED SIBLINGS WITH CHILDHOOD TRAUMA"
+    "text": "S8. GRIN1 PROMOTER METHYLATION CHANGES IN BLOOD OF EARLY-ONSET PSYCHOTIC PATIENTS AND UNAFFECTED SIBLINGS WITH CHILDHOOD TRAUMA"
   },
   {
     "type": "NarrativeText",
-    "element_id": "f3ea77b3bc9c927470cede2650cdefd9",
+    "element_id": "3f834ac0bf8b0dbd8d64ee065820467f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Camila Loureiro*!, Corsi-Zuelli Fabiana', Fachim Helene Aparecida', Shuhama Rosana!, Menezes Paulo Rossi!, Dalton Caroline F’,"
+    "text": "Camila Loureiro*1, Corsi-Zuelli Fabiana1, Fachim Helene Aparecida1, Shuhama Rosana1, Menezes Paulo Rossi1, Dalton Caroline F2,"
   },
   {
-    "type": "Title",
-    "element_id": "574d62523bf0c0a56967c26c82840550",
+    "type": "NarrativeText",
+    "element_id": "117f7774fd093a60d964cc5b461f3e22",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "SIRS 2020 Abstracts"
+    "text": "AQ3"
   }
 ]

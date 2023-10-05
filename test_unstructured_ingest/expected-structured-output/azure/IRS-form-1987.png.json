@@ -1,5 +1,24 @@
 [
   {
+    "type": "UncategorizedText",
+    "element_id": "e16bce609163ec96985ae522ca81502a",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "‘A."
+  },
+  {
     "type": "Title",
     "element_id": "92405c82f76df8b2cbbc6047bd10e0ff",
     "metadata": {
@@ -38,44 +57,6 @@
     "text": "(Section references are to the Internal Revenue Code unless otherwise noted.)"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "e16bce609163ec96985ae522ca81502a",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "‘A."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "c9bc33e913a25aaffa8367aa11bc8ed9",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws an¢ to allow us to figure and collect the nght amount of tax. You are required to this information."
-  },
-  {
     "type": "Title",
     "element_id": "61ed58fa51293f429f87e8cf1896c9e4",
     "metadata": {
@@ -112,6 +93,25 @@
       "page_number": 1
     },
     "text": "We ask for this information to carry out the"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c9bc33e913a25aaffa8367aa11bc8ed9",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws an¢ to allow us to figure and collect the nght amount of tax. You are required to this information."
   },
   {
     "type": "NarrativeText",
@@ -190,8 +190,8 @@
     "text": "File this form to request a change in your accounting method, including the accounting treatment of any item. if you are requesting 2 change in accounting period, use Form 1128, Application for Change in Accounting Period. For more information, see Publication 538, Accounting Periods and Methods,"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "06658399dddcd1d4d4fda8f9fa90fd53",
+    "type": "UncategorizedText",
+    "element_id": "2127f2ab4fc4feb4d32460c8317bf02f",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -206,7 +206,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "filing taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current. revision date of Form 3115)"
+    "text": "Form 3115,"
   },
   {
     "type": "Title",
@@ -228,8 +228,8 @@
     "text": "When"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "2127f2ab4fc4feb4d32460c8317bf02f",
+    "type": "NarrativeText",
+    "element_id": "06658399dddcd1d4d4fda8f9fa90fd53",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -244,7 +244,83 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Form 3115,"
+    "text": "filing taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current. revision date of Form 3115)"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "03c4a83e399f2f669047b3fcfeae5867",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "Long-term contracts.—If you are required to"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "dbf06d87f9be9871dfd64bd0a7bba567",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "change your method of accounting for long-term contracts under section 460, see Notice 87-61 (9/21/87), 1987-38 IRB 40, for the notification procedures that must be followed."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "463ce4107785bb9854ad10b81d93dc7f",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "Other methods. —Unless the Service has published a regulation or procedure to the contrary, all other changes in accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of mcome attributable to the sale or furnishing of utility services no later than the year in which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these"
+  },
+  {
+    "type": "Title",
+    "element_id": "d3eda7d7ed44b4b43fcbfa6f83f6fad3",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "changes."
   },
   {
     "type": "NarrativeText",
@@ -359,82 +435,6 @@
       "page_number": 1
     },
     "text": "Disregard the instructions under Time and Place for Filing and Late Applications. instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(2) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3118 eg. “Automatic Change to Accrual Method—Section 448”). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "dbf06d87f9be9871dfd64bd0a7bba567",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "change your method of accounting for long-term contracts under section 460, see Notice 87-61 (9/21/87), 1987-38 IRB 40, for the notification procedures that must be followed."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "03c4a83e399f2f669047b3fcfeae5867",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "Long-term contracts.—If you are required to"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "463ce4107785bb9854ad10b81d93dc7f",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "Other methods. —Unless the Service has published a regulation or procedure to the contrary, all other changes in accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of mcome attributable to the sale or furnishing of utility services no later than the year in which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these"
-  },
-  {
-    "type": "Title",
-    "element_id": "d3eda7d7ed44b4b43fcbfa6f83f6fad3",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "changes."
   },
   {
     "type": "Title",

@@ -1,60 +1,6 @@
 [
   {
     "type": "Title",
-    "element_id": "80f1cd7f1c8e281093a32842b1e5bbce",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "WORLD NUCLEAR"
-  },
-  {
-    "type": "Title",
-    "element_id": "9f8388cf868cb29d273fdd7328642ff8",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "The Silent Giant"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "f439367da08e61523302e29f153007e0",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "The need for nuclear in a clean energy system"
-  },
-  {
-    "type": "Title",
     "element_id": "14547603bad3329c14c74b8c4e2ff8d9",
     "metadata": {
       "data_source": {
@@ -73,7 +19,61 @@
   },
   {
     "type": "Title",
-    "element_id": "53d548aa01fc3eb72da15a5be7f235e2",
+    "element_id": "80f1cd7f1c8e281093a32842b1e5bbce",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "WORLD NUCLEAR"
+  },
+  {
+    "type": "Title",
+    "element_id": "51174df4a3a78fe261885b1818b66876",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "The Silent Giant"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e2b1006b190b699d597fdb0f1d73f8f9",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "The need for nuclear in a clean energy system"
+  },
+  {
+    "type": "Title",
+    "element_id": "2fa985d0a50e61b09ec22c447cc4b2c9",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -91,7 +91,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c488c9c624cfdc84d2f2eeaf308b749d",
+    "element_id": "1f4925fb064910ee923ccc1f6b20715b",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -105,29 +105,11 @@
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "In a world centred on short-term fixes, many of the traits that make nuclear energy a key player in the transition to a sustainable world are not properly valued and often taken for granted. Reflecting on the popular discourse in the world of energy politics it would seem that renewables, and renewables alone, will be responsible for, and capable of, delivering a zero-carbon energy system — and that it is just a matter of time."
+    "text": "In a world centred on short-term fixes, many of the traits that make nuclear energy a key player in the transition to a sustainable world are not properly valued and often taken for granted. Reflecting on the popular discourse in the world of energy politics it would seem that renewables, and renewables alone, will be responsible for, and capable of, delivering a zero-carbon energy system – and that it is just a matter of time."
   },
   {
     "type": "NarrativeText",
-    "element_id": "8a3e549524fad256e77455075839d854",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Nuclear energy is a proven solution with a long and well-established track record. Nuclear reactors — a grand total of 445 in 30 countries — are the low-carbon backbone of electricity systems, operating in the background, day in and day out, often out of sight and out of mind. Capable of generating immense amounts of clean power, they are the silent giants upon which we rely daily."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "6395cb173a26a3cc05ad01c273a797eb",
+    "element_id": "46385c950e7da4d8e588686a541335c2",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -145,7 +127,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a5996102613c8e4d5e4b533c8f08e17e",
+    "element_id": "ae77460bce2d3a52d823954ccb9c708f",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -163,7 +145,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "34b862fe9a0e0a080a6d8552a0844ab4",
+    "element_id": "8e1e0570b2ba9211cc184c21a3ffbf90",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -177,11 +159,29 @@
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "Nuclear energy has shown — be it in France or Sweden - that it has the potential to be the catalyst for delivering sustainable energy transitions, long before climate change was on the agenda. The use of nuclear energy is the fast track to a high-powered and clean energy system, which not only delivers a healthier environment and an affordable supply of electricity, but also strengthens energy security and helps mitigate climate change."
+    "text": "Nuclear energy is a proven solution with a long and well-established track record. Nuclear reactors – a grand total of 445 in 30 countries – are the low-carbon backbone of electricity systems, operating in the background, day in and day out, often out of sight and out of mind. Capable of generating immense amounts of clean power, they are the silent giants upon which we rely daily."
   },
   {
     "type": "NarrativeText",
-    "element_id": "7fcca1e8ff6edf9f771e53f8fe5fc5bb",
+    "element_id": "c6d2fa859e6df9845dee4044d05ddbc5",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Nuclear energy has shown – be it in France or Sweden – that it has the potential to be the catalyst for delivering sustainable energy transitions, long before climate change was on the agenda. The use of nuclear energy is the fast track to a high-powered and clean energy system, which not only delivers a healthier environment and an affordable supply of electricity, but also strengthens energy security and helps mitigate climate change."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e055395659c9e1aa4d5c0afb188e4a9e",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -199,7 +199,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "fafd2592ad2373e42119f989c625aca2",
+    "element_id": "33a2aba13d6b228d8d6f792f16caa684",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -217,7 +217,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "59b99f7ac1c43270a24665960b005fd6",
+    "element_id": "9209d9a3c8ea19bed487dff9476428ee",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -231,11 +231,11 @@
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "° The need to create a level playing field that values reliability and energy security"
+    "text": "• The need to create a level playing field that values reliability and energy security"
   },
   {
     "type": "ListItem",
-    "element_id": "6b5d197bcb4b9dbd233cc643112a9a2e",
+    "element_id": "ae74ee3ddcecd2ffb75672d469c80a0e",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -249,11 +249,11 @@
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "° The need for harmony in the nuclear regulatory environment"
+    "text": "• The need for harmony in the nuclear regulatory environment"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "5cfab71de7593a4fdacaa8a546b04eb3",
+    "type": "ListItem",
+    "element_id": "93e7dedc9d334470067ad2de1f9ee788",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -267,11 +267,47 @@
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "° The need for a holistic safety paradigm for the whole electricity system."
+    "text": "The need for a holistic safety paradigm for the whole electricity system."
+  },
+  {
+    "type": "Footer",
+    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "1"
+  },
+  {
+    "type": "Header",
+    "element_id": "53c234e5e8472b6ac51c1ae1cab3fe06",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "2"
   },
   {
     "type": "Title",
-    "element_id": "2960604e965650bbf4215790bc9db0c1",
+    "element_id": "257fa04b9d79fc46da551d720411595a",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -289,7 +325,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "febf642dd8ecf1b341acdcc7fcc330f7",
+    "element_id": "ca18f74506ddc1bca89179259f3ff4cb",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -303,7 +339,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Electricity is central to modern life — it powers our daily lives, as well as our dreams and ambitions. Demand has grown steadily for more than 100 years, and will continue to do so as many parts of the world continue to develop, and electrification takes a central role in efforts to decarbonize (Figure 1). With nearly a billion people around the world still living in the dark, without access to electricity, humanity has a responsibility to learn from the past - everyone has the right to enjoy a modern lifestyle in a way that does not cause harm to people or the planet."
+    "text": "Electricity is central to modern life – it powers our daily lives, as well as our dreams and ambitions. Demand has grown steadily for more than 100 years, and will continue to do so as many parts of the world continue to develop, and electrification takes a central role in efforts to decarbonize (Figure 1). With nearly a billion people around the world still living in the dark, without access to electricity, humanity has a responsibility to learn from the past - everyone has the right to enjoy a modern lifestyle in a way that does not cause harm to people or the planet."
   },
   {
     "type": "UncategorizedText",
@@ -325,7 +361,7 @@
   },
   {
     "type": "Title",
-    "element_id": "043a718774c572bd8a25adbeb1bfcd5c",
+    "element_id": "563a2980d46c81119e1d7d952b375a41",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -339,7 +375,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "s"
+    "text": "h W T"
   },
   {
     "type": "Image",
@@ -451,7 +487,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "66b8b3d92630592d2aa5cf7a9bd29feb",
+    "element_id": "578e73d091a9463a76ea7502a6a92503",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -465,11 +501,11 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Figure 1. IEA projected electricity production and sources to 2040!"
+    "text": "Figure 1. IEA projected electricity production and sources to 2040 i"
   },
   {
     "type": "NarrativeText",
-    "element_id": "5baffce63028b39a6015c4e5ce154a60",
+    "element_id": "427b54db6e4b434f92954bc67db93473",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -483,11 +519,11 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "The challenge before us, however, goes far beyond just electricity — we will need to find ways to decarbonize all parts of the economy, and we need solutions that are sustainable in the long-term. That means changing the way we heat our homes and power our industrial processes, as well as ensuring that the way we travel, export our products and ship our food moves away from fossil fuels."
+    "text": "The challenge before us, however, goes far beyond just electricity – we will need to find ways to decarbonize all parts of the economy, and we need solutions that are sustainable in the long-term. That means changing the way we heat our homes and power our industrial processes, as well as ensuring that the way we travel, export our products and ship our food moves away from fossil fuels."
   },
   {
     "type": "NarrativeText",
-    "element_id": "6f1e00a2023163576971f6b87d583847",
+    "element_id": "92f6fd6a561b87154049d083b93b611d",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -501,11 +537,11 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Despite the very considerable efforts to decarbonize the economy and the countless billions spent, our world remains heavily addicted to fossil fuels. The trend is clear — instead of reducing our dependence on fossil fuels, we are increasing it (Figure 2). As a direct result, greenhouse gas emissions continue to rise when they need to drastically fall."
+    "text": "Despite the very considerable efforts to decarbonize the economy and the countless billions spent, our world remains heavily addicted to fossil fuels. The trend is clear – instead of reducing our dependence on fossil fuels, we are increasing it (Figure 2). As a direct result, greenhouse gas emissions continue to rise when they need to drastically fall."
   },
   {
     "type": "Title",
-    "element_id": "87f07ccd2964c13adfa70beda2a15005",
+    "element_id": "a5d60fc4dbbd484074d8389c35703cf7",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -519,7 +555,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "GWh"
+    "text": "h W G"
   },
   {
     "type": "Image",
@@ -649,7 +685,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "7a298f12a61964302f39fe48c4338af0",
+    "element_id": "aa04bda99d06997f39a4b613c2c62be5",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -663,11 +699,11 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Figure 2. Worldwide electricity generation by fuel (1990-2016)'"
+    "text": "Figure 2. Worldwide electricity generation by fuel (1990-2016)ii"
   },
   {
     "type": "NarrativeText",
-    "element_id": "04782c81f91ecdf98bf7eb7bdd3ea174",
+    "element_id": "d841776bdfaae69274a3c8b898021653",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -681,11 +717,11 @@
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "We need to deliver a worldwide transformation that is socially, economically and environmentally sustainable. We need a system that is affordable — no one should have to choose between heating their home, and essentials like eating — as well as helping to alleviate poverty, and ensure the realization of human potential globally. We need a power source that can not only help us mitigate the effects of climate change and environmental degradation, but can also help bring the enormous benefits of reliable electricity supply to the corners of the world that do not have access to it."
+    "text": "We need to deliver a worldwide transformation that is socially, economically and environmentally sustainable. We need a system that is affordable – no one should have to choose between heating their home, and essentials like eating – as well as helping to alleviate poverty, and ensure the realization of human potential globally. We need a power source that can not only help us mitigate the effects of climate change and environmental degradation, but can also help bring the enormous benefits of reliable electricity supply to the corners of the world that do not have access to it."
   },
   {
     "type": "NarrativeText",
-    "element_id": "d657c575466eb3079bc1dfaa38f09e6e",
+    "element_id": "10a72512425bbe7a4cdd6529b0337d90",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -699,11 +735,11 @@
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "Nuclear energy is already making amajor contribution. By using nuclear energy rather than fossil fuels, we currently avoid the emission of more than 2500 million tonnes of carbon dioxide every year. To put that into perspective, it is the equivalent of removing about 400 million cars from the world’s roads"
+    "text": "Nuclear energy is already making a major contribution. By using nuclear energy rather than fossil fuels, we currently avoid the emission of more than 2500 million tonnes of carbon dioxide every year. To put that into perspective, it is the equivalent of removing about 400 million cars from the world’s roads."
   },
   {
     "type": "NarrativeText",
-    "element_id": "db8cb6bc1188b79b195b215f8d827033",
+    "element_id": "030d3154a592248139651c5f8fbef1d5",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -717,11 +753,29 @@
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "Modern society is dependent on the steady supply of electricity, every day of the year — regardless of weather, season or time of day — and nuclear energy is particularly well-suited to providing this service. Given that the majority of baseload supply is fossil-based, an increase in the use of nuclear energy would result in a rapid decarbonization of the electricity system. The International Energy Agency’s (IEA) recent report\" on nuclear energy highlighted the importance of dependable baseload electricity generators and the need to properly value and compensate them for the electricity security and reliability services they provide"
+    "text": "Modern society is dependent on the steady supply of electricity, every day of the year – regardless of weather, season or time of day – and nuclear energy is particularly well-suited to providing this service. Given that the majority of baseload supply is fossil-based, an increase in the use of nuclear energy would result in a rapid decarbonization of the electricity system. The International Energy Agency’s (IEA) recent report III on nuclear energy highlighted the importance of dependable baseload electricity generators and the need to properly value and compensate them for the electricity security and reliability services they provide."
   },
   {
-    "type": "NarrativeText",
-    "element_id": "14cc432137a4f0a5783d038a27c43d93",
+    "type": "Footer",
+    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "3"
+  },
+  {
+    "type": "Footer",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -735,11 +789,29 @@
       "filetype": "application/pdf",
       "page_number": 6
     },
-    "text": "Despite impressive recent growth, the stark reality is that renewables alone will not be able to resolve our dependence on fossil fuels. Clearly, the sun does not always shine, and the wind does not always blow, and this is compounded by the fact that many times these periods coincide with when electricity demand is at its highest, but renewables can be complementary to nuclear energy. Storage solutions, such as batteries, will not be able to power our societies for days or weeks when the weather is not favourable. Natural gas is currently the most used solution for the intermittency problem, which only serves to reinforce our economy's dependence of fossil fuels, and severely undermines the apparently ‘green credentials’ of many renewables."
+    "text": "4"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "a53cecd93ffb9ec731b7974f1805e924",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "Despite impressive recent growth, the stark reality is that renewables alone will not be able to resolve our dependence on fossil fuels. Clearly, the sun does not always shine, and the wind does not always blow, and this is compounded by the fact that many times these periods coincide with when electricity demand is at its highest, but renewables can be complementary to nuclear energy. Storage solutions, such as batteries, will not be able to power our societies for days or weeks when the weather is not favourable. Natural gas is currently the most used solution for the intermittency problem, which only serves to reinforce our economy’s dependence of fossil fuels, and severely undermines the apparently ‘green credentials’ of many renewables."
   },
   {
     "type": "Title",
-    "element_id": "3655eec20e80973efc46cc09db7a04ba",
+    "element_id": "899a2c517ba69726f3808d66f442e439",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -757,7 +829,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "57495e1f9e86098cf4fa5db51e96715e",
+    "element_id": "a8c17b6aa3cad915f2f7e0126706c2f5",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -771,11 +843,11 @@
       "filetype": "application/pdf",
       "page_number": 6
     },
-    "text": "The Intergovernmental Panel on Climate Change (IPCC) special report on Global Warming of 1.5°C'\" examined a large number of different scenarios for limiting global warming to 1.5°C. Of those scenarios which would achieve the 1.5°C target, the mean increase in nuclear energy’s contribution to electricity production was 2.5 times higher compared to today. However, the ‘middle-of-the-road’ scenario — in which social, economic, and technological trends follow current patterns and would not require major changes to, for example, diet and travel habits — sees the need for nuclear increase by five times globally by 2050."
+    "text": "The Intergovernmental Panel on Climate Change (IPCC) special report on Global Warming of 1.5°C iv examined a large number of different scenarios for limiting global warming to 1.5°C. Of those scenarios which would achieve the 1.5°C target, the mean increase in nuclear energy’s contribution to electricity production was 2.5 times higher compared to today. However, the ‘middle-of-the-road’ scenario – in which social, economic, and technological trends follow current patterns and would not require major changes to, for example, diet and travel habits – sees the need for nuclear increase by five times globally by 2050."
   },
   {
     "type": "NarrativeText",
-    "element_id": "937bcef22e485ee0a8673f5800a1402e",
+    "element_id": "7562e707e991f1fb634fff41f2cae0e4",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -789,11 +861,11 @@
       "filetype": "application/pdf",
       "page_number": 6
     },
-    "text": "The IEA has concluded that without an expanded contribution from nuclear energy, the already huge challenge of achieving emissions reductions will become drastically harder and more costly. In their latest report on nuclear energy’, published in 2019, they also conclude that not using nuclear would have negative implications for energy security and result in higher costs for the consumers. The IEA recommends policy reforms to ‘... ensure competition on a level playing field’ and that the ‘... focus should be on designing electricity markets in a way that values the clean energy and energy security attributes of low-carbon technologies, including nuclear power.’ Such reforms should also ensure that reliability of electricity production is properly valued and compensated."
+    "text": "The IEA has concluded that without an expanded contribution from nuclear energy, the already huge challenge of achieving emissions reductions will become drastically harder and more costly. In their latest report on nuclear energy v, published in 2019, they also conclude that not using nuclear would have negative implications for energy security and result in higher costs for the consumers. The IEA recommends policy reforms to ‘… ensure competition on a level playing field’ and that the ‘… focus should be on designing electricity markets in a way that values the clean energy and energy security attributes of low-carbon technologies, including nuclear power.’ Such reforms should also ensure that reliability of electricity production is properly valued and compensated."
   },
   {
     "type": "NarrativeText",
-    "element_id": "0bac109dbd9ba991aa99fc4c961fa5e6",
+    "element_id": "1cde21cc10aa769a17ca11aa1e10823e",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -811,7 +883,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "3e66425c70ff43fc4bd7a8542615f845",
+    "element_id": "af2424b7ec665072a2ee0bdcd901e244",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -829,7 +901,7 @@
   },
   {
     "type": "Title",
-    "element_id": "402ea80e3d6abf97fb440fd1563f342d",
+    "element_id": "e8dbac2cdc67e714e99baa9c0f6a54b9",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -843,7 +915,7 @@
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "$/MWh"
+    "text": "h W M / $"
   },
   {
     "type": "Image",
@@ -865,7 +937,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "acfe5e31dc0920491acc38ff8c094ca7",
+    "element_id": "a5846cd18e790db780cc03f9e5f63278",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -879,11 +951,11 @@
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "Figure 3. Comparative cost projections for main electricity generators”"
+    "text": "Figure 3. Comparative cost projections for main electricity generators vi"
   },
   {
     "type": "NarrativeText",
-    "element_id": "e7b69a7452d318fe60553985fe79f8b6",
+    "element_id": "9ad4cf48d0b9d0bbfd257214f3d050dd",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -897,11 +969,11 @@
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "Additionally, electricity markets fail to recognize the relative cos s of different forms of electricity generation. Whilst the nuclear industry takes responsibility for its lifecycle costs (including decommissioning and waste management), other electricity generators do not. Fossil fuel generators are rarely required to pay the price in ine with the environmental and health damage that their emissi ons cause, whilst the cost of wind and solar does not include the disposal of the sometimes toxic materials at the end of their life"
+    "text": "However, markets fail to give due credit to electricity generators, such as nuclear energy, that are able to meet these societal demands. This has resulted in situations where nuclear energy has struggled to compete with energy sources that have been subsidized, do not pay the hidden costs brought on by their intermittency (e.g. costly backup provisions and investments in the grid), or do not have to take responsibility for using our common atmosphere as a dumping ground."
   },
   {
     "type": "NarrativeText",
-    "element_id": "850c7639f7b52b8bc22377d4bda6ecb2",
+    "element_id": "13ff2375260e277c2dfbc8826aa50a65",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -915,11 +987,11 @@
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "However, markets fail to give due credit to electricity generators, such as nuclear energy, that are able to meet these societal demands. This has resulted in situations where nuclear energy has struggled to compete with energy sources that have been subsidized, do not pay the hid iden costs brought on by their intermittency (e.g. costly backup provisions and investments in the grid), or do not have to take responsibility for using our common atmosphere as a dumping ground."
+    "text": "Additionally, electricity markets fail to recognize the relative costs of different forms of electricity generation. Whilst the nuclear industry takes responsibility for its lifecycle costs (including decommissioning and waste management), other electricity generators do not. Fossil fuel generators are rarely required to pay the price in line with the environmental and health damage that their emissions cause, whilst the cost of wind and solar does not include the disposal of the sometimes toxic materials at the end of their life."
   },
   {
     "type": "NarrativeText",
-    "element_id": "436a5ae36e056dc03066cef53fc8ed40",
+    "element_id": "4b3dad9b769c100e89b2c082e7d9e13e",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -933,11 +1005,11 @@
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "icensing processes and safety requirements currently limit glo! in the licensing of new designs, hindering innovation. n regard to the need to harmonize regulations, multiple regulatory barriers stemming from diverse national bal nuclear trade and investment. A lack of international standardization places unnecessary regulatory burdens on nuclear activities and causes delays"
+    "text": "In regard to the need to harmonize regulations, multiple regulatory barriers stemming from diverse national licensing processes and safety requirements currently limit global nuclear trade and investment. A lack of international standardization places unnecessary regulatory burdens on nuclear activities and causes delays in the licensing of new designs, hindering innovation."
   },
   {
     "type": "NarrativeText",
-    "element_id": "c7e0761b0c1dc02ff7ffdf904a0ab458",
+    "element_id": "0ce74aa5e786157de72d5ae801d86cc4",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -951,11 +1023,47 @@
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "The International Atomic Energy Agency (IAEA) has highlighte: d the importance of addressing this issue, concluding that the lack of regulatory harmony ‘...causes many drawbacks for the entire nuclear industry, including developers, vendors, operators and even regulators themselves... This results in increased costs and reduced predictability in project execution’.’\" It is therefore crucial that we harmonize the regulatory process to address these weaknesses, and avoid unnecessary duplication and inconsistencies."
+    "text": "The International Atomic Energy Agency (IAEA) has highlighted the importance of addressing this issue, concluding that the lack of regulatory harmony ‘…causes many drawbacks for the entire nuclear industry, including developers, vendors, operators and even regulators themselves…This results in increased costs and reduced predictability in project execution’. vii It is therefore crucial that we harmonize the regulatory process to address these weaknesses, and avoid unnecessary duplication and inconsistencies."
+  },
+  {
+    "type": "Footer",
+    "element_id": "ef2d127de37b942baad06145e54b0c61",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "5"
+  },
+  {
+    "type": "Footer",
+    "element_id": "06e9d52c1720fca412803e3b07c4b228",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "6"
   },
   {
     "type": "NarrativeText",
-    "element_id": "4acd9d695e499834265cbd3b43734f02",
+    "element_id": "2cf9c478a20b21f5792941a179d926e9",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -990,8 +1098,8 @@
     "text": "140"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "e4f2e134e2a9ff1b4153700366f361e8",
+    "type": "NarrativeText",
+    "element_id": "e11247712b3df61756970b45f019ad68",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1005,7 +1113,43 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "_ 5 2"
+    "text": "r a e y"
+  },
+  {
+    "type": "Title",
+    "element_id": "3f79bb7b435b05321651daefd374cdc6",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "e"
+  },
+  {
+    "type": "Title",
+    "element_id": "f83714d89302473e0e4f5399bd50e7a9",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "W T"
   },
   {
     "type": "UncategorizedText",
@@ -1027,7 +1171,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "12e3fcca1d0978100724aa3cb6c1c3ee",
+    "element_id": "f9bb49945b60897227abdd75b5f8d39b",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1041,11 +1185,11 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "oO a a &"
+    "text": "r e p s e i t i l"
   },
   {
     "type": "Title",
-    "element_id": "41cec99f1ef5651d53efc832393c338d",
+    "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1059,7 +1203,7 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "& g"
+    "text": "a t a F"
   },
   {
     "type": "Image",
@@ -1081,7 +1225,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "b6c595b941cc7251ff1ea74a8d75084d",
+    "element_id": "445676822969fb5177c0081d07449a70",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1095,11 +1239,11 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "Figure 4. Comparison of number of fatalities due to electricity generation”"
+    "text": "Figure 4. Comparison of number of fatalities due to electricity generation viii"
   },
   {
     "type": "Title",
-    "element_id": "cfa2927842d99020365c55b6bd135679",
+    "element_id": "98d83a387e3ac2261daaf8d936bf3e27",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1117,7 +1261,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "dc60e617305753601c168427638b8723",
+    "element_id": "1119369ba9a68924c64155762de72d8e",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1131,7 +1275,7 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "Nuclear energy is already making a significant contribution to providing the world with clean and abundant electricity, and has a proven track record of being a reliable workhorse around the world. Countries like France, Sweden and Switzerland have proven that it is possible to divorce economic growth from an increase in damaging emissions and over the timescales required to effectively challenge climate change and environmental degradation (Figures 5 and 6). Nuclear can ensure that fast-growing populations achieve rising standards of living — without having to sacrifice the planet or their own well-being."
+    "text": "Nuclear energy is already making a significant contribution to providing the world with clean and abundant electricity, and has a proven track record of being a reliable workhorse around the world. Countries like France, Sweden and Switzerland have proven that it is possible to divorce economic growth from an increase in damaging emissions and over the timescales required to effectively challenge climate change and environmental degradation (Figures 5 and 6). Nuclear can ensure that fast-growing populations achieve rising standards of living – without having to sacrifice the planet or their own well-being."
   },
   {
     "type": "UncategorizedText",
@@ -1152,8 +1296,8 @@
     "text": "100"
   },
   {
-    "type": "Title",
-    "element_id": "2d711642b726b04401627ca9fbac32f5",
+    "type": "UncategorizedText",
+    "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1167,7 +1311,7 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "x"
+    "text": "%"
   },
   {
     "type": "Image",
@@ -1189,7 +1333,7 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "d52bea8fe3af01c979272d9cc4dfb974",
+    "element_id": "5feceb66ffc86f38d952786c6d696c79",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1203,7 +1347,7 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "0)"
+    "text": "0"
   },
   {
     "type": "Title",
@@ -1261,7 +1405,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "9c4935df8347af1e42a2c1cde9265377",
+    "element_id": "fd1b6d076800203a708efab109d9393a",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1275,11 +1419,11 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "Figure 5. The importance of nuclear in ensuring clean energy systems in France, Sweden and Switzerland”"
+    "text": "Figure 5. The importance of nuclear in ensuring clean energy systems in France, Sweden and Switzerland ix"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "cc423ef54c515680fe9418a37b8a4a25",
+    "type": "Title",
+    "element_id": "563a2980d46c81119e1d7d952b375a41",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1293,7 +1437,7 @@
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "£ ="
+    "text": "h W T"
   },
   {
     "type": "Image",
@@ -1333,7 +1477,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "0ad07326f56e66781da5dbb9488eaa67",
+    "element_id": "3b5b3755bac62d7f53eb84cadc34c528",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1347,11 +1491,11 @@
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "Figure 6. The lasting decarbonization of French electricity and nuclear’s ability to meet growing demand”"
+    "text": "Figure 6. The lasting decarbonization of French electricity and nuclear’s ability to meet growing demand x"
   },
   {
     "type": "NarrativeText",
-    "element_id": "edf37116e01e19dd7e27cc6f915b81d2",
+    "element_id": "4f5cc927b953f3c49c562a22c88f863f",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1365,11 +1509,11 @@
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "The incredible energy density of uranium means that just a few kilos is all that is required to provide one person with enough power for a lifetime. Uranium is abundant and can be found in many parts of the world, as well as in seawater. Furthermore, spent nuclear fuel is well managed and can in most cases be recycled to produce even more power. By using nuclear energy, countries are able to take charge of their own destinies by decreasing their reliance on imported energy — enhanced independence and security in uncertain times."
+    "text": "The incredible energy density of uranium means that just a few kilos is all that is required to provide one person with enough power for a lifetime. Uranium is abundant and can be found in many parts of the world, as well as in seawater. Furthermore, spent nuclear fuel is well managed and can in most cases be recycled to produce even more power. By using nuclear energy, countries are able to take charge of their own destinies by decreasing their reliance on imported energy – enhanced independence and security in uncertain times."
   },
   {
     "type": "Image",
-    "element_id": "eeda9f9210dfe4be7e82b4385290d3ca",
+    "element_id": "36ca9b7cdbbcba729a46487cf86c07eb",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1383,11 +1527,11 @@
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "  One fuel pellet contains as much energy as a tonne of coal"
+    "text": "One fuel pellet contains as much energy as a tonne of coal"
   },
   {
     "type": "NarrativeText",
-    "element_id": "b4dfcb14b87f52414bdd5e2bdba9bd6f",
+    "element_id": "0e28734a89e6f2473c6bbd5c1bdaf50e",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1405,7 +1549,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a72d3895448081d55f7a3d40eed7ea6c",
+    "element_id": "81a65c45b597c6647c9f984f7b2e3554",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1422,8 +1566,26 @@
     "text": "Nuclear energy offers a multitude of services beyond just electricity. With nuclear, we can decarbonize the way we heat our homes, provide process heat for industry, and ensure access to clean water. As freshwater supplies come under increasing pressure worldwide, nuclear reactors can provide desalination, ensuring a reliable flow of fresh drinking water in areas where it is scarce."
   },
   {
-    "type": "NarrativeText",
-    "element_id": "44a48f4495885a4339d3159211a853bc",
+    "type": "Header",
+    "element_id": "7902699be42c8a8e46fbbb4501726517",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "7"
+  },
+  {
+    "type": "Footer",
+    "element_id": "aa67a169b0bba217aa0aa88a65346920",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1437,11 +1599,11 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "Nuclear energy can be relied upon to power the new mobility revolution taking place. Every day, we use almost 20 million barrels of oil to power our vehicles. By swapping to an electric or hydrogen-powered transport fleet — all powered by the atom — we are able to address one of the key challenges to a sustainable economy."
+    "text": "8"
   },
   {
     "type": "NarrativeText",
-    "element_id": "25ea670c3779f392930b0d43cdc993b5",
+    "element_id": "4c23c5c4e459d5f3f6f62cc6a06a816a",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1455,11 +1617,11 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "We cannot afford to wait — we need every part of the puzzle to contribute towards solving some of the greatest challenges faced by humankind in a very long time. The impacts of climate change will hit the poorest and most vulnerable first, and failing to act will have significant humanitarian consequences."
+    "text": "Nuclear energy can be relied upon to power the new mobility revolution taking place. Every day, we use almost 20 million barrels of oil to power our vehicles. By swapping to an electric or hydrogen-powered transport fleet – all powered by the atom – we are able to address one of the key challenges to a sustainable economy."
   },
   {
     "type": "NarrativeText",
-    "element_id": "e36d892c65b497d5f708e3db66469481",
+    "element_id": "cd055b546424c5003939bb047a56abf0",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1473,11 +1635,29 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "Nuclear power is the silent giant of today’s energy system — it runs quietly in the background, capable of delivering immense amounts of power, regardless of weather or season, allowing us to focus on everything else in life. It is a technology that is available now, and can be expanded quickly across the world to help us solve some of the most defining challenges we face. Nuclear energy holds the potential to herald a new, cleaner and truly sustainable world — enabling us to pass on a cleaner planet to our children."
+    "text": "We cannot afford to wait – we need every part of the puzzle to contribute towards solving some of the greatest challenges faced by humankind in a very long time. The impacts of climate change will hit the poorest and most vulnerable first, and failing to act will have significant humanitarian consequences."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "a654080ea22f70c397bca52fee82b82f",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "Nuclear power is the silent giant of today’s energy system – it runs quietly in the background, capable of delivering immense amounts of power, regardless of weather or season, allowing us to focus on everything else in life. It is a technology that is available now, and can be expanded quickly across the world to help us solve some of the most defining challenges we face. Nuclear energy holds the potential to herald a new, cleaner and truly sustainable world – enabling us to pass on a cleaner planet to our children."
   },
   {
     "type": "Title",
-    "element_id": "69824d3b0e70ca6aaa0da1613b65fd91",
+    "element_id": "e56261e0bd30965b8e68ed2abb15b141",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1585,6 +1765,42 @@
   },
   {
     "type": "Title",
+    "element_id": "4c94485e0c21ae6c41ce1dfe7b6bface",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "v"
+  },
+  {
+    "type": "Title",
+    "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "vi"
+  },
+  {
+    "type": "Title",
     "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
     "metadata": {
       "data_source": {
@@ -1621,7 +1837,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "16ca8b644b5a24e03e19c6b990545fdc",
+    "element_id": "de72de35f0092bdd3107011f3be18dc0",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1635,7 +1851,43 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "nternational Energy Agency (20 results Nuclear Association. nternational nternational Energy Agency (20 publications/nuclear/ 8), World Energy Outloo! Energy Agency (n.d.), Statistics. Accessed from: https://www.iea.org/statistics/?country=>WORLD&year=20 =chart&dataTable=ELECTRICITYANDHEAT - with visual modifications by World Nuclear Association. 9), Nuclear Power in a CI 2018. Data accessed from https://www.iea.org/weo/ — Based on the New Policies Scenario, which incorporates existing energy policies as well as an assessment of the ikely to stem from the implementation of announced policy intentions — with visual modification by World 6&category=Electricity&indicator=ElecGenByFuel&mode lean Energy System. Accessed from: https://www.iea.org/ Intergovernmental Panel on Climate Change (2018), Special Report on Global Warming of 1.5 °C. Accessed from: https:/Awww.ipce.ch/sr15/ nternational Energy Agency (20 publications/nuclear/ nternational International Publications/PDF/P1695_web.pdf 9), Nuclear Power in a CI Energy Agency & OECD Nuclear Energy Agency (2015), Projected Costs o 2015 Edition. Accessed from: https:/Awww.oecd-nea.org/ndd/pubs/2015/7057-proj-costs-electricity-2015.pdf Atomic Energy Agency (2015), Technical challenges in the application and instrumentation and control systems in nuclear power plants. Accessed from: https://www-pub.iaea.org/MTCD/ lean Energy System. Accessed from: https://www.iea.org/ generating Electricity — icensing of digital"
+    "text": "International Energy Agency (2018), World Energy Outlook 2018. Data accessed from https://www.iea.org/weo/ – Based on the New Policies Scenario, which incorporates existing energy policies as well as an assessment of the results likely to stem from the implementation of announced policy intentions – with visual modification by World Nuclear Association. International Energy Agency (n.d.), Statistics. Accessed from: https://www.iea.org/statistics/?country=WORLD&year=2016&category=Electricity&indicator=ElecGenByFuel&mode =chart&dataTable=ELECTRICITYANDHEAT – with visual modifications by World Nuclear Association. International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ Intergovernmental Panel on Climate Change (2018), Special Report on Global Warming of 1.5 °C. Accessed from: https://www.ipcc.ch/sr15/ International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ International Energy Agency & OECD Nuclear Energy Agency (2015), Projected Costs of generating Electricity – 2015 Edition. Accessed from: https://www.oecd-nea.org/ndd/pubs/2015/7057-proj-costs-electricity-2015.pdf International Atomic Energy Agency (2015), Technical challenges in the application and licensing of digital instrumentation and control systems in nuclear power plants. Accessed from: https://www-pub.iaea.org/MTCD/ Publications/PDF/P1695_web.pdf"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "9ec2f70cbe42f5dc5073a88246db2b7a",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "and NRC SOARCA study 2015 Paul-Scherrer Institute. Data for nuclear accidents modified to reflect UNSCEAR findings/recommendations (2012)"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "5897aff759a5cc8d94710101c73af296",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "and NRC SOARCA study 2015 International Energy Agency (2018), Electricity Information 2018 https://webstore.iea.org/electricity-information-2018-overview Ibid."
   },
   {
     "type": "Title",
@@ -1674,44 +1926,8 @@
     "text": "x bid."
   },
   {
-    "type": "ListItem",
-    "element_id": "9ec2f70cbe42f5dc5073a88246db2b7a",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "and NRC SOARCA study 2015 Paul-Scherrer Institute. Data for nuclear accidents modified to reflect UNSCEAR findings/recommendations (2012)"
-  },
-  {
     "type": "NarrativeText",
-    "element_id": "908805f07434ad2d6814aaf4c96f38ab",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "and NRC SOARCA study 2015 nternational bid. Energy Agency (2018), Electricity Information 2018 https://webstore.iea.org/electricity-information-2018-overview"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "cd7669ea7d8c7961fdbf51c7fec05db7",
+    "element_id": "ab9c4428d3394fd230d7636bea5030d5",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1729,7 +1945,25 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "481e5a54650b0a4ac7bc2568ddad436d",
+    "element_id": "821daa4396c0087d9d5ee9240bc5c85c",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "+44 (0)20 7451 1520 www.world-nuclear.org info@world-nuclear.org"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c48603fd38d3449d3afcd2dc18903083",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1747,43 +1981,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "cff66c7267104eeade830b3dc8675acd",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 12
-    },
-    "text": "The Silent Giant © 2019 World Nuclear Association. Registered in England and Wales, company number 01215741"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "29ffbf37c50921c161081cc3d9fa3fb6",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 12
-    },
-    "text": "+44 (0)20 7451 1520 www.world-nucle: info@world-nuclear."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "20ef77d9aa66e60f1443750cdbaa9014",
+    "element_id": "705da4db5e220010ddfd03d9452855e4",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1798,5 +1996,23 @@
       "page_number": 12
     },
     "text": "World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "de49f1c955d7c8a4d1d6d261c1cf21ba",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "The Silent Giant © 2019 World Nuclear Association. Registered in England and Wales, company number 01215741"
   }
 ]
