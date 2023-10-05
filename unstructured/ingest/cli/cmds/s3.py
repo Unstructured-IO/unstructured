@@ -15,7 +15,7 @@ from unstructured.ingest.cli.interfaces import (
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import S3
+from unstructured.ingest.runner import S3, runner_map
 
 
 @dataclass
@@ -70,6 +70,11 @@ def s3_source(ctx: click.Context, **options):
 @click.command(name="s3")
 @click.pass_context
 def s3_dest(ctx: click.Context, **options):
+    if not ctx.parent:
+        raise click.ClickException("destination command called without a parent")
+    if not ctx.parent.info_name:
+        raise click.ClickException("parent command missing info name")
+    source_cmd = ctx.parent.info_name.replace("-", "_")
     parent_options: dict = ctx.parent.params if ctx.parent else {}
     conform_click_options(options)
     verbose = parent_options.get("verbose", False)
@@ -78,12 +83,15 @@ def s3_dest(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         configs = extract_configs(options, validate=[S3CliConfig])
-        s3_runner = S3(
-            **configs,  # type: ignore
+        runner_cls = runner_map[source_cmd]
+        runner = runner_cls(
+            **configs,
             writer_type="s3",
             writer_kwargs=options,
         )
-        s3_runner.run(**parent_options)
+        runner.run(
+            **parent_options,
+        )
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
