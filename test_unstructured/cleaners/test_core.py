@@ -307,7 +307,7 @@ def test_bytes_string_to_string():
     [
         (
             "The dog loved the cat, but the cat loved the cow",
-            {"the": 4, "cat": 1, "loved": 2, "dog": 2, "but": 1, "cow": 1},
+            {"the": 4, "cat": 2, "loved": 2, "dog": 1, "but": 1, "cow": 1},
         ),
     ],
 )
