@@ -185,7 +185,7 @@ def supplement_page_layout_with_ocr(
         return inferred_page_layout
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
         elements = inferred_page_layout.elements
-        for i, element in enumerate(elements):
+        for element in elements:
             if element.text == "":
                 padded_element = pad_element_bboxes(element, padding=12)
                 cropped_image = image.crop(
@@ -196,7 +196,7 @@ def supplement_page_layout_with_ocr(
                     ocr_languages=ocr_languages,
                     entrie_page_ocr=entrie_page_ocr,
                 )
-                elements[i].text = text_from_ocr
+                element.text = text_from_ocr
         inferred_page_layout.elements[:] = elements
         return inferred_page_layout
     else:
