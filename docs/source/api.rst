@@ -108,7 +108,7 @@ When elements are extracted from PDFs or images, it may be useful to get their b
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
       
       file_data['files'].close()
 
@@ -155,7 +155,7 @@ You can specify the encoding to use to decode the text input. If no value is pro
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -204,7 +204,7 @@ You can also specify what languages to use for OCR with the ``ocr_languages`` kw
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -250,7 +250,7 @@ By default the result will be in ``json``, but it can be set to ``text/csv`` to 
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -296,7 +296,7 @@ Pass the `include_page_breaks` parameter to `true` to include `PageBreak` elemen
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -345,7 +345,7 @@ On the other hand, ``hi_res`` is the better choice for PDFs that may have text w
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -398,7 +398,7 @@ To use the ``hi_res`` strategy with **Chipper** model, pass the argument for ``h
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -451,7 +451,7 @@ To extract the table structure from PDF files using the ``hi_res`` strategy, ens
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -499,7 +499,7 @@ We also provide support for enabling and disabling table extraction for file typ
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -545,7 +545,7 @@ When processing XML documents, set the ``xml_keep_tags`` parameter to ``true`` t
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 

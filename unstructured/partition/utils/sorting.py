@@ -9,7 +9,7 @@ from unstructured.partition.utils.constants import (
     SORT_MODE_BASIC,
     SORT_MODE_XY_CUT,
 )
-from unstructured.partition.utils.xycut import recursive_xy_cut
+from unstructured.partition.utils.xycut import recursive_xy_cut, recursive_xy_cut_swapped
 
 
 def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> Tuple[int, int, int, int]:
@@ -80,6 +80,7 @@ def sort_page_elements(
     page_elements: List[Element],
     sort_mode: str = SORT_MODE_XY_CUT,
     shrink_factor: float = 0.9,
+    xy_cut_primary_direction: str = "x",
 ) -> List[Element]:
     """
     Sorts a list of page elements based on the specified sorting mode.
@@ -102,6 +103,11 @@ def sort_page_elements(
 
     shrink_factor = float(
         os.environ.get("UNSTRUCTURED_XY_CUT_BBOX_SHRINK_FACTOR", shrink_factor),
+    )
+
+    xy_cut_primary_direction = os.environ.get(
+        "UNSTRUCTURED_XY_CUT_PRIMARY_DIRECTION",
+        xy_cut_primary_direction,
     )
 
     if not page_elements:
@@ -136,7 +142,10 @@ def sort_page_elements(
             shrunken_bboxes.append(shrunken_bbox)
 
         res: List[int] = []
-        recursive_xy_cut(
+        xy_cut_sorting_func = (
+            recursive_xy_cut_swapped if xy_cut_primary_direction == "x" else recursive_xy_cut
+        )
+        xy_cut_sorting_func(
             np.asarray(shrunken_bboxes).astype(int),
             np.arange(len(shrunken_bboxes)),
             res,
