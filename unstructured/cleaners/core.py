@@ -461,7 +461,7 @@ def index_adjustment_after_clean_extra_whitespace(index, moved_indices) -> int:
     return int(index - moved_indices[index])
 
 
-def bag_of_words(text: str) -> dict[str]:
+def bag_of_words(text: str) -> dict:
     words = remove_punctuation(text.lower()).split()
     return dict(Counter(words))
     
