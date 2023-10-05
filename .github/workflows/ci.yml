@@ -381,12 +381,12 @@ jobs:
   changelog:
     runs-on: ubuntu-latest
     steps:
+    # need to checkout otherwise paths-filter will fail on merge-queue trigger with 
+    - uses: actions/checkout@v3
     - if: github.ref != 'refs/heads/main'
       uses: dorny/paths-filter@v2
       id: changes
       with:
-        base: ${{ github.event.pull_request.base.ref || github.event.push.base_ref || github.event.merge_group.base_ref }}
-        ref: ${{ github.event.pull_request.head.ref || github.event.push.base_ref || github.event.merge_group.head_ref }}
         filters: |
           src:
             - 'unstructured/**'
