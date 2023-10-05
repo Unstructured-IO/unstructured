@@ -120,7 +120,7 @@ def test_partition_file():
         processor_config=ProcessorConfig(output_dir=TEST_OUTPUT_DIR),
     )
     test_ingest_doc._date_processed = TEST_DATE_PROCESSSED
-    isd_elems_raw = test_ingest_doc.partition_file()
+    isd_elems_raw = test_ingest_doc.partition_file(partition_config=PartitionConfig())
     isd_elems = convert_to_dict(isd_elems_raw)
     assert len(isd_elems)
     expected_keys = {
@@ -166,7 +166,7 @@ def test_process_file_fields_include_default(mocker, partition_test_results):
         read_config=ReadConfig(download_dir=TEST_DOWNLOAD_DIR),
         processor_config=ProcessorConfig(output_dir=TEST_OUTPUT_DIR),
     )
-    isd_elems_raw = test_ingest_doc.partition_file()
+    isd_elems_raw = test_ingest_doc.partition_file(partition_config=PartitionConfig())
     isd_elems = convert_to_dict(isd_elems_raw)
     assert len(isd_elems)
     assert mock_partition.call_count == 1
