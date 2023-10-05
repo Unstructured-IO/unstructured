@@ -34,7 +34,7 @@ cffi==1.16.0
     # via
     #   azure-datalake-store
     #   cryptography
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   aiohttp
@@ -61,7 +61,7 @@ idna==3.4
     #   yarl
 isodate==0.6.1
     # via azure-storage-blob
-msal==1.24.0
+msal==1.24.1
     # via
     #   azure-datalake-store
     #   azure-identity
@@ -94,7 +94,7 @@ typing-extensions==4.8.0
     #   -c requirements/base.txt
     #   azure-core
     #   azure-storage-blob
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
