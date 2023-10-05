@@ -56,6 +56,7 @@ from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
 
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
+DETECTION_ORIGIN: str = "email"
 
 
 def _parse_received_data(data: str) -> List[Element]:
@@ -135,7 +136,7 @@ def build_email_metadata(
         last_modified=metadata_last_modified or email_date,
         filename=filename,
     )
-    element_metadata.detection_origin = "email"
+    element_metadata.detection_origin = DETECTION_ORIGIN
     return element_metadata
 
 

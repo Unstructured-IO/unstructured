@@ -19,6 +19,8 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 
+DETECTION_ORIGIN: str = "csv"
+
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.CSV)
@@ -70,4 +72,4 @@ def partition_csv(
         )
     else:
         metadata = ElementMetadata()
-    return [Table(text=text, metadata=metadata, detection_origin="csv")]
+    return [Table(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
