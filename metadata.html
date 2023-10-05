@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="Azure Cognitive Search" href="destination_connectors/azure_cognitive_search.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Metadata - Unstructured 0.10.18 documentation</title>
+  <title>Metadata - Unstructured 0.10.19 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
@@ -328,6 +328,7 @@
 <li class="toctree-l2"><a class="reference internal" href="bricks/extracting.html">Extracting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bricks/staging.html">Staging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bricks/chunking.html">Chunking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bricks/embedding.html">Embedding</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="source_connectors.html">Source Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Source Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -426,32 +427,100 @@
             <!-- Calendly badge widget begin -->
           </div>
           <section id="metadata">
-<h1>Metadata<a class="headerlink" href="#metadata" title="Permalink to this heading"></a></h1>
+<span id="metadata-label"></span><h1>Metadata<a class="headerlink" href="#metadata" title="Permalink to this heading"></a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> package tracks a variety of metadata about Elements extracted from documents.
 Tracking metadata enables users to filter document elements downstream based on element metadata of interest.
 For example, a user may be interested in selected document elements from a given page number
 or an e-mail with a given subject line.</p>
 <p>Metadata is tracked at the element level. You can extract the metadata for a given document element
-with <code class="docutils literal notranslate"><span class="pre">element.metadata</span></code>. For a dictionary representation, use <code class="docutils literal notranslate"><span class="pre">element.metadata.to_dict()</span></code>.
-All document types return the following metadata fields when the information is available from
+with <code class="docutils literal notranslate"><span class="pre">element.metadata</span></code>. For a dictionary representation, use <code class="docutils literal notranslate"><span class="pre">element.metadata.to_dict()</span></code>.</p>
+<section id="common-metadata-fields">
+<h2>Common Metadata Fields<a class="headerlink" href="#common-metadata-fields" title="Permalink to this heading"></a></h2>
+<p>All document types return the following metadata fields when the information is available from
 the source file:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">filename</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">file_directory</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">date</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">filetype</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">page_number</span></code></p></li>
-</ul>
-<section id="element-coordinates">
-<h2>Element coordinates<a class="headerlink" href="#element-coordinates" title="Permalink to this heading"></a></h2>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metadata Field Name</p></th>
+<th class="head"><p>Short Description</p></th>
+<th class="head"><p>Details</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>filename</p></td>
+<td><p>Filename</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>file_directory</p></td>
+<td><p>File Directory</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>last_modified</p></td>
+<td><p>Last Modified Date</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>filetype</p></td>
+<td><p>File Type</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>coordinates</p></td>
+<td><p>XY Bounding Box Coordinates</p></td>
+<td><p>See notes below for further details about the bounding box.</p></td>
+</tr>
+<tr class="row-odd"><td><p>parent_id</p></td>
+<td><p>Element Hierarchy (Parent ID)</p></td>
+<td><p><cite>parent_id</cite> may be used to infer where an element resides within the overall hierarchy of a document. For instance, a <cite>NarrativeText</cite> element may have a <cite>Title</cite> element as a parent (a “sub-title”), which in turn may have another <cite>Title</cite> element as its parent (a “title).</p></td>
+</tr>
+<tr class="row-even"><td><p>category_depth</p></td>
+<td><p>Element Depth relative to
+other elements of the same category</p></td>
+<td><p>Category depth is the depth of an element relative to other elements of the same category. It’s set by a document partitioner and enables the hierarchy post-processor to compute more accurate hierarchies.
+Category depth may be set using native document hierarchies, e.g.  reflecting &lt;H1&gt;, &lt;H2&gt;, or <cite>&lt;H3&gt;</cite> tags within an HTML document or the indentation level of a bulleted list item in a Word document.</p></td>
+</tr>
+<tr class="row-odd"><td><p>text_as_html</p></td>
+<td><p>HTML representation of extracted tables</p></td>
+<td><p>Only applicable to table elements.</p></td>
+</tr>
+<tr class="row-even"><td><p>languages</p></td>
+<td><p>Document Languages</p></td>
+<td><p>At document level or element level. List is ordered by probability of being the primary language of the text.</p></td>
+</tr>
+<tr class="row-odd"><td><p>emphasized_text_contents</p></td>
+<td><p>Emphasized text (bold or italic) in the original document</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>emphasized_text_tags</p></td>
+<td><p>Tags on text that is emphasized in the original document</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>num_characters</p></td>
+<td><p>The number of characters used
+for max_characters in add_chunking_strategy</p></td>
+<td><p>Used for chunking.</p></td>
+</tr>
+<tr class="row-even"><td><p>is_continuation</p></td>
+<td><p>True if element is a continuation of a previous element</p></td>
+<td><p>Only relevant for chunking, if an element was divided into two due to <code class="docutils literal notranslate"><span class="pre">max_characters</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>detection_class_prob</p></td>
+<td><p>Detection model class probabilities</p></td>
+<td><p>From unstructured-inference, hi-res strategy.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><span class="raw-html"><br /></span>
+Notes on common metadata fields:</p>
+<section id="coordinates">
+<h3>Coordinates<a class="headerlink" href="#coordinates" title="Permalink to this heading"></a></h3>
 <p>Some document types support location data for the elements, usually in the form of bounding boxes.
 If it exists, an element’s location data is available with <code class="docutils literal notranslate"><span class="pre">element.metadata.coordinates</span></code>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">coordinates</span></code> property of an <code class="docutils literal notranslate"><span class="pre">ElementMetadata</span></code> stores:</p>
 <ul class="simple">
-<li><p>points: These specify the corners of the bounding box starting from the top left corner and
+<li><p><code class="docutils literal notranslate"><span class="pre">points</span></code> : These specify the corners of the bounding box starting from the top left corner and
 proceeding counter-clockwise. The points represent pixels, the origin is in the top left and
 the <code class="docutils literal notranslate"><span class="pre">y</span></code> coordinate increases in the downward direction.</p></li>
-<li><p>system: The points have an associated coordinate system. A typical example of a coordinate system is
+<li><p><code class="docutils literal notranslate"><span class="pre">system</span></code>: The points have an associated coordinate system. A typical example of a coordinate system is
 <code class="docutils literal notranslate"><span class="pre">PixelSpace</span></code>, which is used for representing the coordinates of images. The coordinate system has a
 name, orientation, layout width, and layout height.</p></li>
 </ul>
@@ -466,11 +535,13 @@ returned. If the <code class="docutils literal notranslate"><span class="pre">in
 
 <span class="n">coordinates</span> <span class="o">=</span> <span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 <span class="n">coordinate_system</span> <span class="o">=</span> <span class="n">PixelSpace</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1100</span><span class="p">)</span>
+
 <span class="n">element</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">coordinates</span><span class="o">=</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">coordinate_system</span><span class="o">=</span><span class="n">coordinate_system</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">orientation</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+
 <span class="n">element</span><span class="o">.</span><span class="n">convert_coordinates_to_new_system</span><span class="p">(</span><span class="n">RelativeCoordinateSystem</span><span class="p">(),</span> <span class="n">in_place</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="c1"># Should now be in terms of new coordinate system</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
@@ -479,6 +550,71 @@ returned. If the <code class="docutils literal notranslate"><span class="pre">in
 <span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+</section>
+<section id="additional-metadata-fields-by-document-type">
+<h2>Additional Metadata Fields by Document Type<a class="headerlink" href="#additional-metadata-fields-by-document-type" title="Permalink to this heading"></a></h2>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field Name</p></th>
+<th class="head"><p>Applicable Doc Types</p></th>
+<th class="head"><p>Short Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>page_number</p></td>
+<td><p>DOCX,PDF, PPT,XLSX</p></td>
+<td><p>Page Number</p></td>
+</tr>
+<tr class="row-odd"><td><p>page_name</p></td>
+<td><p>XLSX</p></td>
+<td><p>Sheet Name in Excel document</p></td>
+</tr>
+<tr class="row-even"><td><p>sent_from</p></td>
+<td><p>EML</p></td>
+<td><p>Email Sender</p></td>
+</tr>
+<tr class="row-odd"><td><p>sent_to</p></td>
+<td><p>EML</p></td>
+<td><p>Email Recipient</p></td>
+</tr>
+<tr class="row-even"><td><p>subject</p></td>
+<td><p>EML</p></td>
+<td><p>Email Subject</p></td>
+</tr>
+<tr class="row-odd"><td><p>attached_to_filename</p></td>
+<td><p>MSG</p></td>
+<td><p>filename that attachment file is attached to</p></td>
+</tr>
+<tr class="row-even"><td><p>header_footer_type</p></td>
+<td><p>Word Doc</p></td>
+<td><p>Pages a header or footer applies to: “primary”,
+“even_only”, and “first_page”</p></td>
+</tr>
+<tr class="row-odd"><td><p>link_urls</p></td>
+<td><p>HTML</p></td>
+<td><p>The url associated with a link in a document.</p></td>
+</tr>
+<tr class="row-even"><td><p>link_texts</p></td>
+<td><p>HTML</p></td>
+<td><p>The text associated with a link in a document.</p></td>
+</tr>
+<tr class="row-odd"><td><p>links</p></td>
+<td><p>HTML</p></td>
+<td><p>List of {”text”: “&lt;the text&gt;, “url”: &lt;the url&gt;} items.
+Note: this element will be removed in the near future
+in favor of the above link_urls and link_texts.</p></td>
+</tr>
+<tr class="row-even"><td><p>section</p></td>
+<td><p>EPUB</p></td>
+<td><p>Book section title corresponding to table of contents</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><span class="raw-html"><br /></span>
+Notes on additional metadata by document type:</p>
 <section id="email">
 <h3>Email<a class="headerlink" href="#email" title="Permalink to this heading"></a></h3>
 <p>Emails will include <code class="docutils literal notranslate"><span class="pre">sent_from</span></code>, <code class="docutils literal notranslate"><span class="pre">sent_to</span></code>, and <code class="docutils literal notranslate"><span class="pre">subject</span></code> metadata.
@@ -495,9 +631,161 @@ to the sheet name in the Excel document.</p>
 <p>Headers and footers in Word documents include a <code class="docutils literal notranslate"><span class="pre">header_footer_type</span></code> indicating which page
 a header or footer applies to. Valid values are <code class="docutils literal notranslate"><span class="pre">&quot;primary&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;even_only&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;first_page&quot;</span></code>.</p>
 </section>
-<section id="webpages">
-<h3>Webpages<a class="headerlink" href="#webpages" title="Permalink to this heading"></a></h3>
-<p>Elements from webpages will include a <code class="docutils literal notranslate"><span class="pre">url</span></code> metadata field, corresponding to the URL for the webpage.</p>
+</section>
+<section id="data-connector-metadata-fields">
+<h2>Data Connector Metadata Fields<a class="headerlink" href="#data-connector-metadata-fields" title="Permalink to this heading"></a></h2>
+<p>Documents processed through unstructured-ingest connectors include additional document metadata. These additional fields only ever appear if the source document was processed by a connector.</p>
+<section id="common-data-connector-metadata-fields">
+<h3>Common Data Connector Metadata Fields<a class="headerlink" href="#common-data-connector-metadata-fields" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Data Source metadata (on json output):</dt><dd><ul>
+<li><p>url</p></li>
+<li><p>version</p></li>
+<li><p>date created</p></li>
+<li><p>date modified</p></li>
+<li><p>date processed</p></li>
+<li><p>record locator</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Record locator is specific to each connector</p></li>
+</ul>
+</section>
+<section id="additional-metadata-fields-by-connector-type-via-record-locator">
+<h3>Additional Metadata Fields by Connector Type (via record locator)<a class="headerlink" href="#additional-metadata-fields-by-connector-type-via-record-locator" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><dl class="simple">
+<dt>airtable</dt><dd><ul>
+<li><p>base id</p></li>
+<li><p>table id</p></li>
+<li><p>view id</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>azure (from fsspec)</dt><dd><ul>
+<li><p>protocol</p></li>
+<li><p>remote file path</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>box (from fsspec)</dt><dd><ul>
+<li><p>protocol</p></li>
+<li><p>remote file path</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>confluence</dt><dd><ul>
+<li><p>url</p></li>
+<li><p>page id</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>discord</dt><dd><ul>
+<li><p>channel</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>dropbox (from fsspec)</dt><dd><ul>
+<li><p>protocol</p></li>
+<li><p>remote file path</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>elasticsearch</dt><dd><ul>
+<li><p>url</p></li>
+<li><p>index name</p></li>
+<li><p>document id</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fsspec</dt><dd><ul>
+<li><p>protocol</p></li>
+<li><p>remote file path</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>google drive</dt><dd><ul>
+<li><p>drive id</p></li>
+<li><p>file id</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>gcs (from fsspec)</dt><dd><ul>
+<li><p>protocol</p></li>
+<li><p>remote file path</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>jira</dt><dd><ul>
+<li><p>base url</p></li>
+<li><p>issue key</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>onedrive</dt><dd><ul>
+<li><p>user pname</p></li>
+<li><p>server relative path</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>outlook</dt><dd><ul>
+<li><p>message id</p></li>
+<li><p>user email</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>s3 (from fsspec)</dt><dd><ul>
+<li><p>protocol</p></li>
+<li><p>remote file path</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>sharepoint</dt><dd><ul>
+<li><p>server path</p></li>
+<li><p>site url</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>wikipedia</dt><dd><ul>
+<li><p>page title</p></li>
+<li><p>page url</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
 </section>
 </section>
 <section id="advanced-metadata-options">
@@ -585,11 +873,19 @@ Here is an example of how to extract regex metadata:</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Metadata</a><ul>
-<li><a class="reference internal" href="#element-coordinates">Element coordinates</a><ul>
+<li><a class="reference internal" href="#common-metadata-fields">Common Metadata Fields</a><ul>
+<li><a class="reference internal" href="#coordinates">Coordinates</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#additional-metadata-fields-by-document-type">Additional Metadata Fields by Document Type</a><ul>
 <li><a class="reference internal" href="#email">Email</a></li>
 <li><a class="reference internal" href="#microsoft-excel-documents">Microsoft Excel Documents</a></li>
 <li><a class="reference internal" href="#microsoft-word-documents">Microsoft Word Documents</a></li>
-<li><a class="reference internal" href="#webpages">Webpages</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#data-connector-metadata-fields">Data Connector Metadata Fields</a><ul>
+<li><a class="reference internal" href="#common-data-connector-metadata-fields">Common Data Connector Metadata Fields</a></li>
+<li><a class="reference internal" href="#additional-metadata-fields-by-connector-type-via-record-locator">Additional Metadata Fields by Connector Type (via record locator)</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#advanced-metadata-options">Advanced Metadata Options</a><ul>

@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Installation" href="../installing.html" /><link rel="prev" title="Key Concepts" href="key_concepts.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Getting Started - Unstructured 0.10.18 documentation</title>
+  <title>Getting Started - Unstructured 0.10.19 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -328,6 +328,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../bricks/extracting.html">Extracting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bricks/staging.html">Staging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bricks/chunking.html">Chunking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bricks/embedding.html">Embedding</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../source_connectors.html">Source Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Source Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -505,11 +506,11 @@ if <code class="docutils literal notranslate"><span class="pre">libmagic</span><
 <h2>Document elements<a class="headerlink" href="#document-elements" title="Permalink to this heading"></a></h2>
 <p>When we partition a document, the output is a list of document <code class="docutils literal notranslate"><span class="pre">Element</span></code> objects.
 These element objects represent different components of the source document. Currently, the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library supports the following element types:</p>
+<section id="elements">
+<h3><strong>Elements</strong><a class="headerlink" href="#elements" title="Permalink to this heading"></a></h3>
 <ul class="simple">
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">Element</span></code></dt><dd><ul>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">Text</span></code></dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code></p>
+<ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">FigureCaption</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">NarrativeText</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ListItem</span></code></p></li>
@@ -519,17 +520,14 @@ These element objects represent different components of the source document. Cur
 <li><p><code class="docutils literal notranslate"><span class="pre">PageBreak</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Header</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Footer</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">EmailAddress</span></code></p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">CheckBox</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UncategorizedText</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Image</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Formula</span></code></p></li>
 </ul>
-</dd>
-</dl>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">element_id</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metadata</span></code> - see: <a class="reference internal" href="../metadata.html#metadata-label"><span class="std std-ref">Metadata page</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">text</span></code></p></li>
 </ul>
 <p>Other element types that we will add in the future include tables and figures.
 Different partitioning functions use different methods for determining the element type and extracting the associated content.
@@ -554,6 +552,7 @@ The following code shows how you can limit your output to only narrative text wi
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
 </section>
 <section id="tables">
 <h2>Tables<a class="headerlink" href="#tables" title="Permalink to this heading"></a></h2>
@@ -695,7 +694,10 @@ looks like the following:</p>
 <li><a class="reference internal" href="#quick-installation">Quick Installation</a></li>
 <li><a class="reference internal" href="#validating-installation">Validating Installation</a></li>
 <li><a class="reference internal" href="#partitioning-a-document">Partitioning a document</a></li>
-<li><a class="reference internal" href="#document-elements">Document elements</a></li>
+<li><a class="reference internal" href="#document-elements">Document elements</a><ul>
+<li><a class="reference internal" href="#elements"><strong>Elements</strong></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#tables">Tables</a></li>
 <li><a class="reference internal" href="#converting-elements-to-dictionary-or-json">Converting Elements to Dictionary or JSON</a></li>
 <li><a class="reference internal" href="#unique-element-ids">Unique Element IDs</a></li>

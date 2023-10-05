@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Reddit" href="reddit.html" /><link rel="prev" title="One Drive" href="onedrive.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Outlook - Unstructured 0.10.18 documentation</title>
+  <title>Outlook - Unstructured 0.10.19 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -329,6 +329,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../bricks/extracting.html">Extracting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bricks/staging.html">Staging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bricks/chunking.html">Chunking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bricks/embedding.html">Embedding</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../source_connectors.html">Source Connectors</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Source Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
@@ -449,33 +450,26 @@
 <span class="w">    </span>--verbose
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">subprocess</span>
+</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 
-<span class="n">command</span> <span class="o">=</span> <span class="p">[</span>
-  <span class="s2">&quot;unstructured-ingest&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;outlook&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--client-id&quot;</span><span class="p">,</span> <span class="s2">&quot;$MS_CLIENT_ID&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--client-cred&quot;</span><span class="p">,</span> <span class="s2">&quot;$MS_CLIENT_CRED&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--tenant&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;Azure AD tenant_id, default is &#39;common&#39;&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--user-email&quot;</span><span class="p">,</span> <span class="s2">&quot;$MS_USER_EMAIL&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--outlook-folders&quot;</span><span class="p">,</span> <span class="s2">&quot;Inbox,Sent Items&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;onedrive-ingest-output&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--num-processes&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--recursive&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
-<span class="p">]</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="n">PartitionConfig</span><span class="p">,</span> <span class="n">ReadConfig</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.runner.outlook</span> <span class="kn">import</span> <span class="n">outlook</span>
 
-<span class="c1"># Run the command</span>
-<span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
-<span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
-
-<span class="c1"># Print output</span>
-<span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Command executed successfully. Output:&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Command failed. Error:&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">outlook</span><span class="p">(</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">read_config</span><span class="o">=</span><span class="n">ReadConfig</span><span class="p">(),</span>
+        <span class="n">partition_config</span><span class="o">=</span><span class="n">PartitionConfig</span><span class="p">(</span>
+            <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;outlook-output&quot;</span><span class="p">,</span>
+            <span class="n">num_processes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">client_id</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MS_CLIENT_ID&quot;</span><span class="p">),</span>
+        <span class="n">client_cred</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MS_CLIENT_CRED&quot;</span><span class="p">),</span>
+        <span class="n">tenant</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MS_TENANT_ID&quot;</span><span class="p">),</span>
+        <span class="n">user_email</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MS_USER_EMAIL&quot;</span><span class="p">),</span>
+        <span class="n">outlook_folders</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Inbox&quot;</span><span class="p">,</span> <span class="s2">&quot;Sent Items&quot;</span><span class="p">],</span>
+        <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
 </pre></div>
 </div>
 </div></div>
@@ -495,31 +489,28 @@
 <span class="w">  </span>--api-key<span class="w"> </span><span class="s2">&quot;&lt;UNSTRUCTURED-API-KEY&gt;&quot;</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-1-1-1" class="sphinx-tabs-panel" hidden="true" id="panel-1-1-1" name="1-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">subprocess</span>
+</div><div aria-labelledby="tab-1-1-1" class="sphinx-tabs-panel" hidden="true" id="panel-1-1-1" name="1-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 
-<span class="n">command</span> <span class="o">=</span> <span class="p">[</span>
-  <span class="s2">&quot;unstructured-ingest&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;airtable&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;--metadata-exclude&quot;</span><span class="p">,</span> <span class="s2">&quot;filename,file_directory,metadata.data_source.date_processed&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;--personal-access-token&quot;</span><span class="p">,</span> <span class="s2">&quot;$AIRTABLE_PERSONAL_ACCESS_TOKEN&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;airtable-ingest-output&quot;</span>
-  <span class="s2">&quot;--num-processes&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;--reprocess&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;--partition-by-api&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;--api-key&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;UNSTRUCTURED-API-KEY&gt;&quot;</span><span class="p">,</span>
-<span class="p">]</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="n">PartitionConfig</span><span class="p">,</span> <span class="n">ReadConfig</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.runner.outlook</span> <span class="kn">import</span> <span class="n">outlook</span>
 
-<span class="c1"># Run the command</span>
-<span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
-<span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
-
-<span class="c1"># Print output</span>
-<span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Command executed successfully. Output:&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Command failed. Error:&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">outlook</span><span class="p">(</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">read_config</span><span class="o">=</span><span class="n">ReadConfig</span><span class="p">(),</span>
+        <span class="n">partition_config</span><span class="o">=</span><span class="n">PartitionConfig</span><span class="p">(</span>
+            <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;outlook-output&quot;</span><span class="p">,</span>
+            <span class="n">num_processes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">partition_by_api</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;UNSTRUCTURED_API_KEY&quot;</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">client_id</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MS_CLIENT_ID&quot;</span><span class="p">),</span>
+        <span class="n">client_cred</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MS_CLIENT_CRED&quot;</span><span class="p">),</span>
+        <span class="n">tenant</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MS_TENANT_ID&quot;</span><span class="p">),</span>
+        <span class="n">user_email</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MS_USER_EMAIL&quot;</span><span class="p">),</span>
+        <span class="n">outlook_folders</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Inbox&quot;</span><span class="p">,</span> <span class="s2">&quot;Sent Items&quot;</span><span class="p">],</span>
+        <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
 </pre></div>
 </div>
 </div></div>

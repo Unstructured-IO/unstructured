@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Docker Installation" href="docker.html" /><link rel="prev" title="Installation" href="../installing.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Full Installation - Unstructured 0.10.18 documentation</title>
+  <title>Full Installation - Unstructured 0.10.19 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -328,6 +328,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../bricks/extracting.html">Extracting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bricks/staging.html">Staging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../bricks/chunking.html">Chunking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bricks/embedding.html">Embedding</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../source_connectors.html">Source Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Source Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -427,25 +428,38 @@
           </div>
           <section id="full-installation">
 <h1>Full Installation<a class="headerlink" href="#full-installation" title="Permalink to this heading"></a></h1>
-<ol class="arabic">
-<li><p><strong>Installing Extras for Specific Document Types</strong>:
-If you’re processing document types beyond the basics, you can install the necessary extras:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;unstructured[docx,pptx]&quot;</span>
-</pre></div>
-</div>
+<p><strong>Basic Usage</strong></p>
 <p>For a complete set of extras catering to every document type, use:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;unstructured[all-docs]&quot;</span>
 </pre></div>
 </div>
-</li>
-<li><p><strong>Note on Older Versions</strong>:
-For versions earlier than <cite>unstructured&lt;0.9.0</cite>, the following installation pattern was recommended:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;unstructured[local-inference]&quot;</span>
+<p><strong>Installation for Specific Document Types</strong></p>
+<p>If you’re processing document types beyond the basics, you can install the necessary extras:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;unstructured[docx,pptx]&quot;</span>
 </pre></div>
 </div>
-<p>While “local-inference” remains supported in newer versions for backward compatibility, it might be deprecated in future releases. It’s advisable to transition to the “all-docs” extra for comprehensive support.</p>
-</li>
-</ol>
+</div></blockquote>
+<p><em>Available document types:</em></p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;csv&quot;</span>,<span class="w"> </span><span class="s2">&quot;doc&quot;</span>,<span class="w"> </span><span class="s2">&quot;docx&quot;</span>,<span class="w"> </span><span class="s2">&quot;epub&quot;</span>,<span class="w"> </span><span class="s2">&quot;image&quot;</span>,<span class="w"> </span><span class="s2">&quot;md&quot;</span>,<span class="w"> </span><span class="s2">&quot;msg&quot;</span>,<span class="w"> </span><span class="s2">&quot;odt&quot;</span>,<span class="w"> </span><span class="s2">&quot;org&quot;</span>,<span class="w"> </span><span class="s2">&quot;pdf&quot;</span>,<span class="w"> </span><span class="s2">&quot;ppt&quot;</span>,<span class="w"> </span><span class="s2">&quot;pptx&quot;</span>,<span class="w"> </span><span class="s2">&quot;rtf&quot;</span>,<span class="w"> </span><span class="s2">&quot;rst&quot;</span>,<span class="w"> </span><span class="s2">&quot;tsv&quot;</span>,<span class="w"> </span><span class="s2">&quot;xlsx&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><span class="raw-html"><br /></span>
+<strong>Installation for Specific Data Connectors</strong></p>
+<p>To use any of the data connectors, you must install the specific dependency:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;unstructured[s3]&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><em>Available data connectors:</em></p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;airtable&quot;</span>,<span class="w"> </span><span class="s2">&quot;azure&quot;</span>,<span class="w"> </span><span class="s2">&quot;azure-cognitive-search&quot;</span>,<span class="w"> </span><span class="s2">&quot;biomed&quot;</span>,<span class="w"> </span><span class="s2">&quot;box&quot;</span>,<span class="w"> </span><span class="s2">&quot;confluence&quot;</span>,<span class="w"> </span><span class="s2">&quot;delta-table&quot;</span>,<span class="w"> </span><span class="s2">&quot;discord&quot;</span>,<span class="w"> </span><span class="s2">&quot;dropbox&quot;</span>,<span class="w"> </span><span class="s2">&quot;elasticsearch&quot;</span>,<span class="w"> </span><span class="s2">&quot;gcs&quot;</span>,<span class="w"> </span><span class="s2">&quot;github&quot;</span>,<span class="w"> </span><span class="s2">&quot;gitlab&quot;</span>,<span class="w"> </span><span class="s2">&quot;google-drive&quot;</span>,<span class="w"> </span><span class="s2">&quot;jira&quot;</span>,<span class="w"> </span><span class="s2">&quot;notion&quot;</span>,<span class="w"> </span><span class="s2">&quot;onedrive&quot;</span>,<span class="w"> </span><span class="s2">&quot;outlook&quot;</span>,<span class="w"> </span><span class="s2">&quot;reddit&quot;</span>,<span class="w"> </span><span class="s2">&quot;s3&quot;</span>,<span class="w"> </span><span class="s2">&quot;sharepoint&quot;</span>,<span class="w"> </span><span class="s2">&quot;salesforce&quot;</span>,<span class="w"> </span><span class="s2">&quot;slack&quot;</span>,<span class="w"> </span><span class="s2">&quot;wikipedia&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
 <section id="installation-with-conda-on-windows">
 <h2>Installation with <code class="docutils literal notranslate"><span class="pre">conda</span></code> on Windows<a class="headerlink" href="#installation-with-conda-on-windows" title="Permalink to this heading"></a></h2>
 <p>You can install and run <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> on Windows with <code class="docutils literal notranslate"><span class="pre">conda</span></code>, but the process
@@ -549,6 +563,16 @@ to some tokenizers. See the
 information on how to install <code class="docutils literal notranslate"><span class="pre">sentencepiece</span></code> if your tokenizer requires it.</p>
 </section>
 </section>
+<section id="note-on-older-versions">
+<h2>Note on Older Versions<a class="headerlink" href="#note-on-older-versions" title="Permalink to this heading"></a></h2>
+<blockquote>
+<div><p>For versions earlier than <cite>unstructured&lt;0.9.0</cite>, the following installation pattern was recommended:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;unstructured[local-inference]&quot;</span>
+</pre></div>
+</div>
+<p>While “local-inference” remains supported in newer versions for backward compatibility, it might be deprecated in future releases. It’s advisable to transition to the “all-docs” extra for comprehensive support.</p>
+</div></blockquote>
+</section>
 </section>
 
         </article>
@@ -619,6 +643,7 @@ information on how to install <code class="docutils literal notranslate"><span c
 <li><a class="reference internal" href="#huggingface-dependencies">Huggingface Dependencies</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#note-on-older-versions">Note on Older Versions</a></li>
 </ul>
 </li>
 </ul>
