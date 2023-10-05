@@ -72,7 +72,8 @@ def partition_json(
         raise ValueError("Not a valid json")
 
     for element in elements:
-        element.metadata.last_modified = metadata_last_modified or last_modification_date
+        if include_metadata:
+            element.metadata.last_modified = metadata_last_modified or last_modification_date
     # NOTE(Nathan): in future PR, try extracting items that look like text
     #               if file_text is a valid json but not an unstructured json
 
