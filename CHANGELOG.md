@@ -1,7 +1,8 @@
-## 0.10.20-dev3
+## 0.10.20-dev4
 
 ### Enhancements
 
+* **Align to top left when shrinking bounding boxes for `xy-curt` sorting:** Update `shrink_bbox()` to keep top left rather than center
 * **Add visualization script to annotate elements** This script is often used to analyze/visualize elements with coordinates (e.g. partition_pdf()).
 * **Adds data source properties to the Jira connector** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
 * **Improve title detection in pptx documents** The default title textboxes on a pptx slide are now categorized as titles.
