@@ -196,9 +196,9 @@ def test_partition_pdf_with_auto_strategy(
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[0].text == title
-    assert elements[0].metadata.filename == "layout-parser-paper-fast.pdf"
-    assert elements[0].metadata.file_directory == "example-docs"
+    assert elements[7].text == title
+    assert elements[7].metadata.filename == "layout-parser-paper-fast.pdf"
+    assert elements[7].metadata.file_directory == "example-docs"
 
 
 def test_partition_pdf_with_page_breaks(
@@ -388,13 +388,12 @@ def test_partition_pdf_uses_table_extraction():
 def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
-    elements[0] == Title(
-        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis",
-    )
-    # check that the pdf has multiple different page numbers
+    title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
+    idx = 3
+    assert elements[idx].text == title
     assert {element.metadata.page_number for element in elements} == {1, 2}
-    assert elements[0].metadata.detection_class_prob is not None
-    assert isinstance(elements[0].metadata.detection_class_prob, float)
+    assert elements[idx].metadata.detection_class_prob is not None
+    assert isinstance(elements[idx].metadata.detection_class_prob, float)
 
 
 def test_partition_pdf_with_dpi():
@@ -518,7 +517,7 @@ def test_partition_pdf_with_auto_strategy_exclude_metadata(
         include_metadata=False,
     )
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[0].text == title
+    assert elements[7].text == title
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
 
