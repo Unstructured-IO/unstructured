@@ -121,6 +121,17 @@
     "text": "1"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "2"
+  },
+  {
     "type": "NarrativeText",
     "element_id": "f193ae2dc90e6bc6856125ad88fdab12",
     "metadata": {
@@ -143,17 +154,6 @@
     "text": "It is widely accepted that humans have skewed perceptions of risks, and the way we respond to them is shaped by these perceptions, rather than the actual threats posed. Approximately 1.35 millioni people die every year because of traffic accidents, in comparison with 257 aviation fatalities in 2019ii, yet more people are nervous about flying, fearing a rare deadly crash, than being in a fatal traffic accident. These numbers tell a powerful and well-established story: evaluations of risk are largely the result of emotions, rather than logic or facts. Although it is hard to recognize and accept that our perceptions may mislead us and curtail effective decision making, this is a well-established characteristic of humanity."
   },
   {
-    "type": "NarrativeText",
-    "element_id": "45e9c81bf6ccdc498a6ac5640d786736",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "Nuclear energy and the risk of radiation is one of the most extreme cases in which perceived and actual risks have diverged. The fear of radiation, whilst pre- dating the Second World War, was firmly established by the debate on the potential impacts of low-dose radiation from the fallout from nuclear weapons testing in the early years of the Cold War. Radiation in many ways became linked with the mental imagery of nuclear war, playing an important role in increasing public concern about radiation and its health effects. There is a well-established discrepancy between fact-based risk assessments and public perception of different risks. This is very much the case with nuclear power, and this is clearly highlighted in Figure 1, with laypersons ranking nuclear power as the highest risk out of 30 activities and technologies, with experts ranking nuclear as 20th. In many ways, popular culture’s depiction of radiation has played a role in ensuring that this discrepancy has remained, be it Godzilla, The Incredible Hulk, or The Simpsons, which regularly plays on the notion of radiation from nuclear power plants causing three-eyed fish, something that has been firmly rejected as unscientific."
-  },
-  {
     "type": "Title",
     "element_id": "d977fff4c69c437aa4a44a5c5f4bf02e",
     "metadata": {
@@ -165,202 +165,15 @@
     "text": "Rank Order Laypersons"
   },
   {
-    "type": "Title",
-    "element_id": "4d7c9c95f808a09f6b0bcfe8b255e537",
+    "type": "NarrativeText",
+    "element_id": "45e9c81bf6ccdc498a6ac5640d786736",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
     },
-    "text": "Figure 1. Ordering of perceived risks for 30 activities and technologies1,iii"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "30"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "785f3ec7eb32f30b90cd0fcf3657d388",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "22"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4523540f1504cd17100c4835e85b7eef",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "17"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "1"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "4"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "2"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "3"
-  },
-  {
-    "type": "Title",
-    "element_id": "eda8f72476c539920d2c0e3515ba4b07",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "Smoking"
-  },
-  {
-    "type": "Title",
-    "element_id": "2f3122790ccc9e095abe1b5ceedddf88",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "X-rays"
-  },
-  {
-    "type": "Title",
-    "element_id": "ed3861e631428b9b77e2bdc0384d2cbe",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "Vaccinations"
-  },
-  {
-    "type": "Title",
-    "element_id": "602d25f25cca4ebb709f8b48f54d99d9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "Motor vehicles"
-  },
-  {
-    "type": "Title",
-    "element_id": "82a60569029ed9032f1b08891e8524c2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "Nuclear power"
-  },
-  {
-    "type": "Title",
-    "element_id": "f8e3740e358309bd0570d4f3ca141793",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "Handguns"
-  },
-  {
-    "type": "Title",
-    "element_id": "1656c455012b016fbac5eac0a38397bd",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "Electric power (non-nuclear)"
+    "text": "Nuclear energy and the risk of radiation is one of the most extreme cases in which perceived and actual risks have diverged. The fear of radiation, whilst pre- dating the Second World War, was firmly established by the debate on the potential impacts of low-dose radiation from the fallout from nuclear weapons testing in the early years of the Cold War. Radiation in many ways became linked with the mental imagery of nuclear war, playing an important role in increasing public concern about radiation and its health effects. There is a well-established discrepancy between fact-based risk assessments and public perception of different risks. This is very much the case with nuclear power, and this is clearly highlighted in Figure 1, with laypersons ranking nuclear power as the highest risk out of 30 activities and technologies, with experts ranking nuclear as 20th. In many ways, popular culture’s depiction of radiation has played a role in ensuring that this discrepancy has remained, be it Godzilla, The Incredible Hulk, or The Simpsons, which regularly plays on the notion of radiation from nuclear power plants causing three-eyed fish, something that has been firmly rejected as unscientific."
   },
   {
     "type": "Title",
@@ -375,17 +188,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "b7a56873cd771f2c446d369b649430b6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "25"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
     "metadata": {
       "data_source": {},
@@ -396,70 +198,15 @@
     "text": "20"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
+    "type": "Title",
+    "element_id": "82a60569029ed9032f1b08891e8524c2",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
     },
-    "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "4"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "7902699be42c8a8e46fbbb4501726517",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "7"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "19581e27de7ced00ff1ce50b2047e7a5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "9"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "2"
+    "text": "Nuclear power"
   },
   {
     "type": "UncategorizedText",
@@ -474,6 +221,105 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "1"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "2"
+  },
+  {
+    "type": "Title",
+    "element_id": "602d25f25cca4ebb709f8b48f54d99d9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "Motor vehicles"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "4"
+  },
+  {
+    "type": "Title",
+    "element_id": "f8e3740e358309bd0570d4f3ca141793",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "Handguns"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "3"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "2"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "4"
+  },
+  {
+    "type": "Title",
+    "element_id": "eda8f72476c539920d2c0e3515ba4b07",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "Smoking"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
     "metadata": {
       "data_source": {},
@@ -482,6 +328,171 @@
       "links": []
     },
     "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": ""
+  },
+  {
+    "type": "Title",
+    "element_id": "1656c455012b016fbac5eac0a38397bd",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "Electric power (non-nuclear)"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "19581e27de7ced00ff1ce50b2047e7a5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "9"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4523540f1504cd17100c4835e85b7eef",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "17"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": ""
+  },
+  {
+    "type": "Title",
+    "element_id": "2f3122790ccc9e095abe1b5ceedddf88",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "X-rays"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "7902699be42c8a8e46fbbb4501726517",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "7"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "785f3ec7eb32f30b90cd0fcf3657d388",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "22"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d1429f8178a04f7fc73a66edf10ab8b5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "b7a56873cd771f2c446d369b649430b6",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "25"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "30"
+  },
+  {
+    "type": "Title",
+    "element_id": "ed3861e631428b9b77e2bdc0384d2cbe",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "Vaccinations"
+  },
+  {
+    "type": "Title",
+    "element_id": "4d7c9c95f808a09f6b0bcfe8b255e537",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "Figure 1. Ordering of perceived risks for 30 activities and technologies1,iii"
   },
   {
     "type": "NarrativeText",
@@ -517,15 +528,59 @@
     "text": "1 The original study was published in 1978, but its findings have been confirmed by numerous studies since."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "type": "NarrativeText",
+    "element_id": "e11247712b3df61756970b45f019ad68",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 4,
+      "page_number": 5,
       "links": []
     },
-    "text": "2"
+    "text": "r a e y"
+  },
+  {
+    "type": "Title",
+    "element_id": "3f79bb7b435b05321651daefd374cdc6",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5,
+      "links": []
+    },
+    "text": "e"
+  },
+  {
+    "type": "Title",
+    "element_id": "f83714d89302473e0e4f5399bd50e7a9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5,
+      "links": []
+    },
+    "text": "W T"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f9bb49945b60897227abdd75b5f8d39b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5,
+      "links": []
+    },
+    "text": "r e p s e i t i l"
+  },
+  {
+    "type": "Title",
+    "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5,
+      "links": []
+    },
+    "text": "a t a F"
   },
   {
     "type": "Title",
@@ -660,28 +715,6 @@
     "text": "18.4"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "e11247712b3df61756970b45f019ad68",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5,
-      "links": []
-    },
-    "text": "r a e y"
-  },
-  {
-    "type": "Title",
-    "element_id": "3f79bb7b435b05321651daefd374cdc6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5,
-      "links": []
-    },
-    "text": "e"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "e629fa6598d732768f7c726b4b621285",
     "metadata": {
@@ -693,28 +726,6 @@
     "text": "15"
   },
   {
-    "type": "Title",
-    "element_id": "f83714d89302473e0e4f5399bd50e7a9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5,
-      "links": []
-    },
-    "text": "W T"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "f9bb49945b60897227abdd75b5f8d39b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5,
-      "links": []
-    },
-    "text": "r e p s e i t i l"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "4a44dc15364204a80fe80e9039455cc1",
     "metadata": {
@@ -724,17 +735,6 @@
       "links": []
     },
     "text": "10"
-  },
-  {
-    "type": "Title",
-    "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5,
-      "links": []
-    },
-    "text": "a t a F"
   },
   {
     "type": "UncategorizedText",
@@ -968,6 +968,17 @@
     "text": "3"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6,
+      "links": []
+    },
+    "text": "4"
+  },
+  {
     "type": "Title",
     "element_id": "f5bda7d6ba9ea7120d7f4c11c8b8f1ae",
     "metadata": {
@@ -1021,17 +1032,6 @@
       "links": []
     },
     "text": "By looking at radiation risks in isolation, we prolong the over-regulation of radiation in nuclear plants, driving up costs, whilst not delivering any additional health benefits, in turn incentivising the use of more harmful energy sources. A recalibration is required, and this can only done by ensuring a holistic approach to risk is taken."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6,
-      "links": []
-    },
-    "text": "4"
   },
   {
     "type": "NarrativeText",
@@ -1166,6 +1166,17 @@
     "text": "5"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "e7f6c011776e8db7cd330b54174fd76f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "6"
+  },
+  {
     "type": "NarrativeText",
     "element_id": "b5b9075460067db9eb092a70c73a83a4",
     "metadata": {
@@ -1208,17 +1219,6 @@
       "links": []
     },
     "text": "Equally, it is well established that living without access to electricity results in illness and death around the world, caused by everything from not having access to modern healthcare to household air pollution. As of today, 770 million people around the world do not have access to electricity, with over 75% of that population living in Sub-Saharan Africa. The world's poorest 4 billion people consume a mere 5% of the energy used in developed economies, and we need to find ways of delivering reliable electricity to the entire human population in a fashion that is sustainable. Household and ambient air pollution causes 8.7 million deaths each year, largely because of the continued use of fossil fuels. Widespread electrification is a key tool for delivering a just energy transition. Investment in nuclear, has become an urgent necessity. Discarding it, based on risk perceptions divorced from science, would be to abandon the moral obligation to ensure affordable, reliable, and sustainable energy for every community around the world."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "e7f6c011776e8db7cd330b54174fd76f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "6"
   },
   {
     "type": "NarrativeText",
@@ -1265,15 +1265,15 @@
     "text": "7"
   },
   {
-    "type": "Title",
-    "element_id": "69824d3b0e70ca6aaa0da1613b65fd91",
+    "type": "UncategorizedText",
+    "element_id": "2c624232cdd221771294dfbb310aca00",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
     },
-    "text": "References"
+    "text": "8"
   },
   {
     "type": "Title",
@@ -1287,17 +1287,6 @@
     "text": "i"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "e72fdf383c0b4d8cba0284d4f7ff06d5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "World Health Organization (2020). Road traffic injuries. Available at: https://www.who.int/news-room/fact-sheets/ detail/road-traffic-injuries"
-  },
-  {
     "type": "Title",
     "element_id": "5d7f49449ab22deac22d767b89549c55",
     "metadata": {
@@ -1309,17 +1298,6 @@
     "text": "ii"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "e4d7c811a799c3c8e706125556f8a370",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "BBC (2020). Plane crash fatalities fell more than 50% in 2019. Available at: https://www.bbc.co.uk/news/ business-50953712"
-  },
-  {
     "type": "Title",
     "element_id": "f5557d4fcf727a981a3c315aca733eef",
     "metadata": {
@@ -1329,6 +1307,61 @@
       "links": []
     },
     "text": "iii"
+  },
+  {
+    "type": "Title",
+    "element_id": "4c94485e0c21ae6c41ce1dfe7b6bface",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "v"
+  },
+  {
+    "type": "Title",
+    "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "vi"
+  },
+  {
+    "type": "Title",
+    "element_id": "69824d3b0e70ca6aaa0da1613b65fd91",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "References"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e72fdf383c0b4d8cba0284d4f7ff06d5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "World Health Organization (2020). Road traffic injuries. Available at: https://www.who.int/news-room/fact-sheets/ detail/road-traffic-injuries"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e4d7c811a799c3c8e706125556f8a370",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "BBC (2020). Plane crash fatalities fell more than 50% in 2019. Available at: https://www.bbc.co.uk/news/ business-50953712"
   },
   {
     "type": "NarrativeText",
@@ -1364,17 +1397,6 @@
     "text": "Committee on the Effects of Atomic Radiation. Accessed from: https://www.unscear.org/docs/publications/2016/ UNSCEAR_2016_GA-Report-CORR.pdf"
   },
   {
-    "type": "Title",
-    "element_id": "4c94485e0c21ae6c41ce1dfe7b6bface",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "v"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "c328c06c32c00c43471cd3c9d257c68b",
     "metadata": {
@@ -1384,17 +1406,6 @@
       "links": []
     },
     "text": "International Energy Agency (2020). Global share of total energy supply by source, 2018. Key World Energy Statistics 2020. Available at: https://www.iea.org/data-and-statistics/charts/global-share-of-total-energy-supply-by- source-2018"
-  },
-  {
-    "type": "Title",
-    "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "vi"
   },
   {
     "type": "NarrativeText",
@@ -1538,17 +1549,6 @@
       "links": []
     },
     "text": "Photo credits: Front cover & pages 1, 4, 6 left, 7 bottom: Adobe Stock; page 6 right: Getty Images; page 7 top: Uniper."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "2c624232cdd221771294dfbb310aca00",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "8"
   },
   {
     "type": "UncategorizedText",
