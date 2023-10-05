@@ -302,17 +302,19 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename, content_type, 
         strategy="hi_res",
     )
 
-    assert isinstance(elements[0], Title)
-    assert elements[0].text.startswith("LayoutParser")
+    idx = 3
+    assert isinstance(elements[idx], Title)
+    assert elements[idx].text.startswith("LayoutParser")
 
-    assert elements[0].metadata.filename == os.path.basename(filename)
-    assert elements[0].metadata.file_directory == os.path.split(filename)[0]
+    assert elements[idx].metadata.filename == os.path.basename(filename)
+    assert elements[idx].metadata.file_directory == os.path.split(filename)[0]
 
     # NOTE(alan): Xfail since new model skips the word Zejiang
     request.applymarker(pytest.mark.xfail)
 
-    assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Zejiang Shen")
+    idx += 1
+    assert isinstance(elements[idx], NarrativeText)
+    assert elements[idx].text.startswith("Zejiang Shen")
 
 
 def test_auto_partition_pdf_uses_table_extraction():
@@ -361,14 +363,16 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
             strategy="hi_res",
         )
 
-    assert isinstance(elements[0], Title)
-    assert elements[0].text.startswith("LayoutParser")
+    idx = 3
+    assert isinstance(elements[idx], Title)
+    assert elements[idx].text.startswith("LayoutParser")
 
     # NOTE(alan): Xfail since new model misses the first word Zejiang
     request.applymarker(pytest.mark.xfail)
 
-    assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Zejiang Shen")
+    idx += 1
+    assert isinstance(elements[idx], NarrativeText)
+    assert elements[idx].text.startswith("Zejiang Shen")
 
 
 def test_auto_partition_formats_languages_for_tesseract():
@@ -425,9 +429,10 @@ def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, co
     )
 
     # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
-    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[0].text == first_line
-    assert elements[0].metadata.coordinates is not None
+    title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    idx = 2
+    assert elements[idx].text == title
+    assert elements[idx].metadata.coordinates is not None
 
 
 @pytest.mark.parametrize(

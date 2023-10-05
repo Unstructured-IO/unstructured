@@ -437,7 +437,7 @@
     "text": "1 Kaggle is an online community for data scientists, serving as a platform for collaboration, competition, and learning: http://kaggle.com 2 In August 2017, Kaggle conducted an industry-wide survey to gain a clearer picture of the state of data science and machine learning. A standard set of questions were asked of all respondents, with more specific questions related to work for employed data scientists and questions related to learning for data scientists in training. Methodology and results: https://www.kaggle.com/kaggle/kaggle-survey-2017"
   },
   {
-    "type": "Footer",
+    "type": "UncategorizedText",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
       "data_source": {
@@ -456,7 +456,7 @@
     "text": "2"
   },
   {
-    "type": "UncategorizedText",
+    "type": "Footer",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
       "data_source": {
