@@ -25,6 +25,11 @@ function cleanup() {
 }
 trap cleanup EXIT
 
+if [ -z "$SALESFORCE_USERNAME" ] || [ -z "$SALESFORCE_CONSUMER_KEY" ]; then
+  echo "Skipping Salesforce ingest test because SALESFORCE_USERNAME and SALESFORCE_CONSUMER_KEY env vars not set"
+  exit 0
+fi
+
 if [ -z "$SALESFORCE_PRIVATE_KEY" ] && [ -z "$SALESFORCE_PRIVATE_KEY_PATH" ]; then
    echo "Skipping Salesforce ingest test because neither SALESFORCE_PRIVATE_KEY nor SALESFORCE_PRIVATE_KEY_PATH env vars are set."
    exit 0
