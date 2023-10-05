@@ -289,6 +289,8 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                     detection_origin="pptx",
                 )
             elif is_possible_title(text):
+                # If text is a title but not the title shape increment the category depth)
+                metadata = self._text_metadata(category_depth=level + 1)
                 yield Title(text=text, metadata=metadata, detection_origin="pptx")
             else:
                 yield Text(text=text, metadata=metadata, detection_origin="pptx")
