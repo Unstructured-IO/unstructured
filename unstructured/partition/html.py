@@ -92,11 +92,6 @@ def partition_html(
     if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
 
-    if not isinstance(languages, list):
-        raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
-        )
-
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
     last_modification_date = None

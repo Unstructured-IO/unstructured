@@ -42,10 +42,6 @@ def partition_rst(
             detect_language_per_element
                 Detect language per element instead of at the document level.
     """
-    if not isinstance(languages, list):
-        raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
-        )
 
     return convert_and_partition_html(
         source_format="rst",

@@ -57,11 +57,6 @@ def partition_doc(
         filename = ""
     exactly_one(filename=filename, file=file)
 
-    if not isinstance(languages, list):
-        raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
-        )
-
     if len(filename) > 0:
         _, filename_no_path = os.path.split(os.path.abspath(filename))
         base_filename, _ = os.path.splitext(filename_no_path)

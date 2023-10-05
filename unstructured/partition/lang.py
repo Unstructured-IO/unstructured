@@ -222,6 +222,11 @@ def detect_languages(
     Detects the list of languages present in the text (in the default "auto" mode),
     or formats and passes through the user inputted document languages if provided.
     """
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
+
     # Skip language detection for partitioners that use other partitioners.
     # For example, partition_msg relies on partition_html and partition_text, but the metadata
     # gets overwritten after elements have been returned by _html and _text,

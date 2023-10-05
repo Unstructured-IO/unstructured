@@ -212,11 +212,6 @@ def partition_text(
     if text is not None and text.strip() == "" and not file and not filename:
         return []
 
-    if not isinstance(languages, list):
-        raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
-        )
-
     if (
         min_partition is not None
         and max_partition is not None

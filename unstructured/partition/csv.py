@@ -54,11 +54,6 @@ def partition_csv(
     """
     exactly_one(filename=filename, file=file)
 
-    if not isinstance(languages, list):
-        raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
-        )
-
     if filename:
         table = pd.read_csv(filename)
         last_modification_date = get_last_modified_date(filename)

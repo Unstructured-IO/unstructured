@@ -1,6 +1,8 @@
 import os
 import pathlib
 
+import pytest
+
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Table, TableChunk, Title
 from unstructured.partition.json import partition_json
@@ -203,3 +205,9 @@ def test_partition_odt_detects_multiple_elements_in_other_language():
     elements = partition_odt(filename=filename, detect_language_per_element=True)
     langs = [element.metadata.languages for element in elements]
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+def test_invalid_languages_arg_raises_TypeError():
+    with pytest.raises(TypeError):
+        filename = "example-docs/fake.odt"
+        partition_odt(filename=filename, languages="eng")

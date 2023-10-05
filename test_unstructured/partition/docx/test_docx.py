@@ -531,6 +531,12 @@ def test_partition_docx_detects_multiple_elements_in_other_language():
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
 
 
+def test_invalid_languages_arg_raises_TypeError():
+    with pytest.raises(TypeError):
+        filename = "example-docs/handbook-1p.docx"
+        partition_docx(filename=filename, languages="eng")
+
+
 def test_convert_and_partition_docx():
     filename = os.path.join("example-docs/fake.odt")
     with open(filename, "rb") as f:

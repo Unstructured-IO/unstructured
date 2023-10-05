@@ -58,11 +58,6 @@ def partition_epub(
     """
     exactly_one(filename=filename, file=file)
 
-    if not isinstance(languages, list):
-        raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
-        )
-
     if filename is not None:
         last_modification_date = get_last_modified_date(filename)
     elif file is not None:

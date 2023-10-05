@@ -88,11 +88,6 @@ def partition_pptx(
     # -- verify only one source-file argument was provided --
     exactly_one(filename=filename, file=file)
 
-    if not isinstance(languages, list):
-        raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
-        )
-
     # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
     # -- exception when Zipfile tries to open it. Both the docx and pptx formats are zip archives,
     # -- so we need to work around that bug here.

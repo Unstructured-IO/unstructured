@@ -54,11 +54,6 @@ def partition_ppt(
         filename = ""
     exactly_one(filename=filename, file=file)
 
-    if not isinstance(languages, list):
-        raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
-        )
-
     last_modification_date = None
     if len(filename) > 0:
         _, filename_no_path = os.path.split(os.path.abspath(filename))

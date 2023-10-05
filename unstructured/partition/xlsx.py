@@ -69,11 +69,6 @@ def partition_xlsx(
     """
     exactly_one(filename=filename, file=file)
 
-    if not isinstance(languages, list):
-        raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
-        )
-
     last_modification_date = None
     header = 0 if include_header else None
 

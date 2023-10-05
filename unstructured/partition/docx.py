@@ -198,11 +198,6 @@ def partition_docx(
     # -- verify that only one file-specifier argument was provided --
     exactly_one(filename=filename, file=file)
 
-    if not isinstance(languages, list):
-        raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
-        )
-
     elements = _DocxPartitioner.iter_document_elements(
         filename,
         file,

@@ -127,11 +127,6 @@ def partition_xml(
     """
     exactly_one(filename=filename, file=file, text=text)
 
-    if not isinstance(languages, list):
-        raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
-        )
-
     elements: List[Element] = []
 
     last_modification_date = None

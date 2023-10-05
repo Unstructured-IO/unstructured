@@ -66,11 +66,6 @@ def partition_msg(
     """
     exactly_one(filename=filename, file=file)
 
-    if not isinstance(languages, list):
-        raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
-        )
-
     if filename is not None:
         msg_obj = msg_parser.MsOxMessage(filename)
     elif file is not None:
