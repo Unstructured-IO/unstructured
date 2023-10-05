@@ -5,14 +5,14 @@ from unstructured.partition.auto import partition
 
 
 @pytest.mark.parametrize(
-    ("filename", "similarity", "percentage"),
+    ("filename", "expected_score", "expected_distance"),
     [
-        ("fake-text.txt", 0.82, 0.18),
-        ("eml/fake-email.eml", 0.03, 0.97),
-        ("README.md", 0.0, 1.00),
+        ("fake-text.txt", 0.82, 30),
+        ("eml/fake-email.eml", 0.03, 164),
+        ("README.md", 0.0, 719),
     ],
 )
-def test_calculate_edit_distance(filename, similarity, percentage):
+def test_calculate_edit_distance(filename, expected_score, expected_distance):
     with open("example-docs/fake-text.txt") as f:
         source_cct = f.read()
 
@@ -20,11 +20,10 @@ def test_calculate_edit_distance(filename, similarity, percentage):
     output_cct = "\n\n".join([str(el) for el in elements])
 
     score = calculate_edit_distance(output_cct, source_cct, return_as="score")
-    distance = calculate_edit_distance(output_cct, source_cct, return_as="percentage")
+    distance = calculate_edit_distance(output_cct, source_cct, return_as="distance")
 
     assert score >= 0
     assert score <= 1.0
-    assert distance >= 0.0
-    assert distance <= 1.0
-    assert round(score, 2) == similarity
-    assert round(distance, 2) == percentage
+    assert distance >= 0
+    assert round(score, 2) == expected_score
+    assert distance == expected_distance
