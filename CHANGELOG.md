@@ -1,4 +1,4 @@
-## 0.10.20-dev1
+## 0.10.20-dev2
 
 ### Enhancements
 
@@ -8,9 +8,14 @@
 
 ### Features
 
+* **Adds detection_origin field to metadata** Problem: Currently isn't an easy way to find out how an element was created. With this change that information is added. Importance: With this information the developers and users are now able to know how an element was created to make decisions on how to use it. In order tu use this feature
+setting UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true is needed. 
 ### Fixes
 
 * **Tweak `xy-cut` ordering output to be more column friendly** This results in the order of elements more closely reflecting natural reading order which benefits downstream applications. While element ordering from `xy-cut` is usually mostly correct when ordering multi-column documents, sometimes elements from a RHS column will appear before elements in a LHS column. Fix: add swapped `xy-cut` ordering by sorting by X coordinate first and then Y coordinate.
+* **Fixes badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
+should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class
+allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
 
 ## 0.10.19
 
@@ -55,7 +60,6 @@
 
 * **Adds `links` metadata in `partition_pdf` for `fast` strategy.** Problem: PDF files contain rich information and hyperlink that Unstructured did not captured earlier. Feature: `partition_pdf` now can capture embedded links within the file along with its associated text and page number. Importance: Providing depth in extracted elements give user a better understanding and richer context of documents. This also enables user to map to other elements within the document if the hyperlink is refered internally.
 * **Adds the embedding module to be able to embed Elements** Problem: Many NLP applications require the ability to represent parts of documents in a semantic way. Until now, Unstructured did not have text embedding ability within the core library. Feature: This embedding module is able to track embeddings related data with a class, embed a list of elements, and return an updated list of Elements with the *embeddings* property. The module is also able to embed query strings. Importance: Ability to embed documents or parts of documents will enable users to make use of these semantic representations in different NLP applications, such as search, retrieval, and retrieval augmented generation.
-* **Adds data_origin field to metadata** Problem: Currently isn't an easy way to find out how an element was created. With this change that information is added. Importance: With this information the developers and users are now able to know how an element was created to make decisions on how to use it. 
 
 ### Fixes
 
@@ -63,9 +67,6 @@
 * **Fixes issue where unstructured-inference was not getting updated** Problem: unstructured-inference was not getting upgraded to the version to match unstructured release when doing a pip install.  Solution: using `pip install unstructured[all-docs]` it will now upgrade both unstructured and unstructured-inference. Importance: This will ensure that the inference library is always in sync with the unstructured library, otherwise users will be using outdated libraries which will likely lead to unintended behavior.
 * **Fixes SharePoint connector failures if any document has an unsupported filetype** Problem: Currently the entire connector ingest run fails if a single IngestDoc has an unsupported filetype. This is because a ValueError is raised in the IngestDoc's `__post_init__`. Fix: Adds a try/catch when the IngestConnector runs get_ingest_docs such that the error is logged but all processable documents->IngestDocs are still instantiated and returned. Importance: Allows users to ingest SharePoint content even when some files with unsupported filetypes exist there.
 * **Fixes Sharepoint connector server_path issue** Problem: Server path for the Sharepoint Ingest Doc was incorrectly formatted, causing issues while fetching pages from the remote source. Fix: changes formatting of remote file path before instantiating SharepointIngestDocs and appends a '/' while fetching pages from the remote source. Importance: Allows users to fetch pages from Sharepoint Sites.
-* **Fixes badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
-should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class
-allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
 * **Fixes Sphinx errors.** Fixes errors when running Sphinx `make html` and installs library to suppress warnings.
 * **Fixes a metadata backwards compatibility error** Problem: When calling `partition_via_api`, the hosted api may return an element schema that's newer than the current `unstructured`. In this case, metadata fields were added which did not exist in the local `ElementMetadata` dataclass, and `__init__()` threw an error. Fix: remove nonexistent fields before instantiating in `ElementMetadata.from_json()`. Importance: Crucial to avoid breaking changes when adding fields.
 * **Fixes issue with Discord connector when a channel returns `None`** Problem: Getting the `jump_url` from a nonexistent Discord `channel` fails. Fix: property `jump_url` is now retrieved within the same context as the messages from the channel. Importance: Avoids cascading issues when the connector fails to fetch information about a Discord channel.
