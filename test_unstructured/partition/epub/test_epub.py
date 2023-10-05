@@ -226,4 +226,4 @@ def test_partition_epub_detects_multiple_elements_in_other_language():
     filename = "example-docs/language-docs/eng_spa_mult.epub"
     elements = partition_epub(filename=filename, detect_language_per_element=True)
     langs = [element.metadata.languages for element in elements]
-    assert langs == [["eng", "ron"], ["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+    assert langs == [["eng"], ["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
