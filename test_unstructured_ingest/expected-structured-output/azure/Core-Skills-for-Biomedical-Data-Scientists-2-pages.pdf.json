@@ -1,7 +1,7 @@
 [
   {
     "type": "Title",
-    "element_id": "611cb5b35c8277f981fe5faaaab7b1a5",
+    "element_id": "0b8804afbc4722108e877480e28462a6",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -20,7 +20,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "64b2134f054446d473fce1b05d4d4c94",
+    "element_id": "46b1e4dae5ffd7cdcb2a6ed9f206a8ee",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -58,7 +58,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7f56b84c46cb41ebdcec2c9ac8673d72",
+    "element_id": "d9644fb4b85468d186b132c91ca64f31",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -77,7 +77,7 @@
   },
   {
     "type": "Title",
-    "element_id": "53d548aa01fc3eb72da15a5be7f235e2",
+    "element_id": "c8e51fdc53c202393adad77f7f93ee5a",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -96,7 +96,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "f14031943b3f1e34dcfc27bf02c38c09",
+    "element_id": "d6df9cd66da09d30c16d194e877766ca",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -115,7 +115,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "8f90f5970c85f335b1bf50af611ce5c5",
+    "element_id": "04ff84b51fab69c07381ac794b740243",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -134,7 +134,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "0b2857001b1a9eba5e46e26cba08e2ac",
+    "element_id": "9a7cf9ee5fe6f8f03a7659594f23d9ff",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -153,7 +153,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c6be5389b7bd00746d39b7bac468dea0",
+    "element_id": "8b02f539eb8ccee5b3fc24f66858188c",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -172,7 +172,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "1b8039583cbc15f654c89f2141eb6e10",
+    "element_id": "469e981f34d1e6f2b420574ed8e932d2",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -191,7 +191,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "2f87757b1d497a32c077be543632ed7d",
+    "element_id": "4b8fc76cbba0e2fef79ff8bc668b1401",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -210,7 +210,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "34b28172088bba51c6764df6d4e87674",
+    "element_id": "69da7754428f154ee3b2906214d31ad9",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -229,7 +229,7 @@
   },
   {
     "type": "Title",
-    "element_id": "89b1f4c3df983454e25b233320781610",
+    "element_id": "37486ef32cbf05082d5dbff0581db762",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -248,7 +248,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "3d8fbacaba9067faef48850d43801268",
+    "element_id": "cfe4cc76625dc82267d95ec1dc7e7813",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -263,11 +263,11 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Training a biomedical data science (BDS) workforce is a central theme in NLM’s Strategic Plan for the coming decade. That commitment is echoed in the NIH-wide Big Data to Knowledge (BD2k) initiative, which invested $61 million between FY2014 and FY2017 in training programs for the development and use of biomedical big data science methods and tools. In line with"
+    "text": "Training a biomedical data science (BDS) workforce is a central theme in NLM’s Strategic Plan for the coming decade. That commitment is echoed in the NIH-wide Big Data to Knowledge (BD2K) initiative, which invested $61 million between FY2014 and FY2017 in training programs for the development and use of biomedical big data science methods and tools. In line with"
   },
   {
-    "type": "Title",
-    "element_id": "611cb5b35c8277f981fe5faaaab7b1a5",
+    "type": "UncategorizedText",
+    "element_id": "68431de56564c6ad6aa3e6c02b78c89c",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -282,11 +282,11 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Core Skills for Biomedical Data Scientists"
+    "text": "Core Skills for Biomedical Data Scientists _____________________________________________________________________________________________"
   },
   {
     "type": "NarrativeText",
-    "element_id": "4c5f925a7db08289f19dbe8635d8b4cd",
+    "element_id": "edd5f2f5a60a83c8899e533ac8bcd03c",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -305,7 +305,7 @@
   },
   {
     "type": "Title",
-    "element_id": "f26d07e6b71e42596791a241e2417931",
+    "element_id": "3c36cd10b2e64b9f2169f05abddd4981",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -324,7 +324,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "bcefa2402c4d32dbf76a40451d0fc3dd",
+    "element_id": "987542acede56f098db655f02fb814a7",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -343,7 +343,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "9e4072125e9465a2ff9f58529ce54428",
+    "element_id": "2e3cec7bff1e8c8d8e0087f0bcfa89f0",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -358,11 +358,11 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "a) Responses to a 2017 Kaggle' survey’ of over 16,000 self-identified data scientists working across many industries. Analysis of the Kaggle survey responses from the current data science workforce provided insights into the current generation of data scientists, including how they were trained and what programming and analysis skills they use."
+    "text": "a) Responses to a 2017 Kaggle1 survey2 of over 16,000 self-identified data scientists working across many industries. Analysis of the Kaggle survey responses from the current data science workforce provided insights into the current generation of data scientists, including how they were trained and what programming and analysis skills they use."
   },
   {
     "type": "ListItem",
-    "element_id": "77162f0e50911686ff277d8f132430b3",
+    "element_id": "c6865d507571ccb14d37791134f27f61",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -377,11 +377,11 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "b) Data science skills taught in BD2K-funded training programs. A qualitative content analysis was applied to the descriptions of required courses offered under the 12 BD2kK-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized into four major categories: (1) statistics and math skills; (2) computer science; (3) subject knowledge; (4) general skills, like communication and teamwork. The coding schema is detailed in Appendix A."
+    "text": "b) Data science skills taught in BD2K-funded training programs. A qualitative content analysis was applied to the descriptions of required courses offered under the 12 BD2K-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized into four major categories: (1) statistics and math skills; (2) computer science; (3) subject knowledge; (4) general skills, like communication and teamwork. The coding schema is detailed in Appendix A."
   },
   {
     "type": "ListItem",
-    "element_id": "537553a92c985f257ddf026fb12cc547",
+    "element_id": "3f14cc0782485365bad0539f7b1bbb22",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -396,11 +396,11 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "c) Desired skills identified from data science-related job ads. 59 job ads from government (8.5%), academia (42.4%), industry (83.9%), and the nonprofit sector (15.3%) were sampled from websites like Glassdoor, Linkedin, and Ziprecruiter. The content analysis methodology and coding schema utilized in analyzing the training programs were applied to the job descriptions. Because many job ads mentioned the same skill more than once, each occurrence of the skill was coded, therefore weighting important skills that were mentioned multiple times in a single ad."
+    "text": "c) Desired skills identified from data science-related job ads. 59 job ads from government (8.5%), academia (42.4%), industry (33.9%), and the nonprofit sector (15.3%) were sampled from websites like Glassdoor, Linkedin, and Ziprecruiter. The content analysis methodology and coding schema utilized in analyzing the training programs were applied to the job descriptions. Because many job ads mentioned the same skill more than once, each occurrence of the skill was coded, therefore weighting important skills that were mentioned multiple times in a single ad."
   },
   {
     "type": "NarrativeText",
-    "element_id": "91da3a0694b9cdc01c32e1d3071f3941",
+    "element_id": "c2e95867ed0f25e3d9fe1a6b97447ab9",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -419,7 +419,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "eed435329f99bc2f2a992e48715b19bc",
+    "element_id": "f39ddfa6365e505947527153b0ea60d8",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -434,7 +434,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "' Kaggle is an online community for data scientists, serving as a platform for collaboration, competition, and learning: http://kaggle.com ? In August 2017, Kaggle conducted an industry-wide survey to gain a clearer picture of the state of data science and machine learning. A standard set of questions were asked of all respondents, with more specific questions related to work for employed data scientists and questions related to learning for data scientists in training. Methodology and results: https://www.kaggle.com/kaggle/kaggle-survey-2017"
+    "text": "1 Kaggle is an online community for data scientists, serving as a platform for collaboration, competition, and learning: http://kaggle.com 2 In August 2017, Kaggle conducted an industry-wide survey to gain a clearer picture of the state of data science and machine learning. A standard set of questions were asked of all respondents, with more specific questions related to work for employed data scientists and questions related to learning for data scientists in training. Methodology and results: https://www.kaggle.com/kaggle/kaggle-survey-2017"
   },
   {
     "type": "UncategorizedText",
