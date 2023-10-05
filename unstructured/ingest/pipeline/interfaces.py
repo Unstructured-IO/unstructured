@@ -5,6 +5,7 @@ import multiprocessing as mp
 import typing as t
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from multiprocessing.managers import DictProxy
 from pathlib import Path
 
 from dataclasses_json import DataClassJsonMixin
@@ -21,10 +22,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 @dataclass
 class PipelineContext(ProcessorConfig):
     def __post_init__(self):
-        self._ingest_docs_map: t.Optional[mp.managers.DictProxy] = None
+        self._ingest_docs_map: t.Optional[DictProxy] = None
 
     @property
-    def ingest_docs_map(self) -> mp.managers.DictProxy:
+    def ingest_docs_map(self) -> DictProxy:
         if not self._ingest_docs_map:
             raise ValueError("ingest_docs_map never initialized")
         return self._ingest_docs_map
