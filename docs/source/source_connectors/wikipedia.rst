@@ -28,28 +28,21 @@ Run Locally
 
       .. code:: python
 
-        import subprocess
+        from unstructured.ingest.runner.wikipedia import wikipedia
+        from unstructured.ingest.interfaces import ReadConfig, PartitionConfig
 
-        command = [
-          "unstructured-ingest",
-            "wikipedia",
-            "--page-title", "Open Source Software",
-            "--output-dir", "dropbox-output",
-            "--num-processes", "2",
-            "--verbose",
-        ]
 
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            wikipedia(
+                verbose=True,
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
+                    output_dir="wikipedia-ingest-output",
+                    num_processes=2
+                ),
+                page_title="Open Source Software",
+                auto_suggest=False,
+            )
 
 Run via the API
 ---------------
@@ -75,30 +68,24 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
       .. code:: python
 
-        import subprocess
+        import os
 
-        command = [
-          "unstructured-ingest",
-            "wikipedia",
-            "--page-title", "Open Source Software",
-            "--output-dir", "dropbox-output",
-            "--num-processes", "2",
-            "--verbose",
-            "--partition-by-api",
-            "--api-key", "<UNSTRUCTURED-API-KEY>",
-        ]
+        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
+        from unstructured.ingest.runner.wikipedia import wikipedia
 
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            wikipedia(
+                verbose=True,
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
+                    output_dir="wikipedia-ingest-output",
+                    num_processes=2,
+                    partition_by_api=True,
+                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
+                ),
+                page_title="Open Source Software",
+                auto_suggest=False,
+            )
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 

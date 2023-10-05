@@ -25,4 +25,5 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --files-only "Flag to process only files within the site(s)" \
     --output-dir sharepoint-ingest-output \
     --num-processes 2 \
+    --path "Shared Documents" \
     --verbose

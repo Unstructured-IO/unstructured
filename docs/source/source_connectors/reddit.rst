@@ -33,33 +33,24 @@ Run Locally
 
       .. code:: python
 
-        import subprocess
+        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
+        from unstructured.ingest.runner.reddit import reddit
 
-        command = [
-          "unstructured-ingest",
-            "reddit",
-            "--subreddit-name", "machinelearning",
-            "--client-id", "<client id here>",
-            "--client-secret", "<client secret here>",
-            "--user-agent", "Unstructured Ingest Subreddit fetcher by \\u\\...",
-            "--search-query", "Unstructured",
-            "--num-posts", "10",
-            "--output-dir", "reddit-ingest-output",
-            "--num-processes", "2",
-            "--verbose"
-        ]
-
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            reddit(
+                verbose=True,
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
+                    output_dir="reddit-ingest-output",
+                    num_processes=2,
+                ),
+                subreddit_name="machinelearning",
+                client_id="<client id here>",
+                client_secret="<client secret here>",
+                user_agent=r"Unstructured Ingest Subreddit fetcher by \\u\...",
+                search_query="Unstructured",
+                num_posts=10,
+            )
 
 Run via the API
 ---------------
@@ -90,35 +81,28 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
       .. code:: python
 
-        import subprocess
+        import os
 
-        command = [
-          "unstructured-ingest",
-            "reddit",
-            "--subreddit-name", "machinelearning",
-            "--client-id", "<client id here>",
-            "--client-secret", "<client secret here>",
-            "--user-agent", "Unstructured Ingest Subreddit fetcher by \\u\\...",
-            "--search-query", "Unstructured",
-            "--num-posts", "10",
-            "--output-dir", "reddit-ingest-output",
-            "--num-processes", "2",
-            "--verbose"
-            "--partition-by-api",
-            "--api-key", "<UNSTRUCTURED-API-KEY>",
-        ]
+        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
+        from unstructured.ingest.runner.reddit import reddit
 
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            reddit(
+                verbose=True,
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
+                    output_dir="reddit-ingest-output",
+                    num_processes=2,
+                    partition_by_api=True,
+                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
+                ),
+                subreddit_name="machinelearning",
+                client_id="<client id here>",
+                client_secret="<client secret here>",
+                user_agent=r"Unstructured Ingest Subreddit fetcher by \\u\...",
+                search_query="Unstructured",
+                num_posts=10,
+            )
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 
