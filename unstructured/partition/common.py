@@ -151,14 +151,13 @@ def normalize_layout_element(
                 detection_origin=origin,
             )
         else:
-            item = ListItem(
+            return ListItem(
                 text=text if text else "",
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=class_prob_metadata,
                 detection_origin=origin,
             )
-            return item
 
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
         _element_class = TYPE_TO_TEXT_ELEMENT_MAP[element_type]
@@ -175,32 +174,29 @@ def normalize_layout_element(
             _element_class.metadata.category_depth = 2
         return _element_class
     elif element_type == "Checked":
-        checkbox = CheckBox(
+        return CheckBox(
             checked=True,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
             detection_origin=origin,
         )
-        return checkbox
     elif element_type == "Unchecked":
-        checkbox = CheckBox(
+        return CheckBox(
             checked=False,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
             detection_origin=origin,
         )
-        return checkbox
     else:
-        text = Text(
+        return Text(
             text=text if text else "",
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
             detection_origin=origin,
         )
-        return text
 
 
 def layout_list_to_list_items(
