@@ -44,3 +44,4 @@ anyio<4.0
 # pinned in unstructured paddleocr
 opencv-python==4.8.0.76
 opencv-contrib-python==4.8.0.76
+platformdirs==3.10.0
