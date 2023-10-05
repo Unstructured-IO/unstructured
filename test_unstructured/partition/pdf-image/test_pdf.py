@@ -400,7 +400,7 @@ def test_partition_pdf_uses_table_extraction():
 def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
-    title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
+    title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
     idx = 3
     assert elements[idx].text == title
     assert {element.metadata.page_number for element in elements} == {1, 2}
