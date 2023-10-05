@@ -19,7 +19,7 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   requests
@@ -39,13 +39,13 @@ cython==3.0.2
     # via unstructured-paddleocr
 et-xmlfile==1.1.0
     # via openpyxl
-flask==2.3.3
+flask==3.0.0
     # via
     #   flask-babel
     #   visualdl
 flask-babel==3.1.0
     # via visualdl
-fonttools==4.42.1
+fonttools==4.43.0
     # via matplotlib
 future==0.18.3
     # via bce-python-sdk
@@ -122,7 +122,7 @@ opencv-python==4.8.0.76
     #   unstructured-paddleocr
 openpyxl==3.1.2
     # via unstructured-paddleocr
-packaging==23.1
+packaging==23.2
     # via
     #   -c requirements/base.txt
     #   matplotlib
@@ -218,7 +218,7 @@ urllib3==1.26.16
     #   requests
 visualdl==2.5.3
     # via unstructured-paddleocr
-werkzeug==2.3.7
+werkzeug==3.0.0
     # via flask
 zipp==3.17.0
     # via
