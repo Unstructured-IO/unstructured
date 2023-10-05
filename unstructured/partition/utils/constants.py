@@ -1,3 +1,2 @@
 SORT_MODE_XY_CUT = "xy-cut"
 SORT_MODE_BASIC = "basic"
-DEFAULT_HI_RES_MODEL_NAME = "yolox_quantized"
