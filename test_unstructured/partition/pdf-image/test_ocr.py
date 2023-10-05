@@ -9,6 +9,7 @@ from unstructured_inference.inference.layoutelement import (
 )
 
 from unstructured.partition import ocr
+from unstructured.partition.ocr import pad_element_bboxes
 from unstructured.partition.utils.ocr_models import paddle_ocr
 
 
@@ -365,3 +366,33 @@ def test_merge_inferred_layout_with_ocr_layout(mock_inferred_layout, mock_ocr_re
     # Check if the final layout contains both original elements and OCR-derived elements
     assert all(element in final_layout for element in mock_inferred_layout)
     assert any(element in final_layout for element in ocr_elements)
+
+
+@pytest.mark.parametrize(
+    ("padding", "expected_bbox"),
+    [
+        (5, (5, 15, 35, 45)),
+        (-3, (13, 23, 27, 37)),
+        (2.5, (7.5, 17.5, 32.5, 42.5)),
+        (-1.5, (11.5, 21.5, 28.5, 38.5)),
+    ],
+)
+def test_pad_element_bboxes(padding, expected_bbox):
+    element = LayoutElement(
+        x1=10, y1=20, x2=30, y2=40, text="", source=None, type="UncategorizedText"
+    )
+    expected_original_element_bbox = (10, 20, 30, 40)
+
+    padded_element = pad_element_bboxes(element, padding)
+
+    padded_element_bbox = (
+        padded_element.x1,
+        padded_element.y1,
+        padded_element.x2,
+        padded_element.y2,
+    )
+    assert padded_element_bbox == expected_bbox
+
+    # make sure the original element has not changed
+    original_element_bbox = (element.x1, element.y1, element.x2, element.y2)
+    assert original_element_bbox == expected_original_element_bbox
