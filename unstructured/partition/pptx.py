@@ -230,7 +230,10 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         return bool((shape.top and shape.left) and (shape.top < 0 or shape.left < 0))
 
     def _iter_title_shape_element(self, shape: Shape) -> Iterator[Element]:
-        """Generate Text or subtype element for each paragraph in `shape`."""
+        """Generate Title element for each paragraph in title `shape`.
+
+        Text is most likely a title, but in the rare case that the title shape was used
+        for the slide body text, also check for bulleted paragraphs."""
         if self._is_invalid_shape(shape):
             return
 
@@ -239,9 +242,16 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             text = paragraph.text
             if text.strip() == "":
                 continue
-            # increment the category depth by the paragraph increment in the shape
-            yield Title(text=text, metadata=self._text_metadata(category_depth=depth))
-            depth += 1  # Cannot enumerate because we want to skip empty paragraphs
+
+            if self._is_bulleted_paragraph(paragraph):
+                bullet_depth = paragraph.level or 0
+                yield ListItem(text=text, metadata=self._text_metadata(category_depth=bullet_depth))
+            elif is_email_address(text):
+                yield EmailAddress(text=text)
+            else:
+                # increment the category depth by the paragraph increment in the shape
+                yield Title(text=text, metadata=self._text_metadata(category_depth=depth))
+                depth += 1  # Cannot enumerate because we want to skip empty paragraphs
 
     def _iter_shape_elements(self, shape: Shape) -> Iterator[Element]:
         """Generate Text or subtype element for each paragraph in `shape`."""
@@ -253,7 +263,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             if text.strip() == "":
                 continue
 
-            level = getattr(paragraph, "level", 0) or 0
+            level = paragraph.level or 0
             metadata = self._text_metadata(category_depth=level)
 
             if self._is_bulleted_paragraph(paragraph):
