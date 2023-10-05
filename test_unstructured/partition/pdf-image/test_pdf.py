@@ -18,6 +18,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.partition import ocr, pdf, strategies
 from unstructured.partition.json import partition_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 
@@ -128,15 +129,16 @@ def test_partition_pdf_local_raises_with_no_filename():
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
 @pytest.mark.parametrize(
-    ("strategy", "expected"),
+    ("strategy", "expected", "origin"),
     # fast: can't capture the "intentionally left blank page" page
     # others: will ignore the actual blank page
-    [("fast", {1, 4}), ("hi_res", {1, 3, 4}), ("ocr_only", {1, 3, 4})],
+    [("fast", {1, 4}, "pdfminer"), ("hi_res", {1, 3, 4}, "pdf"), ("ocr_only", {1, 3, 4}, "OCR")],
 )
 def test_partition_pdf(
     file_mode,
     strategy,
     expected,
+    origin,
     filename="example-docs/layout-parser-paper-with-empty-pages.pdf",
 ):
     # Test that the partition_pdf function can handle filename
@@ -145,6 +147,8 @@ def test_partition_pdf(
         assert len(result) > 10
         # check that the pdf has multiple different page numbers
         assert {element.metadata.page_number for element in result} == expected
+        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+            assert {element.metadata.detection_origin for element in result} == {origin}
 
     if file_mode == "filename":
         result = pdf.partition_pdf(filename=filename, strategy=strategy)

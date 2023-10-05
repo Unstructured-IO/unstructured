@@ -147,7 +147,7 @@ jobs:
         tesseract --version
         # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
         make install-ci
-        make test CI=true
+        make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
         make check-coverage
 
   test_unit_no_extras:
@@ -419,4 +419,4 @@ jobs:
           source .venv/bin/activate
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
           make docker-build
-          make docker-test CI=true
+          make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
