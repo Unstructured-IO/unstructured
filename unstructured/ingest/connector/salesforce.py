@@ -10,7 +10,7 @@ https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_de
 import os
 import typing as t
 from collections import OrderedDict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
@@ -87,9 +87,16 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     record_type: str
     record_id: str
     registry_name: str = "salesforce"
+    _record: OrderedDict = field(default_factory=lambda: OrderedDict())
 
     def __post_init__(self):
         self.update_source_metadata()
+
+    @property
+    def record(self):
+        if not self._record:
+            self._record = self.get_record()
+        return self._record
 
     def _tmp_download_file(self) -> Path:
         if self.record_type == "EmailMessage":
@@ -145,17 +152,22 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return dedent(eml)
 
-    def get_record(self):
+    def get_record(self) -> OrderedDict:
         client = self.connector_config.get_client()
 
         # Get record from Salesforce based on id
-        record_json = client.query_all(
+        response = client.query_all(
             f"select FIELDS(STANDARD) from {self.record_type} where Id='{self.record_id}'",
-        )["records"][0]
+        )
+        logger.debug(f"response from salesforce record request: {response}")
+        records = response["records"]
+        if not records:
+            raise ValueError(f"No record found with record id {self.record_id}: {response}")
+        record_json = records[0]
         return record_json
 
     def update_source_metadata(self) -> None:  # type: ignore
-        record_json = self.get_record()
+        record_json = self.record
 
         date_format = "%Y-%m-%dT%H:%M:%S.000+0000"
         self.source_metadata = SourceMetadata(
@@ -177,7 +189,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._create_full_tmp_dir_path()
         logger.debug(f"Writing file {self.record_id} - PID: {os.getpid()}")
 
-        record = self.get_record()
+        record = self.record
 
         try:
             if self.record_type == "EmailMessage":
