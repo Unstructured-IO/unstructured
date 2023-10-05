@@ -252,7 +252,6 @@ def test_partition_image_default_strategy_hi_res():
         assert {element.metadata.detection_origin for element in elements} == {"image"}
 
 
-
 def test_partition_image_metadata_date(
     mocker,
     filename="example-docs/english-and-korean.png",

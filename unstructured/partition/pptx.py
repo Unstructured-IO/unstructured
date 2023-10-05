@@ -222,7 +222,9 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         if not notes_text:
             return
 
-        yield NarrativeText(text=notes_text, metadata=self._text_metadata(), detection_origin="pptx")
+        yield NarrativeText(
+            text=notes_text, metadata=self._text_metadata(), detection_origin="pptx"
+        )
 
     def _is_invalid_shape(self, shape: Shape) -> bool:
         # NOTE(robinson) - avoid processing shapes that are not on the actual slide
