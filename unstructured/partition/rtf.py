@@ -5,6 +5,8 @@ from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.html import convert_and_partition_html
 
+DETECTION_ORIGIN: str = "rtf"
+
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.RTF)
@@ -40,4 +42,5 @@ def partition_rtf(
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified,
+        detection_origin=DETECTION_ORIGIN,
     )

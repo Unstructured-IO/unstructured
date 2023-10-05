@@ -32,6 +32,8 @@ from unstructured.partition.text_type import (
     is_possible_title,
 )
 
+DETECTION_ORIGIN: str = "xlsx"
+
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.XLSX)
@@ -99,6 +101,7 @@ def partition_xlsx(
                     filename=metadata_filename or filename,
                     last_modified=metadata_last_modified or last_modification_date,
                 )
+                metadata.detection_origin = DETECTION_ORIGIN
             else:
                 metadata = ElementMetadata()
 
