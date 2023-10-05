@@ -1,5 +1,6 @@
 import os
 import tempfile
+from copy import deepcopy
 from typing import BinaryIO, List, Optional, Union, cast
 
 import numpy as np
@@ -186,8 +187,10 @@ def supplement_page_layout_with_ocr(
         elements = inferred_page_layout.elements
         for i, element in enumerate(elements):
             if element.text == "":
-                element = pad_element_bboxes(element, padding=12)
-                cropped_image = image.crop((element.x1, element.y1, element.x2, element.y2))
+                padded_element = pad_element_bboxes(element, padding=12)
+                cropped_image = image.crop(
+                    (padded_element.x1, padded_element.y1, padded_element.x2, padded_element.y2)
+                )
                 text_from_ocr = get_ocr_text_from_image(
                     cropped_image,
                     ocr_languages=ocr_languages,
@@ -209,11 +212,13 @@ def pad_element_bboxes(
 ) -> "LayoutElement":
     """Increases (or decreases, if padding is negative) the size of the bounding
     boxes of the element by extending the boundary outward (resp. inward)"""
-    element.x1 -= padding
-    element.x2 += padding
-    element.y1 -= padding
-    element.y2 += padding
-    return element
+
+    out_element = deepcopy(element)
+    out_element.x1 -= padding
+    out_element.x2 += padding
+    out_element.y1 -= padding
+    out_element.y2 += padding
+    return out_element
 
 
 def get_ocr_layout_from_image(
