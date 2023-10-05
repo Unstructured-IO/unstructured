@@ -102,7 +102,7 @@ ipython-genutils==0.2.0
     #   qtconsole
 ipywidgets==8.1.1
     # via jupyter
-jedi==0.19.1
+jedi==0.19.0
     # via ipython
 jinja2==3.1.2
     # via
@@ -259,7 +259,7 @@ referencing==0.30.2
     # via
     #   jsonschema
     #   jsonschema-specifications
-rpds-py==0.10.4
+rpds-py==0.10.3
     # via
     #   jsonschema
     #   referencing

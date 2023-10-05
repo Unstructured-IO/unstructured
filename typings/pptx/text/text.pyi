@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Optional, Sequence
 
 from pptx.oxml.text import CT_TextParagraph
 from pptx.shapes import Subshape
@@ -11,3 +11,4 @@ class TextFrame(Subshape):
 class _Paragraph(Subshape):
     _p: CT_TextParagraph
     text: str
+    level: Optional[int]
