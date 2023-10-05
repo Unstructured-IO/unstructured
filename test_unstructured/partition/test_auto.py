@@ -8,7 +8,13 @@ from unittest.mock import patch
 import docx
 import pytest
 
-from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT, EXPECTED_TITLE
+from test_unstructured.partition.test_constants import (
+    EXPECTED_TABLE,
+    EXPECTED_TABLE_XLSX,
+    EXPECTED_TEXT,
+    EXPECTED_TEXT_XLSX,
+    EXPECTED_TITLE,
+)
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
@@ -713,8 +719,8 @@ def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.x
     assert len(elements) == 4
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
-    assert elements[1].metadata.text_as_html == EXPECTED_TABLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
     assert elements[1].metadata.page_number == 1
     assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
@@ -728,8 +734,8 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert len(elements) == 4
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
-    assert elements[1].metadata.text_as_html == EXPECTED_TABLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
     assert elements[1].metadata.page_number == 1
     assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
