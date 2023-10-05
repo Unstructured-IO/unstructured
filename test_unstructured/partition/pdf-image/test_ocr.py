@@ -20,13 +20,13 @@ from unstructured.partition.utils.ocr_models import paddle_ocr
         (False, PDFPageCountError),
     ],
 )
-def test_process_data_with_ocr_invalid_image_file(is_image, expected_error):
-    invalid_image_data = b"i am not a valid image file"
+def test_process_data_with_ocr_invalid_file(is_image, expected_error):
+    invalid_data = b"i am not a valid file"
     with pytest.raises(expected_error):
         _ = ocr.process_data_with_ocr(
-            data=invalid_image_data,
+            data=invalid_data,
             is_image=is_image,
-            inferred_layout=DocumentLayout(),
+            out_layout=DocumentLayout(),
         )
 
 
@@ -37,12 +37,13 @@ def test_process_data_with_ocr_invalid_image_file(is_image, expected_error):
         (False),
     ],
 )
-def test_process_file_with_ocr_invalid_image_filename(is_image):
+def test_process_file_with_ocr_invalid_filename(is_image):
     invalid_filename = "i am not a valid file name"
     with pytest.raises(FileNotFoundError):
         _ = ocr.process_file_with_ocr(
             filename=invalid_filename,
-            inferred_layout=DocumentLayout(),
+            is_image=is_image,
+            out_layout=DocumentLayout(),
         )
 
 
@@ -165,7 +166,7 @@ def mock_ocr_regions():
 
 
 @pytest.fixture()
-def mock_inferred_layout(mock_embedded_text_regions):
+def mock_out_layout(mock_embedded_text_regions):
     return [
         LayoutElement(
             r.x1,
@@ -344,7 +345,7 @@ def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
                 assert ocr_element not in final_layout
 
 
-def test_merge_inferred_layout_with_ocr_layout(mock_inferred_layout, mock_ocr_regions):
+def test_merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions):
     ocr_elements = [
         LayoutElement(
             r.x1,
@@ -358,13 +359,13 @@ def test_merge_inferred_layout_with_ocr_layout(mock_inferred_layout, mock_ocr_re
         for r in mock_ocr_regions
     ]
 
-    final_layout = ocr.merge_inferred_layout_with_ocr_layout(mock_inferred_layout, mock_ocr_regions)
+    final_layout = ocr.merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions)
 
-    # Check if the inferred layout's text attribute is updated with aggregated OCR text
+    # Check if the out layout's text attribute is updated with aggregated OCR text
     assert final_layout[0].text == mock_ocr_regions[2].text
 
     # Check if the final layout contains both original elements and OCR-derived elements
-    assert all(element in final_layout for element in mock_inferred_layout)
+    assert all(element in final_layout for element in mock_out_layout)
     assert any(element in final_layout for element in ocr_elements)
 
 

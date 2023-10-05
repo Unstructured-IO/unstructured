@@ -33,20 +33,21 @@ if "OMP_THREAD_LIMIT" not in os.environ:
 
 def process_data_with_ocr(
     data: Union[bytes, BinaryIO],
-    inferred_layout: "DocumentLayout",
+    out_layout: "DocumentLayout",
     is_image: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
 ) -> "DocumentLayout":
     """
-    Process OCR data from a given data and supplement the inferred DocumentLayout with ocr.
+    Process OCR data from a given data and supplement the output DocumentLayout
+    from unstructured_inference with ocr.
 
     Parameters:
     - data (Union[bytes, BinaryIO]): The input file data,
         which can be either bytes or a BinaryIO object.
 
-    - inferred_layout (DocumentLayout): The inferred layout from unsturcutrued-inference.
+     - out_layout (DocumentLayout): The output layout from unstructured-inference.
 
     - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).
         Defaults to False.
@@ -55,7 +56,7 @@ def process_data_with_ocr(
 
     - ocr_mode (str, optional): The OCR processing mode, e.g., "entire_page" or "individual_blocks".
         Defaults to "entire_page". If choose "entire_page" OCR, OCR processes the entire image
-        page and will be merged with the inferred layout. If choose "individual_blocks" OCR,
+        page and will be merged with the output layout. If choose "individual_blocks" OCR,
         OCR is performed on individual elements by cropping the image.
 
     - pdf_image_dpi (int, optional): DPI (dots per inch) for processing PDF images. Defaults to 200.
@@ -68,7 +69,7 @@ def process_data_with_ocr(
         tmp_file.flush()
         merged_layouts = process_file_with_ocr(
             filename=tmp_file.name,
-            inferred_layout=inferred_layout,
+            out_layout=out_layout,
             is_image=is_image,
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
@@ -86,12 +87,13 @@ def process_file_with_ocr(
     pdf_image_dpi: int = 200,
 ) -> "DocumentLayout":
     """
-    Process OCR data from a given file and supplement the inferred DocumentLayout with ocr.
+    Process OCR data from a given file and supplement the output DocumentLayout
+    from unsturcutured0inference with ocr.
 
     Parameters:
     - filename (str): The path to the input file, which can be an image or a PDF.
 
-    - inferred_layout (DocumentLayout): The inferred layout from unsturcutrued-inference.
+    - out_layout (DocumentLayout): The output layout from unstructured-inference.
 
     - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).
         Defaults to False.
@@ -100,7 +102,7 @@ def process_file_with_ocr(
 
     - ocr_mode (str, optional): The OCR processing mode, e.g., "entire_page" or "individual_blocks".
         Defaults to "entire_page". If choose "entire_page" OCR, OCR processes the entire image
-        page and will be merged with the inferred layout. If choose "individual_blocks" OCR,
+        page and will be merged with the output layout. If choose "individual_blocks" OCR,
         OCR is performed on individual elements by cropping the image.
 
     - pdf_image_dpi (int, optional): DPI (dots per inch) for processing PDF images. Defaults to 200.
@@ -157,10 +159,10 @@ def supplement_page_layout_with_ocr(
     ocr_mode: str = OCRMode.FULL_PAGE.value,
 ) -> "PageLayout":
     """
-    Supplement an inferred PageLayout with OCR results depending on OCR mode.
+    Supplement an PageLayout with OCR results depending on OCR mode.
     If mode is "entire_page", we get the OCR layout for the entire image and
-    merge it with inferred PageLayout.
-    If mode is "individual_blocks", we find the elements from inferred PageLayout
+    merge it with PageLayout.
+    If mode is "individual_blocks", we find the elements from PageLayout
     with no text and add text from OCR to each element.
     """
     entire_page_ocr = os.getenv("ENTIRE_PAGE_OCR", "tesseract").lower()
@@ -368,9 +370,7 @@ def merge_out_layout_with_ocr_layout(
     supplemented with the OCR layout.
     """
 
-    out_regions_without_text = [
-        region for region in out_layout if not region.text
-    ]
+    out_regions_without_text = [region for region in out_layout if not region.text]
 
     for out_region in out_regions_without_text:
         out_region.text = aggregate_ocr_text_by_block(
