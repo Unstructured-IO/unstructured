@@ -223,7 +223,9 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             return
 
         yield NarrativeText(
-            text=notes_text, metadata=self._text_metadata(), detection_origin="pptx"
+            text=notes_text,
+            metadata=self._text_metadata(),
+            detection_origin="pptx",
         )
 
     def _is_invalid_shape(self, shape: Shape) -> bool:
@@ -247,12 +249,20 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
 
             if self._is_bulleted_paragraph(paragraph):
                 bullet_depth = paragraph.level or 0
-                yield ListItem(text=text, metadata=self._text_metadata(category_depth=bullet_depth))
+                yield ListItem(
+                    text=text,
+                    metadata=self._text_metadata(category_depth=bullet_depth),
+                    detection_origin="pptx",
+                )
             elif is_email_address(text):
-                yield EmailAddress(text=text)
+                yield EmailAddress(text=text, detection_origin="pptx")
             else:
                 # increment the category depth by the paragraph increment in the shape
-                yield Title(text=text, metadata=self._text_metadata(category_depth=depth))
+                yield Title(
+                    text=text,
+                    metadata=self._text_metadata(category_depth=depth),
+                    detection_origin="pptx",
+                )
                 depth += 1  # Cannot enumerate because we want to skip empty paragraphs
 
     def _iter_shape_elements(self, shape: Shape) -> Iterator[Element]:
