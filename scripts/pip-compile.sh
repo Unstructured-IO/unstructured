@@ -8,5 +8,5 @@ if ! python -c "import sys; assert sys.version_info.major == $major and sys.vers
   exit 1
 fi
 
-cd requirements && $(MAKE) *.txt
+cd ./requirements && $(MAKE) *.txt
 cp requirements/build.txt docs/requirements.txt
