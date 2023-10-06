@@ -49,7 +49,7 @@ six==1.16.0
     # via
     #   -c requirements/base.txt
     #   python-dateutil
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
