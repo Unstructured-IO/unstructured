@@ -1,24 +1,6 @@
 [
   {
     "type": "Title",
-    "element_id": "14547603bad3329c14c74b8c4e2ff8d9",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "//s88ciation"
-  },
-  {
-    "type": "Title",
     "element_id": "80f1cd7f1c8e281093a32842b1e5bbce",
     "metadata": {
       "data_source": {
@@ -70,6 +52,24 @@
       "page_number": 1
     },
     "text": "The need for nuclear in a clean energy system"
+  },
+  {
+    "type": "Title",
+    "element_id": "14547603bad3329c14c74b8c4e2ff8d9",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "//s88ciation"
   },
   {
     "type": "Title",
@@ -379,7 +379,7 @@
   },
   {
     "type": "Image",
-    "element_id": "d5aedf7912dfff3c661af8cd17426bac",
+    "element_id": "1a411800370258d4be549bdc1a80abda",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -393,7 +393,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "45,000       © Marine 40,000 M™@ csp 35,000 zz Solar PV Geothermal 30,000 ~ Mi Wind 25,000 — Il Bioenergy 20,000 = BB Hydro Nuclear 15,000 — Gas 10,000 — oi 5,000 __ Coal     2000 2010 2020 2030 2040"
+    "text": "40,000 35,000 30,000 25,000 20,000 15,000 10,000 5,000 0   Marine   CSP   Solar PV   Geothermal   Wind   Bioenergy   Hydro   Nuclear   Gas   Oil   Coal"
   },
   {
     "type": "UncategorizedText",
@@ -559,7 +559,7 @@
   },
   {
     "type": "Image",
-    "element_id": "81fe4504e383e98273c4a560382d82ee",
+    "element_id": "7e40a0873687d6f87552153de20bc4b2",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -573,7 +573,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "30,000,000   |_| High-carbon HE Low-carbon   25,000,000 20,000,000   15,000,000 10,000,000 5,000,000   1990 1995 2000 2005 2010 2015"
+    "text": "30,000,000 25,000,000 20,000,000 15,000,000 10,000,000 5,000,000 0   High-carbon    Low-carbon"
   },
   {
     "type": "UncategorizedText",
@@ -919,7 +919,7 @@
   },
   {
     "type": "Image",
-    "element_id": "5b5f659ab2c445e9ed688dd79280a53e",
+    "element_id": "eacea190abcfec210f15f2997c88b1bf",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -933,7 +933,7 @@
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "        a ro)       0 » ec $ Se SW SS is é e » Pe US X? oe fe)"
+    "text": "300 250 200 150 100 50 0 m ercialPhotovoltaic C o m O nshore Wind Offshore Wind N uclear C C G T C oal"
   },
   {
     "type": "FigureCaption",
@@ -1099,7 +1099,7 @@
   },
   {
     "type": "Image",
-    "element_id": "0fece208b80790baa3ae323ace21f818",
+    "element_id": "913df2eeb69df1da2abd72b84c1cfa93",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1113,7 +1113,7 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "                140 120 120 1 : 100 99.5 : 80 71.9 1 n 60 . 1 40 : “99 : 85 7g 0245 <0.01 0 : : : > S & 3} cs s\\ é fos < < Qg eS S ew ee © RS Rs ~a S Se fe) we"
+    "text": "120 100 80 60 40 20 0 120 99.5 71.9 C oal Oil N atural gas 8.5 1.78 0.245 <0.01 (U K) Offshore wind O nshore wind(G erm any) S olar P V N uclear*"
   },
   {
     "type": "NarrativeText",
@@ -1315,7 +1315,7 @@
   },
   {
     "type": "Image",
-    "element_id": "e56f1d3df6ddf93348f20c095337d639",
+    "element_id": "019842af62872152a35f32ffb63258bf",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1329,7 +1329,7 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "                    100 90 IB Coal i Gas/Oil 80 IB Biofuels/Waste 70 i Wind/Solar @ Hydro 60 @ Nuclear 50 40 30 20 10 0)  "
+    "text": "  Coal   Gas/Oil   Biofuels/Waste   Wind/Solar   Hydro   Nuclear 90 80 70 60 50 40 30 20 10"
   },
   {
     "type": "UncategorizedText",
@@ -1423,7 +1423,7 @@
   },
   {
     "type": "Image",
-    "element_id": "77d8044f595648ff9853b27fadd6ef94",
+    "element_id": "45cf232a36df73a8c8c8db55f6cae2b6",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1437,7 +1437,7 @@
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "    BB Non-hydro 500 i ren. & waste 400 z= Nuclear Natural gas 300 y -— EB Hydro i oil 200 —— -— BB Coal 100"
+    "text": "600 500 400 300 200 100 0   Non-hydro ren. & waste   Nuclear   Natural gas   Hydro   Oil   Coal  "
   },
   {
     "type": "Title",
@@ -1855,7 +1855,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "9ec2f70cbe42f5dc5073a88246db2b7a",
+    "element_id": "5986cde0b872e4b1253cf1f5e82360b2",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1869,7 +1869,7 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "and NRC SOARCA study 2015 Paul-Scherrer Institute. Data for nuclear accidents modified to reflect UNSCEAR findings/recommendations (2012)"
+    "text": "viii Paul-Scherrer Institute. Data for nuclear accidents modified to reflect UNSCEAR findings/recommendations (2012)"
   },
   {
     "type": "UncategorizedText",
@@ -1909,7 +1909,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c5693c397679aaeed0a80ac0c6b6dd20",
+    "element_id": "2ac3e029f2ae0ed36a9af34bd225e889",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1923,7 +1923,7 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "x bid."
+    "text": "x"
   },
   {
     "type": "NarrativeText",
