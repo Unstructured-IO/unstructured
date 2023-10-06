@@ -84,7 +84,7 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
         if page_number := data.get("metadata", {}).get("page_number"):
             data["metadata"]["page_number"] = str(page_number)
 
-    def write_elements(self, elements: t.List[Element]) -> None:
+    def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
         elements_dict = convert_to_dict(elements)
         self.write_dict(json_list=elements_dict)
 

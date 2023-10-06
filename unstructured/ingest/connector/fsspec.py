@@ -235,7 +235,15 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             **self.connector_config.get_access_kwargs(),
         )
 
-    def write_elements(self, elements: t.List[Element]) -> None:
+    def write_elements(
+        self,
+        elements: t.List[Element],
+        filename: t.Optional[str] = None,
+        indent: int = 4,
+        encoding: str = "utf-8",
+        *args,
+        **kwargs,
+    ) -> None:
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
@@ -244,12 +252,14 @@ class FsspecDestinationConnector(BaseDestinationConnector):
 
         logger.info(f"Writing content using filesystem: {type(fs).__name__}")
 
-        s3_path = self.connector_config.path
+        s3_folder = self.connector_config.path
+
+        s3_output_path = str(PurePath(s3_folder, filename)) if filename else s3_folder
         element_dict = convert_to_dict(elements)
-        with tempfile.NamedTemporaryFile(mode="w+") as tmp_file:
-            json.dump(element_dict, tmp_file)
-            logger.debug(f"Uploading {tmp_file.name} -> {s3_path}")
-            fs.put_file(lpath=tmp_file.name, rpath=s3_path)
+        with tempfile.NamedTemporaryFile(mode="w+", encoding=encoding) as tmp_file:
+            json.dump(element_dict, tmp_file, indent=indent)
+            logger.debug(f"Uploading {tmp_file.name} -> {s3_output_path}")
+            fs.put_file(lpath=tmp_file.name, rpath=s3_output_path)
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         from fsspec import AbstractFileSystem, get_filesystem_class

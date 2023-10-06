@@ -167,7 +167,7 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
     def initialize(self):
         pass
 
-    def write_elements(self, elements: t.List[Element]) -> None:
+    def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
         elements_json = [json.dumps(e.to_dict()) for e in elements]
         self.write_dict(json_list=elements_json)
 

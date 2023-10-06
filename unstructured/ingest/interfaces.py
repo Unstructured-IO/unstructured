@@ -484,7 +484,7 @@ class BaseDestinationConnector(DataClassJsonMixin, ABC):
         pass
 
     @abstractmethod
-    def write_elements(self, elements: t.List[Element]) -> None:
+    def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
         pass
 
 
