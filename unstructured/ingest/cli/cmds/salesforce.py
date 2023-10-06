@@ -12,9 +12,10 @@ from unstructured.ingest.cli.cmds.utils import (
 from unstructured.ingest.cli.common import (
     log_options,
 )
-from unstructured.ingest.cli.interfaces import (
+from unstructured.ingest.cli.interfaces2 import (
     CliMixin,
     CliPartitionConfig,
+    CliProcessorConfig,
     CliReadConfig,
     CliRecursiveConfig,
 )
@@ -79,9 +80,15 @@ def salesforce_source(ctx: click.Context, **options):
         # run_init_checks(**options)
         read_config = CliReadConfig.from_dict(options)
         partition_config = CliPartitionConfig.from_dict(options)
+        processor_config = CliProcessorConfig.from_dict(options)
         # Run for schema validation
         SalesforceCliConfig.from_dict(options)
-        salesforce_fn(read_config=read_config, partition_config=partition_config, **options)
+        salesforce_fn(
+            read_config=read_config,
+            partition_config=partition_config,
+            processor_config=processor_config,
+            **options,
+        )
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
@@ -95,5 +102,6 @@ def get_source_cmd() -> click.Group:
     # Common CLI configs
     CliReadConfig.add_cli_options(cmd)
     CliPartitionConfig.add_cli_options(cmd)
+    CliProcessorConfig.add_cli_options(cmd)
     cmd.params.append(click.Option(["-v", "--verbose"], is_flag=True, default=False))
     return cmd

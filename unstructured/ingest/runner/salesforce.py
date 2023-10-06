@@ -2,16 +2,17 @@ import hashlib
 import logging
 import typing as t
 
-from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
+from unstructured.ingest.interfaces2 import PartitionConfig, ProcessorConfig, ReadConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.processor import process_documents
-from unstructured.ingest.runner.utils import update_download_dir_hash
+from unstructured.ingest.processor2 import process_documents
+from unstructured.ingest.runner.utils2 import update_download_dir_hash
 from unstructured.ingest.runner.writers import writer_map
 
 
 def salesforce(
     read_config: ReadConfig,
     partition_config: PartitionConfig,
+    processor_config: ProcessorConfig,
     username: str,
     consumer_key: str,
     private_key_path: str,
@@ -48,7 +49,7 @@ def salesforce(
             recursive=recursive,
         ),
         read_config=read_config,
-        partition_config=partition_config,
+        processor_config=processor_config,
     )
 
     dest_doc_connector = None
@@ -59,6 +60,6 @@ def salesforce(
     process_documents(
         source_doc_connector=source_doc_connector,
         partition_config=partition_config,
-        verbose=verbose,
         dest_doc_connector=dest_doc_connector,
+        processor_config=processor_config,
     )
