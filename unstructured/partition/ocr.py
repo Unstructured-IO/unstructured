@@ -406,7 +406,7 @@ def aggregate_ocr_text_by_block(
         if ocr_region_is_subregion_of_given_region and ocr_region.text:
             extracted_texts.append(ocr_region.text)
 
-    return " ".join(extracted_texts) if extracted_texts else None
+    return " ".join(extracted_texts) if extracted_texts else ""
 
 
 def supplement_layout_with_ocr_elements(
