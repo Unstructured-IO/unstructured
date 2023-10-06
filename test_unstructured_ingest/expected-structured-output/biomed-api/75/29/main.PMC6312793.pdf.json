@@ -361,13 +361,13 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "9b49b3f01501b28932903fefe9fe8dc7",
+    "element_id": "8ca260e031eaab2e60b6eb7d3231e6bf",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "i , an end time, te i , a start location, ls i , and an end location, lei , and"
+    "text": "i , a start location, ls i , and an end location, lei , i , an end time, te and"
   },
   {
     "type": "ListItem",
@@ -501,13 +501,13 @@
   },
   {
     "type": "Table",
-    "element_id": "13a0171cb24f7249ac5196a3dc79106a",
+    "element_id": "aa14fa2b3e26b2da889e9f80a7064bb3",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "Instance size (m, n) Average number of (8, 1500)(8, 2000)(8, 2500)(8, 3000)(12, 1500)(12, 2000)(12, 2500)(12, 3000)(16, 1500)(16, 2000)(16, 2500)(16, 3000) Locations Times Vehicles 568.40672.80923.40977.00566.00732.60875.001119.60581.80778.00879.001087.20 975.201048.001078.001113.20994.001040.601081.001107.40985.401040.601083.201101.60 652.20857.201082.401272.80642.00861.201096.001286.20667.80872.401076.401284.60 668,279.401,195,844.801,866,175.202,705,617.00674,191.001,199,659.801,878,745.202,711,180.40673,585.801,200,560.801,879,387.002,684,983.60"
+    "text": "Instance size (m, n) Average number of Locations Times Vehicles (8, 1500)(8, 2000)(8, 2500)(8, 3000)(12, 1500)(12, 2000)(12, 2500)(12, 3000)(16, 1500)(16, 2000)(16, 2500)(16, 3000) 568.40672.80923.40977.00566.00732.60875.001119.60581.80778.00879.001087.20 975.201048.001078.001113.20994.001040.601081.001107.40985.401040.601083.201101.60 652.20857.201082.401272.80642.00861.201096.001286.20667.80872.401076.401284.60 668,279.401,195,844.801,866,175.202,705,617.00674,191.001,199,659.801,878,745.202,711,180.40673,585.801,200,560.801,879,387.002,684,983.60"
   },
   {
     "type": "Title",
@@ -651,13 +651,13 @@
   },
   {
     "type": "Table",
-    "element_id": "0c15cc432df29c9691363ae10cbc6aac",
+    "element_id": "a557a4e8f1aa6814ae2a8f82e36f49e1",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Number oflines Number of columns ineach line Description 11n l 3m4 l The number of depots, the number of trips, and the number of locations.The number of vehicles rd at each depot d.One line for each trip, i ¼ 1; 2; …; n. Each line provides the start location lstime tsi and the end time tei for the corresponding trip.Each element, δij; where i; j A 1; 2; …; l, refers to the travel time between location i andlocation j. i , the end location le i , the start"
+    "text": "Number oflines Number of columns ineach line Description 11n 3m4 The number of depots, the number of trips, and the number of locations.The number of vehicles rd at each depot d.One line for each trip, i ¼ 1; 2; …; n. Each line provides the start location lstime tsi and the end time tei for the corresponding trip.Each element, δij; where i; j A 1; 2; …; l, refers to the travel time between location i andlocation j. i , the start i , the end location le l l"
   },
   {
     "type": "Title",

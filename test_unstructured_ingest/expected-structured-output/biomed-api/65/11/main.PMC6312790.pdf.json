@@ -251,13 +251,13 @@
   },
   {
     "type": "Table",
-    "element_id": "9d9fc2e0856ca8b974ebab072f88cca1",
+    "element_id": "6911009421d6126fc96a193e8e7b8c87",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "How data were acquired Data formatExperimental factors Experimental featuresData source location AccessibilityRelated research article The cleaned and weighed specimen was suspended in beakers con-taining 0.5 M H2SO4 solution of different concentrations of egg shellpowder. The pre-weighed stainless steel samples were retrieved fromthe test solutions after every 24 h, cleaned appropriately, dried andreweighed.Raw, analyzedThe difference between the weight at a given time and the initialweight of the specimen was taken as the weight loss, which was usedto calculate the corrosion rate and inhibition efﬁciency.Inhibitor concentration, exposure timeDepartment of Chemical, Metallurgical and Materials Engineering,Tshwane University of Technology, Pretoria, South AfricaData are available within this articleO. Sanni, A. P. I. Popoola, and O. S. I. Fayomi, Enhanced corrosionresistance of stainless steel type 316 in sulphuric acid solution usingeco-friendly waste product, Results in Physics, 9 (2018) 225–230."
+    "text": "How data were acquired The cleaned and weighed specimen was suspended in beakers con-taining 0.5 M H2SO4 solution of different concentrations of egg shellpowder. The pre-weighed stainless steel samples were retrieved fromthe test solutions after every 24 h, cleaned appropriately, dried andreweighed.Raw, analyzedThe difference between the weight at a given time and the initialweight of the specimen was taken as the weight loss, which was usedto calculate the corrosion rate and inhibition efﬁciency.Inhibitor concentration, exposure timeDepartment of Chemical, Metallurgical and Materials Engineering,Tshwane University of Technology, Pretoria, South AfricaData are available within this articleO. Sanni, A. P. I. Popoola, and O. S. I. Fayomi, Enhanced corrosionresistance of stainless steel type 316 in sulphuric acid solution usingeco-friendly waste product, Results in Physics, 9 (2018) 225–230. Data formatExperimental factors Experimental featuresData source location AccessibilityRelated research article"
   },
   {
     "type": "NarrativeText",
@@ -381,13 +381,13 @@
   },
   {
     "type": "Image",
-    "element_id": "38f6746aa99f4e96b29e02f1d0b418fa",
+    "element_id": "3dd23b04172eaa4ac70b822fde1d6569",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": ")gm ( sso l i thgeW 30 20 10 10g8g6g4g2gControl 48 96 144 192    "
+    "text": "30 10g8g6g4g2gControl )gm (   sso 20 l   thgeW i 10 48 96 144 192"
   },
   {
     "type": "Title",
@@ -421,13 +421,13 @@
   },
   {
     "type": "Image",
-    "element_id": "8f63e54c02cc9090d20f5001d4d90bf9",
+    "element_id": "d4434406b5bb0d9269431d330ec551cc",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "2.7 1.8 0.9 10g8g6g4g2gControl 24 48 72 96 120 144 168 192 Exposure time"
+    "text": "2.7 1.8 10g8g6g4g2gControl 0.9 24 48 72 96 120 144 168 192 Exposure time"
   },
   {
     "type": "NarrativeText",
@@ -501,13 +501,13 @@
   },
   {
     "type": "Image",
-    "element_id": "11c4aec4d2de458111a4598943f9b3c2",
+    "element_id": "aa9468183225a7eec11024085c42365b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": ") % ( ycneciff i EnoitibhnI i 90 80 70 60 50 40 30 20 10 0 2g4g6g8g10g 20 40 60 80 100 120 140 160 180    "
+    "text": "90 2g4g6g8g10g 80 ) % 70 (   ycneciff 60 i 50 EnoitibhnI   40 i 30 20 10 0 20 40 60 80 100 120 140 160 180"
   },
   {
     "type": "Title",
@@ -601,13 +601,13 @@
   },
   {
     "type": "Table",
-    "element_id": "6cd96e77164fa6c7237b62a72012b1b4",
+    "element_id": "c6738f6e333074d3151fb3b9466c26d7",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Inhibitorconcentration (g) bc (V/dec) ba (V/dec) Ecorr (V) icorr (A/cm2) Polarizationresistance (Ω) 0246810 0.03351.94600.01630.32330.12400.0382 0.04090.05960.23690.05400.05560.0086 (cid:3) 0.9393(cid:3) 0.8276(cid:3) 0.8825(cid:3) 0.8027(cid:3) 0.5896(cid:3) 0.5356 0.00030.00020.00015.39E-055.46E-051.24E-05 24.0910121.44042.121373.180305.650246.080 2.81631.50540.94760.43180.37720.0919"
+    "text": "icorr (A/cm2) Polarizationresistance (Ω) Inhibitorconcentration (g) bc (V/dec) ba (V/dec) Ecorr (V) (cid:3) 0.9393(cid:3) 0.8276(cid:3) 0.8825(cid:3) 0.8027(cid:3) 0.5896(cid:3) 0.5356 0246810 0.03351.94600.01630.32330.12400.0382 0.04090.05960.23690.05400.05560.0086 0.00030.00020.00015.39E-055.46E-051.24E-05 24.0910121.44042.121373.180305.650246.080 2.81631.50540.94760.43180.37720.0919"
   },
   {
     "type": "Title",
@@ -781,13 +781,13 @@
   },
   {
     "type": "Image",
-    "element_id": "a66662aaf068459610bf894dd930ba6c",
+    "element_id": "3f35abf61a71e8341d4e51645645724f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "0/C 12 10 8 6 4 2 2 4 6 8 10 Concentration (g)"
+    "text": "12 10 8 0/C 6 4 2 2 4 6 8 10 Concentration (g)"
   },
   {
     "type": "FigureCaption",
@@ -1021,13 +1021,13 @@
   },
   {
     "type": "Formula",
-    "element_id": "fc044ebf8a46e2a72c336b769ecec5f0",
+    "element_id": "68670005ee5fcb70031fb04896b34fee",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 6
     },
-    "text": "IE ð%Þ ¼ CRo (cid:3) CR CRo x 1001"
+    "text": "IE ð%Þ ¼ CRo (cid:3) CR 1001 x CRo"
   },
   {
     "type": "NarrativeText",

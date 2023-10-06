@@ -11,7 +11,7 @@
   },
   {
     "type": "Header",
-    "element_id": "76ad010a720bb15710a209d63b3cc1d1",
+    "element_id": "bac05707b1e00f5f57d8c702c068dc49",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -391,14 +391,14 @@
   },
   {
     "type": "Table",
-    "element_id": "71e289a268220c21575bb55a73980b83",
+    "element_id": "120c712c3b2e7c5572e9207c10a5c435",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5,
       "text_as_html": "<table><thead><th>Dataset</th><th>| Base Mod</th><th>el'| Large Model</th><th>| Notes</th></thead><tr><td>PubLayNet B8]|</td><td>F/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA</td><td>M</td><td>-</td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper</td><td>F</td><td>-</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset</td><td>F/M</td><td>-</td><td>Layouts of history Japanese documents</td></tr></table>"
     },
-    "text": "Dataset Base Model1 Large Model Notes PubLayNet [38]PRImA [3]Newspaper [17]TableBank [18]HJDataset [31] F / MMFFF / M M--F- Layouts of modern scientiﬁc documentsLayouts of scanned modern magazines and scientiﬁc reportsLayouts of scanned US newspapers from the 20th centuryTable region on modern scientiﬁc and business documentLayouts of history Japanese documents"
+    "text": "Base Model1 Large Model Notes Dataset PubLayNet [38]PRImA [3]Newspaper [17]TableBank [18]HJDataset [31] F / MMFFF / M M--F- Layouts of modern scientiﬁc documentsLayouts of scanned modern magazines and scientiﬁc reportsLayouts of scanned US newspapers from the 20th centuryTable region on modern scientiﬁc and business documentLayouts of history Japanese documents"
   },
   {
     "type": "Title",
@@ -712,14 +712,14 @@
   },
   {
     "type": "Table",
-    "element_id": "85e9ccdbe0e11cebcf01515320a03294",
+    "element_id": "1c70e4dd20e663ba4fcaa60af53adcbd",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8,
       "text_as_html": "<table><thead><th>block.pad(top, bottom,</th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></thead><tr><td>block.scale(fx, fy)</td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift(dx, dy)</td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1. intersect (block2)</td><td></td><td></td><td>Return the intersection region of blockl and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td>Return the union region of blockl and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td>Convert the absolute coordinates of block to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2) block. crop_image (image)</td><td></td><td></td><td>Calculate the absolute coordinates of blockl given the canvas block2’s absolute coordinates     Obtain the image segments in the block region</td></tr></table>"
     },
-    "text": "block.pad(top, bottom, right, left) Enlarge the current block according to the input block.scale(fx, fy) block.shift(dx, dy) Scale the current block given the ratioin x and y direction Move the current block with the shiftdistances in x and y direction block1.is in(block2) Whether block1 is inside of block2 block1.intersect(block2) block1.union(block2) block1.relative to(block2) block1.condition on(block2) Convert the absolute coordinates of block1 torelative coordinates to block2 Calculate the absolute coordinates of block1 giventhe canvas block2’s absolute coordinates"
+    "text": "block.pad(top, bottom, right, left) Enlarge the current block according to the input Scale the current block given the ratioin x and y direction block.scale(fx, fy) Move the current block with the shiftdistances in x and y direction block.shift(dx, dy) Whether block1 is inside of block2 block1.is in(block2) block1.intersect(block2) block1.union(block2) Convert the absolute coordinates of block1 torelative coordinates to block2 block1.relative to(block2) Calculate the absolute coordinates of block1 giventhe canvas block2’s absolute coordinates block1.condition on(block2)"
   },
   {
     "type": "NarrativeText",
@@ -1753,12 +1753,12 @@
   },
   {
     "type": "ListItem",
-    "element_id": "2d605a79cf1e027c47b21883a40930c2",
+    "element_id": "042006f2d2112f116d1942c22ecc1d9d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 16
     },
-    "text": "layout analysis. umentAnalysis and Recognition (ICDAR). pp. 1015–1022.https://doi.org/10.1109/ICDAR.2019.00166 largest dataset ever for doc-In: 2019 International Conference on DocumentIEEE (Sep 2019)."
+    "text": "largest dataset ever for doc-In: 2019 International Conference on DocumentIEEE (Sep 2019). umentAnalysis and Recognition (ICDAR). pp. 1015–1022.https://doi.org/10.1109/ICDAR.2019.00166 layout analysis."
   }
 ]
