@@ -1,4 +1,4 @@
-## 0.10.20-dev3
+## 0.10.20-dev5
 
 ### Enhancements
 
@@ -8,6 +8,8 @@
 * **Improve hierarchy detection in pptx documents** List items, and other slide text are properly nested under the slide title. This will enable better chunking of pptx documents.
 
 ### Features
+
+* **Adds `bag_of_words` function** In order to count the word frequency to evaluate extraction accuracy.
 
 ### Fixes
 
