@@ -1107,7 +1107,7 @@ def get_word_bounding_box_from_element(
                 characters.append(character)
                 char = character.get_text()
 
-                if not char.strip():
+                if word and not char.strip():
                     words.append(
                         {"text": word, "bbox": (x1, y1, x2, y2), "start_index": start_index},
                     )
@@ -1158,10 +1158,6 @@ def map_bbox_and_index(words: List[dict], annot: dict):
         annot["text"] = ""
         annot["start_index"] = -1
         return annot
-    if np.array([word["bbox"][0] for word in words]) is None:
-        import pdb
-
-        pdb.set_trace()
     distance_from_bbox_start = np.sqrt(
         (annot["bbox"][0] - np.array([word["bbox"][0] for word in words])) ** 2
         + (annot["bbox"][1] - np.array([word["bbox"][1] for word in words])) ** 2,
