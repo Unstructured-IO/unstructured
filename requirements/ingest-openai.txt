@@ -50,9 +50,9 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.305
+langchain==0.0.310
     # via -r requirements/ingest-openai.in
-langsmith==0.0.41
+langsmith==0.0.43
     # via langchain
 marshmallow==3.20.1
     # via
@@ -66,14 +66,11 @@ mypy-extensions==1.0.0
     # via
     #   -c requirements/base.txt
     #   typing-inspect
-numexpr==2.8.6
-    # via langchain
 numpy==1.24.4
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   langchain
-    #   numexpr
 openai==0.28.1
     # via -r requirements/ingest-openai.in
 packaging==23.2
@@ -87,7 +84,7 @@ pydantic==1.10.13
     #   langsmith
 pyyaml==6.0.1
     # via langchain
-regex==2023.8.8
+regex==2023.10.3
     # via
     #   -c requirements/base.txt
     #   tiktoken
@@ -120,7 +117,7 @@ typing-inspect==0.9.0
     # via
     #   -c requirements/base.txt
     #   dataclasses-json
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
