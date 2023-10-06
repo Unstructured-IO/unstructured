@@ -10,6 +10,7 @@ from unstructured_inference.inference import layout
 from unstructured.chunking.title import chunk_by_title
 from unstructured.partition import image, pdf
 from unstructured.partition.json import partition_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -117,9 +118,10 @@ def test_partition_image_with_auto_strategy(
     elements = image.partition_image(filename=filename, strategy="auto")
     titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    idx = 2
     assert titles[0].text == title
-    assert elements[0].metadata.detection_class_prob is not None
-    assert isinstance(elements[0].metadata.detection_class_prob, float)
+    assert elements[idx].metadata.detection_class_prob is not None
+    assert isinstance(elements[idx].metadata.detection_class_prob, float)
 
 
 def test_partition_image_with_table_extraction(
@@ -240,11 +242,14 @@ def test_partition_image_default_strategy_hi_res():
     with open(filename, "rb") as f:
         elements = image.partition_image(file=f)
 
-    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[0].text == first_line
-    assert elements[0].metadata.coordinates is not None
-    assert elements[0].metadata.detection_class_prob is not None
-    assert isinstance(elements[0].metadata.detection_class_prob, float)
+    title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    idx = 2
+    assert elements[idx].text == title
+    assert elements[idx].metadata.coordinates is not None
+    assert elements[idx].metadata.detection_class_prob is not None
+    assert isinstance(elements[idx].metadata.detection_class_prob, float)
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {"image"}
 
 
 def test_partition_image_metadata_date(
@@ -430,6 +435,20 @@ def test_partition_image_with_ocr_coordinates_are_not_nan_from_filename(
                 assert point[1] is not math.nan
 
 
+def test_partition_image_formats_languages_for_tesseract():
+    filename = "example-docs/jpn-vert.jpeg"
+    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
+        image.partition_image(filename=filename, strategy="hi_res", languages=["jpn_vert"])
+        mock_process.assert_called_once_with(
+            filename,
+            is_image=True,
+            ocr_languages="jpn_vert",
+            ocr_mode="entire_page",
+            extract_tables=False,
+            model_name=pdf.default_hi_res_model(),
+        )
+
+
 def test_partition_image_warns_with_ocr_languages(caplog):
     filename = "example-docs/layout-parser-paper-fast.jpg"
     image.partition_image(filename=filename, strategy="hi_res", ocr_languages="eng")
@@ -441,6 +460,25 @@ def test_add_chunking_strategy_on_partition_image(
 ):
     elements = image.partition_image(filename=filename)
     chunk_elements = image.partition_image(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_add_chunking_strategy_on_partition_image_hi_res(
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    elements = image.partition_image(
+        filename=filename,
+        strategy="hi_res",
+        infer_table_structure=True,
+    )
+    chunk_elements = image.partition_image(
+        filename,
+        strategy="hi_res",
+        infer_table_structure=True,
+        chunking_strategy="by_title",
+    )
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks

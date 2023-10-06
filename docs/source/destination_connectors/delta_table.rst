@@ -1,5 +1,6 @@
 Delta Table
-==========
+===========
+
 Batch process all your records using ``unstructured-ingest`` to store structured outputs locally on your filesystem and upload those local files to a Delta Table.
 
 First you'll need to install the delta table dependencies as shown here.

@@ -9,10 +9,13 @@
           "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP2-8"
         },
-        "date_created": "2023-08-22T11:35:48.407+0000",
-        "date_modified": "2023-08-29T11:46:18.193+0000"
+        "date_created": "2023-08-22T11:35:48.407000+00:00",
+        "date_modified": "2023-09-29T05:55:11.066000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "IssueID_IssueKey:10010     JCTP2-8"
   },
@@ -26,10 +29,13 @@
           "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP2-8"
         },
-        "date_created": "2023-08-22T11:35:48.407+0000",
-        "date_modified": "2023-08-29T11:46:18.193+0000"
+        "date_created": "2023-08-22T11:35:48.407000+00:00",
+        "date_modified": "2023-09-29T05:55:11.066000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "ProjectID_Key:JCTP2     Jira Connector Test Project 2"
   },
@@ -43,10 +49,13 @@
           "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP2-8"
         },
-        "date_created": "2023-08-22T11:35:48.407+0000",
-        "date_modified": "2023-08-29T11:46:18.193+0000"
+        "date_created": "2023-08-22T11:35:48.407000+00:00",
+        "date_modified": "2023-09-29T05:55:11.066000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "IssueType:Story"
   },
@@ -60,10 +69,13 @@
           "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP2-8"
         },
-        "date_created": "2023-08-22T11:35:48.407+0000",
-        "date_modified": "2023-08-29T11:46:18.193+0000"
+        "date_created": "2023-08-22T11:35:48.407000+00:00",
+        "date_modified": "2023-09-29T05:55:11.066000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Status:To Do"
   },
@@ -77,10 +89,13 @@
           "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP2-8"
         },
-        "date_created": "2023-08-22T11:35:48.407+0000",
-        "date_modified": "2023-08-29T11:46:18.193+0000"
+        "date_created": "2023-08-22T11:35:48.407000+00:00",
+        "date_modified": "2023-09-29T05:55:11.066000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Priority:{'self': 'https://unstructured-jira-connector-test.atlassian.net/rest/api/2/priority/3', 'iconUrl': 'https://unstructured-jira-connector-test.atlassian.net/images/icons/priorities/medium.svg', 'name': 'Medium', 'id': '3'}"
   },
@@ -94,10 +109,13 @@
           "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP2-8"
         },
-        "date_created": "2023-08-22T11:35:48.407+0000",
-        "date_modified": "2023-08-29T11:46:18.193+0000"
+        "date_created": "2023-08-22T11:35:48.407000+00:00",
+        "date_modified": "2023-09-29T05:55:11.066000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "AssigneeID_Name:{}     {}"
   },
@@ -111,10 +129,13 @@
           "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP2-8"
         },
-        "date_created": "2023-08-22T11:35:48.407+0000",
-        "date_modified": "2023-08-29T11:46:18.193+0000"
+        "date_created": "2023-08-22T11:35:48.407000+00:00",
+        "date_modified": "2023-09-29T05:55:11.066000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "ReporterAdr_Name:devops+jira-connector@unstructured.io     Unstructured Devops"
   },
@@ -128,10 +149,13 @@
           "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP2-8"
         },
-        "date_created": "2023-08-22T11:35:48.407+0000",
-        "date_modified": "2023-08-29T11:46:18.193+0000"
+        "date_created": "2023-08-22T11:35:48.407000+00:00",
+        "date_modified": "2023-09-29T05:55:11.066000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Labels:"
   },
@@ -145,10 +169,13 @@
           "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP2-8"
         },
-        "date_created": "2023-08-22T11:35:48.407+0000",
-        "date_modified": "2023-08-29T11:46:18.193+0000"
+        "date_created": "2023-08-22T11:35:48.407000+00:00",
+        "date_modified": "2023-09-29T05:55:11.066000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Components:"
   },
@@ -162,10 +189,13 @@
           "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP2-8"
         },
-        "date_created": "2023-08-22T11:35:48.407+0000",
-        "date_modified": "2023-08-29T11:46:18.193+0000"
+        "date_created": "2023-08-22T11:35:48.407000+00:00",
+        "date_modified": "2023-09-29T05:55:11.066000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Test Epic 1 Story 1"
   },
@@ -179,10 +209,13 @@
           "base_url": "https://unstructured-jira-connector-test.atlassian.net",
           "issue_key": "JCTP2-8"
         },
-        "date_created": "2023-08-22T11:35:48.407+0000",
-        "date_modified": "2023-08-29T11:46:18.193+0000"
+        "date_created": "2023-08-22T11:35:48.407000+00:00",
+        "date_modified": "2023-09-29T05:55:11.066000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "{}"
   }

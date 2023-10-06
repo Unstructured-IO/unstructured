@@ -3,6 +3,7 @@ import json
 import os
 import typing as t
 from dataclasses import dataclass
+from datetime import datetime
 from mimetypes import guess_extension
 from pathlib import Path
 
@@ -18,6 +19,7 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     IngestDocSessionHandleMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -103,57 +105,109 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 @dataclass
 class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
     connector_config: SimpleGoogleDriveConfig
-    file_meta: t.Dict[str, str]
+    meta: t.Dict[str, str]
     registry_name: str = "google_drive"
 
     @property
     def filename(self):
-        return Path(self.file_meta.get("download_filepath")).resolve()  # type: ignore
+        return Path(self.meta.get("download_filepath")).resolve()  # type: ignore
 
     @property
     def _output_filename(self):
-        return Path(f"{self.file_meta.get('output_filepath')}.json").resolve()
+        return Path(f"{self.meta.get('output_filepath')}.json").resolve()
 
+    @property
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
+        return {
+            "drive_id": self.connector_config.drive_id,
+            "file_id": self.meta["id"],
+        }
+
+    @requires_dependencies(["googleapiclient"], extras="google-drive")
+    def update_source_metadata(self):
+        from googleapiclient.errors import HttpError
+
+        try:
+            file_obj = (
+                self.session_handle.service.files()
+                .get(
+                    fileId=self.meta["id"],
+                    fields="id, createdTime, modifiedTime, version, webContentLink",
+                )
+                .execute()
+            )
+        except HttpError as e:
+            if e.status_code == 404:
+                logger.error(f"File {self.meta['name']} not found")
+                self.source_metadata = SourceMetadata(
+                    exists=True,
+                )
+                return
+            raise
+
+        date_created = None
+        if dc := file_obj.get("createdTime", ""):
+            date_created = datetime.strptime(
+                dc,
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            ).isoformat()
+
+        date_modified = None
+        if dm := file_obj.get("modifiedTime", ""):
+            date_modified = datetime.strptime(
+                dm,
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            ).isoformat()
+
+        self.source_metadata = SourceMetadata(
+            date_created=date_created,
+            date_modified=date_modified,
+            version=file_obj.get("version", ""),
+            source_url=file_obj.get("webContentLink", ""),
+            exists=True,
+        )
+
+    @requires_dependencies(["googleapiclient"], extras="google-drive")
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(["googleapiclient"], extras="google-drive")
     def get_file(self):
         from googleapiclient.errors import HttpError
         from googleapiclient.http import MediaIoBaseDownload
 
-        if self.file_meta.get("mimeType", "").startswith("application/vnd.google-apps"):
+        if self.meta.get("mimeType", "").startswith("application/vnd.google-apps"):
             export_mime = GOOGLE_DRIVE_EXPORT_TYPES.get(
-                self.file_meta.get("mimeType"),  # type: ignore
+                self.meta.get("mimeType"),  # type: ignore
             )
             if not export_mime:
                 logger.info(
-                    f"File not supported. Name: {self.file_meta.get('name')} "
-                    f"ID: {self.file_meta.get('id')} "
-                    f"MimeType: {self.file_meta.get('mimeType')}",
+                    f"File not supported. Name: {self.meta.get('name')} "
+                    f"ID: {self.meta.get('id')} "
+                    f"MimeType: {self.meta.get('mimeType')}",
                 )
                 return
 
             request = self.session_handle.service.files().export_media(
-                fileId=self.file_meta.get("id"),
+                fileId=self.meta.get("id"),
                 mimeType=export_mime,
             )
         else:
-            request = self.session_handle.service.files().get_media(fileId=self.file_meta.get("id"))
+            request = self.session_handle.service.files().get_media(fileId=self.meta.get("id"))
         file = io.BytesIO()
         downloader = MediaIoBaseDownload(file, request)
+        self.update_source_metadata()
         downloaded = False
         try:
             while downloaded is False:
-                status, downloaded = downloader.next_chunk()
+                _, downloaded = downloader.next_chunk()
         except HttpError:
             pass
 
         saved = False
         if downloaded and file:
-            dir_ = Path(self.file_meta["download_dir"])
+            dir_ = Path(self.meta["download_dir"])
             if dir_:
                 if not dir_.is_dir():
-                    logger.debug(f"Creating directory: {self.file_meta.get('download_dir')}")
+                    logger.debug(f"Creating directory: {self.meta.get('download_dir')}")
 
                     if dir_:
                         dir_.mkdir(parents=True, exist_ok=True)
@@ -162,7 +216,6 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
                     handler.write(file.getbuffer())
                     saved = True
                     logger.debug(f"File downloaded: {self.filename}.")
-
         if not saved:
             logger.error(f"Error while downloading and saving file: {self.filename}.")
 
@@ -267,7 +320,7 @@ class GoogleDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnecto
                 connector_config=self.connector_config,
                 partition_config=self.partition_config,
                 read_config=self.read_config,
-                file_meta=file,
+                meta=file,
             )
             for file in files
         ]

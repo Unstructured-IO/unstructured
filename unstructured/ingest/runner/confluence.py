@@ -10,7 +10,6 @@ from unstructured.ingest.runner.writers import writer_map
 
 
 def confluence(
-    verbose: bool,
     read_config: ReadConfig,
     partition_config: PartitionConfig,
     url: str,
@@ -18,6 +17,7 @@ def confluence(
     api_token: str,
     max_num_of_spaces: int,
     max_num_of_docs_from_each_space: int,
+    verbose: bool = False,
     spaces: t.Optional[t.List[str]] = None,
     writer_type: t.Optional[str] = None,
     writer_kwargs: t.Optional[dict] = None,

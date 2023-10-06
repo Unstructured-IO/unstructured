@@ -6,6 +6,7 @@ import pytest
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import NarrativeText, Title
 from unstructured.partition.json import partition_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.partition.xml import partition_xml
 from unstructured.staging.base import elements_to_json
 
@@ -22,6 +23,8 @@ def test_partition_xml_from_filename(filename):
 
     assert elements[0].text == "United States"
     assert elements[0].metadata.filename == filename
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {"xml"}
 
 
 def test_partition_xml_from_filename_with_metadata_filename():
@@ -38,7 +41,7 @@ def test_partition_xml_from_filename_with_metadata_filename():
 )
 def test_partition_xml_from_file(filename):
     file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    with open(file_path) as f:
+    with open(file_path, "rb") as f:
         elements = partition_xml(file=f, xml_keep_tags=False, metadata_filename=file_path)
 
     assert elements[0].text == "United States"
@@ -47,7 +50,7 @@ def test_partition_xml_from_file(filename):
 
 def test_partition_xml_from_file_with_metadata_filename():
     file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", "factbook.xml")
-    with open(file_path) as f:
+    with open(file_path, "rb") as f:
         elements = partition_xml(file=f, xml_keep_tags=False, metadata_filename="test")
 
     assert elements[0].text == "United States"
@@ -158,7 +161,7 @@ def test_partition_xml_from_filename_exclude_metadata(filename):
 )
 def test_partition_xml_from_file_exclude_metadata(filename):
     file_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    with open(file_path) as f:
+    with open(file_path, "rb") as f:
         elements = partition_xml(
             file=f,
             xml_keep_tags=False,

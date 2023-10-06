@@ -10,6 +10,11 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=api-ingest-output
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
+
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
@@ -20,8 +25,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess \
     --output-dir "$OUTPUT_DIR" \
     --verbose \
-    --num-processes 1 \
+    --num-processes "$max_processes" \
     --file-glob "*1p.txt" \
     --input-path example-docs
 
-sh "$SCRIPT_DIR"/check-num-files-output.sh 1 $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-num-files-output.sh 1 $OUTPUT_FOLDER_NAME

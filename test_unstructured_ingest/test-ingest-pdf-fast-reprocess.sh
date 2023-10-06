@@ -8,6 +8,18 @@ cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=pdf-fast-reprocess
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 INPUT_PATH=$SCRIPT_DIR/download
+max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
+CI=${CI:-"false"}
+
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+function cleanup() {
+  cleanup_dir "$OUTPUT_DIR"
+  if [ "$CI" == "true" ]; then
+    cleanup_dir "$INPUT_PATH"
+  fi
+}
+trap cleanup EXIT
 
 echo "REPROCESS INPUT PATH"
 ls "$INPUT_PATH"
@@ -15,7 +27,7 @@ ls "$INPUT_PATH"
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-    --num-processes 2 \
+    --num-processes "$max_processes" \
     --strategy fast \
     --reprocess \
     --output-dir "$OUTPUT_DIR" \
@@ -26,4 +38,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

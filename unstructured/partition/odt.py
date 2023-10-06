@@ -1,4 +1,4 @@
-from typing import IO, List, Optional
+from typing import Any, BinaryIO, List, Optional
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
@@ -15,12 +15,12 @@ from unstructured.partition.docx import convert_and_partition_docx
 @add_chunking_strategy()
 def partition_odt(
     filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
+    file: Optional[BinaryIO] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Element]:
     """Partitions Open Office Documents in .odt format into its document elements.
 

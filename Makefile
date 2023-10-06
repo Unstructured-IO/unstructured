@@ -21,7 +21,7 @@ install-base: install-base-pip-packages install-nltk-models
 install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-paddleocr install-all-docs install-test
+install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test
 
 .PHONY: install-base-ci
 install-base-ci: install-base-pip-packages install-nltk-models install-test
@@ -221,14 +221,7 @@ install-paddleocr:
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
 pip-compile:
-	@for file in $(shell ls requirements/*.in); do \
-		if [[ "$${file}" =~ "constraints" ]]; then \
-			continue; \
-		fi; \
-		echo "running: pip-compile --upgrade $${file}"; \
-		pip-compile --upgrade $${file}; \
-	done
-	cp requirements/build.txt docs/requirements.txt
+	@scripts/pip-compile.sh
 
 
 
@@ -248,11 +241,13 @@ uninstall-project-local:
 #################
 
 export CI ?= false
+export UNSTRUCTURED_INCLUDE_DEBUG_METADATA ?= false
 
 ## test:                    runs all unittests
 .PHONY: test
 test:
-	PYTHONPATH=. CI=$(CI) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
+	PYTHONPATH=. CI=$(CI) \
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
 
 .PHONY: test-unstructured-api-unit
 test-unstructured-api-unit:
@@ -261,7 +256,8 @@ test-unstructured-api-unit:
 .PHONY: test-no-extras
 # TODO(newelh) Add json test when fixed
 test-no-extras:
-	PYTHONPATH=. CI=$(CI) pytest \
+	PYTHONPATH=. CI=$(CI) \
+		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest \
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
 		test_${PACKAGE_NAME}/partition/test_html_partition.py \
@@ -324,7 +320,7 @@ check: check-src check-tests check-version
 ## check-src:               runs linters (source only, no tests)
 .PHONY: check-src
 check-src:
-	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore PT011,PT012,SIM117
+	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore COM812,PT011,PT012,SIM117
 	black --line-length 100 ${PACKAGE_NAME} --check
 	flake8 ${PACKAGE_NAME}
 	mypy ${PACKAGE_NAME} --ignore-missing-imports --check-untyped-defs
@@ -401,7 +397,9 @@ docker-test:
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/notebook-user/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
-	bash -c "CI=$(CI) pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
+	bash -c "CI=$(CI) \
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
+	pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
 
 .PHONY: docker-smoke-test
 docker-smoke-test:

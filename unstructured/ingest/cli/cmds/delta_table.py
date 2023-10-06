@@ -16,6 +16,7 @@ from unstructured.ingest.cli.interfaces import (
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import delta_table as delta_table_fn
+from unstructured.ingest.runner import runner_map
 
 
 @dataclass
@@ -108,14 +109,15 @@ class DeltaTableCliWriteConfig(BaseConfig, CliMixin):
 @click.command(name="delta-table")
 @click.pass_context
 def delta_table_dest(ctx: click.Context, **options):
+    if not ctx.parent:
+        raise click.ClickException("destination command called without a parent")
+    if not ctx.parent.info_name:
+        raise click.ClickException("parent command missing info name")
+    source_cmd = ctx.parent.info_name.replace("-", "_")
+    runner_fn = runner_map[source_cmd]
     parent_options: dict = ctx.parent.params if ctx.parent else {}
-    # Click sets all multiple fields as tuple, this needs to be updated to list
-    for k, v in options.items():
-        if isinstance(v, tuple):
-            options[k] = list(v)
-    for k, v in parent_options.items():
-        if isinstance(v, tuple):
-            parent_options[k] = list(v)
+    conform_click_options(options)
+    conform_click_options(parent_options)
     verbose = parent_options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
     log_options(parent_options, verbose=verbose)
@@ -127,7 +129,7 @@ def delta_table_dest(ctx: click.Context, **options):
         # Run for schema validation
         DeltaTableCliConfig.from_dict(options)
         DeltaTableCliWriteConfig.from_dict(options)
-        delta_table_fn(
+        runner_fn(
             read_config=read_config,
             partition_config=partition_config,
             writer_type="delta_table",

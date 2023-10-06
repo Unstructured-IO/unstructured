@@ -5,43 +5,44 @@ from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, cast
 
+from typing_extensions import ParamSpec
+
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
 
 _T = TypeVar("_T")
+_P = ParamSpec("_P")
 
 
 class lazyproperty(Generic[_T]):
     """Decorator like @property, but evaluated only on first access.
 
-    Like @property, this can only be used to decorate methods having only a `self`
-    parameter, and is accessed like an attribute on an instance, i.e. trailing
-    parentheses are not used. Unlike @property, the decorated method is only evaluated
-    on first access; the resulting value is cached and that same value returned on
-    second and later access without re-evaluation of the method.
+    Like @property, this can only be used to decorate methods having only a `self` parameter, and
+    is accessed like an attribute on an instance, i.e. trailing parentheses are not used. Unlike
+    @property, the decorated method is only evaluated on first access; the resulting value is
+    cached and that same value returned on second and later access without re-evaluation of the
+    method.
 
-    Like @property, this class produces a *data descriptor* object, which is stored in
-    the __dict__ of the *class* under the name of the decorated method ('fget'
-    nominally). The cached value is stored in the __dict__ of the *instance* under that
-    same name.
+    Like @property, this class produces a *data descriptor* object, which is stored in the __dict__
+    of the *class* under the name of the decorated method ('fget' nominally). The cached value is
+    stored in the __dict__ of the *instance* under that same name.
 
-    Because it is a data descriptor (as opposed to a *non-data descriptor*), its
-    `__get__()` method is executed on each access of the decorated attribute; the
-    __dict__ item of the same name is "shadowed" by the descriptor.
+    Because it is a data descriptor (as opposed to a *non-data descriptor*), its `__get__()` method
+    is executed on each access of the decorated attribute; the __dict__ item of the same name is
+    "shadowed" by the descriptor.
 
-    While this may represent a performance improvement over a property, its greater
-    benefit may be its other characteristics. One common use is to construct
-    collaborator objects, removing that "real work" from the constructor, while still
-    only executing once. It also de-couples client code from any sequencing
-    considerations; if it's accessed from more than one location, it's assured it will
-    be ready whenever needed.
+    While this may represent a performance improvement over a property, its greater benefit may be
+    its other characteristics. One common use is to construct collaborator objects, removing that
+    "real work" from the constructor, while still only executing once. It also de-couples client
+    code from any sequencing considerations; if it's accessed from more than one location, it's
+    assured it will be ready whenever needed.
 
     Loosely based on: https://stackoverflow.com/a/6849299/1902513.
 
-    A lazyproperty is read-only. There is no counterpart to the optional "setter" (or
-    deleter) behavior of an @property. This is critically important to maintaining its
-    immutability and idempotence guarantees. Attempting to assign to a lazyproperty
-    raises AttributeError unconditionally.
+    A lazyproperty is read-only. There is no counterpart to the optional "setter" (or deleter)
+    behavior of an @property. This is critically important to maintaining its immutability and
+    idempotence guarantees. Attempting to assign to a lazyproperty raises AttributeError
+    unconditionally.
 
     The parameter names in the methods below correspond to this usage example::
 
@@ -53,8 +54,8 @@ class lazyproperty(Generic[_T]):
 
         obj = Obj()
 
-    Not suitable for wrapping a function (as opposed to a method) because it is not
-    callable. """
+    Not suitable for wrapping a function (as opposed to a method) because it is not callable.
+    """
 
     def __init__(self, fget: Callable[..., _T]) -> None:
         """*fget* is the decorated method (a "getter" function).
@@ -135,14 +136,14 @@ def read_from_jsonl(filename: str) -> List[Dict]:
 def requires_dependencies(
     dependencies: Union[str, List[str]],
     extras: Optional[str] = None,
-):
+) -> Callable[[Callable[_P, _T]], Callable[_P, _T]]:
     if isinstance(dependencies, str):
         dependencies = [dependencies]
 
-    def decorator(func):
+    def decorator(func: Callable[_P, _T]) -> Callable[_P, _T]:
         @wraps(func)
-        def wrapper(*args, **kwargs):
-            missing_deps = []
+        def wrapper(*args: _P.args, **kwargs: _P.kwargs):
+            missing_deps: List[str] = []
             for dep in dependencies:
                 if not dependency_exists(dep):
                     missing_deps.append(dep)

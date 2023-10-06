@@ -74,12 +74,16 @@ def create_ingest_doc_from_json(ingest_doc_json: str) -> BaseIngestDoc:
         raise TypeError(
             f"failed to load json string when deserializing IngestDoc: {ingest_doc_json}",
         ) from te
+    return create_ingest_doc_from_dict(ingest_doc_dict)
+
+
+def create_ingest_doc_from_dict(ingest_doc_dict: dict) -> BaseIngestDoc:
     if "registry_name" not in ingest_doc_dict:
         raise ValueError(f"registry_name not present in ingest doc: {ingest_doc_dict}")
     registry_name = ingest_doc_dict.pop("registry_name")
     try:
         ingest_doc_cls = INGEST_DOC_NAME_TO_CLASS[registry_name]
-        return cast(BaseIngestDoc, ingest_doc_cls.from_json(ingest_doc_json))
+        return cast(BaseIngestDoc, ingest_doc_cls.from_dict(ingest_doc_dict))
     except KeyError:
         raise ValueError(
             f"Error: Received unknown IngestDoc name: {registry_name} while deserializing",

@@ -18,6 +18,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.partition import pdf, strategies
 from unstructured.partition.json import partition_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 
@@ -114,15 +115,16 @@ def test_partition_pdf_local_raises_with_no_filename():
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
 @pytest.mark.parametrize(
-    ("strategy", "expected"),
+    ("strategy", "expected", "origin"),
     # fast: can't capture the "intentionally left blank page" page
     # others: will ignore the actual blank page
-    [("fast", {1, 4}), ("hi_res", {1, 3, 4}), ("ocr_only", {1, 3, 4})],
+    [("fast", {1, 4}, "pdfminer"), ("hi_res", {1, 3, 4}, "pdf"), ("ocr_only", {1, 3, 4}, "OCR")],
 )
 def test_partition_pdf(
     file_mode,
     strategy,
     expected,
+    origin,
     filename="example-docs/layout-parser-paper-with-empty-pages.pdf",
 ):
     # Test that the partition_pdf function can handle filename
@@ -131,6 +133,8 @@ def test_partition_pdf(
         assert len(result) > 10
         # check that the pdf has multiple different page numbers
         assert {element.metadata.page_number for element in result} == expected
+        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+            assert {element.metadata.detection_origin for element in result} == {origin}
 
     if file_mode == "filename":
         result = pdf.partition_pdf(filename=filename, strategy=strategy)
@@ -196,9 +200,9 @@ def test_partition_pdf_with_auto_strategy(
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[0].text == title
-    assert elements[0].metadata.filename == "layout-parser-paper-fast.pdf"
-    assert elements[0].metadata.file_directory == "example-docs"
+    assert elements[6].text == title
+    assert elements[6].metadata.filename == "layout-parser-paper-fast.pdf"
+    assert elements[6].metadata.file_directory == "example-docs"
 
 
 def test_partition_pdf_with_page_breaks(
@@ -224,6 +228,14 @@ def test_partition_pdf_with_fast_strategy(
     assert {element.metadata.page_number for element in elements} == {1, 2}
     for element in elements:
         assert element.metadata.filename == "layout-parser-paper-fast.pdf"
+
+
+def test_partition_pdf_with_fast_neg_coordinates():
+    filename = "example-docs/negative-coords.pdf"
+    elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
+    assert len(elements) == 5
+    assert elements[0].metadata.coordinates.points[0][0] < 0
+    assert elements[0].metadata.coordinates.points[1][0] < 0
 
 
 def test_partition_pdf_with_fast_groups_text(
@@ -380,13 +392,12 @@ def test_partition_pdf_uses_table_extraction():
 def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
-    elements[0] == Title(
-        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis",
-    )
-    # check that the pdf has multiple different page numbers
+    title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
+    idx = 3
+    assert elements[idx].text == title
     assert {element.metadata.page_number for element in elements} == {1, 2}
-    assert elements[0].metadata.detection_class_prob is not None
-    assert isinstance(elements[0].metadata.detection_class_prob, float)
+    assert elements[idx].metadata.detection_class_prob is not None
+    assert isinstance(elements[idx].metadata.detection_class_prob, float)
 
 
 def test_partition_pdf_with_dpi():
@@ -399,7 +410,7 @@ def test_partition_pdf_with_dpi():
             ocr_languages="eng",
             ocr_mode="entire_page",
             extract_tables=False,
-            model_name=None,
+            model_name=pdf.default_hi_res_model(),
             pdf_image_dpi=100,
         )
 
@@ -471,7 +482,7 @@ def test_partition_pdf_fast_groups_text_in_text_box():
             system=expected_coordinate_system_3,
         ),
     )
-    assert elements[3] == Text("2.5", metadata=expected_elem_metadata_3)
+    assert elements[2] == Text("2.5", metadata=expected_elem_metadata_3)
 
 
 def test_partition_pdf_with_metadata_filename(
@@ -510,7 +521,7 @@ def test_partition_pdf_with_auto_strategy_exclude_metadata(
         include_metadata=False,
     )
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[0].text == title
+    assert elements[6].text == title
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
 
@@ -830,7 +841,7 @@ def test_partition_pdf_with_ocr_coordinates_are_not_nan_from_file(
                     assert point[1] is not math.nan
 
 
-def test_add_chunking_strategy_on_partition_pdf(
+def test_add_chunking_strategy_by_title_on_partition_pdf(
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
     elements = pdf.partition_pdf(filename=filename)
@@ -838,6 +849,20 @@ def test_add_chunking_strategy_on_partition_pdf(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_pdf_formats_languages_for_tesseract():
+    filename = "example-docs/DA-1p.pdf"
+    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
+        pdf.partition_pdf(filename=filename, strategy="hi_res", languages=["en"])
+        mock_process.assert_called_once_with(
+            filename,
+            is_image=False,
+            ocr_languages="eng",
+            ocr_mode="entire_page",
+            extract_tables=False,
+            model_name=pdf.default_hi_res_model(),
+        )
 
 
 def test_partition_pdf_warns_with_ocr_languages(caplog):
@@ -853,7 +878,7 @@ def test_partition_pdf_or_image_warns_with_ocr_languages(caplog):
 
 
 def test_partition_categorization_backup():
-    text = "This is Clearly a Title."
+    text = "This is Clearly a Title"
     with mock.patch.object(pdf, "_partition_pdf_or_image_local", return_value=[Text(text)]):
         elements = pdf.partition_pdf_or_image(
             "example-docs/layout-parser-paper-fast.pdf",
@@ -876,7 +901,45 @@ def test_combine_numbered_list(filename):
             first_list_element = element
             break
     assert len(elements) < 28
-    assert first_list_element.text.endswith("(Section 3)")
+    assert first_list_element.text.endswith(
+        "character recognition, and other DIA tasks (Section 3)",
+    )
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-docs/layout-parser-paper-fast.pdf"],
+)
+def test_partition_pdf_hyperlinks(filename):
+    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    links = [
+        {
+            "text": "8",
+            "url": "cite.gardner2018allennlp",
+            "start_index": 138,
+        },
+        {
+            "text": "34",
+            "url": "cite.wolf2019huggingface",
+            "start_index": 141,
+        },
+        {
+            "text": "35",
+            "url": "cite.wu2019detectron2",
+            "start_index": 168,
+        },
+    ]
+    assert elements[-1].metadata.links == links
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-docs/embedded-link.pdf"],
+)
+def test_partition_pdf_hyperlinks_multiple_lines(filename):
+    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    assert elements[-1].metadata.links[-1]["text"] == "capturing"
+    assert len(elements[-1].metadata.links) == 2
 
 
 def test_partition_pdf_uses_model_name():
@@ -893,3 +956,13 @@ def test_partition_pdf_uses_model_name():
         mockpartition.assert_called_once()
         assert "model_name" in mockpartition.call_args.kwargs
         assert mockpartition.call_args.kwargs["model_name"]
+
+
+def test_partition_pdf_word_bbox_not_char(
+    filename="example-docs/interface-config-guide-p93.pdf",
+):
+    try:
+        elements = pdf.partition_pdf(filename=filename)
+    except Exception as e:
+        raise ("Partitioning fail: %s" % e)
+    assert len(elements) == 17

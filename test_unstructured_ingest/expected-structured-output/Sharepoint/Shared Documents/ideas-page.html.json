@@ -3,7 +3,16 @@
     "type": "Table",
     "element_id": "e83a347af95db7ba47b5351f411e00c7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "",
+        "version": 1,
+        "record_locator": {
+          "server_path": "/Shared Documents/ideas-page.html",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "date_created": "2023-06-16T05:04:47",
+        "date_modified": "2023-06-16T05:04:47"
+      },
       "filename": "ideas-page.html",
       "filetype": "text/html",
       "page_number": 1,

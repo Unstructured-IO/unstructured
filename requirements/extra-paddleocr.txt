@@ -19,7 +19,7 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   requests
@@ -27,25 +27,25 @@ click==8.1.7
     # via
     #   -c requirements/base.txt
     #   flask
-contourpy==1.1.0
+contourpy==1.1.1
     # via matplotlib
 cssselect==1.2.0
     # via premailer
 cssutils==2.7.1
     # via premailer
-cycler==0.11.0
+cycler==0.12.0
     # via matplotlib
 cython==3.0.2
     # via unstructured-paddleocr
 et-xmlfile==1.1.0
     # via openpyxl
-flask==2.3.3
+flask==3.0.0
     # via
     #   flask-babel
     #   visualdl
 flask-babel==3.1.0
     # via visualdl
-fonttools==4.42.1
+fonttools==4.43.0
     # via matplotlib
 future==0.18.3
     # via bce-python-sdk
@@ -53,7 +53,7 @@ idna==3.4
     # via
     #   -c requirements/base.txt
     #   requests
-imageio==2.31.3
+imageio==2.31.4
     # via
     #   imgaug
     #   scikit-image
@@ -61,7 +61,7 @@ imgaug==0.4.0
     # via unstructured-paddleocr
 importlib-metadata==6.8.0
     # via flask
-importlib-resources==6.0.1
+importlib-resources==6.1.0
     # via matplotlib
 itsdangerous==2.1.2
     # via flask
@@ -95,6 +95,7 @@ networkx==3.1
     # via scikit-image
 numpy==1.24.4
     # via
+    #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   contourpy
     #   imageio
@@ -111,21 +112,26 @@ numpy==1.24.4
     #   unstructured-paddleocr
     #   visualdl
 opencv-contrib-python==4.8.0.76
-    # via unstructured-paddleocr
+    # via
+    #   -c requirements/constraints.in
+    #   unstructured-paddleocr
 opencv-python==4.8.0.76
     # via
+    #   -c requirements/constraints.in
     #   imgaug
     #   unstructured-paddleocr
 openpyxl==3.1.2
     # via unstructured-paddleocr
-packaging==23.1
+packaging==23.2
     # via
     #   -c requirements/base.txt
     #   matplotlib
     #   scikit-image
     #   visualdl
 pandas==2.0.3
-    # via visualdl
+    # via
+    #   -c requirements/constraints.in
+    #   visualdl
 pdf2image==1.16.3
     # via unstructured-paddleocr
 pillow==10.0.1
@@ -148,7 +154,7 @@ psutil==5.9.5
     # via visualdl
 pyclipper==1.3.0.post5
     # via unstructured-paddleocr
-pycryptodome==3.18.0
+pycryptodome==3.19.0
     # via bce-python-sdk
 pyparsing==3.0.9
     # via
@@ -165,9 +171,9 @@ pytz==2023.3.post1
     #   pandas
 pywavelets==1.4.1
     # via scikit-image
-rapidfuzz==3.3.0
+rapidfuzz==3.3.1
     # via unstructured-paddleocr
-rarfile==4.0
+rarfile==4.1
     # via visualdl
 requests==2.31.0
     # via
@@ -189,6 +195,7 @@ shapely==2.0.1
     #   unstructured-paddleocr
 six==1.16.0
     # via
+    #   -c requirements/base.txt
     #   attrdict
     #   bce-python-sdk
     #   imgaug
@@ -211,9 +218,9 @@ urllib3==1.26.16
     #   requests
 visualdl==2.5.3
     # via unstructured-paddleocr
-werkzeug==2.3.7
+werkzeug==3.0.0
     # via flask
-zipp==3.16.2
+zipp==3.17.0
     # via
     #   importlib-metadata
     #   importlib-resources

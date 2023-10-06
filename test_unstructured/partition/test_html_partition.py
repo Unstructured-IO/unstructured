@@ -8,7 +8,7 @@ from requests.models import Response
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import ListItem, NarrativeText, Table, Title
+from unstructured.documents.elements import EmailAddress, ListItem, NarrativeText, Table, Title
 from unstructured.documents.html import HTMLTitle
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
@@ -222,9 +222,8 @@ def test_partition_html_from_url_raises_with_bad_status_code():
         status_code=500,
         headers={"Content-Type": "text/html"},
     )
-    with patch.object(requests, "get", return_value=response) as _:
-        with pytest.raises(ValueError):
-            partition_html(url="https://fake.url")
+    with patch.object(requests, "get", return_value=response) as _, pytest.raises(ValueError):
+        partition_html(url="https://fake.url")
 
 
 def test_partition_html_from_url_raises_with_bad_content_type():
@@ -237,9 +236,8 @@ def test_partition_html_from_url_raises_with_bad_content_type():
         status_code=200,
         headers={"Content-Type": "application/json"},
     )
-    with patch.object(requests, "get", return_value=response) as _:
-        with pytest.raises(ValueError):
-            partition_html(url="https://fake.url")
+    with patch.object(requests, "get", return_value=response) as _, pytest.raises(ValueError):
+        partition_html(url="https://fake.url")
 
 
 def test_partition_from_url_uses_headers(mocker):
@@ -647,3 +645,25 @@ def test_add_chunking_strategy_on_partition_html(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_html_heading_title_detection():
+    html_text = """
+    <p>This is a section of narrative text, it's long, flows and has meaning</p>
+    <h1>This is a section of narrative text, it's long, flows and has meaning</h1>
+    <h2>A heading that is at the second level</h2>
+    <h3>Finally, the third heading</h3>
+    <h2>December 1-17, 2017</h2>
+    <h3>email@example.com</h3>
+    <h3><li>- bulleted item</li></h3>
+    """
+    elements = partition_html(text=html_text)
+    assert elements == [
+        NarrativeText("This is a section of narrative text, it's long, flows and has meaning"),
+        Title("This is a section of narrative text, it's long, flows and has meaning"),
+        Title("A heading that is at the second level"),
+        Title("Finally, the third heading"),
+        Title("December 1-17, 2017"),
+        EmailAddress("email@example.com"),
+        ListItem("- bulleted item"),
+    ]

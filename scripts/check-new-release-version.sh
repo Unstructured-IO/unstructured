@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -eux
 
 # Function to check if the current version is a non-dev version
 function is_non_dev_version {
@@ -12,7 +12,7 @@ function is_non_dev_version {
 function get_main_branch_version {
     local VERSION
     git fetch origin main
-    VERSION=$(git show origin/main:unstructured/__version__.py | grep -o -m 1 -E "(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
+    VERSION=$(git show origin/main:unstructured/__version__.py | grep -o -m 1 -E "(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[a-zA-Z0-9.-]+)?")
     echo "$VERSION"
 }
 

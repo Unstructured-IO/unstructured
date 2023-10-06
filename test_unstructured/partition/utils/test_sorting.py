@@ -5,8 +5,17 @@ from unstructured.documents.elements import CoordinatesMetadata, Element, Text
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
 from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
+    coordinates_to_bbox,
+    shrink_bbox,
     sort_page_elements,
 )
+
+
+class MockCoordinatesMetadata(CoordinatesMetadata):
+    def __init__(self, points):
+        system = PixelSpace(width=300, height=500)
+
+        super().__init__(points, system)
 
 
 def test_coord_valid_coordinates():
@@ -98,3 +107,21 @@ def test_sort_basic_pos_coordinates():
 
     sorted_elem_text = " ".join([str(elem.text) for elem in sorted_page_elements])
     assert sorted_elem_text == "7 8 9"
+
+
+def test_coordinates_to_bbox():
+    coordinates_data = MockCoordinatesMetadata([(10, 20), (10, 200), (100, 200), (100, 20)])
+    expected_result = (10, 20, 100, 200)
+    assert coordinates_to_bbox(coordinates_data) == expected_result
+
+
+def test_shrink_bbox():
+    bbox = (0, 0, 200, 100)
+    shrink_factor = 0.9
+    expected_result = (0, 0, 180, 90)
+    assert shrink_bbox(bbox, shrink_factor) == expected_result
+
+    bbox = (20, 20, 320, 120)
+    shrink_factor = 0.9
+    expected_result = (20, 20, 290, 110)
+    assert shrink_bbox(bbox, shrink_factor) == expected_result

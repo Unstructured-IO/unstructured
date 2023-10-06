@@ -1,5 +1,6 @@
 import typing as t
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
@@ -10,6 +11,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -64,7 +66,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     registry_name: str = "onedrive"
 
     def __post_init__(self):
-        self.ext = "".join(Path(self.file_name).suffixes)
+        self.ext = Path(self.file_name).suffix
         if not self.ext:
             raise ValueError("Unsupported file without extension.")
 
@@ -92,9 +94,9 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         self.download_dir = download_path
         self.download_filepath = (download_path / self.file_name).resolve()
-        oname = f"{self.file_name[:-len(self.ext)]}.json"
+        output_filename = output_filename = self.file_name + ".json"
         self.output_dir = output_path
-        self.output_filepath = (output_path / oname).resolve()
+        self.output_filepath = (output_path / output_filename).resolve()
 
     @property
     def filename(self):
@@ -104,34 +106,75 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _output_filename(self):
         return Path(self.output_filepath).resolve()
 
-    @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @property
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
+        return {
+            "user_pname": self.connector_config.user_pname,
+            "server_relative_path": self.server_relative_path,
+        }
+
     @requires_dependencies(["office365"], extras="onedrive")
-    def get_file(self):
+    def _fetch_file(self):
         from office365.graph_client import GraphClient
+        from office365.runtime.client_request_exception import ClientRequestException
 
         try:
             client = GraphClient(self.connector_config.token_factory)
             root = client.users[self.connector_config.user_pname].drive.get().execute_query().root
-            self.file = root.get_by_path(self.server_relative_path).get().execute_query()
-            fsize = self.file.get_property("size", 0)
-            self.output_dir.mkdir(parents=True, exist_ok=True)
+            file = root.get_by_path(self.server_relative_path).get().execute_query()
+        except ClientRequestException as e:
+            if e.response.status_code == 404:
+                return None
+            raise
+        return file
 
-            if not self.download_dir.is_dir():
-                logger.debug(f"Creating directory: {self.download_dir}")
-                self.download_dir.mkdir(parents=True, exist_ok=True)
-
-            if fsize > MAX_MB_SIZE:
-                logger.info(f"Downloading file with size: {fsize} bytes in chunks")
-                with self.filename.open(mode="wb") as f:
-                    self.file.download_session(f, chunk_size=1024 * 1024 * 100).execute_query()
-            else:
-                with self.filename.open(mode="wb") as f:
-                    self.file.download(f).execute_query()
-        except Exception as e:
-            logger.error(f"Error while downloading and saving file: {self.filename}.")
-            logger.error(e)
+    def update_source_metadata(self, **kwargs):
+        file = kwargs.get("file", self._fetch_file())
+        if file is None:
+            self.source_metadata = SourceMetadata(
+                exists=False,
+            )
             return
+
+        version = None
+        if (n_versions := len(file.versions)) > 0:
+            version = file.versions[n_versions - 1].properties.get("id", None)
+
+        self.source_metadata = SourceMetadata(
+            date_created=datetime.strptime(file.created_datetime, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
+            date_modified=datetime.strptime(
+                file.last_modified_datetime,
+                "%Y-%m-%dT%H:%M:%SZ",
+            ).isoformat(),
+            version=version,
+            source_url=file.parent_reference.path + "/" + self.file_name,
+            exists=True,
+        )
+
+    @SourceConnectionError.wrap
+    @BaseIngestDoc.skip_if_file_exists
+    def get_file(self):
+        file = self._fetch_file()
+        self.update_source_metadata(file=file)
+        if file is None:
+            raise ValueError(
+                f"Failed to retrieve file {self.file_path}/{self.file_name}",
+            )
+
+        fsize = file.get_property("size", 0)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+
+        if not self.download_dir.is_dir():
+            logger.debug(f"Creating directory: {self.download_dir}")
+            self.download_dir.mkdir(parents=True, exist_ok=True)
+
+        if fsize > MAX_MB_SIZE:
+            logger.info(f"Downloading file with size: {fsize} bytes in chunks")
+            with self.filename.open(mode="wb") as f:
+                file.download_session(f, chunk_size=1024 * 1024 * 100).execute_query()
+        else:
+            with self.filename.open(mode="wb") as f:
+                file.download(f).execute_query()
         logger.info(f"File downloaded: {self.filename}")
         return
 
@@ -159,7 +202,6 @@ class OneDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     def _gen_ingest_doc(self, file: "DriveItem") -> OneDriveIngestDoc:
         file_path = file.parent_reference.path.split(":")[-1]
         file_path = file_path[1:] if file_path[0] == "/" else file_path
-
         return OneDriveIngestDoc(
             connector_config=self.connector_config,
             partition_config=self.partition_config,

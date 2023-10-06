@@ -9,18 +9,48 @@ from unstructured.utils import requires_dependencies
 def s3_writer(
     remote_url: str,
     anonymous: bool,
+    endpoint_url: t.Optional[str] = None,
     verbose: bool = False,
+    **kwargs,
 ):
     from unstructured.ingest.connector.s3 import (
         S3DestinationConnector,
         SimpleS3Config,
     )
 
+    access_kwargs: t.Dict[str, t.Any] = {"anon": anonymous}
+    if endpoint_url:
+        access_kwargs["endpoint_url"] = endpoint_url
+
     return S3DestinationConnector(
         write_config=WriteConfig(),
         connector_config=SimpleS3Config(
             path=remote_url,
-            access_kwargs={"anon": anonymous},
+            access_kwargs=access_kwargs,
+        ),
+    )
+
+
+@requires_dependencies(["azure"], extras="azure-cognitive-search")
+def azure_cognitive_search_writer(
+    endpoint: str,
+    key: str,
+    index: str,
+    **kwargs,
+):
+    from unstructured.ingest.connector.azure_cognitive_search import (
+        AzureCognitiveSearchDestinationConnector,
+        AzureCognitiveSearchWriteConfig,
+        SimpleAzureCognitiveSearchStorageConfig,
+    )
+
+    return AzureCognitiveSearchDestinationConnector(
+        write_config=AzureCognitiveSearchWriteConfig(
+            index=index,
+        ),
+        connector_config=SimpleAzureCognitiveSearchStorageConfig(
+            endpoint=endpoint,
+            key=key,
         ),
     )
 
@@ -51,4 +81,5 @@ def delta_table_writer(
 writer_map: t.Dict[str, t.Callable] = {
     "s3": s3_writer,
     "delta_table": delta_table_writer,
+    "azure_cognitive_search": azure_cognitive_search_writer,
 }

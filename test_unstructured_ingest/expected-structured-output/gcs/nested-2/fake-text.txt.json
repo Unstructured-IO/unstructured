@@ -13,7 +13,10 @@
         "date_created": "2023-06-20T23:48:24.192000+00:00",
         "date_modified": "2023-06-20T23:48:24.192000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "This is a test document to use for unit tests."
   },
@@ -31,7 +34,10 @@
         "date_created": "2023-06-20T23:48:24.192000+00:00",
         "date_modified": "2023-06-20T23:48:24.192000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Doylestown, PA 18901"
   },
@@ -49,7 +55,10 @@
         "date_created": "2023-06-20T23:48:24.192000+00:00",
         "date_modified": "2023-06-20T23:48:24.192000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Important points:"
   },
@@ -67,7 +76,10 @@
         "date_created": "2023-06-20T23:48:24.192000+00:00",
         "date_modified": "2023-06-20T23:48:24.192000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Hamburgers are delicious"
   },
@@ -85,7 +97,10 @@
         "date_created": "2023-06-20T23:48:24.192000+00:00",
         "date_modified": "2023-06-20T23:48:24.192000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Dogs are the best"
   },
@@ -103,7 +118,10 @@
         "date_created": "2023-06-20T23:48:24.192000+00:00",
         "date_modified": "2023-06-20T23:48:24.192000+00:00"
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "I love fuzzy blankets"
   }

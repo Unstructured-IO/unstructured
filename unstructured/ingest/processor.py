@@ -74,9 +74,10 @@ class Processor:
             if not docs:
                 return
 
-        # Debugging tip: use the below line and comment out the mp.Pool loop
+        # Debugging tip: use the below lines and comment out the mp.Pool loop
         # block to remain in single process
-        # self.doc_processor_fn(docs[0])
+        # json_docs = [doc.to_json() for doc in docs]
+        # self.doc_processor_fn(json_docs[0])
         logger.info(f"Processing {len(docs)} docs")
         json_docs = [doc.to_json() for doc in docs]
         with mp.Pool(
@@ -106,10 +107,11 @@ def process_documents(
     verbose: bool,
     dest_doc_connector: t.Optional[BaseDestinationConnector] = None,
 ) -> None:
+    languages = partition_config.ocr_languages.split("+") if partition_config.ocr_languages else []
     process_document_with_partition_args = partial(
         process_document,
         strategy=partition_config.strategy,
-        ocr_languages=partition_config.ocr_languages,
+        languages=languages,
         encoding=partition_config.encoding,
         pdf_infer_table_structure=partition_config.pdf_infer_table_structure,
     )

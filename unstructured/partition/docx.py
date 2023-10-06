@@ -1,3 +1,5 @@
+# pyright: reportPrivateUsage=false
+
 from __future__ import annotations
 
 import io
@@ -5,9 +7,19 @@ import itertools
 import os
 import tempfile
 from tempfile import SpooledTemporaryFile
-from typing import Any, BinaryIO, Dict, IO, Iterator, List, Optional, Sequence
-from typing import Tuple, Type, Union, cast
-from typing_extensions import TypeAlias
+from typing import (
+    IO,
+    Any,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    Union,
+    cast,
+)
 
 # -- CT_* stands for "complex-type", an XML element type in docx parlance --
 import docx
@@ -19,11 +31,12 @@ from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.oxml.xmlchemy import BaseOxmlElement
-from docx.section import _Footer, _Header, Section  # pyright: ignore [reportPrivateUsage]
+from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 from lxml import etree
+from typing_extensions import TypeAlias
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
@@ -56,16 +69,17 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
-from unstructured.utils import dependency_exists, lazyproperty
+from unstructured.utils import dependency_exists, lazyproperty, requires_dependencies
 
 if dependency_exists("pypandoc"):
     import pypandoc
 
-
+DETECTION_ORIGIN: str = "docx"
 BlockElement: TypeAlias = Union[CT_P, CT_Tbl]
 BlockItem: TypeAlias = Union[Paragraph, DocxTable]
 
 
+@requires_dependencies("pypandoc")
 def convert_and_partition_docx(
     source_format: str,
     filename: Optional[str] = None,
@@ -90,9 +104,6 @@ def convert_and_partition_docx(
         Determines whether or not metadata is included in the metadata attribute on the elements in
         the output.
     """
-    if "pypandoc" not in globals():
-        raise ImportError("package 'pypandoc' required for this operation but not installed")
-
     exactly_one(filename=filename, file=file)
 
     def validate_filename(filename: str) -> str:
@@ -101,7 +112,7 @@ def convert_and_partition_docx(
             raise ValueError(f"The file {filename} does not exist.")
         return filename
 
-    def copy_to_tempfile(file: BinaryIO) -> str:
+    def copy_to_tempfile(file: IO[bytes]) -> str:
         """Return path to temporary copy of file to be converted."""
         with tempfile.NamedTemporaryFile(delete=False) as tmp:
             tmp.write(file.read())
@@ -116,7 +127,7 @@ def convert_and_partition_docx(
         # -- foo -> foo.docx --
         return f"{root_name}.docx"
 
-    file_path = validate_filename(filename) if filename else copy_to_tempfile(cast(BinaryIO, file))
+    file_path = validate_filename(filename) if filename else copy_to_tempfile(cast(IO[bytes], file))
 
     with tempfile.TemporaryDirectory() as tmpdir:
         docx_path = os.path.join(tmpdir, extract_docx_filename(file_path))
@@ -141,7 +152,7 @@ def convert_and_partition_docx(
 @add_chunking_strategy()
 def partition_docx(
     filename: Optional[str] = None,
-    file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]] = None,
+    file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
     include_metadata: bool = True,
@@ -173,7 +184,7 @@ def partition_docx(
             metadata_filename,
             include_page_breaks,
             metadata_last_modified,
-        )
+        ),
     )
 
 
@@ -205,7 +216,7 @@ class _DocxPartitioner:
     def __init__(
         self,
         filename: Optional[str],
-        file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]],
+        file: Optional[IO[bytes]],
         metadata_filename: Optional[str],
         include_page_breaks: bool,
         metadata_last_modified: Optional[str],
@@ -221,7 +232,7 @@ class _DocxPartitioner:
     def iter_document_elements(
         cls,
         filename: Optional[str] = None,
-        file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]] = None,
+        file: Optional[IO[bytes]] = None,
         metadata_filename: Optional[str] = None,
         include_page_breaks: bool = True,
         metadata_last_modified: Optional[str] = None,
@@ -294,7 +305,7 @@ class _DocxPartitioner:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
         self._page_counter += 1
         if self._include_page_breaks:
-            yield PageBreak("")
+            yield PageBreak("", detection_origin=DETECTION_ORIGIN)
 
     def _is_list_item(self, paragraph: Paragraph) -> bool:
         """True when `paragraph` can be identified as a list-item."""
@@ -310,11 +321,11 @@ class _DocxPartitioner:
         does not contribute to the document-element stream and will not cause an element to be
         emitted.
         """
-        text = paragraph.text.strip()
+        text = paragraph.text
 
         # -- blank paragraphs are commonly used for spacing between paragraphs and
         # -- do not contribute to the document-element stream.
-        if not text:
+        if not text.strip():
             return
 
         metadata = self._paragraph_metadata(paragraph)
@@ -323,23 +334,27 @@ class _DocxPartitioner:
         if self._is_list_item(paragraph):
             clean_text = clean_bullets(text).strip()
             if clean_text:
-                yield ListItem(text=clean_text, metadata=metadata)
+                yield ListItem(
+                    text=clean_text,
+                    metadata=metadata,
+                    detection_origin=DETECTION_ORIGIN,
+                )
             return
 
         # -- determine element-type from an explicit Word paragraph-style if possible --
         TextSubCls = self._style_based_element_type(paragraph)
         if TextSubCls:
-            yield TextSubCls(text=text, metadata=metadata)
+            yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             return
 
         # -- try to recognize the element type by parsing its text --
         TextSubCls = self._parse_paragraph_text_for_element_type(paragraph)
         if TextSubCls:
-            yield TextSubCls(text=text, metadata=metadata)
+            yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             return
 
         # -- if all that fails we give it the default `Text` element-type --
-        yield Text(text, metadata=metadata)
+        yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
 
     def _iter_maybe_paragraph_page_breaks(self, paragraph: Paragraph) -> Iterator[PageBreak]:
         """Generate a `PageBreak` document element for each page-break in `paragraph`.
@@ -397,9 +412,11 @@ class _DocxPartitioner:
                 return
             yield Footer(
                 text=text,
+                detection_origin=DETECTION_ORIGIN,
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
+                    category_depth=0,
                 ),
             )
 
@@ -424,9 +441,11 @@ class _DocxPartitioner:
                 return
             yield Header(
                 text=text,
+                detection_origin=DETECTION_ORIGIN,
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
+                    category_depth=0,  # -- headers are always at the root level}
                 ),
             )
 
@@ -485,6 +504,7 @@ class _DocxPartitioner:
 
         yield Table(
             text_table,
+            detection_origin=DETECTION_ORIGIN,
             metadata=ElementMetadata(
                 text_as_html=html_table,
                 filename=self._metadata_filename,
@@ -510,11 +530,11 @@ class _DocxPartitioner:
         if self._metadata_last_modified:
             return self._metadata_last_modified
 
-        filename, file = self._filename, self._file
+        file_path, file = self._filename, self._file
 
         # -- if the file is on the filesystem, get its date from there --
-        if filename is not None:
-            return None if filename.startswith("/tmp") else get_last_modified_date(filename)
+        if file_path is not None:
+            return None if file_path.startswith("/tmp") else get_last_modified_date(file_path)
 
         # -- otherwise try getting it from the file-like object (unlikely since BytesIO and its
         # -- brethren have no such metadata).
@@ -543,13 +563,17 @@ class _DocxPartitioner:
     def _paragraph_metadata(self, paragraph: Paragraph) -> ElementMetadata:
         """ElementMetadata object describing `paragraph`."""
         emphasized_text_contents, emphasized_text_tags = self._paragraph_emphasis(paragraph)
-        return ElementMetadata(
+        category_depth = self._parse_category_depth_by_style(paragraph)
+        element_metadata = ElementMetadata(
             filename=self._metadata_filename,
             page_number=self._page_number,
             last_modified=self._last_modified,
             emphasized_text_contents=emphasized_text_contents or None,
             emphasized_text_tags=emphasized_text_tags or None,
+            category_depth=category_depth,
         )
+        element_metadata.detection_origin = "docx"
+        return element_metadata
 
     def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
         """Attempt to differentiate the element-type by inspecting the raw text."""
@@ -622,6 +646,52 @@ class _DocxPartitioner:
         """[contents, tags] pair describing emphasized text in `table`."""
         iter_tbl_emph, iter_tbl_emph_2 = itertools.tee(self._iter_table_emphasis(table))
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])
+
+    def _parse_category_depth_by_style(self, paragraph: Paragraph) -> int:
+        """Determine category depth from paragraph metadata"""
+
+        # Determine category depth from paragraph ilvl xpath
+        xpath = paragraph._element.xpath("./w:pPr/w:numPr/w:ilvl/@w:val")
+        if xpath:
+            return int(xpath[0])
+
+        # Determine category depth from style name
+        style_name = (paragraph.style and paragraph.style.name) or "Normal"
+        depth = self._parse_category_depth_by_style_name(style_name)
+
+        if depth > 0:
+            return depth
+        else:
+            # Check if category depth can be determined from style ilvl
+            return self._parse_category_depth_by_style_ilvl()
+
+    def _parse_category_depth_by_style_name(self, style_name: str) -> int:
+        """Parse category-depth from the style-name of `paragraph`.
+
+        Category depth is 0-indexed and relative to the other element types in the document.
+        """
+
+        def _extract_number(suffix: str) -> int:
+            return int(suffix.split()[-1]) - 1 if suffix.split()[-1].isdigit() else 0
+
+        # Heading styles
+        if style_name.startswith("Heading"):
+            return _extract_number(style_name)
+
+        if style_name == "Subtitle":
+            return 1
+
+        # List styles
+        list_prefixes = ["List", "List Bullet", "List Continue", "List Number"]
+        if any(style_name.startswith(prefix) for prefix in list_prefixes):
+            return _extract_number(style_name)
+
+        # Other styles
+        return 0
+
+    def _parse_category_depth_by_style_ilvl(self) -> int:
+        # TODO(newelh) Parsing category depth by style ilvl is not yet implemented
+        return 0
 
 
 class _SectBlockItemIterator:
@@ -741,7 +811,7 @@ class _SectBlockElementIterator:
     def _sectPrs(self) -> Sequence[CT_SectPr]:
         """All w:sectPr elements in document, in document-order."""
         return self._sectPr.xpath(
-            "/w:document/w:body/w:p/w:pPr/w:sectPr | /w:document/w:body/w:sectPr"
+            "/w:document/w:body/w:p/w:pPr/w:sectPr | /w:document/w:body/w:sectPr",
         )
 
 
@@ -776,7 +846,7 @@ def _get_paragraph_runs(paragraph: Paragraph) -> Sequence[Run]:
 
 
 Paragraph.runs = property(  # pyright: ignore[reportGeneralTypeIssues]
-    lambda self: _get_paragraph_runs(self)
+    lambda self: _get_paragraph_runs(self),
 )
 
 # ====================================================================================

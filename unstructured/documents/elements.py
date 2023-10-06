@@ -1,39 +1,41 @@
 from __future__ import annotations
 
+import abc
+import copy
+import dataclasses as dc
 import datetime
+import functools
 import hashlib
 import inspect
 import os
 import pathlib
 import re
 import uuid
-from abc import ABC
-from copy import deepcopy
-from dataclasses import dataclass
-from functools import wraps
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
-from typing_extensions import TypedDict
+
+from typing_extensions import ParamSpec, Self, TypedDict
 
 from unstructured.documents.coordinates import (
     TYPE_TO_COORDINATE_SYSTEM_MAP,
     CoordinateSystem,
     RelativeCoordinateSystem,
 )
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
-class NoID(ABC):
+class NoID(abc.ABC):
     """Class to indicate that an element do not have an ID."""
 
     pass
 
 
-class UUID(ABC):
+class UUID(abc.ABC):
     """Class to indicate that an element should have a UUID."""
 
     pass
 
 
-@dataclass
+@dc.dataclass
 class DataSourceMetadata:
     """Metadata fields that pertain to the data source of the document."""
 
@@ -47,8 +49,16 @@ class DataSourceMetadata:
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
 
+    @classmethod
+    def from_dict(cls, input_dict):
+        # Only use existing fields when constructing
+        supported_fields = [f.name for f in dc.fields(cls)]
+        args = {k: v for k, v in input_dict.items() if k in supported_fields}
 
-@dataclass
+        return cls(**args)
+
+
+@dc.dataclass
 class CoordinatesMetadata:
     """Metadata fields that pertain to the coordinates of the element."""
 
@@ -124,9 +134,10 @@ class Link(TypedDict):
 
     text: Optional[str]
     url: str
+    start_index: int
 
 
-@dataclass
+@dc.dataclass
 class ElementMetadata:
     coordinates: Optional[CoordinatesMetadata] = None
     data_source: Optional[DataSourceMetadata] = None
@@ -137,6 +148,10 @@ class ElementMetadata:
     attached_to_filename: Optional[str] = None
     parent_id: Optional[Union[str, uuid.UUID, NoID, UUID]] = None
     category_depth: Optional[int] = None
+    image_path: Optional[str] = None
+
+    # Languages in element. TODO(newelh) - More strongly type languages
+    languages: Optional[List[str]] = None
 
     # Page numbers currenlty supported for PDF, HTML and PPT documents
     page_number: Optional[int] = None
@@ -148,6 +163,7 @@ class ElementMetadata:
     url: Optional[str] = None
     link_urls: Optional[List[str]] = None
     link_texts: Optional[List[str]] = None
+    links: Optional[List[Link]] = None
 
     # E-mail specific metadata fields
     sent_from: Optional[List[str]] = None
@@ -170,8 +186,21 @@ class ElementMetadata:
     # Metadata extracted via regex
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
 
+    # Chunking metadata fields
+    num_characters: Optional[int] = None
+    is_continuation: Optional[bool] = None
+
     # Detection Model Class Probabilities from Unstructured-Inference Hi-Res
     detection_class_prob: Optional[float] = None
+
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        detection_origin: Optional[str] = None
+
+    def __setattr__(self, key, value):
+        if not UNSTRUCTURED_INCLUDE_DEBUG_METADATA and key == "detection_origin":
+            return
+        else:
+            super().__setattr__(key, value)
 
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
@@ -183,7 +212,11 @@ class ElementMetadata:
             self.filename = filename
 
     def to_dict(self):
-        _dict = {key: value for key, value in self.__dict__.items() if value is not None}
+        _dict = {
+            key: value
+            for key, value in self.__dict__.items()
+            if value is not None and key != "detection_origin"
+        }
         if "regex_metadata" in _dict and not _dict["regex_metadata"]:
             _dict.pop("regex_metadata")
         if self.data_source:
@@ -193,13 +226,22 @@ class ElementMetadata:
         return _dict
 
     @classmethod
-    def from_dict(cls, input_dict):
-        constructor_args = deepcopy(input_dict)
+    def from_dict(cls, input_dict: Dict[str, Any]) -> Self:
+        constructor_args = copy.deepcopy(input_dict)
         if constructor_args.get("coordinates", None) is not None:
             constructor_args["coordinates"] = CoordinatesMetadata.from_dict(
                 constructor_args["coordinates"],
             )
-        return cls(**constructor_args)
+        if constructor_args.get("data_source", None) is not None:
+            constructor_args["data_source"] = DataSourceMetadata.from_dict(
+                constructor_args["data_source"],
+            )
+
+        # Only use existing fields when constructing
+        supported_fields = [f.name for f in dc.fields(cls)]
+        args = {k: v for k, v in constructor_args.items() if k in supported_fields}
+
+        return cls(**args)
 
     def merge(self, other: ElementMetadata):
         for k in self.__dict__:
@@ -215,10 +257,19 @@ class ElementMetadata:
         return dt
 
 
-def process_metadata():
-    """Decorator for processing metadata for document elements."""
+_P = ParamSpec("_P")
 
-    def decorator(func: Callable):
+
+def process_metadata() -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
+    """Post-process element-metadata for this document.
+
+    This decorator adds a post-processing step to a document partitioner. It adds documentation for
+    `metadata_filename` and `include_metadata` parameters if not present. Also adds regex-metadata
+    when `regex_metadata` keyword-argument is provided and changes the element-id to a UUID when
+    `unique_element_ids` argument is provided and True.
+    """
+
+    def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
         if func.__doc__:
             if (
                 "metadata_filename" in func.__code__.co_varnames
@@ -238,11 +289,11 @@ def process_metadata():
                     attribute on the elements in the output."""
                 )
 
-        @wraps(func)
-        def wrapper(*args, **kwargs):
+        @functools.wraps(func)
+        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
             elements = func(*args, **kwargs)
             sig = inspect.signature(func)
-            params = dict(**dict(zip(sig.parameters, args)), **kwargs)
+            params: Dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
             for param in sig.parameters.values():
                 if param.name not in params and param.default is not param.empty:
                     params[param.name] = param.default
@@ -261,17 +312,14 @@ def process_metadata():
     return decorator
 
 
-def _elements_ids_to_uuid():
-    pass
-
-
 def _add_regex_metadata(
     elements: List[Element],
     regex_metadata: Dict[str, str] = {},
 ) -> List[Element]:
     """Adds metadata based on a user provided regular expression.
-    The additional metadata will be added to the regex_metadata
-    attrbuted in the element metadata."""
+
+    The additional metadata will be added to the regex_metadata attrbuted in the element metadata.
+    """
     for element in elements:
         if isinstance(element, Text):
             _regex_metadata: Dict["str", List[RegexMetadata]] = {}
@@ -294,7 +342,7 @@ def _add_regex_metadata(
     return elements
 
 
-class Element(ABC):
+class Element(abc.ABC):
     """An element is a section of a page in the document."""
 
     def __init__(
@@ -303,9 +351,11 @@ class Element(ABC):
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
+        detection_origin: Optional[str] = None,
     ):
         if metadata is None:
             metadata = ElementMetadata()
+            metadata.detection_origin = detection_origin
         self.id: Union[str, uuid.UUID, NoID, UUID] = element_id
         coordinates_metadata = (
             None
@@ -320,6 +370,7 @@ class Element(ABC):
         self.metadata = metadata.merge(
             ElementMetadata(coordinates=coordinates_metadata),
         )
+        self.metadata.detection_origin = detection_origin
 
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())
@@ -365,6 +416,7 @@ class CheckBox(Element):
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
         metadata: Optional[ElementMetadata] = None,
+        detection_origin: Optional[str] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         super().__init__(
@@ -372,6 +424,7 @@ class CheckBox(Element):
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=metadata,
+            detection_origin=detection_origin,
         )
         self.checked: bool = checked
 
@@ -388,14 +441,6 @@ class CheckBox(Element):
         return out
 
 
-class Formula(Element):
-    "An element containing formulas in a document"
-
-    category = "Formula"
-
-    pass
-
-
 class Text(Element):
     """Base element for capturing free text from within document."""
 
@@ -408,6 +453,7 @@ class Text(Element):
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
+        detection_origin: Optional[str] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
@@ -424,6 +470,7 @@ class Text(Element):
             metadata=metadata,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
+            detection_origin=detection_origin,
         )
 
     def __str__(self):
@@ -456,6 +503,14 @@ class Text(Element):
             raise ValueError("Cleaner produced a non-string output.")
 
         self.text = cleaned_text
+
+
+class Formula(Text):
+    "An element containing formulas in a document"
+
+    category = "Formula"
+
+    pass
 
 
 class CompositeElement(Text):
@@ -536,6 +591,14 @@ class Table(Text):
     pass
 
 
+class TableChunk(Table):
+    """An element for capturing chunks of tables."""
+
+    category = "Table"
+
+    pass
+
+
 class Header(Text):
     """An element for capturing document headers."""
 
@@ -575,7 +638,8 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "Page-footer": Footer,
     "Page-header": Header,  # Title?
     "Picture": Image,
-    "Section-header": Header,
+    # this mapping favors ensures yolox produces backward compatible categories
+    "Section-header": Title,
     "Headline": Title,
     "Subheadline": Title,
     "Abstract": NarrativeText,

@@ -1,7 +1,7 @@
 Unstructured API
 #################
 
-Try our hosted API! It's freely available to use with any of the file types listed above. This is the easiest way to get started, all you need is an API key. You can get your API key `here <https://unstructured.io/#get-api-key>`_ now and start using it today.
+Try our hosted API! It's freely available to use with any of the file types listed above. This is the easiest way to get started, all you need is an API key. You can get your API key `here <https://unstructured.io/#get-api-key>`__ now and start using it today.
 
 Now you can get started with this quick example:
 
@@ -45,9 +45,9 @@ Now you can get started with this quick example:
 
         json_response = response.json()
 
-Below, you will find a more comprehensive overview of the API capabilities. For detailed information on request and response schemas, refer to the `API documentation <https://api.unstructured.io/general/docs#/>`_.
+Below, you will find a more comprehensive overview of the API capabilities. For detailed information on request and response schemas, refer to the `API documentation <https://api.unstructured.io/general/docs#/>`__.
 
-NOTE: You can also host the API locally. For more information check the `Using the API Locally`_ section.
+NOTE: You can also host the API locally. For more information check the `Using the API Locally <https://github.com/Unstructured-IO/unstructured-api>`__ section.
 
 
 Supported File Types
@@ -108,7 +108,7 @@ When elements are extracted from PDFs or images, it may be useful to get their b
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
       
       file_data['files'].close()
 
@@ -155,7 +155,7 @@ You can specify the encoding to use to decode the text input. If no value is pro
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -204,7 +204,7 @@ You can also specify what languages to use for OCR with the ``ocr_languages`` kw
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -250,7 +250,7 @@ By default the result will be in ``json``, but it can be set to ``text/csv`` to 
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -296,7 +296,7 @@ Pass the `include_page_breaks` parameter to `true` to include `PageBreak` elemen
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -345,7 +345,7 @@ On the other hand, ``hi_res`` is the better choice for PDFs that may have text w
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -398,7 +398,7 @@ To use the ``hi_res`` strategy with **Chipper** model, pass the argument for ``h
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -451,7 +451,7 @@ To extract the table structure from PDF files using the ``hi_res`` strategy, ens
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -499,7 +499,7 @@ We also provide support for enabling and disabling table extraction for file typ
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 
@@ -545,7 +545,7 @@ When processing XML documents, set the ``xml_keep_tags`` parameter to ``true`` t
       file_path = "/Path/To/File"
       file_data = {'files': open(file_path, 'rb')}
 
-      response = requests.post(url, headers=headers, files=files, data=data)
+      response = requests.post(url, headers=headers, files=file_data, data=data)
 
       file_data['files'].close()
 

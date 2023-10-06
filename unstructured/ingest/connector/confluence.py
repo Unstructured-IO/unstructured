@@ -2,6 +2,7 @@ import math
 import os
 import typing as t
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 
 from unstructured.ingest.error import SourceConnectionError
@@ -11,6 +12,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -36,7 +38,7 @@ class SimpleConfluenceConfig(BaseConnectorConfig):
 
 
 @dataclass
-class ConfluenceFileMeta:
+class ConfluenceDocumentMeta:
     """Metadata specifying:
     id for the confluence space that the document locates in,
     and the id of document that is being reached to.
@@ -82,7 +84,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     """
 
     connector_config: SimpleConfluenceConfig
-    file_meta: ConfluenceFileMeta
+    document_meta: ConfluenceDocumentMeta
     registry_name: str = "confluence"
 
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
@@ -92,33 +94,85 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return None
         return (
             Path(self.read_config.download_dir)
-            / self.file_meta.space_id
-            / f"{self.file_meta.document_id}.html"
+            / self.document_meta.space_id
+            / f"{self.document_meta.document_id}.html"
         ).resolve()
 
     @property
     def _output_filename(self):
         """Create output file path based on output directory, space id and document id."""
-        output_file = f"{self.file_meta.document_id}.json"
-        return Path(self.partition_config.output_dir) / self.file_meta.space_id / output_file
+        output_file = f"{self.document_meta.document_id}.json"
+        return Path(self.partition_config.output_dir) / self.document_meta.space_id / output_file
+
+    @property
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
+        return {
+            "url": self.connector_config.url,
+            "page_id": self.document_meta.document_id,
+        }
+
+    @requires_dependencies(["atlassian"], extras="Confluence")
+    def _get_page(self):
+        from atlassian import Confluence
+        from atlassian.errors import ApiError
+
+        try:
+            confluence = Confluence(
+                self.connector_config.url,
+                username=self.connector_config.user_email,
+                password=self.connector_config.api_token,
+            )
+            result = confluence.get_page_by_id(
+                page_id=self.document_meta.document_id,
+                expand="history.lastUpdated,version,body.view",
+            )
+        except ApiError as e:
+            logger.error(e)
+            return None
+        return result
+
+    def update_source_metadata(self, **kwargs):
+        """Fetches file metadata from the current page."""
+        page = kwargs.get("page", self._get_page())
+        if page is None:
+            self.source_metadata = SourceMetadata(
+                exists=False,
+            )
+            return
+        document_history = page["history"]
+        date_created = datetime.strptime(
+            document_history["createdDate"],
+            "%Y-%m-%dT%H:%M:%S.%fZ",
+        ).isoformat()
+        if last_updated := document_history.get("lastUpdated", {}).get("when", ""):
+            date_modified = datetime.strptime(
+                last_updated,
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            ).isoformat()
+        else:
+            date_modified = date_created
+        version = page["version"]["number"]
+        self.source_metadata = SourceMetadata(
+            date_created=date_created,
+            date_modified=date_modified,
+            version=version,
+            source_url=page["_links"].get("self", None),
+            exists=True,
+        )
 
     @SourceConnectionError.wrap
     @requires_dependencies(["atlassian"], extras="confluence")
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        from atlassian import Confluence
-
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         # TODO: instead of having a separate connection object for each doc,
         # have a separate connection object for each process
-        confluence = Confluence(
-            self.connector_config.url,
-            username=self.connector_config.user_email,
-            password=self.connector_config.api_token,
-        )
 
-        result = confluence.get_page_by_id(page_id=self.file_meta.document_id, expand="body.view")
+        result = self._get_page()
+        self.update_source_metadata(page=result)
+        if result is None:
+            raise ValueError(f"Failed to retrieve page with ID {self.document_meta.document_id}")
         self.document = result["body"]["view"]["value"]
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
@@ -201,7 +255,7 @@ class ConfluenceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
                 connector_config=self.connector_config,
                 partition_config=self.partition_config,
                 read_config=self.read_config,
-                file_meta=ConfluenceFileMeta(space_id, doc_id),
+                document_meta=ConfluenceDocumentMeta(space_id, doc_id),
             )
             for space_id, doc_id in doc_ids
         ]

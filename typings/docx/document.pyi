@@ -1,6 +1,6 @@
 # pyright: reportPrivateUsage=false
 
-from typing import BinaryIO, Optional, Union
+from typing import IO, Union
 
 from docx.blkcntnr import BlockItemContainer
 from docx.oxml.document import CT_Document
@@ -11,11 +11,11 @@ from docx.text.paragraph import Paragraph
 
 class Document(BlockItemContainer):
     def add_paragraph(
-        self, text: str = "", style: Optional[Union[_ParagraphStyle, str]] = None
+        self, text: str = "", style: Union[_ParagraphStyle, str, None] = None,
     ) -> Paragraph: ...
     @property
     def element(self) -> CT_Document: ...
-    def save(self, path_or_stream: Union[str, BinaryIO]) -> None: ...
+    def save(self, path_or_stream: Union[str, IO[bytes]]) -> None: ...
     @property
     def sections(self) -> Sections: ...
     @property

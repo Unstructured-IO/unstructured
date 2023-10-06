@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import pandas as pd
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
@@ -10,12 +12,14 @@ from es_cluster_config import (
 )
 
 print("Connecting to the Elasticsearch cluster.")
-es = Elasticsearch(CLUSTER_URL)
+es = Elasticsearch(CLUSTER_URL, request_timeout=30)
 print(es.info())
 df = pd.read_csv(DATA_PATH).dropna().reset_index()
 
 print("Creating an Elasticsearch index for testing elasticsearch ingest.")
-es.indices.create(index=INDEX_NAME, mappings=MAPPINGS)
+response = es.options(max_retries=5).indices.create(index=INDEX_NAME, mappings=MAPPINGS)
+if response.meta.status != 200:
+    raise RuntimeError("failed to create index")
 
 print("Loading data into the index.")
 bulk_data = []
