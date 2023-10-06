@@ -1,4 +1,4 @@
-## 0.10.20-dev4
+## 0.10.20-dev5
 
 ### Enhancements
 
@@ -20,7 +20,8 @@ setting UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true is needed.
 * **Fixes badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
 should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class
 allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
-
+* **bumps unstructured-inference==0.7.1** This version of `unstructured-inference` download yolox already quantized from Hugging Face, avoiding some issues with newer versions
+of onnxruntime. Also, onnxruntime is pinned to <1.16 where this issues were found.
 ## 0.10.19
 
 ### Enhancements
