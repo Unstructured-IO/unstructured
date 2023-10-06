@@ -143,6 +143,9 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     def source_metadata(self) -> SourceMetadata:
         if self._source_metadata is None:
             self.update_source_metadata()
+        # Provide guarantee that the field was set by update_source_metadata()
+        if self._source_metadata is None:
+            raise ValueError("failed to set source metadata")
         return self._source_metadata
 
     @source_metadata.setter
