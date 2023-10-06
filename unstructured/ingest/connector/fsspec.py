@@ -22,7 +22,6 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
     SourceMetadata,
-    WriteConfig,
 )
 from unstructured.ingest.logger import logger
 from unstructured.staging.base import convert_to_dict
@@ -226,16 +225,8 @@ class FsspecSourceConnector(
 
 
 @dataclass
-class FsspecWriteConfig(WriteConfig):
-    filename: t.Optional[str] = None
-    indent: int = 4
-    encoding: str = "utf-8"
-
-
-@dataclass
 class FsspecDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleFsspecConfig
-    write_config: FsspecWriteConfig
 
     def initialize(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
@@ -252,21 +243,13 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         )
 
         logger.info(f"Writing content using filesystem: {type(fs).__name__}")
-        s3_folder = self.connector_config.path
 
-        s3_output_path = (
-            str(PurePath(s3_folder, self.write_config.filename))
-            if self.write_config.filename
-            else s3_folder
-        )
+        s3_path = self.connector_config.path
         element_dict = convert_to_dict(elements)
-        with tempfile.NamedTemporaryFile(
-            mode="w+",
-            encoding=self.write_config.encoding,
-        ) as tmp_file:
-            json.dump(element_dict, tmp_file, indent=self.write_config.indent)
-            logger.debug(f"Uploading {tmp_file.name} -> {s3_output_path}")
-            fs.put_file(lpath=tmp_file.name, rpath=s3_output_path)
+        with tempfile.NamedTemporaryFile(mode="w+") as tmp_file:
+            json.dump(element_dict, tmp_file)
+            logger.debug(f"Uploading {tmp_file.name} -> {s3_path}")
+            fs.put_file(lpath=tmp_file.name, rpath=s3_path)
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         from fsspec import AbstractFileSystem, get_filesystem_class

@@ -1,7 +1,7 @@
 import typing as t
 from pathlib import Path
 
-from unstructured.ingest.connector.s3 import S3WriteConfig
+from unstructured.ingest.interfaces import WriteConfig
 from unstructured.utils import requires_dependencies
 
 
@@ -10,9 +10,6 @@ def s3_writer(
     remote_url: str,
     anonymous: bool,
     endpoint_url: t.Optional[str] = None,
-    filename: t.Optional[str] = None,
-    indent: int = 4,
-    encoding: str = "utf-8",
     verbose: bool = False,
     **kwargs,
 ):
@@ -26,11 +23,7 @@ def s3_writer(
         access_kwargs["endpoint_url"] = endpoint_url
 
     return S3DestinationConnector(
-        write_config=S3WriteConfig(
-            filename=filename,
-            encoding=encoding,
-            indent=indent,
-        ),
+        write_config=WriteConfig(),
         connector_config=SimpleS3Config(
             remote_url=remote_url,
             access_kwargs=access_kwargs,
