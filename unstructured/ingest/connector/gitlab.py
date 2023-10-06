@@ -72,7 +72,7 @@ class GitLabSourceConnector(GitSourceConnector):
         return [
             GitLabIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 path=element["path"],
             )

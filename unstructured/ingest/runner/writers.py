@@ -60,7 +60,6 @@ def delta_table_writer(
     table_uri: t.Union[str, Path],
     write_column: str,
     mode: t.Literal["error", "append", "overwrite", "ignore"] = "error",
-    verbose: bool = False,
     **kwargs,
 ):
     from unstructured.ingest.connector.delta_table import (
@@ -73,7 +72,6 @@ def delta_table_writer(
         write_config=DeltaTableWriteConfig(write_column=write_column, mode=mode),
         connector_config=SimpleDeltaTableConfig(
             table_uri=table_uri,
-            verbose=verbose,
         ),
     )
 
