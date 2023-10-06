@@ -27,7 +27,7 @@ fsspec==2023.9.1
     #   -c requirements/constraints.in
     #   huggingface-hub
     #   torch
-huggingface-hub==0.16.4
+huggingface-hub==0.17.3
     # via
     #   tokenizers
     #   transformers
@@ -90,7 +90,7 @@ six==1.16.0
     #   sacremoses
 sympy==1.12
     # via torch
-tokenizers==0.14.0
+tokenizers==0.14.1
     # via transformers
 torch==2.1.0
     # via -r requirements/huggingface.in
