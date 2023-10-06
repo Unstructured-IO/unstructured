@@ -92,7 +92,7 @@ def partition_msg(
             text=text,
             languages=[""],
             include_metadata=False,  # metadata is overwritten later, so no need to compute it here
-            detection_origin="msg"
+            detection_origin="msg",
         )
     else:
         elements = partition_text(
