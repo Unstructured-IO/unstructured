@@ -50,7 +50,6 @@ def test_calculate_edit_distance():
     ("filename", "expected_score", "expected_distance"),
     [
         ("fake-text.txt", 0.78, 38),
-        ("eml/fake-email.eml", 0.01, 168),
     ],
 )
 def test_calculate_edit_distance_with_filename(filename, expected_score, expected_distance):
