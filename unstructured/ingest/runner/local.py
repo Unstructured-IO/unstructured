@@ -5,7 +5,7 @@ from unstructured.ingest.logger import ingest_log_streaming_init
 from unstructured.ingest.runner.base_runner import Runner
 
 
-class Local(Runner):
+class LocalRunner(Runner):
     def run(
         self,
         input_path: str,

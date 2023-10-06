@@ -7,7 +7,7 @@ from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
 
-class Gitlab(Runner):
+class GitlabRunner(Runner):
     def run(
         self,
         url: str,

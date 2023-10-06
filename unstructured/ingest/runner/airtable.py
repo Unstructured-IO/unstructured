@@ -7,7 +7,7 @@ from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
 
-class Airtable(Runner):
+class AirtableRunner(Runner):
     def run(
         self,
         personal_access_token: str,

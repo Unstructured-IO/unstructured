@@ -15,7 +15,7 @@ from unstructured.ingest.cli.interfaces import (
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import Outlook
+from unstructured.ingest.runner import OutlookRunner
 
 
 @dataclass
@@ -83,7 +83,7 @@ def outlook_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         configs = extract_configs(options, validate=([OutlookCliConfig]))
-        runner = Outlook(
+        runner = OutlookRunner(
             **configs,  # type: ignore
         )
         runner.run(**options)

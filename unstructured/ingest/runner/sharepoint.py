@@ -6,7 +6,7 @@ from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
 
-class SharePoint(Runner):
+class SharePointRunner(Runner):
     def run(
         self,
         site: str,

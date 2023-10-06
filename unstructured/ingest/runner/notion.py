@@ -8,7 +8,7 @@ from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
 
-class Notion(Runner):
+class NotionRunner(Runner):
     def run(
         self,
         api_key: str,

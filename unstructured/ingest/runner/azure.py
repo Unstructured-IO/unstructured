@@ -6,7 +6,7 @@ from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_remote_url
 
 
-class Azure(Runner):
+class AzureRunner(Runner):
     def run(
         self,
         account_name: t.Optional[str],

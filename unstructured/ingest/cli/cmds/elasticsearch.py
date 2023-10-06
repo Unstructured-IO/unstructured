@@ -13,7 +13,7 @@ from unstructured.ingest.cli.interfaces import (
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import ElasticSearch
+from unstructured.ingest.runner import ElasticSearchRunner
 
 
 @dataclass
@@ -62,7 +62,7 @@ def elasticsearch_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         configs = extract_configs(options, validate=[ElasticsearchCliConfig])
-        runner = ElasticSearch(
+        runner = ElasticSearchRunner(
             **configs,  # type: ignore
         )
         runner.run(**options)

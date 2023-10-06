@@ -7,7 +7,7 @@ from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
 
-class Biomed(Runner):
+class BiomedRunner(Runner):
     def run(
         self,
         max_retries: int,

@@ -1,85 +1,85 @@
 import typing as t
 
-from .airtable import Airtable
-from .azure import Azure
-from .biomed import Biomed
-from .box import Box
-from .confluence import Confluence
-from .delta_table import DeltaTable
-from .discord import Discord
-from .dropbox import Dropbox
-from .elasticsearch import ElasticSearch
-from .fsspec import Fsspec
-from .gcs import GCS
-from .github import Github
-from .gitlab import Gitlab
-from .google_drive import GoogleDrive
-from .jira import Jira
-from .local import Local
-from .notion import Notion
-from .onedrive import OneDrive
-from .outlook import Outlook
-from .reddit import Reddit
-from .s3 import S3
-from .salesforce import Salesforce
-from .sharepoint import SharePoint
-from .slack import Slack
-from .wikipedia import Wikipedia
+from .airtable import AirtableRunner
+from .azure import AzureRunner
+from .biomed import BiomedRunner
+from .box import BoxRunner
+from .confluence import ConfluenceRunner
+from .delta_table import DeltaTableRunner
+from .discord import DiscordRunner
+from .dropbox import DropboxRunner
+from .elasticsearch import ElasticSearchRunner
+from .fsspec import FsspecRunner
+from .gcs import GCSRunner
+from .github import GithubRunner
+from .gitlab import GitlabRunner
+from .google_drive import GoogleDriveRunner
+from .jira import JiraRunner
+from .local import LocalRunner
+from .notion import NotionRunner
+from .onedrive import OneDriveRunner
+from .outlook import OutlookRunner
+from .reddit import RedditRunner
+from .s3 import S3Runner
+from .salesforce import SalesforceRunner
+from .sharepoint import SharePointRunner
+from .slack import SlackRunner
+from .wikipedia import WikipediaRunner
 
 runner_map: t.Dict[str, t.Callable] = {
-    "airtable": Airtable,
-    "azure": Azure,
-    "biomed": Biomed,
-    "box": Box,
-    "confluence": Confluence,
-    "delta_table": DeltaTable,
-    "discord": Discord,
-    "dropbox": Dropbox,
-    "elasticsearch": ElasticSearch,
-    "fsspec": Fsspec,
-    "gcs": GCS,
-    "github": Github,
-    "gitlab": Gitlab,
-    "gdrive": GoogleDrive,
-    "google_drive": GoogleDrive,
-    "jira": Jira,
-    "local": Local,
-    "notion": Notion,
-    "onedrive": OneDrive,
-    "outlook": Outlook,
-    "reddit": Reddit,
-    "s3": S3,
-    "salesforce": Salesforce,
-    "sharepoint": SharePoint,
-    "slack": Slack,
-    "wikipedia": Wikipedia,
+    "airtable": AirtableRunner,
+    "azure": AzureRunner,
+    "biomed": BiomedRunner,
+    "box": BoxRunner,
+    "confluence": ConfluenceRunner,
+    "delta_table": DeltaTableRunner,
+    "discord": DiscordRunner,
+    "dropbox": DropboxRunner,
+    "elasticsearch": ElasticSearchRunner,
+    "fsspec": FsspecRunner,
+    "gcs": GCSRunner,
+    "github": GithubRunner,
+    "gitlab": GitlabRunner,
+    "gdrive": GoogleDriveRunner,
+    "google_drive": GoogleDriveRunner,
+    "jira": JiraRunner,
+    "local": LocalRunner,
+    "notion": NotionRunner,
+    "onedrive": OneDriveRunner,
+    "outlook": OutlookRunner,
+    "reddit": RedditRunner,
+    "s3": S3Runner,
+    "salesforce": SalesforceRunner,
+    "sharepoint": SharePointRunner,
+    "slack": SlackRunner,
+    "wikipedia": WikipediaRunner,
 }
 
 __all__ = [
-    "Airtable",
-    "Azure",
-    "Biomed",
-    "Box",
-    "Confluence",
-    "DeltaTable",
-    "Discord",
-    "Dropbox",
-    "ElasticSearch",
-    "Fsspec",
-    "GCS",
-    "GoogleDrive",
-    "Github",
-    "Gitlab",
-    "Jira",
-    "Local",
-    "Notion",
-    "OneDrive",
-    "Outlook",
-    "Reddit",
-    "S3",
-    "Salesforce",
-    "SharePoint",
-    "Slack",
-    "Wikipedia",
+    "AirtableRunner",
+    "AzureRunner",
+    "BiomedRunner",
+    "BoxRunner",
+    "ConfluenceRunner",
+    "DeltaTableRunner",
+    "DiscordRunner",
+    "DropboxRunner",
+    "ElasticSearchRunner",
+    "FsspecRunner",
+    "GCSRunner",
+    "GoogleDriveRunner",
+    "GithubRunner",
+    "GitlabRunner",
+    "JiraRunner",
+    "LocalRunner",
+    "NotionRunner",
+    "OneDriveRunner",
+    "OutlookRunner",
+    "RedditRunner",
+    "S3Runner",
+    "SalesforceRunner",
+    "SharePointRunner",
+    "SlackRunner",
+    "WikipediaRunner",
     "runner_map",
 ]

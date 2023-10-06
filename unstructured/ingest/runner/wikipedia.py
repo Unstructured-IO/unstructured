@@ -6,7 +6,7 @@ from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
 
-class Wikipedia(Runner):
+class WikipediaRunner(Runner):
     def run(
         self,
         page_title: str,

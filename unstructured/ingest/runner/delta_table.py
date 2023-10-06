@@ -8,7 +8,7 @@ from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
 
-class DeltaTable(Runner):
+class DeltaTableRunner(Runner):
     def run(
         self,
         table_uri: t.Union[str, Path],

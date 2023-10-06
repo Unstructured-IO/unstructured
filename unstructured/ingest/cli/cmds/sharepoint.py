@@ -14,7 +14,7 @@ from unstructured.ingest.cli.interfaces import (
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import SharePoint
+from unstructured.ingest.runner import SharePointRunner
 
 
 @dataclass
@@ -81,7 +81,7 @@ def sharepoint_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         configs = extract_configs(data=options, validate=[SharepointCliConfig])
-        sharepoint_runner = SharePoint(
+        sharepoint_runner = SharePointRunner(
             **configs,  # type: ignore
         )
         sharepoint_runner.run(**options)

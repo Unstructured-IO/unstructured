@@ -7,7 +7,7 @@ from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
 
-class Salesforce(Runner):
+class SalesforceRunner(Runner):
     def run(
         self,
         username: str,

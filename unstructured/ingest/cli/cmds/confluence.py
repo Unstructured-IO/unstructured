@@ -14,7 +14,7 @@ from unstructured.ingest.cli.interfaces import (
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import Confluence
+from unstructured.ingest.runner import ConfluenceRunner
 
 
 @dataclass
@@ -86,7 +86,7 @@ def confluence_source(ctx: click.Context, **options):
     log_options(options, verbose=verbose)
     try:
         configs = extract_configs(options, validate=[ConfluenceCliConfig])
-        runner = Confluence(
+        runner = ConfluenceRunner(
             **configs,  # type: ignore
         )
         runner.run(**options)

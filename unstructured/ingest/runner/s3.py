@@ -6,7 +6,7 @@ from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_remote_url
 
 
-class S3(Runner):
+class S3Runner(Runner):
     def run(
         self,
         remote_url: str,
