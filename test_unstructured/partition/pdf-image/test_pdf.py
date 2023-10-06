@@ -212,9 +212,9 @@ def test_partition_pdf_with_auto_strategy(
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[7].text == title
-    assert elements[7].metadata.filename == "layout-parser-paper-fast.pdf"
-    assert elements[7].metadata.file_directory == "example-docs"
+    assert elements[6].text == title
+    assert elements[6].metadata.filename == "layout-parser-paper-fast.pdf"
+    assert elements[6].metadata.file_directory == "example-docs"
 
 
 def test_partition_pdf_with_page_breaks(
@@ -531,7 +531,7 @@ def test_partition_pdf_with_auto_strategy_exclude_metadata(
         include_metadata=False,
     )
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[7].text == title
+    assert elements[6].text == title
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
 
