@@ -28,13 +28,13 @@ from unstructured.documents.elements import (
     process_metadata,
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.partition.common import (
     convert_ms_office_table_to_text,
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
+from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
     is_email_address,
     is_possible_narrative_text,

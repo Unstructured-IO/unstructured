@@ -12,13 +12,13 @@ from unstructured.file_utils.filetype import (
     FileType,
     add_metadata_with_filetype,
 )
-from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.partition.common import (
     document_to_element_list,
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
+from unstructured.partition.lang import apply_lang_metadata
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout

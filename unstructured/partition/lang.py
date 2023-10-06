@@ -1,9 +1,10 @@
 import re
-from typing import List
+from typing import Iterable, Iterator, List
 
 import iso639
 from langdetect import DetectorFactory, detect_langs, lang_detect_exception
 
+from unstructured.documents.elements import Element
 from unstructured.logger import logger
 
 # pytesseract.get_languages(config="") only shows user installed language packs,
@@ -281,3 +282,43 @@ def detect_languages(
                 doc_languages.append(lang)
 
     return doc_languages
+
+
+def apply_lang_metadata(
+    elements: Iterable[Element],
+    languages: List[str],
+    detect_language_per_element: bool = False,
+) -> Iterator[Element]:
+    """Detect and apply metadata.languages to each element in `elements`."""
+    # -- Note this function has a stream interface, but reads the full `elements` stream into memory
+    # -- before emitting the first updated element as output.
+
+    # Skip language detection for partitioners that use other partitioners.
+    # For example, partition_msg relies on partition_html and partition_text, but the metadata
+    # gets overwritten after elements have been returned by _html and _text,
+    # so `languages` would be detected twice.
+    if languages == [""]:
+        yield from elements
+        return
+
+    if not isinstance(elements, List):
+        elements = list(elements)
+
+    full_text = " ".join(e.text for e in elements if hasattr(e, "text"))
+    detected_languages = detect_languages(text=full_text, languages=languages)
+    if (
+        detected_languages is not None
+        and len(languages) == 1
+        and detect_language_per_element is False
+    ):
+        # -- apply detected language to each metadata --
+        for e in elements:
+            e.metadata.languages = detected_languages
+            yield e
+    else:
+        for e in elements:
+            if hasattr(e, "text"):
+                e.metadata.languages = detect_languages(e.text)
+                yield e
+            else:
+                yield e

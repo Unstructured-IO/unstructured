@@ -15,12 +15,12 @@ from unstructured.file_utils.encoding import (
     read_txt_file,
     validate_encoding,
 )
-from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.logger import logger
 from unstructured.partition.common import (
     convert_to_bytes,
     exactly_one,
 )
+from unstructured.partition.lang import apply_lang_metadata
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final

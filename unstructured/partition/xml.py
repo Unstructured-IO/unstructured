@@ -14,13 +14,13 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
+from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text import element_from_text
 
 DETECTION_ORIGIN: str = "xml"

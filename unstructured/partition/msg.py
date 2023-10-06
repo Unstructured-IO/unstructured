@@ -7,11 +7,11 @@ import msg_parser
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, ElementMetadata, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.email import convert_to_iso_8601
 from unstructured.partition.html import partition_html
+from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text import partition_text
 
 

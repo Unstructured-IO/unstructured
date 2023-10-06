@@ -7,13 +7,13 @@ from ebooklib import epub
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.file_utils.metadata import apply_lang_metadata
 from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
 from unstructured.partition.html import partition_html
+from unstructured.partition.lang import apply_lang_metadata
 
 DETECTION_ORIGIN: str = "epub"
 
