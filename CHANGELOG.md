@@ -1,7 +1,8 @@
-## 0.10.20-dev5
+## 0.10.20-dev6
 
 ### Enhancements
 
+* **Refactor OCR code** The OCR code for entire page is moved from unstructured-inference to unstructured. On top of continuing support for OCR language parameter, we also support two OCR processing modes, "entire_page" or "individual_blocks".
 * **Align to top left when shrinking bounding boxes for `xy-cut` sorting:** Update `shrink_bbox()` to keep top left rather than center.
 * **Add visualization script to annotate elements** This script is often used to analyze/visualize elements with coordinates (e.g. partition_pdf()).
 * **Adds data source properties to the Jira connector** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
