@@ -23,7 +23,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition.doc import partition_doc
-from unstructured.partition.docx import _DocxPartitioner, convert_and_partition_docx, partition_docx
+from unstructured.partition.docx import _DocxPartitioner, partition_docx
 from unstructured.partition.json import partition_json
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
@@ -544,19 +544,3 @@ def test_invalid_languages_arg_raises_TypeError():
     with pytest.raises(TypeError):
         filename = "example-docs/handbook-1p.docx"
         partition_docx(filename=filename, languages="eng")
-
-
-def test_convert_and_partition_docx():
-    filename = os.path.join("example-docs/fake.odt")
-    with open(filename, "rb") as f:
-        elements = convert_and_partition_docx(source_format="odt", file=f)
-    assert elements == [
-        Title("Lorem ipsum dolor sit amet."),
-        Table(
-            text="\nHeader row  Mon    Wed"
-            "   Fri\nColor       Blue"
-            "   Red   Green\nTime        1pm"
-            "    2pm   3pm\nLeader      "
-            "Sarah  Mark  Ryan",
-        ),
-    ]
