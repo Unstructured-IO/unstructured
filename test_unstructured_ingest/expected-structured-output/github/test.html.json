@@ -5,6 +5,9 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Downloadify Example"
@@ -15,6 +18,9 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "http://github.com/dcneiner/Downloadify"
@@ -31,6 +37,9 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Filename"
@@ -41,6 +50,9 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "File Contents"
@@ -51,6 +63,9 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Whatever you put in this text box will be downloaded and saved in the file. If you leave it blank, no file will be downloaded"
@@ -61,6 +76,9 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "You must have Flash 10 installed to download this file."
@@ -71,6 +89,9 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Downloadify Invoke Script For This Page"
@@ -81,6 +102,9 @@
     "metadata": {
       "data_source": {},
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Downloadify.create('downloadify',{\n  filename: function(){\n    return document.getElementById('filename').value;\n  },\n  data: function(){ \n    return document.getElementById('data').value;\n  },\n  onComplete: function(){ \n    alert('Your File Has Been Saved!'); \n  },\n  onCancel: function(){ \n    alert('You have cancelled the saving of this file.');\n  },\n  onError: function(){ \n    alert('You must put something in the File Contents or there will be nothing to save!'); \n  },\n  swf: 'media/downloadify.swf',\n  downloadImage: 'images/download.png',\n  width: 100,\n  height: 30,\n  transparent: true,\n  append: false\n});"

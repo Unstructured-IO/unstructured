@@ -16,6 +16,9 @@
       "filename": "497eba8c81c801c6.eml",
       "last_modified": "2023-07-24T18:25:52-07:00",
       "filetype": "message/rfc822",
+      "languages": [
+        "eng"
+      ],
       "sent_from": [
         "Ryan Nikolaidis <ryan@unstructured.io>"
       ],
