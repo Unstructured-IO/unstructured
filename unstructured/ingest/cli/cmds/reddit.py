@@ -60,12 +60,13 @@ class RedditCliConfig(BaseConfig, CliMixin):
                 ["--num-posts"],
                 required=True,
                 type=click.IntRange(0),
-                help="If set, return posts using this query. Otherwise, use hot posts.",
+                help="If set, limits the number of posts to pull in.",
             ),
             click.Option(
                 ["--user-agent"],
                 required=True,
                 type=str,
+                help="user agent request header to use when calling Reddit API",
             ),
         ]
         cmd.params.extend(options)

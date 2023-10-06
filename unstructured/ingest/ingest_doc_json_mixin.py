@@ -7,6 +7,12 @@ from dataclasses_json.core import _ExtendedEncoder
 
 
 class IngestDocJsonMixin(DataClassJsonMixin):
+    """
+    Inherently, DataClassJsonMixin does not add in any @property fields to the json/dict
+    created from the dataclass. This explicitly sets properties to look for on the IngestDoc
+    class when creating the json/dict for serialization purposes.
+    """
+
     properties_to_serialize = [
         "base_filename",
         "date_created",

@@ -27,6 +27,11 @@ def extract_configs(
     data: dict,
     validate: t.Optional[t.List[t.Type[BaseConfig]]] = None,
 ) -> t.Dict[str, BaseConfig]:
+    """
+    Extract all common configs used across CLI command and validate that any
+    command-specific configs have all their needed information from the Click
+    options that are passed in during invocation.
+    """
     validate = validate if validate else []
     res = {
         "read_config": CliReadConfig.from_dict(data),

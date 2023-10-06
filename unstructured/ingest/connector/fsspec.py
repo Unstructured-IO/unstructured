@@ -91,7 +91,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     remote_file_path: str
 
     def __post_init__(self):
-        self.update_source_metadata_metadata()
+        self.update_source_metadata()
 
     def _tmp_download_file(self):
         download_dir = self.read_config.download_dir if self.read_config.download_dir else ""
@@ -125,7 +125,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
 
     @requires_dependencies(["fsspec"])
-    def update_source_metadata_metadata(self):
+    def update_source_metadata(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(

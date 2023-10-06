@@ -87,7 +87,7 @@ class CliProcessorConfig(ProcessorConfig, CliMixin):
                 ["--num-processes"],
                 default=2,
                 show_default=True,
-                help="Number of parallel processes to process docs in.",
+                help="Number of parallel processes with which to process docs",
             ),
             click.Option(["-v", "--verbose"], is_flag=True, default=False),
         ]
@@ -129,7 +129,7 @@ class CliReadConfig(ReadConfig, CliMixin):
                 ["--max-docs"],
                 default=None,
                 type=int,
-                help="If specified, process at most specified number of documents.",
+                help="If specified, process at most the specified number of documents.",
             ),
         ]
         cmd.params.extend(options)

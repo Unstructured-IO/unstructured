@@ -21,6 +21,10 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 @dataclass
 class PipelineContext(ProcessorConfig):
+    """
+    Data that gets shared across each pipeline node
+    """
+
     def __post_init__(self):
         self._ingest_docs_map: t.Optional[DictProxy] = None
 
@@ -37,6 +41,10 @@ class PipelineContext(ProcessorConfig):
 
 @dataclass
 class PipelineNode(DataClassJsonMixin, ABC):
+    """
+    Class that encapsulates logic to run during a single pipeline step
+    """
+
     pipeline_context: PipelineContext
 
     def __call__(self, iterable: t.Optional[t.Iterable[t.Any]] = None) -> t.Any:
@@ -79,6 +87,10 @@ class PipelineNode(DataClassJsonMixin, ABC):
 
 @dataclass
 class DocFactoryNode(PipelineNode):
+    """
+    Encapsulated logic to generate a list of ingest docs
+    """
+
     source_doc_connector: BaseSourceConnector
 
     def initialize(self):
@@ -155,6 +167,10 @@ class ReformatNode(PipelineNode, ABC):
 
 @dataclass
 class WriteNode(PipelineNode):
+    """
+    Encapsulated logic to write the final result to a downstream data connection
+    """
+
     dest_doc_connector: BaseDestinationConnector
 
     @abstractmethod
@@ -175,6 +191,10 @@ class WriteNode(PipelineNode):
 
 @dataclass
 class CopyNode(PipelineNode):
+    """
+    Encapsulated logic to copy the final result of the pipeline to the designated output location.
+    """
+
     def initialize(self):
         logger.info("Running copy node to move content to desired output location")
         super().initialize()
