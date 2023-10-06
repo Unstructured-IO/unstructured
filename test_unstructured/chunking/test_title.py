@@ -206,6 +206,31 @@ def test_add_chunking_strategy_on_partition_html():
     assert chunk_elements == chunks
 
 
+def test_add_chunking_strategy_respects_max_characters():
+    filename = "example-docs/example-10k-1p.html"
+    chunk_elements = partition_html(
+        filename,
+        chunking_strategy="by_title",
+        combine_text_under_n_chars=0,
+        new_after_n_chars=50,
+        max_characters=100,
+    )
+    elements = partition_html(filename)
+    chunks = chunk_by_title(
+        elements,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=50,
+        max_characters=100,
+    )
+
+    for chunk in chunks:
+        assert len(chunk.text) <= 100
+    for chunk_element in chunk_elements:
+        assert len(chunk_element.text) <= 100
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
 def test_add_chunking_strategy_on_partition_html_respects_multipage():
     filename = "example-docs/example-10k-1p.html"
     partitioned_elements_multipage_false_combine_chars_0 = partition_html(

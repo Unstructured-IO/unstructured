@@ -50,23 +50,6 @@ def chunk_table_element(
     return chunks
 
 
-def _validate_char_len_input(
-    combine_text_under_n_chars: int, new_after_n_chars: int, max_characters: int
-) -> bool:
-    if max_characters <= 0:
-        return False
-    elif combine_text_under_n_chars < 0:
-        return False
-    elif new_after_n_chars < 0:
-        return False
-    elif combine_text_under_n_chars > new_after_n_chars:
-        return False
-    elif combine_text_under_n_chars > max_characters:
-        return False
-
-    return True
-
-
 def chunk_by_title(
     elements: List[Element],
     multipage_sections: bool = True,
@@ -91,12 +74,20 @@ def chunk_by_title(
     new_after_n_chars
         Cuts off new sections once they reach a length of n characters (soft max)
     max_characters
-        Chunks elements text and text_as_html (if present) into chunks of length n characters (hard max)
+        Chunks elements text and text_as_html (if present) into chunks of length
+        n characters (hard max)
     """
 
-    if not _validate_char_len_input(combine_text_under_n_chars, new_after_n_chars, max_characters):
+    if not (
+        max_characters > 0
+        and combine_text_under_n_chars >= 0
+        and new_after_n_chars >= 0
+        and combine_text_under_n_chars <= new_after_n_chars
+        and combine_text_under_n_chars <= max_characters
+    ):
         raise ValueError(
-            "Invalid values for combine_text_under_n_chars, new_after_n_chars, and/or max_characters.",
+            "Invalid values for combine_text_under_n_chars, "
+            "new_after_n_chars, and/or max_characters.",
         )
 
     chunked_elements: List[Element] = []
@@ -140,8 +131,30 @@ def chunk_by_title(
 
                     _value.extend(item for item in value if item not in _value)
                     setattr(metadata, attr, _value)
-        metadata.max_characters = max_characters
-        chunked_elements.append(CompositeElement(text=text, metadata=metadata))
+
+        #
+        # metadata.max_characters = max_characters
+        # chunked_elements.append(CompositeElement(text=text, metadata=metadata))
+
+        # Check if text exceeds max_characters
+        if len(text) > max_characters:
+            # Chunk the text from the end to the beginning
+            while len(text) > 0:
+                if len(text) <= max_characters:
+                    # If the remaining text is shorter than max_characters
+                    # create a chunk from the beginning
+                    chunk_text = text
+                    text = ""
+                else:
+                    # Otherwise, create a chunk from the end
+                    chunk_text = text[-max_characters:]
+                    text = text[:-max_characters]
+
+                # Prepend the chunk to the beginning of the list
+                chunked_elements.insert(0, CompositeElement(text=chunk_text, metadata=metadata))
+        else:
+            # If it doesn't exceed, create a single CompositeElement
+            chunked_elements.append(CompositeElement(text=text, metadata=metadata))
 
     return chunked_elements
 
@@ -167,12 +180,12 @@ def _split_elements_by_title_and_table(
             )
 
         section_length = sum([len(str(element)) for element in section])
-        new_section = (
-            (isinstance(element, Title) and section_length > combine_text_under_n_chars)
-            or (not metadata_matches or section_length > new_after_n_chars)
-            or (section_length > max_characters)
-        )
 
+        new_section = (
+            (section_length + len(str(element)) > max_characters)
+            or (isinstance(element, Title) and section_length > combine_text_under_n_chars)
+            or (not metadata_matches or section_length > new_after_n_chars)
+        )
         if not isinstance(element, Text) or isinstance(element, Table):
             sections.append(section)
             sections.append([element])
@@ -182,6 +195,7 @@ def _split_elements_by_title_and_table(
                 sections.append(section)
             section = [element]
         else:
+            # if existing section plus new section will go above max, start new section
             section.append(element)
 
     if len(section) > 0:
