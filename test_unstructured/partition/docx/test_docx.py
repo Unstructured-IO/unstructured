@@ -534,6 +534,12 @@ def test_partition_docx_detects_multiple_elements_in_other_language():
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
 
 
+def test_partition_docx_element_metadata_accepts_languages_arg():
+    filename = "example-docs/handbook-1p.docx"
+    elements = partition_docx(filename=filename, languages=["deu"])
+    assert elements[0].metadata.languages == ["deu"]
+
+
 def test_invalid_languages_arg_raises_TypeError():
     with pytest.raises(TypeError):
         filename = "example-docs/handbook-1p.docx"
