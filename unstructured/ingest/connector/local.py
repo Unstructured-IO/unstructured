@@ -62,7 +62,7 @@ class LocalIngestDoc(BaseIngestDoc):
             if input_path.is_file()
             else f"{Path(self.path).relative_to(input_path)}.json"
         )
-        return Path(self.partition_config.output_dir) / basename
+        return Path(self.processor_config.output_dir) / basename
 
 
 @dataclass
@@ -105,7 +105,7 @@ class LocalSourceConnector(BaseSourceConnector):
         return [
             self.ingest_doc_cls(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 path=file,
             )

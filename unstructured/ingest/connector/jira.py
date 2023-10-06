@@ -293,7 +293,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
         output_file = f"{self.file_meta.issue_id}.json"
 
         return (
-            Path(self.partition_config.output_dir) / self.grouping_folder_name / output_file
+            Path(self.processor_config.output_dir) / self.grouping_folder_name / output_file
         ).resolve()
 
     @property
@@ -436,7 +436,7 @@ class JiraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         return [
             JiraIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 file_meta=JiraFileMeta(
                     issue_id=issue_id,
