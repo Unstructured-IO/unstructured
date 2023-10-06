@@ -310,12 +310,8 @@ def test_bytes_string_to_string():
             {"the": 4, "cat": 2, "loved": 2, "dog": 1, "but": 1, "cow": 1},
         ),
         (
-            "i n t r o d u c t i o n",
-            {"i": 2, "n": 2, "t": 2, "o": 2, "r": 1, "d": 1, "u": 1, "c": 1},
-        ),
-        (
             "Hello my name is H a r p e r, what's your name?",
-            {"hello": 1, "my": 1, "name": 2, "is": 1, "h a r p e r": 1, "whats": 1, "your": 1},
+            {"hello": 1, "my": 1, "name": 2, "is": 1, "whats": 1, "your": 1},
         ),
     ],
 )

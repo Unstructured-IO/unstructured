@@ -474,14 +474,5 @@ def bag_of_words(text: str) -> dict:
                 bow[words[i]] = 1
             i += 1
         else:
-            j = i
-            while j < len(words) and len(words[j]) == 1:
-                incorrect_word += words[j]
-                j += 1
-            if len(incorrect_word) == 1:
-                bow[incorrect_word] = 1
-            else:
-                incorrect_word = " ".join(list(incorrect_word))
-                bow[incorrect_word] = 1
-            i = j
+            i += 1
     return bow
