@@ -89,9 +89,6 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     registry_name: str = "salesforce"
     _record: OrderedDict = field(default_factory=lambda: OrderedDict())
 
-    def __post_init__(self):
-        self.update_source_metadata()
-
     @property
     def record(self):
         if not self._record:
@@ -190,6 +187,8 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         logger.debug(f"Writing file {self.record_id} - PID: {os.getpid()}")
 
         record = self.record
+
+        self.update_source_metadata()
 
         try:
             if self.record_type == "EmailMessage":

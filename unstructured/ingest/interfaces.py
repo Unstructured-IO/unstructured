@@ -136,21 +136,27 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     processor_config: ProcessorConfig
     read_config: ReadConfig
     connector_config: BaseConnectorConfig
-    source_metadata: t.Optional[SourceMetadata] = field(init=False, default=None)
+    _source_metadata: t.Optional[SourceMetadata] = field(init=False, default=None)
     _date_processed: t.Optional[str] = field(init=False, default=None)
+
+    @property
+    def source_metadata(self) -> SourceMetadata:
+        if self._source_metadata is None:
+            self.update_source_metadata()
+        return self._source_metadata
+
+    @source_metadata.setter
+    def source_metadata(self, value: SourceMetadata):
+        self._source_metadata = value
 
     @property
     def date_created(self) -> t.Optional[str]:
         """The date the document was created on the source system."""
-        if self.source_metadata is None:
-            self.update_source_metadata()
         return self.source_metadata.date_created  # type: ignore
 
     @property
     def date_modified(self) -> t.Optional[str]:
         """The date the document was last modified on the source system."""
-        if self.source_metadata is None:
-            self.update_source_metadata()
         return self.source_metadata.date_modified  # type: ignore
 
     @property
@@ -162,8 +168,6 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     @property
     def exists(self) -> t.Optional[bool]:
         """Whether the document exists on the remote source."""
-        if self.source_metadata is None:
-            self.update_source_metadata()
         return self.source_metadata.exists  # type: ignore
 
     @property
@@ -194,8 +198,6 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     @property
     def source_url(self) -> t.Optional[str]:
         """The url of the source document."""
-        if self.source_metadata is None:
-            self.update_source_metadata()
         return self.source_metadata.source_url  # type: ignore
 
     @property
@@ -203,8 +205,6 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
         """The version of the source document, this could be the last modified date, an
         explicit version number, or anything else that can be used to uniquely identify
         the version of the document."""
-        if self.source_metadata is None:
-            self.update_source_metadata()
         return self.source_metadata.version  # type: ignore
 
     @abstractmethod
@@ -233,7 +233,7 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     # TODO: set as @abstractmethod and pass or raise NotImplementedError
     def update_source_metadata(self, **kwargs) -> None:
         """Sets the SourceMetadata and the  properties for the doc"""
-        self.source_metadata = SourceMetadata()
+        self._source_metadata = SourceMetadata()
 
     # NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
     # in addition to or instead of get_file()
