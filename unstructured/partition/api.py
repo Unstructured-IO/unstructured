@@ -25,6 +25,7 @@ def partition_via_api(
 ) -> List[Element]:
     """Partitions a document using the Unstructured REST API. This is equivalent to
     running the document through partition.
+    NOTE(newelh): Since we now have the SDK do we need this function?
 
     See https://api.unstructured.io/general/docs for the hosted API documentation or
     https://github.com/Unstructured-IO/unstructured-api for instructions on how to run

@@ -31,6 +31,29 @@ def partition_epub(
     chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
+    return _partition_epub(
+        filename=filename,
+        file=file,
+        include_page_breaks=include_page_breaks,
+        include_metadata=include_metadata,
+        metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
+        encoding=encoding,
+        chunking_strategy=chunking_strategy,
+        **kwargs,
+    )
+
+def _partition_epub(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    include_page_breaks: bool = False,
+    include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
+    encoding: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
+    **kwargs,
+) -> List[Element]:
     """Partitions an EPUB document. The document is first converted to HTML and then
     partitioned using partition_html. Book `section` info is included in metadata, but
     does not perfectly align with sections in document because of ebooklib constraints.

@@ -28,6 +28,29 @@ def partition_doc(
     chunking_strategy: Optional[str] = None,
     **kwargs: Any,
 ) -> List[Element]:
+    return _partition_doc(
+        filename=filename,
+        file=file,
+        include_page_breaks=include_page_breaks,
+        include_metadata=include_metadata,
+        metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
+        libre_office_filter=libre_office_filter,
+        chunking_strategy=chunking_strategy,
+        **kwargs,
+    )
+
+def _partition_doc(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    include_page_breaks: bool = True,
+    include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
+    libre_office_filter: Optional[str] = "MS Word 2007 XML",
+    chunking_strategy: Optional[str] = None,
+    **kwargs: Any,
+) -> List[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
 
     Parameters

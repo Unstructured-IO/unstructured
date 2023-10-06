@@ -262,6 +262,41 @@ def partition_email(
     chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
+    return _partition_email(
+        filename=filename,
+        file=file,
+        text=text,
+        content_source=content_source,
+        encoding=encoding,
+        include_headers=include_headers,
+        max_partition=max_partition,
+        include_metadata=include_metadata,
+        metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
+        process_attachments=process_attachments,
+        attachment_partitioner=attachment_partitioner,
+        min_partition=min_partition,
+        chunking_strategy=chunking_strategy,
+        **kwargs,
+    )
+
+def _partition_email(
+    filename: Optional[str] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
+    text: Optional[str] = None,
+    content_source: str = "text/html",
+    encoding: Optional[str] = None,
+    include_headers: bool = False,
+    max_partition: Optional[int] = 1500,
+    include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
+    process_attachments: bool = False,
+    attachment_partitioner: Optional[Callable] = None,
+    min_partition: Optional[int] = 0,
+    chunking_strategy: Optional[str] = None,
+    **kwargs,
+) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
     Parameters
     ----------

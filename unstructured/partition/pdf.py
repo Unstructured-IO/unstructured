@@ -100,6 +100,41 @@ def partition_pdf(
     links: Sequence[Link] = [],
     **kwargs,
 ) -> List[Element]:
+    return _partition_pdf(
+        filename=filename,
+        file=file,
+        include_page_breaks=include_page_breaks,
+        strategy=strategy,
+        infer_table_structure=infer_table_structure,
+        ocr_languages=ocr_languages,
+        languages=languages,
+        max_partition=max_partition,
+        min_partition=min_partition,
+        include_metadata=include_metadata,
+        metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
+        chunking_strategy=chunking_strategy,
+        links=links,
+        **kwargs,
+    )
+
+def _partition_pdf(
+    filename: str = "",
+    file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
+    include_page_breaks: bool = False,
+    strategy: str = "auto",
+    infer_table_structure: bool = False,
+    ocr_languages: Optional[str] = None,  # changing to optional for deprecation
+    languages: List[str] = ["eng"],
+    max_partition: Optional[int] = 1500,
+    min_partition: Optional[int] = 0,
+    include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
+    links: Sequence[Link] = [],
+    **kwargs,
+) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
     Parameters
     ----------

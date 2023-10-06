@@ -22,6 +22,25 @@ def partition_odt(
     chunking_strategy: Optional[str] = None,
     **kwargs: Any,
 ) -> List[Element]:
+    return _partition_odt(
+        filename=filename,
+        file=file,
+        include_metadata=include_metadata,
+        metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
+        chunking_strategy=chunking_strategy,
+        **kwargs,
+    )
+
+def _partition_odt(
+    filename: Optional[str] = None,
+    file: Optional[BinaryIO] = None,
+    include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
+    **kwargs: Any,
+) -> List[Element]:
     """Partitions Open Office Documents in .odt format into its document elements.
 
     Parameters

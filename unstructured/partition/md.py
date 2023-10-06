@@ -40,6 +40,34 @@ def partition_md(
     chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
+    return _partition_md(
+        filename=filename,
+        file=file,
+        text=text,
+        url=url,
+        include_page_breaks=include_page_breaks,
+        include_metadata=include_metadata,
+        parser=parser,
+        metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
+        chunking_strategy=chunking_strategy,
+        **kwargs,
+    )
+
+
+def _partition_md(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    text: Optional[str] = None,
+    url: Optional[str] = None,
+    include_page_breaks: bool = False,
+    include_metadata: bool = True,
+    parser: VALID_PARSERS = None,
+    metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
+    **kwargs,
+) -> List[Element]:
     """Partitions a markdown file into its constituent elements
 
     Parameters

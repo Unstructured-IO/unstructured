@@ -27,6 +27,27 @@ def partition_ppt(
     chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
+    return _partition_ppt(
+        filename=filename,
+        file=file,
+        include_page_breaks=include_page_breaks,
+        include_metadata=include_metadata,
+        metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
+        chunking_strategy=chunking_strategy,
+        **kwargs,
+    )
+
+def _partition_ppt(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    include_page_breaks: bool = False,
+    include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
+    **kwargs,
+) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.
 
     Parameters

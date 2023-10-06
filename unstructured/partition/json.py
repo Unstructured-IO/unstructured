@@ -26,6 +26,29 @@ def partition_json(
     metadata_last_modified: Optional[str] = None,
     **kwargs: Any,
 ) -> List[Element]:
+    """NOTE(newel) This partitioner is extremely misleading because it doesn't partition a json, 
+    
+    it loads a json file list of elements into a list of elements.
+    This is not a general purpose json partitioner."""
+    return _partition_json(
+        filename=filename,
+        file=file,
+        text=text,
+        include_metadata=include_metadata,
+        metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
+        **kwargs,
+    )
+
+def _partition_json(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    text: Optional[str] = None,
+    include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
+    **kwargs: Any,
+) -> List[Element]:
     """Partitions an .json document into its constituent elements.
 
     Parameters

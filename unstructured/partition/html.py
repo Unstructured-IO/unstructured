@@ -46,6 +46,47 @@ def partition_html(
     detection_origin: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
+    return _partition_html(
+        filename=filename,
+        file=file,
+        text=text,
+        url=url,
+        encoding=encoding,
+        include_page_breaks=include_page_breaks,
+        include_metadata=include_metadata,
+        headers=headers,
+        ssl_verify=ssl_verify,
+        parser=parser,
+        source_format=source_format,
+        html_assemble_articles=html_assemble_articles,
+        metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
+        skip_headers_and_footers=skip_headers_and_footers,
+        chunking_strategy=chunking_strategy,
+        detection_origin=detection_origin,
+        **kwargs,
+    )
+
+def _partition_html(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    text: Optional[str] = None,
+    url: Optional[str] = None,
+    encoding: Optional[str] = None,
+    include_page_breaks: bool = False,
+    include_metadata: bool = True,
+    headers: Dict[str, str] = {},
+    ssl_verify: bool = True,
+    parser: VALID_PARSERS = None,
+    source_format: Optional[str] = None,
+    html_assemble_articles: bool = False,
+    metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
+    skip_headers_and_footers: bool = False,
+    chunking_strategy: Optional[str] = None,
+    detection_origin: Optional[str] = None,
+    **kwargs,
+) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
 
     Parameters

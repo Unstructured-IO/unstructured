@@ -24,6 +24,31 @@ def partition_image(
     chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
+    return _partition_image(
+        filename=filename,
+        file=file,
+        include_page_breaks=include_page_breaks,
+        infer_table_structure=infer_table_structure,
+        ocr_languages=ocr_languages,
+        languages=languages,
+        strategy=strategy,
+        metadata_last_modified=metadata_last_modified,
+        chunking_strategy=chunking_strategy,
+        **kwargs,
+    )
+
+def _partition_image(
+    filename: str = "",
+    file: Optional[bytes] = None,
+    include_page_breaks: bool = False,
+    infer_table_structure: bool = False,
+    ocr_languages: Optional[str] = None,
+    languages: List[str] = ["eng"],
+    strategy: str = "hi_res",
+    metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
+    **kwargs,
+) -> List[Element]:
     """Parses an image into a list of interpreted elements.
 
     Parameters

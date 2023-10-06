@@ -175,6 +175,40 @@ def partition_text(
     detection_origin: Optional[str] = "text",
     **kwargs,
 ) -> List[Element]:
+    return _partition_text(
+        filename=filename,
+        file=file,
+        text=text,
+        encoding=encoding,
+        paragraph_grouper=paragraph_grouper,
+        metadata_filename=metadata_filename,
+        include_metadata=include_metadata,
+        languages=languages,
+        max_partition=max_partition,
+        min_partition=min_partition,
+        metadata_last_modified=metadata_last_modified,
+        chunking_strategy=chunking_strategy,
+        detection_origin=detection_origin,
+        **kwargs,
+    )
+
+
+def _partition_text(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    text: Optional[str] = None,
+    encoding: Optional[str] = None,
+    paragraph_grouper: Optional[Callable[[str], str]] = None,
+    metadata_filename: Optional[str] = None,
+    include_metadata: bool = True,
+    languages: List[str] = ["auto"],
+    max_partition: Optional[int] = 1500,
+    min_partition: Optional[int] = 0,
+    metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
+    detection_origin: Optional[str] = "text",
+    **kwargs,
+) -> List[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.
     If paragraphs are below "min_partition" or above "max_partition" boundaries,
     they are combined or split.

@@ -19,6 +19,25 @@ def partition_org(
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
 ) -> List[Element]:
+    return _partition_org(
+        filename=filename,
+        file=file,
+        include_page_breaks=include_page_breaks,
+        include_metadata=include_metadata,
+        metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
+        chunking_strategy=chunking_strategy,
+    )
+
+def _partition_org(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    include_page_breaks: bool = False,
+    include_metadata: bool = True,
+    metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
+) -> List[Element]:
     """Partitions an org document. The document is first converted to HTML and then
     partitioned using partition_html.
 

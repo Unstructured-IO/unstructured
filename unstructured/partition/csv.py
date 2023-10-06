@@ -33,6 +33,23 @@ def partition_csv(
     include_metadata: bool = True,
     **kwargs,
 ) -> List[Element]:
+    return _partition_csv(
+        filename=filename,
+        file=file,
+        metadata_filename=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
+        include_metadata=include_metadata,
+        **kwargs,
+    )
+
+def _partition_csv(
+    filename: Optional[str] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
+    metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
+    include_metadata: bool = True,
+    **kwargs,
+) -> List[Element]:
     """Partitions Microsoft Excel Documents in .csv format into its document elements.
 
     Parameters
