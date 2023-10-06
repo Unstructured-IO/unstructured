@@ -245,7 +245,7 @@ pip-tools==7.3.0
     # via -r requirements/dev.in
 pkgutil-resolve-name==1.3.10
     # via jsonschema
-platformdirs==3.10.0
+platformdirs==3.11.0
     # via
     #   -c requirements/constraints.in
     #   -c requirements/test.txt

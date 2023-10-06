@@ -94,7 +94,9 @@ omegaconf==2.3.0
 onnx==1.14.1
     # via unstructured-inference
 onnxruntime==1.15.1
-    # via unstructured-inference
+    # via
+    #   -c requirements/constraints.in
+    #   unstructured-inference
 opencv-python==4.8.0.76
     # via
     #   -c requirements/constraints.in

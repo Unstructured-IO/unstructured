@@ -3,10 +3,7 @@ import io
 from dataclasses import dataclass, field
 from typing import IO, Any, Dict, Final, Optional
 
-import docx
-import openpyxl
-from PIL import Image
-from PIL.ExifTags import TAGS
+from unstructured.utils import requires_dependencies
 
 # NOTE(robison) - ref: https://www.media.mit.edu/pia/Research/deepview/exif.html
 EXIF_DATETIME_FMT: Final[str] = "%Y:%m:%d %H:%M:%S"
@@ -39,11 +36,14 @@ class Metadata:
         return self.__dict__
 
 
+@requires_dependencies("docx")
 def get_docx_metadata(
     filename: str = "",
     file: Optional[IO[bytes]] = None,
 ) -> Metadata:
     """Extracts document metadata from a Microsoft .docx document."""
+    import docx
+
     if filename:
         doc = docx.Document(filename)
     elif file:
@@ -72,11 +72,14 @@ def get_docx_metadata(
     return metadata
 
 
+@requires_dependencies("openpyxl")
 def get_xlsx_metadata(
     filename: str = "",
     file: Optional[IO[bytes]] = None,
 ) -> Metadata:
     """Extracts document metadata from a Microsoft .xlsx document."""
+    import openpyxl
+
     if filename:
         workbook = openpyxl.load_workbook(filename)
     elif file:
@@ -106,11 +109,15 @@ def get_xlsx_metadata(
     return metadata
 
 
+@requires_dependencies("PIL")
 def get_jpg_metadata(
     filename: str = "",
     file: Optional[IO[bytes]] = None,
 ) -> Metadata:
     """Extracts metadata from a JPG image, including EXIF metadata."""
+    from PIL import Image
+    from PIL.ExifTags import TAGS
+
     if filename:
         image = Image.open(filename)
     elif file:
