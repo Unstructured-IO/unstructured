@@ -1,24 +1,5 @@
 [
   {
-    "type": "UncategorizedText",
-    "element_id": "e16bce609163ec96985ae522ca81502a",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "‘A."
-  },
-  {
     "type": "Title",
     "element_id": "92405c82f76df8b2cbbc6047bd10e0ff",
     "metadata": {
@@ -342,6 +323,25 @@
     "text": "Generally, applicants must complete Section In addition, complete the appropriate sections (B:1 through H) for which a change is desired."
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "e16bce609163ec96985ae522ca81502a",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "‘A."
+  },
+  {
     "type": "NarrativeText",
     "element_id": "bf2a070cb9d03d056e70b26bebf1ef79",
     "metadata": {
@@ -513,25 +513,6 @@
     "text": "You should normally receive an acknowledgment of receipt of your application within 30 days. If you do not hear from IRS within 30 days of submitting your completed Form 3115, you may inquire as to the receipt of your application by writing to: Control Clerk, CC:C:4, Internal Revenue Service, Room 5040, 1111 Constitution Avenue, NW, Washington, DC 20224."
   },
   {
-    "type": "Title",
-    "element_id": "ea325d761f98c6b73320e442b67f2a35",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "an"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "e3e2ccf4f0d1524d4f5ce42e8f2d1efa",
     "metadata": {
@@ -549,6 +530,25 @@
       "page_number": 1
     },
     "text": "See section 5.03 of Rev. Proc. 84-74 for filing early application,"
+  },
+  {
+    "type": "Title",
+    "element_id": "ea325d761f98c6b73320e442b67f2a35",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "an"
   },
   {
     "type": "NarrativeText",
@@ -646,25 +646,6 @@
     "text": "Individuals. —An individual should enter his or her social security number in this block. If the application is made on behalf of a husband and wife who file their income tax return jointly, enter the social security numbers of both."
   },
   {
-    "type": "Title",
-    "element_id": "ea325d761f98c6b73320e442b67f2a35",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "an"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "e72d9c8a779a47796c4362b7885aa80b",
     "metadata": {
@@ -682,6 +663,25 @@
       "page_number": 1
     },
     "text": "Others.-—The employer identification number applicant other than an individual should be entered in this block,"
+  },
+  {
+    "type": "Title",
+    "element_id": "ea325d761f98c6b73320e442b67f2a35",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "an"
   },
   {
     "type": "Title",
@@ -855,25 +855,6 @@
     "text": "Preparer other than partner, officer, etc.—The signature of the individual preparing the application should appear in the space provided on page 6."
   },
   {
-    "type": "Title",
-    "element_id": "ca978112ca1bbdcafac231b39a23dc4d",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "a"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "8200352b4e91b1be4f14e9248d50380a",
     "metadata": {
@@ -891,6 +872,25 @@
       "page_number": 1
     },
     "text": "Ifthe individual or firm is also authorized to represent the applicant before the IRS, receive copy of the requested ruling, or perform any other act(s), the power of attorney must reflect such authorization(s)."
+  },
+  {
+    "type": "Title",
+    "element_id": "ca978112ca1bbdcafac231b39a23dc4d",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "a"
   },
   {
     "type": "Title",

@@ -35,7 +35,7 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def _output_filename(self):
-        return Path(self.partition_config.output_dir) / f"{self.path}.json"
+        return Path(self.processor_config.output_dir) / f"{self.path}.json"
 
     def _create_full_tmp_dir_path(self):
         """includes directories in in the gitlab repository"""

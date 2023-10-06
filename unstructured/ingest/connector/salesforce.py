@@ -10,7 +10,7 @@ https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_de
 import os
 import typing as t
 from collections import OrderedDict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from email.utils import formatdate
 from pathlib import Path
@@ -87,6 +87,13 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     record_type: str
     record_id: str
     registry_name: str = "salesforce"
+    _record: OrderedDict = field(default_factory=lambda: OrderedDict())
+
+    @property
+    def record(self):
+        if not self._record:
+            self._record = self.get_record()
+        return self._record
 
     def _tmp_download_file(self) -> Path:
         if self.record_type == "EmailMessage":
@@ -102,7 +109,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self) -> Path:
         record_file = self.record_id + ".json"
-        return Path(self.partition_config.output_dir) / self.record_type / record_file
+        return Path(self.processor_config.output_dir) / self.record_type / record_file
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
@@ -142,7 +149,23 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return dedent(eml)
 
-    def update_source_metadata(self, record_json: t.Dict[str, t.Any]) -> None:  # type: ignore
+    def get_record(self) -> OrderedDict:
+        client = self.connector_config.get_client()
+
+        # Get record from Salesforce based on id
+        response = client.query_all(
+            f"select FIELDS(STANDARD) from {self.record_type} where Id='{self.record_id}'",
+        )
+        logger.debug(f"response from salesforce record request: {response}")
+        records = response["records"]
+        if not records:
+            raise ValueError(f"No record found with record id {self.record_id}: {response}")
+        record_json = records[0]
+        return record_json
+
+    def update_source_metadata(self) -> None:  # type: ignore
+        record_json = self.record
+
         date_format = "%Y-%m-%dT%H:%M:%S.000+0000"
         self.source_metadata = SourceMetadata(
             date_created=datetime.strptime(record_json["CreatedDate"], date_format).isoformat(),
@@ -163,14 +186,9 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._create_full_tmp_dir_path()
         logger.debug(f"Writing file {self.record_id} - PID: {os.getpid()}")
 
-        client = self.connector_config.get_client()
+        record = self.record
 
-        # Get record from Salesforce based on id
-        record = client.query_all(
-            f"select FIELDS(STANDARD) from {self.record_type} where Id='{self.record_id}'",
-        )["records"][0]
-
-        self.update_source_metadata(record)
+        self.update_source_metadata()
 
         try:
             if self.record_type == "EmailMessage":
@@ -225,7 +243,7 @@ class SalesforceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
                     ingest_docs.append(
                         SalesforceIngestDoc(
                             connector_config=self.connector_config,
-                            partition_config=self.partition_config,
+                            processor_config=self.processor_config,
                             read_config=self.read_config,
                             record_type=record_type,
                             record_id=record["Id"],
