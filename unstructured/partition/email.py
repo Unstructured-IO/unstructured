@@ -58,6 +58,7 @@ from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
 
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
+DETECTION_ORIGIN: str = "email"
 
 
 def _parse_received_data(data: str) -> List[Element]:
@@ -130,13 +131,15 @@ def build_email_metadata(
     if sent_to is not None:
         sent_to = [recipient.strip() for recipient in sent_to.split(",")]
 
-    return ElementMetadata(
+    element_metadata = ElementMetadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=header_dict.get("Subject"),
         last_modified=metadata_last_modified or email_date,
         filename=filename,
     )
+    element_metadata.detection_origin = DETECTION_ORIGIN
+    return element_metadata
 
 
 def convert_to_iso_8601(time: str) -> Optional[str]:
@@ -213,8 +216,7 @@ def find_embedded_image(
     image_raw_info = element.text[start:end]
     image_info = clean_extra_whitespace(image_raw_info.split(":")[1])
     element.text = element.text.replace("[image: " + image_info[:-1] + "]", "")
-
-    return Image(text=image_info[:-1]), element
+    return Image(text=image_info[:-1], detection_origin="email"), element
 
 
 def parse_email(
@@ -380,6 +382,7 @@ def partition_email(
             include_metadata=False,
             metadata_filename=metadata_filename,
             languages=[""],
+            detection_origin="email",
         )
         for element in elements:
             if isinstance(element, Text):
@@ -416,6 +419,7 @@ def partition_email(
             min_partition=min_partition,
             languages=[""],
             include_metadata=False,  # metadata is overwritten later, so no need to compute it here
+            detection_origin="email",
         )
 
     for idx, element in enumerate(elements):

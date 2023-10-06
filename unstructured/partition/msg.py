@@ -92,6 +92,7 @@ def partition_msg(
             text=text,
             languages=[""],
             include_metadata=False,  # metadata is overwritten later, so no need to compute it here
+            detection_origin="msg"
         )
     else:
         elements = partition_text(
@@ -100,6 +101,7 @@ def partition_msg(
             min_partition=min_partition,
             languages=[""],
             include_metadata=False,  # metadata is overwritten later, so no need to compute it here
+            detection_origin="msg",
         )
 
     metadata = build_msg_metadata(
@@ -161,7 +163,7 @@ def build_msg_metadata(
     if sent_to is not None:
         sent_to = [str(recipient) for recipient in sent_to]
 
-    return ElementMetadata(
+    element_metadata = ElementMetadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=getattr(msg_obj, "subject", None),
@@ -169,6 +171,8 @@ def build_msg_metadata(
         filename=filename,
         languages=languages,
     )
+    element_metadata.detection_origin = "msg"
+    return element_metadata
 
 
 def extract_msg_attachment_info(

@@ -7,6 +7,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import ListItem, NarrativeText, Title
 from unstructured.partition.json import partition_json
 from unstructured.partition.ppt import partition_ppt
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -28,6 +29,8 @@ def test_partition_ppt_from_filename():
     assert elements == EXPECTED_PPT_OUTPUT
     for element in elements:
         assert element.metadata.filename == "fake-power-point.ppt"
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {"pptx"}
 
 
 def test_partition_ppt_from_filename_with_metadata_filename():

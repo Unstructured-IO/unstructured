@@ -25,6 +25,7 @@ from unstructured.documents.elements import (
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import _DocxPartitioner, convert_and_partition_docx, partition_docx
 from unstructured.partition.json import partition_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 
@@ -107,6 +108,8 @@ def test_partition_docx_from_filename(
     assert elements[0].metadata.page_number is None
     for element in elements:
         assert element.metadata.filename == "mock_document.docx"
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {"docx"}
 
 
 def test_partition_docx_from_filename_with_metadata_filename(mock_document, tmpdir):

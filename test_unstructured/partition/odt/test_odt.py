@@ -7,6 +7,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Table, TableChunk, Title
 from unstructured.partition.json import partition_json
 from unstructured.partition.odt import partition_odt
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -28,6 +29,10 @@ def test_partition_odt_from_filename():
     ]
     for element in elements:
         assert element.metadata.filename == "fake.odt"
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {
+            "docx",
+        }  # this file is processed by docx backend
 
 
 def test_partition_odt_from_filename_with_metadata_filename():

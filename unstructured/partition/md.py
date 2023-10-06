@@ -21,6 +21,9 @@ def optional_decode(contents: Union[str, bytes]) -> str:
     return contents
 
 
+DETECTION_ORIGIN: str = "md"
+
+
 @process_metadata()
 @add_metadata_with_filetype(FileType.MD)
 @add_chunking_strategy()
@@ -108,4 +111,5 @@ def partition_md(
         metadata_last_modified=metadata_last_modified or last_modification_date,
         languages=languages,
         detect_language_per_element=detect_language_per_element,
+        detection_origin=DETECTION_ORIGIN,
     )

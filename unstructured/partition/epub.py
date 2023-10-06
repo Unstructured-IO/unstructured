@@ -15,6 +15,8 @@ from unstructured.partition.common import (
 )
 from unstructured.partition.html import partition_html
 
+DETECTION_ORIGIN: str = "epub"
+
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.EPUB)
@@ -105,6 +107,7 @@ def partition_epub(
             section=item_title,
             metadata_last_modified=metadata_last_modified or last_modification_date,
             source_format="epub",
+            detection_origin=DETECTION_ORIGIN,
             **kwargs,
         )
 

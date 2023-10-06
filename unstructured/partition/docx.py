@@ -75,7 +75,7 @@ from unstructured.utils import dependency_exists, lazyproperty, requires_depende
 if dependency_exists("pypandoc"):
     import pypandoc
 
-
+DETECTION_ORIGIN: str = "docx"
 BlockElement: TypeAlias = Union[CT_P, CT_Tbl]
 BlockItem: TypeAlias = Union[Paragraph, DocxTable]
 
@@ -342,7 +342,7 @@ class _DocxPartitioner:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
         self._page_counter += 1
         if self._include_page_breaks:
-            yield PageBreak("")
+            yield PageBreak("", detection_origin=DETECTION_ORIGIN)
 
     def _is_list_item(self, paragraph: Paragraph) -> bool:
         """True when `paragraph` can be identified as a list-item."""
@@ -371,23 +371,27 @@ class _DocxPartitioner:
         if self._is_list_item(paragraph):
             clean_text = clean_bullets(text).strip()
             if clean_text:
-                yield ListItem(text=clean_text, metadata=metadata)
+                yield ListItem(
+                    text=clean_text,
+                    metadata=metadata,
+                    detection_origin=DETECTION_ORIGIN,
+                )
             return
 
         # -- determine element-type from an explicit Word paragraph-style if possible --
         TextSubCls = self._style_based_element_type(paragraph)
         if TextSubCls:
-            yield TextSubCls(text=text, metadata=metadata)
+            yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             return
 
         # -- try to recognize the element type by parsing its text --
         TextSubCls = self._parse_paragraph_text_for_element_type(paragraph)
         if TextSubCls:
-            yield TextSubCls(text=text, metadata=metadata)
+            yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             return
 
         # -- if all that fails we give it the default `Text` element-type --
-        yield Text(text, metadata=metadata)
+        yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
 
     def _iter_maybe_paragraph_page_breaks(self, paragraph: Paragraph) -> Iterator[PageBreak]:
         """Generate a `PageBreak` document element for each page-break in `paragraph`.
@@ -445,6 +449,7 @@ class _DocxPartitioner:
                 return
             yield Footer(
                 text=text,
+                detection_origin=DETECTION_ORIGIN,
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
@@ -473,10 +478,11 @@ class _DocxPartitioner:
                 return
             yield Header(
                 text=text,
+                detection_origin=DETECTION_ORIGIN,
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
-                    category_depth=0,  # -- headers are always at the root level
+                    category_depth=0,  # -- headers are always at the root level}
                 ),
             )
 
@@ -535,6 +541,7 @@ class _DocxPartitioner:
 
         yield Table(
             text_table,
+            detection_origin=DETECTION_ORIGIN,
             metadata=ElementMetadata(
                 text_as_html=html_table,
                 filename=self._metadata_filename,
@@ -594,7 +601,7 @@ class _DocxPartitioner:
         """ElementMetadata object describing `paragraph`."""
         emphasized_text_contents, emphasized_text_tags = self._paragraph_emphasis(paragraph)
         category_depth = self._parse_category_depth_by_style(paragraph)
-        return ElementMetadata(
+        element_metadata = ElementMetadata(
             filename=self._metadata_filename,
             page_number=self._page_number,
             last_modified=self._last_modified,
@@ -602,6 +609,8 @@ class _DocxPartitioner:
             emphasized_text_tags=emphasized_text_tags or None,
             category_depth=category_depth,
         )
+        element_metadata.detection_origin = "docx"
+        return element_metadata
 
     def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
         """Attempt to differentiate the element-type by inspecting the raw text."""

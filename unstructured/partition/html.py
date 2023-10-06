@@ -46,6 +46,7 @@ def partition_html(
     chunking_strategy: Optional[str] = None,
     languages: List[str] = ["auto"],
     detect_language_per_element: bool = False,
+    detection_origin: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -143,6 +144,7 @@ def partition_html(
                 include_page_breaks=include_page_breaks,
                 last_modification_date=metadata_last_modified or last_modification_date,
                 source_format=source_format if source_format else None,
+                detection_origin=detection_origin,
                 **kwargs,
             ),
             languages=languages,
@@ -160,6 +162,7 @@ def convert_and_partition_html(
     metadata_last_modified: Optional[str] = None,
     languages: List[str] = ["auto"],
     detect_language_per_element: bool = False,
+    detection_origin: Optional[str] = None,
 ) -> List[Element]:
     """Converts a document to HTML and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -208,6 +211,7 @@ def convert_and_partition_html(
         metadata_last_modified=metadata_last_modified or last_modification_date,
         languages=languages,
         detect_language_per_element=detect_language_per_element,
+        detection_origin=detection_origin,
     )
 
 

@@ -20,6 +20,8 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 
+DETECTION_ORIGIN: str = "csv"
+
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.CSV)
@@ -79,7 +81,7 @@ def partition_csv(
         metadata = ElementMetadata()
 
     elements = apply_lang_metadata(
-        [Table(text=text, metadata=metadata)],
+        [Table(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN))],
         languages=languages,
     )
 

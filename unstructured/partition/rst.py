@@ -5,6 +5,8 @@ from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.html import convert_and_partition_html
 
+DETECTION_ORIGIN: str = "rst"
+
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.RST)
@@ -52,4 +54,5 @@ def partition_rst(
         metadata_last_modified=metadata_last_modified,
         languages=languages,
         detect_language_per_element=detect_language_per_element,
+        detection_origin=DETECTION_ORIGIN,
     )
