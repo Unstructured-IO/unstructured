@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import click
 
+from unstructured.ingest.cli.cmds.fsspec import FsspecCliWriteConfigs
 from unstructured.ingest.cli.common import (
     log_options,
 )
@@ -85,6 +86,9 @@ def s3_dest(ctx: click.Context, **options):
     log_options(parent_options, verbose=verbose)
     log_options(options, verbose=verbose)
     try:
+        configs = extract_configs(options, validate=[S3CliConfig])
+        # Validate
+        FsspecCliWriteConfigs.from_dict(configs)
         runner_cls = runner_map[source_cmd]
         configs = extract_configs(
             options,
@@ -110,6 +114,7 @@ def get_dest_cmd() -> click.Command:
     cmd = s3_dest
     S3CliConfig.add_cli_options(cmd)
     CliFilesStorageConfig.add_cli_options(cmd)
+    FsspecCliWriteConfigs.add_cli_options(cmd)
     return cmd
 
 

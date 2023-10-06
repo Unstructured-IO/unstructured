@@ -5,6 +5,7 @@ from unstructured.ingest.connector.fsspec import (
     FsspecDestinationConnector,
     FsspecIngestDoc,
     FsspecSourceConnector,
+    FsspecWriteConfig,
     SimpleFsspecConfig,
 )
 from unstructured.utils import requires_dependencies
@@ -35,5 +36,11 @@ class S3SourceConnector(FsspecSourceConnector):
 
 
 @dataclass
+class S3WriteConfig(FsspecWriteConfig):
+    pass
+
+
+@dataclass
 class S3DestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleS3Config
+    write_config: S3WriteConfig
