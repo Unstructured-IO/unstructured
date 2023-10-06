@@ -33,6 +33,8 @@ def partition_csv(
     metadata_last_modified: Optional[str] = None,
     include_metadata: bool = True,
     languages: List[str] = ["auto"],
+    # NOTE (jennings) partition_csv generates a single TableElement
+    # so detect_language_per_element is not included as a param
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .csv format into its document elements.
@@ -81,7 +83,7 @@ def partition_csv(
         metadata = ElementMetadata()
 
     elements = apply_lang_metadata(
-        [Table(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN))],
+        [Table(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)],
         languages=languages,
     )
 

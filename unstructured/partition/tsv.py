@@ -31,6 +31,8 @@ def partition_tsv(
     metadata_last_modified: Optional[str] = None,
     include_metadata: bool = True,
     languages: List[str] = ["auto"],
+    # NOTE (jennings) partition_tsv generates a single TableElement
+    # so detect_language_per_element is not included as a param
     **kwargs,
 ) -> List[Element]:
     """Partitions TSV files into document elements.
