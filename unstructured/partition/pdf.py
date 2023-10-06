@@ -1067,12 +1067,13 @@ def check_annotations_within_element(
     """
     annotations_within_element = []
     for annotation in annotation_list:
-        if annotation["page_number"] == page_number and (
-            calculate_intersection_area(element_bbox, annotation["bbox"])
-            / calculate_bbox_area(annotation["bbox"])
-            > threshold
-        ):
-            annotations_within_element.append(annotation)
+        if annotation["page_number"] == page_number:
+            annotation_bbox_size = calculate_bbox_area(annotation["bbox"])
+            if annotation_bbox_size and (
+                calculate_intersection_area(element_bbox, annotation["bbox"]) / annotation_bbox_size
+                > threshold
+            ):
+                annotations_within_element.append(annotation)
     return annotations_within_element
 
 
@@ -1157,7 +1158,10 @@ def map_bbox_and_index(words: List[dict], annot: dict):
         annot["text"] = ""
         annot["start_index"] = -1
         return annot
+    if np.array([word["bbox"][0] for word in words]) is None:
+        import pdb
 
+        pdb.set_trace()
     distance_from_bbox_start = np.sqrt(
         (annot["bbox"][0] - np.array([word["bbox"][0] for word in words])) ** 2
         + (annot["bbox"][1] - np.array([word["bbox"][1] for word in words])) ** 2,
