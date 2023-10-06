@@ -137,6 +137,8 @@ dmypy.json
 
 # ingest outputs
 /structured-output
+test_unstructured_ingest/workdir/
+test_unstructured_ingest/delta-table-dest/
 
 # suggested ingest mirror directory
 /mirror

@@ -164,7 +164,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                             download_filepath=(Path(self.read_config.download_dir) / local_path)
                             .resolve()
                             .as_posix(),
-                            output_filepath=(Path(self.partition_config.output_dir) / local_path)
+                            output_filepath=(Path(self.processor_config.output_dir) / local_path)
                             .resolve()
                             .as_posix(),
                         ),
@@ -246,7 +246,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                                 .resolve()
                                 .as_posix(),
                                 output_filepath=(
-                                    Path(self.partition_config.output_dir) / local_path
+                                    Path(self.processor_config.output_dir) / local_path
                                 )
                                 .resolve()
                                 .as_posix(),
@@ -269,7 +269,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                     download_filepath=(Path(self.read_config.download_dir) / local_path)
                     .resolve()
                     .as_posix(),
-                    output_filepath=(Path(self.partition_config.output_dir) / local_path)
+                    output_filepath=(Path(self.processor_config.output_dir) / local_path)
                     .resolve()
                     .as_posix(),
                 ),
@@ -278,7 +278,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             traverse(
                 Path(path),
                 Path(self.read_config.download_dir),
-                Path(self.partition_config.output_dir),
+                Path(self.processor_config.output_dir),
             )
 
         return files
@@ -290,9 +290,9 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         files = self._list_objects_api() if self.connector_config.is_api else self._list_objects()
         return [
             BiomedIngestDoc(
+                processor_config=self.processor_config,
                 connector_config=self.connector_config,
                 read_config=self.read_config,
-                partition_config=self.partition_config,
                 file_meta=file,
             )
             for file in files
