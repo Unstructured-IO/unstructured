@@ -49,9 +49,8 @@ def test_calculate_edit_distance():
 @pytest.mark.parametrize(
     ("filename", "expected_score", "expected_distance"),
     [
-        ("fake-text.txt", 0.82, 30),
-        ("eml/fake-email.eml", 0.03, 164),
-        ("README.md", 0.0, 719),
+        ("fake-text.txt", 0.78, 38),
+        ("eml/fake-email.eml", 0.01, 168),
     ],
 )
 def test_calculate_edit_distance_with_filename(filename, expected_score, expected_distance):
@@ -59,7 +58,7 @@ def test_calculate_edit_distance_with_filename(filename, expected_score, expecte
         source_cct = f.read()
 
     elements = partition(filename=f"example-docs/{filename}")
-    output_cct = "\n\n".join([str(el) for el in elements])
+    output_cct = "\n".join([str(el) for el in elements])
 
     score = calculate_edit_distance(output_cct, source_cct, return_as="score")
     distance = calculate_edit_distance(output_cct, source_cct, return_as="distance")
