@@ -132,10 +132,6 @@ def chunk_by_title(
                     _value.extend(item for item in value if item not in _value)
                     setattr(metadata, attr, _value)
 
-        #
-        # metadata.max_characters = max_characters
-        # chunked_elements.append(CompositeElement(text=text, metadata=metadata))
-
         # Check if text exceeds max_characters
         if len(text) > max_characters:
             # Chunk the text from the end to the beginning
