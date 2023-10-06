@@ -42,11 +42,29 @@ def chunk_table_element(
 
         if is_continuation:
             table_chunk.metadata.is_continuation = True
+            table_chunk.metadata.max_characters = max_characters
 
         chunks.append(table_chunk)
         is_continuation = True
 
     return chunks
+
+
+def _validate_char_len_input(
+    combine_text_under_n_chars: int, new_after_n_chars: int, max_characters: int
+) -> bool:
+    if max_characters <= 0:
+        return False
+    elif combine_text_under_n_chars < 0:
+        return False
+    elif new_after_n_chars < 0:
+        return False
+    elif combine_text_under_n_chars > new_after_n_chars:
+        return False
+    elif combine_text_under_n_chars > max_characters:
+        return False
+
+    return True
 
 
 def chunk_by_title(
@@ -73,23 +91,12 @@ def chunk_by_title(
     new_after_n_chars
         Cuts off new sections once they reach a length of n characters (soft max)
     max_characters
-        Chunks table elements text and text_as_html into chunks of length n characters (hard max)
-        TODO: (amanda) extend to other elements
+        Chunks elements text and text_as_html (if present) into chunks of length n characters (hard max)
     """
-    if (
-        combine_text_under_n_chars is not None
-        and new_after_n_chars is not None
-        and max_characters is not None
-        and (
-            combine_text_under_n_chars > new_after_n_chars
-            or combine_text_under_n_chars < 0
-            or new_after_n_chars < 0
-            or max_characters <= 0
-            or combine_text_under_n_chars > max_characters
-        )
-    ):
+
+    if not _validate_char_len_input(combine_text_under_n_chars, new_after_n_chars, max_characters):
         raise ValueError(
-            "Invalid values for combine_text_under_n_chars and/or max_characters.",
+            "Invalid values for combine_text_under_n_chars, new_after_n_chars, and/or max_characters.",
         )
 
     chunked_elements: List[Element] = []
@@ -98,6 +105,7 @@ def chunk_by_title(
         multipage_sections=multipage_sections,
         combine_text_under_n_chars=combine_text_under_n_chars,
         new_after_n_chars=new_after_n_chars,
+        max_characters=max_characters,
     )
     for section in sections:
         if not section:
@@ -132,7 +140,7 @@ def chunk_by_title(
 
                     _value.extend(item for item in value if item not in _value)
                     setattr(metadata, attr, _value)
-
+        metadata.max_characters = max_characters
         chunked_elements.append(CompositeElement(text=text, metadata=metadata))
 
     return chunked_elements
@@ -143,6 +151,7 @@ def _split_elements_by_title_and_table(
     multipage_sections: bool = True,
     combine_text_under_n_chars: int = 500,
     new_after_n_chars: int = 500,
+    max_characters: int = 500,
 ) -> List[List[Element]]:
     sections: List[List[Element]] = []
     section: List[Element] = []
@@ -159,8 +168,10 @@ def _split_elements_by_title_and_table(
 
         section_length = sum([len(str(element)) for element in section])
         new_section = (
-            isinstance(element, Title) and section_length > combine_text_under_n_chars
-        ) or (not metadata_matches or section_length > new_after_n_chars)
+            (isinstance(element, Title) and section_length > combine_text_under_n_chars)
+            or (not metadata_matches or section_length > new_after_n_chars)
+            or (section_length > max_characters)
+        )
 
         if not isinstance(element, Text) or isinstance(element, Table):
             sections.append(section)
@@ -248,7 +259,7 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
                 + "\n\t\t\t Cuts off new sections once they reach a length of n characters"
                 + "\n\t\t\t a soft max."
                 + "\n\t\tmax_characters"
-                + "\n\t\t\tChunks table elements text and text_as_html into chunks"
+                + "\n\t\t\tChunks elements text and text_as_html (if present) into chunks"
                 + "\n\t\t\tof length n characters, a hard max."
             )
 

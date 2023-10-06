@@ -255,11 +255,12 @@ def test_add_chunking_strategy_on_partition_html_respects_multipage():
 @pytest.mark.parametrize(
     ("combine_text_under_n_chars", "new_after_n_chars", "max_characters"),
     [
-        (-1, -1, -1),
-        (0, 0, 0),
-        (-5666, -6777, -8999),
-        (-5, 40, 50),
-        (50, 100, 20),
+        (-1, -1, -1),  # invalid chunk size
+        (0, 0, 0),  # invalid max_characters
+        (-5666, -6777, -8999),  # invalid chunk size
+        (-5, 40, 50),  # invalid chunk size
+        (50, 70, 20),  # max_characters needs to be greater than new_after_n_chars
+        (70, 50, 50),  # combine_text_under_n_chars needs to be les than new_after_n_chars
     ],
 )
 def test_add_chunking_strategy_raises_error_for_invalid_n_chars(
