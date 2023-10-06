@@ -306,7 +306,11 @@ def process_metadata() -> Callable[[Callable[_P, List[Element]]], Callable[_P, L
                     params[param.name] = param.default
 
             regex_metadata: Dict["str", "str"] = params.get("regex_metadata", {})
-            elements = _add_regex_metadata(elements, regex_metadata)
+            # -- don't write an empty `{}` to metadata.regex_metadata when no regex-metadata was
+            # -- requested, otherwise it will serialize (because it's not None) when it has no
+            # -- meaning or is even misleading. Also it complicates tests that don't use regex-meta.
+            if regex_metadata:
+                elements = _add_regex_metadata(elements, regex_metadata)
             unique_element_ids: bool = params.get("unique_element_ids", False)
             if unique_element_ids:
                 for element in elements:
