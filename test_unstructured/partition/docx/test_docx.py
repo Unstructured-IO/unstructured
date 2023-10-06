@@ -27,75 +27,6 @@ from unstructured.partition.docx import _DocxPartitioner, partition_docx
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
-@pytest.fixture()
-def mock_document():
-    document = docx.Document()
-
-    document.add_paragraph("These are a few of my favorite things:", style="Heading 1")
-    # NOTE(robinson) - this should get picked up as a list item due to the •
-    document.add_paragraph("• Parrots", style="Normal")
-    # NOTE(robinson) - this should get dropped because it's empty
-    document.add_paragraph("• ", style="Normal")
-    document.add_paragraph("Hockey", style="List Bullet")
-    # NOTE(robinson) - this should get dropped because it's empty
-    document.add_paragraph("", style="List Bullet")
-    # NOTE(robinson) - this should get picked up as a title
-    document.add_paragraph("Analysis", style="Normal")
-    # NOTE(robinson) - this should get dropped because it is empty
-    document.add_paragraph("", style="Normal")
-    # NOTE(robinson) - this should get picked up as a narrative text
-    document.add_paragraph("This is my first thought. This is my second thought.", style="Normal")
-    document.add_paragraph("This is my third thought.", style="Body Text")
-    # NOTE(robinson) - this should just be regular text
-    document.add_paragraph("2023")
-    # NOTE(robinson) - this should be an address
-    document.add_paragraph("DOYLESTOWN, PA 18901")
-
-    return document
-
-
-@pytest.fixture()
-def mock_document_filename(mock_document: Document, tmp_path: pathlib.Path) -> str:
-    filename = str(tmp_path / "mock_document.docx")
-    print(f"filename = {filename}")
-    mock_document.save(filename)
-    return filename
-
-
-@pytest.fixture()
-def expected_elements():
-    return [
-        Title("These are a few of my favorite things:"),
-        ListItem("Parrots"),
-        ListItem("Hockey"),
-        Title("Analysis"),
-        NarrativeText("This is my first thought. This is my second thought."),
-        NarrativeText("This is my third thought."),
-        Text("2023"),
-        Address("DOYLESTOWN, PA 18901"),
-    ]
-
-
-@pytest.fixture()
-def expected_emphasized_texts():
-    return [
-        {"text": "bold", "tag": "b"},
-        {"text": "italic", "tag": "i"},
-        {"text": "bold-italic", "tag": "b"},
-        {"text": "bold-italic", "tag": "i"},
-    ]
-
-
-@pytest.fixture()
-def expected_emphasized_text_contents():
-    return ["bold", "italic", "bold-italic", "bold-italic"]
-
-
-@pytest.fixture()
-def expected_emphasized_text_tags():
-    return ["b", "i", "b", "i"]
-
-
 def test_partition_docx_from_filename(
     mock_document_filename: str,
     expected_elements: List[Element],
@@ -532,3 +463,75 @@ def test_partition_docx_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
         filename = "example-docs/handbook-1p.docx"
         partition_docx(filename=filename, languages="eng")
+
+
+# -- module-level fixtures -----------------------------------------------------------------------
+
+
+@pytest.fixture()
+def expected_elements():
+    return [
+        Title("These are a few of my favorite things:"),
+        ListItem("Parrots"),
+        ListItem("Hockey"),
+        Title("Analysis"),
+        NarrativeText("This is my first thought. This is my second thought."),
+        NarrativeText("This is my third thought."),
+        Text("2023"),
+        Address("DOYLESTOWN, PA 18901"),
+    ]
+
+
+@pytest.fixture()
+def expected_emphasized_text_contents():
+    return ["bold", "italic", "bold-italic", "bold-italic"]
+
+
+@pytest.fixture()
+def expected_emphasized_text_tags():
+    return ["b", "i", "b", "i"]
+
+
+@pytest.fixture()
+def expected_emphasized_texts():
+    return [
+        {"text": "bold", "tag": "b"},
+        {"text": "italic", "tag": "i"},
+        {"text": "bold-italic", "tag": "b"},
+        {"text": "bold-italic", "tag": "i"},
+    ]
+
+
+@pytest.fixture()
+def mock_document():
+    document = docx.Document()
+
+    document.add_paragraph("These are a few of my favorite things:", style="Heading 1")
+    # NOTE(robinson) - this should get picked up as a list item due to the •
+    document.add_paragraph("• Parrots", style="Normal")
+    # NOTE(robinson) - this should get dropped because it's empty
+    document.add_paragraph("• ", style="Normal")
+    document.add_paragraph("Hockey", style="List Bullet")
+    # NOTE(robinson) - this should get dropped because it's empty
+    document.add_paragraph("", style="List Bullet")
+    # NOTE(robinson) - this should get picked up as a title
+    document.add_paragraph("Analysis", style="Normal")
+    # NOTE(robinson) - this should get dropped because it is empty
+    document.add_paragraph("", style="Normal")
+    # NOTE(robinson) - this should get picked up as a narrative text
+    document.add_paragraph("This is my first thought. This is my second thought.", style="Normal")
+    document.add_paragraph("This is my third thought.", style="Body Text")
+    # NOTE(robinson) - this should just be regular text
+    document.add_paragraph("2023")
+    # NOTE(robinson) - this should be an address
+    document.add_paragraph("DOYLESTOWN, PA 18901")
+
+    return document
+
+
+@pytest.fixture()
+def mock_document_filename(mock_document: Document, tmp_path: pathlib.Path) -> str:
+    filename = str(tmp_path / "mock_document.docx")
+    print(f"filename = {filename}")
+    mock_document.save(filename)
+    return filename
