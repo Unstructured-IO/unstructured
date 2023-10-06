@@ -3,7 +3,7 @@ import re
 import typing as t
 from contextlib import suppress
 from dataclasses import dataclass, field
-from pathlib import Path
+from pathlib import Path, PurePath
 
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
@@ -100,7 +100,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         return (
-            Path(self.partition_config.output_dir)
+            Path(self.processor_config.output_dir)
             / f"{self.remote_file_path.replace(f'{self.connector_config.dir_path}/', '')}.json"
         )
 
@@ -120,10 +120,10 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
-        self.update_source_metadata_metadata()
+        self.update_source_metadata()
 
     @requires_dependencies(["fsspec"])
-    def update_source_metadata_metadata(self):
+    def update_source_metadata(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
@@ -171,7 +171,9 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching document(s) from"""
 
     connector_config: SimpleFsspecConfig
-    ingest_doc_cls: t.Type[FsspecIngestDoc] = FsspecIngestDoc
+
+    def __post_init__(self):
+        self.ingest_doc_cls: t.Type[FsspecIngestDoc] = FsspecIngestDoc
 
     def initialize(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
@@ -212,9 +214,9 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     def get_ingest_docs(self):
         return [
             self.ingest_doc_cls(
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
                 remote_file_path=file,
             )
             for file in self._list_files()
@@ -242,16 +244,9 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         logger.info(f"Writing content using filesystem: {type(fs).__name__}")
 
         for doc in docs:
-            s3_file_path = str(doc._output_filename).replace(
-                doc.partition_config.output_dir,
-                self.connector_config.path,
-            )
+            s3_file_path = doc.base_filename
             s3_folder = self.connector_config.path
-            if s3_folder[-1] != "/":
-                s3_folder = f"{s3_file_path}/"
-            if s3_file_path[0] == "/":
-                s3_file_path = s3_file_path[1:]
 
-            s3_output_path = s3_folder + s3_file_path
+            s3_output_path = str(PurePath(s3_folder, s3_file_path)) if s3_file_path else s3_folder
             logger.debug(f"Uploading {doc._output_filename} -> {s3_output_path}")
             fs.put_file(lpath=doc._output_filename, rpath=s3_output_path)

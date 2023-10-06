@@ -7,6 +7,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=pdf-fast-reprocess
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 INPUT_PATH=$SCRIPT_DIR/download
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 CI=${CI:-"false"}
@@ -15,6 +16,7 @@ CI=${CI:-"false"}
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$WORK_DIR"
   if [ "$CI" == "true" ]; then
     cleanup_dir "$INPUT_PATH"
   fi
@@ -34,7 +36,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --file-glob "*.pdf" \
     --input-path "$INPUT_PATH" \
-    --recursive
+    --recursive \
+    --work-dir "$WORK_DIR"
 
 
 

@@ -33,7 +33,7 @@ more-itertools==10.1.0
     # via simple-salesforce
 pendulum==2.1.2
     # via simple-salesforce
-platformdirs==3.10.0
+platformdirs==3.11.0
     # via zeep
 pycparser==2.21
     # via cffi
@@ -64,7 +64,7 @@ six==1.16.0
     #   isodate
     #   python-dateutil
     #   requests-file
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

@@ -6,7 +6,7 @@
 #
 attrdict==2.0.1
     # via unstructured-paddleocr
-babel==2.12.1
+babel==2.13.0
     # via flask-babel
 bce-python-sdk==0.8.90
     # via visualdl
@@ -35,7 +35,7 @@ cssutils==2.7.1
     # via premailer
 cycler==0.12.0
     # via matplotlib
-cython==3.0.2
+cython==3.0.3
     # via unstructured-paddleocr
 et-xmlfile==1.1.0
     # via openpyxl
@@ -43,7 +43,7 @@ flask==3.0.0
     # via
     #   flask-babel
     #   visualdl
-flask-babel==3.1.0
+flask-babel==4.0.0
     # via visualdl
 fonttools==4.43.0
     # via matplotlib
@@ -53,7 +53,7 @@ idna==3.4
     # via
     #   -c requirements/base.txt
     #   requests
-imageio==2.31.4
+imageio==2.31.5
     # via
     #   imgaug
     #   scikit-image
@@ -211,7 +211,7 @@ tzdata==2023.3
     # via pandas
 unstructured-paddleocr==2.6.1.3
     # via -r requirements/extra-paddleocr.in
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

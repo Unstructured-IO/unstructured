@@ -305,7 +305,7 @@ class GoogleDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnecto
         traverse(
             drive_id,
             Path(self.read_config.download_dir),
-            Path(self.partition_config.output_dir),
+            Path(self.processor_config.output_dir),
             recursive,
         )
         return files
@@ -318,7 +318,7 @@ class GoogleDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnecto
         return [
             GoogleDriveIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 meta=file,
             )
