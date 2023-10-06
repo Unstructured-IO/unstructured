@@ -307,7 +307,7 @@
   },
   {
     "type": "Table",
-    "element_id": "2dcd1bd388156227a765f0be44ff190a",
+    "element_id": "c5f7f12cc3a85d4f0f8601be51d565a7",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -321,7 +321,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "4 3 1 2 1 20 Experts Handguns Motor vehicles Nuclear power Electric power (non-nuclear) Vaccinations Smoking X-rays 17 22 25 30 4 2 9 7"
+    "text": "4 3 1 1 2 20 Experts Handguns Motor vehicles Nuclear power Electric power (non-nuclear) Vaccinations Smoking X-rays 17 22 30 25 2 4 9 7"
   },
   {
     "type": "Title",
