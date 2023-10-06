@@ -110,9 +110,9 @@ python3
 Use the following instructions to get up and running with `unstructured` and test your
 installation.
 
-- Install the Python SDK to support all document types with `pip install "unstructured[all-docs]" --extra-index-url --extra-index-url https://packages.unstructured.io/simple/`
-  - For plain text files, HTML, XML, JSON and Emails that do not require any extra dependencies, you can run `pip install unstructured --extra-index-url --extra-index-url https://packages.unstructured.io/simple/`
-  - To process other doc types, you can install the extras required for those documents, such as `pip install "unstructured[docx,pptx]" --extra-index-url --extra-index-url https://packages.unstructured.io/simple/`
+- Install the Python SDK to support all document types with `pip install "unstructured[all-docs]" --extra-index-url https://packages.unstructured.io/simple/`
+  - For plain text files, HTML, XML, JSON and Emails that do not require any extra dependencies, you can run `pip install unstructured --extra-index-url  https://packages.unstructured.io/simple/`
+  - To process other doc types, you can install the extras required for those documents, such as `pip install "unstructured[docx,pptx]" --extra-index-url https://packages.unstructured.io/simple/`
 - Install the following system dependencies if they are not already available on your system.
   Depending on what document types you're parsing, you may not need all of these.
     - `libmagic-dev` (filetype detection)
@@ -192,7 +192,7 @@ The **Connectors** 🔗 in `unstructured` serve as vital links between the pre-p
 ### PDF Document Parsing Example
 The following examples show how to get started with the `unstructured` library. You can parse over a dozen document types with one line of code! Use this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the example below.
 
-The easiest way to parse a document in unstructured is to use the `partition` brick. If you use `partition` brick, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning brick. If you are using the `partition` brick, you may need to install additional parameters via `pip install unstructured[local-inference] --extra-index-url --extra-index-url https://packages.unstructured.io/simple/`. Ensure you first install `libmagic` using the instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection) `partition` will always apply the default arguments. If you need advanced features, use a document-specific brick.
+The easiest way to parse a document in unstructured is to use the `partition` brick. If you use `partition` brick, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning brick. If you are using the `partition` brick, you may need to install additional parameters via `pip install unstructured[local-inference] --extra-index-url https://packages.unstructured.io/simple/`. Ensure you first install `libmagic` using the instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection) `partition` will always apply the default arguments. If you need advanced features, use a document-specific brick.
 
 ```python
 from unstructured.partition.auto import partition
