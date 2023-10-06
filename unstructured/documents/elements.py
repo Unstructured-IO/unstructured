@@ -194,9 +194,16 @@ class ElementMetadata:
     detection_class_prob: Optional[float] = None
 
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-        detection_origin: Optional[str] = None
+        # -- The detection mechanism that emitted this element, for debugging purposes. Only
+        # -- defined when UNSTRUCTURED_INCLUDE_DEBUG_METADATA flag is True. Note the `compare=False`
+        # -- setting meaning it's value is not included when comparing two ElementMetadata instances
+        # -- for equality (`.__eq__()`).
+        detection_origin: Optional[str] = dc.field(default=None, compare=False)
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, key: str, value: Any):
+        # -- Avoid triggering `AttributeError` when assigning to `metadata.detection_origin` when
+        # -- when the UNSTRUCTURED_INCLUDE_DEBUG_METADATA flag is False (and the `.detection_origin`
+        # -- field is not defined).
         if not UNSTRUCTURED_INCLUDE_DEBUG_METADATA and key == "detection_origin":
             return
         else:
