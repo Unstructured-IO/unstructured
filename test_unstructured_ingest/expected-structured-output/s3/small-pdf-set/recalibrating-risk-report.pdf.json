@@ -307,7 +307,7 @@
   },
   {
     "type": "Table",
-    "element_id": "c5f7f12cc3a85d4f0f8601be51d565a7",
+    "element_id": "bd73364ecc77e30dd55e632e93e4583d",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -321,7 +321,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "4 3 1 1 2 20 Experts Handguns Motor vehicles Nuclear power Electric power (non-nuclear) Vaccinations Smoking X-rays 17 22 30 25 2 4 9 7"
+    "text": "Experts 1 Nuclear power 20 2 Motor vehicles 1 3 Handguns 4 4 Smoking 2 17 Electric power (non-nuclear) 9 22 X-rays 7 30 Vaccinations 25"
   },
   {
     "type": "Title",
@@ -883,7 +883,7 @@
   },
   {
     "type": "Image",
-    "element_id": "a88982f8cceca040a44cfec8fbc3c085",
+    "element_id": "557e455200e568a1b8ce1fa205432b10",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -897,7 +897,7 @@
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "Natural Artificial   48%  Radon  14%  Buildings & soil  12%  Food & water  10%  Cosmic  4% Thoron Fallout   11%  Medicine  0.4%   0.4%  Miscellaneous  0.2%  Occupational  0.04%  Nuclear discharges"
+    "text": "Natural Artificial   48%  Radon  14%  Buildings & soil  12%  Food & water  10%  Cosmic  4% Thoron   11%  Medicine  0.4%   0.4%  Miscellaneous  0.2%  Occupational  0.04%  Nuclear discharges Fallout"
   },
   {
     "type": "FigureCaption",
@@ -1063,7 +1063,7 @@
   },
   {
     "type": "Image",
-    "element_id": "99edfb124ea2be2853e4c8545af02274",
+    "element_id": "86c85866eb204cac66d78366332b5f42",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -1077,7 +1077,7 @@
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "25 20 15 10 5 0 18.4 C oal Oil 4.6 Bio m ass 2.8 N atural gas 0.07 Wind 0.04 H ydropo w er 0.02 S olar 0.01 N uclear"
+    "text": "25 20 18.4 15 10 4.6 5 2.8 0.07 0.04 0.02 0.01 0 C oal Oil Bio m ass N atural gas Wind H ydropo w er S olar N uclear"
   },
   {
     "type": "FigureCaption",
@@ -1369,7 +1369,7 @@
   },
   {
     "type": "Image",
-    "element_id": "c7925f94ce12c29308a5f93a8819e7da",
+    "element_id": "b1139c67550215b3f94886c9b2dc1ab5",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -1383,7 +1383,7 @@
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "Plant-levelproduction costsat market prices Grid-level costsof the electricitysystem Social andenvironmental costs ofemissions, land-use,climate change, securityof supply, etc."
+    "text": "Social andenvironmental costs ofemissions, land-use,climate change, securityof supply, etc. Plant-levelproduction costsat market prices Grid-level costsof the electricitysystem"
   },
   {
     "type": "FigureCaption",
