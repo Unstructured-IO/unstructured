@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from unstructured.documents.elements import Element
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
@@ -166,18 +167,13 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
     def initialize(self):
         pass
 
-    @requires_dependencies(["deltalake"], extras="delta-table")
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+    def write_elements(self, elements: t.List[Element]) -> None:
+        elements_json = [json.dumps(e.to_dict()) for e in elements]
+        self.write_dict(json_list=elements_json)
+
+    def write_dict(self, json_list: t.List[str]) -> None:
         from deltalake.writer import write_deltalake
 
-        json_list = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                json_content = json.load(json_file)
-                json_items = [json.dumps(j) for j in json_content]
-                logger.info(f"converting {len(json_items)} rows from content in {local_path}")
-                json_list.extend(json_items)
         logger.info(
             f"writing {len(json_list)} rows to destination "
             f"table at {self.connector_config.table_uri}",
@@ -196,3 +192,15 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
         )
         writer.start()
         writer.join()
+
+    @requires_dependencies(["deltalake"], extras="delta-table")
+    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+        json_list: t.List[str] = []
+        for doc in docs:
+            local_path = doc._output_filename
+            with open(local_path) as json_file:
+                json_content = json.load(json_file)
+                json_items = [json.dumps(j) for j in json_content]
+                logger.info(f"converting {len(json_items)} rows from content in {local_path}")
+                json_list.extend(json_items)
+        self.write_dict(json_list=json_list)

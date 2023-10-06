@@ -483,6 +483,10 @@ class BaseDestinationConnector(DataClassJsonMixin, ABC):
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         pass
 
+    @abstractmethod
+    def write_elements(self, elements: t.List[Element]) -> None:
+        pass
+
 
 class SourceConnectorCleanupMixin:
     read_config: ReadConfig
