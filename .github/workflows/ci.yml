@@ -8,22 +8,50 @@ on:
   merge_group:
     branches: [ main ]
 
-env:
-  GHA_CACHE_KEY_VERSION: "v1"
-
 jobs:
-  pre-job:
+  check_version:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Check Version
+      run: |
+        make check-version
+
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: ShellCheck
+        uses: ludeeus/action-shellcheck@master
+
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+    # need to checkout otherwise paths-filter will fail on merge-queue trigger 
+    - uses: actions/checkout@v3
+    - if: github.ref != 'refs/heads/main'
+      uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          src:
+            - 'unstructured/**'
+    - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
+      uses: dangoslen/changelog-enforcer@v3
+
+  skip_conditions:
     runs-on: ubuntu-latest
     outputs:
-      skip_no_code_changes: ${{ steps.has_code_changes.outputs.should_skip }}
+      no_code_changes: ${{ steps.version_only_change.outputs.should_skip }}
     steps:
-    - id: has_code_changes
+    - id: version_only_change
       uses: fkirc/skip-duplicate-actions@v5
       with:
         paths_ignore: '["unstructured/__version__.py", "CHANGELOG.md"]'
+
   setup:
-    needs: pre-job
-    if: needs.pre-job.outputs.skip_no_code_changes == 'false'
+    needs: skip_conditions
+    if: needs.skip_conditions.outputs.no_code_changes == 'false'
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
@@ -40,7 +68,7 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -56,13 +84,13 @@ jobs:
       with:
         paths_ignore: '["unstructured/__version__.py", "CHANGELOG.py"]'
 
-  check-deps:
+  check_deps:
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
-    needs: [setup, pre-job]
-    if: needs.pre-job.outputs.skip_no_code_changes == 'false'
+    needs: [setup, skip_conditions]
+    if: needs.skip_conditions.outputs.no_code_changes == 'false'
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache/restore@v3
@@ -87,13 +115,24 @@ jobs:
         source .venv/bin/activate
         make check-deps
 
+  check_deps_result: # report the final result of the check_deps job, so that it can be properly skipped as needed
+    if: always()
+    runs-on: ubuntu-latest
+    needs:
+      - skip_conditions
+      - check_deps
+    steps:
+      - name: Mark result as failed
+        if: needs.skip_conditions.outputs.no_code_changes == 'false' && needs.check_deps.result != 'success'
+        run: exit 1
+
   lint:
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
-    needs: [setup, pre-job]
-    if: needs.pre-job.outputs.skip_no_code_changes == 'false'
+    needs: [setup, skip_conditions]
+    if: needs.skip_conditions.outputs.no_code_changes == 'false'
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache/restore@v3
@@ -102,7 +141,7 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -116,14 +155,19 @@ jobs:
     - name: Lint
       run: |
         source .venv/bin/activate
-        make check
+        make check-src
+        make check-tests 
 
-  shellcheck:
+  lint_result: # report the final result of the lint job, so that it can be properly skipped as needed
+    if: always()
     runs-on: ubuntu-latest
+    needs:
+      - skip_conditions
+      - lint
     steps:
-      - uses: actions/checkout@v3
-      - name: ShellCheck
-        uses: ludeeus/action-shellcheck@master
+      - name: Mark result as failed
+        if: needs.skip_conditions.outputs.no_code_changes == 'false' && needs.lint.result != 'success'
+        run: exit 1
 
   test_unit:
     strategy:
@@ -132,8 +176,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup, pre-job, lint]
-    if: needs.pre-job.outputs.skip_no_code_changes == 'false'
+    needs: [setup, skip_conditions, lint]
+    if: needs.skip_conditions.outputs.no_code_changes == 'false'
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache/restore@v3
@@ -142,7 +186,7 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -158,3 +202,14 @@ jobs:
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: echo "pass" 
+
+  test_unit_result: # report the final result of the test_unit job, so that it can be properly skipped as needed
+    if: always()
+    runs-on: ubuntu-latest
+    needs:
+      - skip_conditions
+      - test_unit
+    steps:
+      - name: Mark result as failed
+        if: needs.skip_conditions.outputs.no_code_changes == 'false' && needs.test_unit.result != 'success'
+        run: exit 1
