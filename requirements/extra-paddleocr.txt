@@ -45,7 +45,7 @@ flask==3.0.0
     #   visualdl
 flask-babel==4.0.0
     # via visualdl
-fonttools==4.43.0
+fonttools==4.43.1
     # via matplotlib
 future==0.18.3
     # via bce-python-sdk
