@@ -35,14 +35,14 @@ filelock==3.12.4
     #   transformers
 flatbuffers==23.5.26
     # via onnxruntime
-fonttools==4.43.0
+fonttools==4.43.1
     # via matplotlib
 fsspec==2023.9.1
     # via
     #   -c requirements/constraints.in
     #   huggingface-hub
     #   torch
-huggingface-hub==0.16.4
+huggingface-hub==0.17.3
     # via
     #   timm
     #   tokenizers
@@ -199,7 +199,7 @@ sympy==1.12
     #   torch
 timm==0.9.7
     # via effdet
-tokenizers==0.14.0
+tokenizers==0.14.1
     # via transformers
 torch==2.1.0
     # via
@@ -229,7 +229,7 @@ typing-extensions==4.8.0
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.6.6
+unstructured-inference==0.7.2
     # via -r requirements/extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via
