@@ -99,7 +99,7 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def _output_filename(self):
-        return Path(self.partition_config.output_dir) / f"{self.post_id}.json"
+        return Path(self.processor_config.output_dir) / f"{self.post_id}.json"
 
     @property
     def date_modified(self) -> t.Optional[str]:
@@ -136,7 +136,7 @@ class RedditSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         return [
             RedditIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 post_id=post.id,
             )

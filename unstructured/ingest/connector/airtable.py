@@ -65,7 +65,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _output_filename(self):
         """Create output file path based on output directory, base id, and table id"""
         output_file = f"{self.table_meta.table_id}.json"
-        return Path(self.partition_config.output_dir) / self.table_meta.base_id / output_file
+        return Path(self.processor_config.output_dir) / self.table_meta.base_id / output_file
 
     @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
@@ -274,8 +274,8 @@ class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             baseid_tableid_viewid_tuples += self.fetch_table_ids()
         return [
             AirtableIngestDoc(
+                processor_config=self.processor_config,
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
                 read_config=self.read_config,
                 table_meta=AirtableTableMeta(base_id, table_id, view_id),
             )
