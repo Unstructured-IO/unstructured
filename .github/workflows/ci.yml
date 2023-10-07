@@ -111,8 +111,24 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
+        make install-ingest-s3
+        make install-ingest-airtable
+        make install-ingest-azure
+        make install-ingest-box
+        make install-ingest-confluence
+        make install-ingest-discord
         make install-ingest-elasticsearch
-        make install-ingest-salesforce
-        make install-ingest-notion
+        make install-ingest-dropbox
+        make install-ingest-gcs
+        make install-ingest-google-drive
+        make install-ingest-github
+        make install-ingest-gitlab
         make install-ingest-jira
+        make install-ingest-onedrive
+        make install-ingest-outlook
+        make install-ingest-salesforce
+        make install-ingest-slack
+        make install-ingest-wikipedia
+        make install-ingest-notion
+        make install-ingest-delta-table
         ./test_unstructured_ingest/test-ingest.sh
