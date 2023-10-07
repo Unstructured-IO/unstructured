@@ -291,7 +291,7 @@ test-extra-odt:
 .PHONY: test-extra-pdf-image
 test-extra-pdf-image:
 	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/pdf-image
+		test_${PACKAGE_NAME}/partition/pdf_image
 
 .PHONY: test-extra-pptx
 test-extra-pptx:
