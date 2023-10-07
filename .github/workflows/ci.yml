@@ -42,7 +42,7 @@ jobs:
   test_ingest:
     strategy:
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
