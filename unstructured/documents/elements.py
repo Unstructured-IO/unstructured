@@ -215,7 +215,11 @@ class ElementMetadata:
 
         if self.filename is not None:
             file_directory, filename = os.path.split(self.filename)
-            self.file_directory = file_directory or None
+            # -- Only replace file-directory when we have something better. When ElementMetadata is
+            # -- being re-loaded from JSON, the file-directory we want will already be there and
+            # -- filename will be just the file-name portion of the path.
+            if file_directory:
+                self.file_directory = file_directory
             self.filename = filename
 
     def to_dict(self):
