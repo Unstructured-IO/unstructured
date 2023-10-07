@@ -41,6 +41,8 @@ from unstructured.partition.text_type import (
 )
 from unstructured.utils import lazyproperty
 
+DETECTION_ORIGIN = "pptx"
+
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.PPTX)
@@ -190,7 +192,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             return
         # -- only emit page-breaks when enabled --
         if self._include_page_breaks:
-            yield PageBreak("")
+            yield PageBreak("", detection_origin=DETECTION_ORIGIN)
 
     def _is_bulleted_paragraph(self, paragraph: _Paragraph) -> bool:
         """True when `paragraph` has a bullet-charcter prefix.
@@ -222,7 +224,11 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         if not notes_text:
             return
 
-        yield NarrativeText(text=notes_text, metadata=self._text_metadata())
+        yield NarrativeText(
+            text=notes_text,
+            metadata=self._text_metadata(),
+            detection_origin=DETECTION_ORIGIN,
+        )
 
     def _is_invalid_shape(self, shape: Shape) -> bool:
         # NOTE(robinson) - avoid processing shapes that are not on the actual slide
@@ -245,12 +251,20 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
 
             if self._is_bulleted_paragraph(paragraph):
                 bullet_depth = paragraph.level or 0
-                yield ListItem(text=text, metadata=self._text_metadata(category_depth=bullet_depth))
+                yield ListItem(
+                    text=text,
+                    metadata=self._text_metadata(category_depth=bullet_depth),
+                    detection_origin=DETECTION_ORIGIN,
+                )
             elif is_email_address(text):
-                yield EmailAddress(text=text)
+                yield EmailAddress(text=text, detection_origin=DETECTION_ORIGIN)
             else:
                 # increment the category depth by the paragraph increment in the shape
-                yield Title(text=text, metadata=self._text_metadata(category_depth=depth))
+                yield Title(
+                    text=text,
+                    metadata=self._text_metadata(category_depth=depth),
+                    detection_origin=DETECTION_ORIGIN,
+                )
                 depth += 1  # Cannot enumerate because we want to skip empty paragraphs
 
     def _iter_shape_elements(self, shape: Shape) -> Iterator[Element]:
@@ -267,17 +281,21 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             metadata = self._text_metadata(category_depth=level)
 
             if self._is_bulleted_paragraph(paragraph):
-                yield ListItem(text=text, metadata=metadata)
+                yield ListItem(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             elif is_email_address(text):
-                yield EmailAddress(text=text)
+                yield EmailAddress(text=text, detection_origin=DETECTION_ORIGIN)
             elif is_possible_narrative_text(text):
-                yield NarrativeText(text=text, metadata=metadata)
+                yield NarrativeText(
+                    text=text,
+                    metadata=metadata,
+                    detection_origin=DETECTION_ORIGIN,
+                )
             elif is_possible_title(text):
                 # If text is a title but not the title shape increment the category depth)
                 metadata = self._text_metadata(category_depth=level + 1)
-                yield Title(text=text, metadata=metadata)
+                yield Title(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             else:
-                yield Text(text=text, metadata=metadata)
+                yield Text(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
 
     def _iter_table_element(self, graphfrm: GraphicFrame) -> Iterator[Table]:
         """Generate zero-or-one Table element for the table in `shape`.
@@ -288,7 +306,11 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         if not text_table:
             return
         html_table = convert_ms_office_table_to_text(graphfrm.table, as_html=True)
-        yield Table(text=text_table, metadata=self._table_metadata(html_table))
+        yield Table(
+            text=text_table,
+            metadata=self._table_metadata(html_table),
+            detection_origin=DETECTION_ORIGIN,
+        )
 
     @lazyproperty
     def _last_modified(self) -> Optional[str]:
@@ -338,18 +360,22 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
 
     def _table_metadata(self, text_as_html: str):
         """ElementMetadata instance suitable for use with Table element."""
-        return ElementMetadata(
+        element_metadata = ElementMetadata(
             filename=self._filename,
             last_modified=self._last_modified,
             page_number=self._page_number,
             text_as_html=text_as_html,
         )
+        element_metadata.detection_origin = DETECTION_ORIGIN
+        return element_metadata
 
     def _text_metadata(self, category_depth: int = 0) -> ElementMetadata:
         """ElementMetadata instance suitable for use with Text and subtypes."""
-        return ElementMetadata(
+        element_metadata = ElementMetadata(
             filename=self._filename,
             last_modified=self._last_modified,
             page_number=self._page_number,
             category_depth=category_depth,
         )
+        element_metadata.detection_origin = DETECTION_ORIGIN
+        return element_metadata

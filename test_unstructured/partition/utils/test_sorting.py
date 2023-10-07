@@ -116,12 +116,12 @@ def test_coordinates_to_bbox():
 
 
 def test_shrink_bbox():
-    bbox = (0, 0, 100, 100)
-    shrink_factor = 0.5
-    expected_result = (25, 25, 75, 75)
-    assert shrink_bbox(bbox, shrink_factor) == expected_result
-
     bbox = (0, 0, 200, 100)
     shrink_factor = 0.9
-    expected_result = (10, 5, 190, 95)
+    expected_result = (0, 0, 180, 90)
+    assert shrink_bbox(bbox, shrink_factor) == expected_result
+
+    bbox = (20, 20, 320, 120)
+    shrink_factor = 0.9
+    expected_result = (20, 20, 290, 110)
     assert shrink_bbox(bbox, shrink_factor) == expected_result

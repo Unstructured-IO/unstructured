@@ -16,6 +16,7 @@ scripts=(
 'test-ingest-biomed-path.sh'
 ## NOTE(yuming): The following test should be put after any tests with --preserve-downloads option
 'test-ingest-pdf-fast-reprocess.sh'
+'test-ingest-salesforce.sh'
 'test-ingest-box.sh'
 'test-ingest-discord.sh'
 'test-ingest-dropbox.sh'
@@ -40,7 +41,6 @@ scripts=(
 'test-ingest-local-single-file-with-pdf-infer-table-structure.sh'
 'test-ingest-notion.sh'
 'test-ingest-delta-table.sh'
-'test-ingest-salesforce.sh'
 'test-ingest-jira.sh'
 'test-ingest-sharepoint.sh'
 )

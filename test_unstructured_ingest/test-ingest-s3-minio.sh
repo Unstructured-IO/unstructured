@@ -7,6 +7,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=s3-minio
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 secret_key=minioadmin
@@ -21,6 +22,7 @@ function cleanup() {
   docker-compose -f scripts/minio-test-helpers/docker-compose.yaml down --remove-orphans -v
 
   cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$WORK_DIR"
 }
 
 trap cleanup EXIT
@@ -40,7 +42,8 @@ AWS_SECRET_ACCESS_KEY=$secret_key AWS_ACCESS_KEY_ID=$access_key PYTHONPATH=. ./u
     --output-dir "$OUTPUT_DIR" \
     --verbose \
     --remote-url s3://utic-dev-tech-fixtures/ \
-    --endpoint-url http://localhost:9000
+    --endpoint-url http://localhost:9000 \
+    --work-dir "$WORK_DIR"
 
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
