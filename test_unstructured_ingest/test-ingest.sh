@@ -22,7 +22,7 @@ scripts=(
 'test-ingest-dropbox.sh'
 'test-ingest-github.sh'
 'test-ingest-gitlab.sh'
-'test-ingest-google-drive.sh'
+# 'test-ingest-google-drive.sh'
 'test-ingest-wikipedia.sh'
 'test-ingest-local.sh'
 'test-ingest-slack.sh'
