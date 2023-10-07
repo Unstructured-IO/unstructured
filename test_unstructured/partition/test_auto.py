@@ -25,7 +25,6 @@ from unstructured.file_utils.filetype import FILETYPE_TO_MIMETYPE, FileType
 from unstructured.partition import auto
 from unstructured.partition.auto import _get_partition_with_extras, partition
 from unstructured.partition.common import convert_office_doc
-from unstructured.partition.pdf import default_hi_res_model
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -302,17 +301,19 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename, content_type, 
         strategy="hi_res",
     )
 
-    assert isinstance(elements[0], Title)
-    assert elements[0].text.startswith("LayoutParser")
+    idx = 3
+    assert isinstance(elements[idx], Title)
+    assert elements[idx].text.startswith("LayoutParser")
 
-    assert elements[0].metadata.filename == os.path.basename(filename)
-    assert elements[0].metadata.file_directory == os.path.split(filename)[0]
+    assert elements[idx].metadata.filename == os.path.basename(filename)
+    assert elements[idx].metadata.file_directory == os.path.split(filename)[0]
 
     # NOTE(alan): Xfail since new model skips the word Zejiang
     request.applymarker(pytest.mark.xfail)
 
-    assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Zejiang Shen")
+    idx += 1
+    assert isinstance(elements[idx], NarrativeText)
+    assert elements[idx].text.startswith("Zejiang Shen")
 
 
 def test_auto_partition_pdf_uses_table_extraction():
@@ -361,30 +362,27 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
             strategy="hi_res",
         )
 
-    assert isinstance(elements[0], Title)
-    assert elements[0].text.startswith("LayoutParser")
+    idx = 3
+    assert isinstance(elements[idx], Title)
+    assert elements[idx].text.startswith("LayoutParser")
 
     # NOTE(alan): Xfail since new model misses the first word Zejiang
     request.applymarker(pytest.mark.xfail)
 
-    assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Zejiang Shen")
+    idx += 1
+    assert isinstance(elements[idx], NarrativeText)
+    assert elements[idx].text.startswith("Zejiang Shen")
 
 
 def test_auto_partition_formats_languages_for_tesseract():
     filename = "example-docs/chi_sim_image.jpeg"
     with patch(
-        "unstructured_inference.inference.layout.process_file_with_model",
-    ) as mock_process_file_with_model:
+        "unstructured.partition.ocr.process_file_with_ocr",
+    ) as mock_process_file_with_ocr:
         partition(filename, strategy="hi_res", languages=["zh"])
-        mock_process_file_with_model.assert_called_once_with(
-            filename,
-            is_image=True,
-            ocr_languages="chi_sim+chi_sim_vert+chi_tra+chi_tra_vert",
-            ocr_mode="entire_page",
-            extract_tables=False,
-            model_name=default_hi_res_model(),
-        )
+        _, kwargs = mock_process_file_with_ocr.call_args_list[0]
+        assert "ocr_languages" in kwargs
+        assert kwargs["ocr_languages"] == "chi_sim+chi_sim_vert+chi_tra+chi_tra_vert"
 
 
 def test_auto_partition_element_metadata_user_provided_languages():
@@ -425,9 +423,10 @@ def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, co
     )
 
     # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
-    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[0].text == first_line
-    assert elements[0].metadata.coordinates is not None
+    title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    idx = 2
+    assert elements[idx].text == title
+    assert elements[idx].metadata.coordinates is not None
 
 
 @pytest.mark.parametrize(

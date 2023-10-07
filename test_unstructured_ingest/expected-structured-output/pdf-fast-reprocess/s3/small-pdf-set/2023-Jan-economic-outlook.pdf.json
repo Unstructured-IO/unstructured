@@ -132,61 +132,6 @@
     "text": "Monetary policy starts to bite. Signs are apparent that monetary policy tightening is starting to cool demand and inflation, but the full impact is unlikely to be realized before 2024. Global headline inflation appears to have peaked in the third quarter of 2022 (Figure 1). Prices of fuel and nonfuel commodities have declined, lowering headline inflation, notably in the United States, the euro area, and Latin America. But underlying (core) inflation has not yet peaked in most economies and remains well above pre-pandemic levels. It has persisted amid second-round effects from earlier cost shocks and tight labor markets with robust wage growth as consumer demand has remained resilient. Medium-term inflation expectations generally remain anchored, but some gauges are up. These developments have caused central banks to raise rates faster than expected, especially in the United States and the euro area, and to signal that rates will stay elevated for longer. Core inflation is declining in some economies that have completed their tightening cycle—such as Brazil. Financial markets are displaying high sensitivity to inflation news, with equity markets rising following recent releases of lower inflation data in anticipation of interest rate cuts (Box 1), despite central banks’ communicating their resolve to tighten policy further. With the peak in US headline inflation and an acceleration in rate hikes by several non-US central banks, the dollar has weakened since September but remains significantly stronger than a year ago."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "808caaef5b114d874a25b7fec21b5516",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "18 16 14 12 10 8 6 4 2 0 –2"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "28a5aa3897d66de6c31caba99a4c337e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "–2"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c2c7be4534a60790d1d18451c91dc138",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "16 14 12 10 8 6 4 2 0"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jan. 2019"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jan. 2019"
-  },
-  {
     "type": "Title",
     "element_id": "0cce65035ca66e9be782c845ddd606e2",
     "metadata": {
@@ -196,116 +141,6 @@
       "links": []
     },
     "text": "Figure 1. Twin Peaks? Headline and Core Inflation (Percent, year over year)"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "e26dceaba57a5f670d91ac170e8706d1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Sources: Haver Analytics; and IMF staff calculations. Note: The figure shows the developments in headline and core inflation across 18 advanced economies and 17 emerging market and developing economies. Core inflation is the change in prices for goods and services, but excluding those for food and energy (or the closest available measure). For the euro area (and other European countries for which the data are available), energy, food, alcohol, and tobacco are excluded. The gray bands depict the 10th to 90th percentiles of inflation across economies."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "63e35649dd179389ecc7251e1503489a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "1. Headline Inflation"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "b790ab5fcad28bbedb50b568b3adeca2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "2. Core Inflation"
-  },
-  {
-    "type": "Title",
-    "element_id": "323d79e74460eda1fb0f8d55a2e0ff42",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Median country Brazil"
-  },
-  {
-    "type": "Title",
-    "element_id": "646612b0a62b59fd13be769b4590a9ac",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jul. 19"
-  },
-  {
-    "type": "Title",
-    "element_id": "646612b0a62b59fd13be769b4590a9ac",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jul. 19"
-  },
-  {
-    "type": "Title",
-    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jan. 20"
-  },
-  {
-    "type": "Title",
-    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jan. 20"
-  },
-  {
-    "type": "Title",
-    "element_id": "6d2f5e3c057e12c92023d5501c3fd075",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jul. 20"
-  },
-  {
-    "type": "Title",
-    "element_id": "6d2f5e3c057e12c92023d5501c3fd075",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jul. 20"
   },
   {
     "type": "Title",
@@ -320,69 +155,14 @@
   },
   {
     "type": "Title",
-    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
+    "element_id": "323d79e74460eda1fb0f8d55a2e0ff42",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
     },
-    "text": "Jan. 21"
-  },
-  {
-    "type": "Title",
-    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jan. 21"
-  },
-  {
-    "type": "Title",
-    "element_id": "81db94f58819ee2fd6c05ddef2082ccc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jul. 21"
-  },
-  {
-    "type": "Title",
-    "element_id": "81db94f58819ee2fd6c05ddef2082ccc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jul. 21"
-  },
-  {
-    "type": "Title",
-    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jan. 22"
-  },
-  {
-    "type": "Title",
-    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jan. 22"
+    "text": "Median country Brazil"
   },
   {
     "type": "Title",
@@ -396,48 +176,224 @@
     "text": "Euro area"
   },
   {
-    "type": "Title",
-    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
+    "type": "UncategorizedText",
+    "element_id": "808caaef5b114d874a25b7fec21b5516",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
     },
-    "text": "Jul. 22"
+    "text": "18 16 14 12 10 8 6 4 2 0 –2"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "63e35649dd179389ecc7251e1503489a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "1. Headline Inflation"
   },
   {
     "type": "Title",
-    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
+    "element_id": "81db94f58819ee2fd6c05ddef2082ccc",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
     },
-    "text": "Jul. 22"
+    "text": "Jul. 21"
   },
   {
     "type": "Title",
-    "element_id": "cc874418b59b7ecb37a2c938783fb5ce",
+    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
     },
-    "text": "Nov. 22"
+    "text": "Jan. 21"
   },
   {
     "type": "Title",
-    "element_id": "cc874418b59b7ecb37a2c938783fb5ce",
+    "element_id": "6d2f5e3c057e12c92023d5501c3fd075",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
     },
-    "text": "Nov. 22"
+    "text": "Jul. 20"
+  },
+  {
+    "type": "Title",
+    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jan. 20"
+  },
+  {
+    "type": "Title",
+    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jan. 22"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jan. 2019"
+  },
+  {
+    "type": "Title",
+    "element_id": "646612b0a62b59fd13be769b4590a9ac",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jul. 19"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c2c7be4534a60790d1d18451c91dc138",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "16 14 12 10 8 6 4 2 0"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "b790ab5fcad28bbedb50b568b3adeca2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "2. Core Inflation"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "28a5aa3897d66de6c31caba99a4c337e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "–2"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jan. 2019"
+  },
+  {
+    "type": "Title",
+    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jan. 20"
+  },
+  {
+    "type": "Title",
+    "element_id": "6d2f5e3c057e12c92023d5501c3fd075",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jul. 20"
+  },
+  {
+    "type": "Title",
+    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jan. 21"
+  },
+  {
+    "type": "Title",
+    "element_id": "81db94f58819ee2fd6c05ddef2082ccc",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jul. 21"
+  },
+  {
+    "type": "Title",
+    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jan. 22"
+  },
+  {
+    "type": "Title",
+    "element_id": "646612b0a62b59fd13be769b4590a9ac",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jul. 19"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e26dceaba57a5f670d91ac170e8706d1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Sources: Haver Analytics; and IMF staff calculations. Note: The figure shows the developments in headline and core inflation across 18 advanced economies and 17 emerging market and developing economies. Core inflation is the change in prices for goods and services, but excluding those for food and energy (or the closest available measure). For the euro area (and other European countries for which the data are available), energy, food, alcohol, and tobacco are excluded. The gray bands depict the 10th to 90th percentiles of inflation across economies."
   },
   {
     "type": "NarrativeText",
@@ -449,6 +405,50 @@
       "links": []
     },
     "text": "Winter comes to Europe. European economic growth in 2022 was more resilient than expected in the face of the large negative terms-of-trade shock from the war in Ukraine. This resilience––which is"
+  },
+  {
+    "type": "Title",
+    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jul. 22"
+  },
+  {
+    "type": "Title",
+    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jul. 22"
+  },
+  {
+    "type": "Title",
+    "element_id": "cc874418b59b7ecb37a2c938783fb5ce",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Nov. 22"
+  },
+  {
+    "type": "Title",
+    "element_id": "cc874418b59b7ecb37a2c938783fb5ce",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Nov. 22"
   },
   {
     "type": "NarrativeText",
@@ -595,17 +595,6 @@
   },
   {
     "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5,
-      "links": []
-    },
-    "text": ""
-  },
-  {
-    "type": "ListItem",
     "element_id": "afde979c99a73646915fe253c85c5a9c",
     "metadata": {
       "data_source": {},
@@ -614,6 +603,17 @@
       "links": []
     },
     "text": "Growth in emerging and developing Europe is projected to have bottomed out in 2022 at 0.7 percent and, since the October forecast, has been revised up for 2023 by 0.9 percentage point to 1.5 percent. This reflects a smaller economic contraction in Russia in 2022 (estimated at –2.2 percent compared with a predicted –3.4 percent) followed by modestly positive growth in 2023. At the current oil price cap level of the Group of Seven, Russian crude oil export volumes are not expected to be significantly affected, with Russian trade continuing to be redirected from sanctioning to non-sanctioning countries. In Latin America and the Caribbean, growth is projected to decline from 3.9 percent in 2022 to 1.8 percent in 2023, with an upward revision for 2023 of 0.1 percentage point since October. The forecast revision reflects upgrades of 0.2 percentage point for Brazil and 0.5 percentage point for Mexico due to unexpected domestic demand resilience, higher-than-expected growth in"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5,
+      "links": []
+    },
+    "text": ""
   },
   {
     "type": "NarrativeText",
@@ -628,17 +628,6 @@
   },
   {
     "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6,
-      "links": []
-    },
-    "text": ""
-  },
-  {
-    "type": "ListItem",
     "element_id": "25e2f1dc031b5421b8a234945098e58b",
     "metadata": {
       "data_source": {},
@@ -647,6 +636,17 @@
       "links": []
     },
     "text": "Growth in the Middle East and Central Asia is projected to decline from 5.3 percent in 2022 to 3.2 percent in 2023, with a downward revision of 0.4 percentage point since October, mainly attributable to a steeper-than-expected growth slowdown in Saudi Arabia, from 8.7 percent in 2022 (which was stronger than expected by 1.1 percentage points) to 2.6 percent in 2023, with a negative revision of 1.1 percentage points. The downgrade for 2023 reflects mainly lower oil production in line with an agreement through OPEC+ (Organization of the Petroleum Exporting Countries, including Russia and other non-OPEC oil exporters), while non-oil growth is expected to remain robust. In sub-Saharan Africa, growth is projected to remain moderate at 3.8 percent in 2023 amid prolonged fallout from the COVID-19 pandemic, although with a modest upward revision since October, before picking up to 4.1 percent in 2024. The small upward revision for 2023 (0.1 percentage point) reflects Nigeria’s rising growth in 2023 due to measures to address insecurity issues in the oil sector. In South Africa, by contrast, after a COVID-19 reopening rebound in 2022, projected growth more than halves in 2023, to 1.2 percent, reflecting weaker external demand, power shortages, and structural constraints."
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6,
+      "links": []
+    },
+    "text": ""
   },
   {
     "type": "NarrativeText",
@@ -1794,17 +1794,6 @@
   },
   {
     "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": ""
-  },
-  {
-    "type": "ListItem",
     "element_id": "2d14934d52ff357c52e9ae1c38f7390e",
     "metadata": {
       "data_source": {},
@@ -1813,6 +1802,17 @@
       "links": []
     },
     "text": "Debt distress: Since October, sovereign spreads for emerging market and developing economies have modestly declined on the back of an easing in global financial conditions (Box 1) and dollar depreciation. About 15 percent of low-income countries are estimated to be in debt distress, with an additional 45 percent at high risk of debt distress and about 25 percent of emerging market economies also at high risk. The combination of high debt levels from the pandemic, lower growth, and higher borrowing costs exacerbates the vulnerability of these economies, especially those with significant near-term dollar financing needs. Inflation persisting: Persistent labor market tightness could translate into stronger-than-expected wage growth. Higher-than-expected oil, gas, and food prices from the war in Ukraine or from a faster rebound in China’s growth could again raise headline inflation and pass through into underlying inflation. Such developments could cause inflation expectations to de-anchor and require an even tighter monetary policy."
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": ""
   },
   {
     "type": "ListItem",
@@ -2288,72 +2288,6 @@
     "text": "Slowing aggregate demand and weaker-than-expected inflation prints in some major advanced economies have prompted investors’ anticipation of a further reduction in the pace of future policy rate hikes. Corporate earnings forecasts have been cut due to headwinds from slowing demand, and margins have contracted across most regions. In addition, survey-based probabilities of recession have been increasing, particularly in the United States and Europe. However, upside risks to the inflation outlook remain. Despite the recent moderation in headline inflation, core inflation remains stubbornly high across most regions, labor markets are still tight, energy prices remain pressured by Russia’s ongoing war in Ukraine, and supply chain disruptions may reappear. To keep these risks in check, financial conditions will likely need to tighten further. If not, central banks may need to increase policy rates even more in order to achieve their inflation objectives."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "e7f6c011776e8db7cd330b54174fd76f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11,
-      "links": []
-    },
-    "text": "6"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ef2d127de37b942baad06145e54b0c61",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11,
-      "links": []
-    },
-    "text": "5"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11,
-      "links": []
-    },
-    "text": "4"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11,
-      "links": []
-    },
-    "text": "3"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11,
-      "links": []
-    },
-    "text": "2"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11,
-      "links": []
-    },
-    "text": "1"
-  },
-  {
     "type": "Title",
     "element_id": "6ef230728534d871e5126e2a55e12b26",
     "metadata": {
@@ -2385,6 +2319,17 @@
       "links": []
     },
     "text": "October 2022 GFSR"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "e7f6c011776e8db7cd330b54174fd76f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11,
+      "links": []
+    },
+    "text": "6"
   },
   {
     "type": "ListItem",
@@ -2616,5 +2561,60 @@
       "links": []
     },
     "text": "WEO Update © 2023 • ISBN: 979-8-40023-224-4"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ef2d127de37b942baad06145e54b0c61",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11,
+      "links": []
+    },
+    "text": "5"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11,
+      "links": []
+    },
+    "text": "4"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11,
+      "links": []
+    },
+    "text": "3"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11,
+      "links": []
+    },
+    "text": "2"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11,
+      "links": []
+    },
+    "text": "1"
   }
 ]
