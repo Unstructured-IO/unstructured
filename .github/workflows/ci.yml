@@ -111,7 +111,8 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
-        # make install-ingest-salesforce
+        make install-ingest-elasticsearch
+        make install-ingest-salesforce
         make install-ingest-notion
         make install-ingest-jira
         ./test_unstructured_ingest/test-ingest.sh

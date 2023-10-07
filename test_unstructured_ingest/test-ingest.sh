@@ -16,7 +16,7 @@ scripts=(
 # 'test-ingest-biomed-path.sh'
 # ## NOTE(yuming): The following test should be put after any tests with --preserve-downloads option
 # 'test-ingest-pdf-fast-reprocess.sh'
-# 'test-ingest-salesforce.sh'
+'test-ingest-salesforce.sh'
 # 'test-ingest-box.sh'
 # 'test-ingest-discord.sh'
 # 'test-ingest-dropbox.sh'
@@ -30,7 +30,7 @@ scripts=(
 # 'test-ingest-gcs.sh'
 # 'test-ingest-onedrive.sh'
 # 'test-ingest-outlook.sh'
-# 'test-ingest-elasticsearch.sh'
+'test-ingest-elasticsearch.sh'
 # 'test-ingest-confluence-diff.sh'
 # 'test-ingest-confluence-large.sh'
 # 'test-ingest-airtable-diff.sh'
