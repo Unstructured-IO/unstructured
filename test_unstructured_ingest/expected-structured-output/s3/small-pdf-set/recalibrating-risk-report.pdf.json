@@ -307,7 +307,7 @@
   },
   {
     "type": "Table",
-    "element_id": "07e04cdff751f52e042c08c1b265b6f5",
+    "element_id": "bd73364ecc77e30dd55e632e93e4583d",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -321,7 +321,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "_Laypersons Experts 1 2 3 Handguns 4 + Nuclear power 20 Motor vehicles 1 4 Smoking 2 17 Electric power (non-nuclear) 9 1 | + + 22 xrays 7 30 Vaccinations 25"
+    "text": "Experts 1 Nuclear power 20 2 Motor vehicles 1 3 Handguns 4 4 Smoking 2 17 Electric power (non-nuclear) 9 22 X-rays 7 30 Vaccinations 25"
   },
   {
     "type": "Title",
@@ -594,8 +594,8 @@
     "text": ""
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "4523540f1504cd17100c4835e85b7eef",
+    "type": "Title",
+    "element_id": "1656c455012b016fbac5eac0a38397bd",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -609,7 +609,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "17"
+    "text": "Electric power (non-nuclear)"
   },
   {
     "type": "UncategorizedText",
@@ -630,8 +630,8 @@
     "text": "9"
   },
   {
-    "type": "Title",
-    "element_id": "1656c455012b016fbac5eac0a38397bd",
+    "type": "UncategorizedText",
+    "element_id": "4523540f1504cd17100c4835e85b7eef",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -645,7 +645,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Electric power (non-nuclear)"
+    "text": "17"
   },
   {
     "type": "UncategorizedText",
@@ -685,7 +685,7 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "785f3ec7eb32f30b90cd0fcf3657d388",
+    "element_id": "7902699be42c8a8e46fbbb4501726517",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -699,7 +699,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "22"
+    "text": "7"
   },
   {
     "type": "Title",
@@ -721,7 +721,7 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "7902699be42c8a8e46fbbb4501726517",
+    "element_id": "785f3ec7eb32f30b90cd0fcf3657d388",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -735,7 +735,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "7"
+    "text": "22"
   },
   {
     "type": "UncategorizedText",
@@ -772,6 +772,24 @@
       "page_number": 4
     },
     "text": ""
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "b7a56873cd771f2c446d369b649430b6",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "25"
   },
   {
     "type": "UncategorizedText",
@@ -808,24 +826,6 @@
       "page_number": 4
     },
     "text": "Vaccinations"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b7a56873cd771f2c446d369b649430b6",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": 306475068461766865312866697521104206816,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "date_modified": "2023-02-12T10:09:32"
-      },
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "25"
   },
   {
     "type": "NarrativeText",
@@ -883,7 +883,7 @@
   },
   {
     "type": "Image",
-    "element_id": "aa493f4c5f573e209dc5e56d5e2a341f",
+    "element_id": "557e455200e568a1b8ce1fa205432b10",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -897,7 +897,7 @@
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "Natural Artificial   @ 48% Radon @ 11% Medicine @ 14% Buildings & soil @ 0.4% = Fallout @ 12% Food & water @ 0.4% Miscellaneous @ 10% Cosmic @ 0.2% Occupational @ 4% = Thoron @ 0.04% Nuclear discharges  "
+    "text": "Natural Artificial   48%  Radon  14%  Buildings & soil  12%  Food & water  10%  Cosmic  4% Thoron   11%  Medicine  0.4%   0.4%  Miscellaneous  0.2%  Occupational  0.04%  Nuclear discharges Fallout"
   },
   {
     "type": "FigureCaption",
@@ -1063,7 +1063,7 @@
   },
   {
     "type": "Image",
-    "element_id": "226de27a8eeb930616d6b9c4aa4dc574",
+    "element_id": "86c85866eb204cac66d78366332b5f42",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -1077,7 +1077,7 @@
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "            05 24.6 20 18.4 S15 10 46 28 5 || 0.07 0.04 0.02 0.01 > SS I ~— ~— es ° & Se es oe oe & ro se s& e as"
+    "text": "25 20 18.4 15 10 4.6 5 2.8 0.07 0.04 0.02 0.01 0 C oal Oil Bio m ass N atural gas Wind H ydropo w er S olar N uclear"
   },
   {
     "type": "FigureCaption",
@@ -1135,7 +1135,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "9f9b01127f5b3b297b3759a8e205ad59",
+    "element_id": "31138d5dc0c297144d27d5dbd15d5ef0",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -1149,7 +1149,7 @@
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "$ Sources drawn upon: Markandya, A., & Wilkinson, P. (2007), Sovacool et al. (2016). Data for nuclear accidents modified to reflect the 2012 UNSCEAR report and the 2015 US NRC SOARCA study."
+    "text": "2012 UNSCEAR report and the 2015 US NRC SOARCA study."
   },
   {
     "type": "Header",
@@ -1369,7 +1369,7 @@
   },
   {
     "type": "Image",
-    "element_id": "72b1be8b707acf2f917fef7ea176ec32",
+    "element_id": "b1139c67550215b3f94886c9b2dc1ab5",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -1383,7 +1383,7 @@
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "ae) Plant-level Social and flea productio Grid-level costs environmental costs of at market pri of the electricity emissions, land-use, system climate change, security of supply, etc.  "
+    "text": "Social andenvironmental costs ofemissions, land-use,climate change, securityof supply, etc. Plant-levelproduction costsat market prices Grid-level costsof the electricitysystem"
   },
   {
     "type": "FigureCaption",
@@ -1747,7 +1747,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "6febbd0bffa8633c6c188165767c843c",
+    "element_id": "0d47ae52e5f061cfc5048ddcaba403d4",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -1761,7 +1761,7 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "United Nations Scientific Committee on the Effects of Radiation (2016). Report of the United Nations Scientific Committee on the Effects of Atomic Radiation. Accessed from: https:/Avww.unscear.org/docs/publications/2016/ UNSCEAR_2016_GA-Report-CORR.pdf"
+    "text": "iv United Nations Scientific Committee on the Effects of Radiation (2016). Report of the United Nations Scientific Committee on the Effects of Atomic Radiation. Accessed from: https://www.unscear.org/docs/publications/2016/UNSCEAR_2016_GA-Report-CORR.pdf"
   },
   {
     "type": "ListItem",
@@ -1837,7 +1837,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "2f9b2ba9ed7265891caea2b618d2968c",
+    "element_id": "15e80c04027ef832c3b1390cc65e4bd3",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -1851,11 +1851,11 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "VIL World Health Organization. (2016). Updated tables 2016 for ‘Preventing disease through health environments: a global assessment of the burden of disease from environmental risks’. Available at: https://www.who.int/data/gho/ data/themes/public-health-and-environment [Accessed on 8 April 2021]"
+    "text": "vii World Health Organization. (2016). Updated tables 2016 for ‘Preventing disease through health environments: a global assessment of the burden of disease from environmental risks’. Available at: https://www.who.int/data/gho/data/themes/public-health-and-environment [Accessed on 8 April 2021]"
   },
   {
     "type": "ListItem",
-    "element_id": "46c6ddac9c0dadbc38d874f4b35fa235",
+    "element_id": "cfe3779da861867bff1504ddefb25de7",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -1869,11 +1869,11 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "National Cancer Institute (2020). Cancer statistics. Available at: https://www.cancer.gov/about-cancer/ understanding/statistics"
+    "text": "viii National Cancer Institute (2020). Cancer statistics. Available at: https://www.cancer.gov/about-cancer/ understanding/statistics"
   },
   {
     "type": "ListItem",
-    "element_id": "acdfef838c7c3dd2d1d6bfe41f4156e6",
+    "element_id": "dd9a5a9cddd215a320cef8faba067a29",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -1887,11 +1887,11 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "Cancer Research UK (n.d.). Cancer risk statistics. Available at: https:/Awww.cancerresearchuk.org/health- professional/cancer-statistics/risk"
+    "text": "ix Cancer Research UK (n.d.). Cancer risk statistics. Available at: https://www.cancerresearchuk.org/health- professional/cancer-statistics/risk"
   },
   {
     "type": "ListItem",
-    "element_id": "0765b3700a8d5cdd4e4cdb9283835ade",
+    "element_id": "406c6ad54b798573c5e610cb96d3d7e1",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -1905,11 +1905,11 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "OECD-NEA (2019). The Full Costs of Electricity Provision. Available at: https:/Avww.oecd-nea.org/jcms/pl_14998/ the-full-costs-of-electricity-provision?details=true"
+    "text": "x OECD-NEA (2019). The Full Costs of Electricity Provision. Available at: https://www.oecd-nea.org/jcms/pl_14998/ the-full-costs-of-electricity-provision?details=true"
   },
   {
     "type": "ListItem",
-    "element_id": "8bfb0188dff570fe23d75b3873051528",
+    "element_id": "5f515ae66188ea42830eaf540f4f0c12",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -1923,7 +1923,7 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "xi World Health Organization (2018). Climate change and health. Available at: https:/Awww.who.int/news-room/fact- sheets/detail/climate-change-and-health"
+    "text": "xi World Health Organization (2018). Climate change and health. Available at: https://www.who.int/news-room/fact- sheets/detail/climate-change-and-health"
   },
   {
     "type": "ListItem",
