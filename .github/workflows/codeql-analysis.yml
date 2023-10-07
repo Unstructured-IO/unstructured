@@ -17,15 +17,25 @@ on:
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ main ]
-  merge_group:
-    branches: [ main ]
   schedule:
     - cron: '21 21 * * 5'
 
 jobs:
+  skip_conditions:
+    runs-on: ubuntu-latest
+    outputs:
+      no_code_changes: ${{ steps.version_only_change.outputs.should_skip }}
+    steps:
+    - id: version_only_change
+      uses: fkirc/skip-duplicate-actions@v5
+      with:
+        paths_ignore: '["unstructured/__version__.py", "CHANGELOG.md"]'
+        
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    needs: skip_conditions
+    if: needs.skip_conditions.outputs.no_code_changes == 'false'
     permissions:
       actions: read
       contents: read
