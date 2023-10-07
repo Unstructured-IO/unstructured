@@ -61,8 +61,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
-    outputs:
-      skip_no_code_changes: ${{ steps.has_code_changes.outputs.should_skip }}
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache@v3
@@ -82,10 +80,6 @@ jobs:
         source .venv/bin/activate
         [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
         make install-ci
-    - id: has_code_changes
-      uses: fkirc/skip-duplicate-actions@v5
-      with:
-        paths_ignore: '["unstructured/__version__.py", "CHANGELOG.py"]'
 
   check_deps:
     strategy:
