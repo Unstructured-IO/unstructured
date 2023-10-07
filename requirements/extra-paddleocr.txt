@@ -172,7 +172,9 @@ pytz==2023.3.post1
 pywavelets==1.4.1
     # via scikit-image
 rapidfuzz==3.3.1
-    # via unstructured-paddleocr
+    # via
+    #   -c requirements/base.txt
+    #   unstructured-paddleocr
 rarfile==4.1
     # via visualdl
 requests==2.31.0

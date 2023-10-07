@@ -12,3 +12,4 @@ dataclasses-json
 python-iso639
 langdetect
 numpy
+rapidfuzz
