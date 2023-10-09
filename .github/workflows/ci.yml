@@ -115,14 +115,14 @@ jobs:
         make check-deps
 
   check_deps_result: # report the final result of the check_deps job, so that it can be properly skipped as needed
-    if: always()
+    if: needs.skip_conditions.outputs.no_code_changes == 'false' && always()
     runs-on: ubuntu-latest
     needs:
       - skip_conditions
       - check_deps
     steps:
       - name: Mark result as failed
-        if: needs.skip_conditions.outputs.no_code_changes == 'false' && needs.check_deps.result != 'success'
+        if: needs.check_deps.result != 'success'
         run: exit 1
 
   lint:
@@ -158,14 +158,14 @@ jobs:
         make check-tests 
 
   lint_result: # report the final result of the lint job, so that it can be properly skipped as needed
-    if: always()
+    if: needs.skip_conditions.outputs.no_code_changes == 'false' && always()
     runs-on: ubuntu-latest
     needs:
       - skip_conditions
       - lint
     steps:
       - name: Mark result as failed
-        if: needs.skip_conditions.outputs.no_code_changes == 'false' && needs.lint.result != 'success'
+        if: needs.lint.result != 'success'
         run: exit 1
 
   test_unit:
@@ -214,14 +214,14 @@ jobs:
         make check-coverage
 
   test_unit_result: # report the final result of the test_unit job, so that it can be properly skipped as needed
-    if: always()
+    if: needs.skip_conditions.outputs.no_code_changes == 'false' && always()
     runs-on: ubuntu-latest
     needs:
       - skip_conditions
       - test_unit
     steps:
       - name: Mark result as failed
-        if: needs.skip_conditions.outputs.no_code_changes == 'false' && needs.test_unit.result != 'success'
+        if: needs.test_unit.result != 'success'
         run: exit 1
 
   test_unit_no_extras:
@@ -261,14 +261,14 @@ jobs:
         make test-no-extras CI=true
 
   test_unit_no_extras_result: # report the final result of the test_unit_no_extras job, so that it can be properly skipped as needed
-    if: always()
+    if: needs.skip_conditions.outputs.no_code_changes == 'false' && always()
     runs-on: ubuntu-latest
     needs:
       - skip_conditions
       - test_unit_no_extras
     steps:
       - name: Mark result as failed
-        if: needs.skip_conditions.outputs.no_code_changes == 'false' && needs.test_unit_no_extras.result != 'success'
+        if: needs.test_unit_no_extras.result != 'success'
         run: exit 1
 
   test_unit_dependency_extras:
@@ -315,14 +315,14 @@ jobs:
         make test-extra-${{ matrix.extra }} CI=true
 
   test_unit_dependency_extras_result: # report the final result of the test_unit_dependency_extras job, so that it can be properly skipped as needed
-    if: always()
+    if: needs.skip_conditions.outputs.no_code_changes == 'false' && always()
     runs-on: ubuntu-latest
     needs:
       - skip_conditions
       - test_unit_dependency_extras
     steps:
       - name: Mark result as failed
-        if: needs.skip_conditions.outputs.no_code_changes == 'false' && needs.test_unit_dependency_extras.result != 'success'
+        if: needs.test_unit_dependency_extras.result != 'success'
         run: exit 1
 
   test_ingest:
@@ -429,14 +429,14 @@ jobs:
         ./test_unstructured_ingest/test-ingest.sh
 
   test_ingest_result: # report the final result of the test_ingest job, so that it can be properly skipped as needed
-    if: always()
+    if: needs.skip_conditions.outputs.no_code_changes == 'false' && always()
     runs-on: ubuntu-latest
     needs:
       - skip_conditions
       - test_ingest
     steps:
       - name: Mark result as failed
-        if: needs.skip_conditions.outputs.no_code_changes == 'false' && needs.test_ingest.result != 'success'
+        if: needs.test_ingest.result != 'success'
         run: exit 1
 
   test_unstructured_api_unit:
@@ -490,14 +490,14 @@ jobs:
         make test-unstructured-api-unit
 
   test_unstructured_api_unit_result: # report the final result of the test_unstructured_api_unit job, so that it can be properly skipped as needed
-    if: always()
+    if: needs.skip_conditions.outputs.no_code_changes == 'false' && always()
     runs-on: ubuntu-latest
     needs:
       - skip_conditions
       - test_unstructured_api_unit
     steps:
       - name: Mark result as failed
-        if: needs.skip_conditions.outputs.no_code_changes == 'false' && needs.test_unstructured_api_unit.result != 'success'
+        if: needs.test_unstructured_api_unit.result != 'success'
         run: exit 1
 
   # TODO - figure out best practice for caching docker images
@@ -531,12 +531,12 @@ jobs:
           make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
 
   test_dockerfile_result: # report the final result of the test_dockerfile job, so that it can be properly skipped as needed
-    if: always()
+    if: needs.skip_conditions.outputs.no_code_changes == 'false' && always()
     runs-on: ubuntu-latest
     needs:
       - skip_conditions
       - test_dockerfile
     steps:
       - name: Mark result as failed
-        if: needs.skip_conditions.outputs.no_code_changes == 'false' && needs.test_dockerfile.result != 'success'
+        if: needs.test_dockerfile.result != 'success'
         run: exit 1
