@@ -76,17 +76,16 @@ class Processor:
 
         # Debugging tip: use the below lines and comment out the mp.Pool loop
         # block to remain in single process
-        json_docs = [doc.to_json() for doc in docs]
-        for i in range(len(json_docs)):
-            self.doc_processor_fn(json_docs[i])
-        logger.info(f"Processing {len(docs)} docs")
         # json_docs = [doc.to_json() for doc in docs]
-        # with mp.Pool(
-        #     processes=self.num_processes,
-        #     initializer=ingest_log_streaming_init,
-        #     initargs=(logging.DEBUG if self.verbose else logging.INFO,),
-        # ) as pool:
-        #     pool.map(self.doc_processor_fn, json_docs)
+        # self.doc_processor_fn(json_docs[0])
+        logger.info(f"Processing {len(docs)} docs")
+        json_docs = [doc.to_json() for doc in docs]
+        with mp.Pool(
+            processes=self.num_processes,
+            initializer=ingest_log_streaming_init,
+            initargs=(logging.DEBUG if self.verbose else logging.INFO,),
+        ) as pool:
+            pool.map(self.doc_processor_fn, json_docs)
 
     def run(self):
         self.initialize()
