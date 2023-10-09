@@ -38,6 +38,7 @@ class SharePoint(Runner):
         )
 
         from unstructured.ingest.connector.sharepoint import (
+            SharepointPermissionsConfig,
             SharepointSourceConnector,
             SimpleSharepointConfig,
         )
@@ -46,13 +47,15 @@ class SharePoint(Runner):
             connector_config=SimpleSharepointConfig(
                 client_id=client_id,
                 client_credential=client_cred,
-                permissions_application_id=permissions_application_id,
-                permissions_client_cred=permissions_client_cred,
-                permissions_tenant=permissions_tenant,
                 site_url=site,
                 path=path,
                 process_pages=(not files_only),
                 recursive=recursive,
+                permissions_config=SharepointPermissionsConfig(
+                    application_id=permissions_application_id,
+                    client_credential=permissions_client_cred,
+                    tenant=permissions_tenant,
+                ),
             ),
             read_config=self.read_config,
             partition_config=self.partition_config,

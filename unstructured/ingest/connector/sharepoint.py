@@ -12,6 +12,7 @@ from unstructured.embed.interfaces import BaseEmbeddingEncoder
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
+    BaseConfig,
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSourceConnector,
@@ -34,16 +35,32 @@ CONTENT_LABELS = ["CanvasContent1", "LayoutWebpartsContent1", "TimeCreated"]
 
 
 @dataclass
+class SharepointPermissionsConfig(BaseConfig):
+    application_id: t.Optional[str] = None
+    client_credential: t.Optional[str] = None
+    tenant: t.Optional[str] = None
+
+    def __post_init__(self):
+        if any([self.application_id or self.client_credential or self.tenant]) and not all(
+            [self.application_id and self.client_credential and self.tenant],
+        ):
+            raise ValueError(
+                "Please provide either none or all of the following mandatory values:"
+                "--permissions-application-id"
+                "--permissions-client-cred"
+                "--permissions-tenant",
+            )
+
+
+@dataclass
 class SimpleSharepointConfig(BaseConnectorConfig):
     client_id: str
     client_credential: str = field(repr=False)
-    permissions_application_id: str
-    permissions_client_cred: str = field(repr=False)
-    permissions_tenant: str
     site_url: str
     path: str
     process_pages: bool = False
     recursive: bool = False
+    permissions_config: t.Optional[SharepointPermissionsConfig] = None
 
     def __post_init__(self):
         if not (self.client_id and self.client_credential and self.site_url):
@@ -68,11 +85,7 @@ class SimpleSharepointConfig(BaseConnectorConfig):
 
     def get_permissions_client(self):
         try:
-            permissions_connector = PermissionsConnector(
-                self.permissions_tenant,
-                self.permissions_application_id,
-                self.permissions_client_cred,
-            )
+            permissions_connector = PermissionsConnector(self.permissions_config)
             assert permissions_connector.access_token
             return permissions_connector
         except Exception as e:
@@ -401,7 +414,7 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
     def get_ingest_docs(self):
         base_site_client = self.connector_config.get_site_client()
 
-        if self.connector_config.permissions_application_id:
+        if self.connector_config.permissions_config.application_id:
             permissions_client = self.connector_config.get_permissions_client()
             if permissions_client:
                 permissions_client.write_all_permissions(self.partition_config.output_dir)
@@ -419,27 +432,26 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         return ingest_docs
 
 
+@dataclass
 class PermissionsConnector:
-    def __init__(self, permissions_tenant, permissions_application_id, permissions_client_cred):
-        self.permissions_tenant: str = permissions_tenant
-        self.permissions_application_id: str = permissions_application_id
-        self.permissions_client_cred: str = permissions_client_cred
+    def __init__(self, permissions_config):
+        self.permissions_config: SharepointPermissionsConfig = permissions_config
         self.access_token: str = self.get_access_token()
 
     @requires_dependencies(["requests"], extras="sharepoint")
     def get_access_token(self) -> str:
         import requests
 
-        url = f"https://login.microsoftonline.com/{self.permissions_tenant}/oauth2/v2.0/token"
+        url = (
+            f"https://login.microsoftonline.com/{self.permissions_config.tenant}/oauth2/v2.0/token"
+        )
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
-
         data = {
-            "client_id": self.permissions_application_id,
+            "client_id": self.permissions_config.application_id,
             "scope": "https://graph.microsoft.com/.default",
-            "client_secret": self.permissions_client_cred,
+            "client_secret": self.permissions_config.client_credential,
             "grant_type": "client_credentials",
         }
-
         response = requests.post(url, headers=headers, data=data)
         return response.json()["access_token"]
 
