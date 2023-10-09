@@ -42,7 +42,6 @@ def chunk_table_element(
 
         if is_continuation:
             table_chunk.metadata.is_continuation = True
-            table_chunk.metadata.max_characters = max_characters
 
         chunks.append(table_chunk)
         is_continuation = True

@@ -1052,13 +1052,7 @@ def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
 def test_add_chunking_strategy_chars_on_partition_auto_adds_is_continuation():
     filename = "example-docs/example-10k-1p.html"
 
-    table_elements = [
-        e
-        for e in partition(
-            filename,
-        )
-        if isinstance(e, Table)
-    ]
+    table_elements = [e for e in partition(filename) if isinstance(e, Table)]
     chunked_table_elements = [
         e
         for e in partition(
