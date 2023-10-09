@@ -45,9 +45,9 @@ class SharepointPermissionsConfig(BaseConfig):
             [self.application_id and self.client_credential and self.tenant],
         ):
             raise ValueError(
-                "Please provide either none or all of the following mandatory values:"
-                "--permissions-application-id"
-                "--permissions-client-cred"
+                "Please provide either none or all of the following optional values:\n"
+                "--permissions-application-id\n"
+                "--permissions-client-cred\n"
                 "--permissions-tenant",
             )
 
