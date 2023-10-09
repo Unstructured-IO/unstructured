@@ -1,6 +1,6 @@
 import sys
 import unicodedata
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 from rapidfuzz.distance import Levenshtein
 
@@ -70,8 +70,9 @@ def remove_punctuation(s: str, exclude_punctuation: Optional[list]) -> str:
     return s
 
 
-def bag_of_words(text: str) -> dict[str, int]:
-    bow = {}
+def bag_of_words(text: str) -> Dict[str, int]:
+    bow = Dict[str, int]
+    incorrect_word: str
     words = remove_punctuation(text.lower(), ["-", "'"]).split()
 
     i = 0
@@ -85,6 +86,7 @@ def bag_of_words(text: str) -> dict[str, int]:
         else:
             j = i
             incorrect_word = ""
+
             while j < len(words) and len(words[j]) == 1:
                 incorrect_word += words[j]
                 j += 1
