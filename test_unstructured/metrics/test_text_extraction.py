@@ -123,6 +123,21 @@ def test_calculate_edit_distance_with_filename(filename, expected_score, expecte
             "I have a dog and a cat, I love my dog.",
             {"i": 2, "have": 1, "a": 2, "dog": 2, "and": 1, "cat": 1, "love": 1, "my": 1},
         ),
+        (
+            "My dog's hair is red, but the dogs' houses are blue.",
+            {
+                "my": 1,
+                "dog's": 1,
+                "hair": 1,
+                "is": 2,
+                "red": 1,
+                "but": 1,
+                "the": 1,
+                "dogs": 1,
+                "house": 1,
+                "blue": 1,
+            },
+        ),
     ],
 )
 def test_bag_of_words(text, expected):
