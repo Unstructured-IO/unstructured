@@ -18,6 +18,11 @@ if [ -z "$SHAREPOINT_CLIENT_ID" ] || [ -z "$SHAREPOINT_CRED" ] ; then
    exit 0
 fi
 
+if [ -z "$SHAREPOINT_RBAC_CLIENT_APPLICATION_ID" ] || [ -z "$SHAREPOINT_RBAC_CLIENT_SECRET" ] || [ -z "$SHAREPOINT_TENANT" ] ; then
+   echo "Skipping Sharepoint ingest test because the SHAREPOINT_RBAC_CLIENT_APPLICATION_ID, SHAREPOINT_RBAC_CLIENT_SECRET, or SHAREPOINT_TENANT env var is not set."
+   exit 0
+fi
+
 if [ -z "$OPENAI_API_KEY" ]; then
    echo "Skipping Sharepoint embedding ingest test because the OPENAI_API_KEY env var is not set."
    exit 0
@@ -83,6 +88,9 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --client-cred "$SHAREPOINT_CRED" \
     --client-id "$SHAREPOINT_CLIENT_ID" \
     --site "$SHAREPOINT_SITE" \
+    --permissions-application-id "$SHAREPOINT_PERMISSIONS_APP_ID" \
+    --permissions-client-cred "$SHAREPOINT_PERMISSIONS_APP_CRED" \
+    --permissions-tenant "$SHAREPOINT_PERMISSIONS_TENANT" \
     --path "Shared Documents" \
     --recursive \
     --embedding-api-key "$OPENAI_API_KEY" \
