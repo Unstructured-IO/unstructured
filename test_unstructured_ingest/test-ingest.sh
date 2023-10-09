@@ -69,10 +69,11 @@ trap print_last_run EXIT
 python_version=$(python --version 2>&1)
 
 for test in "${all_tests[@]}"; do
+  CURRENT_TEST="$test"
   if [[ "$python_version" != "Python 3.10"* ]] && [[ ! "${full_python_matrix_tests[*]}" =~ "$test" ]] ; then
     echo "--------- SKIPPING SCRIPT $test ---------"
   fi
-  if [[ "$CURRENT_TEST" == "test-ingest-notion.sh" ]]; then
+  if [[ "$test" == "test-ingest-notion.sh" ]]; then
     echo "--------- RUNNING SCRIPT $test --- IGNORING FAILURES"
     set +e
     echo "Running ./test_unstructured_ingest/$test"
