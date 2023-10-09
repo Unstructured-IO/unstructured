@@ -71,8 +71,8 @@ def remove_punctuation(s: str, exclude_punctuation: Optional[list]) -> str:
 
 
 def bag_of_words(text: str) -> Dict[str, int]:
-    bow = Dict[str, int]
-    incorrect_word: str
+    bow: Dict[str, int] = {}
+    incorrect_word: str = ""
     words = remove_punctuation(text.lower(), ["-", "'"]).split()
 
     i = 0
