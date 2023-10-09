@@ -28,17 +28,22 @@ Run Locally
 
       .. code:: python
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.s3 import s3
+        import os
+
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import S3Runner
 
         if __name__ == "__main__":
-            s3(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = S3Runner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="s3-small-batch-output",
                     num_processes=2,
                 ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+            )
+            runner.run(
                 remote_url="s3://utic-dev-tech-fixtures/small-pdf-set/",
                 anonymous=True,
             )
@@ -69,19 +74,23 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.s3 import s3
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import S3Runner
 
         if __name__ == "__main__":
-            s3(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = S3Runner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="s3-small-batch-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+            )
+            runner.run(
                 remote_url="s3://utic-dev-tech-fixtures/small-pdf-set/",
                 anonymous=True,
             )
