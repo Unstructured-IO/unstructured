@@ -1052,18 +1052,20 @@ def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
 def test_add_chunking_strategy_chars_on_partition_auto_adds_is_continuation():
     filename = "example-docs/example-10k-1p.html"
 
-    # default chunk size in chars is 200
-    partitioned_table_elements_200_chars = [
+    table_elements = [e for e in partition(filename) if isinstance(e, Table)]
+    chunked_table_elements = [
         e
         for e in partition(
             filename,
-            chunking_strategy="by_num_characters",
+            chunking_strategy="by_title",
         )
         if isinstance(e, Table)
     ]
 
+    assert table_elements != chunked_table_elements
+
     i = 0
-    for table in partitioned_table_elements_200_chars:
+    for table in chunked_table_elements:
         # have to reset the counter to 0 here when we encounter a Table element
         if isinstance(table, Table):
             i = 0
