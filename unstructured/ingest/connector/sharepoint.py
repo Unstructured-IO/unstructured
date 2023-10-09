@@ -87,7 +87,7 @@ class SimpleSharepointConfig(BaseConnectorConfig):
 
     def get_permissions_client(self):
         try:
-            permissions_connector = PermissionsConnector(self.permissions_config)
+            permissions_connector = SharepointPermissionsConnector(self.permissions_config)
             assert permissions_connector.access_token
             return permissions_connector
         except Exception as e:
@@ -438,9 +438,12 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 
 
 @dataclass
-class PermissionsConnector:
+class SharepointPermissionsConnector:
     def __init__(self, permissions_config):
         self.permissions_config: SharepointPermissionsConfig = permissions_config
+        self.initialize()
+
+    def initialize(self):
         self.access_token: str = self.get_access_token()
 
     @requires_dependencies(["requests"], extras="sharepoint")
