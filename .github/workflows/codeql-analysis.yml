@@ -17,8 +17,8 @@ on:
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ main ]
-  merge_group:
-    branches: [ main ]
+    # known issue that codeql doesn't support merge_queue event, recommendation is to skip it on merge_queue
+    # https://github.com/github/codeql-action/issues/1572 and https://github.com/github/codeql-action/issues/1537
   schedule:
     - cron: '21 21 * * 5'
 

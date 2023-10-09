@@ -115,7 +115,7 @@ class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
     @property
     def _output_filename(self):
         return (
-            Path(self.partition_config.output_dir)
+            Path(self.processor_config.output_dir)
             / f"{self.page.title}-{self.page.revision_id}-html.json"
         )
 
@@ -137,7 +137,7 @@ class WikipediaIngestTextDoc(WikipediaIngestDoc):
     @property
     def _output_filename(self):
         return (
-            Path(self.partition_config.output_dir)
+            Path(self.processor_config.output_dir)
             / f"{self.page.title}-{self.page.revision_id}-txt.json"
         )
 
@@ -160,7 +160,7 @@ class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
     @property
     def _output_filename(self):
         return (
-            Path(self.partition_config.output_dir)
+            Path(self.processor_config.output_dir)
             / f"{self.page.title}-{self.page.revision_id}-summary.json"
         )
 
@@ -175,18 +175,18 @@ class WikipediaSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector)
     def get_ingest_docs(self):
         return [
             WikipediaIngestTextDoc(
+                processor_config=self.processor_config,
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
                 read_config=self.read_config,
             ),
             WikipediaIngestHTMLDoc(
+                processor_config=self.processor_config,
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
                 read_config=self.read_config,
             ),
             WikipediaIngestSummaryDoc(
+                processor_config=self.processor_config,
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
                 read_config=self.read_config,
             ),
         ]

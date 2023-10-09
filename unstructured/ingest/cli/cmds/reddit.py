@@ -4,18 +4,16 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import Group, conform_click_options
 from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
     CliMixin,
-    CliPartitionConfig,
-    CliReadConfig,
 )
+from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import reddit as reddit_fn
+from unstructured.ingest.runner import RedditRunner
 
 
 @dataclass
@@ -24,6 +22,7 @@ class RedditCliConfig(BaseConfig, CliMixin):
     client_secret: str
     subreddit_name: str
     user_agent: str
+    num_posts: int
     search_query: t.Optional[str] = None
 
     @staticmethod
@@ -57,6 +56,18 @@ class RedditCliConfig(BaseConfig, CliMixin):
                 type=str,
                 help="If set, return posts using this query. Otherwise, use hot posts.",
             ),
+            click.Option(
+                ["--num-posts"],
+                required=True,
+                type=click.IntRange(0),
+                help="If set, limits the number of posts to pull in.",
+            ),
+            click.Option(
+                ["--user-agent"],
+                required=True,
+                type=str,
+                help="user agent request header to use when calling Reddit API",
+            ),
         ]
         cmd.params.extend(options)
 
@@ -72,12 +83,11 @@ def reddit_source(ctx: click.Context, **options):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
     log_options(options, verbose=verbose)
     try:
-        # run_init_checks(**options)
-        read_config = CliReadConfig.from_dict(options)
-        partition_config = CliPartitionConfig.from_dict(options)
-        # Run for schema validation
-        RedditCliConfig.from_dict(options)
-        reddit_fn(read_config=read_config, partition_config=partition_config, **options)
+        configs = extract_configs(options, validate=([RedditCliConfig]))
+        runner = RedditRunner(
+            **configs,  # type: ignore
+        )
+        runner.run(**options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
@@ -85,10 +95,5 @@ def reddit_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = reddit_source
-    RedditCliConfig.add_cli_options(cmd)
-
-    # Common CLI configs
-    CliReadConfig.add_cli_options(cmd)
-    CliPartitionConfig.add_cli_options(cmd)
-    cmd.params.append(click.Option(["-v", "--verbose"], is_flag=True, default=False))
+    add_options(cmd, extras=[RedditCliConfig])
     return cmd

@@ -31,7 +31,6 @@ class SimpleSlackConfig(BaseConnectorConfig):
     token: str
     oldest: t.Optional[str]
     latest: t.Optional[str]
-    verbose: bool = False
 
     def validate_inputs(self):
         oldest_valid = True
@@ -79,7 +78,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         output_file = self.channel + ".json"
-        return Path(self.partition_config.output_dir) / output_file
+        return Path(self.processor_config.output_dir) / output_file
 
     @property
     def version(self) -> t.Optional[str]:
@@ -150,7 +149,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         self._create_full_tmp_dir_path()
 
-        if self.connector_config.verbose:
+        if self.processor_config.verbose:
             logger.debug(f"fetching channel {self.channel} - PID: {os.getpid()}")
 
         result = self._fetch_messages()
@@ -211,7 +210,7 @@ class SlackSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         return [
             SlackIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 channel=channel,
                 token=self.connector_config.token,
