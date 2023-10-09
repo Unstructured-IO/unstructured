@@ -1,3 +1,12 @@
+## 0.10.21-dev0
+
+### Enhancements
+* **Expose skip_infer_table_types in ingest CLI** For each connector a new `--skip-infer-table-types` parameter was added to map to the `skip_infer_table_types` partition argument.
+
+### Features
+
+### Fixes
+
 ## 0.10.20
 
 ### Enhancements
@@ -12,7 +21,7 @@
 * **Refactor of the ingest cli workflow** The refactored approach uses a dynamically set pipeline with a snapshot along each step to save progress and accommodate continuation from a snapshot if an error occurs. This also allows the pipeline to dynamically assign any number of steps to modify the partitioned content before it gets written to a destination.
 * **Applies `max_characters=<n>` argument to all element types in `add_chunking_strategy` decorator** Previously this argument was only utilized in chunking Table elements and now applies to all partitioned elements if `add_chunking_strategy` decorator is utilized, further preparing the elements for downstream processing.
 * **Add common retry strategy utilities for unstructured-ingest** Dynamic retry strategy with exponential backoff added to Notion source connector.
-*
+
 ### Features
 
 * **Adds `bag_of_words` and `percent_missing_text` functions** In order to count the word frequencies in two input texts and calculate the percentage of text missing relative to the source document.
