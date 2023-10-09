@@ -67,6 +67,6 @@ USER ${NB_USER}
 COPY example-docs example-docs
 COPY unstructured unstructured
 
-RUN python3.10 -c "from unstructured.ingest.doc_processor.generalized import initialize; initialize()"
+RUN python3.10 -c "from unstructured.ingest.pipeline.initialize import initialize; initialize()"
 
 CMD ["/bin/bash"]

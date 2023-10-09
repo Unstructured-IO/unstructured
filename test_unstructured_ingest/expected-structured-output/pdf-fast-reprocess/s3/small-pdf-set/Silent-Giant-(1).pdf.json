@@ -1166,17 +1166,6 @@
     "text": "r e p s e i t i l"
   },
   {
-    "type": "Title",
-    "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "a t a F"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "48449a14a4ff7d79bb7a1b6f3d488eba",
     "metadata": {
@@ -1200,17 +1189,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "d59eced1ded07f84c145592f65bdf854",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "40"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "ce3201efc2e495241a85e4fc84575f50",
     "metadata": {
       "data_source": {},
@@ -1219,6 +1197,28 @@
       "links": []
     },
     "text": "71.9"
+  },
+  {
+    "type": "Title",
+    "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "a t a F"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d59eced1ded07f84c145592f65bdf854",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "40"
   },
   {
     "type": "UncategorizedText",
@@ -1925,6 +1925,50 @@
     "text": "8"
   },
   {
+    "type": "NarrativeText",
+    "element_id": "3c6336f12bcbf4d1ca36bef92d77efea",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "Nuclear energy can be relied upon to power the new mobility revolution taking place. Every day, we use almost 20 million barrels of oil to power our vehicles. By swapping to an electric or hydrogen-powered transport fleet – all powered by the atom – we are able to address one of the key challenges to a sustainable economy."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f3e39d107b4601c15dbb3d83ed7a7d9c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "We cannot afford to wait – we need every part of the puzzle to contribute towards solving some of the greatest challenges faced by humankind in a very long time. The impacts of climate change will hit the poorest and most vulnerable first, and failing to act will have significant humanitarian consequences."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "d263fe9467aa7876c4d5009c3125176b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "Nuclear power is the silent giant of today’s energy system – it runs quietly in the background, capable of delivering immense amounts of power, regardless of weather or season, allowing us to focus on everything else in life. It is a technology that is available now, and can be expanded quickly across the world to help us solve some of the most defining challenges we face. Nuclear energy holds the potential to herald a new, cleaner and truly sustainable world – enabling us to pass on a cleaner planet to our children."
+  },
+  {
+    "type": "Title",
+    "element_id": "69824d3b0e70ca6aaa0da1613b65fd91",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "References"
+  },
+  {
     "type": "Title",
     "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
@@ -2002,72 +2046,6 @@
     "text": "vii"
   },
   {
-    "type": "Title",
-    "element_id": "ed171375d0bf81eaa5512140c3a29b8f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "ix"
-  },
-  {
-    "type": "Title",
-    "element_id": "2d711642b726b04401627ca9fbac32f5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "x"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "3c6336f12bcbf4d1ca36bef92d77efea",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "Nuclear energy can be relied upon to power the new mobility revolution taking place. Every day, we use almost 20 million barrels of oil to power our vehicles. By swapping to an electric or hydrogen-powered transport fleet – all powered by the atom – we are able to address one of the key challenges to a sustainable economy."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "f3e39d107b4601c15dbb3d83ed7a7d9c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "We cannot afford to wait – we need every part of the puzzle to contribute towards solving some of the greatest challenges faced by humankind in a very long time. The impacts of climate change will hit the poorest and most vulnerable first, and failing to act will have significant humanitarian consequences."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "d263fe9467aa7876c4d5009c3125176b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "Nuclear power is the silent giant of today’s energy system – it runs quietly in the background, capable of delivering immense amounts of power, regardless of weather or season, allowing us to focus on everything else in life. It is a technology that is available now, and can be expanded quickly across the world to help us solve some of the most defining challenges we face. Nuclear energy holds the potential to herald a new, cleaner and truly sustainable world – enabling us to pass on a cleaner planet to our children."
-  },
-  {
-    "type": "Title",
-    "element_id": "69824d3b0e70ca6aaa0da1613b65fd91",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "References"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "de72de35f0092bdd3107011f3be18dc0",
     "metadata": {
@@ -2088,6 +2066,28 @@
       "links": []
     },
     "text": "viii Paul-Scherrer Institute. Data for nuclear accidents modified to reflect UNSCEAR findings/recommendations (2012)"
+  },
+  {
+    "type": "Title",
+    "element_id": "ed171375d0bf81eaa5512140c3a29b8f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "ix"
+  },
+  {
+    "type": "Title",
+    "element_id": "2d711642b726b04401627ca9fbac32f5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "x"
   },
   {
     "type": "UncategorizedText",

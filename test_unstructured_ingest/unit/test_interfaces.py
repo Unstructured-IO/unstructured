@@ -10,6 +10,7 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
     PartitionConfig,
+    ProcessorConfig,
     ReadConfig,
 )
 from unstructured.partition.auto import partition
@@ -116,10 +117,11 @@ def test_partition_file():
     test_ingest_doc = TestIngestDoc(
         connector_config=TEST_CONFIG,
         read_config=ReadConfig(download_dir=TEST_DOWNLOAD_DIR),
-        partition_config=PartitionConfig(output_dir=TEST_OUTPUT_DIR),
+        processor_config=ProcessorConfig(output_dir=TEST_OUTPUT_DIR),
     )
     test_ingest_doc._date_processed = TEST_DATE_PROCESSSED
-    isd_elems = test_ingest_doc.partition_file()
+    isd_elems_raw = test_ingest_doc.partition_file(partition_config=PartitionConfig())
+    isd_elems = convert_to_dict(isd_elems_raw)
     assert len(isd_elems)
     expected_keys = {
         "element_id",
@@ -162,9 +164,10 @@ def test_process_file_fields_include_default(mocker, partition_test_results):
     test_ingest_doc = TestIngestDoc(
         connector_config=TEST_CONFIG,
         read_config=ReadConfig(download_dir=TEST_DOWNLOAD_DIR),
-        partition_config=PartitionConfig(output_dir=TEST_OUTPUT_DIR),
+        processor_config=ProcessorConfig(output_dir=TEST_OUTPUT_DIR),
     )
-    isd_elems = test_ingest_doc.process_file()
+    isd_elems_raw = test_ingest_doc.partition_file(partition_config=PartitionConfig())
+    isd_elems = convert_to_dict(isd_elems_raw)
     assert len(isd_elems)
     assert mock_partition.call_count == 1
     for elem in isd_elems:
@@ -191,15 +194,15 @@ def test_process_file_metadata_includes_filename_and_filetype(
         "unstructured.ingest.interfaces.partition",
         return_value=partition_test_results,
     )
+    partition_config = PartitionConfig(
+        metadata_include=["filename", "filetype"],
+    )
     test_ingest_doc = TestIngestDoc(
         connector_config=TEST_CONFIG,
         read_config=ReadConfig(download_dir=TEST_DOWNLOAD_DIR),
-        partition_config=PartitionConfig(
-            output_dir=TEST_OUTPUT_DIR,
-            metadata_include=["filename", "filetype"],
-        ),
+        processor_config=ProcessorConfig(output_dir=TEST_OUTPUT_DIR),
     )
-    isd_elems = test_ingest_doc.process_file()
+    isd_elems = test_ingest_doc.process_file(partition_config=partition_config)
     assert len(isd_elems)
     for elem in isd_elems:
         # Parent IDs are non-deterministic - remove them from the test
@@ -215,15 +218,17 @@ def test_process_file_metadata_exclude_filename_pagenum(mocker, partition_test_r
         "unstructured.ingest.interfaces.partition",
         return_value=partition_test_results,
     )
+    partition_config = PartitionConfig(
+        metadata_exclude=["filename", "page_number"],
+    )
     test_ingest_doc = TestIngestDoc(
         connector_config=TEST_CONFIG,
         read_config=ReadConfig(download_dir=TEST_DOWNLOAD_DIR),
-        partition_config=PartitionConfig(
+        processor_config=ProcessorConfig(
             output_dir=TEST_OUTPUT_DIR,
-            metadata_exclude=["filename", "page_number"],
         ),
     )
-    isd_elems = test_ingest_doc.process_file()
+    isd_elems = test_ingest_doc.process_file(partition_config=partition_config)
     assert len(isd_elems)
     for elem in isd_elems:
         assert "filename" not in elem["metadata"]
@@ -235,16 +240,18 @@ def test_process_file_flatten_metadata(mocker, partition_test_results):
         "unstructured.ingest.interfaces.partition",
         return_value=partition_test_results,
     )
+    partition_config = PartitionConfig(
+        metadata_include=["filename", "data_source"],
+        flatten_metadata=True,
+    )
     test_ingest_doc = TestIngestDoc(
         connector_config=TEST_CONFIG,
         read_config=ReadConfig(download_dir=TEST_DOWNLOAD_DIR),
-        partition_config=PartitionConfig(
+        processor_config=ProcessorConfig(
             output_dir=TEST_OUTPUT_DIR,
-            metadata_include=["filename", "data_source"],
-            flatten_metadata=True,
         ),
     )
-    isd_elems = test_ingest_doc.process_file()
+    isd_elems = test_ingest_doc.process_file(partition_config=partition_config)
     expected_keys = {"element_id", "text", "type", "filename", "data_source"}
     for elem in isd_elems:
         assert expected_keys == set(elem.keys())

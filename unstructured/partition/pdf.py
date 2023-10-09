@@ -60,7 +60,12 @@ from unstructured.partition.lang import (
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
-from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_DONT, SORT_MODE_XY_CUT
+from unstructured.partition.utils.constants import (
+    SORT_MODE_BASIC,
+    SORT_MODE_DONT,
+    SORT_MODE_XY_CUT,
+    OCRMode,
+)
 from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     sort_page_elements,
@@ -282,7 +287,6 @@ def partition_pdf_or_image(
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
                 languages=languages,
-                ocr_mode="entire_page",
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 **kwargs,
             )
@@ -323,7 +327,7 @@ def _partition_pdf_or_image_local(
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
     languages: List[str] = ["eng"],
-    ocr_mode: str = "entire_page",
+    ocr_mode: str = OCRMode.FULL_PAGE.value,
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     **kwargs,
@@ -334,47 +338,80 @@ def _partition_pdf_or_image_local(
         process_file_with_model,
     )
 
+    from unstructured.partition.ocr import (
+        process_data_with_ocr,
+        process_file_with_ocr,
+    )
+
     ocr_languages = prepare_languages_for_tesseract(languages)
 
     model_name = model_name or default_hi_res_model()
     pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
+    if pdf_image_dpi is None:
+        pdf_image_dpi = 300 if model_name == "chipper" else 200
+    if (pdf_image_dpi < 300) and (model_name == "chipper"):
+        logger.warning(
+            "The Chipper model performs better when images are rendered with DPI >= 300 "
+            f"(currently {pdf_image_dpi}).",
+        )
+
+    # NOTE(christine): Need to extract images from PDF's
     extract_images_in_pdf = kwargs.get("extract_images_in_pdf", False)
     image_output_dir_path = kwargs.get("image_output_dir_path", None)
-
-    process_with_model_kwargs = {
-        "is_image": is_image,
-        "ocr_languages": ocr_languages,
-        "ocr_mode": ocr_mode,
-        "extract_tables": infer_table_structure,
-        "model_name": model_name,
-    }
-
     process_with_model_extra_kwargs = {
-        "pdf_image_dpi": pdf_image_dpi,
         "extract_images_in_pdf": extract_images_in_pdf,
         "image_output_dir_path": image_output_dir_path,
     }
 
+    process_with_model_kwargs = {}
     for key, value in process_with_model_extra_kwargs.items():
         if value:
             process_with_model_kwargs[key] = value
 
     if file is None:
-        layout = process_file_with_model(
+        # NOTE(christine): out_layout = extracted_layout + inferred_layout
+        out_layout = process_file_with_model(
             filename,
+            is_image=is_image,
+            extract_tables=infer_table_structure,
+            model_name=model_name,
+            pdf_image_dpi=pdf_image_dpi,
             **process_with_model_kwargs,
+        )
+        final_layout = process_file_with_ocr(
+            filename,
+            out_layout,
+            is_image=is_image,
+            ocr_languages=ocr_languages,
+            ocr_mode=ocr_mode,
+            pdf_image_dpi=pdf_image_dpi,
         )
     else:
-        layout = process_data_with_model(
+        out_layout = process_data_with_model(
             file,
+            is_image=is_image,
+            extract_tables=infer_table_structure,
+            model_name=model_name,
+            pdf_image_dpi=pdf_image_dpi,
             **process_with_model_kwargs,
         )
+        if hasattr(file, "seek"):
+            file.seek(0)
+        final_layout = process_data_with_ocr(
+            file,
+            out_layout,
+            is_image=is_image,
+            ocr_languages=ocr_languages,
+            ocr_mode=ocr_mode,
+            pdf_image_dpi=pdf_image_dpi,
+        )
+
     # NOTE(alan): chipperv2 sorts the elements itself.
     if model_name == "chipperv2":
         kwargs["sort_mode"] = SORT_MODE_DONT
 
     elements = document_to_element_list(
-        layout,
+        final_layout,
         sortable=True,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_last_modified,
@@ -382,6 +419,7 @@ def _partition_pdf_or_image_local(
         # block with NLP rules. Otherwise, the assumptions in
         # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
         infer_list_items=False,
+        detection_origin="image" if is_image else "pdf",
         **kwargs,
     )
 
@@ -560,6 +598,7 @@ def _process_pdfminer_pages(
                         last_modified=metadata_last_modified,
                         links=links,
                     )
+                    element.metadata.detection_origin = "pdfminer"
                     page_elements.append(element)
         list_item = 0
         updated_page_elements = []  # type: ignore
@@ -760,14 +799,14 @@ def _partition_pdf_or_image_with_ocr(
         if file is not None:
             image = PIL.Image.open(file)
             text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
-                image,
+                np.array(image),
                 extensions=["txt", "box"],
                 lang=ocr_languages,
             )
         else:
             image = PIL.Image.open(filename)
             text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
-                image,
+                np.array(image),
                 extensions=["txt", "box"],
                 lang=ocr_languages,
             )
@@ -776,6 +815,7 @@ def _partition_pdf_or_image_with_ocr(
             max_partition=max_partition,
             min_partition=min_partition,
             metadata_last_modified=metadata_last_modified,
+            detection_origin="OCR",
         )
         width, height = image.size
         _add_pytesseract_bboxes_to_elements(
@@ -796,6 +836,7 @@ def _partition_pdf_or_image_with_ocr(
                 last_modified=metadata_last_modified,
                 languages=languages,
             )
+            metadata.detection_origin = "OCR"
             _text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
                 image,
                 extensions=["txt", "box"],

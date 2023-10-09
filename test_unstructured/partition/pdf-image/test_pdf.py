@@ -16,8 +16,9 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition import pdf, strategies
+from unstructured.partition import ocr, pdf, strategies
 from unstructured.partition.json import partition_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 
@@ -84,12 +85,16 @@ class MockDocumentLayout(layout.DocumentLayout):
     def pages(self):
         return [
             MockPageLayout(number=0, image=Image.new("1", (1, 1))),
+            MockPageLayout(number=1, image=Image.new("1", (1, 1))),
         ]
 
 
 @pytest.mark.parametrize(
     ("filename", "file"),
-    [("example-docs/layout-parser-paper-fast.pdf", None), (None, b"0000")],
+    [
+        ("example-docs/layout-parser-paper-fast.pdf", None),
+        (None, b"0000"),
+    ],
 )
 def test_partition_pdf_local(monkeypatch, filename, file):
     monkeypatch.setattr(
@@ -100,6 +105,16 @@ def test_partition_pdf_local(monkeypatch, filename, file):
     monkeypatch.setattr(
         layout,
         "process_file_with_model",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
+        ocr,
+        "process_data_with_ocr",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
+        ocr,
+        "process_data_with_ocr",
         lambda *args, **kwargs: MockDocumentLayout(),
     )
 
@@ -114,15 +129,16 @@ def test_partition_pdf_local_raises_with_no_filename():
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
 @pytest.mark.parametrize(
-    ("strategy", "expected"),
+    ("strategy", "expected", "origin"),
     # fast: can't capture the "intentionally left blank page" page
     # others: will ignore the actual blank page
-    [("fast", {1, 4}), ("hi_res", {1, 3, 4}), ("ocr_only", {1, 3, 4})],
+    [("fast", {1, 4}, "pdfminer"), ("hi_res", {1, 3, 4}, "pdf"), ("ocr_only", {1, 3, 4}, "OCR")],
 )
 def test_partition_pdf(
     file_mode,
     strategy,
     expected,
+    origin,
     filename="example-docs/layout-parser-paper-with-empty-pages.pdf",
 ):
     # Test that the partition_pdf function can handle filename
@@ -131,6 +147,8 @@ def test_partition_pdf(
         assert len(result) > 10
         # check that the pdf has multiple different page numbers
         assert {element.metadata.page_number for element in result} == expected
+        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+            assert {element.metadata.detection_origin for element in result} == {origin}
 
     if file_mode == "filename":
         result = pdf.partition_pdf(filename=filename, strategy=strategy)
@@ -163,8 +181,7 @@ def test_partition_pdf_with_model_name_env_var(
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            ocr_languages="eng",
-            ocr_mode="entire_page",
+            pdf_image_dpi=200,
             extract_tables=False,
             model_name="checkbox",
         )
@@ -184,8 +201,7 @@ def test_partition_pdf_with_model_name(
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            ocr_languages="eng",
-            ocr_mode="entire_page",
+            pdf_image_dpi=200,
             extract_tables=False,
             model_name="checkbox",
         )
@@ -196,9 +212,9 @@ def test_partition_pdf_with_auto_strategy(
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[7].text == title
-    assert elements[7].metadata.filename == "layout-parser-paper-fast.pdf"
-    assert elements[7].metadata.file_directory == "example-docs"
+    assert elements[6].text == title
+    assert elements[6].metadata.filename == "layout-parser-paper-fast.pdf"
+    assert elements[6].metadata.file_directory == "example-docs"
 
 
 def test_partition_pdf_with_page_breaks(
@@ -403,8 +419,6 @@ def test_partition_pdf_with_dpi():
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            ocr_languages="eng",
-            ocr_mode="entire_page",
             extract_tables=False,
             model_name=pdf.default_hi_res_model(),
             pdf_image_dpi=100,
@@ -517,7 +531,7 @@ def test_partition_pdf_with_auto_strategy_exclude_metadata(
         include_metadata=False,
     )
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[7].text == title
+    assert elements[6].text == title
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
 
@@ -854,8 +868,7 @@ def test_partition_pdf_formats_languages_for_tesseract():
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            ocr_languages="eng",
-            ocr_mode="entire_page",
+            pdf_image_dpi=200,
             extract_tables=False,
             model_name=pdf.default_hi_res_model(),
         )

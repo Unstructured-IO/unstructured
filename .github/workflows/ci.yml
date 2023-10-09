@@ -148,7 +148,7 @@ jobs:
         # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
         make install-ci
         make install-local-inference-branch
-        make test CI=true
+        make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
         make check-coverage
 
   test_unit_no_extras:
@@ -385,6 +385,8 @@ jobs:
   changelog:
     runs-on: ubuntu-latest
     steps:
+    # need to checkout otherwise paths-filter will fail on merge-queue trigger 
+    - uses: actions/checkout@v3
     - if: github.ref != 'refs/heads/main'
       uses: dorny/paths-filter@v2
       id: changes
@@ -423,4 +425,4 @@ jobs:
           source .venv/bin/activate
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
           make docker-build
-          make docker-test CI=true
+          make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true

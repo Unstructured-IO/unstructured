@@ -34,7 +34,26 @@ class MockPageLayout(layout.PageLayout):
     @property
     def elements(self):
         return [
-            LayoutElement(type="Headline", text="Charlie Brown and the Great Pumpkin", bbox=None),
+            LayoutElement(
+                type="Headline",
+                text="Charlie Brown and the Great Pumpkin",
+                bbox=None,
+            ),
+            LayoutElement(
+                type="Subheadline",
+                text="The Beginning",
+                bbox=None,
+            ),
+            LayoutElement(
+                type="Text",
+                text="This time Charlie Brown had it really tricky...",
+                bbox=None,
+            ),
+            LayoutElement(
+                type="Title",
+                text="Another book title in the same page",
+                bbox=None,
+            ),
         ]
 
 
@@ -464,3 +483,12 @@ def test_document_to_element_list_doesnt_sort_on_sort_method(sort_mode, call_cou
     with mock.patch.object(common, "sort_page_elements") as mock_sort_page_elements:
         document_to_element_list(doc, sortable=True, sort_mode=sort_mode)
     assert mock_sort_page_elements.call_count == call_count
+
+
+def test_document_to_element_list_sets_category_depth_titles():
+    layout_with_hierarchies = MockDocumentLayout()
+    elements = document_to_element_list(layout_with_hierarchies)
+    assert elements[0].metadata.category_depth == 1
+    assert elements[1].metadata.category_depth == 2
+    assert elements[2].metadata.category_depth is None
+    assert elements[3].metadata.category_depth == 0

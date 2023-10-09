@@ -24,7 +24,6 @@ class SimpleNotionConfig(BaseConnectorConfig):
     database_ids: t.List[str]
     recursive: bool
     api_key: str
-    verbose: bool
 
 
 @dataclass
@@ -48,7 +47,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         page_file = self.page_id + ".json"
-        return Path(self.partition_config.output_dir) / page_file
+        return Path(self.processor_config.output_dir) / page_file
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
@@ -160,7 +159,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         page_file = self.database_id + ".json"
-        return Path(self.partition_config.output_dir) / page_file
+        return Path(self.processor_config.output_dir) / page_file
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
@@ -332,7 +331,7 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             docs += [
                 NotionPageIngestDoc(
                     connector_config=self.connector_config,
-                    partition_config=self.partition_config,
+                    processor_config=self.processor_config,
                     read_config=self.read_config,
                     page_id=page_id,
                     api_key=self.connector_config.api_key,
@@ -343,7 +342,7 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             docs += [
                 NotionDatabaseIngestDoc(
                     connector_config=self.connector_config,
-                    partition_config=self.partition_config,
+                    processor_config=self.processor_config,
                     read_config=self.read_config,
                     database_id=database_id,
                     api_key=self.connector_config.api_key,
@@ -380,7 +379,7 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 docs += [
                     NotionPageIngestDoc(
                         connector_config=self.connector_config,
-                        partition_config=self.partition_config,
+                        processor_config=self.processor_config,
                         read_config=self.read_config,
                         page_id=page_id,
                         api_key=self.connector_config.api_key,
@@ -397,7 +396,7 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 docs += [
                     NotionDatabaseIngestDoc(
                         connector_config=self.connector_config,
-                        partition_config=self.partition_config,
+                        processor_config=self.processor_config,
                         read_config=self.read_config,
                         database_id=database_id,
                         api_key=self.connector_config.api_key,

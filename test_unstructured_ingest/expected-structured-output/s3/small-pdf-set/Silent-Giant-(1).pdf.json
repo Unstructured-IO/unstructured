@@ -1,24 +1,6 @@
 [
   {
     "type": "Title",
-    "element_id": "14547603bad3329c14c74b8c4e2ff8d9",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "//s88ciation"
-  },
-  {
-    "type": "Title",
     "element_id": "80f1cd7f1c8e281093a32842b1e5bbce",
     "metadata": {
       "data_source": {
@@ -70,6 +52,24 @@
       "page_number": 1
     },
     "text": "The need for nuclear in a clean energy system"
+  },
+  {
+    "type": "Title",
+    "element_id": "14547603bad3329c14c74b8c4e2ff8d9",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "//s88ciation"
   },
   {
     "type": "Title",
@@ -342,24 +342,6 @@
     "text": "Electricity is central to modern life – it powers our daily lives, as well as our dreams and ambitions. Demand has grown steadily for more than 100 years, and will continue to do so as many parts of the world continue to develop, and electrification takes a central role in efforts to decarbonize (Figure 1). With nearly a billion people around the world still living in the dark, without access to electricity, humanity has a responsibility to learn from the past - everyone has the right to enjoy a modern lifestyle in a way that does not cause harm to people or the planet."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "b4af08fb653ae7dea99f3a48c2ff7f5d",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "45,000"
-  },
-  {
     "type": "Title",
     "element_id": "563a2980d46c81119e1d7d952b375a41",
     "metadata": {
@@ -378,8 +360,8 @@
     "text": "h W T"
   },
   {
-    "type": "Image",
-    "element_id": "d5aedf7912dfff3c661af8cd17426bac",
+    "type": "UncategorizedText",
+    "element_id": "b4af08fb653ae7dea99f3a48c2ff7f5d",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -393,7 +375,25 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "45,000       © Marine 40,000 M™@ csp 35,000 zz Solar PV Geothermal 30,000 ~ Mi Wind 25,000 — Il Bioenergy 20,000 = BB Hydro Nuclear 15,000 — Gas 10,000 — oi 5,000 __ Coal     2000 2010 2020 2030 2040"
+    "text": "45,000"
+  },
+  {
+    "type": "Image",
+    "element_id": "adaa6130ff3fb4154048fc2c431ad232",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "  Marine   CSP 40,000   Solar PV 35,000   Geothermal 30,000   Wind   Bioenergy 25,000   Hydro 20,000   Nuclear 15,000   Gas 10,000   Oil   Coal 5,000 0"
   },
   {
     "type": "UncategorizedText",
@@ -559,7 +559,7 @@
   },
   {
     "type": "Image",
-    "element_id": "81fe4504e383e98273c4a560382d82ee",
+    "element_id": "08ecd96cc879b82950d1204ea4e7d6d9",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -573,7 +573,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "30,000,000   |_| High-carbon HE Low-carbon   25,000,000 20,000,000   15,000,000 10,000,000 5,000,000   1990 1995 2000 2005 2010 2015"
+    "text": "30,000,000   High-carbon    Low-carbon 25,000,000 20,000,000 15,000,000 10,000,000 5,000,000 0"
   },
   {
     "type": "UncategorizedText",
@@ -919,7 +919,7 @@
   },
   {
     "type": "Image",
-    "element_id": "5b5f659ab2c445e9ed688dd79280a53e",
+    "element_id": "82ef36cba07b18d12e76b25316a913ad",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -933,7 +933,7 @@
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "        a ro)       0 » ec $ Se SW SS is é e » Pe US X? oe fe)"
+    "text": "300 250 200 150 100 50 0 O nshore Wind Offshore Wind N uclear m ercialPhotovoltaic C oal C C G T C o m"
   },
   {
     "type": "FigureCaption",
@@ -1098,6 +1098,24 @@
     "text": "140"
   },
   {
+    "type": "Image",
+    "element_id": "0f2d0fcb85c227ec422bc38a9902a394",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "120 120 99.5 100 71.9 80 60 40 20 8.5 1.78 0.245 <0.01 0 Offshore wind O nshore wind(G erm any) C oal Oil N atural gas N uclear* S olar P V (U K)"
+  },
+  {
     "type": "NarrativeText",
     "element_id": "e11247712b3df61756970b45f019ad68",
     "metadata": {
@@ -1206,24 +1224,6 @@
     "text": "a t a F"
   },
   {
-    "type": "Image",
-    "element_id": "0fece208b80790baa3ae323ace21f818",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "                140 120 120 1 : 100 99.5 : 80 71.9 1 n 60 . 1 40 : “99 : 85 7g 0245 <0.01 0 : : : > S & 3} cs s\\ é fos < < Qg eS S ew ee © RS Rs ~a S Se fe) we"
-  },
-  {
     "type": "FigureCaption",
     "element_id": "445676822969fb5177c0081d07449a70",
     "metadata": {
@@ -1279,24 +1279,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "ad57366865126e55649ecb23ae1d4888",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "100"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
     "metadata": {
       "data_source": {
@@ -1314,8 +1296,8 @@
     "text": "%"
   },
   {
-    "type": "Image",
-    "element_id": "e56f1d3df6ddf93348f20c095337d639",
+    "type": "UncategorizedText",
+    "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1329,7 +1311,25 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "                    100 90 IB Coal i Gas/Oil 80 IB Biofuels/Waste 70 i Wind/Solar @ Hydro 60 @ Nuclear 50 40 30 20 10 0)  "
+    "text": "100"
+  },
+  {
+    "type": "Image",
+    "element_id": "7e02da28a2dd800555ed667258895ebc",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "  Coal 90   Gas/Oil 80   Biofuels/Waste   Wind/Solar 70   Hydro 60   Nuclear 50 40 30 20 10"
   },
   {
     "type": "UncategorizedText",
@@ -1422,6 +1422,24 @@
     "text": "Figure 5. The importance of nuclear in ensuring clean energy systems in France, Sweden and Switzerland ix"
   },
   {
+    "type": "Image",
+    "element_id": "bd278705b60b07b012155a5883b6c09b",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "600   Non-hydro 500   ren. & waste   Nuclear 400   Natural gas 300   Hydro   Oil 200   Coal 100 0"
+  },
+  {
     "type": "Title",
     "element_id": "563a2980d46c81119e1d7d952b375a41",
     "metadata": {
@@ -1438,24 +1456,6 @@
       "page_number": 9
     },
     "text": "h W T"
-  },
-  {
-    "type": "Image",
-    "element_id": "77d8044f595648ff9853b27fadd6ef94",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "    BB Non-hydro 500 i ren. & waste 400 z= Nuclear Natural gas 300 y -— EB Hydro i oil 200 —— -— BB Coal 100"
   },
   {
     "type": "FigureCaption",
@@ -1855,7 +1855,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "9ec2f70cbe42f5dc5073a88246db2b7a",
+    "element_id": "5986cde0b872e4b1253cf1f5e82360b2",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1869,7 +1869,7 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "and NRC SOARCA study 2015 Paul-Scherrer Institute. Data for nuclear accidents modified to reflect UNSCEAR findings/recommendations (2012)"
+    "text": "viii Paul-Scherrer Institute. Data for nuclear accidents modified to reflect UNSCEAR findings/recommendations (2012)"
   },
   {
     "type": "UncategorizedText",
@@ -1909,7 +1909,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c5693c397679aaeed0a80ac0c6b6dd20",
+    "element_id": "2ac3e029f2ae0ed36a9af34bd225e889",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1923,7 +1923,7 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "x bid."
+    "text": "x"
   },
   {
     "type": "NarrativeText",
