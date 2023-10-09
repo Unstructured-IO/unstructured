@@ -72,6 +72,7 @@ for test in "${all_tests[@]}"; do
   CURRENT_TEST="$test"
   if [[ "$python_version" != "Python 3.10"* ]] && [[ ! "${full_python_matrix_tests[*]}" =~ $test ]] ; then
     echo "--------- SKIPPING SCRIPT $test ---------"
+    continue
   fi
   if [[ "$test" == "test-ingest-notion.sh" ]]; then
     echo "--------- RUNNING SCRIPT $test --- IGNORING FAILURES"
