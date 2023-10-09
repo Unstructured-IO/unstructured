@@ -296,9 +296,7 @@ tbl = dict.fromkeys(
 )
 
 
-def remove_punctuation(
-    s: str,
-) -> str:
+def remove_punctuation(s: str) -> str:
     """Removes punctuation from a given string."""
     s = s.translate(tbl)
     return s
