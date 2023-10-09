@@ -36,20 +36,22 @@ CONTENT_LABELS = ["CanvasContent1", "LayoutWebpartsContent1", "TimeCreated"]
 
 @dataclass
 class SharepointPermissionsConfig(BaseConfig):
-    application_id: t.Optional[str] = None
-    client_credential: t.Optional[str] = None
-    tenant: t.Optional[str] = None
+    application_id: str = None
+    client_credential: str = None
+    tenant: str = None
 
     def __post_init__(self):
-        if any([self.application_id or self.client_credential or self.tenant]) and not all(
-            [self.application_id and self.client_credential and self.tenant],
-        ):
-            raise ValueError(
-                "Please provide either none or all of the following optional values:\n"
-                "--permissions-application-id\n"
-                "--permissions-client-cred\n"
-                "--permissions-tenant",
-            )
+        self.provided = False
+        if any([self.application_id or self.client_credential or self.tenant]):
+            if not all([self.application_id and self.client_credential and self.tenant]):
+                raise ValueError(
+                    "Please provide either none or all of the following optional values:\n"
+                    "--permissions-application-id\n"
+                    "--permissions-client-cred\n"
+                    "--permissions-tenant",
+                )
+            else:
+                self.provided = True
 
 
 @dataclass
@@ -197,7 +199,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             return None
         return page
 
-    # todo: improve permissions - ingestdoc matching logic
     def update_permissions_data(self):
         def parent_name_matches(parent_type, permissions_filename, ingest_doc_filepath):
             permissions_filename = permissions_filename.split("_SEP_")
@@ -209,11 +210,10 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             elif parent_type == "SitePages" or parent_type == "Shared Documents":
                 return True
 
-        self._permissions_data = None
+        permissions_data = None
         permissions_dir = Path(self.partition_config.output_dir) / "permissions_data"
 
         if permissions_dir.is_dir():
-            print("FILE_PATH", self.file_path)
             parent_type = self.file_path.split("/")[0]
 
             if parent_type == "sites":
@@ -231,10 +231,11 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                     ingest_doc_filepath=self.file_path,
                 ):
                     with open(read_dir / filename) as f:
-                        self._permissions_data = json.loads(f.read())
+                        permissions_data = json.loads(f.read())
+
+        return permissions_data
 
     def update_source_metadata(self, **kwargs):
-        self.update_permissions_data()
         if self.is_page:
             page = self._fetch_page()
             if page is None:
@@ -248,7 +249,9 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 version=page.get_property("Version", ""),
                 source_url=page.absolute_url,
                 exists=True,
-                permissions_data=self._permissions_data,
+                permissions_data=self.update_permissions_data()
+                if self.connector_config.permissions_config
+                else None,
             )
             return
 
@@ -267,7 +270,9 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             version=file.major_version,
             source_url=file.properties.get("LinkingUrl", None),
             exists=True,
-            permissions_data=self._permissions_data,
+            permissions_data=self.update_permissions_data()
+            if self.connector_config.permissions_config
+            else None,
         )
 
     def _download_page(self):
@@ -414,7 +419,7 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
     def get_ingest_docs(self):
         base_site_client = self.connector_config.get_site_client()
 
-        if self.connector_config.permissions_config.application_id:
+        if self.connector_config.permissions_config:
             permissions_client = self.connector_config.get_permissions_client()
             if permissions_client:
                 permissions_client.write_all_permissions(self.partition_config.output_dir)

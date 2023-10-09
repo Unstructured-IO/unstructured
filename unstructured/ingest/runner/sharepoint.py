@@ -43,6 +43,12 @@ class SharePoint(Runner):
             SimpleSharepointConfig,
         )
 
+        permissions_config = SharepointPermissionsConfig(
+            application_id=permissions_application_id,
+            client_credential=permissions_client_cred,
+            tenant=permissions_tenant,
+        )
+
         source_doc_connector = SharepointSourceConnector(  # type: ignore
             connector_config=SimpleSharepointConfig(
                 client_id=client_id,
@@ -51,11 +57,7 @@ class SharePoint(Runner):
                 path=path,
                 process_pages=(not files_only),
                 recursive=recursive,
-                permissions_config=SharepointPermissionsConfig(
-                    application_id=permissions_application_id,
-                    client_credential=permissions_client_cred,
-                    tenant=permissions_tenant,
-                ),
+                permissions_config=permissions_config if permissions_config.provided else None,
             ),
             read_config=self.read_config,
             partition_config=self.partition_config,
