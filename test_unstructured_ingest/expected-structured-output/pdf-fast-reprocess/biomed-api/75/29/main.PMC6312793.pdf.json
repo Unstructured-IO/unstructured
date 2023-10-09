@@ -596,6 +596,17 @@
     "text": "i þδ"
   },
   {
+    "type": "NarrativeText",
+    "element_id": "43dad32a26a446c5a2c74f3f2328b849",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": ". If le i ls le i j , otherwise, the vehicle may require waiting at le i for the duration of ðts"
+  },
+  {
     "type": "Title",
     "element_id": "3feb623147ddb3265b5968ce2efb8f6b",
     "metadata": {
@@ -627,17 +638,6 @@
       "links": []
     },
     "text": "A trip j can be covered after trip i by the same vehicle, if ts j"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "43dad32a26a446c5a2c74f3f2328b849",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": ". If le i ls le i j , otherwise, the vehicle may require waiting at le i for the duration of ðts"
   },
   {
     "type": "NarrativeText",
@@ -706,17 +706,6 @@
     "text": "A sufﬁcient number of vehicles are provided to maintain the feasibility of an instance. For each instance size ðm; nÞ, Table 1 provides the average of the number of locations, the number of times, the number of vehicles, and the number of possible empty travels, over ﬁve instances. The number of locations includes m distinct locations for depots and the number of locations at which various trips start or end. The number of times includes the start and the end time of the planning horizon and the start/end times for the trips. The number of vehicles is the total number of vehicles from all the depots. The number of possible empty travels is the number of possible connections between trips that require a vehicle travelling empty between two consecutive trips in a schedule."
   },
   {
-    "type": "Title",
-    "element_id": "252f10c83610ebca1a059c0bae8255eb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "f"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "928fa0dcad70f173bc989ee5715375c5",
     "metadata": {
@@ -726,6 +715,17 @@
       "links": []
     },
     "text": "The description of the ﬁle for each problem instance is presented in Table 2. The ﬁrst line in the ﬁle provides the number of depots ðmÞ, the number of trips, ðnÞ, and the number of locations ðlÞ, in the problem instance. The next n lines present the information for n trips. Each line corresponds to a trip, i A 1; …; n g, and provides the start location, the start time, the end location, and the end time of trip i. The next l lines present the travel times between any two locations, i; jA 1; …; l"
+  },
+  {
+    "type": "Title",
+    "element_id": "252f10c83610ebca1a059c0bae8255eb",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "f"
   },
   {
     "type": "UncategorizedText",
@@ -913,17 +913,6 @@
       "links": []
     },
     "text": "S. Kulkarni et al. / Data in Brief 22 (2019) 484–487"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "9b19f9ab816598a0809e4afd5d60800f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "487"
   },
   {
     "type": "Title",
@@ -1324,5 +1313,16 @@
       ]
     },
     "text": "(1994) 41–52."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "9b19f9ab816598a0809e4afd5d60800f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "487"
   }
 ]
