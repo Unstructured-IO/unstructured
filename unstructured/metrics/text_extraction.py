@@ -70,7 +70,7 @@ def remove_punctuation(s: str, exclude_punctuation: Optional[list]) -> str:
     return s
 
 
-def bag_of_words(text: str) -> dict:
+def bag_of_words(text: str) -> dict[str, int]:
     bow = {}
     words = remove_punctuation(text.lower(), ["-", "'"]).split()
 
