@@ -1,5 +1,6 @@
 import hashlib
 import logging
+import typing as t
 
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.processor import process_documents
@@ -14,9 +15,9 @@ class SharePoint(Runner):
         site: str,
         client_id: str,
         client_cred: str,
-        permissions_application_id: str,
-        permissions_client_cred: str,
-        permissions_tenant: str,
+        permissions_application_id: t.Optional[str],
+        permissions_client_cred: t.Optional[str],
+        permissions_tenant: t.Optional[str],
         path: str,
         files_only: bool = False,
         recursive: bool = False,
