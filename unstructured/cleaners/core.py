@@ -296,7 +296,9 @@ tbl = dict.fromkeys(
 )
 
 
-def remove_punctuation(s: str) -> str:
+def remove_punctuation(
+    s: str,
+) -> str:
     """Removes punctuation from a given string."""
     s = s.translate(tbl)
     return s
@@ -458,21 +460,3 @@ def clean_extra_whitespace_with_index_run(text: str) -> Tuple[str, np.ndarray]:
 
 def index_adjustment_after_clean_extra_whitespace(index, moved_indices) -> int:
     return int(index - moved_indices[index])
-
-
-def bag_of_words(text: str) -> dict:
-    incorrect_word = ""
-    bow = {}
-
-    words = remove_punctuation(text.lower()).split()
-    i = 0
-    while i < len(words):
-        if len(words[i]) > 1:
-            if words[i] in bow.keys():
-                bow[words[i]] += 1
-            else:
-                bow[words[i]] = 1
-            i += 1
-        else:
-            i += 1
-    return bow

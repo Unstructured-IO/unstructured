@@ -300,20 +300,3 @@ def test_clean(text, extra_whitespace, dashes, bullets, lowercase, trailing_punc
 def test_bytes_string_to_string():
     text = "\xe6\xaf\x8f\xe6\x97\xa5\xe6\x96\xb0\xe9\x97\xbb"
     assert core.bytes_string_to_string(text, "utf-8") == "每日新闻"
-
-
-@pytest.mark.parametrize(
-    ("text", "expected"),
-    [
-        (
-            "The dog loved the cat, but the cat loved the cow",
-            {"the": 4, "cat": 2, "loved": 2, "dog": 1, "but": 1, "cow": 1},
-        ),
-        (
-            "Hello my name is H a r p e r, what's your name?",
-            {"hello": 1, "my": 1, "name": 2, "is": 1, "whats": 1, "your": 1},
-        ),
-    ],
-)
-def test_bag_of_words(text, expected):
-    assert core.bag_of_words(text) == expected

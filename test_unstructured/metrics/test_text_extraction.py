@@ -67,3 +67,24 @@ def test_calculate_edit_distance_with_filename(filename, expected_score, expecte
     assert distance >= 0
     assert round(score, 2) == expected_score
     assert distance == expected_distance
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        (
+            "The dog loved the cat, but the cat loved the cow",
+            {"the": 4, "cat": 2, "loved": 2, "dog": 1, "but": 1, "cow": 1},
+        ),
+        (
+            "Hello my name is H a r p e r, what's your name?",
+            {"hello": 1, "my": 1, "name": 2, "is": 1, "what's": 1, "your": 1},
+        ),
+        (
+            "I have a dog and a cat, I love my dog.",
+            {"i": 2, "have": 1, "a": 2, "dog": 2, "and": 1, "cat": 1, "love": 1, "my": 1},
+        ),
+    ],
+)
+def test_bag_of_words(text, expected):
+    assert core.bag_of_words(text) == expected
