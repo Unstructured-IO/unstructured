@@ -1,6 +1,6 @@
 import sys
 import unicodedata
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 from rapidfuzz.distance import Levenshtein
 
@@ -54,7 +54,8 @@ def calculate_edit_distance(
     return 0.0
 
 
-# Duplicate code from cleaners.core, not sure we want this functionality introduced in the main library.
+# Duplicate code from cleaners.core,
+# not sure we want this functionality introduced in the main library.
 def remove_punctuation(s: str, exclude_punctuation: Optional[list]) -> str:
     """Removes punctuation from a given string."""
 
@@ -76,7 +77,7 @@ def bag_of_words(text: str) -> dict:
     i = 0
     while i < len(words):
         if len(words[i]) > 1:
-            if words[i] in bow.keys():
+            if words[i] in bow:
                 bow[words[i]] += 1
             else:
                 bow[words[i]] = 1
@@ -89,7 +90,7 @@ def bag_of_words(text: str) -> dict:
                 j += 1
 
             if len(incorrect_word) == 1:
-                if incorrect_word in bow.keys():
+                if incorrect_word in bow:
                     bow[incorrect_word] += 1
                 else:
                     bow[incorrect_word] = 1
