@@ -52,7 +52,6 @@ full_python_matrix_tests=(
   'test-ingest-local-single-file-with-encoding.sh'
   'test-ingest-local-single-file-with-pdf-infer-table-structure.sh'
   'test-ingest-s3.sh'
-  'test-ingest-delta-table.sh'
   'test-ingest-google-drive.sh'
   'test-ingest-gcs.sh'
 )
