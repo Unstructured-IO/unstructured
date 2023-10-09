@@ -22,6 +22,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --num-processes "$max_processes" \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --output-dir "$OUTPUT_DIR" \
+    --skip-infer-table-types "" \
     --pdf-infer-table-structure true \
     --strategy hi_res \
     --verbose \
