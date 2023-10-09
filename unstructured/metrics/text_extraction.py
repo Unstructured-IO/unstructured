@@ -1,10 +1,9 @@
 import sys
 import unicodedata
+
 from typing import Dict, Optional, Tuple
 
 from rapidfuzz.distance import Levenshtein
-
-from unstructured.nlp.patterns import ENDS_IN_PUNCT_RE
 
 
 def calculate_edit_distance(
@@ -76,12 +75,6 @@ def bag_of_words(text: str) -> Dict[str, int]:
     bow: Dict[str, int] = {}
     incorrect_word: str = ""
     words = remove_punctuation(text.lower(), ["-", "'"]).split()
-
-    # Remove remaining punctuation
-    for idx in range(len(words)):
-        punct = ENDS_IN_PUNCT_RE.findall(words[idx])
-        if punct:
-            words[idx] = words[idx].replace(punct[0], "")
 
     i = 0
     while i < len(words):
