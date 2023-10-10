@@ -23,3 +23,6 @@ certifi>=2022.12.07
 
 # NOTE(ronny) - Added to suppress Sphinx warnings
 myst-parser
+
+# NOTE(jason) - Trying to get 3.12 to work
+distutils
