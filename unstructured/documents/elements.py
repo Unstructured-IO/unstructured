@@ -187,7 +187,7 @@ class ElementMetadata:
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
 
     # Chunking metadata fields
-    num_characters: Optional[int] = None
+    max_characters: Optional[int] = None
     is_continuation: Optional[bool] = None
 
     # Detection Model Class Probabilities from Unstructured-Inference Hi-Res

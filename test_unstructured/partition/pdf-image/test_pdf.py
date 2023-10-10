@@ -16,7 +16,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition import pdf, strategies
+from unstructured.partition import ocr, pdf, strategies
 from unstructured.partition.json import partition_json
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
@@ -85,12 +85,16 @@ class MockDocumentLayout(layout.DocumentLayout):
     def pages(self):
         return [
             MockPageLayout(number=0, image=Image.new("1", (1, 1))),
+            MockPageLayout(number=1, image=Image.new("1", (1, 1))),
         ]
 
 
 @pytest.mark.parametrize(
     ("filename", "file"),
-    [("example-docs/layout-parser-paper-fast.pdf", None), (None, b"0000")],
+    [
+        ("example-docs/layout-parser-paper-fast.pdf", None),
+        (None, b"0000"),
+    ],
 )
 def test_partition_pdf_local(monkeypatch, filename, file):
     monkeypatch.setattr(
@@ -101,6 +105,16 @@ def test_partition_pdf_local(monkeypatch, filename, file):
     monkeypatch.setattr(
         layout,
         "process_file_with_model",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
+        ocr,
+        "process_data_with_ocr",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
+        ocr,
+        "process_data_with_ocr",
         lambda *args, **kwargs: MockDocumentLayout(),
     )
 
@@ -167,8 +181,7 @@ def test_partition_pdf_with_model_name_env_var(
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            ocr_languages="eng",
-            ocr_mode="entire_page",
+            pdf_image_dpi=200,
             extract_tables=False,
             model_name="checkbox",
         )
@@ -188,8 +201,7 @@ def test_partition_pdf_with_model_name(
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            ocr_languages="eng",
-            ocr_mode="entire_page",
+            pdf_image_dpi=200,
             extract_tables=False,
             model_name="checkbox",
         )
@@ -407,8 +419,6 @@ def test_partition_pdf_with_dpi():
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            ocr_languages="eng",
-            ocr_mode="entire_page",
             extract_tables=False,
             model_name=pdf.default_hi_res_model(),
             pdf_image_dpi=100,
@@ -858,8 +868,7 @@ def test_partition_pdf_formats_languages_for_tesseract():
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            ocr_languages="eng",
-            ocr_mode="entire_page",
+            pdf_image_dpi=200,
             extract_tables=False,
             model_name=pdf.default_hi_res_model(),
         )

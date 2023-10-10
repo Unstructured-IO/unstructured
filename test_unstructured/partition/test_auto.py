@@ -25,7 +25,6 @@ from unstructured.file_utils.filetype import FILETYPE_TO_MIMETYPE, FileType
 from unstructured.partition import auto
 from unstructured.partition.auto import _get_partition_with_extras, partition
 from unstructured.partition.common import convert_office_doc
-from unstructured.partition.pdf import default_hi_res_model
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -378,17 +377,12 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
 def test_auto_partition_formats_languages_for_tesseract():
     filename = "example-docs/chi_sim_image.jpeg"
     with patch(
-        "unstructured_inference.inference.layout.process_file_with_model",
-    ) as mock_process_file_with_model:
+        "unstructured.partition.ocr.process_file_with_ocr",
+    ) as mock_process_file_with_ocr:
         partition(filename, strategy="hi_res", languages=["zh"])
-        mock_process_file_with_model.assert_called_once_with(
-            filename,
-            is_image=True,
-            ocr_languages="chi_sim+chi_sim_vert+chi_tra+chi_tra_vert",
-            ocr_mode="entire_page",
-            extract_tables=False,
-            model_name=default_hi_res_model(),
-        )
+        _, kwargs = mock_process_file_with_ocr.call_args_list[0]
+        assert "ocr_languages" in kwargs
+        assert kwargs["ocr_languages"] == "chi_sim+chi_sim_vert+chi_tra+chi_tra_vert"
 
 
 def test_auto_partition_element_metadata_user_provided_languages():
@@ -1058,18 +1052,20 @@ def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
 def test_add_chunking_strategy_chars_on_partition_auto_adds_is_continuation():
     filename = "example-docs/example-10k-1p.html"
 
-    # default chunk size in chars is 200
-    partitioned_table_elements_200_chars = [
+    table_elements = [e for e in partition(filename) if isinstance(e, Table)]
+    chunked_table_elements = [
         e
         for e in partition(
             filename,
-            chunking_strategy="by_num_characters",
+            chunking_strategy="by_title",
         )
         if isinstance(e, Table)
     ]
 
+    assert table_elements != chunked_table_elements
+
     i = 0
-    for table in partitioned_table_elements_200_chars:
+    for table in chunked_table_elements:
         # have to reset the counter to 0 here when we encounter a Table element
         if isinstance(table, Table):
             i = 0
