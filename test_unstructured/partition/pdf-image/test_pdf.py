@@ -982,7 +982,7 @@ def test_partition_pdf_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
         pdf.partition_pdf(filename=filename, strategy="hi_res", languages="eng")
 
-        
+
 @pytest.mark.parametrize(
     ("threshold", "expected"),
     [
