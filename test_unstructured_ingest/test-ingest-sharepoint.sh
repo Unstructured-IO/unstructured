@@ -27,7 +27,7 @@ if [ -z "$SHAREPOINT_CLIENT_ID" ] || [ -z "$SHAREPOINT_CRED" ]; then
    exit 0
 fi
 
-if [ -z "$SHAREPOINT_RBAC_CLIENT_APPLICATION_ID" ] || [ -z "$SHAREPOINT_RBAC_CLIENT_SECRET" ] || [ -z "$SHAREPOINT_TENANT" ] ; then
+if [ -z "$SHAREPOINT_PERMISSIONS_APP_ID" ] || [ -z "$SHAREPOINT_PERMISSIONS_APP_CRED" ] || [ -z "$SHAREPOINT_PERMISSIONS_TENANT" ] ; then
    echo "Skipping Sharepoint ingest test because the SHAREPOINT_RBAC_CLIENT_APPLICATION_ID, SHAREPOINT_RBAC_CLIENT_SECRET, or SHAREPOINT_TENANT env var is not set."
    exit 0
 fi
