@@ -55,6 +55,13 @@ def calculate_edit_distance(
 
 
 def bag_of_words(text: str) -> Dict[str, int]:
+    """
+    Outputs the bag of words (BOW) found in the input text and their frequencies.
+
+    Takes "clean, concatenated text" (CCT) from a document as input.
+
+    Removes sentence punctuation, but not punctuation within a word (ex. apostrophes).
+    """
     bow: Dict[str, int] = {}
     incorrect_word: str = ""
     words = clean_bullets(remove_sentence_punctuation(text.lower(), ["-", "'"])).split()
@@ -89,16 +96,16 @@ def calculate_percent_missing_text(
     source: str,
 ) -> float:
     """
-    Creates the bag of words (BOW) found in each input text and their frequencies, then compares the 
+    Creates the bag of words (BOW) found in each input text and their frequencies, then compares the
     output BOW against the source BOW to calculate the % of text from the source text missing from
     the output text.
 
-    Takes "clean, concatenated text" (CCT) from a document output and the ground truth source text 
+    Takes "clean, concatenated text" (CCT) from a document output and the ground truth source text
     as inputs.
 
     If the output text contains all words from the source text and then some extra, result will be
     0% missing text - this calculation does not penalize duplication.
-    
+
     A spaced-out word (ex. h e l l o) is considered missing; individual characters of a word
     will not be counted as separate words.
 
@@ -108,7 +115,7 @@ def calculate_percent_missing_text(
     source_bow = bag_of_words(source)
 
     # get total words in source bow while counting missing words
-    total_source_word_count = 0 
+    total_source_word_count = 0
     total_missing_word_count = 0
 
     for source_word, source_count in source_bow.items():
@@ -120,12 +127,9 @@ def calculate_percent_missing_text(
             output_count = output_bow[source_word]
             total_missing_word_count += max(source_count - output_count, 0)
 
-    
     # calculate percent missing text
     if total_source_word_count == 0:
-        return 0 # nothing missing because nothing in source document
-    
-    fraction_missing = round(total_missing_word_count / total_source_word_count, 2)
-    return min(fraction_missing, 1) #limit to 100%
-            
+        return 0  # nothing missing because nothing in source document
 
+    fraction_missing = round(total_missing_word_count / total_source_word_count, 2)
+    return min(fraction_missing, 1)  # limit to 100%

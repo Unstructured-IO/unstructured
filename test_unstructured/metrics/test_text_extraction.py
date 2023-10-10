@@ -179,3 +179,40 @@ def test_calculate_edit_distance_with_filename(filename, expected_score, expecte
 )
 def test_bag_of_words(text, expected):
     assert text_extraction.bag_of_words(text) == expected
+
+
+@pytest.mark.parametrize(
+    ("output_text", "source_text", "expected_percentage"),
+    [
+        (
+            "extra",
+            "",
+            0,
+        ),
+        (
+            "",
+            "Source text has a sentence.",
+            1,
+        ),
+        (
+            "The original s e n t e n c e is normal.",
+            "The original sentence is normal...",
+            0.2,
+        ),
+        (
+            "We saw 23% improvement in this quarter.",
+            "We saw 23% improvement in sales this quarter.",
+            0.12,
+        ),
+        (
+            "no",
+            "Is it possible to have more than everything missing?",
+            1,
+        ),
+    ],
+)
+def test_calculate_percent_missing_text_edge(output_text, source_text, expected_percentage):
+    assert (
+        text_extraction.calculate_percent_missing_text(output_text, source_text)
+        == expected_percentage
+    )
