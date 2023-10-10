@@ -22,6 +22,9 @@ Run Locally
           --client-id "<Microsoft Sharepoint app client-id>" \
           --client-cred "<Microsoft Sharepoint app client-secret>" \
           --site "<e.g https://contoso.sharepoint.com or https://contoso.admin.sharepoint.com to process all sites within tenant>" \
+          --permissions-application-id "<Microsoft Graph API application id, to process permissions (rbac) data>" \
+          --permissions-client-cred "<Microsoft Graph API application credentials, to process permissions (rbac) data>" \
+          --permissions-tenant "<e.g https://contoso.onmicrosoft.com (tenant URL) to process permission (rbac) data>" \
           --files-only "Flag to process only files within the site(s)" \
           --output-dir sharepoint-ingest-output \
           --num-processes 2 \
@@ -46,6 +49,10 @@ Run Locally
                 client_id="<Microsoft Sharepoint app client-id>",
                 client_cred="<Microsoft Sharepoint app client-secret>",
                 site="<e.g https://contoso.sharepoint.com to process all sites within tenant>",
+                # Credentials to process data about permissions (rbac) within the tenant
+                permissions_application_id="<Microsoft Graph API application id>",
+                permissions_client_cred="<Microsoft Graph API application credentials>",
+                permissions_tenant="<e.g https://contoso.onmicrosoft.com to process permission info within tenant>",
                 # Flag to process only files within the site(s)
                 files_only=True,
                 path="Shared Documents",
@@ -68,6 +75,9 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
           --client-id "<Microsoft Sharepoint app client-id>" \
           --client-cred "<Microsoft Sharepoint app client-secret>" \
           --site "<e.g https://contoso.sharepoint.com or https://contoso.admin.sharepoint.com to process all sites within tenant>" \
+          --permissions-application-id "<Microsoft Graph API application id, to process permissions (rbac) data>" \
+          --permissions-client-cred "<Microsoft Graph API application credentials, to process permissions (rbac) data>" \
+          --permissions-tenant "<e.g https://contoso.onmicrosoft.com (tenant URL) to process permission (rbac) data>" \
           --files-only "Flag to process only files within the site(s)" \
           --output-dir sharepoint-ingest-output \
           --num-processes 2 \
@@ -98,6 +108,10 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
                 client_id="<Microsoft Sharepoint app client-id>",
                 client_cred="<Microsoft Sharepoint app client-secret>",
                 site="<e.g https://contoso.sharepoint.com to process all sites within tenant>",
+                # Credentials to process data about permissions (rbac) within the tenant
+                permissions_application_id="<Microsoft Graph API application id>",
+                permissions_client_cred="<Microsoft Graph API application credentials>",
+                permissions_tenant="<e.g https://contoso.onmicrosoft.com to process permission info within tenant>",
                 # Flag to process only files within the site(s)
                 files_only=True,
                 path="Shared Documents",
