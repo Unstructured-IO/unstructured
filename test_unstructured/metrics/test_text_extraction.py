@@ -168,6 +168,27 @@ def test_calculate_edit_distance_with_filename(filename, expected_score, expecte
                 "blue": 1,
             },
         ),
+        (
+            "Sometimes sentences have a dash - like this one! A hyphen connects 2 words with no gap: easy-peasy.",
+            {
+                "sometimes": 1,
+                "sentences": 1,
+                "have": 1,
+                "a": 2,
+                "dash": 1,
+                "like": 1,
+                "this": 1,
+                "one": 1,
+                "hyphen": 1,
+                "connects": 1,
+                "2": 1,
+                "words": 1,
+                "with": 1,
+                "no": 1,
+                "gap": 1,
+                "easy-peasy": 1,
+            },
+        ),
     ],
 )
 def test_bag_of_words(text, expected):
