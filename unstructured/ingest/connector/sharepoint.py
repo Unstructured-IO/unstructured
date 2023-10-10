@@ -187,7 +187,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 return True
 
         permissions_data = None
-        permissions_dir = Path(self.partition_config.output_dir) / "permissions_data"
+        permissions_dir = Path(self.processor_config.output_dir) / "permissions_data"
 
         if permissions_dir.is_dir():
             parent_type = self.file_path.split("/")[0]
@@ -394,7 +394,7 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         if self.connector_config.permissions_config:
             permissions_client = self.connector_config.get_permissions_client()
             if permissions_client:
-                permissions_client.write_all_permissions(self.partition_config.output_dir)
+                permissions_client.write_all_permissions(self.processor_config.output_dir)
 
         if not base_site_client.is_tenant:
             return self._ingest_site_docs(base_site_client)
