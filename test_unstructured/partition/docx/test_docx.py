@@ -18,13 +18,13 @@ from unstructured.documents.elements import (
     ListItem,
     NarrativeText,
     Table,
-    TableChunk,
     Text,
     Title,
 )
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import _DocxPartitioner, partition_docx
 from unstructured.partition.json import partition_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 
@@ -107,6 +107,8 @@ def test_partition_docx_from_filename(
     assert elements[0].metadata.page_number is None
     for element in elements:
         assert element.metadata.filename == "mock_document.docx"
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {"docx"}
 
 
 def test_partition_docx_from_filename_with_metadata_filename(mock_document, tmpdir):
@@ -506,13 +508,9 @@ def test_add_chunking_strategy_on_partition_docx(
     )
     elements = partition_docx(filename)
     chunks = chunk_by_title(elements, max_characters=9, combine_text_under_n_chars=5)
-    # remove the last element of the TableChunk list because it will be the leftover slice
-    # and not necessarily the max_characters len
-    table_chunks = [chunk for chunk in chunks if isinstance(chunk, TableChunk)][:-1]
-    other_chunks = [chunk for chunk in chunks if not isinstance(chunk, TableChunk)]
-    for table_chunk in table_chunks:
-        assert len(table_chunk.text) == 9
-    for chunk in other_chunks:
-        assert len(chunk.text) >= 5
-    assert chunk_elements != elements
+
     assert chunk_elements == chunks
+    assert elements != chunk_elements
+
+    for chunk in chunks:
+        assert len(chunk.text) <= 9

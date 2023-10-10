@@ -31,10 +31,13 @@ from unstructured.documents.elements import (
     ListItem,
     PageBreak,
     Text,
+    Title,
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
-from unstructured.partition.utils.constants import SORT_MODE_XY_CUT
+from unstructured.partition.utils.constants import (
+    SORT_MODE_XY_CUT,
+)
 from unstructured.utils import dependency_exists
 
 if dependency_exists("docx") and dependency_exists("docx.table"):
@@ -130,6 +133,10 @@ def normalize_layout_element(
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
     prob = layout_dict.get("prob")
+    aux_origin = layout_dict["source"] if "source" in layout_dict else None
+    origin = None
+    if aux_origin:
+        origin = aux_origin.value
     if prob and isinstance(prob, (int, str, float, numbers.Number)):
         class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))  # type: ignore
     else:
@@ -141,6 +148,7 @@ def normalize_layout_element(
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=class_prob_metadata,
+                detection_origin=origin,
             )
         else:
             return ListItem(
@@ -148,6 +156,7 @@ def normalize_layout_element(
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
                 metadata=class_prob_metadata,
+                detection_origin=origin,
             )
 
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
@@ -157,6 +166,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
+            detection_origin=origin,
         )
         if element_type == "Headline":
             _element_class.metadata.category_depth = 1
@@ -169,6 +179,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
+            detection_origin=origin,
         )
     elif element_type == "Unchecked":
         return CheckBox(
@@ -176,6 +187,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
+            detection_origin=origin,
         )
     else:
         return Text(
@@ -183,6 +195,7 @@ def normalize_layout_element(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=class_prob_metadata,
+            detection_origin=origin,
         )
 
 
@@ -191,6 +204,7 @@ def layout_list_to_list_items(
     coordinates: Optional[Tuple[Tuple[float, float], ...]],
     coordinate_system: Optional[CoordinateSystem],
     metadata=Optional[ElementMetadata],
+    detection_origin=Optional[str],
 ) -> List[Element]:
     """Converts a list LayoutElement to a list of ListItem elements."""
     split_items = ENUMERATED_BULLETS_RE.split(text) if text else []
@@ -203,14 +217,14 @@ def layout_list_to_list_items(
         if len(text_segment.strip()) > 0:
             # Both `coordinates` and `coordinate_system` must be present
             # in order to add coordinates metadata to the element.
-            list_items.append(
-                ListItem(
-                    text=text_segment.strip(),
-                    coordinates=coordinates,
-                    coordinate_system=coordinate_system,
-                    metadata=metadata,
-                ),
+            item = ListItem(
+                text=text_segment.strip(),
+                coordinates=coordinates,
+                coordinate_system=coordinate_system,
+                metadata=metadata,
+                detection_origin=detection_origin,
             )
+            list_items.append(item)
 
     return list_items
 
@@ -273,6 +287,7 @@ def _add_element_metadata(
     coordinate_system: Optional[CoordinateSystem] = None,
     section: Optional[str] = None,
     image_path: Optional[str] = None,
+    detection_origin: Optional[str] = None,
     **kwargs,
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
@@ -321,6 +336,7 @@ def _add_element_metadata(
         category_depth=depth,
         image_path=image_path,
     )
+    metadata.detection_origin = detection_origin
     # NOTE(newel) - Element metadata is being merged into
     # newly constructed metadata, not the other way around
     # TODO? Make this more expected behavior?
@@ -534,6 +550,7 @@ def document_to_element_list(
     last_modification_date: Optional[str] = None,
     infer_list_items: bool = True,
     source_format: Optional[str] = None,
+    detection_origin: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
@@ -561,7 +578,6 @@ def document_to_element_list(
                 infer_list_items=infer_list_items,
                 source_format=source_format if source_format else "html",
             )
-
             if isinstance(element, List):
                 for el in element:
                     if last_modification_date:
@@ -575,6 +591,14 @@ def document_to_element_list(
                 element.metadata.text_as_html = (
                     layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
                 )
+                try:
+                    if (
+                        isinstance(element, Title) and element.metadata.category_depth is None
+                    ) and any(el.type in ["Headline", "Subheadline"] for el in page.elements):
+                        element.metadata.category_depth = 0
+                except AttributeError:
+                    logger.info("HTML element instance has no attribute type")
+
                 page_elements.append(element)
             coordinates = (
                 element.metadata.coordinates.points if element.metadata.coordinates else None
@@ -592,6 +616,7 @@ def document_to_element_list(
                 coordinate_system=coordinate_system,
                 category_depth=element.metadata.category_depth,
                 image_path=el_image_path,
+                detection_origin=detection_origin,
                 **kwargs,
             )
 

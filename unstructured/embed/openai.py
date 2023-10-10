@@ -63,7 +63,7 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
 
             openai_client = OpenAIEmbeddings(
                 openai_api_key=self.api_key,
-                model=self.model_name,
+                model=self.model_name,  # type:ignore
             )
 
             self.examplary_embedding = openai_client.embed_query("Q")

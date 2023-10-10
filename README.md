@@ -21,7 +21,7 @@
 <div>
   <p align="center">
   <a
-  href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-23kciff0y-bvzXxJkgtbXe5POo_rxMkw">
+  href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-20kd2e9ti-q5yz7RCa2nlyqmAba9vqRw">
     <img src="https://img.shields.io/badge/JOIN US ON SLACK-4A154B?style=for-the-badge&logo=slack&logoColor=white" />
   </a>
   <a href="https://www.linkedin.com/company/unstructuredio/">
@@ -47,7 +47,7 @@ While access to the hosted Unstructured API will remain free, API Keys are requi
 
 We are releasing the beta version of our Chipper model to deliver superior performance when processing high-resolution, complex documents. To start using the Chipper model in your API request, you can utilize the `hi_res_model_name=chipper` parameter. Please refer to the documentation [here](https://unstructured-io.github.io/unstructured/api.html#beta-version-hi-res-strategy-with-chipper-model).
 
-As the Chipper model is in beta version, we welcome feedback and suggestions. For those interested in testing the Chipper model, we encourage you to connect with us on [Slack community](https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-23kciff0y-bvzXxJkgtbXe5POo_rxMkw).
+As the Chipper model is in beta version, we welcome feedback and suggestions. For those interested in testing the Chipper model, we encourage you to connect with us on [Slack community](https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-20kd2e9ti-q5yz7RCa2nlyqmAba9vqRw).
 
 ## :eight_pointed_black_star: Quick Start
 
@@ -110,9 +110,9 @@ python3
 Use the following instructions to get up and running with `unstructured` and test your
 installation.
 
-- Install the Python SDK to support all document types with `pip install "unstructured[all-docs]"`
-  - For plain text files, HTML, XML, JSON and Emails that do not require any extra dependencies, you can run `pip install unstructured`
-  - To process other doc types, you can install the extras required for those documents, such as `pip install "unstructured[docx,pptx]"`
+- Install the Python SDK to support all document types with `pip install "unstructured[all-docs]" --extra-index-url https://packages.unstructured.io/simple/`
+  - For plain text files, HTML, XML, JSON and Emails that do not require any extra dependencies, you can run `pip install unstructured --extra-index-url  https://packages.unstructured.io/simple/`
+  - To process other doc types, you can install the extras required for those documents, such as `pip install "unstructured[docx,pptx]" --extra-index-url https://packages.unstructured.io/simple/`
 - Install the following system dependencies if they are not already available on your system.
   Depending on what document types you're parsing, you may not need all of these.
     - `libmagic-dev` (filetype detection)
@@ -183,7 +183,7 @@ This README overviews how to install, use and develop the library. For more comp
 **Bricks** 🧱 in `unstructured` are the foundational elements that drive the data processing workflow within the system. These components provide users with the building blocks to build pipelines targeted at the documents they care about. The bricks fall into three categories:
 - :jigsaw: *Partitioning* bricks break raw documents into standard, structured elements.
 - :broom: *Cleaning* bricks remove unwanted text from documents, such as boilerplate and sentence fragments.
-- :performing_arts: *Staging* bricks format data for downstream tasks, such as ML inference and data labeling. 
+- :performing_arts: *Staging* bricks format data for downstream tasks, such as ML inference and data labeling.
 
 These bricks create a cohesive, streamlined process that enables effective data handling and analysis. Check out the available bricks and how to use them from the [Bricks documentation](https://unstructured-io.github.io/unstructured/bricks.html).
 
@@ -192,7 +192,7 @@ The **Connectors** 🔗 in `unstructured` serve as vital links between the pre-p
 ### PDF Document Parsing Example
 The following examples show how to get started with the `unstructured` library. You can parse over a dozen document types with one line of code! Use this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the example below.
 
-The easiest way to parse a document in unstructured is to use the `partition` brick. If you use `partition` brick, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning brick. If you are using the `partition` brick, you may need to install additional parameters via `pip install unstructured[local-inference]`. Ensure you first install `libmagic` using the instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection) `partition` will always apply the default arguments. If you need advanced features, use a document-specific brick.
+The easiest way to parse a document in unstructured is to use the `partition` brick. If you use `partition` brick, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning brick. If you are using the `partition` brick, you may need to install additional parameters via `pip install unstructured[local-inference] --extra-index-url https://packages.unstructured.io/simple/`. Ensure you first install `libmagic` using the instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection) `partition` will always apply the default arguments. If you need advanced features, use a document-specific brick.
 
 ```python
 from unstructured.partition.auto import partition

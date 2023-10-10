@@ -6,11 +6,11 @@
 #
 attrdict==2.0.1
     # via unstructured-paddleocr
-babel==2.12.1
+babel==2.13.0
     # via flask-babel
 bce-python-sdk==0.8.90
     # via visualdl
-blinker==1.6.2
+blinker==1.6.3
     # via flask
 cachetools==5.3.1
     # via premailer
@@ -19,7 +19,7 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   requests
@@ -33,19 +33,19 @@ cssselect==1.2.0
     # via premailer
 cssutils==2.7.1
     # via premailer
-cycler==0.12.0
+cycler==0.12.1
     # via matplotlib
-cython==3.0.2
+cython==3.0.3
     # via unstructured-paddleocr
 et-xmlfile==1.1.0
     # via openpyxl
-flask==2.3.3
+flask==3.0.0
     # via
     #   flask-babel
     #   visualdl
-flask-babel==3.1.0
+flask-babel==4.0.0
     # via visualdl
-fonttools==4.42.1
+fonttools==4.43.1
     # via matplotlib
 future==0.18.3
     # via bce-python-sdk
@@ -53,7 +53,7 @@ idna==3.4
     # via
     #   -c requirements/base.txt
     #   requests
-imageio==2.31.4
+imageio==2.31.5
     # via
     #   imgaug
     #   scikit-image
@@ -122,7 +122,7 @@ opencv-python==4.8.0.76
     #   unstructured-paddleocr
 openpyxl==3.1.2
     # via unstructured-paddleocr
-packaging==23.1
+packaging==23.2
     # via
     #   -c requirements/base.txt
     #   matplotlib
@@ -171,8 +171,10 @@ pytz==2023.3.post1
     #   pandas
 pywavelets==1.4.1
     # via scikit-image
-rapidfuzz==3.3.1
-    # via unstructured-paddleocr
+rapidfuzz==3.4.0
+    # via
+    #   -c requirements/base.txt
+    #   unstructured-paddleocr
 rarfile==4.1
     # via visualdl
 requests==2.31.0
@@ -211,14 +213,14 @@ tzdata==2023.3
     # via pandas
 unstructured-paddleocr==2.6.1.3
     # via -r requirements/extra-paddleocr.in
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
 visualdl==2.5.3
     # via unstructured-paddleocr
-werkzeug==2.3.7
+werkzeug==3.0.0
     # via flask
 zipp==3.17.0
     # via
