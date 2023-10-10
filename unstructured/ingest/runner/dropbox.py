@@ -1,42 +1,41 @@
 import logging
-from typing import Optional
+import typing as t
 
-from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.processor import process_documents
+from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_remote_url
 
 
-def dropbox(
-    verbose: bool,
-    connector_config: StandardConnectorConfig,
-    processor_config: ProcessorConfigs,
-    remote_url: str,
-    recursive: bool,
-    token: Optional[str],
-    **kwargs,
-):
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+class DropboxRunner(Runner):
+    def run(
+        self,
+        remote_url: str,
+        recursive: bool = False,
+        token: t.Optional[str] = None,
+        **kwargs,
+    ):
+        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
-    connector_config.download_dir = update_download_dir_remote_url(
-        connector_name="dropbox",
-        connector_config=connector_config,
-        remote_url=remote_url,
-        logger=logger,
-    )
+        self.read_config.download_dir = update_download_dir_remote_url(
+            connector_name="dropbox",
+            read_config=self.read_config,
+            remote_url=remote_url,
+            logger=logger,
+        )
 
-    from unstructured.ingest.connector.dropbox import (
-        DropboxConnector,
-        SimpleDropboxConfig,
-    )
+        from unstructured.ingest.connector.dropbox import (
+            DropboxSourceConnector,
+            SimpleDropboxConfig,
+        )
 
-    doc_connector = DropboxConnector(  # type: ignore
-        standard_config=connector_config,
-        config=SimpleDropboxConfig(
-            path=remote_url,
-            recursive=recursive,
-            access_kwargs={"token": token},
-        ),
-    )
+        source_doc_connector = DropboxSourceConnector(  # type: ignore
+            read_config=self.read_config,
+            connector_config=SimpleDropboxConfig(
+                path=remote_url,
+                recursive=recursive,
+                access_kwargs={"token": token},
+            ),
+            processor_config=self.processor_config,
+        )
 
-    process_documents(doc_connector=doc_connector, processor_config=processor_config)
+        self.process_documents(source_doc_connector=source_doc_connector)

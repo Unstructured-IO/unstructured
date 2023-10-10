@@ -25,6 +25,7 @@ if sys.version_info < (3, 8):
 else:
     from typing import Final
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import clean_extra_whitespace, replace_mime_encodings
 from unstructured.cleaners.extract import (
     extract_datetimetz,
@@ -55,6 +56,7 @@ from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
 
 VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
+DETECTION_ORIGIN: str = "email"
 
 
 def _parse_received_data(data: str) -> List[Element]:
@@ -127,13 +129,15 @@ def build_email_metadata(
     if sent_to is not None:
         sent_to = [recipient.strip() for recipient in sent_to.split(",")]
 
-    return ElementMetadata(
+    element_metadata = ElementMetadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=header_dict.get("Subject"),
         last_modified=metadata_last_modified or email_date,
         filename=filename,
     )
+    element_metadata.detection_origin = DETECTION_ORIGIN
+    return element_metadata
 
 
 def convert_to_iso_8601(time: str) -> Optional[str]:
@@ -210,8 +214,7 @@ def find_embedded_image(
     image_raw_info = element.text[start:end]
     image_info = clean_extra_whitespace(image_raw_info.split(":")[1])
     element.text = element.text.replace("[image: " + image_info[:-1] + "]", "")
-
-    return Image(text=image_info[:-1]), element
+    return Image(text=image_info[:-1], detection_origin="email"), element
 
 
 def parse_email(
@@ -241,6 +244,7 @@ def parse_email(
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.EML)
+@add_chunking_strategy()
 def partition_email(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
@@ -255,6 +259,7 @@ def partition_email(
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
     min_partition: Optional[int] = 0,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
@@ -365,6 +370,7 @@ def partition_email(
             text=content,
             include_metadata=False,
             metadata_filename=metadata_filename,
+            detection_origin="email",
         )
         for element in elements:
             if isinstance(element, Text):
@@ -400,6 +406,7 @@ def partition_email(
             max_partition=max_partition,
             metadata_filename=metadata_filename or filename,
             min_partition=min_partition,
+            detection_origin="email",
         )
 
     for idx, element in enumerate(elements):

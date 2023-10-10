@@ -145,11 +145,9 @@ jobs:
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        # NOTE(robinson) - Installing weaviate-client separately here because the requests
-        # version conflicts with label_studio_sdk
-        pip install weaviate-client
-        pip install argilla
-        make test CI=true
+        # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
+        make install-ci
+        make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
         make check-coverage
 
   test_unit_no_extras:
@@ -227,17 +225,13 @@ jobs:
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        # NOTE(robinson) - Installing weaviate-client separately here because the requests
-        # version conflicts with label_studio_sdk
-        pip install weaviate-client
-        pip install argilla
         make test-extra-${{ matrix.extra }} CI=true
 
   test_ingest:
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
@@ -261,6 +255,10 @@ jobs:
         source .venv/bin/activate
         mkdir "$NLTK_DATA"
         make install-ci
+    - name: Setup docker-compose
+      uses: KengoTODA/actions-setup-docker-compose@v1
+      with:
+        version: '2.22.0'
     - name: Test Ingest (unit)
       run: |
         source .venv/bin/activate
@@ -295,6 +293,11 @@ jobs:
         NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+        AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
+        TABLE_OCR: "tesseract"
+        ENTIRE_PAGE_OCR: "tesseract"
+        CI: "true"
       run: |
         source .venv/bin/activate
         sudo apt-get update
@@ -365,6 +368,8 @@ jobs:
       if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
       run: |
         source .venv/bin/activate
+        # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
+        make install-ci
         sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
         make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
@@ -376,6 +381,8 @@ jobs:
   changelog:
     runs-on: ubuntu-latest
     steps:
+    # need to checkout otherwise paths-filter will fail on merge-queue trigger 
+    - uses: actions/checkout@v3
     - if: github.ref != 'refs/heads/main'
       uses: dorny/paths-filter@v2
       id: changes
@@ -414,4 +421,4 @@ jobs:
           source .venv/bin/activate
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
           make docker-build
-          make docker-test CI=true
+          make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true

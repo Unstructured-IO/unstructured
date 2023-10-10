@@ -11,4 +11,6 @@ lxml==4.9.3
     #   -c requirements/base.txt
     #   ebooklib
 six==1.16.0
-    # via ebooklib
+    # via
+    #   -c requirements/base.txt
+    #   ebooklib

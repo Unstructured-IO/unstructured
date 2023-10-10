@@ -1,62 +1,87 @@
 import logging
+import typing as t
+from dataclasses import dataclass
 
 import click
 
 from unstructured.ingest.cli.common import (
-    add_recursive_option,
-    add_shared_options,
     log_options,
-    map_to_processor_config,
-    map_to_standard_config,
-    run_init_checks,
 )
+from unstructured.ingest.cli.interfaces import (
+    CliMixin,
+    CliRecursiveConfig,
+    DelimitedString,
+)
+from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
+from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import salesforce as salesforce_fn
+from unstructured.ingest.runner import SalesforceRunner
 
 
-@click.command()
-@click.option(
-    "--categories",
-    default=None,
-    required=True,
-    help="Comma separated list of Salesforce categories to download. "
-    "Currently only Account, Case, Campaign, EmailMessage, Lead.",
-)
-@click.option(
-    "--username",
-    required=True,
-    help="Salesforce username usually looks like an email.",
-)
-@click.option(
-    "--consumer-key",
-    required=True,
-    help="For the Salesforce JWT auth. Found in Consumer Details.",
-)
-@click.option(
-    "--private-key-path",
-    required=True,
-    help="Path to the private key for the Salesforce JWT auth. Usually named server.key.",
-)
-def salesforce(**options):
+@dataclass
+class SalesforceCliConfig(BaseConfig, CliMixin):
+    username: str
+    consumer_key: str
+    private_key_path: str
+    categories: t.List[str]
+
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        possible_categories = ["Account", "Case", "Campaign", "EmailMessage", "Lead"]
+        options = [
+            click.Option(
+                ["--username"],
+                required=True,
+                type=str,
+                help="Salesforce username usually looks like an email.",
+            ),
+            click.Option(
+                ["--consumer-key"],
+                required=True,
+                type=str,
+                help="For the Salesforce JWT auth. Found in Consumer Details.",
+            ),
+            click.Option(
+                ["--private-key-path"],
+                required=True,
+                type=click.Path(file_okay=True, exists=True, dir_okay=False),
+                help="Path to the private key for the Salesforce JWT auth. "
+                "Usually named server.key.",
+            ),
+            click.Option(
+                ["--categories"],
+                default=None,
+                required=True,
+                type=DelimitedString(choices=possible_categories),
+                help="Comma-delimited salesforce categories to download. "
+                "Currently only {}.".format(", ".join(possible_categories)),
+            ),
+        ]
+        cmd.params.extend(options)
+
+
+@click.group(name="salesforce", invoke_without_command=True, cls=Group)
+@click.pass_context
+def salesforce_source(ctx: click.Context, **options):
+    if ctx.invoked_subcommand:
+        return
+
+    conform_click_options(options)
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(options)
+    log_options(options, verbose=verbose)
     try:
-        run_init_checks(**options)
-        connector_config = map_to_standard_config(options)
-        processor_config = map_to_processor_config(options)
-        salesforce_fn(
-            connector_config=connector_config,
-            processor_config=processor_config,
-            **options,
+        configs = extract_configs(options, validate=([SalesforceCliConfig]))
+        runner = SalesforceRunner(
+            **configs,  # type: ignore
         )
+        runner.run(**options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
 
 
-def get_cmd() -> click.Command:
-    cmd = salesforce
-    add_recursive_option(cmd)
-    add_shared_options(cmd)
+def get_source_cmd() -> click.Group:
+    cmd = salesforce_source
+    add_options(cmd, extras=[SalesforceCliConfig, CliRecursiveConfig])
     return cmd

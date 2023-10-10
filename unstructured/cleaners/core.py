@@ -2,6 +2,9 @@ import quopri
 import re
 import sys
 import unicodedata
+from typing import Tuple
+
+import numpy as np
 
 from unstructured.file_utils.encoding import (
     format_encoding_str,
@@ -29,7 +32,7 @@ def clean_non_ascii_chars(text) -> str:
     return en.decode()
 
 
-def clean_bullets(text) -> str:
+def clean_bullets(text: str) -> str:
     """Cleans unicode bullets from a section of text.
 
     Example
@@ -66,6 +69,37 @@ def clean_ordered_bullets(text) -> str:
         return text
 
     return text_cl
+
+
+def clean_ligatures(text) -> str:
+    """Replaces ligatures with their most likely equivalent characters.
+
+    Example
+    -------
+    The beneﬁts -> The benefits
+    High quality ﬁnancial -> High quality financial
+    """
+    ligatures_map = {
+        "æ": "ae",
+        "Æ": "AE",
+        "ﬀ": "ff",
+        "ﬁ": "fi",
+        "ﬂ": "fl",
+        "ﬃ": "ffi",
+        "ﬄ": "ffl",
+        "ﬅ": "ft",
+        "ʪ": "ls",
+        "œ": "oe",
+        "Œ": "OE",
+        "ȹ": "qp",
+        "ﬆ": "st",
+        "ʦ": "ts",
+    }
+    cleaned_text: str = text
+    for k, v in ligatures_map.items():
+        cleaned_text = cleaned_text.replace(k, v)
+
+    return cleaned_text
 
 
 def group_bullet_paragraph(paragraph: str) -> list:
@@ -381,3 +415,46 @@ def bytes_string_to_string(text: str, encoding: str = "utf-8"):
     text_bytes = bytes([ord(char) for char in text])
     formatted_encoding = format_encoding_str(encoding)
     return text_bytes.decode(formatted_encoding)
+
+
+def clean_extra_whitespace_with_index_run(text: str) -> Tuple[str, np.ndarray]:
+    """Cleans extra whitespace characters that appear between words.
+    Calculate distance between characters of original text and cleaned text.
+
+    Returns cleaned text along with array of indices it has moved from original.
+
+    Example
+    -------
+    ITEM 1.     BUSINESS -> ITEM 1. BUSINESS
+    array([0., 0., 0., 0., 0., 0., 0., 0., 4., 4., 4., 4., 4., 4., 4., 4., 4., 4., 4., 4.]))
+    """
+
+    cleaned_text = re.sub(r"[\xa0\n]", " ", text)
+    cleaned_text = re.sub(r"([ ]{2,})", " ", cleaned_text)
+
+    cleaned_text = cleaned_text.strip()
+
+    moved_indices = np.zeros(len(text))
+
+    distance, original_index, cleaned_index = 0, 0, 0
+    while cleaned_index < len(cleaned_text):
+        if text[original_index] == cleaned_text[cleaned_index] or (
+            bool(re.match("[\xa0\n]", text[original_index]))
+            and bool(re.match(" ", cleaned_text[cleaned_index]))
+        ):
+            moved_indices[cleaned_index] = distance
+            original_index += 1
+            cleaned_index += 1
+            continue
+
+        distance += 1
+        moved_indices[cleaned_index] = distance
+        original_index += 1
+
+    moved_indices[cleaned_index:] = distance
+
+    return cleaned_text, moved_indices
+
+
+def index_adjustment_after_clean_extra_whitespace(index, moved_indices) -> int:
+    return int(index - moved_indices[index])

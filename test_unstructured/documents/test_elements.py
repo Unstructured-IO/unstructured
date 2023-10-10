@@ -14,6 +14,7 @@ from unstructured.documents.elements import (
     UUID,
     CoordinatesMetadata,
     Element,
+    ElementMetadata,
     NoID,
     Text,
 )
@@ -186,3 +187,27 @@ def test_element_to_dict():
         "element_id": "awt32t1",
     }
     assert element.to_dict() == expected
+
+
+def test_metadata_from_dict_extra_fields():
+    """
+    Assert that the metadata classes ignore nonexistent fields.
+    This can be an issue when elements_from_json gets a schema
+    from the future.
+    """
+    element_metadata = {
+        "new_field": "hello",
+        "data_source": {
+            "new_field": "world",
+        },
+        "coordinates": {
+            "new_field": "foo",
+        },
+    }
+
+    metadata = ElementMetadata.from_dict(element_metadata)
+    metadata_dict = metadata.to_dict()
+
+    assert "new_field" not in metadata_dict
+    assert "new_field" not in metadata_dict["coordinates"]
+    assert "new_field" not in metadata_dict["data_source"]

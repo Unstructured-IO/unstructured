@@ -1,34 +1,33 @@
 import logging
-from typing import Optional
+import typing as t
 
-from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
 from unstructured.ingest.logger import ingest_log_streaming_init
-from unstructured.ingest.processor import process_documents
+from unstructured.ingest.runner.base_runner import Runner
 
 
-def local(
-    verbose: bool,
-    connector_config: StandardConnectorConfig,
-    processor_config: ProcessorConfigs,
-    input_path: str,
-    recursive: bool,
-    file_glob: Optional[str],
-    **kwargs,
-):
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+class LocalRunner(Runner):
+    def run(
+        self,
+        input_path: str,
+        recursive: bool = False,
+        file_glob: t.Optional[str] = None,
+        **kwargs,
+    ):
+        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
-    from unstructured.ingest.connector.local import (
-        LocalConnector,
-        SimpleLocalConfig,
-    )
+        from unstructured.ingest.connector.local import (
+            LocalSourceConnector,
+            SimpleLocalConfig,
+        )
 
-    doc_connector = LocalConnector(  # type: ignore
-        standard_config=connector_config,
-        config=SimpleLocalConfig(
-            input_path=input_path,
-            recursive=recursive,
-            file_glob=file_glob,
-        ),
-    )
+        source_doc_connector = LocalSourceConnector(  # type: ignore
+            connector_config=SimpleLocalConfig(
+                input_path=input_path,
+                recursive=recursive,
+                file_glob=file_glob,
+            ),
+            read_config=self.read_config,
+            processor_config=self.processor_config,
+        )
 
-    process_documents(doc_connector=doc_connector, processor_config=processor_config)
+        self.process_documents(source_doc_connector=source_doc_connector)

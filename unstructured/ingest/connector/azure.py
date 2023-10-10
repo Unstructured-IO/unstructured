@@ -1,13 +1,13 @@
+import typing as t
 from dataclasses import dataclass
-from typing import Type
 
 from unstructured.ingest.connector.fsspec import (
-    FsspecConnector,
+    FsspecDestinationConnector,
     FsspecIngestDoc,
+    FsspecSourceConnector,
     SimpleFsspecConfig,
 )
 from unstructured.ingest.error import SourceConnectionError
-from unstructured.ingest.interfaces import StandardConnectorConfig
 from unstructured.utils import requires_dependencies
 
 
@@ -18,6 +18,7 @@ class SimpleAzureBlobStorageConfig(SimpleFsspecConfig):
 
 @dataclass
 class AzureBlobStorageIngestDoc(FsspecIngestDoc):
+    connector_config: SimpleAzureBlobStorageConfig
     registry_name: str = "azure"
 
     @SourceConnectionError.wrap
@@ -26,13 +27,14 @@ class AzureBlobStorageIngestDoc(FsspecIngestDoc):
         super().get_file()
 
 
-@requires_dependencies(["adlfs", "fsspec"], extras="azure")
-class AzureBlobStorageConnector(FsspecConnector):
-    ingest_doc_cls: Type[AzureBlobStorageIngestDoc] = AzureBlobStorageIngestDoc
+@dataclass
+class AzureBlobStorageSourceConnector(FsspecSourceConnector):
+    connector_config: SimpleAzureBlobStorageConfig
 
-    def __init__(
-        self,
-        standard_config: StandardConnectorConfig,
-        config: SimpleAzureBlobStorageConfig,
-    ) -> None:
-        super().__init__(standard_config=standard_config, config=config)
+    def __post_init__(self):
+        self.ingest_doc_cls: t.Type[AzureBlobStorageIngestDoc] = AzureBlobStorageIngestDoc
+
+
+@dataclass
+class AzureBlobStorageDestinationConnector(FsspecDestinationConnector):
+    connector_config: SimpleAzureBlobStorageConfig

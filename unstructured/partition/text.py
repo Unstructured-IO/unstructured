@@ -2,6 +2,7 @@ import re
 import textwrap
 from typing import IO, Callable, List, Optional, Tuple
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import (
     auto_paragraph_grouper,
     clean_bullets,
@@ -27,10 +28,12 @@ from unstructured.partition.common import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
+from unstructured.partition.lang import detect_languages
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
     is_possible_narrative_text,
+    is_possible_numbered_list,
     is_possible_title,
     is_us_city_state_zip,
 )
@@ -155,6 +158,7 @@ def combine_paragraphs_less_than_min(
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.TXT)
+@add_chunking_strategy()
 def partition_text(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -163,9 +167,12 @@ def partition_text(
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
+    languages: List[str] = ["auto"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
+    detection_origin: Optional[str] = "text",
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.
@@ -186,6 +193,8 @@ def partition_text(
         for formatting purposes.
     include_metadata
         Determines whether or not metadata is included in the output.
+    languages
+        The list of languages present in the document.
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied.
@@ -196,6 +205,11 @@ def partition_text(
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
 
     if (
         min_partition is not None
@@ -219,6 +233,8 @@ def partition_text(
     elif text is not None:
         file_text = str(text)
 
+    languages = detect_languages(file_text, languages)
+
     if paragraph_grouper is False:
         pass
     elif paragraph_grouper is not None:
@@ -236,14 +252,16 @@ def partition_text(
     )
 
     elements: List[Element] = []
-    metadata = (
-        ElementMetadata(
+    if include_metadata:
+        metadata = ElementMetadata(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
+            languages=languages,
         )
-        if include_metadata
-        else ElementMetadata()
-    )
+        metadata.detection_origin = detection_origin
+    else:
+        metadata = ElementMetadata()
+
     for ctext in file_content:
         ctext = ctext.strip()
 
@@ -270,6 +288,12 @@ def element_from_text(
         return EmailAddress(text=text)
     elif is_us_city_state_zip(text):
         return Address(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
+    elif is_possible_numbered_list(text):
+        return ListItem(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,

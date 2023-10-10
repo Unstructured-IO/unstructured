@@ -4,6 +4,7 @@ from typing import IO, Callable, Dict, List, Optional
 
 import msg_parser
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, ElementMetadata, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.logger import logger
@@ -15,6 +16,7 @@ from unstructured.partition.text import partition_text
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.MSG)
+@add_chunking_strategy()
 def partition_msg(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -25,6 +27,7 @@ def partition_msg(
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable] = None,
     min_partition: Optional[int] = 0,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions a MSFT Outlook .msg file
@@ -76,12 +79,13 @@ def partition_msg(
     elif text is None:
         pass
     elif "<html>" in text or "</div>" in text:
-        elements = partition_html(text=text)
+        elements = partition_html(text=text, detection_origin="msg")
     else:
         elements = partition_text(
             text=text,
             max_partition=max_partition,
             min_partition=min_partition,
+            detection_origin="msg",
         )
 
     metadata = build_msg_metadata(
@@ -135,13 +139,15 @@ def build_msg_metadata(
     if sent_to is not None:
         sent_to = [str(recipient) for recipient in sent_to]
 
-    return ElementMetadata(
+    element_metadata = ElementMetadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=getattr(msg_obj, "subject", None),
         last_modified=metadata_last_modified or email_date,
         filename=filename,
     )
+    element_metadata.detection_origin = "msg"
+    return element_metadata
 
 
 def extract_msg_attachment_info(

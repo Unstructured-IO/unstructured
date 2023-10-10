@@ -1,28 +1,28 @@
-import datetime
 import math
 import os
+import typing as t
 from collections import abc
 from dataclasses import dataclass
+from datetime import datetime
 from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
 
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConnector,
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSessionHandle,
+    BaseSourceConnector,
     ConfigSessionHandleMixin,
-    ConnectorCleanupMixin,
     IngestDocCleanupMixin,
     IngestDocSessionHandleMixin,
-    StandardConnectorConfig,
+    SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
     from atlassian import Jira
 
 
@@ -81,9 +81,9 @@ class SimpleJiraConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     user_email: str
     api_token: str
     url: str
-    list_of_projects: Optional[str]
-    list_of_boards: Optional[str]
-    list_of_issues: Optional[str]
+    projects: t.Optional[t.List[str]]
+    boards: t.Optional[t.List[str]]
+    issues: t.Optional[t.List[str]]
 
     def create_session_handle(
         self,
@@ -100,7 +100,7 @@ class JiraFileMeta:
     """
 
     project_id: str
-    board_id: Optional[str]
+    board_id: t.Optional[str]
     issue_key: str
     issue_id: str
 
@@ -249,20 +249,16 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     to fetch each doc, rather than creating a it for each thread.
     """
 
-    config: SimpleJiraConfig
+    connector_config: SimpleJiraConfig
     file_meta: JiraFileMeta
     registry_name: str = "jira"
-
-    @cached_property
-    def source_url(self):
-        return f"{self.config.url}/browse/{self.file_meta.issue_key}"
 
     @cached_property
     def record_locator(self):  # Values must be JSON-serializable
         """A dictionary with any data necessary to uniquely identify the document on
         the source system."""
         return {
-            "base_url": self.config.url,
+            "base_url": self.connector_config.url,
             "issue_key": self.file_meta.issue_key,
         }
 
@@ -276,30 +272,6 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     def parsed_fields(self):
         return nested_object_to_field_getter(self.issue["fields"])
 
-    @cached_property
-    @SourceConnectionError.wrap
-    @requires_dependencies(dependencies=["atlassian"], extras="jira")
-    def metadata_fields(self):
-        return {
-            "exists": bool(self.issue),
-            "date_modified": str(self.parsed_fields["updated"]),
-            "date_created": str(self.parsed_fields["created"]),
-            "date_processed": str(datetime.datetime.now().time()),
-            "record_locator": self.record_locator,
-        }
-
-    @cached_property
-    def date_created(self) -> Optional[str]:
-        return self.metadata_fields["date_created"]
-
-    @cached_property
-    def date_modified(self) -> Optional[str]:
-        return self.metadata_fields["date_modified"]
-
-    @cached_property
-    def date_processed(self) -> Optional[str]:
-        return self.metadata_fields["date_processed"]
-
     @property
     def grouping_folder_name(self):
         if self.file_meta.board_id:
@@ -312,7 +284,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
         download_file = f"{self.file_meta.issue_id}.txt"
 
         return (
-            Path(self.standard_config.download_dir) / self.grouping_folder_name / download_file
+            Path(self.read_config.download_dir) / self.grouping_folder_name / download_file
         ).resolve()
 
     @property
@@ -321,8 +293,33 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
         output_file = f"{self.file_meta.issue_id}.json"
 
         return (
-            Path(self.standard_config.output_dir) / self.grouping_folder_name / output_file
+            Path(self.processor_config.output_dir) / self.grouping_folder_name / output_file
         ).resolve()
+
+    @property
+    def version(self) -> t.Optional[str]:
+        return None
+
+    def update_source_metadata(self, **kwargs) -> None:
+        exists = bool(self.issue)
+        if not exists:
+            self.source_metadata = SourceMetadata(
+                exists=exists,
+            )
+            return
+
+        self.source_metadata = SourceMetadata(
+            date_created=datetime.strptime(
+                self.parsed_fields["created"],
+                "%Y-%m-%dT%H:%M:%S.%f%z",
+            ).isoformat(),
+            date_modified=datetime.strptime(
+                self.parsed_fields["updated"],
+                "%Y-%m-%dT%H:%M:%S.%f%z",
+            ).isoformat(),
+            source_url=f"{self.connector_config.url}/browse/{self.file_meta.issue_key}",
+            exists=exists,
+        )
 
     @SourceConnectionError.wrap
     @requires_dependencies(["atlassian"], extras="jira")
@@ -330,31 +327,24 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     def get_file(self):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
-        self.document = form_templated_string(self.issue, self.parsed_fields)
-
+        document = form_templated_string(self.issue, self.parsed_fields)
+        self.update_source_metadata()
         self.filename.parent.mkdir(parents=True, exist_ok=True)
 
         with open(self.filename, "w", encoding="utf8") as f:
-            f.write(self.document)
+            f.write(document)
 
 
 @requires_dependencies(["atlassian"], extras="jira")
 @dataclass
-class JiraConnector(ConnectorCleanupMixin, BaseConnector):
+class JiraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Fetches issues from projects in an Atlassian (Jira) Cloud instance."""
 
-    config: SimpleJiraConfig
-
-    def __init__(
-        self,
-        standard_config: StandardConnectorConfig,
-        config: SimpleJiraConfig,
-    ):
-        super().__init__(standard_config, config)
+    connector_config: SimpleJiraConfig
 
     @requires_dependencies(["atlassian"], extras="jira")
     def initialize(self):
-        self.jira = self.config.create_session_handle().service
+        self.jira = self.connector_config.create_session_handle().service
 
     @requires_dependencies(["atlassian"], extras="jira")
     def _get_all_project_ids(self):
@@ -373,10 +363,10 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
         return [(issue["key"], issue["id"], None) for issue in results]
 
     @requires_dependencies(["atlassian"], extras="jira")
-    def _get_issue_keys_within_projects(self, project_ids=None):
+    def _get_issue_keys_within_projects(self, project_ids: t.Optional[t.List[str]] = None):
         if project_ids is None:
             # for when a component list is provided, without any projects
-            if bool(self.config.list_of_boards or self.config.list_of_issues):
+            if bool(self.connector_config.boards or self.connector_config.issues):
                 return []
             # for when no components are provided. all projects will be ingested
             else:
@@ -422,22 +412,21 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
     def get_issue_keys_for_given_components(self):
         issues = []
 
-        if self.config.list_of_projects:
-            issues += self._get_issue_keys_within_projects(self.config.list_of_projects.split())
-        if self.config.list_of_boards:
-            issues += self._get_issue_keys_within_boards(self.config.list_of_boards.split())
-        if self.config.list_of_issues:
-            issues += self.get_issues_info(self.config.list_of_issues.split())
+        if self.connector_config.projects:
+            issues += self._get_issue_keys_within_projects(self.connector_config.projects)
+        if self.connector_config.boards:
+            issues += self._get_issue_keys_within_boards(self.connector_config.boards)
+        if self.connector_config.issues:
+            issues += self.get_issues_info(self.connector_config.issues)
 
         return issues
 
     def get_ingest_docs(self):
         """Fetches all issues in a project."""
-        print(str(self.config))
         if bool(
-            self.config.list_of_projects
-            or self.config.list_of_boards
-            or self.config.list_of_issues,
+            self.connector_config.projects
+            or self.connector_config.boards
+            or self.connector_config.issues,
         ):
             issue_keys_and_ids = self.get_issue_keys_for_given_components()
         else:
@@ -446,9 +435,10 @@ class JiraConnector(ConnectorCleanupMixin, BaseConnector):
 
         return [
             JiraIngestDoc(
-                self.standard_config,
-                self.config,
-                JiraFileMeta(
+                connector_config=self.connector_config,
+                processor_config=self.processor_config,
+                read_config=self.read_config,
+                file_meta=JiraFileMeta(
                     issue_id=issue_id,
                     issue_key=issue_key,
                     project_id=issue_key.split("-")[0],

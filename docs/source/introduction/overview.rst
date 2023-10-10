@@ -10,9 +10,9 @@ and no matter what format that data is in, Unstructured's toolkit will transform
 Product Offerings
 ^^^^^^^^^^^^^^^^^
 
-- **Python Library**: Unstructured's open source software `(library) <https://github.com/Unstructured-IO/unstructured>`_.
+- **Python Library**: Unstructured's open source software `(library) <https://github.com/Unstructured-IO/unstructured>`__.
 
-- **Hosted API**: Easiest and most scalable way to process large documents in quantity `(library) <https://github.com/Unstructured-IO/unstructured-api>`_.
+- **Hosted API**: Easiest and most scalable way to process large documents in quantity `(library) <https://github.com/Unstructured-IO/unstructured-api>`__.
 
 - **Enterprise Product**: In development with the hopes of launching late 2023.
 
@@ -38,6 +38,6 @@ Common Use Cases
 Quickstart Tutorial
 ^^^^^^^^^^^^^^^^^^^^
 
-If you're eager to dive in, head over to our :doc:`getting_started` to get a hands-on introduction to the ``unstructured`` library. In a few minutes, you'll have a basic workflow set up and running!
+If you're eager to dive in, head over to our `Getting Started <https://unstructured-io.github.io/unstructured/introduction/getting_started.html>`__ to get a hands-on introduction to the ``unstructured`` library. In a few minutes, you'll have a basic workflow set up and running!
 
 For more detailed information about specific components or advanced features, explore the rest of the documentation.

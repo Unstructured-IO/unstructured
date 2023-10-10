@@ -4,8 +4,10 @@
 #
 #    pip-compile requirements/ingest-notion.in
 #
-anyio==4.0.0
-    # via httpcore
+anyio==3.7.1
+    # via
+    #   -c requirements/constraints.in
+    #   httpcore
 certifi==2023.7.22
     # via
     #   -c requirements/base.txt
@@ -18,9 +20,9 @@ h11==0.14.0
     # via httpcore
 htmlbuilder==1.0.0
     # via -r requirements/ingest-notion.in
-httpcore==0.17.3
+httpcore==0.18.0
     # via httpx
-httpx==0.24.1
+httpx==0.25.0
     # via notion-client
 idna==3.4
     # via

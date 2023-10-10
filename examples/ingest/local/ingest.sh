@@ -19,7 +19,7 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
     --input-path example-docs \
-    --structured-output-dir local-ingest-output \
+    --output-dir local-ingest-output \
     --num-processes 2 \
     --recursive \
     --verbose \

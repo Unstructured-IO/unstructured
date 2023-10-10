@@ -2,12 +2,12 @@ from dataclasses import dataclass
 from typing import Type
 
 from unstructured.ingest.connector.fsspec import (
-    FsspecConnector,
+    FsspecDestinationConnector,
     FsspecIngestDoc,
+    FsspecSourceConnector,
     SimpleFsspecConfig,
 )
 from unstructured.ingest.error import SourceConnectionError
-from unstructured.ingest.interfaces import StandardConnectorConfig
 from unstructured.utils import requires_dependencies
 
 
@@ -18,7 +18,7 @@ class SimpleGcsConfig(SimpleFsspecConfig):
 
 @dataclass
 class GcsIngestDoc(FsspecIngestDoc):
-    config: SimpleGcsConfig
+    connector_config: SimpleGcsConfig
     registry_name: str = "gcs"
 
     @SourceConnectionError.wrap
@@ -27,13 +27,14 @@ class GcsIngestDoc(FsspecIngestDoc):
         super().get_file()
 
 
-@requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
-class GcsConnector(FsspecConnector):
-    ingest_doc_cls: Type[GcsIngestDoc] = GcsIngestDoc
+@dataclass
+class GcsSourceConnector(FsspecSourceConnector):
+    connector_config: SimpleGcsConfig
 
-    def __init__(
-        self,
-        config: SimpleGcsConfig,
-        standard_config: StandardConnectorConfig,
-    ) -> None:
-        super().__init__(standard_config, config)
+    def __post_init__(self):
+        self.ingest_doc_cls: Type[GcsIngestDoc] = GcsIngestDoc
+
+
+@dataclass
+class GcsDestinationConnector(FsspecDestinationConnector):
+    connector_config: SimpleGcsConfig

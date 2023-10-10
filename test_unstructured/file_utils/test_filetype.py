@@ -8,6 +8,7 @@ import pytest
 from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
     FileType,
+    _detect_filetype_from_octet_stream,
     _is_code_mime_type,
     _is_text_file_a_csv,
     _is_text_file_a_json,
@@ -439,3 +440,8 @@ def test_detect_filetype_skips_escape_commas_for_csv(tmpdir):
 
     with open(filename, "rb") as f:
         assert detect_filetype(file=f) == FileType.CSV
+
+
+def test_detect_filetype_from_octet_stream(filename="example-docs/emoji.xlsx"):
+    with open(filename, "rb") as f:
+        assert _detect_filetype_from_octet_stream(file=f) == FileType.XLSX

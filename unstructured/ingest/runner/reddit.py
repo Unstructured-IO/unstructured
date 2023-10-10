@@ -1,52 +1,52 @@
 import hashlib
 import logging
-from typing import Optional
+import typing as t
 
-from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.processor import process_documents
+from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
 
-def reddit(
-    verbose: bool,
-    connector_config: StandardConnectorConfig,
-    processor_config: ProcessorConfigs,
-    subreddit_name: str,
-    client_id: Optional[str],
-    client_secret: Optional[str],
-    user_agent: str,
-    search_query: Optional[str],
-    num_posts: int,
-    **kwargs,
-):
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+class RedditRunner(Runner):
+    def run(
+        self,
+        subreddit_name: str,
+        user_agent: str,
+        num_posts: int,
+        client_id: t.Optional[str] = None,
+        client_secret: t.Optional[str] = None,
+        search_query: t.Optional[str] = None,
+        **kwargs,
+    ):
+        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
-    hashed_dir_name = hashlib.sha256(
-        subreddit_name.encode("utf-8"),
-    )
-    connector_config.download_dir = update_download_dir_hash(
-        connector_name="reddit",
-        connector_config=connector_config,
-        hashed_dir_name=hashed_dir_name,
-        logger=logger,
-    )
+        hashed_dir_name = hashlib.sha256(
+            subreddit_name.encode("utf-8"),
+        )
 
-    from unstructured.ingest.connector.reddit import (
-        RedditConnector,
-        SimpleRedditConfig,
-    )
+        self.read_config.download_dir = update_download_dir_hash(
+            connector_name="reddit",
+            read_config=self.read_config,
+            hashed_dir_name=hashed_dir_name,
+            logger=logger,
+        )
 
-    doc_connector = RedditConnector(  # type: ignore
-        standard_config=connector_config,
-        config=SimpleRedditConfig(
-            subreddit_name=subreddit_name,
-            client_id=client_id,
-            client_secret=client_secret,
-            user_agent=user_agent,
-            search_query=search_query,
-            num_posts=num_posts,
-        ),
-    )
+        from unstructured.ingest.connector.reddit import (
+            RedditSourceConnector,
+            SimpleRedditConfig,
+        )
 
-    process_documents(doc_connector=doc_connector, processor_config=processor_config)
+        source_doc_connector = RedditSourceConnector(  # type: ignore
+            connector_config=SimpleRedditConfig(
+                subreddit_name=subreddit_name,
+                client_id=client_id,
+                client_secret=client_secret,
+                user_agent=user_agent,
+                search_query=search_query,
+                num_posts=num_posts,
+            ),
+            read_config=self.read_config,
+            processor_config=self.processor_config,
+        )
+
+        self.process_documents(source_doc_connector=source_doc_connector)

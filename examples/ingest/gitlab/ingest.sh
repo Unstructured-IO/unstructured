@@ -12,7 +12,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     gitlab \
     --url https://gitlab.com/gitlab-com/content-sites/docsy-gitlab \
     --git-branch 'v0.0.7' \
-    --structured-output-dir gitlab-ingest-output \
+    --output-dir gitlab-ingest-output \
     --num-processes 2 \
     --verbose
 

@@ -7,7 +7,21 @@ cd "$SCRIPT_DIR"/.. || exit 1
 
 OUTPUT_FOLDER_NAME=jira-diff
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
+max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
+CI=${CI:-"false"}
+
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+function cleanup() {
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$WORK_DIR"
+  if [ "$CI" == "true" ]; then
+    cleanup_dir "$DOWNLOAD_DIR"
+  fi
+}
+trap cleanup EXIT
 
 if [ -z "$JIRA_INGEST_USER_EMAIL" ] || [ -z "$JIRA_INGEST_API_TOKEN" ]; then
    echo "Skipping Jira ingest test because the JIRA_INGEST_USER_EMAIL or JIRA_INGEST_API_TOKEN env var is not set."
@@ -25,11 +39,11 @@ fi
 
 # Optional arguments:
 # --list-of-projects
-#     --> Space separated project ids or keys
+#     --> Comma separated project ids or keys
 # --list-of-boards
-#     --> Space separated board ids or keys
+#     --> Comma separated board ids or keys
 # --list-of-issues
-#     --> Space separated issue ids or keys
+#     --> Comma separated issue ids or keys
 
 # Note: When any of the optional arguments are provided, connector will ingest only those components, and nothing else.
 #       When none of the optional arguments are provided, all issues in all projects will be ingested.
@@ -37,19 +51,20 @@ fi
 PYTHONPATH=. ./unstructured/ingest/main.py \
         jira \
         --download-dir "$DOWNLOAD_DIR" \
-        --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified \
-        --num-processes 2 \
+        --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+        --num-processes "$max_processes" \
         --preserve-downloads \
         --reprocess \
-        --structured-output-dir "$OUTPUT_DIR" \
+        --output-dir "$OUTPUT_DIR" \
         --verbose \
         --url https://unstructured-jira-connector-test.atlassian.net \
         --user-email "$JIRA_INGEST_USER_EMAIL" \
         --api-token "$JIRA_INGEST_API_TOKEN" \
-        --list-of-projects "JCTP3" \
-        --list-of-boards "1" \
-        --list-of-issues "JCTP2-4 JCTP2-7 JCTP2-8 10012 JCTP2-11" \
+        --projects "JCTP3" \
+        --boards "1" \
+        --issues "JCTP2-4,JCTP2-7,JCTP2-8,10012,JCTP2-11" \
+        --work-dir "$WORK_DIR"
 
 
 
-sh "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

@@ -1,44 +1,46 @@
 import hashlib
 import logging
-from typing import Optional
+import typing as t
 
-from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.processor import process_documents
+from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
 
-def airtable(
-    verbose: bool,
-    connector_config: StandardConnectorConfig,
-    processor_config: ProcessorConfigs,
-    personal_access_token: str,
-    list_of_paths: Optional[str],
-    **kwargs,
-):
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+class AirtableRunner(Runner):
+    def run(
+        self,
+        personal_access_token: str,
+        list_of_paths: t.Optional[str] = None,
+        **kwargs,
+    ):
+        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
-    hashed_dir_name = hashlib.sha256(
-        personal_access_token.encode("utf-8"),
-    )
-    connector_config.download_dir = update_download_dir_hash(
-        connector_name="airtable",
-        connector_config=connector_config,
-        hashed_dir_name=hashed_dir_name,
-        logger=logger,
-    )
+        hashed_dir_name = hashlib.sha256(
+            personal_access_token.encode("utf-8"),
+        )
 
-    from unstructured.ingest.connector.airtable import (
-        AirtableConnector,
-        SimpleAirtableConfig,
-    )
+        self.read_config.download_dir = update_download_dir_hash(
+            connector_name="airtable",
+            read_config=self.read_config,
+            hashed_dir_name=hashed_dir_name,
+            logger=logger,
+        )
 
-    doc_connector = AirtableConnector(  # type: ignore
-        standard_config=connector_config,
-        config=SimpleAirtableConfig(
-            personal_access_token=personal_access_token,
-            list_of_paths=list_of_paths,
-        ),
-    )
+        from unstructured.ingest.connector.airtable import (
+            AirtableSourceConnector,
+            SimpleAirtableConfig,
+        )
 
-    process_documents(doc_connector=doc_connector, processor_config=processor_config)
+        source_doc_connector = AirtableSourceConnector(  # type: ignore
+            processor_config=self.processor_config,
+            connector_config=SimpleAirtableConfig(
+                personal_access_token=personal_access_token,
+                list_of_paths=list_of_paths,
+            ),
+            read_config=self.read_config,
+        )
+
+        self.process_documents(
+            source_doc_connector=source_doc_connector,
+        )

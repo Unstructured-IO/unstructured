@@ -1,0 +1,6 @@
+from pptx.oxml.xmlchemy import BaseOxmlElement
+
+class CT_TextParagraph(BaseOxmlElement):
+    def get_or_add_pPr(self) -> CT_TextParagraphProperties: ...
+
+class CT_TextParagraphProperties(BaseOxmlElement): ...

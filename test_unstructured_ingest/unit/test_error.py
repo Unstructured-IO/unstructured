@@ -1,5 +1,3 @@
-import traceback
-
 import pytest
 
 from unstructured.ingest.error import (

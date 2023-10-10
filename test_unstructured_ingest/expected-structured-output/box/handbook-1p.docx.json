@@ -3,7 +3,16 @@
     "type": "Header",
     "element_id": "4791dd98269fcb004add63ef773c6867",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "header_footer_type": "primary"
     },
@@ -13,7 +22,16 @@
     "type": "Title",
     "element_id": "8ed906945500938a06129c30763f300e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 1,
       "emphasized_text_contents": [
@@ -29,7 +47,16 @@
     "type": "Title",
     "element_id": "348348036267fa046df6956d6bff62c9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 1,
       "emphasized_text_contents": [
@@ -45,7 +72,16 @@
     "type": "Title",
     "element_id": "a9f8f222e3a281af9a626683f881af17",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 1
     },
@@ -55,7 +91,16 @@
     "type": "Title",
     "element_id": "e74b0fbd76f6797cad25bec01ff6d6b2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 1
     },
@@ -65,7 +110,16 @@
     "type": "NarrativeText",
     "element_id": "44ee744fed4045b95ce492678a7d780a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 1
     },
@@ -75,7 +129,16 @@
     "type": "NarrativeText",
     "element_id": "4ab54ca78854a3da32f22a5765bd194c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 1
     },
@@ -85,7 +148,16 @@
     "type": "NarrativeText",
     "element_id": "67483276a5011df9e435b054ad7fde6e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 1
     },
@@ -95,7 +167,16 @@
     "type": "PageBreak",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     },
     "text": ""
@@ -104,7 +185,16 @@
     "type": "Title",
     "element_id": "4966c7804baab3f751348b349370ec3a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 2
     },
@@ -114,7 +204,16 @@
     "type": "NarrativeText",
     "element_id": "caa2416842c288251ef040d0c096e3f3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 2
     },
@@ -124,7 +223,16 @@
     "type": "NarrativeText",
     "element_id": "2373a57d3967a41ea2d60b52749773c2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 2
     },
@@ -134,7 +242,16 @@
     "type": "Title",
     "element_id": "ba76416d7694fefb8e1c7e3d30aa93e1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 2
     },
@@ -144,7 +261,16 @@
     "type": "NarrativeText",
     "element_id": "c14906791f9e639fa9163558d28bdc1f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 2
     },
@@ -154,7 +280,16 @@
     "type": "NarrativeText",
     "element_id": "34a34610cc4415f9f3d547012ca226e6",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "page_number": 2
     },
@@ -164,7 +299,16 @@
     "type": "Footer",
     "element_id": "8dfc77ab4089e09d4397e12306086c19",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "box://utic-test-ingest-fixtures/handbook-1p.docx",
+        "version": 279067178702899831567111695812844052273,
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/handbook-1p.docx"
+        },
+        "date_created": "2023-07-08T20:47:31-07:00",
+        "date_modified": "2023-07-08T20:47:31-07:00"
+      },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "header_footer_type": "primary"
     },

@@ -7,8 +7,10 @@ from PIL import Image
 from pytesseract import TesseractError
 from unstructured_inference.inference import layout
 
-from unstructured.partition import image, pdf
+from unstructured.chunking.title import chunk_by_title
+from unstructured.partition import image, ocr, pdf
 from unstructured.partition.json import partition_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -82,7 +84,10 @@ class MockDocumentLayout(layout.DocumentLayout):
 
 @pytest.mark.parametrize(
     ("filename", "file"),
-    [("example-docs/example.jpg", None), (None, b"0000")],
+    [
+        ("example-docs/example.jpg", None),
+        (None, b"0000"),
+    ],
 )
 def test_partition_image_local(monkeypatch, filename, file):
     monkeypatch.setattr(
@@ -93,6 +98,16 @@ def test_partition_image_local(monkeypatch, filename, file):
     monkeypatch.setattr(
         layout,
         "process_file_with_model",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
+        ocr,
+        "process_data_with_ocr",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
+        ocr,
+        "process_data_with_ocr",
         lambda *args, **kwargs: MockDocumentLayout(),
     )
 
@@ -116,7 +131,10 @@ def test_partition_image_with_auto_strategy(
     elements = image.partition_image(filename=filename, strategy="auto")
     titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    idx = 2
     assert titles[0].text == title
+    assert elements[idx].metadata.detection_class_prob is not None
+    assert isinstance(elements[idx].metadata.detection_class_prob, float)
 
 
 def test_partition_image_with_table_extraction(
@@ -129,7 +147,7 @@ def test_partition_image_with_table_extraction(
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 1
-    assert "Layouts of history Japanese documents" in table[0]
+    assert "<table><thead><th>" in table[0]
 
 
 def test_partition_image_with_multipage_tiff(
@@ -141,8 +159,8 @@ def test_partition_image_with_multipage_tiff(
 
 def test_partition_image_with_language_passed(filename="example-docs/example.jpg"):
     with mock.patch.object(
-        layout,
-        "process_file_with_model",
+        ocr,
+        "process_file_with_ocr",
         mock.MagicMock(),
     ) as mock_partition:
         image.partition_image(
@@ -158,8 +176,8 @@ def test_partition_image_from_file_with_language_passed(
     filename="example-docs/example.jpg",
 ):
     with mock.patch.object(
-        layout,
-        "process_data_with_model",
+        ocr,
+        "process_data_with_ocr",
         mock.MagicMock(),
     ) as mock_partition, open(filename, "rb") as f:
         image.partition_image(file=f, strategy="hi_res", ocr_languages="eng+swe")
@@ -237,9 +255,14 @@ def test_partition_image_default_strategy_hi_res():
     with open(filename, "rb") as f:
         elements = image.partition_image(file=f)
 
-    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[0].text == first_line
-    assert elements[0].metadata.coordinates is not None
+    title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    idx = 2
+    assert elements[idx].text == title
+    assert elements[idx].metadata.coordinates is not None
+    assert elements[idx].metadata.detection_class_prob is not None
+    assert isinstance(elements[idx].metadata.detection_class_prob, float)
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {"image"}
 
 
 def test_partition_image_metadata_date(
@@ -393,15 +416,111 @@ def test_partition_msg_with_json(
         assert elements[i] == test_elements[i]
 
 
-def test_partition_image_with_ocr_has_coordinates_from_file(
-    mocker,
+def test_partition_image_with_ocr_has_coordinates_from_filename(
     filename="example-docs/english-and-korean.png",
 ):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    mocker.patch(
-        "unstructured.partition.pdf.get_last_modified_date",
-        return_value=mocked_last_modification_date,
-    )
     elements = image.partition_image(filename=filename, strategy="ocr_only")
     int_coordinates = [(int(x), int(y)) for x, y in elements[0].metadata.coordinates.points]
     assert int_coordinates == [(14, 36), (14, 16), (381, 16), (381, 36)]
+
+
+@pytest.mark.parametrize(
+    ("filename"),
+    [
+        ("example-docs/layout-parser-paper-with-table.jpg"),
+        ("example-docs/english-and-korean.png"),
+        ("example-docs/layout-parser-paper-fast.jpg"),
+    ],
+)
+def test_partition_image_with_ocr_coordinates_are_not_nan_from_filename(
+    filename,
+):
+    import math
+
+    elements = image.partition_image(filename=filename, strategy="ocr_only")
+    for element in elements:
+        # TODO (jennings) One or multiple elements is an empty string
+        # without coordinates. This should be fixed in a new issue
+        if element.text:
+            box = element.metadata.coordinates.points
+            for point in box:
+                assert point[0] is not math.nan
+                assert point[1] is not math.nan
+
+
+def test_partition_image_formats_languages_for_tesseract():
+    filename = "example-docs/jpn-vert.jpeg"
+    with mock.patch(
+        "unstructured.partition.ocr.process_file_with_ocr",
+    ) as mock_process_file_with_ocr:
+        image.partition_image(filename=filename, strategy="hi_res", languages=["jpn_vert"])
+        _, kwargs = mock_process_file_with_ocr.call_args_list[0]
+        assert "ocr_languages" in kwargs
+        assert kwargs["ocr_languages"] == "jpn_vert"
+
+
+def test_partition_image_warns_with_ocr_languages(caplog):
+    filename = "example-docs/layout-parser-paper-fast.jpg"
+    image.partition_image(filename=filename, strategy="hi_res", ocr_languages="eng")
+    assert "The ocr_languages kwarg will be deprecated" in caplog.text
+
+
+def test_add_chunking_strategy_on_partition_image(
+    filename="example-docs/layout-parser-paper-fast.jpg",
+):
+    elements = image.partition_image(filename=filename)
+    chunk_elements = image.partition_image(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_add_chunking_strategy_on_partition_image_hi_res(
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    elements = image.partition_image(
+        filename=filename,
+        strategy="hi_res",
+        infer_table_structure=True,
+    )
+    chunk_elements = image.partition_image(
+        filename,
+        strategy="hi_res",
+        infer_table_structure=True,
+        chunking_strategy="by_title",
+    )
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_partition_image_uses_model_name():
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_or_image_local",
+    ) as mockpartition:
+        image.partition_image("example-docs/layout-parser-paper-fast.jpg", model_name="test")
+        print(mockpartition.call_args)
+        assert "model_name" in mockpartition.call_args.kwargs
+        assert mockpartition.call_args.kwargs["model_name"]
+
+
+@pytest.mark.parametrize(
+    ("ocr_mode", "idx_title_element"),
+    [
+        ("entire_page", 2),
+        ("individual_blocks", 1),
+    ],
+)
+def test_partition_image_hi_res_ocr_mode(ocr_mode, idx_title_element):
+    filename = "example-docs/layout-parser-paper-fast.jpg"
+    elements = image.partition_image(filename=filename, ocr_mode=ocr_mode, strategy="hi_res")
+    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    # Note(yuming): idx_title_element is different based on xy-cut and ocr mode
+    assert elements[idx_title_element].text == first_line
+
+
+def test_partition_image_hi_res_invalid_ocr_mode():
+    filename = "example-docs/layout-parser-paper-fast.jpg"
+    with pytest.raises(ValueError):
+        _ = image.partition_image(filename=filename, ocr_mode="invalid_ocr_mode", strategy="hi_res")

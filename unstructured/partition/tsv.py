@@ -18,6 +18,8 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 
+DETECTION_ORIGIN: str = "tsv"
+
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.TSV)
@@ -63,6 +65,7 @@ def partition_tsv(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
         )
+        metadata.detection_origin = DETECTION_ORIGIN
     else:
         metadata = ElementMetadata()
 

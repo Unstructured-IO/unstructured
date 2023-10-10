@@ -1,58 +1,86 @@
 import logging
+import typing as t
+from dataclasses import dataclass
 
 import click
 
 from unstructured.ingest.cli.common import (
-    add_shared_options,
     log_options,
-    map_to_processor_config,
-    map_to_standard_config,
-    run_init_checks,
 )
+from unstructured.ingest.cli.interfaces import (
+    CliMixin,
+)
+from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
+from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import gitlab as gitlab_fn
+from unstructured.ingest.runner import GitlabRunner
 
 
-@click.command()
-@click.option(
-    "--git-access-token",
-    default=None,
-    help="A GitHub or GitLab access token, see https://docs.github.com/en/authentication "
-    " or https://docs.gitlab.com/ee/api/rest/index.html#personalprojectgroup-access-tokens",
-)
-@click.option(
-    "--git-branch",
-    default=None,
-    help="The branch for which to fetch files from. If not given,"
-    " the default repository branch is used.",
-)
-@click.option(
-    "--git-file-glob",
-    default=None,
-    help="A comma-separated list of file globs to limit which types of files are accepted,"
-    " e.g. '*.html,*.txt'",
-)
-@click.option(
-    "--url",
-    required=True,
-    help='URL to GitLab repository, e.g. "https://gitlab.com/gitlab-com/content-sites/docsy-gitlab"'
-    ', or a repository path, e.g. "gitlab-com/content-sites/docsy-gitlab"',
-)
-def gitlab(**options):
+@dataclass
+class GitlabCliConfig(BaseConfig, CliMixin):
+    url: str
+    git_access_token: t.Optional[str] = None
+    git_branch: t.Optional[str] = None
+    git_file_glob: t.Optional[str] = None
+
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--url"],
+                required=True,
+                type=str,
+                help="URL to GitHub repository, e.g. "
+                '"https://github.com/Unstructured-IO/unstructured", or '
+                'a repository owner/name pair, e.g. "Unstructured-IO/unstructured"',
+            ),
+            click.Option(
+                ["--git-access-token"],
+                default=None,
+                help="A GitHub or GitLab access token, "
+                "see https://docs.github.com/en/authentication or "
+                "https://docs.gitlab.com/ee/api/rest/index.html#personalprojectgroup-access-tokens",
+            ),
+            click.Option(
+                ["--git-branch"],
+                default=None,
+                type=str,
+                help="The branch for which to fetch files from. If not given,"
+                " the default repository branch is used.",
+            ),
+            click.Option(
+                ["--git-file-glob"],
+                default=None,
+                type=str,
+                help="A comma-separated list of file globs to limit which types of "
+                "files are accepted, e.g. '*.html,*.txt'",
+            ),
+        ]
+        cmd.params.extend(options)
+
+
+@click.group(name="gitlab", invoke_without_command=True, cls=Group)
+@click.pass_context
+def gitlab_source(ctx: click.Context, **options):
+    if ctx.invoked_subcommand:
+        return
+
+    conform_click_options(options)
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(options)
+    log_options(options, verbose=verbose)
     try:
-        run_init_checks(**options)
-        connector_config = map_to_standard_config(options)
-        processor_config = map_to_processor_config(options)
-        gitlab_fn(connector_config=connector_config, processor_config=processor_config, **options)
+        configs = extract_configs(options, validate=([GitlabCliConfig]))
+        runner = GitlabRunner(
+            **configs,  # type: ignore
+        )
+        runner.run(**options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
 
 
-def get_cmd() -> click.Command:
-    cmd = gitlab
-    add_shared_options(cmd)
+def get_source_cmd() -> click.Group:
+    cmd = gitlab_source
+    add_options(cmd, extras=[GitlabCliConfig])
     return cmd

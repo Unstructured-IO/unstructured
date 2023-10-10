@@ -14,12 +14,12 @@ from pathlib import Path
 from typing import Type
 
 from unstructured.ingest.connector.fsspec import (
-    FsspecConnector,
+    FsspecDestinationConnector,
     FsspecIngestDoc,
+    FsspecSourceConnector,
     SimpleFsspecConfig,
 )
 from unstructured.ingest.error import SourceConnectionError
-from unstructured.ingest.interfaces import StandardConnectorConfig
 from unstructured.utils import requires_dependencies
 
 
@@ -34,6 +34,7 @@ class SimpleDropboxConfig(SimpleFsspecConfig):
 
 @dataclass
 class DropboxIngestDoc(FsspecIngestDoc):
+    connector_config: SimpleDropboxConfig
     registry_name: str = "dropbox"
 
     @SourceConnectionError.wrap
@@ -46,55 +47,60 @@ class DropboxIngestDoc(FsspecIngestDoc):
         # Dropbox requires a forward slash at the front of the folder path. This
         # creates some complications in path joining so a custom path is created here.
         # Dropbox uses an empty string `""`, or a space `" "`` or a `" /"` to list root
-        if self.config.dir_path == " ":
-            return Path(self.standard_config.output_dir) / re.sub(
+        if self.connector_config.dir_path == " ":
+            return Path(self.processor_config.output_dir) / re.sub(
                 "^/",
                 "",
                 f"{self.remote_file_path}.json",
             )
         else:
             return (
-                Path(self.standard_config.output_dir)
-                / f"{self.remote_file_path.replace(f'/{self.config.dir_path}/', '')}.json"
+                Path(self.processor_config.output_dir)
+                / f"{self.remote_file_path.replace(f'/{self.connector_config.dir_path}/', '')}.json"
             )
 
     def _tmp_download_file(self):
         # Dropbox requires a forward slash at the front of the folder path. This
         # creates some complications in path joining so a custom path is created here.
         # Dropbox uses an empty string `""`, or a space `" "`` or a `" /"` to list root
-        if self.config.dir_path == " ":
-            return Path(self.standard_config.download_dir) / re.sub(
+        download_dir: str = self.read_config.download_dir if self.read_config.download_dir else ""
+        if not download_dir:
+            return ""
+        if self.connector_config.dir_path == " ":
+            return Path(download_dir) / re.sub(
                 "^/",
                 "",
                 self.remote_file_path,
             )
         else:
-            return Path(self.standard_config.download_dir) / self.remote_file_path.replace(
-                f"/{self.config.dir_path}/",
+            return Path(download_dir) / self.remote_file_path.replace(
+                f"/{self.connector_config.dir_path}/",
                 "",
             )
 
 
-@requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
-class DropboxConnector(FsspecConnector):
-    ingest_doc_cls: Type[DropboxIngestDoc] = DropboxIngestDoc
+@dataclass
+class DropboxSourceConnector(FsspecSourceConnector):
+    connector_config: SimpleDropboxConfig
 
-    def __init__(
-        self,
-        config: SimpleDropboxConfig,
-        standard_config: StandardConnectorConfig,
-    ) -> None:
-        super().__init__(standard_config, config)
+    def __post_init__(self):
+        self.ingest_doc_cls: Type[DropboxIngestDoc] = DropboxIngestDoc
 
+    @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
     def initialize(self):
+        from fsspec import AbstractFileSystem, get_filesystem_class
+
+        self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
+            **self.connector_config.get_access_kwargs(),
+        )
         # Dropbox requires a forward slash at the front of the folder path. This
         # creates some complications in path joining so a custom path is created here.
-        ls_output = self.fs.ls(f"/{self.config.path_without_protocol}")
+        ls_output = self.fs.ls(f"/{self.connector_config.path_without_protocol}")
         if ls_output and len(ls_output) >= 1:
             return
         elif ls_output:
             raise ValueError(
-                f"No objects found in {self.config.path}.",
+                f"No objects found in {self.connector_config.path}.",
             )
         else:
             raise MissingFolderError(
@@ -104,14 +110,14 @@ class DropboxConnector(FsspecConnector):
     def _list_files(self):
         # Dropbox requires a forward slash at the front of the folder path. This
         # creates some complications in path joining so a custom path is created here.
-        if not self.config.recursive:
+        if not self.connector_config.recursive:
             # fs.ls does not walk directories
             # directories that are listed in cloud storage can cause problems because they are seen
             # as 0byte files
             return [
                 x.get("name")
                 for x in self.fs.ls(
-                    f"/{self.config.path_without_protocol}",
+                    f"/{self.connector_config.path_without_protocol}",
                     detail=True,
                 )
                 if x.get("size")
@@ -122,8 +128,13 @@ class DropboxConnector(FsspecConnector):
             return [
                 k
                 for k, v in self.fs.find(
-                    f"/{self.config.path_without_protocol}",
+                    f"/{self.connector_config.path_without_protocol}",
                     detail=True,
                 ).items()
                 if v.get("size")
             ]
+
+
+@dataclass
+class DropboxDestinationConnector(FsspecDestinationConnector):
+    connector_config: SimpleFsspecConfig

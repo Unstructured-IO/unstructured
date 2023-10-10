@@ -29,7 +29,7 @@ install-base-ci: install-base-pip-packages install-nltk-models install-test
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
 	python3 -m pip install pip==${PIP_VERSION}
-	python3 -m pip install -r requirements/base.txt
+	python3 -m pip install -r requirements/base.txt --extra-index-url https://packages.unstructured.io/simple/
 
 .PHONY: install-huggingface
 install-huggingface:
@@ -44,9 +44,15 @@ install-nltk-models:
 .PHONY: install-test
 install-test:
 	python3 -m pip install -r requirements/test.txt
+	# NOTE(yao) - CI seem to always install tesseract to test so it would make sense to also require
+	# pytesseract installation into the virtual env for testing
+	python3 -m pip install unstructured.pytesseract -c requirements/constraints.in
+	python3 -m pip install argilla -c requirements/constraints.in
 	# NOTE(robinson) - Installing weaviate-client separately here because the requests
 	# version conflicts with label_studio_sdk
-	python3 -m pip install weaviate-client
+	python3 -m pip install weaviate-client -c requirements/constraints.in
+	# TODO (yao): find out if how to constrain argilla properly without causing conflicts
+	python3 -m pip install argilla
 
 .PHONY: install-dev
 install-dev:
@@ -208,18 +214,14 @@ install-local-inference: install install-all-docs
 install-pandoc:
 	ARCH=${ARCH} ./scripts/install-pandoc.sh
 
+.PHONY: install-paddleocr
+install-paddleocr:
+	ARCH=${ARCH} ./scripts/install-paddleocr.sh
 
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
 pip-compile:
-	@for file in $(shell ls requirements/*.in); do \
-		if [[ "$${file}" =~ "constraints" ]]; then \
-			continue; \
-		fi; \
-		echo "running: pip-compile --upgrade $${file}"; \
-		pip-compile --upgrade $${file}; \
-	done
-	cp requirements/build.txt docs/requirements.txt
+	@scripts/pip-compile.sh
 
 
 
@@ -239,11 +241,13 @@ uninstall-project-local:
 #################
 
 export CI ?= false
+export UNSTRUCTURED_INCLUDE_DEBUG_METADATA ?= false
 
 ## test:                    runs all unittests
 .PHONY: test
 test:
-	PYTHONPATH=. CI=$(CI) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
+	PYTHONPATH=. CI=$(CI) \
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
 
 .PHONY: test-unstructured-api-unit
 test-unstructured-api-unit:
@@ -252,7 +256,8 @@ test-unstructured-api-unit:
 .PHONY: test-no-extras
 # TODO(newelh) Add json test when fixed
 test-no-extras:
-	PYTHONPATH=. CI=$(CI) pytest \
+	PYTHONPATH=. CI=$(CI) \
+		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest \
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
 		test_${PACKAGE_NAME}/partition/test_html_partition.py \
@@ -315,7 +320,7 @@ check: check-src check-tests check-version
 ## check-src:               runs linters (source only, no tests)
 .PHONY: check-src
 check-src:
-	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore PT011,PT012,SIM117
+	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore COM812,PT011,PT012,SIM117
 	black --line-length 100 ${PACKAGE_NAME} --check
 	flake8 ${PACKAGE_NAME}
 	mypy ${PACKAGE_NAME} --ignore-missing-imports --check-untyped-defs
@@ -323,7 +328,9 @@ check-src:
 .PHONY: check-tests
 check-tests:
 	black --line-length 100 test_${PACKAGE_NAME} --check
+	black --line-length 100 test_${PACKAGE_NAME}_ingest --check
 	flake8 test_${PACKAGE_NAME}
+	flake8 test_${PACKAGE_NAME}_ingest
 
 ## check-scripts:           run shellcheck
 .PHONY: check-scripts
@@ -344,6 +351,7 @@ tidy:
 	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --fix-only || true
 	black --line-length 100 ${PACKAGE_NAME}
 	black --line-length 100 test_${PACKAGE_NAME}
+	black --line-length 100 test_${PACKAGE_NAME}_ingest
 
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync
@@ -389,7 +397,9 @@ docker-test:
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/notebook-user/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
-	bash -c "CI=$(CI) pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
+	bash -c "CI=$(CI) \
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
+	pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
 
 .PHONY: docker-smoke-test
 docker-smoke-test:

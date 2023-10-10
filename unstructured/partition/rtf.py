@@ -1,12 +1,16 @@
 from typing import IO, List, Optional
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.html import convert_and_partition_html
 
+DETECTION_ORIGIN: str = "rtf"
+
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.RTF)
+@add_chunking_strategy()
 def partition_rtf(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -14,6 +18,7 @@ def partition_rtf(
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partitions an RTF document. The document is first converted to HTML and then
@@ -37,4 +42,5 @@ def partition_rtf(
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified,
+        detection_origin=DETECTION_ORIGIN,
     )

@@ -1,0 +1,83 @@
+name: Release Version Alert
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    branches: [ main ]
+
+jobs:
+  check-version:  
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout codes
+        uses: actions/checkout@v4 
+      - name: Get PR information
+        id: pr-info
+        run: |
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          HAS_PR=false; [ "$PR_NUMBER" != "null" ] && HAS_PR=true
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "HAS_PR=$HAS_PR" >> $GITHUB_ENV
+          echo "PR_NUMBER=$PR_NUMBER"
+          echo "HAS_PR=$HAS_PR"
+      - name: Check versions
+        id: check-versions
+        run: |
+          CHECK_NEW_VERSION_RESPONSE=$(bash scripts/check-new-release-version.sh)
+          if [[ "$CHECK_NEW_VERSION_RESPONSE" == "New release version"* ]]; then
+            if [ "$HAS_PR" = true ]; then
+              MESSAGE="$CHECK_NEW_VERSION_RESPONSE :rocket: Coming soon in PR: https://github.com/$GITHUB_REPOSITORY/pull/$PR_NUMBER "
+            else
+              BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}")
+              BRANCH_LINK="https://github.com/${{ github.repository }}/tree/$BRANCH_NAME"
+              MESSAGE="$CHECK_NEW_VERSION_RESPONSE :rocket: Coming soon in branch: $BRANCH_LINK"
+            fi
+            echo "SLACK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
+          else
+            echo "No new non-dev version found. Skipping Slack notification."
+            echo "SKIP_STEPS=true" >> $GITHUB_ENV  # Set an environment variable to indicate skipping steps
+          fi 
+          echo "SLACK_MESSAGE=$MESSAGE"
+      - name: Generate Message Hash
+        if: env.SKIP_STEPS != 'true' 
+        id: generate-hash
+        run: |
+          MESSAGE_HASH=$(echo "${{env.SLACK_MESSAGE}}" | sha256sum | cut -d ' ' -f1)
+          echo "MESSAGE_HASH=$MESSAGE_HASH" >> $GITHUB_ENV
+      - name: Restore Message from Cache
+        if: env.SKIP_STEPS != 'true'
+        id: restore-cache
+        uses: actions/cache/restore@v3
+        with: 
+          path: message_cache.txt
+          key: message-cache-${{ env.MESSAGE_HASH  }}
+      - name: Check for Duplicates
+        if: env.SKIP_STEPS != 'true'
+        run: |
+          DUPLICATE_CHECK=$(grep -Fx "${{env.SLACK_MESSAGE}}" message_cache.txt || true)
+          echo "DUPLICATE_CHECK=$DUPLICATE_CHECK"
+          if [ -n "$DUPLICATE_CHECK" ]; then
+            echo "Message already posted. Skipping duplicate Slack notification."
+            echo "SKIP_STEPS=true" >> $GITHUB_ENV  # Set an environment variable to indicate skipping steps
+          fi
+      - name: Write Message to Cache File
+        if: env.SKIP_STEPS != 'true'
+        run: |
+          echo "${{env.SLACK_MESSAGE}}" >> message_cache.txt
+          cat message_cache.txt
+      - name: Store Message in Cache
+        if: env.SKIP_STEPS != 'true'
+        uses: actions/cache/save@v3
+        with:
+          path: message_cache.txt
+          key: message-cache-${{ env.MESSAGE_HASH }}
+      - name: Slack Notification
+        if: env.SKIP_STEPS != 'true'
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: 'C05S1QMKL5D'
+          slack-message: ${{ env.SLACK_MESSAGE }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
