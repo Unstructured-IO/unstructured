@@ -23,6 +23,8 @@ class NotionCliConfig(BaseConfig, CliMixin):
     api_key: str
     page_ids: t.Optional[t.List[str]]
     database_ids: t.Optional[t.List[str]]
+    max_retries: t.Optional[int] = None
+    max_time: t.Optional[float] = None
 
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:
@@ -44,6 +46,20 @@ class NotionCliConfig(BaseConfig, CliMixin):
                 default=None,
                 type=DelimitedString(),
                 help="Notion database IDs to pull text from",
+            ),
+            click.Option(
+                ["--max-retries"],
+                default=None,
+                type=int,
+                help="If provided, will use this max retry for "
+                "back off strategy if http calls fail",
+            ),
+            click.Option(
+                ["--max-time"],
+                default=None,
+                type=float,
+                help="If provided, will attempt retries for this long as part "
+                "of back off strategy if http calls fail",
             ),
         ]
         cmd.params.extend(options)

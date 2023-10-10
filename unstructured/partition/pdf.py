@@ -963,13 +963,14 @@ def get_uris_from_annots(
         uri_dict = try_resolve(annotation_dict["A"])
         uri_type = str(uri_dict["S"])
 
+        uri = None
         try:
             if uri_type == "/'URI'":
                 uri = try_resolve(try_resolve(uri_dict["URI"])).decode("utf-8")
             if uri_type == "/'GoTo'":
                 uri = try_resolve(try_resolve(uri_dict["D"])).decode("utf-8")
-        except (KeyError, AttributeError, TypeError, UnicodeDecodeError):
-            uri = None
+        except Exception:
+            pass
 
         points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
 
