@@ -532,7 +532,7 @@ def test_partition_text_respects_detect_language_per_element():
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
 
 
-def test_partition_text_element_metadata_accepts_languages_arg():
+def test_partition_text_respects_languages_arg():
     filename = "example-docs/norwich-city.txt"
     elements = partition_text(filename=filename, languages=["deu"])
     assert elements[0].metadata.languages == ["deu"]

@@ -217,7 +217,7 @@ def test_partition_csv_element_metadata_has_languages():
     assert elements[0].metadata.languages == ["eng"]
 
 
-def test_partition_csv_element_metadata_accepts_languages_arg():
+def test_partition_csv_respects_languages_arg():
     filename = "example-docs/stanley-cups.csv"
     elements = partition_csv(filename=filename, strategy="fast", languages=["deu"])
     assert elements[0].metadata.languages == ["deu"]

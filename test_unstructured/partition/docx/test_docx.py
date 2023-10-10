@@ -529,7 +529,7 @@ def test_partition_docx_respects_detect_language_per_element():
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
 
 
-def test_partition_docx_element_metadata_accepts_languages_arg():
+def test_partition_docx_respects_languages_arg():
     filename = "example-docs/handbook-1p.docx"
     elements = partition_docx(filename=filename, languages=["deu"])
     assert elements[0].metadata.languages == ["deu"]
