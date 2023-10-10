@@ -132,7 +132,7 @@ def partition(
     skip_infer_table_types: List[str] = ["pdf", "jpg", "png", "xls", "xlsx"],
     ssl_verify: bool = True,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
-    languages: List[str] = ["eng"],
+    languages: List[str] = ["auto"],
     detect_language_per_element: bool = False,
     pdf_infer_table_structure: bool = False,
     xml_keep_tags: bool = False,
