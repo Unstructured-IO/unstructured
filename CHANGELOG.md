@@ -1,4 +1,4 @@
-## 0.10.20-dev6
+## 0.10.20-dev7
 
 ### Enhancements
 
@@ -25,6 +25,10 @@ setting UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true is needed.
 * **Fixes badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
 should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class
 allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
+* **Fixes a bug where division by zero can happen during pdf parition** * Problem: when checking if
+  an annotation is inside an element the annotation could have zero area, which lead to division by
+  zero. Fix: check if the annotation has an area > 0, if not the annotation is not considered to be
+  part of the element
 
 ## 0.10.19
 

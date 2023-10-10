@@ -1096,10 +1096,12 @@ def check_annotations_within_element(
     """
     annotations_within_element = []
     for annotation in annotation_list:
-        if annotation["page_number"] == page_number and (
-            calculate_intersection_area(element_bbox, annotation["bbox"])
-            / calculate_bbox_area(annotation["bbox"])
-            > threshold
+        area = calculate_bbox_area(annotation["bbox"])
+        # when area is <=0 it is not considered part of any other element
+        if (
+            area
+            and annotation["page_number"] == page_number
+            and (calculate_intersection_area(element_bbox, annotation["bbox"]) / area > threshold)
         ):
             annotations_within_element.append(annotation)
     return annotations_within_element
