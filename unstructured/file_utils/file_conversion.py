@@ -1,3 +1,4 @@
+import os
 import tempfile
 from typing import IO, Optional
 
@@ -43,6 +44,8 @@ def convert_file_to_html_text(
             source_format=source_format,
             target_format="html",
         )
+        if os.path.exists(tmp.name):
+            os.remove(tmp.name)
     elif filename is not None:
         html_text = convert_file_to_text(
             filename=filename,
