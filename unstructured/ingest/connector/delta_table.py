@@ -28,7 +28,6 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class SimpleDeltaTableConfig(BaseConnectorConfig):
-    verbose: bool
     table_uri: t.Union[str, Path]
     version: t.Optional[int] = None
     storage_options: t.Optional[t.Dict[str, str]] = None
@@ -60,7 +59,7 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _output_filename(self):
         """Create filename document id combined with a hash of the query to uniquely identify
         the output file."""
-        return Path(self.partition_config.output_dir) / f"{self.uri_filename()}.json"
+        return Path(self.processor_config.output_dir) / f"{self.uri_filename()}.json"
 
     def _create_full_tmp_dir_path(self):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
@@ -142,7 +141,7 @@ class DeltaTableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         return [
             DeltaTableIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 uri=uri,
                 modified_date=mod_date_dict[os.path.basename(uri)],

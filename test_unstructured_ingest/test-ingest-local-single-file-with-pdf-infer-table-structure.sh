@@ -6,11 +6,16 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=local-single-file-with-pdf-infer-table-structure
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+function cleanup() {
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$WORK_DIR"
+}
+trap cleanup EXIT
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
@@ -21,7 +26,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --strategy hi_res \
     --verbose \
     --reprocess \
-    --input-path example-docs/layout-parser-paper.pdf
+    --input-path example-docs/layout-parser-paper.pdf \
+    --work-dir "$WORK_DIR"
 
 set +e
 
