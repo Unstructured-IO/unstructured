@@ -609,6 +609,12 @@ def test_partition_email_element_metadata_has_languages():
     assert elements[0].metadata.languages == ["eng"]
 
 
+def test_partition_email_respects_languages_arg():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
+    elements = partition_email(filename=filename, languages=["deu"])
+    assert all(element.metadata.languages == ["deu"] for element in elements)
+
+
 def test_partition_eml_detects_multiple_elements_in_other_language():
     filename = "example-docs/language-docs/eng_spa_mult.eml"
     elements = partition_email(filename=filename, detect_language_per_element=True)
