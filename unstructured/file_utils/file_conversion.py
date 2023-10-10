@@ -1,4 +1,3 @@
-import os
 import tempfile
 from typing import IO, Optional
 
