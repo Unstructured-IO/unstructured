@@ -57,7 +57,7 @@ def partition_pptx(
     metadata_last_modified: Optional[str] = None,
     include_slide_notes: bool = False,
     chunking_strategy: Optional[str] = None,
-    languages: List[str] = ["auto"],
+    languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     **kwargs: Any,
 ) -> List[Element]:

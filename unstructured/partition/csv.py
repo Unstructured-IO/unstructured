@@ -32,7 +32,7 @@ def partition_csv(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     include_metadata: bool = True,
-    languages: List[str] = ["auto"],
+    languages: Optional[List[str]] = ["auto"],
     # NOTE (jennings) partition_csv generates a single TableElement
     # so detect_language_per_element is not included as a param
     **kwargs,

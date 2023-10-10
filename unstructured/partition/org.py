@@ -18,7 +18,7 @@ def partition_org(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
-    languages: List[str] = ["auto"],
+    languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
 ) -> List[Element]:
     """Partitions an org document. The document is first converted to HTML and then

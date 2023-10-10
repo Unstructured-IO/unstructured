@@ -29,7 +29,7 @@ def partition_msg(
     attachment_partitioner: Optional[Callable] = None,
     min_partition: Optional[int] = 0,
     chunking_strategy: Optional[str] = None,
-    languages: List[str] = ["auto"],
+    languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
@@ -148,7 +148,7 @@ def build_msg_metadata(
     msg_obj: msg_parser.MsOxMessage,
     filename: Optional[str],
     metadata_last_modified: Optional[str],
-    languages: List[str] = ["auto"],
+    languages: Optional[List[str]] = ["auto"],
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     email_date = getattr(msg_obj, "sent_date", None)

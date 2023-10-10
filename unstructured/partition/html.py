@@ -44,7 +44,7 @@ def partition_html(
     metadata_last_modified: Optional[str] = None,
     skip_headers_and_footers: bool = False,
     chunking_strategy: Optional[str] = None,
-    languages: List[str] = ["auto"],
+    languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     detection_origin: Optional[str] = None,
     **kwargs,
@@ -160,7 +160,7 @@ def convert_and_partition_html(
     include_page_breaks: bool = False,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    languages: List[str] = ["auto"],
+    languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     detection_origin: Optional[str] = None,
 ) -> List[Element]:

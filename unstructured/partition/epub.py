@@ -30,7 +30,7 @@ def partition_epub(
     metadata_last_modified: Optional[str] = None,
     encoding: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
-    languages: List[str] = ["auto"],
+    languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:

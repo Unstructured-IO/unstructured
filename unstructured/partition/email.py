@@ -262,7 +262,7 @@ def partition_email(
     attachment_partitioner: Optional[Callable] = None,
     min_partition: Optional[int] = 0,
     chunking_strategy: Optional[str] = None,
-    languages: List[str] = ["auto"],
+    languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:

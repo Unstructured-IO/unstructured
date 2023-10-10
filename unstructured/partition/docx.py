@@ -88,7 +88,7 @@ def convert_and_partition_docx(
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    languages: List[str] = ["auto"],
+    languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
 ) -> List[Element]:
     """Converts a document to DOCX and then partitions it using partition_docx.
@@ -170,7 +170,7 @@ def partition_docx(
     include_metadata: bool = True,  # used by decorator
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,  # used by decorator
-    languages: List[str] = ["auto"],
+    languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     **kwargs: Any,  # used by decorator
 ) -> List[Element]:

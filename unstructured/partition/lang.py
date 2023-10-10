@@ -1,5 +1,5 @@
 import re
-from typing import Iterable, Iterator, List
+from typing import Iterable, Iterator, List, Optional
 
 import iso639
 from langdetect import DetectorFactory, detect_langs, lang_detect_exception
@@ -139,10 +139,12 @@ PYTESSERACT_LANGS = [
 ]
 
 
-def prepare_languages_for_tesseract(languages: List[str] = ["eng"]):
+def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
     """
     Entry point: convert languages (list of strings) into tesseract ocr langcode format (uses +)
     """
+    if languages is None:
+        raise ValueError("`languages` can not be `None`")
     converted_languages = list(
         filter(None, [convert_language_to_tesseract(lang) for lang in languages]),
     )
@@ -217,7 +219,7 @@ def _convert_to_standard_langcode(lang: str) -> str:
 
 def detect_languages(
     text: str,
-    languages: List[str] = ["auto"],
+    languages: Optional[List[str]] = ["auto"],
 ) -> List[str]:
     """
     Detects the list of languages present in the text (in the default "auto" mode),
@@ -286,12 +288,17 @@ def detect_languages(
 
 def apply_lang_metadata(
     elements: Iterable[Element],
-    languages: List[str],
+    languages: Optional[List[str]],
     detect_language_per_element: bool = False,
 ) -> Iterator[Element]:
     """Detect and apply metadata.languages to each element in `elements`."""
     # -- Note this function has a stream interface, but reads the full `elements` stream into memory
     # -- before emitting the first updated element as output.
+
+    # The auto `partition` function uses `None` as a default because the default for
+    # `partition_pdf` and `partition_img` conflict with the other partitioners that use ["auto"]
+    if languages is None:
+        languages = ["auto"]
 
     # Skip language detection for partitioners that use other partitioners.
     # For example, partition_msg relies on partition_html and partition_text, but the metadata

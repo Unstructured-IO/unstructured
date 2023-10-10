@@ -132,7 +132,7 @@ def partition(
     skip_infer_table_types: List[str] = ["pdf", "jpg", "png", "xls", "xlsx"],
     ssl_verify: bool = True,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
-    languages: List[str] = ["auto"],
+    languages: Optional[List[str]] = None,
     detect_language_per_element: bool = False,
     pdf_infer_table_structure: bool = False,
     xml_keep_tags: bool = False,
@@ -206,13 +206,10 @@ def partition(
         )
     kwargs.setdefault("metadata_filename", metadata_filename)
 
-    if not isinstance(languages, list):
-        raise TypeError("The language parameter must be a list of language codes as strings.")
-
     if ocr_languages is not None:
         # check if languages was set to anything not the default value
         # languages and ocr_languages were therefore both provided - raise error
-        if languages != ["eng"]:
+        if languages is not None:
             raise ValueError(
                 "Only one of languages and ocr_languages should be specified. "
                 "languages is preferred. ocr_languages is marked for deprecation.",
@@ -370,7 +367,6 @@ def partition(
             infer_table_structure=infer_table_structure,
             strategy=strategy,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG) or (filetype == FileType.TIFF):
@@ -382,7 +378,6 @@ def partition(
             infer_table_structure=infer_table_structure,
             strategy=strategy,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
     elif filetype == FileType.TXT:
