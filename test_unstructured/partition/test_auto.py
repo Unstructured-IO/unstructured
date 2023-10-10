@@ -1072,3 +1072,31 @@ def test_add_chunking_strategy_chars_on_partition_auto_adds_is_continuation():
         if i > 0 and isinstance(table, TableChunk):
             assert table.metadata.is_continuation is True
             i += 1
+
+
+EXAMPLE_LANG_DOCS = "example-docs/language-docs/eng_spa_mult."
+
+
+@pytest.mark.parametrize(
+    "file_extension",
+    [
+        "doc",
+        "docx",
+        "eml",
+        "epub",
+        "html",
+        "md",
+        "odt",
+        "org",
+        "ppt",
+        "pptx",
+        "rst",
+        "rtf",
+        "txt",
+        "xml",
+    ],
+)
+def test_partition_respects_language_arg(file_extension):
+    filename = EXAMPLE_LANG_DOCS + file_extension
+    elements = partition(filename=filename, languages=["deu"])
+    assert all(element.metadata.languages == ["deu"] for element in elements)
