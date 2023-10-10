@@ -535,7 +535,7 @@ def test_partition_docx_respects_languages_arg():
     assert elements[0].metadata.languages == ["deu"]
 
 
-def test_invalid_languages_arg_raises_TypeError():
+def test_partition_docx_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
         filename = "example-docs/handbook-1p.docx"
         partition_docx(filename=filename, languages="eng")

@@ -977,7 +977,7 @@ def test_partition_pdf_word_bbox_not_char(
     assert len(elements) == 17
 
 
-def test_partition_pdf_raises_TypeError_for_languages():
+def test_partition_pdf_raises_TypeError_for_invalid_languages():
     filename = "example-docs/chevron-page.pdf"
     with pytest.raises(TypeError):
         pdf.partition_pdf(filename=filename, strategy="hi_res", languages="eng")

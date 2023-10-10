@@ -311,7 +311,7 @@ def test_partition_msg_respects_languages_arg():
     assert all(element.metadata.languages == ["deu"] for element in elements)
 
 
-def test_invalid_languages_arg_raises_TypeError():
+def test_partition_msg_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
         filename = "example-docs/fake-email.msg"
         partition_msg(filename=filename, languages="eng")

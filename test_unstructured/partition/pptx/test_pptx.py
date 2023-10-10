@@ -373,7 +373,7 @@ def test_partition_pptx_respects_detect_language_per_element():
     assert "spa" in langs
 
 
-def test_invalid_languages_arg_raises_TypeError():
+def test_partition_pptx_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
         filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
         partition_pptx(filename=filename, languages="eng")
