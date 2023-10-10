@@ -1,6 +1,7 @@
 from typing import Dict, Tuple
 
 from rapidfuzz.distance import Levenshtein
+
 from unstructured.cleaners.core import clean_bullets, remove_sentence_punctuation
 
 

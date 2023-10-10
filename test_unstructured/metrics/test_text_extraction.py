@@ -23,7 +23,9 @@ def test_calculate_edit_distance():
     assert (
         round(
             text_extraction.calculate_edit_distance(
-                source_cct_word_space, source_cct, return_as="score"
+                source_cct_word_space,
+                source_cct,
+                return_as="score",
             ),
             2,
         )
@@ -32,7 +34,9 @@ def test_calculate_edit_distance():
     assert (
         round(
             text_extraction.calculate_edit_distance(
-                source_cct_spaces, source_cct, return_as="score"
+                source_cct_spaces,
+                source_cct,
+                return_as="score",
             ),
             2,
         )
@@ -41,7 +45,9 @@ def test_calculate_edit_distance():
     assert (
         round(
             text_extraction.calculate_edit_distance(
-                source_cct_no_space, source_cct, return_as="score"
+                source_cct_no_space,
+                source_cct,
+                return_as="score",
             ),
             2,
         )
@@ -50,7 +56,9 @@ def test_calculate_edit_distance():
     assert (
         round(
             text_extraction.calculate_edit_distance(
-                source_cct_one_sentence, source_cct, return_as="score"
+                source_cct_one_sentence,
+                source_cct,
+                return_as="score",
             ),
             2,
         )
@@ -59,7 +67,9 @@ def test_calculate_edit_distance():
     assert (
         round(
             text_extraction.calculate_edit_distance(
-                source_cct_missing_word, source_cct, return_as="score"
+                source_cct_missing_word,
+                source_cct,
+                return_as="score",
             ),
             2,
         )
@@ -68,7 +78,9 @@ def test_calculate_edit_distance():
     assert (
         round(
             text_extraction.calculate_edit_distance(
-                source_cct_addn_char, source_cct, return_as="score"
+                source_cct_addn_char,
+                source_cct,
+                return_as="score",
             ),
             2,
         )
@@ -77,7 +89,9 @@ def test_calculate_edit_distance():
     assert (
         round(
             text_extraction.calculate_edit_distance(
-                source_cct_dup_word, source_cct, return_as="score"
+                source_cct_dup_word,
+                source_cct,
+                return_as="score",
             ),
             2,
         )
