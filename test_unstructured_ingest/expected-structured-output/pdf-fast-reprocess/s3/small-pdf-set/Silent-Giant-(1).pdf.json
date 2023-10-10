@@ -154,6 +154,17 @@
     "text": "1"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": "2"
+  },
+  {
     "type": "Title",
     "element_id": "2960604e965650bbf4215790bc9db0c1",
     "metadata": {
@@ -682,17 +693,6 @@
     "text": "Figure 2. Worldwide electricity generation by fuel (1990-2016)ii"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": "2"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "a72a816f8588c0dc2d089d7a0a44ecaa",
     "metadata": {
@@ -735,6 +735,17 @@
       "links": []
     },
     "text": "3"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6,
+      "links": []
+    },
+    "text": "4"
   },
   {
     "type": "NarrativeText",
@@ -801,17 +812,6 @@
       "links": []
     },
     "text": "In regard to the need for a level playing field, we see that many of the world’s electricity markets operate in an unsustainable fashion, dominated by short-term thinking. Electricity supply which is affordable, reliable and available 24/7 generates broad societal benefits, and as seen in Figure 3, nuclear is one of the most affordable electricity sources."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6,
-      "links": []
-    },
-    "text": "4"
   },
   {
     "type": "UncategorizedText",
@@ -902,17 +902,6 @@
     "text": "0"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "4b5ebf5890b9c61b43c5daf4c40cbab0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7,
-      "links": []
-    },
-    "text": "C o m"
-  },
-  {
     "type": "Title",
     "element_id": "8fd5206adbbb7a132889e4161057d4cf",
     "metadata": {
@@ -922,6 +911,17 @@
       "links": []
     },
     "text": "m ercial Photovoltaic"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4b5ebf5890b9c61b43c5daf4c40cbab0",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7,
+      "links": []
+    },
+    "text": "C o m"
   },
   {
     "type": "Title",
@@ -1045,6 +1045,17 @@
     "text": "5"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "e7f6c011776e8db7cd330b54174fd76f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "6"
+  },
+  {
     "type": "NarrativeText",
     "element_id": "4acd9d695e499834265cbd3b43734f02",
     "metadata": {
@@ -1155,17 +1166,6 @@
     "text": "r e p s e i t i l"
   },
   {
-    "type": "Title",
-    "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "a t a F"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "48449a14a4ff7d79bb7a1b6f3d488eba",
     "metadata": {
@@ -1189,17 +1189,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "d59eced1ded07f84c145592f65bdf854",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "40"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "ce3201efc2e495241a85e4fc84575f50",
     "metadata": {
       "data_source": {},
@@ -1208,6 +1197,28 @@
       "links": []
     },
     "text": "71.9"
+  },
+  {
+    "type": "Title",
+    "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "a t a F"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d59eced1ded07f84c145592f65bdf854",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "40"
   },
   {
     "type": "UncategorizedText",
@@ -1298,17 +1309,6 @@
     "text": "Offshore wind"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "77e43ef38dbfcec0511535d9c7dbee5c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "(U K)"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "50a78acc78a3c5b4acc8c439af743a0a",
     "metadata": {
@@ -1318,6 +1318,17 @@
       "links": []
     },
     "text": "O nshore wind (G erm any)"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "77e43ef38dbfcec0511535d9c7dbee5c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "(U K)"
   },
   {
     "type": "UncategorizedText",
@@ -1640,17 +1651,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "e7f6c011776e8db7cd330b54174fd76f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "6"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "284b7e6d788f363f910f7beb1910473e",
     "metadata": {
       "data_source": {},
@@ -1914,6 +1914,17 @@
     "text": "7"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "2c624232cdd221771294dfbb310aca00",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "8"
+  },
+  {
     "type": "NarrativeText",
     "element_id": "3c6336f12bcbf4d1ca36bef92d77efea",
     "metadata": {
@@ -2099,17 +2110,6 @@
       "links": []
     },
     "text": "Photo credits: Front cover: Mike Baird; page 2: Vattenfall; page 4: Getty Images; page 5: Adobe Stock; page 6: Rosatom; page 8: Dean Calma, IAEA; page 10: Kazatomprom; page 11: EDF."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "2c624232cdd221771294dfbb310aca00",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "8"
   },
   {
     "type": "UncategorizedText",

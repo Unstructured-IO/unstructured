@@ -6,6 +6,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=sharepoint-azure-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 DESTINATION_INDEX="utic-test-ingest-fixtures-output-$(date +%s)"
 # The vector configs on the schema currently only exist on versions:
@@ -52,6 +53,7 @@ function cleanup {
   fi
 
   cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$WORK_DIR"
   if [ "$CI" == "true" ]; then
     cleanup_dir "$DOWNLOAD_DIR"
   fi
@@ -96,6 +98,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --embedding-api-key "$OPENAI_API_KEY" \
     --chunk-elements \
     --chunk-multipage-sections \
+    --work-dir "$WORK_DIR" \
     azure-cognitive-search \
     --key "$AZURE_SEARCH_API_KEY" \
     --endpoint "$AZURE_SEARCH_ENDPOINT" \

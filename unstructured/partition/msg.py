@@ -79,12 +79,13 @@ def partition_msg(
     elif text is None:
         pass
     elif "<html>" in text or "</div>" in text:
-        elements = partition_html(text=text)
+        elements = partition_html(text=text, detection_origin="msg")
     else:
         elements = partition_text(
             text=text,
             max_partition=max_partition,
             min_partition=min_partition,
+            detection_origin="msg",
         )
 
     metadata = build_msg_metadata(
@@ -138,13 +139,15 @@ def build_msg_metadata(
     if sent_to is not None:
         sent_to = [str(recipient) for recipient in sent_to]
 
-    return ElementMetadata(
+    element_metadata = ElementMetadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=getattr(msg_obj, "subject", None),
         last_modified=metadata_last_modified or email_date,
         filename=filename,
     )
+    element_metadata.detection_origin = "msg"
+    return element_metadata
 
 
 def extract_msg_attachment_info(

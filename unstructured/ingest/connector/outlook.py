@@ -87,7 +87,7 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _set_download_paths(self) -> None:
         """Creates paths for downloading and parsing."""
         download_path = Path(f"{self.read_config.download_dir}")
-        output_path = Path(f"{self.partition_config.output_dir}")
+        output_path = Path(f"{self.processor_config.output_dir}")
 
         self.download_dir = download_path
         self.download_filepath = (
@@ -247,7 +247,7 @@ class OutlookSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         return [
             OutlookIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 message_id=message.id,
             )
