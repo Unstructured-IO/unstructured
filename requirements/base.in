@@ -13,3 +13,4 @@ python-iso639
 langdetect
 numpy
 rapidfuzz
+backoff
