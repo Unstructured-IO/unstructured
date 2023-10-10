@@ -1,4 +1,4 @@
-## 0.10.20-dev7
+## 0.10.20-dev8
 
 ### Enhancements
 
@@ -14,7 +14,7 @@
 *
 ### Features
 
-* **Adds `bag_of_words` function** In order to count the word frequency to evaluate extraction accuracy.
+* **Adds `bag_of_words` and `percent_missing_text` functions** In order to count the word frequencies in two input texts and calculate the percentage of text missing relative to the source document.
 * **Adds `edit_distance` calculation metrics** In order to benchmark the cleaned, extracted text with unstructured, `edit_distance` (`Levenshtein distance`) is included.
 * **Adds detection_origin field to metadata** Problem: Currently isn't an easy way to find out how an element was created. With this change that information is added. Importance: With this information the developers and users are now able to know how an element was created to make decisions on how to use it. In order tu use this feature
 setting UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true is needed.
