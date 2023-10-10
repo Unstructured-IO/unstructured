@@ -99,6 +99,11 @@ class ChunkingConfig(BaseConfig):
 
 
 @dataclass
+class PermissionsConfig(BaseConfig):
+    pass
+
+
+@dataclass
 class WriteConfig(BaseConfig):
     pass
 

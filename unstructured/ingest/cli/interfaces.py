@@ -9,6 +9,7 @@ from unstructured.ingest.interfaces import (
     ChunkingConfig,
     EmbeddingConfig,
     PartitionConfig,
+    PermissionsConfig,
     ReadConfig,
 )
 
@@ -218,12 +219,12 @@ class CliEmbeddingsConfig(EmbeddingConfig, CliMixin):
     ):
         """
         Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
-        This allows CLI arguments to be prepended with chunk_ during CLI invocation but
+        This allows CLI arguments to be prepended with embedding_ during CLI invocation but
         doesn't require that as part of the field names in this class
         """
         if isinstance(kvs, dict):
             new_kvs = {
-                k[len("embedding-") :]: v  # noqa: E203
+                k[len("embedding_") :]: v  # noqa: E203
                 for k, v in kvs.items()
                 if k.startswith("embedding_")
             }
@@ -285,6 +286,73 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                     if k.startswith("chunking_")
                 },
             )
+            if len(new_kvs.keys()) == 0:
+                return None
+            return _decode_dataclass(cls, new_kvs, infer_missing)
+        return _decode_dataclass(cls, kvs, infer_missing)
+
+
+class CliPermissionsConfig(PermissionsConfig, CliMixin):
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--permissions-application-id"],
+                type=str,
+                help="Microsoft Graph API application id",
+            ),
+            click.Option(
+                ["--permissions-client-cred"],
+                type=str,
+                help="Microsoft Graph API application credentials",
+            ),
+            click.Option(
+                ["--permissions-tenant"],
+                type=str,
+                help="e.g https://contoso.onmicrosoft.com to get permissions data within tenant.",
+            ),
+        ]
+        cmd.params.extend(options)
+
+    @classmethod
+    def from_dict(
+        cls,
+        kvs: Json,
+        *,
+        infer_missing=False,
+    ):
+        """
+        Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
+        This allows CLI arguments to be prepended with permissions_ during CLI invocation but
+        doesn't require that as part of the field names in this class
+        """
+
+        if any(
+            [
+                kvs["permissions_application_id"]
+                or kvs["permissions_client_credential"]
+                or kvs["permissions_tenant"],
+            ],
+        ) and not all(
+            [
+                kvs["permissions_application_id"]
+                and kvs["permissions_client_credential"]
+                and kvs["permissions_tenant"],
+            ],
+        ):
+            raise ValueError(
+                "Please provide either none or all of the following optional values:\n"
+                "--permissions-application-id\n"
+                "--permissions-client-cred\n"
+                "--permissions-tenant",
+            )
+
+        if isinstance(kvs, dict):
+            new_kvs = {
+                k[len("permissions_") :]: v  # noqa: E203
+                for k, v in kvs.items()
+                if k.startswith("permissions_")
+            }
             if len(new_kvs.keys()) == 0:
                 return None
             return _decode_dataclass(cls, new_kvs, infer_missing)

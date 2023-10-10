@@ -36,9 +36,9 @@ CONTENT_LABELS = ["CanvasContent1", "LayoutWebpartsContent1", "TimeCreated"]
 
 @dataclass
 class SharepointPermissionsConfig(BaseConfig):
-    application_id: str = None
-    client_credential: str = None
-    tenant: str = None
+    application_id: str
+    client_credential: str
+    tenant: str
 
     def __post_init__(self):
         self.provided = False
