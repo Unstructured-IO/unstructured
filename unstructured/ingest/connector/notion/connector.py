@@ -16,6 +16,8 @@ from unstructured.utils import (
     requires_dependencies,
 )
 
+NOTION_API_VERSION = "2022-06-28"
+
 
 @dataclass
 class SimpleNotionConfig(BaseConnectorConfig):
@@ -65,7 +67,14 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         from unstructured.ingest.connector.notion.client import Client as NotionClient
 
         retry_strategy = self.connector_config.get_retry_strategy()
-        return NotionClient(auth=self.api_key, logger=logger, retry_strategy=retry_strategy)
+
+        # Pin the version of the api to avoid schema changes
+        return NotionClient(
+            notion_version=NOTION_API_VERSION,
+            auth=self.api_key,
+            logger=logger,
+            retry_strategy=retry_strategy,
+        )
 
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["notion_client"], extras="notion")
@@ -181,7 +190,14 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         from unstructured.ingest.connector.notion.client import Client as NotionClient
 
         retry_strategy = self.connector_config.get_retry_strategy()
-        return NotionClient(auth=self.api_key, logger=logger, retry_strategy=retry_strategy)
+
+        # Pin the version of the api to avoid schema changes
+        return NotionClient(
+            notion_version=NOTION_API_VERSION,
+            auth=self.api_key,
+            logger=logger,
+            retry_strategy=retry_strategy,
+        )
 
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["notion_client"], extras="notion")
@@ -281,7 +297,10 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         from unstructured.ingest.connector.notion.client import Client as NotionClient
 
         retry_strategy = self.connector_config.get_retry_strategy()
+
+        # Pin the version of the api to avoid schema changes
         self.client = NotionClient(
+            notion_version=NOTION_API_VERSION,
             auth=self.connector_config.api_key,
             logger=logger,
             retry_strategy=retry_strategy,
