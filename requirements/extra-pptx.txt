@@ -10,5 +10,5 @@ pillow==10.0.1
     # via python-pptx
 python-pptx==0.6.21
     # via -r requirements/extra-pptx.in
-xlsxwriter==3.1.6
+xlsxwriter==3.1.7
     # via python-pptx
