@@ -169,7 +169,7 @@ def test_partition_rtf_element_metadata_has_languages():
     assert elements[0].metadata.languages == ["eng"]
 
 
-def test_partition_rtf_detects_multiple_elements_in_other_language():
+def test_partition_rtf_respects_detect_language_per_element():
     filename = "example-docs/language-docs/eng_spa_mult.rtf"
     elements = partition_rtf(filename=filename, detect_language_per_element=True)
     langs = [element.metadata.languages for element in elements]

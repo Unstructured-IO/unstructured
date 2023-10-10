@@ -615,7 +615,7 @@ def test_partition_email_respects_languages_arg():
     assert all(element.metadata.languages == ["deu"] for element in elements)
 
 
-def test_partition_eml_detects_multiple_elements_in_other_language():
+def test_partition_eml_respects_detect_language_per_element():
     filename = "example-docs/language-docs/eng_spa_mult.eml"
     elements = partition_email(filename=filename, detect_language_per_element=True)
     # languages other than English and Spanish are detected by this partitioner,

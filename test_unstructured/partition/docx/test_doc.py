@@ -300,7 +300,7 @@ def test_partition_doc_element_metadata_has_languages():
     assert elements[0].metadata.languages == ["eng"]
 
 
-def test_partition_doc_detects_multiple_elements_in_other_language():
+def test_partition_doc_respects_detect_language_per_element():
     filename = "example-docs/language-docs/eng_spa_mult.doc"
     elements = partition_doc(filename=filename, detect_language_per_element=True)
     langs = [element.metadata.languages for element in elements]
