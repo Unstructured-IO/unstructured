@@ -1,9 +1,7 @@
-import sys
-import unicodedata
-
-from typing import Dict, Optional, Tuple
+from typing import Dict, Tuple
 
 from rapidfuzz.distance import Levenshtein
+from unstructured.cleaners.core import clean_bullets, remove_sentence_punctuation
 
 
 def calculate_edit_distance(
@@ -55,26 +53,10 @@ def calculate_edit_distance(
     return 0.0
 
 
-# Duplicate code from cleaners.core,
-# not sure we want this functionality introduced in the main library.
-def remove_punctuation(s: str, exclude_punctuation: Optional[list]) -> str:
-    """Removes punctuation from a given string."""
-
-    tbl = dict.fromkeys(
-        i for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith("P")
-    )
-
-    if exclude_punctuation:
-        for punct in exclude_punctuation:
-            del tbl[ord(punct)]
-    s = s.translate(tbl)
-    return s
-
-
 def bag_of_words(text: str) -> Dict[str, int]:
     bow: Dict[str, int] = {}
     incorrect_word: str = ""
-    words = remove_punctuation(text.lower(), ["-", "'"]).split()
+    words = clean_bullets(remove_sentence_punctuation(text.lower(), ["-", "'"])).split()
 
     i = 0
     while i < len(words):
