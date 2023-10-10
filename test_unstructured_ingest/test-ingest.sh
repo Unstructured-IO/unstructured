@@ -70,6 +70,8 @@ python_version=$(python --version 2>&1)
 
 for test in "${all_tests[@]}"; do
   CURRENT_TEST="$test"
+  # IF: python_version is not 3.10 (wildcarded to match any subminor version) AND the current test is not in full_python_matrix_tests
+  # Note: to test we expand the full_python_matrix_tests array to a string and then regex match the current test
   if [[ "$python_version" != "Python 3.10"* ]] && [[ ! "${full_python_matrix_tests[*]}" =~ $test ]] ; then
     echo "--------- SKIPPING SCRIPT $test ---------"
     continue
