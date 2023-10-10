@@ -138,6 +138,22 @@ def test_calculate_edit_distance_with_filename(filename, expected_score, expecte
             {"i": 2, "have": 1, "a": 2, "dog": 2, "and": 1, "cat": 1, "love": 1, "my": 1},
         ),
         (
+            "-First I'd like to install the anti-theft lock on my car.",
+            {
+                "first": 1,
+                "i'd": 1,
+                "like": 1,
+                "to": 1,
+                "install": 1,
+                "the": 1,
+                "anti-theft": 1,
+                "lock": 1,
+                "on": 1,
+                "my": 1,
+                "car": 1,
+            },
+        ),
+        (
             "My dog's hair is red, but the dogs' houses are blue.",
             {
                 "my": 1,
