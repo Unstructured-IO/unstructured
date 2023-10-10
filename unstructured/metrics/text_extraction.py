@@ -1,6 +1,8 @@
-from typing import Tuple
+from typing import Dict, Tuple
 
 from rapidfuzz.distance import Levenshtein
+
+from unstructured.cleaners.core import clean_bullets, remove_sentence_punctuation
 
 
 def calculate_edit_distance(
@@ -50,3 +52,33 @@ def calculate_edit_distance(
     elif return_as == "distance":
         return distance
     return 0.0
+
+
+def bag_of_words(text: str) -> Dict[str, int]:
+    bow: Dict[str, int] = {}
+    incorrect_word: str = ""
+    words = clean_bullets(remove_sentence_punctuation(text.lower(), ["-", "'"])).split()
+
+    i = 0
+    while i < len(words):
+        if len(words[i]) > 1:
+            if words[i] in bow:
+                bow[words[i]] += 1
+            else:
+                bow[words[i]] = 1
+            i += 1
+        else:
+            j = i
+            incorrect_word = ""
+
+            while j < len(words) and len(words[j]) == 1:
+                incorrect_word += words[j]
+                j += 1
+
+            if len(incorrect_word) == 1 and words[i].isalnum():
+                if incorrect_word in bow:
+                    bow[incorrect_word] += 1
+                else:
+                    bow[incorrect_word] = 1
+            i = j
+    return bow
