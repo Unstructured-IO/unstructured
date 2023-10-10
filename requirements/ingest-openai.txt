@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements/ingest-openai.in
 #
-aiohttp==3.8.5
+aiohttp==3.8.6
     # via
     #   langchain
     #   openai
@@ -40,8 +40,6 @@ frozenlist==1.4.0
     # via
     #   aiohttp
     #   aiosignal
-greenlet==3.0.0
-    # via sqlalchemy
 idna==3.4
     # via
     #   -c requirements/base.txt
@@ -52,7 +50,7 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.310
+langchain==0.0.311
     # via -r requirements/ingest-openai.in
 langsmith==0.0.43
     # via langchain

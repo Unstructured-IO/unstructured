@@ -48,7 +48,7 @@ python-iso639==2023.6.15
     # via -r requirements/base.in
 python-magic==0.4.27
     # via -r requirements/base.in
-rapidfuzz==3.3.1
+rapidfuzz==3.4.0
     # via -r requirements/base.in
 regex==2023.10.3
     # via nltk
