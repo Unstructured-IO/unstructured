@@ -143,7 +143,7 @@ def test_calculate_edit_distance_with_filename(filename, expected_score, expecte
                 "my": 1,
                 "dog's": 1,
                 "hair": 1,
-                "is": 2,
+                "is": 1,
                 "red": 1,
                 "but": 1,
                 "the": 1,
