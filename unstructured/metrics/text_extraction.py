@@ -75,7 +75,7 @@ def bag_of_words(text: str) -> Dict[str, int]:
                 incorrect_word += words[j]
                 j += 1
 
-            if len(incorrect_word) == 1:
+            if len(incorrect_word) == 1 and words[i].isalnum():
                 if incorrect_word in bow:
                     bow[incorrect_word] += 1
                 else:
