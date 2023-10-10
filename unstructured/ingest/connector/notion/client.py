@@ -17,7 +17,8 @@ from unstructured.ingest.connector.notion.types.database_properties import (
     map_cells,
 )
 from unstructured.ingest.connector.notion.types.page import Page
-from unstructured.ingest.ingest_backoff import RetryStrategy, on_exception
+from unstructured.ingest.ingest_backoff import on_exception
+from unstructured.ingest.interfaces import RetryStrategyConfig
 from unstructured.ingest.logger import make_default_logger
 
 logger = make_default_logger(logging.INFO)
@@ -31,9 +32,14 @@ retryable_exceptions = (
 
 
 class BlocksChildrenEndpoint(NotionBlocksChildrenEndpoint):
-    def __init__(self, retry_strategy: Optional[RetryStrategy] = None, *args, **kwargs):
+    def __init__(
+        self,
+        retry_strategy_config: Optional[RetryStrategyConfig] = None,
+        *args,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
-        self.retry_strategy = retry_strategy
+        self.retry_strategy_config = retry_strategy_config
 
     @on_exception(
         backoff.expo,
@@ -64,9 +70,14 @@ class BlocksChildrenEndpoint(NotionBlocksChildrenEndpoint):
 
 
 class DatabasesEndpoint(NotionDatabasesEndpoint):
-    def __init__(self, retry_strategy: Optional[RetryStrategy] = None, *args, **kwargs):
+    def __init__(
+        self,
+        retry_strategy_config: Optional[RetryStrategyConfig] = None,
+        *args,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
-        self.retry_strategy = retry_strategy
+        self.retry_strategy_config = retry_strategy_config
 
     @on_exception(
         backoff.expo,
@@ -127,13 +138,13 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
 class BlocksEndpoint(NotionBlocksEndpoint):
     def __init__(
         self,
-        retry_strategy: Optional[RetryStrategy] = None,
+        retry_strategy_config: Optional[RetryStrategyConfig] = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
         super().__init__(*args, **kwargs)
         self.children = BlocksChildrenEndpoint(*args, **kwargs)
-        self.retry_strategy = retry_strategy
+        self.retry_strategy_config = retry_strategy_config
 
     @on_exception(
         backoff.expo,
@@ -145,9 +156,14 @@ class BlocksEndpoint(NotionBlocksEndpoint):
 
 
 class PagesEndpoint(NotionPagesEndpoint):
-    def __init__(self, retry_strategy: Optional[RetryStrategy] = None, *args, **kwargs):
+    def __init__(
+        self,
+        retry_strategy_config: Optional[RetryStrategyConfig] = None,
+        *args,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
-        self.retry_strategy = retry_strategy
+        self.retry_strategy_config = retry_strategy_config
 
     @on_exception(
         backoff.expo,
@@ -177,11 +193,11 @@ class PagesEndpoint(NotionPagesEndpoint):
 class Client(NotionClient):
     def __init__(
         self,
-        retry_strategy: Optional[RetryStrategy] = None,
+        retry_strategy_config: Optional[RetryStrategyConfig] = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
         super().__init__(*args, **kwargs)
-        self.blocks = BlocksEndpoint(retry_strategy=retry_strategy, parent=self)
-        self.pages = PagesEndpoint(retry_strategy=retry_strategy, parent=self)
-        self.databases = DatabasesEndpoint(retry_strategy=retry_strategy, parent=self)
+        self.blocks = BlocksEndpoint(retry_strategy_config=retry_strategy_config, parent=self)
+        self.pages = PagesEndpoint(retry_strategy_config=retry_strategy_config, parent=self)
+        self.databases = DatabasesEndpoint(retry_strategy_config=retry_strategy_config, parent=self)

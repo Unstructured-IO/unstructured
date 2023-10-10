@@ -59,8 +59,6 @@ class NotionRunner(Runner):
                 database_ids=database_ids,
                 api_key=api_key,
                 recursive=recursive,
-                max_retries=max_retries,
-                max_time=max_time,
             ),
             read_config=self.read_config,
             processor_config=self.processor_config,
