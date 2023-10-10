@@ -6,6 +6,9 @@ from unstructured.documents.elements import TYPE_TO_TEXT_ELEMENT_MAP
 def get_element_type_frequency(
     elements: List,
 ) -> Union[Dict[str, Tuple[Optional[str], int]], Dict]:
+    """
+    Calculate the frequency of Element Types from a list of elements.
+    """
     frequency: Dict = {key: {} for key in TYPE_TO_TEXT_ELEMENT_MAP}
     if len(elements) == 0:
         return frequency
