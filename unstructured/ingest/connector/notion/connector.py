@@ -3,6 +3,7 @@ import typing as t
 from dataclasses import dataclass
 from pathlib import Path
 
+from unstructured.ingest.ingest_backoff import RetryStrategy
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -15,6 +16,8 @@ from unstructured.utils import (
     requires_dependencies,
 )
 
+NOTION_API_VERSION = "2022-06-28"
+
 
 @dataclass
 class SimpleNotionConfig(BaseConnectorConfig):
@@ -24,6 +27,13 @@ class SimpleNotionConfig(BaseConnectorConfig):
     database_ids: t.List[str]
     recursive: bool
     api_key: str
+    max_retries: t.Optional[int] = None
+    max_time: t.Optional[float] = None
+
+    def get_retry_strategy(self):
+        if self.max_time or self.max_retries:
+            return RetryStrategy(max_time=self.max_time, max_tries=self.max_retries)
+        return None
 
 
 @dataclass
@@ -52,19 +62,32 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
+    @requires_dependencies(dependencies=["notion_client"], extras="notion")
+    def get_client(self):
+        from unstructured.ingest.connector.notion.client import Client as NotionClient
+
+        retry_strategy = self.connector_config.get_retry_strategy()
+
+        # Pin the version of the api to avoid schema changes
+        return NotionClient(
+            notion_version=NOTION_API_VERSION,
+            auth=self.api_key,
+            logger=logger,
+            retry_strategy=retry_strategy,
+        )
+
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(dependencies=["notion_client"])
+    @requires_dependencies(dependencies=["notion_client"], extras="notion")
     def get_file(self):
         from notion_client import APIErrorCode, APIResponseError
 
-        from unstructured.ingest.connector.notion.client import Client as NotionClient
         from unstructured.ingest.connector.notion.helpers import extract_page_html
 
         self._create_full_tmp_dir_path()
 
         logger.debug(f"fetching page {self.page_id} - PID: {os.getpid()}")
 
-        client = NotionClient(auth=self.api_key, logger=logger)
+        client = self.get_client()
 
         try:
             text_extraction = extract_page_html(
@@ -85,13 +108,11 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             else:
                 logger.error(f"Error: {error}")
 
-    @requires_dependencies(dependencies=["notion_client"])
+    @requires_dependencies(dependencies=["notion_client"], extras="notion")
     def get_file_metadata(self):
         from notion_client import APIErrorCode, APIResponseError
 
-        from unstructured.ingest.connector.notion.client import Client as NotionClient
-
-        client = NotionClient(auth=self.api_key, logger=logger)
+        client = self.get_client()
 
         # The Notion block endpoint gives more hierarchical information (parent,child relationships)
         # than the pages endpoint so choosing to use that one to get metadata about the page
@@ -164,19 +185,32 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
+    @requires_dependencies(dependencies=["notion_client"], extras="notion")
+    def get_client(self):
+        from unstructured.ingest.connector.notion.client import Client as NotionClient
+
+        retry_strategy = self.connector_config.get_retry_strategy()
+
+        # Pin the version of the api to avoid schema changes
+        return NotionClient(
+            notion_version=NOTION_API_VERSION,
+            auth=self.api_key,
+            logger=logger,
+            retry_strategy=retry_strategy,
+        )
+
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(dependencies=["notion_client"])
+    @requires_dependencies(dependencies=["notion_client"], extras="notion")
     def get_file(self):
         from notion_client import APIErrorCode, APIResponseError
 
-        from unstructured.ingest.connector.notion.client import Client as NotionClient
         from unstructured.ingest.connector.notion.helpers import extract_database_html
 
         self._create_full_tmp_dir_path()
 
         logger.debug(f"fetching database {self.database_id} - PID: {os.getpid()}")
 
-        client = NotionClient(auth=self.api_key, logger=logger)
+        client = self.get_client()
 
         try:
             text_extraction = extract_database_html(
@@ -197,13 +231,11 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             else:
                 logger.error(f"Error: {error}")
 
-    @requires_dependencies(dependencies=["notion_client"])
+    @requires_dependencies(dependencies=["notion_client"], extras="notion")
     def get_file_metadata(self):
         from notion_client import APIErrorCode, APIResponseError
 
-        from unstructured.ingest.connector.notion.client import Client as NotionClient
-
-        client = NotionClient(auth=self.api_key, logger=logger)
+        client = self.get_client()
 
         # The Notion block endpoint gives more hierarchical information (parent,child relationships)
         # than the pages endpoint so choosing to use that one to get metadata about the page
@@ -252,74 +284,75 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self._tmp_download_file()
 
 
-@requires_dependencies(dependencies=["notion_client"])
+@requires_dependencies(dependencies=["notion_client"], extras="notion")
 @dataclass
 class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching document(s) from"""
 
     connector_config: SimpleNotionConfig
 
-    @requires_dependencies(dependencies=["notion_client"])
+    @requires_dependencies(dependencies=["notion_client"], extras="notion")
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""
-        pass
-
-    @requires_dependencies(dependencies=["notion_client"])
-    def get_child_page_content(self, page_id: str):
         from unstructured.ingest.connector.notion.client import Client as NotionClient
+
+        retry_strategy = self.connector_config.get_retry_strategy()
+
+        # Pin the version of the api to avoid schema changes
+        self.client = NotionClient(
+            notion_version=NOTION_API_VERSION,
+            auth=self.connector_config.api_key,
+            logger=logger,
+            retry_strategy=retry_strategy,
+        )
+
+    @requires_dependencies(dependencies=["notion_client"], extras="notion")
+    def get_child_page_content(self, page_id: str):
         from unstructured.ingest.connector.notion.helpers import (
             get_recursive_content_from_page,
         )
 
-        client = NotionClient(auth=self.connector_config.api_key, logger=logger)
-
         # sanity check that database id is valid
-        resp_code = client.pages.retrieve_status(page_id=page_id)
+        resp_code = self.client.pages.retrieve_status(page_id=page_id)
         if resp_code != 200:
             raise ValueError(
                 f"page associated with page id could not be found: {page_id}",
             )
 
         child_content = get_recursive_content_from_page(
-            client=client,
+            client=self.client,
             page_id=page_id,
             logger=logger,
         )
         return child_content
 
     def get_child_content(self, page_id: str):
-        from unstructured.ingest.connector.notion.client import Client as NotionClient
         from unstructured.ingest.connector.notion.helpers import (
             get_recursive_content_from_page,
         )
 
-        client = NotionClient(auth=self.connector_config.api_key, logger=logger)
-
         child_content = get_recursive_content_from_page(
-            client=client,
+            client=self.client,
             page_id=page_id,
             logger=logger,
         )
         return child_content
 
-    @requires_dependencies(dependencies=["notion_client"])
+    @requires_dependencies(dependencies=["notion_client"], extras="notion")
     def get_child_database_content(self, database_id: str):
-        from unstructured.ingest.connector.notion.client import Client as NotionClient
         from unstructured.ingest.connector.notion.helpers import (
             get_recursive_content_from_database,
         )
 
-        client = NotionClient(auth=self.connector_config.api_key, logger=logger)
-
         # sanity check that database id is valid
-        resp_code = client.databases.retrieve_status(database_id=database_id)
+        resp_code = self.client.databases.retrieve_status(database_id=database_id)
         if resp_code != 200:
             raise ValueError(
                 f"database associated with database id could not be found: {database_id}",
             )
 
         child_content = get_recursive_content_from_database(
-            client=client,
+            client=self.client,
             database_id=database_id,
             logger=logger,
         )
