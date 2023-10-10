@@ -211,7 +211,7 @@ def test_bag_of_words(text, expected):
         ),
     ],
 )
-def test_calculate_percent_missing_text_edge(output_text, source_text, expected_percentage):
+def test_calculate_percent_missing_text(output_text, source_text, expected_percentage):
     assert (
         text_extraction.calculate_percent_missing_text(output_text, source_text)
         == expected_percentage
