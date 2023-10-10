@@ -385,21 +385,26 @@ class CliPermissionsConfig(PermissionsConfig, CliMixin):
         """
         Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
         This allows CLI arguments to be prepended with permissions_ during CLI invocation but
-        doesn't require that as part of the field names in this class
+        doesn't require that as part of the field names in this class. It also checks if the
+        CLI params are provided as intended.
         """
 
-        if any(
-            [
-                kvs["permissions_application_id"]
-                or kvs["permissions_client_credential"]
-                or kvs["permissions_tenant"],
-            ],
-        ) and not all(
-            [
-                kvs["permissions_application_id"]
-                and kvs["permissions_client_credential"]
-                and kvs["permissions_tenant"],
-            ],
+        if (
+            isinstance(kvs, dict)
+            and any(
+                [
+                    kvs["permissions_application_id"]
+                    or kvs["permissions_client_cred"]
+                    or kvs["permissions_tenant"],
+                ],
+            )
+            and not all(
+                [
+                    kvs["permissions_application_id"]
+                    and kvs["permissions_client_cred"]
+                    and kvs["permissions_tenant"],
+                ],
+            )
         ):
             raise ValueError(
                 "Please provide either none or all of the following optional values:\n"

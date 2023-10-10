@@ -107,6 +107,9 @@ class ChunkingConfig(BaseConfig):
 
 @dataclass
 class PermissionsConfig(BaseConfig):
+    application_id: t.Optional[str]
+    client_cred: t.Optional[str]
+    tenant: t.Optional[str]
     pass
 
 

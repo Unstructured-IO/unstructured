@@ -42,7 +42,7 @@ class SharePointRunner(Runner):
 
         permissions_config = SharepointPermissionsConfig(
             application_id=permissions_application_id,
-            client_credential=permissions_client_cred,
+            client_cred=permissions_client_cred,
             tenant=permissions_tenant,
         )
 
@@ -55,7 +55,7 @@ class SharePointRunner(Runner):
                 path=path,
                 process_pages=(not files_only),
                 recursive=recursive,
-                permissions_config=permissions_config if permissions_config.provided else None,
+                permissions_config=permissions_config,
             ),
             read_config=self.read_config,
         )

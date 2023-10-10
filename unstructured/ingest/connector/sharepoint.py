@@ -10,7 +10,6 @@ from urllib.parse import urlparse
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
-    BaseConfig,
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSourceConnector,
@@ -18,6 +17,7 @@ from unstructured.ingest.interfaces import (
     SourceConnectorCleanupMixin,
     SourceMetadata,
 )
+from unstructured.ingest.interfaces import PermissionsConfig as SharepointPermissionsConfig
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
@@ -28,26 +28,6 @@ if t.TYPE_CHECKING:
 
 MAX_MB_SIZE = 512_000_000
 CONTENT_LABELS = ["CanvasContent1", "LayoutWebpartsContent1", "TimeCreated"]
-
-
-@dataclass
-class SharepointPermissionsConfig(BaseConfig):
-    application_id: str
-    client_credential: str
-    tenant: str
-
-    def __post_init__(self):
-        self.provided = False
-        if any([self.application_id or self.client_credential or self.tenant]):
-            if not all([self.application_id and self.client_credential and self.tenant]):
-                raise ValueError(
-                    "Please provide either none or all of the following optional values:\n"
-                    "--permissions-application-id\n"
-                    "--permissions-client-cred\n"
-                    "--permissions-tenant",
-                )
-            else:
-                self.provided = True
 
 
 @dataclass
@@ -429,7 +409,7 @@ class SharepointPermissionsConnector:
         data = {
             "client_id": self.permissions_config.application_id,
             "scope": "https://graph.microsoft.com/.default",
-            "client_secret": self.permissions_config.client_credential,
+            "client_secret": self.permissions_config.client_cred,
             "grant_type": "client_credentials",
         }
         response = requests.post(url, headers=headers, data=data)

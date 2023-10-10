@@ -8,6 +8,7 @@ from unstructured.ingest.interfaces import (
     ChunkingConfig,
     EmbeddingConfig,
     PartitionConfig,
+    PermissionsConfig,
     ProcessorConfig,
     ReadConfig,
 )
@@ -24,6 +25,7 @@ class Runner(ABC):
     writer_kwargs: t.Optional[dict] = None
     embedding_config: t.Optional[EmbeddingConfig] = None
     chunking_config: t.Optional[ChunkingConfig] = None
+    permissions_config: t.Optional[PermissionsConfig] = None
 
     @abstractmethod
     def run(self, *args, **kwargs):
