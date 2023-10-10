@@ -2,6 +2,7 @@
 import datetime
 import functools
 import time
+import warnings
 from datetime import timedelta
 
 from backoff._common import _init_wait_gen, _maybe_call, _next_wait
@@ -26,6 +27,9 @@ def retry_exception(
     @functools.wraps(target)
     def retry(self, *args, **kwargs):
         if not hasattr(self, "retry_strategy"):
+            warnings.warn(
+                "retry_strategy does not exist on current instance, not running retrying logic",
+            )
             return target(self, *args, **kwargs)
         retry_strategy: RetryStrategy = self.retry_strategy
         if not retry_strategy:

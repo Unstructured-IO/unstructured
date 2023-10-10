@@ -1,14 +1,13 @@
 # coding:utf-8
 import logging
-from typing import Any, Callable, Iterable, Optional, Type, Union
+from typing import Any, Callable, Iterable, Type, Union
 
-from backoff._common import _config_handlers, _log_backoff, _log_giveup, _prepare_logger
+from backoff._common import _config_handlers, _prepare_logger
 from backoff._jitter import full_jitter
 from backoff._typing import (
     _CallableT,
     _Handler,
     _Jitterer,
-    _MaybeCallable,
     _MaybeLogger,
     _MaybeSequence,
     _Predicate,
@@ -16,14 +15,13 @@ from backoff._typing import (
 )
 
 from unstructured.ingest.ingest_backoff import _sync
+from unstructured.ingest.ingest_backoff._common import _log_backoff, _log_giveup
 
 
 def on_exception(
     wait_gen: _WaitGenerator,
     exception: _MaybeSequence[Type[Exception]],
     *,
-    max_tries: Optional[_MaybeCallable[int]] = None,
-    max_time: Optional[_MaybeCallable[float]] = None,
     jitter: Union[_Jitterer, None] = full_jitter,
     giveup: _Predicate[Exception] = lambda e: False,
     on_success: Union[_Handler, Iterable[_Handler], None] = None,
