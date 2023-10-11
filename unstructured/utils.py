@@ -199,18 +199,14 @@ def validate_date_args(date: Optional[str] = None):
 
 def scarf_analytics():
     try:
-        subprocess.check_output('nvidia-smi')
+        subprocess.check_output("nvidia-smi")
         gpu_present = True
     except Exception:
         gpu_present = False
         pass
 
-
     try:
-        if (
-            os.getenv("SCARF_NO_ANALYTICS") != "true"
-            and os.getenv("DO_NOT_TRACK") != "true"
-        ):
+        if os.getenv("SCARF_NO_ANALYTICS") != "true" and os.getenv("DO_NOT_TRACK") != "true":
             if "dev" in __version__:
                 requests.get(
                     "https://packages.unstructured.io/python-telemetry?version="
@@ -218,7 +214,7 @@ def scarf_analytics():
                     + "&platform="
                     + platform.system()
                     + "&python"
-                    + platform. python_version()
+                    + platform.python_version()
                     + "&arch="
                     + platform.machine()
                     + "&gpu="
@@ -232,7 +228,7 @@ def scarf_analytics():
                     + "&platform="
                     + platform.system()
                     + "&python"
-                    + platform. python_version()
+                    + platform.python_version()
                     + "&arch="
                     + platform.machine()
                     + "&gpu="
