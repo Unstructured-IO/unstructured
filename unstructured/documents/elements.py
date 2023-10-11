@@ -490,6 +490,8 @@ class Text(Element):
         out["element_id"] = self.id
         out["type"] = self.category
         out["text"] = self.text
+        if hasattr(self, "embeddings"):
+            out["embeddings"] = self.embeddings
         return out
 
     def apply(self, *cleaners: Callable):
