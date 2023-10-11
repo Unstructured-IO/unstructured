@@ -176,6 +176,8 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 read_dir = permissions_dir / "sites"
             elif parent_type == "SitePages" or parent_type == "Shared Documents":
                 read_dir = permissions_dir / "other"
+            else:
+                read_dir = permissions_dir / "other"
 
             for filename in os.listdir(read_dir):
                 permissions_docname = os.path.splitext(filename)[0].split("_SEP_")[1]
@@ -478,13 +480,18 @@ class SharepointPermissionsConnector:
         elif split_path[0] == "personal":
             return "Personal", "Personal"
 
+        elif split_path[0] == "_layouts":
+            return "layouts", "layouts"
+
         # if other weburl structures are found, additional logic might need to be implemented
 
         logger.warning(
-            "Couldn't extract sitename, skipping RBAC ingestion \
-                           for the document with the URL:",
+            """Couldn't extract sitename, unknown site or parent type. Skipping permissions
+            ingestion for the document with the URL:""",
             weburl,
         )
+
+        return None, None
 
     @requires_dependencies(["requests"], extras="sharepoint")
     def get_permissions_for_drive_item(self, site, drive_id, item_id):
@@ -536,7 +543,9 @@ class SharepointPermissionsConnector:
                 if parent_type == "sites":
                     write_path = permissions_dir / "sites" / f"{parent_name}_SEP_{item_name}.json"
 
-                if parent_type == "Personal" or parent_type == "Shared Documents":
+                elif parent_type == "Personal" or parent_type == "Shared Documents":
+                    write_path = permissions_dir / "other" / f"{parent_name}_SEP_{item_name}.json"
+                else:
                     write_path = permissions_dir / "other" / f"{parent_name}_SEP_{item_name}.json"
 
                 if not Path(os.path.dirname(write_path)).is_dir():

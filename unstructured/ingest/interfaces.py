@@ -441,6 +441,38 @@ class SourceConnectorCleanupMixin:
             os.rmdir(cur_dir)
 
 
+class PermissionsCleanupMixin:
+    processor_config: ProcessorConfig
+
+    def cleanup_permissions(self, cur_dir=None):
+        def has_no_folders(folder_path):
+            folders = [
+                item
+                for item in os.listdir(folder_path)
+                if os.path.isdir(os.path.join(folder_path, item))
+            ]
+            return len(folders) == 0
+
+        """Recursively clean up downloaded files and directories."""
+        if cur_dir is None:
+            cur_dir = Path(self.processor_config.output_dir, "permissions_data")
+        if cur_dir is None:
+            return
+        if Path(cur_dir).is_file():
+            cur_file = cur_dir
+            os.remove(cur_file)
+            return
+        sub_dirs = os.listdir(cur_dir)
+        os.chdir(cur_dir)
+        for sub_dir in sub_dirs:
+            # don't traverse symlinks, not that there every should be any
+            if not os.path.islink(sub_dir):
+                self.cleanup_permissions(sub_dir)
+        os.chdir("..")
+        if has_no_folders(cur_dir):
+            os.rmdir(cur_dir)
+
+
 class IngestDocCleanupMixin:
     read_config: ReadConfig
 

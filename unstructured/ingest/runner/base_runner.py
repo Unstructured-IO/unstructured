@@ -46,4 +46,5 @@ class Runner(ABC):
             dest_doc_connector=self.get_dest_doc_connector(),
             embedder_config=self.embedding_config,
             chunking_config=self.chunking_config,
+            permissions_config=self.permissions_config,
         )
