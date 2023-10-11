@@ -1,7 +1,7 @@
 ## 0.10.22-dev1
 
 ### Enhancements
-* **Expose skip_infer_table_types in ingest CLI** For each connector a new `--skip-infer-table-types` parameter was added to map to the `skip_infer_table_types` partition argument.
+* **Expose skip_infer_table_types in ingest CLI** For each connector a new `--skip-infer-table-types` parameter was added to map to the `skip_infer_table_types` partition argument. This gives more granular control to unstructured-ingest users, allowing them to specify which file types for which we should attempt table extraction.
 
 ### Features
 
