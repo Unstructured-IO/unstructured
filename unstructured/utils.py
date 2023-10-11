@@ -3,11 +3,11 @@ import importlib
 import json
 import os
 import platform
-import requests
 from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, cast
 
+import requests
 from typing_extensions import ParamSpec
 
 from unstructured.__version__ import __version__
