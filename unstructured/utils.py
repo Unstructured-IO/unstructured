@@ -198,7 +198,7 @@ def validate_date_args(date: Optional[str] = None):
 
 def scarf_analytics():
     try:
-        if os.getenv("SCARF_NO_ANALYTICS") != "true" and os.getenv("DO_NOT_TRACK") != "true" and "dev" not in platform.system():
+        if os.getenv("SCARF_NO_ANALYTICS") != "true" and os.getenv("DO_NOT_TRACK") != "true" and "dev" not in __version__:
             requests.get(
                 "https://packages.unstructured.io/python-telemetry?version="
                 + __version__
