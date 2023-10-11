@@ -39,6 +39,9 @@ class Runner(ABC):
         return None
 
     def get_permissions_config(self) -> t.Optional[PermissionsConfig]:
+        if self.permissions_config is None:
+            return None
+
         permissions_config_filled = bool(
             self.permissions_config.application_id
             and self.permissions_config.client_cred
