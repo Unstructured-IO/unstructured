@@ -1,3 +1,7 @@
+## 0.10.21
+
+* **Adds Scarf analytics**.
+
 ## 0.10.20
 
 ### Enhancements
