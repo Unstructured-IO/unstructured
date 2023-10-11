@@ -1,8 +1,9 @@
-from typing import Dict, List, Optional, Tuple, Union
+import json
+from typing import Dict, Optional, Tuple, Union
 
 
 def get_element_type_frequency(
-    elements: List,
+    elements: str,
 ) -> Union[Dict[Tuple[str, Optional[int]], int], Dict]:
     """
     Calculate the frequency of Element Types from a list of elements.
@@ -10,10 +11,10 @@ def get_element_type_frequency(
     frequency: Dict = {}
     if len(elements) == 0:
         return frequency
-    for element in elements:
-        category = element.category
-        category_depth = element.metadata.category_depth
-        key = (category, category_depth)
+    for element in json.loads(elements):
+        type = element.get("type")
+        category_depth = element["metadata"].get("category_depth")
+        key = (type, category_depth)
         if key not in frequency:
             frequency[key] = 1
         else:

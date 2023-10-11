@@ -2,6 +2,7 @@ import pytest
 
 from unstructured.metrics.element_type import get_element_type_frequency
 from unstructured.partition.auto import partition
+from unstructured.staging.base import elements_to_json
 
 
 @pytest.mark.parametrize(
@@ -32,5 +33,5 @@ from unstructured.partition.auto import partition
 )
 def test_get_element_type_frequency(filename, frequency):
     elements = partition(filename=f"example-docs/{filename}")
-    elements_freq = get_element_type_frequency(elements)
+    elements_freq = get_element_type_frequency(elements_to_json(elements))
     assert elements_freq == frequency
