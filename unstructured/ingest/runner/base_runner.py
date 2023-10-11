@@ -38,6 +38,15 @@ class Runner(ABC):
             return writer(**writer_kwargs)
         return None
 
+    def get_permissions_config(self) -> t.Optional[PermissionsConfig]:
+        permissions_config_filled = bool(
+            self.permissions_config.application_id
+            and self.permissions_config.client_cred
+            and self.permissions_config.tenant,
+        )
+
+        return self.permissions_config if permissions_config_filled else None
+
     def process_documents(self, source_doc_connector: BaseSourceConnector):
         process_documents(
             processor_config=self.processor_config,
@@ -46,5 +55,5 @@ class Runner(ABC):
             dest_doc_connector=self.get_dest_doc_connector(),
             embedder_config=self.embedding_config,
             chunking_config=self.chunking_config,
-            permissions_config=self.permissions_config,
+            permissions_config=self.get_permissions_config(),
         )
