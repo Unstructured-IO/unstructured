@@ -15,6 +15,8 @@ def detail(self, message, *args, **kws):
     if self.isEnabledFor(DETAIL):
         self._log(DETAIL, message, args, **kws)
 
+# Note(Trevor,Crag): to opt out of scarf analytics, set the environment variable:
+# SCARF_NO_ANALYTICS=true. See the README for more info.
 scarf_analytics()
 
 # Add the custom log method to the logging.Logger class
