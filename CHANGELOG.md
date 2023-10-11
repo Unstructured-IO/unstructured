@@ -1,10 +1,11 @@
-## 0.10.22-dev3
+## 0.10.22-dev4
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+* **ingest pipeline reformat not discoverable** The reformat directory was missing the `__init__.py` needed to make it discoverable, causing an import error.
 
 * **Fixes PDF list parsing creating duplicate list items** Previously a bug in PDF list item parsing caused removal of other elements and duplication of the list items
 
