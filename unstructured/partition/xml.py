@@ -1,3 +1,4 @@
+import copy
 from io import BytesIO
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, Iterator, List, Optional, Union, cast
@@ -19,6 +20,7 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
+from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text import element_from_text
 
 DETECTION_ORIGIN: str = "xml"
@@ -91,6 +93,8 @@ def partition_xml(
     encoding: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
+    languages: Optional[List[str]] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an XML document into its document elements.
@@ -102,21 +106,29 @@ def partition_xml(
     file
         A file-like object using "rb" mode --> open(filename, "rb").
     text
-        The text of the XML file
+        The text of the XML file.
     xml_keep_tags
         If True, will retain the XML tags in the output. Otherwise it will simply extract
         the text from within the tags.
     xml_path
-        The xml_path to use for extracting the text. Only used if xml_keep_tags=False
+        The xml_path to use for extracting the text. Only used if xml_keep_tags=False.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     include_metadata
         Determines whether or not metadata is included in the metadata attribute on the
         elements in the output.
     metadata_last_modified
-        The day of the last modification
+        The day of the last modification.
+    languages
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     exactly_one(filename=filename, file=file, text=text)
+
     elements: List[Element] = []
 
     last_modification_date = None
@@ -159,7 +171,14 @@ def partition_xml(
         for leaf_element in leaf_elements:
             if leaf_element:
                 element = element_from_text(leaf_element)
-                element.metadata = metadata
+                element.metadata = copy.deepcopy(metadata)
                 elements.append(element)
 
+    elements = list(
+        apply_lang_metadata(
+            elements=elements,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+        ),
+    )
     return elements
