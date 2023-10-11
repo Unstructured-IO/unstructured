@@ -2,18 +2,16 @@ import logging
 import typing as t
 
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner.base_runner import Runner
+from unstructured.ingest.runner.base_runner import FsspecBaseRunner
 from unstructured.ingest.runner.utils import update_download_dir_remote_url
 
 
-class AzureRunner(Runner):
+class AzureRunner(FsspecBaseRunner):
     def run(
         self,
         account_name: t.Optional[str],
         account_key: t.Optional[str],
         connection_string: t.Optional[str],
-        remote_url: str,
-        recursive: bool = False,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
@@ -26,7 +24,7 @@ class AzureRunner(Runner):
         self.read_config.download_dir = update_download_dir_remote_url(
             connector_name="azure",
             read_config=self.read_config,
-            remote_url=remote_url,
+            remote_url=self.fsspec_config.remote_url,
             logger=logger,
         )
 
@@ -47,8 +45,8 @@ class AzureRunner(Runner):
         source_doc_connector = AzureBlobStorageSourceConnector(  # type: ignore
             processor_config=self.processor_config,
             connector_config=SimpleAzureBlobStorageConfig(
-                path=remote_url,
-                recursive=recursive,
+                path=self.fsspec_config.remote_url,
+                recursive=self.fsspec_config.recursive,
                 access_kwargs=access_kwargs,
             ),
             read_config=self.read_config,

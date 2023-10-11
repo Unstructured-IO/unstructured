@@ -2,15 +2,13 @@ import logging
 import typing as t
 
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner.base_runner import Runner
+from unstructured.ingest.runner.base_runner import FsspecBaseRunner
 from unstructured.ingest.runner.utils import update_download_dir_remote_url
 
 
-class DropboxRunner(Runner):
+class DropboxRunner(FsspecBaseRunner):
     def run(
         self,
-        remote_url: str,
-        recursive: bool = False,
         token: t.Optional[str] = None,
         **kwargs,
     ):
@@ -19,7 +17,7 @@ class DropboxRunner(Runner):
         self.read_config.download_dir = update_download_dir_remote_url(
             connector_name="dropbox",
             read_config=self.read_config,
-            remote_url=remote_url,
+            remote_url=self.fsspec_config.remote_url,
             logger=logger,
         )
 
@@ -31,8 +29,8 @@ class DropboxRunner(Runner):
         source_doc_connector = DropboxSourceConnector(  # type: ignore
             read_config=self.read_config,
             connector_config=SimpleDropboxConfig(
-                path=remote_url,
-                recursive=recursive,
+                path=self.fsspec_config.remote_url,
+                recursive=self.fsspec_config.recursive,
                 access_kwargs={"token": token},
             ),
             processor_config=self.processor_config,

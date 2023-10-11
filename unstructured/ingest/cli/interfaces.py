@@ -10,6 +10,7 @@ from unstructured.ingest.interfaces import (
     BaseConfig,
     ChunkingConfig,
     EmbeddingConfig,
+    FsspecConfig,
     PartitionConfig,
     PermissionsConfig,
     ProcessorConfig,
@@ -248,9 +249,7 @@ class CliRecursiveConfig(BaseConfig, CliMixin):
         cmd.params.extend(options)
 
 
-class CliRemoteUrlConfig(BaseConfig, CliMixin):
-    remote_url: str
-
+class CliFsspecConfig(FsspecConfig, CliMixin):
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:
         options = [
@@ -258,6 +257,21 @@ class CliRemoteUrlConfig(BaseConfig, CliMixin):
                 ["--remote-url"],
                 required=True,
                 help="Remote fsspec URL formatted as `protocol://dir/path`",
+            ),
+            click.Option(
+                ["--uncompress"],
+                type=bool,
+                default=False,
+                is_flag=True,
+                help="Uncompress any archived files. Currently supporting zip and tar "
+                "files based on file extension.",
+            ),
+            click.Option(
+                ["--recursive"],
+                is_flag=True,
+                default=False,
+                help="Recursively download files in their respective folders "
+                "otherwise stop at the files in provided folder level.",
             ),
         ]
         cmd.params.extend(options)

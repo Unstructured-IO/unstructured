@@ -70,7 +70,7 @@ def azure_cognitive_search_dest(ctx: click.Context, **options):
         configs = extract_configs(options, validate=[AzureCognitiveSearchCliWriteConfig])
         runner_cls = runner_map[source_cmd]
         runner = runner_cls(
-            **configs,
+            **configs,  # type: ignore
             writer_type="azure_cognitive_search",
             writer_kwargs=options,
         )

@@ -6,8 +6,8 @@ from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
+    CliFsspecConfig,
     CliRecursiveConfig,
-    CliRemoteUrlConfig,
 )
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
@@ -25,7 +25,7 @@ def fsspec_source(ctx: click.Context, **options):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
     log_options(options, verbose=verbose)
     try:
-        configs = extract_configs(options)
+        configs = extract_configs(options, extras={"fsspec_config": CliFsspecConfig})
         runner = FsspecRunner(
             **configs,  # type: ignore
         )
@@ -37,5 +37,5 @@ def fsspec_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = fsspec_source
-    add_options(cmd, extras=[CliRemoteUrlConfig, CliRecursiveConfig])
+    add_options(cmd, extras=[CliFsspecConfig, CliRecursiveConfig])
     return cmd

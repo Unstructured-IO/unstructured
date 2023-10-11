@@ -7,6 +7,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     ChunkingConfig,
     EmbeddingConfig,
+    FsspecConfig,
     PartitionConfig,
     PermissionsConfig,
     ProcessorConfig,
@@ -60,3 +61,7 @@ class Runner(ABC):
             chunking_config=self.chunking_config,
             permissions_config=self.get_permissions_config(),
         )
+
+
+class FsspecBaseRunner(Runner):
+    fsspec_config: FsspecConfig
