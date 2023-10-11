@@ -910,6 +910,7 @@ def test_combine_numbered_list(filename):
             first_list_element = element
             break
     assert len(elements) < 28
+    assert len([element for element in elements if isinstance(element, ListItem)]) == 4
     assert first_list_element.text.endswith(
         "character recognition, and other DIA tasks (Section 3)",
     )

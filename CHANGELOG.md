@@ -1,13 +1,18 @@
-## 0.10.21-dev0
+## 0.10.22-dev2
 
 ### Enhancements
 
 ### Features
 
-* **Adds Scarf analytics**.
 * **Adds permissions(RBAC) data ingestion functionality for the Sharepoint connector.** Problem: Role based access control is an important component in many data storage systems. Users may need to pass permissions (RBAC) data to downstream systems when ingesting data. Feature: Added permissions data ingestion functionality to the Sharepoint connector.
 
 ### Fixes
+
+* **Fixes PDF list parsing creating duplicate list items** Previously a bug in PDF list item parsing caused removal of other elements and duplication of the list items
+
+## 0.10.21
+
+* **Adds Scarf analytics**.
 
 ## 0.10.20
 
