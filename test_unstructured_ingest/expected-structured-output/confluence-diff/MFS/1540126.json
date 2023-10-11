@@ -14,6 +14,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "text_as_html": "<table><br><tbody><br><tr><td>Driver      </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Approver    </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Contributors</td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Informed    </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Objective   </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Due date    </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Key outcomes</td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Status      </td><td>NOT STARTED</td><td>/</td><td>IN PROGRESS</td><td>/</td><td>COMPLETE</td></tr><br></tbody><br></table>"
     },
@@ -34,6 +37,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83E\\uDD14 Problem Statement"
@@ -53,6 +59,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "🎯 Scope"
@@ -72,6 +81,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "text_as_html": "<table><br><tbody><br><tr><td>Must have:   </td></tr><br><tr><td>Nice to have:</td></tr><br><tr><td>Not in scope:</td></tr><br></tbody><br></table>"
     },
@@ -92,6 +104,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83D\\uDDD3 Timeline"
@@ -111,6 +126,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Lane 1"
@@ -130,6 +148,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Lane 2"
@@ -149,6 +170,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Feature 1"
@@ -168,6 +192,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Feature 2"
@@ -187,6 +214,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Feature 3"
@@ -206,6 +236,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Feature 4"
@@ -225,6 +258,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "iOS app"
@@ -244,6 +280,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Android app"
@@ -263,6 +302,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83D\\uDEA9 Milestones and deadlines"
@@ -282,6 +324,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "text_as_html": "<table><br><tbody><br><tr><td>Milestone</td><td>Owner</td><td>Deadline</td><td>Status</td></tr><br><tr><td>         </td><td>     </td><td>        </td><td>      </td></tr><br><tr><td>         </td><td>     </td><td>        </td><td>      </td></tr><br><tr><td>         </td><td>     </td><td>        </td><td>      </td></tr><br></tbody><br></table>"
     },
@@ -302,6 +347,9 @@
         "date_modified": "2023-07-09T12:56:10.564000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83D\\uDD17 Reference materials"

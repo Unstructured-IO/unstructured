@@ -1,3 +1,4 @@
+import copy
 import datetime
 import email
 import os
@@ -19,6 +20,7 @@ from unstructured.partition.common import (
     convert_to_bytes,
     exactly_one,
 )
+from unstructured.partition.lang import apply_lang_metadata
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -260,6 +262,8 @@ def partition_email(
     attachment_partitioner: Optional[Callable] = None,
     min_partition: Optional[int] = 0,
     chunking_strategy: Optional[str] = None,
+    languages: Optional[List[str]] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
@@ -291,6 +295,13 @@ def partition_email(
     min_partition
         The minimum number of characters to include in a partition. Only applies if
         processing the text/plain content.
+    languages
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
@@ -370,6 +381,7 @@ def partition_email(
             text=content,
             include_metadata=False,
             metadata_filename=metadata_filename,
+            languages=[""],
             detection_origin="email",
         )
         for element in elements:
@@ -404,8 +416,9 @@ def partition_email(
             text=content,
             encoding=encoding,
             max_partition=max_partition,
-            metadata_filename=metadata_filename or filename,
             min_partition=min_partition,
+            languages=[""],
+            include_metadata=False,  # metadata is overwritten later, so no need to compute it here
             detection_origin="email",
         )
 
@@ -427,7 +440,7 @@ def partition_email(
         metadata_last_modified=metadata_last_modified,
     )
     for element in all_elements:
-        element.metadata = metadata
+        element.metadata = copy.deepcopy(metadata)
 
     if process_attachments:
         with TemporaryDirectory() as tmpdir:
@@ -451,4 +464,12 @@ def partition_email(
                     element.metadata.attached_to_filename = metadata_filename or filename
                     all_elements.append(element)
 
-    return all_elements
+    elements = list(
+        apply_lang_metadata(
+            elements=all_elements,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+        ),
+    )
+
+    return elements

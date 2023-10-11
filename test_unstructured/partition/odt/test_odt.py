@@ -195,3 +195,16 @@ def test_add_chunking_strategy_on_partition_odt_non_default():
             assert len(chunk.text) <= 7
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_odt_element_metadata_has_languages():
+    filename = "example-docs/fake.odt"
+    elements = partition_odt(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_odt_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.odt"
+    elements = partition_odt(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
