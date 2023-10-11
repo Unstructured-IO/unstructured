@@ -205,5 +205,5 @@ def scarf_analytics():
                 + "&platform="
                 + platform.system()
             )
-    except:
+    except Exception:
         pass

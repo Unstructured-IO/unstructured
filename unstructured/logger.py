@@ -1,9 +1,9 @@
 import logging
 
+from unstructured.utils import scarf_analytics
+
 logger = logging.getLogger("unstructured")
 trace_logger = logging.getLogger("unstructured.trace")
-
-from unstructured.utils import scarf_analytics
 
 # Create a custom logging level
 DETAIL = 15
