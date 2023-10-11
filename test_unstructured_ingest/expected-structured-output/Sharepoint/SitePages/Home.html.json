@@ -15,6 +15,9 @@
       },
       "filename": "Home.html",
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Documents"
@@ -35,6 +38,9 @@
       },
       "filename": "Home.html",
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Events"

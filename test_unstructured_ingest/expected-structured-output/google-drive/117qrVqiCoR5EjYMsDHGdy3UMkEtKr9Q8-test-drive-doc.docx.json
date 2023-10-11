@@ -13,6 +13,9 @@
         "date_modified": "2023-06-15T06:15:44"
       },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
       "emphasized_text_contents": [
         "Title"
       ],
@@ -36,6 +39,9 @@
         "date_modified": "2023-06-15T06:15:44"
       },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
       "emphasized_text_contents": [
         "This is a good reason to continue"
       ],
