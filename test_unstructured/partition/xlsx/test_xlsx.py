@@ -229,3 +229,17 @@ def test_partition_xlsx_subtables(filename="example-docs/vodafone.xlsx"):
     elements = partition_xlsx(filename)
     assert sum(isinstance(element, Table) for element in elements) == 3
     assert len(elements) == 6
+
+
+def test_partition_xlsx_element_metadata_has_languages():
+    filename = "example-docs/stanley-cups.xlsx"
+    elements = partition_xlsx(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_eml_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa.xlsx"
+    elements = partition_xlsx(filename=filename, detect_language_per_element=True)
+    langs = {element.metadata.languages[0] for element in elements}
+    assert "eng" in langs
+    assert "spa" in langs

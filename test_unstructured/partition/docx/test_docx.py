@@ -514,3 +514,28 @@ def test_add_chunking_strategy_on_partition_docx(
 
     for chunk in chunks:
         assert len(chunk.text) <= 9
+
+
+def test_partition_docx_element_metadata_has_languages():
+    filename = "example-docs/handbook-1p.docx"
+    elements = partition_docx(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_docx_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.docx"
+    elements = partition_docx(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+def test_partition_docx_respects_languages_arg():
+    filename = "example-docs/handbook-1p.docx"
+    elements = partition_docx(filename=filename, languages=["deu"])
+    assert elements[0].metadata.languages == ["deu"]
+
+
+def test_partition_docx_raises_TypeError_for_invalid_languages():
+    with pytest.raises(TypeError):
+        filename = "example-docs/handbook-1p.docx"
+        partition_docx(filename=filename, languages="eng")

@@ -62,6 +62,7 @@ from unstructured.partition.common import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
+from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -87,6 +88,8 @@ def convert_and_partition_docx(
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    languages: Optional[List[str]] = ["auto"],
+    detect_language_per_element: bool = False,
 ) -> List[Element]:
     """Converts a document to DOCX and then partitions it using partition_docx.
 
@@ -103,6 +106,13 @@ def convert_and_partition_docx(
     include_metadata
         Determines whether or not metadata is included in the metadata attribute on the elements in
         the output.
+    languages
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     exactly_one(filename=filename, file=file)
 
@@ -142,6 +152,8 @@ def convert_and_partition_docx(
             metadata_filename=metadata_filename,
             include_metadata=include_metadata,
             metadata_last_modified=metadata_last_modified,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
         )
 
     return elements
@@ -155,10 +167,12 @@ def partition_docx(
     file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
-    include_metadata: bool = True,
+    include_metadata: bool = True,  # used by decorator
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,
-    **kwargs: Any,
+    chunking_strategy: Optional[str] = None,  # used by decorator
+    languages: Optional[List[str]] = ["auto"],
+    detect_language_per_element: bool = False,
+    **kwargs: Any,  # used by decorator
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
 
@@ -173,19 +187,30 @@ def partition_docx(
         to .docx before partition. We want the original source filename in the metadata.
     metadata_last_modified
         The last modified date for the document.
+    languages
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     # -- verify that only one file-specifier argument was provided --
     exactly_one(filename=filename, file=file)
 
-    return list(
-        _DocxPartitioner.iter_document_elements(
-            filename,
-            file,
-            metadata_filename,
-            include_page_breaks,
-            metadata_last_modified,
-        ),
+    elements = _DocxPartitioner.iter_document_elements(
+        filename,
+        file,
+        metadata_filename,
+        include_page_breaks,
+        metadata_last_modified,
     )
+    elements = apply_lang_metadata(
+        elements=elements,
+        languages=languages,
+        detect_language_per_element=detect_language_per_element,
+    )
+    return list(elements)
 
 
 class _DocxPartitioner:
@@ -248,6 +273,18 @@ class _DocxPartitioner:
 
     def _iter_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in (docx) `document` in document order."""
+        # -- This implementation composes a collection of iterators into a "combined" iterator
+        # -- return value using `yield from`. You can think of the return value as an Element
+        # -- stream and each `yield from` as "add elements found by this function to the stream".
+        # -- This is functionally analogous to declaring `elements: List[Element] = []` at the top
+        # -- and using `elements.extend()` for the results of each of the function calls, but is
+        # -- more perfomant, uses less memory (avoids producing and then garbage-collecting all
+        # -- those small lists), is more flexible for later iterator operations like filter,
+        # -- chain, map, etc. and is perhaps more elegant and simpler to read once you have the
+        # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
+        # -- functions like `._iter_paragraph_elements()` where the "just return when done"
+        # -- characteristic of a generator avoids repeated code to form interim results into lists.
+
         for section_idx, section in enumerate(self._document.sections):
             yield from self._iter_section_page_breaks(section_idx, section)
             yield from self._iter_section_headers(section)
@@ -476,7 +513,7 @@ class _DocxPartitioner:
         # -- predict when two page breaks will be needed and emit one of them. The second will be
         # -- emitted by the rendered page-break to follow.
 
-        if start_type == WD_SECTION_START.EVEN_PAGE:
+        if start_type == WD_SECTION_START.EVEN_PAGE:  # noqa
             # -- on an even page we need two total, add one to supplement the rendered page break
             # -- to follow. There is no "first-document-page" special case because 1 is odd.
             if not page_is_odd():

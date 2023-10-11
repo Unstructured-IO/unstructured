@@ -185,3 +185,20 @@ def test_add_chunking_strategy_by_title_on_partition_ppt(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_ppt_element_metadata_has_languages():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
+    elements = partition_ppt(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_ppt_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.ppt"
+    elements = partition_ppt(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    # languages other than English and Spanish are detected by this partitioner,
+    # so this test is slightly different from the other partition tests
+    langs = {element.metadata.languages[0] for element in elements}
+    assert "eng" in langs
+    assert "spa" in langs
