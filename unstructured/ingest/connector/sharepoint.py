@@ -525,7 +525,6 @@ class SharepointPermissionsConnector:
             drive_items = self.get_drive_items(site, drive_id)
             if drive_items:
                 item_ids.extend(
-                    # [(site, drive_id, item["id"], item["name"]) for item in drive_items["value"]],
                     [
                         (site, drive_id, item["id"], item["name"], item["webUrl"])
                         for item in drive_items["value"]
