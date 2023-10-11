@@ -203,6 +203,7 @@ def scarf_analytics():
         gpu_present = True
     except Exception:
         gpu_present = False
+        pass
 
 
     try:
