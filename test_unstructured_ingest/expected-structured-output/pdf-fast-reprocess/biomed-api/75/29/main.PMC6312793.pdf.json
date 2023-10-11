@@ -563,17 +563,6 @@
     "text": "All times are in minutes and integers. The planning duration is from 5 a.m. to around midnight. Each instance has two classes of trips, short trips and long trips, with 40% short trips and 60% long trips. The duration of a short trip is less than a total of 45 min and the travel time between the start"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "86b700fab5db37977a73700b53a0654b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "486"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "0a1b09ff562f4d063703cbf021ee297f",
     "metadata": {
@@ -682,6 +671,17 @@
       "links": []
     },
     "text": "i to ls"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "2d6b506bd58a7dd7bbf1c8599ef630c8",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "1. Each schedule should start and end at the same depot. 2. Each trip should be covered by only one vehicle. 3. The number of schedules that start from a depot should not exceed the number of vehicles at the depot."
   },
   {
     "type": "ListItem",
