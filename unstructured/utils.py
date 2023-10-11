@@ -1,11 +1,16 @@
 import functools
 import importlib
 import json
+import os
+import platform
+import requests
 from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, cast
 
 from typing_extensions import ParamSpec
+
+from unstructured.__version__ import __version__
 
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
@@ -189,3 +194,11 @@ def validate_date_args(date: Optional[str] = None):
         f"The argument {date} does not satisfy the format: "
         "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
     )
+
+
+def scarf_analytics():
+    try:
+        if os.getenv("SCARF_NO_ANALYTICS") != "true" and os.getenv("DO_NOT_TRACK") != "true":
+            requests.get('https://packages.unstructured.io/python-telemetry?version=' + __version__ + '&platform=' + platform.system())
+    except:
+        pass
