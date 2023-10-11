@@ -1,10 +1,6 @@
-## 0.10.21-dev0
+## 0.10.21
 
-### Enhancements
-
-### Features
-
-### Fixes
+* **Adds Scarf analytics**.
 
 ## 0.10.20
 
