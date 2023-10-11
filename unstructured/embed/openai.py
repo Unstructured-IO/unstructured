@@ -1,4 +1,3 @@
-import types
 from typing import List
 
 import numpy as np
@@ -37,8 +36,9 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
     def _add_embeddings_to_elements(self, elements, embeddings) -> List[Element]:
         assert len(elements) == len(embeddings)
         elements_w_embedding = []
-        element.embeddings = embeddings[i]
-        elements_w_embedding.append(element)
+        for i, element in enumerate(elements):
+            element.embeddings = embeddings[i]
+            elements_w_embedding.append(element)
         return elements
 
     @EmbeddingEncoderConnectionError.wrap
