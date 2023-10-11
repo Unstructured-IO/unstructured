@@ -22,12 +22,12 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --num-processes "$max_processes" \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --output-dir "$OUTPUT_DIR" \
-    --skip-infer-table-types "" \
+    --skip-infer-table-types "jpg" \
     --pdf-infer-table-structure true \
     --strategy hi_res \
     --verbose \
     --reprocess \
-    --input-path example-docs/layout-parser-paper.pdf \
+    --input-path "$SCRIPT_DIR"/example-docs/ \
     --work-dir "$WORK_DIR"
 
 set +e
