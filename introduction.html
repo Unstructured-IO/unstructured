@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Overview" href="introduction/overview.html" /><link rel="prev" title="Unstructured Core Library" href="index.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Introduction - Unstructured 0.10.19 documentation</title>
+  <title>Introduction - Unstructured 0.10.20 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
@@ -473,7 +473,7 @@ and no matter what format that data is in, Unstructured’s toolkit will transfo
 <p>Natural Language Processing (NLP) encompasses a broad spectrum of tasks and methodologies. This section introduces some fundamental concepts crucial for most NLP projects that involve Unstructured’s products.</p>
 <section id="data-ingestion">
 <h2>Data Ingestion<a class="headerlink" href="#data-ingestion" title="Permalink to this heading"></a></h2>
-<p>Unstructured’s <code class="docutils literal notranslate"><span class="pre">upstream</span> <span class="pre">connectors</span></code> make data ingestion easy. They ensure that your data is accessible, up to date, and usable for any downstream task. If you’d like to read more on our upstream connectors, you can find details <a class="reference external" href="../upstream_connectors.html">here</a>.</p>
+<p>Unstructured’s <code class="docutils literal notranslate"><span class="pre">upstream</span> <span class="pre">connectors</span></code> make data ingestion easy. They ensure that your data is accessible, up to date, and usable for any downstream task. If you’d like to read more on our upstream connectors, you can find details <a class="reference external" href="https://unstructured-io.github.io/unstructured/source_connectors.html">here</a>.</p>
 <section id="data-preprocessing">
 <h3>Data Preprocessing<a class="headerlink" href="#data-preprocessing" title="Permalink to this heading"></a></h3>
 <p>Before the core analysis, raw data often requires significant preprocessing:</p>
@@ -515,7 +515,7 @@ only ensures that an LLM’s claims can be verified for accuracy but also builds
 is particularly beneficial for organizations that lack the means to develop and deploy foundational models from scratch.</p>
 <p>A RAG workflow can be broken down into the following steps:</p>
 <ol class="arabic simple">
-<li><p><strong>Data ingestion</strong>: The first step is acquiring data from your relevant sources. At Unstructured we make this super easy with our <a class="reference external" href="https://unstructured-io.github.io/unstructured/upstream_connectors.html">data connectors</a>.</p></li>
+<li><p><strong>Data ingestion</strong>: The first step is acquiring data from your relevant sources. At Unstructured we make this super easy with our <a class="reference external" href="https://unstructured-io.github.io/unstructured/source_connectors.html">data connectors</a>.</p></li>
 <li><p><strong>Data preprocessing and cleaning</strong>: Once you’ve identified and collected your data sources a good practice is to remove any unnecessary artifacts within the dataset. At Unstructured we have a variety of different tools to remove unneccesary elements. Found <a class="reference external" href="https://unstructured-io.github.io/unstructured/bricks.html">here</a></p></li>
 <li><p><strong>Chunking</strong>: The next step is to break your text down into digestable pieces for your LLM to be able to consume. LangChain, Llama Index and Haystack offer chunking funcionalities.</p></li>
 <li><p><strong>Embedding</strong>: After chunking, you will need to convert the text into a numerical representation (vector embedding) that a LLM can understand. OpenAI, Cohere, and Hugging Face all offer embedding models.</p></li>
@@ -662,7 +662,7 @@ of the table will be available in the element metadata under <code class="docuti
 table extraction is available, the <code class="docutils literal notranslate"><span class="pre">partition</span></code> function will extract tables automatically if they are present.
 For PDFs and images, table extraction requires a relatively expensive call to a table recognition model, and so for those
 document types table extraction is an option you need to enable. If you would like to extract tables for PDFs or images,
-pass in <code class="docutils literal notranslate"><span class="pre">infer_table_structured=True</span></code>. Here is an example (Note: this example requires the <code class="docutils literal notranslate"><span class="pre">pdf</span></code> extra. This can be installed with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[pdf]&quot;</span></code>):</p>
+pass in <code class="docutils literal notranslate"><span class="pre">infer_table_structure=True</span></code>. Here is an example (Note: this example requires the <code class="docutils literal notranslate"><span class="pre">pdf</span></code> extra. This can be installed with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;unstructured[pdf]&quot;</span></code>):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.pdf</span> <span class="kn">import</span> <span class="n">partition_pdf</span>
 
 <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;example-docs/layout-parser-paper.pdf&quot;</span>
