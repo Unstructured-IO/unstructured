@@ -15,7 +15,7 @@ jobs:
       (github.event_name == 'push' && contains(github.event.head_commit.message, 'ingest-test-fixtures-update'))
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
-      PYTHON_VERSION: "3.8"
+      PYTHON_VERSION: "3.10"
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3

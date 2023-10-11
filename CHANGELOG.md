@@ -1,31 +1,36 @@
-## 0.10.20-dev7
+## 0.10.20-dev10
 
 ### Enhancements
 
 * **Refactor OCR code** The OCR code for entire page is moved from unstructured-inference to unstructured. On top of continuing support for OCR language parameter, we also support two OCR processing modes, "entire_page" or "individual_blocks".
 * **Align to top left when shrinking bounding boxes for `xy-cut` sorting:** Update `shrink_bbox()` to keep top left rather than center.
 * **Add visualization script to annotate elements** This script is often used to analyze/visualize elements with coordinates (e.g. partition_pdf()).
-* **Adds data source properties to the Jira connector** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+* **Adds data source properties to the Jira, Github and Gitlab connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
 * **Improve title detection in pptx documents** The default title textboxes on a pptx slide are now categorized as titles.
 * **Improve hierarchy detection in pptx documents** List items, and other slide text are properly nested under the slide title. This will enable better chunking of pptx documents.
 * **Refactor of the ingest cli workflow** The refactored approach uses a dynamically set pipeline with a snapshot along each step to save progress and accommodate continuation from a snapshot if an error occurs. This also allows the pipeline to dynamically assign any number of steps to modify the partitioned content before it gets written to a destination.
 * **Applies `max_characters=<n>` argument to all element types in `add_chunking_strategy` decorator** Previously this argument was only utilized in chunking Table elements and now applies to all partitioned elements if `add_chunking_strategy` decorator is utilized, further preparing the elements for downstream processing.
-
+* **Add common retry strategy utilities for unstructured-ingest** Dynamic retry strategy with exponential backoff added to Notion source connector.
+*
 ### Features
 
+* **Adds `bag_of_words` and `percent_missing_text` functions** In order to count the word frequencies in two input texts and calculate the percentage of text missing relative to the source document.
 * **Adds `edit_distance` calculation metrics** In order to benchmark the cleaned, extracted text with unstructured, `edit_distance` (`Levenshtein distance`) is included.
 * **Adds detection_origin field to metadata** Problem: Currently isn't an easy way to find out how an element was created. With this change that information is added. Importance: With this information the developers and users are now able to know how an element was created to make decisions on how to use it. In order tu use this feature
 setting UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true is needed.
+* **Adds a function that calculates frequency of the element type and its depth** To capture the accuracy of element type extraction, this function counts the occurrences of each unique element type with its depth for use in element metrics.
 * **Adds permissions(RBAC) data ingestion functionality for the Sharepoint connector.** Problem: Role based access control is an important component in many data storage systems. Users may need to pass permissions (RBAC) data to downstream systems when ingesting data. Feature: Added permissions data ingestion functionality to the Sharepoint connector.
 
 ### Fixes
 
+* **Fix zero division error in annotation bbox size** This fixes the bug where we find annotation bboxes realted to an element that need to divide the intersection size between annotation bbox and element bbox by the size of the annotation bbox
 * **Fix prevent metadata module from importing dependencies from unnecessary modules** Problem: The `metadata` module had several top level imports that were only used in and applicable to code related to specific document types, while there were many general-purpose functions. As a result, general-purpose functions couldn't be used without unnecessary dependencies being installed. Fix: moved 3rd party dependency top level imports to inside the functions in which they are used and applied a decorator to check that the dependency is installed and emit a helpful error message if not.
 * **Fixes category_depth None value for Title elements** Problem: `Title` elements from `chipper` get `category_depth`= None even when `Headline` and/or `Subheadline` elements are present in the same page. Fix: all `Title` elements with `category_depth` = None should be set to have a depth of 0 instead iff there are `Headline` and/or `Subheadline` element-types present. Importance: `Title` elements should be equivalent html `H1` when nested headings are present; otherwise, `category_depth` metadata can result ambiguous within elements in a page.
 * **Tweak `xy-cut` ordering output to be more column friendly** This results in the order of elements more closely reflecting natural reading order which benefits downstream applications. While element ordering from `xy-cut` is usually mostly correct when ordering multi-column documents, sometimes elements from a RHS column will appear before elements in a LHS column. Fix: add swapped `xy-cut` ordering by sorting by X coordinate first and then Y coordinate.
 * **Fixes badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
 should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class
 allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
+* **Fixes pdf uri error** An error was encountered when URI type of `GoToR` which refers to pdf resources outside of its own was detected since no condition catches such case. The code is fixing the issue by initialize URI before any condition check.
 
 ## 0.10.19
 
