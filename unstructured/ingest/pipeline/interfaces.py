@@ -88,6 +88,7 @@ class PipelineNode(DataClassJsonMixin, ABC):
         if path := self.get_path():
             logger.info(f"Creating {path}")
             path.mkdir(parents=True, exist_ok=True)
+        ingest_log_streaming_init(logging.DEBUG if self.pipeline_context.verbose else logging.INFO)
 
     def get_path(self) -> t.Optional[Path]:
         return None

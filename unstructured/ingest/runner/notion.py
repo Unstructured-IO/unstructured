@@ -62,6 +62,7 @@ class NotionRunner(Runner):
             ),
             read_config=self.read_config,
             processor_config=self.processor_config,
+            retry_strategy_config=self.retry_strategy_config,
         )
 
         self.process_documents(source_doc_connector=source_doc_connector)

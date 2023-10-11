@@ -65,6 +65,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             notion_version=NOTION_API_VERSION,
             auth=self.api_key,
             logger=logger,
+            log_level=logger.level,
             retry_strategy_config=self.retry_strategy_config,
         )
 
@@ -187,6 +188,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             notion_version=NOTION_API_VERSION,
             auth=self.api_key,
             logger=logger,
+            log_level=logger.level,
             retry_strategy_config=self.retry_strategy_config,
         )
 
@@ -292,6 +294,7 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             notion_version=NOTION_API_VERSION,
             auth=self.connector_config.api_key,
             logger=logger,
+            log_level=logger.level,
             retry_strategy_config=self.retry_strategy_config,
         )
 

@@ -67,7 +67,7 @@ class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
     def add_cli_options(cmd: click.Command) -> None:
         options = [
             click.Option(
-                ["--max-retries"],
+                ["--max-tries"],
                 default=None,
                 type=int,
                 help="If provided, will use this max retry for "
@@ -94,7 +94,7 @@ class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
         Return None if none of the fields are being populated
         """
         if isinstance(kvs, dict):
-            field_names = {field.name for field in fields(cls) if field.name not in kvs}
+            field_names = {field.name for field in fields(cls) if field.name in kvs}
             field_values = [kvs.get(n) for n in field_names if kvs.get(n)]
             if not field_values:
                 return None

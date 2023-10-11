@@ -1,3 +1,3 @@
-from ._decorator import on_exception
+from ._wrapper import RetryHandler
 
-__all__ = ["on_exception"]
+__all__ = ["RetryHandler"]
