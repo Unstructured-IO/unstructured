@@ -1,3 +1,14 @@
+## 0.10.22-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fixes PDF list parsing creating duplicate list items** Previously a bug in PDF list item parsing caused removal of other elements and duplication of the list items
+
+
 ## 0.10.21
 
 * **Adds Scarf analytics**.
@@ -35,7 +46,6 @@ setting UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true is needed.
 should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class
 allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
 * **Fixes pdf uri error** An error was encountered when URI type of `GoToR` which refers to pdf resources outside of its own was detected since no condition catches such case. The code is fixing the issue by initialize URI before any condition check.
-* **Fixes PDF list parsing creating duplicate list items** Previously a bug in PDF list item parsing caused removal of other elements and duplication of the list items
 
 ## 0.10.19
 
