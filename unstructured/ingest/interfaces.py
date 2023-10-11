@@ -462,7 +462,6 @@ class BaseSourceConnector(DataClassJsonMixin, ABC):
     processor_config: ProcessorConfig
     read_config: ReadConfig
     connector_config: BaseConnectorConfig
-    retry_strategy_config: t.Optional[RetryStrategyConfig] = None
 
     @abstractmethod
     def cleanup(self, cur_dir=None):

@@ -39,7 +39,6 @@ class AirtableRunner(Runner):
                 list_of_paths=list_of_paths,
             ),
             read_config=self.read_config,
-            retry_strategy_config=self.retry_strategy_config,
         )
 
         self.process_documents(

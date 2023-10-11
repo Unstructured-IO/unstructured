@@ -283,6 +283,7 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching document(s) from"""
 
     connector_config: SimpleNotionConfig
+    retry_strategy_config: t.Optional[RetryStrategyConfig] = None
 
     @requires_dependencies(dependencies=["notion_client"], extras="notion")
     def initialize(self):

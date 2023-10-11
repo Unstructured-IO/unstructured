@@ -61,7 +61,11 @@ class Runner(ABC):
             dest_doc_connector=self.get_dest_doc_connector(),
             embedder_config=self.embedding_config,
             chunking_config=self.chunking_config,
+<<<<<<< HEAD
             permissions_config=self.get_permissions_config(),
+=======
+            retry_strategy_config=self.retry_strategy_config,
+>>>>>>> 38c78099 (Add custom error to be used for retryable errors)
         )
 
 

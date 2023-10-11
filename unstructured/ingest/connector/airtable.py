@@ -1,21 +1,15 @@
-import logging
 import os
 import typing as t
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
-import backoff
-from requests.exceptions import HTTPError
-
-from unstructured.ingest.error import SourceConnectionError
-from unstructured.ingest.ingest_backoff import RetryHandler
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
-    RetryStrategyConfig,
     SourceConnectorCleanupMixin,
     SourceMetadata,
 )
@@ -57,21 +51,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     connector_config: SimpleAirtableConfig
     table_meta: AirtableTableMeta
-    retry_strategy_config: t.Optional[RetryStrategyConfig] = None
     registry_name: str = "airtable"
-
-    @property
-    def retry_handler(self) -> t.Optional[RetryHandler]:
-        if retry_strategy_config := self.retry_strategy_config:
-            return RetryHandler(
-                backoff.expo,
-                HTTPError,
-                max_time=retry_strategy_config.max_time,
-                max_tries=retry_strategy_config.max_tries,
-                logger=logger,
-                backoff_log_level=logging.DEBUG if self.processor_config.verbose else logging.INFO,
-            )
-        return None
 
     @property
     def filename(self):
@@ -111,10 +91,9 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return rows, table_url
 
+    @SourceConnectionNetworkError.wrap
     def _get_table_rows(self):
-        rows, table_url = (
-            self.retry_handler(self._query_table) if self.retry_handler else self._query_table()
-        )
+        rows, table_url = self._query_table()
 
         if len(rows) == 0:
             logger.info("Empty document, retrieved table but it has no rows.")
@@ -297,7 +276,6 @@ class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 connector_config=self.connector_config,
                 read_config=self.read_config,
                 table_meta=AirtableTableMeta(base_id, table_id, view_id),
-                retry_strategy_config=self.retry_strategy_config,
             )
             for base_id, table_id, view_id in baseid_tableid_viewid_tuples
         ]

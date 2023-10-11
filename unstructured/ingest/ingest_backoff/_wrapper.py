@@ -72,7 +72,7 @@ class RetryHandler:
                 max_time,
                 ", ".join([e.__name__ for e in exception])
                 if isinstance(exception, IterableType)
-                else exception,
+                else exception.__name__,
                 logging.getLevelName(start_log_level),
                 logging.getLevelName(backoff_log_level),
                 logging.getLevelName(giveup_log_level),

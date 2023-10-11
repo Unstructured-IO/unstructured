@@ -12,6 +12,7 @@ session_handle: t.Optional[BaseSessionHandle] = None
 
 @dataclass
 class Reader(SourceNode):
+<<<<<<< HEAD
     def run(self, ingest_doc_json: str) -> t.Optional[str]:
         try:
             global session_handle
@@ -35,3 +36,22 @@ class Reader(SourceNode):
                 exc_info=True,
             )
             return None
+=======
+    def run(self, ingest_doc_json: str) -> str:
+        global session_handle
+        doc = create_ingest_doc_from_json(ingest_doc_json)
+        if isinstance(doc, IngestDocSessionHandleMixin):
+            if session_handle is None:
+                # create via doc.session_handle, which is a property that creates a
+                # session handle if one is not already defined
+                session_handle = doc.session_handle
+            else:
+                doc.session_handle = session_handle
+        # does the work necessary to load file into filesystem
+        # in the future, get_file_handle() could also be supported
+        if self.retry_strategy:
+            self.retry_strategy(doc.get_file)
+        else:
+            doc.get_file()
+        return doc.filename
+>>>>>>> 38c78099 (Add custom error to be used for retryable errors)
