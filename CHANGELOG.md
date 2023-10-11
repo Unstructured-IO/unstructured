@@ -1,10 +1,13 @@
-## 0.10.22-dev0
+## 0.10.22-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* **Fixes PDF list parsing creating duplicate list items** Previously a bug in PDF list item parsing caused removal of other elements and duplication of the list items
+
 
 ## 0.10.21
 
