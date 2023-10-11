@@ -8,7 +8,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 # NOTE(crag): sets number of tesseract threads to 1 which may help with more reproducible outputs
 export OMP_THREAD_LIMIT=1
 
-scripts=(
+all_tests=(
 'test-ingest-s3.sh'
 'test-ingest-s3-minio.sh'
 'test-ingest-azure.sh'
@@ -45,29 +45,48 @@ scripts=(
 'test-ingest-sharepoint.sh'
 )
 
-CURRENT_SCRIPT="none"
+full_python_matrix_tests=(
+  'test-ingest-sharepoint.sh'
+  'test-ingest-local.sh'
+  'test-ingest-local-single-file.sh'
+  'test-ingest-local-single-file-with-encoding.sh'
+  'test-ingest-local-single-file-with-pdf-infer-table-structure.sh'
+  'test-ingest-s3.sh'
+  'test-ingest-google-drive.sh'
+  'test-ingest-gcs.sh'
+)
+
+CURRENT_TEST="none"
 
 function print_last_run() {
-  if [ "$CURRENT_SCRIPT" != "none" ]; then
-    echo "Last ran script: $CURRENT_SCRIPT"
+  if [ "$CURRENT_TEST" != "none" ]; then
+    echo "Last ran script: $CURRENT_TEST"
   fi
 }
 
 trap print_last_run EXIT
 
-for script in "${scripts[@]}"; do
-  CURRENT_SCRIPT=$script
-  if [[ "$CURRENT_SCRIPT" == "test-ingest-notion.sh" ]]; then
-    echo "--------- RUNNING SCRIPT $script --- IGNORING FAILURES"
+python_version=$(python --version 2>&1)
+
+for test in "${all_tests[@]}"; do
+  CURRENT_TEST="$test"
+  # IF: python_version is not 3.10 (wildcarded to match any subminor version) AND the current test is not in full_python_matrix_tests
+  # Note: to test we expand the full_python_matrix_tests array to a string and then regex match the current test
+  if [[ "$python_version" != "Python 3.10"* ]] && [[ ! "${full_python_matrix_tests[*]}" =~ $test ]] ; then
+    echo "--------- SKIPPING SCRIPT $test ---------"
+    continue
+  fi
+  if [[ "$test" == "test-ingest-notion.sh" ]]; then
+    echo "--------- RUNNING SCRIPT $test --- IGNORING FAILURES"
     set +e
-    echo "Running ./test_unstructured_ingest/$script"
-    ./test_unstructured_ingest/"$script"
+    echo "Running ./test_unstructured_ingest/$test"
+    ./test_unstructured_ingest/"$test"
     set -e
-    echo "--------- FINISHED SCRIPT $script ---------"
+    echo "--------- FINISHED SCRIPT $test ---------"
   else
-    echo "--------- RUNNING SCRIPT $script ---------"
-    echo "Running ./test_unstructured_ingest/$script"
-    ./test_unstructured_ingest/"$script"
-    echo "--------- FINISHED SCRIPT $script ---------"
+    echo "--------- RUNNING SCRIPT $test ---------"
+    echo "Running ./test_unstructured_ingest/$test"
+    ./test_unstructured_ingest/"$test"
+    echo "--------- FINISHED SCRIPT $test ---------"
   fi
 done
