@@ -469,9 +469,11 @@ class Text(Element):
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
+        embeddings: Optional[List[float]] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
+        self.embeddings: Optional[List[float]] = embeddings
 
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
@@ -497,6 +499,7 @@ class Text(Element):
                 (self.text == other.text),
                 (self.metadata.coordinates == other.metadata.coordinates),
                 (self.category == other.category),
+                (self.embeddings == other.embeddings),
             ],
         )
 
@@ -505,6 +508,8 @@ class Text(Element):
         out["element_id"] = self.id
         out["type"] = self.category
         out["text"] = self.text
+        if self.embeddings:
+            out["embeddings"] = self.embeddings
         return out
 
     def apply(self, *cleaners: Callable):

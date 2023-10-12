@@ -782,7 +782,8 @@ def test_partition_pdf_from_file_with_hi_res_strategy_custom_metadata_date(
 @pytest.mark.parametrize("strategy", ["fast", "hi_res"])
 def test_partition_pdf_with_json(strategy: str):
     elements = pdf.partition_pdf(
-        example_doc_path("layout-parser-paper-fast.pdf"), strategy=strategy
+        example_doc_path("layout-parser-paper-fast.pdf"),
+        strategy=strategy,
     )
     assert_round_trips_through_JSON(elements)
 

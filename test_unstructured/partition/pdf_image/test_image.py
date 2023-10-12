@@ -405,7 +405,8 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
 
 def test_partition_msg_with_json():
     elements = image.partition_image(
-        example_doc_path("layout-parser-paper-fast.jpg"), strategy="auto"
+        example_doc_path("layout-parser-paper-fast.jpg"),
+        strategy="auto",
     )
     assert_round_trips_through_JSON(elements)
 
