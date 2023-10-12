@@ -140,6 +140,12 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
     def add_cli_options(cmd: click.Command) -> None:
         options = [
             click.Option(
+                ["--skip-infer-table-types"],
+                type=DelimitedString(),
+                default=None,
+                help="Optional list of document types to skip table extraction on",
+            ),
+            click.Option(
                 ["--pdf-infer-table-structure"],
                 default=False,
                 help="If set to True, partition will include the table's text "

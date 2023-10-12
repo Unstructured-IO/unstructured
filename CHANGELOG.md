@@ -1,15 +1,16 @@
-## 0.10.22-dev2
+## 0.10.22-dev5
 
 ### Enhancements
 
 * **bump `unstructured-inference` to `0.7.3`** The updated version of `unstructured-inference` supports a new version of the Chipper model, as well as a cleaner schema for its output classes. Support is included for new inference features such as hierarchy and ordering.
+* **Expose skip_infer_table_types in ingest CLI** For each connector a new `--skip-infer-table-types` parameter was added to map to the `skip_infer_table_types` partition argument. This gives more granular control to unstructured-ingest users, allowing them to specify which file types for which we should attempt table extraction.
 
 ### Features
 
 ### Fixes
 
 * **Fixes PDF list parsing creating duplicate list items** Previously a bug in PDF list item parsing caused removal of other elements and duplication of the list items
-
+* **Fix ingest pipeline reformat nodes not discoverable** Fixes issue where  reformat nodes raise ModuleNotFoundError on import. This was due to the directory was missing `__init__.py` in order to make it discoverable.
 
 ## 0.10.21
 
