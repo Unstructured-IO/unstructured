@@ -1,4 +1,4 @@
-## 0.10.22-dev3
+## 0.10.22-dev4
 
 ### Enhancements
 
@@ -7,7 +7,7 @@
 ### Fixes
 
 * **Fixes PDF list parsing creating duplicate list items** Previously a bug in PDF list item parsing caused removal of other elements and duplication of the list items
-
+* **Fix default language in ingest CLI** Previously the default was being set to english which injected potentially incorrect information to downstream language detection libraries. By setting the default to None allows those libraries to better detect what language the text is in the doc being processed.
 
 ## 0.10.21
 
