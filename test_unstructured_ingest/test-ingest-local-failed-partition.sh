@@ -12,10 +12,29 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
+  echo "RUNNING CLEANUP"
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
 }
+
 trap cleanup EXIT
+
+function check() {
+  # Currently, unstructured doesn't support .gif files for partitioning so only one of the files should
+  # get successfully partitioned. If support for .gif files is ever added, that test file
+  # should be updated to another non-supported filetype
+  files=$(find "$OUTPUT_DIR" -type f)
+  echo "files: $files"
+
+  "$SCRIPT_DIR"/check-num-files-output.sh 1 "$OUTPUT_FOLDER_NAME"
+
+  filename=$(basename "$files")
+  expected_file="small.txt.json"
+  if [ "$filename" != "$expected_file" ]; then
+    echo "The only partitioned file that should exist is $expected_file, instead found $filename"
+    exit 1
+  fi
+}
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
@@ -28,20 +47,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --input-path "$SCRIPT_DIR"/failed-partition-docs \
     --work-dir "$WORK_DIR"
 
-
-# Currently, unstructured doesn't support .gif files for partitioning so only one of the files should
-# get successfully partitioned. If support for .gif files is ever added, that test file
-# should be updated to another non-supported filetype
-files=$(find "$OUTPUT_DIR" -type f)
-echo "files: $files"
-num_files=$(echo  "$files" | wc -l)
-if [ "$num_files" -ne 1 ]; then
-  echo "There should be only one file that got processed, found: $num_files"
-  exit 1
-fi
-filename=$(basename "$files")
-expected_file="small.txt.json"
-if [ "$filename" != "$expected_file" ]; then
-  echo "The only partitioned file that should exist is $expected_file, instead found $filename"
-  exit 1
-fi
+check
