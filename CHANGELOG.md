@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-* **bump `unstructured-inference` to `0.7.3`** The updated version of `unstructured-inference` supports a new version of the Chipper model, as well as a cleaner schema for its output classes.
+* **bump `unstructured-inference` to `0.7.3`** The updated version of `unstructured-inference` supports a new version of the Chipper model, as well as a cleaner schema for its output classes. Support is included for new inference features such as hierarchy and ordering.
 
 ### Features
 
