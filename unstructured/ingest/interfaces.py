@@ -38,8 +38,9 @@ class BaseConfig(DataClassJsonMixin, ABC):
 class PartitionConfig(BaseConfig):
     # where to write structured data outputs
     pdf_infer_table_structure: bool = False
+    skip_infer_table_types: t.Optional[t.List[str]] = None
     strategy: str = "auto"
-    ocr_languages: str = "eng"
+    ocr_languages: t.Optional[t.List[str]] = None
     encoding: t.Optional[str] = None
     fields_include: t.List[str] = field(
         default_factory=lambda: ["element_id", "text", "type", "metadata", "embeddings"],
@@ -59,6 +60,7 @@ class ProcessorConfig(BaseConfig):
     work_dir: str = str((Path.home() / ".cache" / "unstructured" / "ingest" / "pipeline").resolve())
     output_dir: str = "structured-output"
     num_processes: int = 2
+    raise_on_error: bool = False
 
 
 @dataclass
