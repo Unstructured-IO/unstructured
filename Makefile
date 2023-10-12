@@ -331,7 +331,7 @@ check-ruff:
 
 .PHONY: check-autoflake
 check-autoflake:
-	autoflake --in-place --check-diff .
+	autoflake --check-diff .
 
 ## check-scripts:           run shellcheck
 .PHONY: check-scripts
