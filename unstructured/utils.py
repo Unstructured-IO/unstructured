@@ -205,7 +205,7 @@ def scarf_analytics():
         gpu_present = False
         pass
 
-    python_version = '.'.join(platform.python_version().split(".")[:2])
+    python_version = ".".join(platform.python_version().split(".")[:2])
 
     try:
         if os.getenv("SCARF_NO_ANALYTICS") != "true" and os.getenv("DO_NOT_TRACK") != "true":
