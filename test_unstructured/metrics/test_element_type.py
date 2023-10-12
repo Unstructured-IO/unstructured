@@ -1,6 +1,9 @@
 import pytest
 
-from unstructured.metrics.element_type import get_element_type_frequency, calculate_element_type_percent_match
+from unstructured.metrics.element_type import (
+    calculate_element_type_percent_match,
+    get_element_type_frequency,
+)
 from unstructured.partition.auto import partition
 from unstructured.staging.base import elements_to_json
 

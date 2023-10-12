@@ -23,10 +23,16 @@ def get_element_type_frequency(
 
 
 def calculate_element_type_percent_match(
-    output: Dict, 
+    output: Dict,
     source: Dict,
     category_depth_weight: float = 0.5,
 ) -> float:
+    """
+    Calculate the percent match between two frequency dictionary. Intended to use with
+    `get_element_type_frequency` function. The function counts the absolute exact match
+    (type and depth), and counts the weighted match (correct type but different depth),
+    then normalized with source's total elements.
+    """
     if len(output) == 0 or len(source) == 0:
         return 0.0
 
@@ -38,14 +44,14 @@ def calculate_element_type_percent_match(
     unmatched_depth_output = {}
     unmatched_depth_source = {}
 
-    for k,v in output_copy.items():
+    for k, v in output_copy.items():
         if k in source_copy:
             match_count = min(output_copy[k], source_copy[k])
             total_match_element_count += match_count
             total_source_element_count += match_count
             output_copy[k] -= match_count
             source_copy[k] -= match_count
-            
+
             element_type = k[0]
             if element_type not in unmatched_depth_output:
                 unmatched_depth_output[element_type] = output_copy[k]
@@ -56,7 +62,7 @@ def calculate_element_type_percent_match(
             else:
                 unmatched_depth_source[element_type] += source_copy[k]
 
-    for k,v in unmatched_depth_source.items():
+    for k, v in unmatched_depth_source.items():
         total_source_element_count += unmatched_depth_source[k]
         if k in unmatched_depth_output:
             match_count = min(unmatched_depth_output[k], unmatched_depth_source[k])

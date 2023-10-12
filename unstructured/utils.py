@@ -203,7 +203,7 @@ def scarf_analytics():
                 "https://packages.unstructured.io/python-telemetry?version="
                 + __version__
                 + "&platform="
-                + platform.system()
+                + platform.system(),
             )
     except Exception:
         pass
