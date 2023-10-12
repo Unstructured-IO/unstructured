@@ -1,5 +1,6 @@
 import hashlib
 import json
+import typing as t
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -25,21 +26,21 @@ class Partitioner(PartitionNode):
         if not self.pipeline_context.reprocess and json_path.is_file() and json_path.stat().st_size:
             logger.info(f"File exists: {json_path}, skipping partition")
             return str(json_path)
-        languages = (
-            self.partition_config.ocr_languages.split("+")
-            if self.partition_config.ocr_languages
-            else []
-        )
-        partition_kwargs = {
+
+        partition_kwargs: t.Dict[str, t.Any] = {
             "strategy": self.partition_config.strategy,
-            "languages": languages,
             "encoding": self.partition_config.encoding,
             "pdf_infer_table_structure": self.partition_config.pdf_infer_table_structure,
         }
+
+        if self.partition_config.ocr_languages:
+            partition_kwargs["languages"] = self.partition_config.ocr_languages.split("+")
+
         if self.partition_config.skip_infer_table_types:
             partition_kwargs[
                 "skip_infer_table_types"
             ] = self.partition_config.skip_infer_table_types
+
         elements = doc.process_file(
             partition_config=self.partition_config,
             **partition_kwargs,

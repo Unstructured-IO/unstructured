@@ -159,12 +159,11 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
             ),
             click.Option(
                 ["--ocr-languages"],
-                default="eng",
+                default=None,
                 help="A list of language packs to specify which languages to use for OCR, "
                 "separated by '+' e.g. 'eng+deu' to use the English and German language packs. "
                 "The appropriate Tesseract "
-                "language pack needs to be installed."
-                "Default: eng",
+                "language pack needs to be installed.",
             ),
             click.Option(
                 ["--encoding"],
