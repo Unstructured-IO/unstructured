@@ -1,3 +1,13 @@
+## 0.10.24-dev0
+
+### Enhancements
+
+* **Ingest compression utilities and fsspec connector support** Generic utility code added to handle files that get pulled from a source connector that are either tar or zip compressed and uncompress them locally. This is then processed using a local source connector. Currently this functionality has been incorporated into the fsspec connector and all those inheriting from it (currently: Azure Blob Storage, Google Cloud Storage, S3, Box, and Dropbox).
+
+### Features
+
+### Fixes
+
 ## 0.10.23
 
 ### Enhancements
