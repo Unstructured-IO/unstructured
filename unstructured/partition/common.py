@@ -5,6 +5,7 @@ import os
 import subprocess
 from datetime import datetime
 from io import BufferedReader, BytesIO, TextIOWrapper
+from pathlib import Path
 from tempfile import SpooledTemporaryFile
 from typing import (
     IO,
@@ -84,6 +85,8 @@ HIERARCHY_RULE_SET = {
 
 
 def get_last_modified_date(filename: str) -> Union[str, None]:
+    if not Path(filename).exists():
+        return None
     modify_date = datetime.fromtimestamp(os.path.getmtime(filename))
     return modify_date.strftime("%Y-%m-%dT%H:%M:%S%z")
 
