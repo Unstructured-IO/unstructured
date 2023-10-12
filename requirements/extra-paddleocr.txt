@@ -10,7 +10,7 @@ babel==2.13.0
     # via flask-babel
 bce-python-sdk==0.8.90
     # via visualdl
-blinker==1.6.2
+blinker==1.6.3
     # via flask
 cachetools==5.3.1
     # via premailer
@@ -33,7 +33,7 @@ cssselect==1.2.0
     # via premailer
 cssutils==2.7.1
     # via premailer
-cycler==0.12.0
+cycler==0.12.1
     # via matplotlib
 cython==3.0.3
     # via unstructured-paddleocr
@@ -171,7 +171,7 @@ pytz==2023.3.post1
     #   pandas
 pywavelets==1.4.1
     # via scikit-image
-rapidfuzz==3.3.1
+rapidfuzz==3.4.0
     # via
     #   -c requirements/base.txt
     #   unstructured-paddleocr

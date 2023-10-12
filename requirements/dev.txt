@@ -8,10 +8,6 @@ anyio==3.7.1
     # via
     #   -c requirements/constraints.in
     #   jupyter-server
-appdirs==1.4.4
-    # via
-    #   -c requirements/test.txt
-    #   virtualenv
 appnope==0.1.3
     # via
     #   ipykernel
@@ -148,7 +144,7 @@ jsonschema-specifications==2023.7.1
     # via jsonschema
 jupyter==1.0.0
     # via -r requirements/dev.in
-jupyter-client==8.3.1
+jupyter-client==8.4.0
     # via
     #   ipykernel
     #   jupyter-console
@@ -157,7 +153,7 @@ jupyter-client==8.3.1
     #   qtconsole
 jupyter-console==6.6.3
     # via jupyter
-jupyter-core==4.12.0
+jupyter-core==5.4.0
     # via
     #   -c requirements/constraints.in
     #   ipykernel
@@ -182,7 +178,7 @@ jupyter-server==2.7.3
     #   notebook-shim
 jupyter-server-terminals==0.4.4
     # via jupyter-server
-jupyterlab==4.0.6
+jupyterlab==4.0.7
     # via notebook
 jupyterlab-pygments==0.2.2
     # via nbconvert
@@ -249,7 +245,13 @@ pip-tools==7.3.0
     # via -r requirements/dev.in
 pkgutil-resolve-name==1.3.10
     # via jsonschema
-pre-commit==2.20.0
+platformdirs==3.10.0
+    # via
+    #   -c requirements/constraints.in
+    #   -c requirements/test.txt
+    #   jupyter-core
+    #   virtualenv
+pre-commit==3.4.0
     # via -r requirements/dev.in
 prometheus-client==0.17.1
     # via jupyter-server
@@ -318,7 +320,7 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
-rpds-py==0.10.4
+rpds-py==0.10.6
     # via
     #   jsonschema
     #   referencing
@@ -332,7 +334,6 @@ six==1.16.0
     #   bleach
     #   python-dateutil
     #   rfc3339-validator
-    #   virtualenv
 sniffio==1.3.0
     # via anyio
 soupsieve==2.5
@@ -347,8 +348,6 @@ terminado==0.17.1
     #   jupyter-server-terminals
 tinycss2==1.2.1
     # via nbconvert
-toml==0.10.2
-    # via pre-commit
 tomli==2.0.1
     # via
     #   -c requirements/test.txt
@@ -397,7 +396,7 @@ urllib3==1.26.17
     #   -c requirements/constraints.in
     #   -c requirements/test.txt
     #   requests
-virtualenv==20.4.7
+virtualenv==20.24.5
     # via pre-commit
 wcwidth==0.2.8
     # via prompt-toolkit
@@ -407,7 +406,7 @@ webencodings==0.5.1
     # via
     #   bleach
     #   tinycss2
-websocket-client==1.6.3
+websocket-client==1.6.4
     # via jupyter-server
 wheel==0.41.2
     # via
