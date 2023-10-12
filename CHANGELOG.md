@@ -1,6 +1,8 @@
-## 0.10.22-dev1
+## 0.10.22-dev2
 
 ### Enhancements
+
+* **bump `unstructured-inference` to `0.7.3`** The updated version of `unstructured-inference` supports a new version of the Chipper model, as well as a cleaner schema for its output classes.
 
 ### Features
 
