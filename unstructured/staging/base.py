@@ -41,12 +41,7 @@ TABLE_FIELDNAMES: List[str] = [
 
 def convert_to_text(elements: List[Element]) -> str:
     """Converts a list of elements into clean, concatenated text."""
-    clean_concat_text: str = ""
-    for element in elements:
-        chunk = element.to_dict()
-        clean_concat_text += chunk["text"]
-        clean_concat_text += "\n"
-    return clean_concat_text
+    return "\n".join([e.text for e in elements if hasattr(e, "text") and e.text])
 
 
 def elements_to_text(
