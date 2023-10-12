@@ -1,4 +1,4 @@
-## 0.10.22-dev5
+## 0.10.22-dev6
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 * **Add flag to ingest CLI to raise error if any single doc fails in pipeline** Currently if a single doc fails in the pipeline, the whole thing halts due to the error. This flag defaults to log an error but continue with the docs it can.
 
 ### Features
+* **Add `elements_to_text` as a staging helper function** In order to get a single clean text output from unstructured for metric calculations, automate the process of extracting text from elements using this function.
 
 ### Fixes
 
