@@ -10,7 +10,6 @@ from unstructured.ingest.cli.common import (
 from unstructured.ingest.cli.interfaces import (
     CliFsspecConfig,
     CliMixin,
-    CliRecursiveConfig,
 )
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
 from unstructured.ingest.interfaces import BaseConfig
@@ -74,5 +73,5 @@ def azure_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = azure_source
-    add_options(cmd, extras=[AzureCliConfig, CliFsspecConfig, CliRecursiveConfig])
+    add_options(cmd, extras=[AzureCliConfig, CliFsspecConfig])
     return cmd

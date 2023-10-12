@@ -10,7 +10,6 @@ from unstructured.ingest.cli.common import (
 from unstructured.ingest.cli.interfaces import (
     CliFsspecConfig,
     CliMixin,
-    CliRecursiveConfig,
 )
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
 from unstructured.ingest.interfaces import BaseConfig
@@ -116,5 +115,5 @@ def get_dest_cmd() -> click.Command:
 
 def get_source_cmd() -> click.Group:
     cmd = s3_source
-    add_options(cmd, extras=[S3CliConfig, CliFsspecConfig, CliRecursiveConfig])
+    add_options(cmd, extras=[S3CliConfig, CliFsspecConfig])
     return cmd

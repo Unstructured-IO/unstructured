@@ -7,7 +7,6 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.cli.interfaces import (
     CliFsspecConfig,
-    CliRecursiveConfig,
 )
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
@@ -37,5 +36,5 @@ def fsspec_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = fsspec_source
-    add_options(cmd, extras=[CliFsspecConfig, CliRecursiveConfig])
+    add_options(cmd, extras=[CliFsspecConfig])
     return cmd
