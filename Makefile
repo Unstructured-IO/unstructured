@@ -329,6 +329,10 @@ check-flake8:
 check-ruff:
 	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore COM812,PT011,PT012,SIM117
 
+.PHONY: check-autoflake
+check-autoflake:
+	autoflake --in-place --check-diff .
+
 ## check-scripts:           run shellcheck
 .PHONY: check-scripts
 check-scripts:
@@ -347,6 +351,7 @@ check-version:
 tidy:
 	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --fix-only || true
 	black  .
+	autoflake --in-place .
 
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync
