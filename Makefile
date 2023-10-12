@@ -33,7 +33,7 @@ install-base-ci: install-base-pip-packages install-nltk-models install-test
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
 	python3 -m pip install pip==${PIP_VERSION}
-	python3 -m pip install -r requirements/base.txt --extra-index-url https://packages.unstructured.io/simple/
+	python3 -m pip install -r requirements/base.txt
 
 .PHONY: install-huggingface
 install-huggingface:

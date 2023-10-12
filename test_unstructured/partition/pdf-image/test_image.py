@@ -524,3 +524,9 @@ def test_partition_image_hi_res_invalid_ocr_mode():
     filename = "example-docs/layout-parser-paper-fast.jpg"
     with pytest.raises(ValueError):
         _ = image.partition_image(filename=filename, ocr_mode="invalid_ocr_mode", strategy="hi_res")
+
+
+def test_partition_image_raises_TypeError_for_invalid_languages():
+    filename = "example-docs/layout-parser-paper-fast.jpg"
+    with pytest.raises(TypeError):
+        image.partition_image(filename=filename, strategy="hi_res", languages="eng")

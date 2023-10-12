@@ -30,6 +30,7 @@ class Database(FromJSONMixin, GetHTMLMixin):
     url: str
     is_inline: bool
     public_url: str
+    request_id: Optional[str] = None
     properties: Dict[str, DBPropertyBase] = field(default_factory=dict)
     title: List[RichText] = field(default_factory=list)
     description: List[RichText] = field(default_factory=list)

@@ -1,6 +1,8 @@
 import functools
 import importlib
 import json
+import os
+import platform
 from datetime import datetime
 from functools import wraps
 from typing import (
@@ -18,7 +20,10 @@ from typing import (
     cast,
 )
 
+import requests
 from typing_extensions import ParamSpec
+
+from unstructured.__version__ import __version__
 
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
@@ -231,3 +236,16 @@ def only(it: Iterable) -> Any:
             "Expected only 1 element in passed argument, instead there are at least 2 elements.",
         )
     return out
+
+
+def scarf_analytics():
+    try:
+        if os.getenv("SCARF_NO_ANALYTICS") != "true" and os.getenv("DO_NOT_TRACK") != "true":
+            requests.get(
+                "https://packages.unstructured.io/python-telemetry?version="
+                + __version__
+                + "&platform="
+                + platform.system()
+            )
+    except Exception:
+        pass

@@ -4,6 +4,8 @@
 #
 #    pip-compile requirements/base.in
 #
+backoff==2.2.1
+    # via -r requirements/base.in
 beautifulsoup4==4.12.2
     # via -r requirements/base.in
 certifi==2023.7.22
