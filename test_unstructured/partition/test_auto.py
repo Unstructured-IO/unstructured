@@ -1123,3 +1123,10 @@ def test_partition_default_does_not_overwrite_other_defaults():
     auto_elements = partition(filename)
     assert auto_elements[0].metadata.languages != ["eng"]
     assert auto_elements[0].metadata.languages == text_elements[0].metadata.languages
+
+
+def test_partition_languages_default_to_None():
+    filename = "example-docs/handbook-1p.docx"
+    elements = partition(filename=filename, detect_language_per_element=True)
+    none_langs = [element for element in elements if element.metadata.languages is None]
+    assert none_langs[0].text == ""

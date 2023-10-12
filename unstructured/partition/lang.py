@@ -220,7 +220,7 @@ def _convert_to_standard_langcode(lang: str) -> str:
 def detect_languages(
     text: str,
     languages: Optional[List[str]] = ["auto"],
-) -> List[str]:
+) -> List[str] | None:
     """
     Detects the list of languages present in the text (in the default "auto" mode),
     or formats and passes through the user inputted document languages if provided.
@@ -234,12 +234,13 @@ def detect_languages(
     # For example, partition_msg relies on partition_html and partition_text, but the metadata
     # gets overwritten after elements have been returned by _html and _text,
     # so `languages` would be detected twice.
-    if languages[0] == "":
-        return [""]
+    # Also return None if there is no text.
+    if languages[0] == "" or text.strip == "":
+        return None
 
-    # Default to "eng" if text is empty or it has only ascii characters and is short
-    if text.strip() == "" or (re.match(r"^[\x00-\x7F]+$", text) and len(text) < 20):
-        return ["eng"]  # english as default
+    # Default to "eng" if text has only ascii characters and is short
+    if re.match(r"^[\x00-\x7F]+$", text) and len(text) < 20:
+        return ["eng"]
 
     # set seed for deterministic langdetect outputs
     DetectorFactory.seed = 0
@@ -264,7 +265,7 @@ def detect_languages(
             langdetect_result = detect_langs(text)
         except lang_detect_exception.LangDetectException as e:
             logger.warning(e)
-            return ["eng"]  # english as default
+            return None  # None as default
 
         # NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
         # Chinese variants. We normalizes these because there is a single model for Chinese
