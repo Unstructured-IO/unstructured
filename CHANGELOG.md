@@ -1,4 +1,4 @@
-## 0.10.22-dev4
+## 0.10.22-dev5
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 
 ### Fixes
 
+* **Fix languages default** Previously the default language was being set to English when elements didn't have text or if langdetect could not detect the language. It now defaults to None so there is not misleading information about the language detected.
 * **Fixes PDF list parsing creating duplicate list items** Previously a bug in PDF list item parsing caused removal of other elements and duplication of the list items
 * **Fix ingest pipeline reformat nodes not discoverable** Fixes issue where  reformat nodes raise ModuleNotFoundError on import. This was due to the directory was missing `__init__.py` in order to make it discoverable.
 * **Fix default language in ingest CLI** Previously the default was being set to english which injected potentially incorrect information to downstream language detection libraries. By setting the default to None allows those libraries to better detect what language the text is in the doc being processed.
