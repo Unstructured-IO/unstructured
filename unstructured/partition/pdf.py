@@ -382,14 +382,18 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
             **process_with_model_kwargs,
         )
-        final_layout = process_file_with_ocr(
-            filename,
-            out_layout,
-            is_image=is_image,
-            ocr_languages=ocr_languages,
-            ocr_mode=ocr_mode,
-            pdf_image_dpi=pdf_image_dpi,
-        )
+        if model_name.startswith("chipper"):
+            # NOTE(alan): We shouldn't do OCR with chipper
+            final_layout = out_layout
+        else:
+            final_layout = process_file_with_ocr(
+                filename,
+                out_layout,
+                is_image=is_image,
+                ocr_languages=ocr_languages,
+                ocr_mode=ocr_mode,
+                pdf_image_dpi=pdf_image_dpi,
+            )
     else:
         out_layout = process_data_with_model(
             file,
@@ -399,19 +403,23 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
             **process_with_model_kwargs,
         )
-        if hasattr(file, "seek"):
-            file.seek(0)
-        final_layout = process_data_with_ocr(
-            file,
-            out_layout,
-            is_image=is_image,
-            ocr_languages=ocr_languages,
-            ocr_mode=ocr_mode,
-            pdf_image_dpi=pdf_image_dpi,
-        )
+        if model_name.startswith("chipper"):
+            # NOTE(alan): We shouldn't do OCR with chipper
+            final_layout = out_layout
+        else:
+            if hasattr(file, "seek"):
+                file.seek(0)
+            final_layout = process_data_with_ocr(
+                file,
+                out_layout,
+                is_image=is_image,
+                ocr_languages=ocr_languages,
+                ocr_mode=ocr_mode,
+                pdf_image_dpi=pdf_image_dpi,
+            )
 
-    # NOTE(alan): chipperv2 sorts the elements itself.
-    if model_name == "chipperv2":
+    # NOTE(alan): starting with v2, chipper sorts the elements itself.
+    if model_name == "chipper":
         kwargs["sort_mode"] = SORT_MODE_DONT
 
     elements = document_to_element_list(
@@ -447,7 +455,9 @@ def _partition_pdf_or_image_local(
                 " ",
                 el.text or "",
             ).strip()
-            if el.text or isinstance(el, PageBreak):
+            # NOTE(alan): with chipper there are parent elements with no text we don't want to
+            # filter those out and leave the children orphaned.
+            if el.text or isinstance(el, PageBreak) or model_name.startswith("chipper"):
                 out_elements.append(cast(Element, el))
 
     return out_elements
