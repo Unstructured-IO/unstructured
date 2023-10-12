@@ -1,6 +1,8 @@
-## 0.10.22-dev2
+## 0.10.22-dev5
 
 ### Enhancements
+
+* **Expose skip_infer_table_types in ingest CLI** For each connector a new `--skip-infer-table-types` parameter was added to map to the `skip_infer_table_types` partition argument. This gives more granular control to unstructured-ingest users, allowing them to specify which file types for which we should attempt table extraction.
 
 ### Features
 
@@ -8,7 +10,7 @@
 
 * **Fixes PDF list parsing creating duplicate list items** Previously a bug in PDF list item parsing caused removal of other elements and duplication of the list items
 * **Fixes duplicated elements** Fixes issue where elements are duplicated when embeddings are generated. This will allow users to generate embeddings for their list of Elements without duplicating/breaking the orginal content.
-
+* **Fix ingest pipeline reformat nodes not discoverable** Fixes issue where  reformat nodes raise ModuleNotFoundError on import. This was due to the directory was missing `__init__.py` in order to make it discoverable.
 
 ## 0.10.21
 

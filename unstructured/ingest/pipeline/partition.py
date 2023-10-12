@@ -30,12 +30,19 @@ class Partitioner(PartitionNode):
             if self.partition_config.ocr_languages
             else []
         )
+        partition_kwargs = {
+            "strategy": self.partition_config.strategy,
+            "languages": languages,
+            "encoding": self.partition_config.encoding,
+            "pdf_infer_table_structure": self.partition_config.pdf_infer_table_structure,
+        }
+        if self.partition_config.skip_infer_table_types:
+            partition_kwargs[
+                "skip_infer_table_types"
+            ] = self.partition_config.skip_infer_table_types
         elements = doc.process_file(
             partition_config=self.partition_config,
-            strategy=self.partition_config.strategy,
-            languages=languages,
-            encoding=self.partition_config.encoding,
-            pdf_infer_table_structure=self.partition_config.pdf_infer_table_structure,
+            **partition_kwargs,
         )
         with open(json_path, "w", encoding="utf8") as output_f:
             logger.info(f"writing partitioned content to {json_path}")
