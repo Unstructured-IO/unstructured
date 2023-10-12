@@ -89,6 +89,13 @@ class CliProcessorConfig(ProcessorConfig, CliMixin):
                 show_default=True,
                 help="Number of parallel processes with which to process docs",
             ),
+            click.Option(
+                ["--raise-on-error"],
+                is_flag=True,
+                default=False,
+                help="Is set, will raise error if any doc in the pipeline fail. Otherwise will "
+                "log error and continue with other docs",
+            ),
             click.Option(["-v", "--verbose"], is_flag=True, default=False),
         ]
         cmd.params.extend(options)

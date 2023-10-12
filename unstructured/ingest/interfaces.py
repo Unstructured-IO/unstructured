@@ -60,6 +60,7 @@ class ProcessorConfig(BaseConfig):
     work_dir: str = str((Path.home() / ".cache" / "unstructured" / "ingest" / "pipeline").resolve())
     output_dir: str = "structured-output"
     num_processes: int = 2
+    raise_on_error: bool = False
 
 
 @dataclass

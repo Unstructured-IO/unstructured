@@ -194,9 +194,16 @@ class ElementMetadata:
     detection_class_prob: Optional[float] = None
 
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-        detection_origin: Optional[str] = None
+        # -- The detection mechanism that emitted this element, for debugging purposes. Only
+        # -- defined when UNSTRUCTURED_INCLUDE_DEBUG_METADATA flag is True. Note the `compare=False`
+        # -- setting meaning it's value is not included when comparing two ElementMetadata instances
+        # -- for equality (`.__eq__()`).
+        detection_origin: Optional[str] = dc.field(default=None, compare=False)
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, key: str, value: Any):
+        # -- Avoid triggering `AttributeError` when assigning to `metadata.detection_origin` when
+        # -- when the UNSTRUCTURED_INCLUDE_DEBUG_METADATA flag is False (and the `.detection_origin`
+        # -- field is not defined).
         if not UNSTRUCTURED_INCLUDE_DEBUG_METADATA and key == "detection_origin":
             return
         else:
@@ -208,7 +215,11 @@ class ElementMetadata:
 
         if self.filename is not None:
             file_directory, filename = os.path.split(self.filename)
-            self.file_directory = file_directory or None
+            # -- Only replace file-directory when we have something better. When ElementMetadata is
+            # -- being re-loaded from JSON, the file-directory we want will already be there and
+            # -- filename will be just the file-name portion of the path.
+            if file_directory:
+                self.file_directory = file_directory
             self.filename = filename
 
     def to_dict(self):
@@ -299,7 +310,11 @@ def process_metadata() -> Callable[[Callable[_P, List[Element]]], Callable[_P, L
                     params[param.name] = param.default
 
             regex_metadata: Dict["str", "str"] = params.get("regex_metadata", {})
-            elements = _add_regex_metadata(elements, regex_metadata)
+            # -- don't write an empty `{}` to metadata.regex_metadata when no regex-metadata was
+            # -- requested, otherwise it will serialize (because it's not None) when it has no
+            # -- meaning or is even misleading. Also it complicates tests that don't use regex-meta.
+            if regex_metadata:
+                elements = _add_regex_metadata(elements, regex_metadata)
             unique_element_ids: bool = params.get("unique_element_ids", False)
             if unique_element_ids:
                 for element in elements:
@@ -454,9 +469,11 @@ class Text(Element):
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
+        embeddings: Optional[List[float]] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
+        self.embeddings: Optional[List[float]] = embeddings
 
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
@@ -482,6 +499,7 @@ class Text(Element):
                 (self.text == other.text),
                 (self.metadata.coordinates == other.metadata.coordinates),
                 (self.category == other.category),
+                (self.embeddings == other.embeddings),
             ],
         )
 
@@ -490,6 +508,8 @@ class Text(Element):
         out["element_id"] = self.id
         out["type"] = self.category
         out["text"] = self.text
+        if self.embeddings:
+            out["embeddings"] = self.embeddings
         return out
 
     def apply(self, *cleaners: Callable):
