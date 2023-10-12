@@ -23,12 +23,11 @@ class GCSRunner(FsspecBaseRunner):
 
         from unstructured.ingest.connector.gcs import GcsSourceConnector, SimpleGcsConfig
 
+        connector_config = SimpleGcsConfig.from_dict(self.fsspec_config.to_dict())  # type: ignore
+        connector_config.access_kwargs = {"token": token}
+
         source_doc_connector = GcsSourceConnector(  # type: ignore
-            connector_config=SimpleGcsConfig(
-                remote_url=self.fsspec_config.remote_url,  # type: ignore
-                recursive=self.fsspec_config.recursive,  # type: ignore
-                access_kwargs={"token": token},
-            ),
+            connector_config=connector_config,
             read_config=self.read_config,
             processor_config=self.processor_config,
         )

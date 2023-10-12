@@ -7,11 +7,11 @@ from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
-    CliFsspecConfig,
+    CliFilesStorageConfig,
     CliMixin,
 )
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
-from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.interfaces import BaseConfig, FsspecConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import DropboxRunner
 
@@ -46,7 +46,7 @@ def dropbox_source(ctx: click.Context, **options):
         configs = extract_configs(
             options,
             validate=[DropboxCliConfig],
-            extras={"fsspec_config": CliFsspecConfig},
+            extras={"fsspec_config": FsspecConfig},
         )
         runner = DropboxRunner(
             **configs,  # type: ignore
@@ -59,5 +59,5 @@ def dropbox_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = dropbox_source
-    add_options(cmd, extras=[DropboxCliConfig, CliFsspecConfig])
+    add_options(cmd, extras=[DropboxCliConfig, CliFilesStorageConfig])
     return cmd

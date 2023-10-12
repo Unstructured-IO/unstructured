@@ -15,11 +15,11 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 
-zip_file_extensions = [".zip"]
-tar_file_extensions = [".tar", ".tar.gz", ".tgz"]
+ZIP_FILE_EXT = [".zip"]
+TAR_FILE_EXT = [".tar", ".tar.gz", ".tgz"]
 
 
-def decompress_file(filename: str, path: Optional[str] = None) -> str:
+def uncompress_file(filename: str, path: Optional[str] = None) -> str:
     """
     Takes in a compressed zip or tar file and uncompresses it
     """
@@ -27,22 +27,22 @@ def decompress_file(filename: str, path: Optional[str] = None) -> str:
     if path:
         Path(path).mkdir(parents=True, exist_ok=True)
 
-    if any(filename.endswith(ext) for ext in zip_file_extensions):
+    if any(filename.endswith(ext) for ext in ZIP_FILE_EXT):
         return uncompress_zip_file(zip_filename=filename, path=path)
-    elif any(filename.endswith(ext) for ext in tar_file_extensions):
+    elif any(filename.endswith(ext) for ext in TAR_FILE_EXT):
         return uncompress_tar_file(tar_filename=filename, path=path)
     else:
         raise ValueError(
             "filename {} not a recognized compressed extension: {}".format(
                 filename,
-                ", ".join(zip_file_extensions + tar_file_extensions),
+                ", ".join(ZIP_FILE_EXT + TAR_FILE_EXT),
             ),
         )
 
 
 def uncompress_zip_file(zip_filename: str, path: Optional[str] = None) -> str:
     head, tail = os.path.split(zip_filename)
-    for ext in zip_file_extensions:
+    for ext in ZIP_FILE_EXT:
         if tail.endswith(ext):
             tail = tail[: -(len(ext))]
             break
@@ -55,7 +55,7 @@ def uncompress_zip_file(zip_filename: str, path: Optional[str] = None) -> str:
 
 def uncompress_tar_file(tar_filename: str, path: Optional[str] = None) -> str:
     head, tail = os.path.split(tar_filename)
-    for ext in tar_file_extensions:
+    for ext in TAR_FILE_EXT:
         if tail.endswith(ext):
             tail = tail[: -(len(ext))]
             break
@@ -80,14 +80,17 @@ class CompressionSourceConnectorMixin:
         """
         # Download the raw file to local
         doc.get_file()
-        path = decompress_file(filename=str(doc.filename))
+        path = uncompress_file(filename=str(doc.filename))
         new_read_configs = copy.copy(self.read_config)
         new_process_configs = copy.copy(self.processor_config)
         relative_path = path.replace(self.read_config.download_dir, "")
 
-        new_process_configs.output_dir = str(
-            Path(self.processor_config.output_dir) / Path(relative_path),
-        )
+        if self.processor_config.output_dir.endswith(os.sep):
+            new_process_configs.output_dir = f"{self.processor_config.output_dir}{relative_path}"
+        else:
+            new_process_configs.output_dir = (
+                f"{self.processor_config.output_dir}{os.sep}{relative_path}"
+            )
 
         local_connector = LocalSourceConnector(
             connector_config=SimpleLocalConfig(
@@ -97,5 +100,6 @@ class CompressionSourceConnectorMixin:
             read_config=new_read_configs,
             processor_config=new_process_configs,
         )
+        logger.info(f"Created local source connector: {local_connector.to_json()}")
         local_connector.initialize()
         return local_connector.get_ingest_docs()

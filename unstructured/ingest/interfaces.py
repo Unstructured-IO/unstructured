@@ -76,10 +76,14 @@ class ProcessorConfig(BaseConfig):
 
 
 @dataclass
-class FsspecConfig(BaseConfig):
+class FileStorageConfig(BaseConfig):
     remote_url: str
     uncompress: bool = False
     recursive: bool = False
+
+
+@dataclass
+class FsspecConfig(FileStorageConfig):
     access_kwargs: dict = field(default_factory=dict)
     protocol: str = field(init=False)
     path_without_protocol: str = field(init=False)

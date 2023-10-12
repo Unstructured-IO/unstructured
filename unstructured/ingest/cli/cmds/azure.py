@@ -8,11 +8,11 @@ from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
-    CliFsspecConfig,
+    CliFilesStorageConfig,
     CliMixin,
 )
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
-from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.interfaces import BaseConfig, FsspecConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import AzureRunner
 
@@ -60,7 +60,7 @@ def azure_source(ctx: click.Context, **options):
         configs = extract_configs(
             options,
             validate=[AzureCliConfig],
-            extras={"fsspec_config": CliFsspecConfig},
+            extras={"fsspec_config": FsspecConfig},
         )
         runner = AzureRunner(
             **configs,  # type: ignore
@@ -73,5 +73,5 @@ def azure_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = azure_source
-    add_options(cmd, extras=[AzureCliConfig, CliFsspecConfig])
+    add_options(cmd, extras=[AzureCliConfig, CliFilesStorageConfig])
     return cmd

@@ -10,7 +10,7 @@ from unstructured.ingest.interfaces import (
     BaseConfig,
     ChunkingConfig,
     EmbeddingConfig,
-    FsspecConfig,
+    FileStorageConfig,
     PartitionConfig,
     PermissionsConfig,
     ProcessorConfig,
@@ -249,7 +249,7 @@ class CliRecursiveConfig(BaseConfig, CliMixin):
         cmd.params.extend(options)
 
 
-class CliFsspecConfig(FsspecConfig, CliMixin):
+class CliFilesStorageConfig(FileStorageConfig, CliMixin):
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:
         options = [

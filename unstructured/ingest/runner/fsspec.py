@@ -34,11 +34,11 @@ class FsspecRunner(FsspecBaseRunner):
             SimpleFsspecConfig,
         )
 
+        connector_config = SimpleFsspecConfig.from_dict(
+            self.fsspec_config.to_dict(),  # type: ignore
+        )
         source_doc_connector = FsspecSourceConnector(  # type: ignore
-            connector_config=SimpleFsspecConfig(
-                remote_url=self.fsspec_config.remote_url,  # type: ignore
-                recursive=self.fsspec_config.recursive,  # type: ignore
-            ),
+            connector_config=connector_config,
             read_config=self.read_config,
             processor_config=self.processor_config,
         )

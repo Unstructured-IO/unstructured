@@ -26,13 +26,13 @@ class DropboxRunner(FsspecBaseRunner):
             SimpleDropboxConfig,
         )
 
+        connector_config = SimpleDropboxConfig.from_dict(
+            self.fsspec_config.to_dict(),  # type: ignore
+        )
+        connector_config.access_kwargs = {"token": token}
         source_doc_connector = DropboxSourceConnector(  # type: ignore
             read_config=self.read_config,
-            connector_config=SimpleDropboxConfig(
-                remote_url=self.fsspec_config.remote_url,  # type: ignore
-                recursive=self.fsspec_config.recursive,  # type: ignore
-                access_kwargs={"token": token},
-            ),
+            connector_config=connector_config,
             processor_config=self.processor_config,
         )
 

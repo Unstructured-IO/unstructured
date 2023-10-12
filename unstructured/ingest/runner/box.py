@@ -23,13 +23,11 @@ class BoxRunner(FsspecBaseRunner):
 
         from unstructured.ingest.connector.box import BoxSourceConnector, SimpleBoxConfig
 
+        connector_config = SimpleBoxConfig.from_dict(self.fsspec_config.to_dict())  # type: ignore
+        connector_config.access_kwargs = {"box_app_config": box_app_config}
         source_doc_connector = BoxSourceConnector(  # type: ignore
             read_config=self.read_config,
-            connector_config=SimpleBoxConfig(
-                remote_url=self.fsspec_config.remote_url,  # type: ignore
-                recursive=self.fsspec_config.recursive,  # type: ignore
-                access_kwargs={"box_app_config": box_app_config},
-            ),
+            connector_config=connector_config,
             processor_config=self.processor_config,
         )
 

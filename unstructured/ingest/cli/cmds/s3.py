@@ -8,11 +8,11 @@ from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
-    CliFsspecConfig,
+    CliFilesStorageConfig,
     CliMixin,
 )
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
-from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.interfaces import BaseConfig, FsspecConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import FsspecBaseRunner, S3Runner, runner_map
 
@@ -59,7 +59,7 @@ def s3_source(ctx: click.Context, **options):
         configs = extract_configs(
             options,
             validate=[S3CliConfig],
-            extras={"fsspec_config": CliFsspecConfig},
+            extras={"fsspec_config": FsspecConfig},
         )
         s3_runner = S3Runner(
             **configs,  # type: ignore
@@ -89,7 +89,7 @@ def s3_dest(ctx: click.Context, **options):
         configs = extract_configs(
             options,
             validate=[S3CliConfig],
-            extras={"fsspec_config": CliFsspecConfig}
+            extras={"fsspec_config": FsspecConfig}
             if issubclass(runner_cls, FsspecBaseRunner)
             else None,
         )
@@ -109,11 +109,11 @@ def s3_dest(ctx: click.Context, **options):
 def get_dest_cmd() -> click.Command:
     cmd = s3_dest
     S3CliConfig.add_cli_options(cmd)
-    CliFsspecConfig.add_cli_options(cmd)
+    CliFilesStorageConfig.add_cli_options(cmd)
     return cmd
 
 
 def get_source_cmd() -> click.Group:
     cmd = s3_source
-    add_options(cmd, extras=[S3CliConfig, CliFsspecConfig])
+    add_options(cmd, extras=[S3CliConfig, CliFilesStorageConfig])
     return cmd

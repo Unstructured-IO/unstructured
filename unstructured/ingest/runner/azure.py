@@ -42,13 +42,13 @@ class AzureRunner(FsspecBaseRunner):
             access_kwargs = {"connection_string": connection_string}
         else:
             access_kwargs = {}
+        connector_config = SimpleAzureBlobStorageConfig.from_dict(
+            self.fsspec_config.to_dict(),  # type: ignore
+        )
+        connector_config.access_kwargs = access_kwargs
         source_doc_connector = AzureBlobStorageSourceConnector(  # type: ignore
             processor_config=self.processor_config,
-            connector_config=SimpleAzureBlobStorageConfig(
-                remote_url=self.fsspec_config.remote_url,  # type: ignore
-                recursive=self.fsspec_config.recursive,  # type: ignore
-                access_kwargs=access_kwargs,
-            ),
+            connector_config=connector_config,
             read_config=self.read_config,
         )
 

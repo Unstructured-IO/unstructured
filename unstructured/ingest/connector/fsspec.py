@@ -4,7 +4,11 @@ from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path, PurePath
 
-from unstructured.ingest.compression_support import CompressionSourceConnectorMixin
+from unstructured.ingest.compression_support import (
+    TAR_FILE_EXT,
+    ZIP_FILE_EXT,
+    CompressionSourceConnectorMixin,
+)
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
@@ -31,9 +35,6 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "box",
     "dropbox",
 ]
-
-zip_file_extensions = [".zip"]
-tar_file_extensions = [".tar", ".tar.gz", ".tgz"]
 
 
 @dataclass
@@ -179,15 +180,46 @@ class FsspecSourceConnector(
             ]
 
     def get_ingest_docs(self):
-        return [
-            self.ingest_doc_cls(
-                processor_config=self.processor_config,
+        print(f"Getting docs using {self.to_json(indent=2)}")
+        files = self._list_files()
+        print(f"Files: {files}")
+        # remove compressed files
+        compressed_file_ext = TAR_FILE_EXT + ZIP_FILE_EXT
+        compressed_files = []
+        uncompressed_files = []
+        docs: t.List[BaseIngestDoc] = []
+        for file in files:
+            if any(file.endswith(ext) for ext in compressed_file_ext):
+                compressed_files.append(file)
+            else:
+                uncompressed_files.append(file)
+        docs.extend(
+            [
+                self.ingest_doc_cls(
+                    read_config=self.read_config,
+                    connector_config=self.connector_config,
+                    processor_config=self.processor_config,
+                    remote_file_path=file,
+                )
+                for file in uncompressed_files
+            ],
+        )
+        if not self.connector_config.uncompress:
+            return docs
+        for compressed_file in compressed_files:
+            compressed_doc = self.ingest_doc_cls(
                 read_config=self.read_config,
+                processor_config=self.processor_config,
                 connector_config=self.connector_config,
-                remote_file_path=file,
+                remote_file_path=compressed_file,
             )
-            for file in self._list_files()
-        ]
+            try:
+                local_ingest_docs = self.process_compressed_doc(doc=compressed_doc)
+                logger.info(f"adding {len(local_ingest_docs)} from {compressed_file}")
+                docs.extend(local_ingest_docs)
+            finally:
+                compressed_doc.cleanup_file()
+        return docs
 
 
 @dataclass
