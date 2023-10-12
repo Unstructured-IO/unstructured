@@ -47,16 +47,28 @@ class Pipeline(DataClassJsonMixin):
         manager = mp.Manager()
         self.pipeline_context.ingest_docs_map = manager.dict()
         json_docs = self.doc_factory_node()
+        if not json_docs:
+            logger.info("no docs found to process")
+            return
         logger.info(
             f"processing {len(json_docs)} docs via "
             f"{self.pipeline_context.num_processes} processes",
         )
         for doc in json_docs:
             self.pipeline_context.ingest_docs_map[get_ingest_doc_hash(doc)] = doc
-        self.source_node(iterable=json_docs)
+        fetched_filenames = self.source_node(iterable=json_docs)
+        if not fetched_filenames:
+            logger.info("No files to run partition over")
+            return
         partitioned_jsons = self.partition_node(iterable=json_docs)
+        if not partitioned_jsons:
+            logger.info("No files to process after partitioning")
+            return
         for reformat_node in self.reformat_nodes:
             reformatted_jsons = reformat_node(iterable=partitioned_jsons)
+            if not reformatted_jsons:
+                logger.info(f"No files to process after {reformat_node.__class__.__name__}")
+                return
             partitioned_jsons = reformatted_jsons
 
         # Copy the final destination to the desired location
