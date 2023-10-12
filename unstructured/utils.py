@@ -221,7 +221,7 @@ def scarf_analytics():
                     + platform.machine()
                     + "&gpu="
                     + str(gpu_present)
-                    + "&dev=true"
+                    + "&dev=true",
                 )
             else:
                 requests.get(
@@ -235,7 +235,7 @@ def scarf_analytics():
                     + platform.machine()
                     + "&gpu="
                     + str(gpu_present)
-                    + "&dev=false"
+                    + "&dev=false",
                 )
     except Exception:
         pass

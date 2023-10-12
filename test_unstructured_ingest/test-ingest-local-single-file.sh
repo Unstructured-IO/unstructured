@@ -22,11 +22,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --num-processes "$max_processes" \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --output-dir "$OUTPUT_DIR" \
-    --ocr-languages eng+kor \
     --strategy ocr_only \
     --verbose \
     --reprocess \
-    --input-path example-docs/english-and-korean.png \
+    --input-path example-docs/language-docs/UDHR_first_article_all.txt \
     --work-dir "$WORK_DIR"
 
 set +e
