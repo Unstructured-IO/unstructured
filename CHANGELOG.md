@@ -1,10 +1,11 @@
-## 0.10.22-dev4
+## 0.10.22-dev5
 
 ### Enhancements
 
 * **Expose skip_infer_table_types in ingest CLI** For each connector a new `--skip-infer-table-types` parameter was added to map to the `skip_infer_table_types` partition argument. This gives more granular control to unstructured-ingest users, allowing them to specify which file types for which we should attempt table extraction.
 
 ### Features
+* **Add `elements_to_text` as a staging helper function** In order to get a single clean text output from unstructured for metric calculations, automate the process of extracting text from elements using this function.
 
 ### Fixes
 
