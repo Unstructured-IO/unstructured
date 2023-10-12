@@ -180,9 +180,7 @@ class FsspecSourceConnector(
             ]
 
     def get_ingest_docs(self):
-        print(f"Getting docs using {self.to_json(indent=2)}")
         files = self._list_files()
-        print(f"Files: {files}")
         # remove compressed files
         compressed_file_ext = TAR_FILE_EXT + ZIP_FILE_EXT
         compressed_files = []
