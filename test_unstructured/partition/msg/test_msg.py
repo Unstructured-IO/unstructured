@@ -4,6 +4,7 @@ import pathlib
 import msg_parser
 import pytest
 
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     ElementMetadata,
@@ -11,11 +12,9 @@ from unstructured.documents.elements import (
     NarrativeText,
     Title,
 )
-from unstructured.partition.json import partition_json
 from unstructured.partition.msg import extract_msg_attachment_info, partition_msg
 from unstructured.partition.text import partition_text
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
@@ -268,14 +267,8 @@ def test_partition_msg_custom_metadata_date(
 
 
 def test_partition_msg_with_json():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
-    elements = partition_msg(filename=filename)
-    test_elements = partition_json(text=elements_to_json(elements))
-
-    assert elements == test_elements
-    assert elements[0].metadata.sent_from == test_elements[0].metadata.sent_from
-    assert elements[0].metadata.sent_to[0] == test_elements[0].metadata.sent_to[0]
-    assert elements[0].metadata.subject == test_elements[0].metadata.subject
+    elements = partition_msg(example_doc_path("fake-email.msg"))
+    assert_round_trips_through_JSON(elements)
 
 
 def test_partition_msg_with_pgp_encrypted_message(
