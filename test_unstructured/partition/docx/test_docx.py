@@ -3,7 +3,7 @@
 import os
 import pathlib
 from tempfile import SpooledTemporaryFile
-from typing import Dict, List
+from typing import Dict, List, cast
 
 import docx
 import pytest
@@ -462,7 +462,94 @@ def test_partition_docx_respects_languages_arg():
 def test_partition_docx_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
         filename = "example-docs/handbook-1p.docx"
-        partition_docx(filename=filename, languages="eng")
+        partition_docx(
+            filename=filename,
+            languages="eng",  # pyright: ignore[reportGeneralTypeIssues]
+        )
+
+
+def test_partition_docx_includes_hyperlink_metadata():
+    elements = cast(List[Text], partition_docx(get_test_file_path("hlink-meta.docx")))
+
+    # -- regular paragraph, no hyperlinks --
+    element = elements[0]
+    assert element.text == "One"
+    metadata = element.metadata
+    assert metadata.links is None
+    assert metadata.link_texts is None
+    assert metadata.link_urls is None
+
+    # -- paragraph with "internal-jump" hyperlinks, no URL --
+    element = elements[1]
+    assert element.text == "Two with link to bookmark."
+    metadata = element.metadata
+    assert metadata.links is None
+    assert metadata.link_texts is None
+    assert metadata.link_urls is None
+
+    # -- paragraph with external link, no fragment --
+    element = elements[2]
+    assert element.text == "Three with link to foo.com."
+    metadata = element.metadata
+    assert metadata.links == [
+        {
+            "start_index": 11,
+            "text": "link to foo.com",
+            "url": "https://foo.com",
+        }
+    ]
+    assert metadata.link_texts == ["link to foo.com"]
+    assert metadata.link_urls == ["https://foo.com"]
+
+    # -- paragraph with external link that has query string --
+    element = elements[3]
+    assert element.text == "Four with link to foo.com searching for bar."
+    metadata = element.metadata
+    assert metadata.links == [
+        {
+            "start_index": 10,
+            "text": "link to foo.com searching for bar",
+            "url": "https://foo.com?q=bar",
+        }
+    ]
+    assert metadata.link_texts == ["link to foo.com searching for bar"]
+    assert metadata.link_urls == ["https://foo.com?q=bar"]
+
+    # -- paragraph with external link with separate URI fragment --
+    element = elements[4]
+    assert element.text == "Five with link to foo.com introduction section."
+    metadata = element.metadata
+    assert metadata.links == [
+        {
+            "start_index": 10,
+            "text": "link to foo.com introduction section",
+            "url": "http://foo.com/#intro",
+        }
+    ]
+    assert metadata.link_texts == ["link to foo.com introduction section"]
+    assert metadata.link_urls == ["http://foo.com/#intro"]
+
+    # -- paragraph with link to file on local filesystem --
+    element = elements[7]
+    assert element.text == "Eight with link to file."
+    metadata = element.metadata
+    assert metadata.links == [
+        {
+            "start_index": 11,
+            "text": "link to file",
+            "url": "court-exif.jpg",
+        }
+    ]
+    assert metadata.link_texts == ["link to file"]
+    assert metadata.link_urls == ["court-exif.jpg"]
+
+    # -- regular paragraph, no hyperlinks, ensure no state is retained --
+    element = elements[8]
+    assert element.text == "Nine."
+    metadata = element.metadata
+    assert metadata.links is None
+    assert metadata.link_texts is None
+    assert metadata.link_urls is None
 
 
 # -- module-level fixtures -----------------------------------------------------------------------
@@ -500,6 +587,12 @@ def expected_emphasized_texts():
         {"text": "bold-italic", "tag": "b"},
         {"text": "bold-italic", "tag": "i"},
     ]
+
+
+def get_test_file_path(filename: str) -> str:
+    """String path to a file in the docx/test_files directory."""
+    # -- needs the `get_` prefix on name so this doesn't get picked up as a test-function --
+    return str(pathlib.Path(__file__).parent / "test_files" / filename)
 
 
 @pytest.fixture()

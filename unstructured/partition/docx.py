@@ -33,6 +33,7 @@ from docx.oxml.text.run import CT_R
 from docx.oxml.xmlchemy import BaseOxmlElement
 from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
+from docx.text.hyperlink import Hyperlink
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 from lxml import etree
@@ -47,6 +48,7 @@ from unstructured.documents.elements import (
     EmailAddress,
     Footer,
     Header,
+    Link,
     ListItem,
     NarrativeText,
     PageBreak,
@@ -597,17 +599,61 @@ class _DocxPartitioner:
         iter_p_emph, iter_p_emph_2 = itertools.tee(self._iter_paragraph_emphasis(paragraph))
         return ([e["text"] for e in iter_p_emph], [e["tag"] for e in iter_p_emph_2])
 
+    def _paragraph_link_meta(self, paragraph: Paragraph) -> Tuple[List[str], List[str], List[Link]]:
+        """Describes hyperlinks in `paragraph`, if any."""
+        if not paragraph.hyperlinks:
+            return [], [], []
+
+        def iter_paragraph_links() -> Iterator[Link]:
+            """Generate `Link` typed-dict for each external link in `paragraph`.
+
+            Word uses hyperlinks for internal "jumps" within the document, as well as for web and
+            other external locations. Only generate the external ones.
+            """
+            offset = 0
+            for item in paragraph.iter_inner_content():
+                if isinstance(item, Run):
+                    offset += len(item.text)
+                elif isinstance(item, Hyperlink):  # pyright: ignore[reportUnnecessaryIsInstance]
+                    text = item.text
+                    url = item.url
+                    start_index = offset
+                    offset += len(text)
+                    # -- docx hyperlinks include "internal" links, like a table-of-contents
+                    # -- (TOC) entry has a jump to the named heading in the document (e.g.
+                    # -- '#_Toc147925734'. Such links have a fragment but not an address
+                    # -- (URL). Treat those as regular text.
+                    if not url:
+                        continue
+                    # -- all Word hyperlinks should contain text, otherwise they have no
+                    # -- visual appearance on the document. Not expected, but technically possible
+                    # -- so filter these out too.
+                    if not text:
+                        continue
+                    yield Link(text=text, url=url, start_index=start_index)
+
+        links = list(iter_paragraph_links())
+        # -- link["text"] is allowed to be None by the declared type for `Link`, but never will be
+        # -- here because such a link is filtered out above. Use empty str to satisfy type-checker.
+        link_texts = [link["text"] or "" for link in links]
+        link_urls = [link["url"] for link in links]
+        return link_texts, link_urls, links
+
     def _paragraph_metadata(self, paragraph: Paragraph) -> ElementMetadata:
         """ElementMetadata object describing `paragraph`."""
-        emphasized_text_contents, emphasized_text_tags = self._paragraph_emphasis(paragraph)
         category_depth = self._parse_category_depth_by_style(paragraph)
+        emphasized_text_contents, emphasized_text_tags = self._paragraph_emphasis(paragraph)
+        link_texts, link_urls, links = self._paragraph_link_meta(paragraph)
         element_metadata = ElementMetadata(
-            filename=self._metadata_filename,
-            page_number=self._page_number,
-            last_modified=self._last_modified,
+            category_depth=category_depth,
             emphasized_text_contents=emphasized_text_contents or None,
             emphasized_text_tags=emphasized_text_tags or None,
-            category_depth=category_depth,
+            filename=self._metadata_filename,
+            last_modified=self._last_modified,
+            link_texts=link_texts or None,
+            link_urls=link_urls or None,
+            links=links or None,
+            page_number=self._page_number,
         )
         element_metadata.detection_origin = "docx"
         return element_metadata
