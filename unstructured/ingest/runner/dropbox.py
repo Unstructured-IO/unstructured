@@ -17,7 +17,7 @@ class DropboxRunner(FsspecBaseRunner):
         self.read_config.download_dir = update_download_dir_remote_url(
             connector_name="dropbox",
             read_config=self.read_config,
-            remote_url=self.fsspec_config.remote_url,
+            remote_url=self.fsspec_config.remote_url,  # type: ignore
             logger=logger,
         )
 
@@ -29,8 +29,8 @@ class DropboxRunner(FsspecBaseRunner):
         source_doc_connector = DropboxSourceConnector(  # type: ignore
             read_config=self.read_config,
             connector_config=SimpleDropboxConfig(
-                path=self.fsspec_config.remote_url,
-                recursive=self.fsspec_config.recursive,
+                remote_url=self.fsspec_config.remote_url,  # type: ignore
+                recursive=self.fsspec_config.recursive,  # type: ignore
                 access_kwargs={"token": token},
             ),
             processor_config=self.processor_config,

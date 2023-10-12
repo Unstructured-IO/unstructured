@@ -1,8 +1,7 @@
 import os
-import re
 import typing as t
 from contextlib import suppress
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path, PurePath
 
 from unstructured.ingest.error import SourceConnectionError
@@ -11,6 +10,7 @@ from unstructured.ingest.interfaces import (
     BaseDestinationConnector,
     BaseIngestDoc,
     BaseSourceConnector,
+    FsspecConfig,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
     SourceMetadata,
@@ -31,51 +31,13 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "dropbox",
 ]
 
+zip_file_extensions = [".zip"]
+tar_file_extensions = [".tar", ".tar.gz", ".tgz"]
+
 
 @dataclass
-class SimpleFsspecConfig(BaseConnectorConfig):
-    # fsspec specific options
-    path: str
-    recursive: bool = False
-    access_kwargs: dict = field(default_factory=dict)
-    protocol: str = field(init=False)
-    path_without_protocol: str = field(init=False)
-    dir_path: str = field(init=False)
-    file_path: str = field(init=False)
-
-    def get_access_kwargs(self) -> dict:
-        return self.access_kwargs
-
-    def __post_init__(self):
-        self.protocol, self.path_without_protocol = self.path.split("://")
-        if self.protocol not in SUPPORTED_REMOTE_FSSPEC_PROTOCOLS:
-            raise ValueError(
-                f"Protocol {self.protocol} not supported yet, only "
-                f"{SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported.",
-            )
-
-        # dropbox root is an empty string
-        match = re.match(rf"{self.protocol}://([\s])/", self.path)
-        if match and self.protocol == "dropbox":
-            self.dir_path = " "
-            self.file_path = ""
-            return
-
-        # just a path with no trailing prefix
-        match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.path)
-        if match:
-            self.dir_path = match.group(1)
-            self.file_path = ""
-            return
-
-        # valid path with a dir and/or file
-        match = re.match(rf"{self.protocol}://([^/\s]+?)/([^\s]*)", self.path)
-        if not match:
-            raise ValueError(
-                f"Invalid path {self.path}. Expected <protocol>://<dir-path>/<file-or-dir-path>.",
-            )
-        self.dir_path = match.group(1)
-        self.file_path = match.group(2) or ""
+class SimpleFsspecConfig(FsspecConfig, BaseConnectorConfig):
+    pass
 
 
 @dataclass
@@ -186,7 +148,7 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         ls_output = self.fs.ls(self.connector_config.path_without_protocol)
         if len(ls_output) < 1:
             raise ValueError(
-                f"No objects found in {self.connector_config.path}.",
+                f"No objects found in {self.connector_config.remote_url}.",
             )
 
     def _list_files(self):
@@ -245,7 +207,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
 
         for doc in docs:
             s3_file_path = doc.base_filename
-            s3_folder = self.connector_config.path
+            s3_folder = self.connector_config.remote_url
 
             s3_output_path = str(PurePath(s3_folder, s3_file_path)) if s3_file_path else s3_folder
             logger.debug(f"Uploading {doc._output_filename} -> {s3_output_path}")

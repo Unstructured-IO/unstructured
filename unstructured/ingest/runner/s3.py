@@ -18,7 +18,7 @@ class S3Runner(FsspecBaseRunner):
         self.read_config.download_dir = update_download_dir_remote_url(
             connector_name="s3",
             read_config=self.read_config,
-            remote_url=self.fsspec_config.remote_url,
+            remote_url=self.fsspec_config.remote_url,  # type: ignore
             logger=logger,
         )
 
@@ -29,8 +29,8 @@ class S3Runner(FsspecBaseRunner):
             access_kwargs["endpoint_url"] = endpoint_url
         source_doc_connector = S3SourceConnector(  # type: ignore
             connector_config=SimpleS3Config(
-                path=self.fsspec_config.remote_url,
-                recursive=self.fsspec_config.recursive,
+                remote_url=self.fsspec_config.remote_url,  # type: ignore
+                recursive=self.fsspec_config.recursive,  # type: ignore
                 access_kwargs=access_kwargs,
             ),
             read_config=self.read_config,

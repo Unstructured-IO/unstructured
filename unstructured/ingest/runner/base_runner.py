@@ -63,5 +63,13 @@ class Runner(ABC):
         )
 
 
+@dataclass
 class FsspecBaseRunner(Runner):
-    fsspec_config: FsspecConfig
+    # TODO make this field required when python3.8 no longer supported
+    # python3.8 dataclass doesn't support default values in child classes, but this
+    # fsspec_config should be required in this class.
+    fsspec_config: t.Optional[FsspecConfig] = None
+
+    def __post_init__(self):
+        if self.fsspec_config is None:
+            raise ValueError("fsspec_config must exist")

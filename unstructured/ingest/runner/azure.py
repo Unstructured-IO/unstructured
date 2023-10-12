@@ -24,7 +24,7 @@ class AzureRunner(FsspecBaseRunner):
         self.read_config.download_dir = update_download_dir_remote_url(
             connector_name="azure",
             read_config=self.read_config,
-            remote_url=self.fsspec_config.remote_url,
+            remote_url=self.fsspec_config.remote_url,  # type: ignore
             logger=logger,
         )
 
@@ -45,8 +45,8 @@ class AzureRunner(FsspecBaseRunner):
         source_doc_connector = AzureBlobStorageSourceConnector(  # type: ignore
             processor_config=self.processor_config,
             connector_config=SimpleAzureBlobStorageConfig(
-                path=self.fsspec_config.remote_url,
-                recursive=self.fsspec_config.recursive,
+                remote_url=self.fsspec_config.remote_url,  # type: ignore
+                recursive=self.fsspec_config.recursive,  # type: ignore
                 access_kwargs=access_kwargs,
             ),
             read_config=self.read_config,

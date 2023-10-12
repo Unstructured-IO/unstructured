@@ -17,11 +17,11 @@ class FsspecRunner(FsspecBaseRunner):
         self.read_config.download_dir = update_download_dir_remote_url(
             connector_name="fsspec",
             read_config=self.read_config,
-            remote_url=self.fsspec_config.remote_url,
+            remote_url=self.fsspec_config.remote_url,  # type: ignore
             logger=logger,
         )
 
-        protocol = urlparse(self.fsspec_config.remote_url).scheme
+        protocol = urlparse(self.fsspec_config.remote_url).scheme  # type: ignore
         warnings.warn(
             f"`fsspec` protocol {protocol} is not directly supported by `unstructured`,"
             " so use it at your own risk. Supported protocols are `gcs`, `gs`, `s3`, `s3a`,"
@@ -36,8 +36,8 @@ class FsspecRunner(FsspecBaseRunner):
 
         source_doc_connector = FsspecSourceConnector(  # type: ignore
             connector_config=SimpleFsspecConfig(
-                path=self.fsspec_config.remote_url,
-                recursive=self.fsspec_config.recursive,
+                remote_url=self.fsspec_config.remote_url,  # type: ignore
+                recursive=self.fsspec_config.recursive,  # type: ignore
             ),
             read_config=self.read_config,
             processor_config=self.processor_config,

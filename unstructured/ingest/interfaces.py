@@ -4,6 +4,7 @@ through Unstructured."""
 import functools
 import json
 import os
+import re
 import typing as t
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -22,6 +23,17 @@ from unstructured.ingest.ingest_doc_json_mixin import IngestDocJsonMixin
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict, elements_from_json
+
+SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
+    "s3",
+    "s3a",
+    "abfs",
+    "az",
+    "gs",
+    "gcs",
+    "box",
+    "dropbox",
+]
 
 
 @dataclass
@@ -68,6 +80,46 @@ class FsspecConfig(BaseConfig):
     remote_url: str
     uncompress: bool = False
     recursive: bool = False
+    access_kwargs: dict = field(default_factory=dict)
+    protocol: str = field(init=False)
+    path_without_protocol: str = field(init=False)
+    dir_path: str = field(init=False)
+    file_path: str = field(init=False)
+
+    def get_access_kwargs(self) -> dict:
+        return self.access_kwargs
+
+    def __post_init__(self):
+        self.protocol, self.path_without_protocol = self.remote_url.split("://")
+        if self.protocol not in SUPPORTED_REMOTE_FSSPEC_PROTOCOLS:
+            raise ValueError(
+                f"Protocol {self.protocol} not supported yet, only "
+                f"{SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported.",
+            )
+
+        # dropbox root is an empty string
+        match = re.match(rf"{self.protocol}://([\s])/", self.remote_url)
+        if match and self.protocol == "dropbox":
+            self.dir_path = " "
+            self.file_path = ""
+            return
+
+        # just a path with no trailing prefix
+        match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.remote_url)
+        if match:
+            self.dir_path = match.group(1)
+            self.file_path = ""
+            return
+
+        # valid path with a dir and/or file
+        match = re.match(rf"{self.protocol}://([^/\s]+?)/([^\s]*)", self.remote_url)
+        if not match:
+            raise ValueError(
+                f"Invalid path {self.remote_url}. "
+                f"Expected <protocol>://<dir-path>/<file-or-dir-path>.",
+            )
+        self.dir_path = match.group(1)
+        self.file_path = match.group(2) or ""
 
 
 @dataclass
