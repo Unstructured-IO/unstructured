@@ -454,6 +454,7 @@ class Text(Element):
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
+        embeddings: Optional[str] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
@@ -482,6 +483,7 @@ class Text(Element):
                 (self.text == other.text),
                 (self.metadata.coordinates == other.metadata.coordinates),
                 (self.category == other.category),
+                (self.embeddings == other.embeddings),
             ],
         )
 
@@ -490,7 +492,7 @@ class Text(Element):
         out["element_id"] = self.id
         out["type"] = self.category
         out["text"] = self.text
-        if hasattr(self, "embeddings"):
+        if self.embeddings:
             out["embeddings"] = self.embeddings
         return out
 
