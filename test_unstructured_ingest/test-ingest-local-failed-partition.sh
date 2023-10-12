@@ -28,6 +28,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --input-path "$SCRIPT_DIR"/failed-partition-docs \
     --work-dir "$WORK_DIR"
 
+
+# Currently, unstructured doesn't support .gif files for partitioning so only one of the files should
+# get successfully partitioned. If support for .gif files is ever added, that test file
+# should be updated to another non-supported filetype
 files=$(find "$OUTPUT_DIR" -type f)
 echo "files: $files"
 num_files=$(echo  "$files" | wc -l)
