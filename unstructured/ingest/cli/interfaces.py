@@ -140,6 +140,12 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
     def add_cli_options(cmd: click.Command) -> None:
         options = [
             click.Option(
+                ["--skip-infer-table-types"],
+                type=DelimitedString(),
+                default=None,
+                help="Optional list of document types to skip table extraction on",
+            ),
+            click.Option(
                 ["--pdf-infer-table-structure"],
                 default=False,
                 help="If set to True, partition will include the table's text "
@@ -153,12 +159,12 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
             ),
             click.Option(
                 ["--ocr-languages"],
-                default="eng",
+                default=None,
+                type=DelimitedString(delimiter="+"),
                 help="A list of language packs to specify which languages to use for OCR, "
                 "separated by '+' e.g. 'eng+deu' to use the English and German language packs. "
                 "The appropriate Tesseract "
-                "language pack needs to be installed."
-                "Default: eng",
+                "language pack needs to be installed.",
             ),
             click.Option(
                 ["--encoding"],

@@ -38,8 +38,9 @@ class BaseConfig(DataClassJsonMixin, ABC):
 class PartitionConfig(BaseConfig):
     # where to write structured data outputs
     pdf_infer_table_structure: bool = False
+    skip_infer_table_types: t.Optional[t.List[str]] = None
     strategy: str = "auto"
-    ocr_languages: str = "eng"
+    ocr_languages: t.Optional[t.List[str]] = None
     encoding: t.Optional[str] = None
     fields_include: t.List[str] = field(
         default_factory=lambda: ["element_id", "text", "type", "metadata", "embeddings"],
