@@ -23,7 +23,10 @@ VALID_FILING_TYPES: Final[List[str]] = [
 
 
 def get_filing(
-    cik: Union[str, int], accession_number: Union[str, int], company: str, email: str,
+    cik: Union[str, int],
+    accession_number: Union[str, int],
+    company: str,
+    email: str,
 ) -> str:
     """Fetches the specified filing from the SEC EDGAR Archives. Conforms to the rate
     limits specified on the SEC website.
@@ -35,7 +38,9 @@ def get_filing(
 @sleep_and_retry
 @limits(calls=10, period=1)
 def _get_filing(
-    session: requests.Session, cik: Union[str, int], accession_number: Union[str, int],
+    session: requests.Session,
+    cik: Union[str, int],
+    accession_number: Union[str, int],
 ) -> str:
     """Wrapped so filings can be retrieved with an existing session."""
     url = archive_url(cik, accession_number)
@@ -70,7 +75,9 @@ def get_forms_by_cik(session: requests.Session, cik: Union[str, int]) -> dict:
 
 
 def _get_recent_acc_num_by_cik(
-    session: requests.Session, cik: Union[str, int], form_types: List[str],
+    session: requests.Session,
+    cik: Union[str, int],
+    form_types: List[str],
 ) -> Tuple[str, str]:
     """Returns accession number and form type for the most recent filing for one of the
     given form_types (AKA filing types) for a given cik."""
@@ -120,7 +127,11 @@ def get_form_by_ticker(
     session = _get_session(company, email)
     cik = get_cik_by_ticker(session, ticker)
     return get_form_by_cik(
-        cik, form_type, allow_amended_filing=allow_amended_filing, company=company, email=email,
+        cik,
+        form_type,
+        allow_amended_filing=allow_amended_filing,
+        company=company,
+        email=email,
     )
 
 
@@ -148,7 +159,9 @@ def get_form_by_cik(
     """
     session = _get_session(company, email)
     acc_num, _ = _get_recent_acc_num_by_cik(
-        session, cik, _form_types(form_type, allow_amended_filing),
+        session,
+        cik,
+        _form_types(form_type, allow_amended_filing),
     )
     text = _get_filing(session, cik, acc_num)
     return text
@@ -173,7 +186,9 @@ def open_form_by_ticker(
     session = _get_session(company, email)
     cik = get_cik_by_ticker(session, ticker)
     acc_num, _ = _get_recent_acc_num_by_cik(
-        session, cik, _form_types(form_type, allow_amended_filing),
+        session,
+        cik,
+        _form_types(form_type, allow_amended_filing),
     )
     open_form(cik, acc_num)
 
@@ -226,7 +241,10 @@ def _get_session(company: Optional[str] = None, email: Optional[str] = None) -> 
 
 def get_version():
     """Pulls the current version of the pipeline API from the GitHub repo."""
-    api_yaml_url = "https://raw.githubusercontent.com/Unstructured-IO/pipeline-sec-filings/main/preprocessing-pipeline-family.yaml"
+    api_yaml_url = (
+        "https://raw.githubusercontent.com/Unstructured-IO/"
+        "pipeline-sec-filings/main/preprocessing-pipeline-family.yaml"
+    )
     yaml_content = requests.get(api_yaml_url).text
     for tokens in [line.split(" ") for line in yaml_content.split("\n")]:
         if tokens[0] == "version:":

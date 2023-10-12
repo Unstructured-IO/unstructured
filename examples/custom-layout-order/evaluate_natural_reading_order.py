@@ -109,8 +109,10 @@ def run_partition_pdf(
     output_type="plot",
     output_root_dir="",
 ):
-    print(f">>> Starting run_partition_pdf - f_path: {f_path} - strategy: {strategy} "
-          f"- sort_mode: {sort_mode} - filetype: {filetype}")
+    print(
+        f">>> Starting run_partition_pdf - f_path: {f_path} - strategy: {strategy} "
+        f"- sort_mode: {sort_mode} - filetype: {filetype}"
+    )
     f_base_name = os.path.splitext(os.path.basename(f_path))[0]
 
     output_dir = os.path.join(output_root_dir, strategy, f_base_name)
@@ -148,7 +150,7 @@ def run():
     run_partition_pdf(f_path, strategy, sort_mode, filetype, "image", output_root_dir)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) < 5:
         print(
             "Please provide the path to the file name as the first argument, the strategy as the "
