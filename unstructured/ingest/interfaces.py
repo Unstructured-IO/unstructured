@@ -40,7 +40,7 @@ class PartitionConfig(BaseConfig):
     pdf_infer_table_structure: bool = False
     skip_infer_table_types: t.Optional[t.List[str]] = None
     strategy: str = "auto"
-    ocr_languages: t.Optional[str] = None
+    ocr_languages: t.Optional[t.List[str]] = None
     encoding: t.Optional[str] = None
     fields_include: t.List[str] = field(
         default_factory=lambda: ["element_id", "text", "type", "metadata", "embeddings"],

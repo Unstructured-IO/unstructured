@@ -31,10 +31,8 @@ class Partitioner(PartitionNode):
             "strategy": self.partition_config.strategy,
             "encoding": self.partition_config.encoding,
             "pdf_infer_table_structure": self.partition_config.pdf_infer_table_structure,
+            "languages": self.partition_config.ocr_languages,
         }
-
-        if self.partition_config.ocr_languages:
-            partition_kwargs["languages"] = self.partition_config.ocr_languages.split("+")
 
         if self.partition_config.skip_infer_table_types:
             partition_kwargs[
