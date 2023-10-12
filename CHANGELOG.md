@@ -1,4 +1,4 @@
-## 0.10.22-dev3
+## 0.10.22-dev4
 
 ### Enhancements
 
@@ -7,7 +7,7 @@
 ### Fixes
 
 * **Fixes PDF list parsing creating duplicate list items** Previously a bug in PDF list item parsing caused removal of other elements and duplication of the list items
-
+* **Fix ingest pipeline reformat nodes not discoverable** Fixes issue where  reformat nodes raise ModuleNotFoundError on import. This was due to the directory was missing `__init__.py` in order to make it discoverable.
 
 ## 0.10.21
 
