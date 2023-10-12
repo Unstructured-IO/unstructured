@@ -205,6 +205,8 @@ def scarf_analytics():
         gpu_present = False
         pass
 
+    python_version = ".".join(platform.python_version().split(".")[:2])
+
     try:
         if os.getenv("SCARF_NO_ANALYTICS") != "true" and os.getenv("DO_NOT_TRACK") != "true":
             if "dev" in __version__:
@@ -214,7 +216,7 @@ def scarf_analytics():
                     + "&platform="
                     + platform.system()
                     + "&python"
-                    + platform.python_version()
+                    + python_version
                     + "&arch="
                     + platform.machine()
                     + "&gpu="
@@ -228,7 +230,7 @@ def scarf_analytics():
                     + "&platform="
                     + platform.system()
                     + "&python"
-                    + platform.python_version()
+                    + python_version
                     + "&arch="
                     + platform.machine()
                     + "&gpu="
