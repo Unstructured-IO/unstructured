@@ -5,12 +5,15 @@
 * **bump `unstructured-inference` to `0.7.3`** The updated version of `unstructured-inference` integrates `Chipperv2` and additional `Chipper` functionality, which includes automatic detection of GPU,
 bounding box prediction and hierarchical representation; it also improves element text by removing control characters from the text of all layout elements in the `hi_res` partitioning of pdfs and images.
 
+* **Expose skip_infer_table_types in ingest CLI** For each connector a new `--skip-infer-table-types` parameter was added to map to the `skip_infer_table_types` partition argument. This gives more granular control to unstructured-ingest users, allowing them to specify which file types for which we should attempt table extraction.
+
 ### Features
 
 ### Fixes
 
 * **Fixes PDF list parsing creating duplicate list items** Previously a bug in PDF list item parsing caused removal of other elements and duplication of the list items
-
+* **Fix ingest pipeline reformat nodes not discoverable** Fixes issue where  reformat nodes raise ModuleNotFoundError on import. This was due to the directory was missing `__init__.py` in order to make it discoverable.
+* **Fix default language in ingest CLI** Previously the default was being set to english which injected potentially incorrect information to downstream language detection libraries. By setting the default to None allows those libraries to better detect what language the text is in the doc being processed.
 
 ## 0.10.21
 
