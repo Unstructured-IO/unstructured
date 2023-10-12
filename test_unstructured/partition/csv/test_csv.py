@@ -207,3 +207,17 @@ def test_add_chunking_strategy_to_partition_csv_non_default():
     chunks = chunk_by_title(elements, max_characters=9, combine_text_under_n_chars=0)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+# NOTE (jennings) partition_csv returns a single TableElement per sheet,
+# so leaving off additional tests for multiple languages like the other partitions
+def test_partition_csv_element_metadata_has_languages():
+    filename = "example-docs/stanley-cups.csv"
+    elements = partition_csv(filename=filename, strategy="fast")
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_csv_respects_languages_arg():
+    filename = "example-docs/stanley-cups.csv"
+    elements = partition_csv(filename=filename, strategy="fast", languages=["deu"])
+    assert elements[0].metadata.languages == ["deu"]

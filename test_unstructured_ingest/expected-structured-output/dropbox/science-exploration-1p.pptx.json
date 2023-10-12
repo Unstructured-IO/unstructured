@@ -12,6 +12,9 @@
         }
       },
       "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "GSFC: Sciences and Exploration Directorate"
@@ -29,6 +32,9 @@
         }
       },
       "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Virtual Machine Environment Scorecard"
@@ -46,6 +52,9 @@
         }
       },
       "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Code 600: Sciences and Exploration Directorate (SED)"
@@ -63,6 +72,9 @@
         }
       },
       "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Code 610: Earth Sciences Division"
@@ -80,6 +92,9 @@
         }
       },
       "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Code 660: Astrophysics Science Division"
@@ -97,6 +112,9 @@
         }
       },
       "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Code 670: Heliophysics Science Division"
@@ -114,6 +132,9 @@
         }
       },
       "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Code 690: Solar System Exploration Division"
@@ -131,6 +152,9 @@
         }
       },
       "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Support offices"
@@ -148,6 +172,9 @@
         }
       },
       "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Code 603: Administration and Resources Management Office"
@@ -165,6 +192,9 @@
         }
       },
       "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Code 605: Science Proposal Support Office"
@@ -182,6 +212,9 @@
         }
       },
       "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Code 606: Computational and Information Sciences and Technology Office  ( The SEDVME project is managed out of 606)."
@@ -199,6 +232,9 @@
         }
       },
       "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Code 700: Information Technology and Communication Directorate"
@@ -216,6 +252,9 @@
         }
       },
       "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Project management help, CNE, Zoned Architecture, IT Security,  Production SEDVME Service Manager"

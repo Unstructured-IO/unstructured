@@ -910,6 +910,7 @@ def test_combine_numbered_list(filename):
             first_list_element = element
             break
     assert len(elements) < 28
+    assert len([element for element in elements if isinstance(element, ListItem)]) == 4
     assert first_list_element.text.endswith(
         "character recognition, and other DIA tasks (Section 3)",
     )
@@ -975,6 +976,12 @@ def test_partition_pdf_word_bbox_not_char(
     except Exception as e:
         raise ("Partitioning fail: %s" % e)
     assert len(elements) == 17
+
+
+def test_partition_pdf_raises_TypeError_for_invalid_languages():
+    filename = "example-docs/chevron-page.pdf"
+    with pytest.raises(TypeError):
+        pdf.partition_pdf(filename=filename, strategy="hi_res", languages="eng")
 
 
 @pytest.mark.parametrize(

@@ -133,9 +133,6 @@ def partition_pdf(
     """
     exactly_one(filename=filename, file=file)
 
-    if not isinstance(languages, list):
-        raise TypeError("The language parameter must be a list of language codes as strings.")
-
     if ocr_languages is not None:
         # check if languages was set to anything not the default value
         # languages and ocr_languages were therefore both provided - raise error
@@ -204,7 +201,7 @@ def partition_pdf_or_image(
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
-    languages: List[str] = ["eng"],
+    languages: Optional[List[str]] = ["eng"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
@@ -216,8 +213,15 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
+    # The auto `partition` function uses `None` as a default because the default for
+    # `partition_pdf` and `partition_img` conflict with the other partitioners that use ["auto"]
+    if languages is None:
+        languages = ["eng"]
+
     if not isinstance(languages, list):
-        raise TypeError("The language parameter must be a list of language codes as strings.")
+        raise TypeError(
+            "The language parameter must be a list of language codes as strings, ex. ['eng']",
+        )
 
     if ocr_languages is not None:
         if languages != ["eng"]:
@@ -321,7 +325,7 @@ def _partition_pdf_or_image_local(
     is_image: bool = False,
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
-    languages: List[str] = ["eng"],
+    languages: Optional[List[str]] = ["eng"],
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
@@ -629,7 +633,7 @@ def _process_pdfminer_pages(
                     system=coordinate_system,
                 )
                 page_element = list_page_element
-                updated_page_elements.pop(0)
+                updated_page_elements.pop()
 
             updated_page_elements.append(page_element)
 
@@ -774,7 +778,7 @@ def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
     include_page_breaks: bool = False,
-    languages: List[str] = ["eng"],
+    languages: Optional[List[str]] = ["eng"],
     is_image: bool = False,
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
