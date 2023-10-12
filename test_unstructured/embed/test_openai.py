@@ -10,4 +10,3 @@ def test_embed_documents_does_not_break_element_to_dict(mocker):
     assert len(elements) == 2
     assert elements[0].to_dict()['text'] == "This is sentence 1"
     assert elements[1].to_dict()['text'] == "This is sentence 2"
-# 
