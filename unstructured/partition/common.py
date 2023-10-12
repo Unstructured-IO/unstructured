@@ -567,7 +567,7 @@ def document_to_element_list(
         image_height = page_image_metadata.get("height")
 
         for layout_element in page.elements:
-            if image_width and image_height and hasattr(layout_element, "coordinates"):
+            if image_width and image_height and hasattr(layout_element.bbox, "coordinates"):
                 coordinate_system = PixelSpace(width=image_width, height=image_height)
             else:
                 coordinate_system = None
