@@ -4,6 +4,7 @@ from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path, PurePath
 
+from unstructured.ingest.compression_support import CompressionSourceConnectorMixin
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
@@ -129,7 +130,11 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
 
 @dataclass
-class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
+class FsspecSourceConnector(
+    SourceConnectorCleanupMixin,
+    CompressionSourceConnectorMixin,
+    BaseSourceConnector,
+):
     """Objects of this class support fetching document(s) from"""
 
     connector_config: SimpleFsspecConfig
