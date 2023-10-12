@@ -297,6 +297,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
         AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         TABLE_OCR: "tesseract"
         ENTIRE_PAGE_OCR: "tesseract"
         CI: "true"
@@ -329,6 +330,7 @@ jobs:
         make install-ingest-wikipedia
         make install-ingest-notion
         make install-ingest-delta-table
+        pip install "unstructured[openai]"
         ./test_unstructured_ingest/test-ingest.sh
 
   test_unstructured_api_unit:
