@@ -14,11 +14,11 @@ from PIL import ImageSequence
 from unstructured_inference.inference.elements import (
     Rectangle,
     TextRegion,
-    partition_groups_from_regions,
 )
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
+    partition_groups_from_regions,
 )
 from unstructured_pytesseract import Output
 
