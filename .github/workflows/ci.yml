@@ -147,7 +147,6 @@ jobs:
         tesseract --version
         # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
         make install-ci
-        make install-local-inference-branch
         make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
         make check-coverage
 
@@ -184,7 +183,6 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv-base/bin/activate
-        make install-local-inference-branch
         make test-no-extras CI=true
 
   test_unit_dependency_extras:
@@ -227,7 +225,6 @@ jobs:
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        make install-local-inference-branch
         make test-extra-${{ matrix.extra }} CI=true
 
   test_ingest:
@@ -330,7 +327,6 @@ jobs:
         make install-ingest-wikipedia
         make install-ingest-notion
         make install-ingest-delta-table
-        make install-local-inference-branch
         ./test_unstructured_ingest/test-ingest.sh
 
   test_unstructured_api_unit:
