@@ -14,7 +14,9 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "fra",
+        "cat",
+        "ita"
       ]
     },
     "text": "IssueID_IssueKey:10001     JCTP1-2"
@@ -34,7 +36,9 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "fra",
+        "cat",
+        "ita"
       ]
     },
     "text": "ProjectID_Key:JCTP1     Jira Connector Test Project 1"
@@ -54,7 +58,9 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "fra",
+        "cat",
+        "ita"
       ]
     },
     "text": "IssueType:Task"
@@ -74,7 +80,9 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "fra",
+        "cat",
+        "ita"
       ]
     },
     "text": "Status:In Progress"
@@ -94,7 +102,9 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "fra",
+        "cat",
+        "ita"
       ]
     },
     "text": "Priority:{'self': 'https://unstructured-jira-connector-test.atlassian.net/rest/api/2/priority/3', 'iconUrl': 'https://unstructured-jira-connector-test.atlassian.net/images/icons/priorities/medium.svg', 'name': 'Medium', 'id': '3'}"
@@ -114,7 +124,9 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "fra",
+        "cat",
+        "ita"
       ]
     },
     "text": "AssigneeID_Name:{}     {}"
@@ -134,7 +146,9 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "fra",
+        "cat",
+        "ita"
       ]
     },
     "text": "ReporterAdr_Name:devops+jira-connector@unstructured.io     Unstructured Devops"
@@ -154,7 +168,9 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "fra",
+        "cat",
+        "ita"
       ]
     },
     "text": "Labels:"
@@ -174,7 +190,9 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "fra",
+        "cat",
+        "ita"
       ]
     },
     "text": "Components:"
@@ -194,7 +212,9 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "fra",
+        "cat",
+        "ita"
       ]
     },
     "text": "Unstructured Devops     My comment 1"
@@ -214,7 +234,9 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "fra",
+        "cat",
+        "ita"
       ]
     },
     "text": "Test in progress 1"
@@ -234,7 +256,9 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "fra",
+        "cat",
+        "ita"
       ]
     },
     "text": "Cur deinde Metrodori liberos commendas? Quicquid porro animo cernimus, id omne oritur a sensibus; Ergo ita: non posse honeste vivi, nisi honeste vivatur? [Quis Aristidem non mortuum diligit?|http://loripsum.net/] Quid, de quo nulla dissensio est? [Bork|http://loripsum.net/]"
@@ -254,7 +278,9 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "fra",
+        "cat",
+        "ita"
       ]
     },
     "text": "Atqui pugnantibus et contrariis studiis consiliisque semper utens nihil quieti videre, nihil tranquilli potest. Habes, inquam, Cato, formam eorum, de quibus loquor, philosophorum. [Ecce aliud simile dissimile.|http://loripsum.net/] Ad quorum et cognitionem et usum iam corroborati natura ipsa praeeunte deducimur. Itaque et manendi in vita et migrandi ratio omnis iis rebus, quas supra dixi, metienda. Quicquid enim a sapientia proficiscitur, id continuo debet expletum esse omnibus suis partibus; At ille non pertimuit saneque fidenter: Istis quidem ipsis verbis, inquit; Utrum igitur tibi litteram videor an totas paginas commovere?"
@@ -274,7 +300,9 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "fra",
+        "cat",
+        "ita"
       ]
     },
     "text": "Duo Reges: constructio interrete. Nunc omni virtuti vitium contrario nomine opponitur. Non autem hoc: igitur ne illud quidem. Ergo hoc quidem apparet, nos ad agendum esse natos. Quo tandem modo? Quod si ita se habeat, non possit beatam praestare vitam sapientia. Propter nos enim illam, non propter eam nosmet ipsos diligimus."
