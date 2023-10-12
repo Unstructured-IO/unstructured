@@ -6,6 +6,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=s3-azure-cog-search-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 DESTINATION_INDEX="utic-test-ingest-fixtures-output-$(date +%s)"
 # The vector configs on the schema currently only exist on versions:
@@ -16,8 +17,10 @@ if [ -z "$AZURE_SEARCH_ENDPOINT" ] && [ -z "$AZURE_SEARCH_API_KEY" ]; then
    echo "Skipping Azure Cognitive Search ingest test because neither AZURE_SEARCH_ENDPOINT nor AZURE_SEARCH_API_KEY env vars are set."
    exit 0
 fi
-
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
 function cleanup {
+  # Index cleanup
   response_code=$(curl -s -o /dev/null -w "%{http_code}" \
   "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
   --header "api-key: $AZURE_SEARCH_API_KEY" \
@@ -30,6 +33,13 @@ function cleanup {
     --header 'content-type: application/json'
   else
     echo "Index $DESTINATION_INDEX does not exist, nothing to delete"
+  fi
+
+  # Local file cleanup
+  cleanup_dir "$WORK_DIR"
+  cleanup_dir "$OUTPUT_DIR"
+  if [ "$CI" == "true" ]; then
+    cleanup_dir "$DOWNLOAD_DIR"
   fi
 }
 
@@ -62,6 +72,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --verbose \
   --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
   --anonymous \
+  --work-dir "$WORK_DIR" \
   azure-cognitive-search \
   --key "$AZURE_SEARCH_API_KEY" \
   --endpoint "$AZURE_SEARCH_ENDPOINT" \

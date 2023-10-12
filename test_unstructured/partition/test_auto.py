@@ -8,7 +8,7 @@ from unittest.mock import patch
 import docx
 import pytest
 
-from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT
+from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT, EXPECTED_TITLE
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
@@ -301,17 +301,19 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename, content_type, 
         strategy="hi_res",
     )
 
-    assert isinstance(elements[0], Title)
-    assert elements[0].text.startswith("LayoutParser")
+    idx = 3
+    assert isinstance(elements[idx], Title)
+    assert elements[idx].text.startswith("LayoutParser")
 
-    assert elements[0].metadata.filename == os.path.basename(filename)
-    assert elements[0].metadata.file_directory == os.path.split(filename)[0]
+    assert elements[idx].metadata.filename == os.path.basename(filename)
+    assert elements[idx].metadata.file_directory == os.path.split(filename)[0]
 
     # NOTE(alan): Xfail since new model skips the word Zejiang
     request.applymarker(pytest.mark.xfail)
 
-    assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Zejiang Shen")
+    idx += 1
+    assert isinstance(elements[idx], NarrativeText)
+    assert elements[idx].text.startswith("Zejiang Shen")
 
 
 def test_auto_partition_pdf_uses_table_extraction():
@@ -360,30 +362,27 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
             strategy="hi_res",
         )
 
-    assert isinstance(elements[0], Title)
-    assert elements[0].text.startswith("LayoutParser")
+    idx = 3
+    assert isinstance(elements[idx], Title)
+    assert elements[idx].text.startswith("LayoutParser")
 
     # NOTE(alan): Xfail since new model misses the first word Zejiang
     request.applymarker(pytest.mark.xfail)
 
-    assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Zejiang Shen")
+    idx += 1
+    assert isinstance(elements[idx], NarrativeText)
+    assert elements[idx].text.startswith("Zejiang Shen")
 
 
 def test_auto_partition_formats_languages_for_tesseract():
     filename = "example-docs/chi_sim_image.jpeg"
     with patch(
-        "unstructured_inference.inference.layout.process_file_with_model",
-    ) as mock_process_file_with_model:
+        "unstructured.partition.ocr.process_file_with_ocr",
+    ) as mock_process_file_with_ocr:
         partition(filename, strategy="hi_res", languages=["zh"])
-        mock_process_file_with_model.assert_called_once_with(
-            filename,
-            is_image=True,
-            ocr_languages="chi_sim+chi_sim_vert+chi_tra+chi_tra_vert",
-            ocr_mode="entire_page",
-            extract_tables=False,
-            model_name="detectron2_onnx",
-        )
+        _, kwargs = mock_process_file_with_ocr.call_args_list[0]
+        assert "ocr_languages" in kwargs
+        assert kwargs["ocr_languages"] == "chi_sim+chi_sim_vert+chi_tra+chi_tra_vert"
 
 
 def test_auto_partition_element_metadata_user_provided_languages():
@@ -424,9 +423,10 @@ def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, co
     )
 
     # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
-    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[0].text == first_line
-    assert elements[0].metadata.coordinates is not None
+    title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    idx = 2
+    assert elements[idx].text == title
+    assert elements[idx].metadata.coordinates is not None
 
 
 @pytest.mark.parametrize(
@@ -707,36 +707,51 @@ EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsh
 def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx"):
     elements = partition(filename=filename, include_header=False)
 
-    assert all(isinstance(element, Table) for element in elements)
-    assert len(elements) == 2
+    assert sum(isinstance(element, Table) for element in elements) == 2
+    assert sum(isinstance(element, Title) for element in elements) == 2
+    assert len(elements) == 4
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
-    assert elements[0].metadata.page_number == 1
-    assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE
+    assert elements[1].metadata.page_number == 1
+    assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
 def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
     with open(filename, "rb") as f:
         elements = partition(file=f, include_header=False)
 
-    assert all(isinstance(element, Table) for element in elements)
-    assert len(elements) == 2
+    assert sum(isinstance(element, Table) for element in elements) == 2
+    assert sum(isinstance(element, Title) for element in elements) == 2
+    assert len(elements) == 4
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
-    assert elements[0].metadata.page_number == 1
-    assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE
+    assert elements[1].metadata.page_number == 1
+    assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
-EXPECTED_XLS_TEXT_LEN = 507
+EXPECTED_XLS_TEXT_LEN = 550
 
 
-EXPECTED_XLS_INITIAL_45_CLEAN_TEXT = "MA What C datatypes are 8 bits? (assume i386)"
+EXPECTED_XLS_INITIAL_45_CLEAN_TEXT = "MC What is 2+2? 4 correct 3 incorrect MA What"
 
 EXPECTED_XLS_TABLE = (
     """<table border="1" class="dataframe">
   <tbody>
+    <tr>
+      <td>MC</td>
+      <td>What is 2+2?</td>
+      <td>4</td>
+      <td>correct</td>
+      <td>3</td>
+      <td>incorrect</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
     <tr>
       <td>MA</td>
       <td>What C datatypes are 8 bits? (assume i386)</td>
@@ -813,8 +828,8 @@ EXPECTED_XLS_TABLE = (
 def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.xls"):
     elements = partition(filename=filename, include_header=False)
 
-    assert all(isinstance(element, Table) for element in elements)
-    assert len(elements) == 3
+    assert sum(isinstance(element, Table) for element in elements) == 2
+    assert len(elements) == 18
 
     assert clean_extra_whitespace(elements[0].text)[:45] == EXPECTED_XLS_INITIAL_45_CLEAN_TEXT
     # NOTE(crag): if the beautifulsoup4 package is installed, some (but not all) additional
@@ -1037,18 +1052,20 @@ def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
 def test_add_chunking_strategy_chars_on_partition_auto_adds_is_continuation():
     filename = "example-docs/example-10k-1p.html"
 
-    # default chunk size in chars is 200
-    partitioned_table_elements_200_chars = [
+    table_elements = [e for e in partition(filename) if isinstance(e, Table)]
+    chunked_table_elements = [
         e
         for e in partition(
             filename,
-            chunking_strategy="by_num_characters",
+            chunking_strategy="by_title",
         )
         if isinstance(e, Table)
     ]
 
+    assert table_elements != chunked_table_elements
+
     i = 0
-    for table in partitioned_table_elements_200_chars:
+    for table in chunked_table_elements:
         # have to reset the counter to 0 here when we encounter a Table element
         if isinstance(table, Table):
             i = 0

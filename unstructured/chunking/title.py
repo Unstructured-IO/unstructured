@@ -73,23 +73,20 @@ def chunk_by_title(
     new_after_n_chars
         Cuts off new sections once they reach a length of n characters (soft max)
     max_characters
-        Chunks table elements text and text_as_html into chunks of length n characters (hard max)
-        TODO: (amanda) extend to other elements
+        Chunks elements text and text_as_html (if present) into chunks of length
+        n characters (hard max)
     """
-    if (
-        combine_text_under_n_chars is not None
-        and new_after_n_chars is not None
-        and max_characters is not None
-        and (
-            combine_text_under_n_chars > new_after_n_chars
-            or combine_text_under_n_chars < 0
-            or new_after_n_chars < 0
-            or max_characters <= 0
-            or combine_text_under_n_chars > max_characters
-        )
+
+    if not (
+        max_characters > 0
+        and combine_text_under_n_chars >= 0
+        and new_after_n_chars >= 0
+        and combine_text_under_n_chars <= new_after_n_chars
+        and combine_text_under_n_chars <= max_characters
     ):
         raise ValueError(
-            "Invalid values for combine_text_under_n_chars and/or max_characters.",
+            "Invalid values for combine_text_under_n_chars, "
+            "new_after_n_chars, and/or max_characters.",
         )
 
     chunked_elements: List[Element] = []
@@ -98,6 +95,7 @@ def chunk_by_title(
         multipage_sections=multipage_sections,
         combine_text_under_n_chars=combine_text_under_n_chars,
         new_after_n_chars=new_after_n_chars,
+        max_characters=max_characters,
     )
     for section in sections:
         if not section:
@@ -133,7 +131,25 @@ def chunk_by_title(
                     _value.extend(item for item in value if item not in _value)
                     setattr(metadata, attr, _value)
 
-        chunked_elements.append(CompositeElement(text=text, metadata=metadata))
+        # Check if text exceeds max_characters
+        if len(text) > max_characters:
+            # Chunk the text from the end to the beginning
+            while len(text) > 0:
+                if len(text) <= max_characters:
+                    # If the remaining text is shorter than max_characters
+                    # create a chunk from the beginning
+                    chunk_text = text
+                    text = ""
+                else:
+                    # Otherwise, create a chunk from the end
+                    chunk_text = text[-max_characters:]
+                    text = text[:-max_characters]
+
+                # Prepend the chunk to the beginning of the list
+                chunked_elements.insert(0, CompositeElement(text=chunk_text, metadata=metadata))
+        else:
+            # If it doesn't exceed, create a single CompositeElement
+            chunked_elements.append(CompositeElement(text=text, metadata=metadata))
 
     return chunked_elements
 
@@ -143,6 +159,7 @@ def _split_elements_by_title_and_table(
     multipage_sections: bool = True,
     combine_text_under_n_chars: int = 500,
     new_after_n_chars: int = 500,
+    max_characters: int = 500,
 ) -> List[List[Element]]:
     sections: List[List[Element]] = []
     section: List[Element] = []
@@ -158,10 +175,12 @@ def _split_elements_by_title_and_table(
             )
 
         section_length = sum([len(str(element)) for element in section])
-        new_section = (
-            isinstance(element, Title) and section_length > combine_text_under_n_chars
-        ) or (not metadata_matches or section_length > new_after_n_chars)
 
+        new_section = (
+            (section_length + len(str(element)) > max_characters)
+            or (isinstance(element, Title) and section_length > combine_text_under_n_chars)
+            or (not metadata_matches or section_length > new_after_n_chars)
+        )
         if not isinstance(element, Text) or isinstance(element, Table):
             sections.append(section)
             sections.append([element])
@@ -171,6 +190,7 @@ def _split_elements_by_title_and_table(
                 sections.append(section)
             section = [element]
         else:
+            # if existing section plus new section will go above max, start new section
             section.append(element)
 
     if len(section) > 0:
@@ -197,7 +217,14 @@ def _drop_extra_metadata(
     metadata_dict: Dict[str, Any],
     include_pages: bool = True,
 ) -> Dict[str, Any]:
-    keys_to_drop = ["element_id", "type", "coordinates", "parent_id", "category_depth"]
+    keys_to_drop = [
+        "element_id",
+        "type",
+        "coordinates",
+        "parent_id",
+        "category_depth",
+        "detection_class_prob",
+    ]
     if not include_pages and "page_number" in metadata_dict:
         keys_to_drop.append("page_number")
 
@@ -241,7 +268,7 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
                 + "\n\t\t\t Cuts off new sections once they reach a length of n characters"
                 + "\n\t\t\t a soft max."
                 + "\n\t\tmax_characters"
-                + "\n\t\t\tChunks table elements text and text_as_html into chunks"
+                + "\n\t\t\tChunks elements text and text_as_html (if present) into chunks"
                 + "\n\t\t\tof length n characters, a hard max."
             )
 

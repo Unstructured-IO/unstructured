@@ -31,7 +31,7 @@ def test_dropbox_root_succeeds():
     dbox = DropboxIngestDoc(
         connector_config=FakeConfigDropboxRoot,
         read_config=FakeConfigDropboxRoot,
-        partition_config=FakeConfigDropboxRoot,
+        processor_config=FakeConfigDropboxRoot,
         remote_file_path="/fake_file.txt",
     )
     output_filename = dbox._output_filename
@@ -49,7 +49,7 @@ def test_dropbox_root_succeeds2():
     dbox = DropboxIngestDoc(
         connector_config=FakeConfigDropboxRoot,
         read_config=FakeConfigDropboxRoot,
-        partition_config=FakeConfigDropboxRoot,
+        processor_config=FakeConfigDropboxRoot,
         remote_file_path="fake_file.txt",
     )
     output_filename = dbox._output_filename
@@ -67,7 +67,7 @@ def test_dropbox_folder_succeeds():
     dbox = DropboxIngestDoc(
         connector_config=FakeConfigFolder,
         read_config=FakeConfigFolder,
-        partition_config=FakeConfigFolder,
+        processor_config=FakeConfigFolder,
         remote_file_path="fake_file2.txt",
     )
     output_filename = dbox._output_filename
@@ -83,7 +83,7 @@ def test_dropbox_folder_fails():
     dbox = DropboxIngestDoc(
         connector_config=FakeConfigFolder,
         read_config=FakeConfigFolder,
-        partition_config=FakeConfigFolder,
+        processor_config=FakeConfigFolder,
         remote_file_path="/fake_file2.txt",
     )
     output_filename = dbox._output_filename
@@ -101,7 +101,7 @@ def test_fsspec_folder_succeeds():
     dbox = FsspecIngestDoc(
         connector_config=FakeConfigFolder,
         read_config=FakeConfigFolder,
-        partition_config=FakeConfigFolder,
+        processor_config=FakeConfigFolder,
         remote_file_path="fake_file2.txt",
     )
     output_filename = dbox._output_filename
@@ -117,7 +117,7 @@ def test_fsspec_folder_fails():
     fstest = FsspecIngestDoc(
         connector_config=FakeConfigFolder,
         read_config=FakeConfigFolder,
-        partition_config=FakeConfigFolder,
+        processor_config=FakeConfigFolder,
         remote_file_path="/fake_file2.txt",
     )
     output_filename = fstest._output_filename

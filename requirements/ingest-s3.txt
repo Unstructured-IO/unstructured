@@ -6,7 +6,7 @@
 #
 aiobotocore==2.5.4
     # via s3fs
-aiohttp==3.8.5
+aiohttp==3.8.6
     # via
     #   aiobotocore
     #   s3fs
@@ -20,7 +20,7 @@ attrs==23.1.0
     # via aiohttp
 botocore==1.31.17
     # via aiobotocore
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   aiohttp
@@ -55,7 +55,7 @@ typing-extensions==4.8.0
     # via
     #   -c requirements/base.txt
     #   aioitertools
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

@@ -21,6 +21,8 @@ from unstructured.partition.common import (
 )
 from unstructured.partition.text import element_from_text
 
+DETECTION_ORIGIN: str = "xml"
+
 
 def get_leaf_elements(
     filename: Optional[str] = None,
@@ -123,14 +125,14 @@ def partition_xml(
     elif file:
         last_modification_date = get_last_modified_date_from_file(file)
 
-    metadata = (
-        ElementMetadata(
+    if include_metadata:
+        metadata = ElementMetadata(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
         )
-        if include_metadata
-        else ElementMetadata()
-    )
+        metadata.detection_origin = DETECTION_ORIGIN
+    else:
+        metadata = ElementMetadata()
 
     if xml_keep_tags:
         if filename:

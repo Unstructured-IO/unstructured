@@ -15,7 +15,7 @@ elasticsearch==8.10.0
     # via -r requirements/ingest-elasticsearch.in
 jq==1.6.0
     # via -r requirements/ingest-elasticsearch.in
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

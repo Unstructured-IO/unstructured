@@ -17,7 +17,7 @@ certifi==2023.7.22
     #   requests
 cffi==1.16.0
     # via cryptography
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   requests
@@ -49,7 +49,7 @@ six==1.16.0
     # via
     #   -c requirements/base.txt
     #   python-dateutil
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
