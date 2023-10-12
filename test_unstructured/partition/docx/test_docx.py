@@ -9,6 +9,7 @@ import docx
 import pytest
 from docx.document import Document
 
+from test_unstructured.unit_utils import assert_round_trips_through_JSON
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     Address,
@@ -23,9 +24,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import _DocxPartitioner, partition_docx
-from unstructured.partition.json import partition_json
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-from unstructured.staging.base import elements_to_json
 
 
 @pytest.fixture()
@@ -411,18 +410,12 @@ def test_partition_docx_grabs_emphasized_texts(
     assert elements[2].metadata.emphasized_text_tags is None
 
 
-def test_partition_docx_with_json(mock_document, expected_elements, tmpdir):
+def test_partition_docx_with_json(mock_document, tmpdir):
     filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     mock_document.save(filename)
 
     elements = partition_docx(filename=filename)
-    test_elements = partition_json(text=elements_to_json(elements))
-
-    assert len(elements) == len(test_elements)
-    assert elements[0].metadata.page_number == test_elements[0].metadata.page_number
-    assert elements[0].metadata.filename == test_elements[0].metadata.filename
-    for i in range(len(elements)):
-        assert elements[i] == test_elements[i]
+    assert_round_trips_through_JSON(elements)
 
 
 def test_parse_category_depth_by_style():
@@ -514,3 +507,28 @@ def test_add_chunking_strategy_on_partition_docx(
 
     for chunk in chunks:
         assert len(chunk.text) <= 9
+
+
+def test_partition_docx_element_metadata_has_languages():
+    filename = "example-docs/handbook-1p.docx"
+    elements = partition_docx(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_docx_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.docx"
+    elements = partition_docx(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+def test_partition_docx_respects_languages_arg():
+    filename = "example-docs/handbook-1p.docx"
+    elements = partition_docx(filename=filename, languages=["deu"])
+    assert elements[0].metadata.languages == ["deu"]
+
+
+def test_partition_docx_raises_TypeError_for_invalid_languages():
+    with pytest.raises(TypeError):
+        filename = "example-docs/handbook-1p.docx"
+        partition_docx(filename=filename, languages="eng")

@@ -133,9 +133,6 @@ def partition_pdf(
     """
     exactly_one(filename=filename, file=file)
 
-    if not isinstance(languages, list):
-        raise TypeError("The language parameter must be a list of language codes as strings.")
-
     if ocr_languages is not None:
         # check if languages was set to anything not the default value
         # languages and ocr_languages were therefore both provided - raise error
@@ -204,7 +201,7 @@ def partition_pdf_or_image(
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
-    languages: List[str] = ["eng"],
+    languages: Optional[List[str]] = ["eng"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
@@ -216,8 +213,15 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
+    # The auto `partition` function uses `None` as a default because the default for
+    # `partition_pdf` and `partition_img` conflict with the other partitioners that use ["auto"]
+    if languages is None:
+        languages = ["eng"]
+
     if not isinstance(languages, list):
-        raise TypeError("The language parameter must be a list of language codes as strings.")
+        raise TypeError(
+            "The language parameter must be a list of language codes as strings, ex. ['eng']",
+        )
 
     if ocr_languages is not None:
         if languages != ["eng"]:
@@ -321,7 +325,7 @@ def _partition_pdf_or_image_local(
     is_image: bool = False,
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
-    languages: List[str] = ["eng"],
+    languages: Optional[List[str]] = ["eng"],
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
@@ -629,7 +633,7 @@ def _process_pdfminer_pages(
                     system=coordinate_system,
                 )
                 page_element = list_page_element
-                updated_page_elements.pop(0)
+                updated_page_elements.pop()
 
             updated_page_elements.append(page_element)
 
@@ -774,7 +778,7 @@ def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
     include_page_breaks: bool = False,
-    languages: List[str] = ["eng"],
+    languages: Optional[List[str]] = ["eng"],
     is_image: bool = False,
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
@@ -1097,12 +1101,13 @@ def check_annotations_within_element(
     """
     annotations_within_element = []
     for annotation in annotation_list:
-        if annotation["page_number"] == page_number and (
-            calculate_intersection_area(element_bbox, annotation["bbox"])
-            / calculate_bbox_area(annotation["bbox"])
-            > threshold
-        ):
-            annotations_within_element.append(annotation)
+        if annotation["page_number"] == page_number:
+            annotation_bbox_size = calculate_bbox_area(annotation["bbox"])
+            if annotation_bbox_size and (
+                calculate_intersection_area(element_bbox, annotation["bbox"]) / annotation_bbox_size
+                > threshold
+            ):
+                annotations_within_element.append(annotation)
     return annotations_within_element
 
 
@@ -1136,7 +1141,7 @@ def get_word_bounding_box_from_element(
                 characters.append(character)
                 char = character.get_text()
 
-                if not char.strip():
+                if word and not char.strip():
                     words.append(
                         {"text": word, "bbox": (x1, y1, x2, y2), "start_index": start_index},
                     )
@@ -1187,7 +1192,6 @@ def map_bbox_and_index(words: List[dict], annot: dict):
         annot["text"] = ""
         annot["start_index"] = -1
         return annot
-
     distance_from_bbox_start = np.sqrt(
         (annot["bbox"][0] - np.array([word["bbox"][0] for word in words])) ** 2
         + (annot["bbox"][1] - np.array([word["bbox"][1] for word in words])) ** 2,

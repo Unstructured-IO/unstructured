@@ -34,6 +34,7 @@ from unstructured.partition.common import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
+from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
     is_email_address,
     is_possible_narrative_text,
@@ -56,6 +57,8 @@ def partition_pptx(
     metadata_last_modified: Optional[str] = None,
     include_slide_notes: bool = False,
     chunking_strategy: Optional[str] = None,
+    languages: Optional[List[str]] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs: Any,
 ) -> List[Element]:
     """Partition PowerPoint document in .pptx format into its document elements.
@@ -76,6 +79,13 @@ def partition_pptx(
         The last modified date for the document.
     include_slide_notes
         If True, includes the slide notes as element
+    languages
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     # -- verify only one source-file argument was provided --
     exactly_one(filename=filename, file=file)
@@ -90,15 +100,19 @@ def partition_pptx(
     source_file = file or filename
     assert source_file is not None
 
-    return list(
-        _PptxPartitioner.iter_presentation_elements(
-            source_file,
-            include_page_breaks,
-            include_slide_notes,
-            metadata_filename,
-            metadata_last_modified,
-        ),
+    elements = _PptxPartitioner.iter_presentation_elements(
+        source_file,
+        include_page_breaks,
+        include_slide_notes,
+        metadata_filename,
+        metadata_last_modified,
     )
+    elements = apply_lang_metadata(
+        elements=elements,
+        languages=languages,
+        detect_language_per_element=detect_language_per_element,
+    )
+    return list(elements)
 
 
 class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]

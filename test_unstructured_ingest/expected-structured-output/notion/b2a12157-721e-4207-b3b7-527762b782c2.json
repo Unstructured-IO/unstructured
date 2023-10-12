@@ -8,6 +8,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Getting Started"
@@ -21,6 +24,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "💡\n      \n      Notion Tip: When creating a page, it's important to give it a clear title and provide some content. This could include verifying the information, summarizing the topic, or sharing your thoughts and opinions on something that matters to you."
@@ -34,6 +40,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "The Basics"
@@ -47,6 +56,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Create a Page"
@@ -60,6 +72,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "emphasized_text_contents": [
         "Workspace"
@@ -79,6 +94,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Headings"
@@ -92,6 +110,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "You can add headings and subheadings in one of two ways:"
@@ -105,6 +126,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Type \n        \n          /heading\n        \n         or \n        \n          /h1\n        \n        , \n        \n          /h2\n        \n        , or \n        \n          /h3\n        \n         to choose the heading size you want."
@@ -118,6 +142,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Use Markdown shortcuts, like \n        \n          #\n        \n        , \n        \n          ##\n        \n        , and \n        \n          ###\n        \n        ."
@@ -131,6 +158,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Create inline code by wrapping text with \n          \n            `\n          \n           (or with the shortcut \n          \n            cmd/ctrl + e\n          \n          )."
@@ -144,6 +174,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Toggle Lists"
@@ -157,6 +190,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Toggle lists streamline your content. Click the arrow to open."
@@ -170,6 +206,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Callout Blocks"
@@ -183,6 +222,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Code Blocks"
@@ -196,6 +238,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "You can add code notation to any Notion page:"
@@ -209,6 +254,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Your teammates can select any code to comment on it."
@@ -222,6 +270,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Organizing Pages"
@@ -235,6 +286,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\n      Instead of using folders, Notion lets you nest pages inside pages. Type \n      "
@@ -248,6 +302,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Advanced Techniques"
@@ -261,6 +318,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.notion.so/notion/Notion-editor-101-create-and-edit-68c7c67047494fdb87d50185429df93e"
@@ -280,6 +340,9 @@
         "date_modified": "2023-08-04T18:31:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.notion.so/notion/Notion-editor-101-create-and-edit-68c7c67047494fdb87d50185429df93e"
