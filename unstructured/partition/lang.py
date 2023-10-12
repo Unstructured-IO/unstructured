@@ -220,7 +220,7 @@ def _convert_to_standard_langcode(lang: str) -> str:
 def detect_languages(
     text: str,
     languages: Optional[List[str]] = ["auto"],
-) -> List[str] | None:
+) -> Optional[List[str]]:
     """
     Detects the list of languages present in the text (in the default "auto" mode),
     or formats and passes through the user inputted document languages if provided.
