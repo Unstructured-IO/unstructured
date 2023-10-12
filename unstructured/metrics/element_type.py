@@ -27,34 +27,39 @@ def calculate_element_type_percent_match(
     source: Dict,
     category_depth_weight: float = 0.5,
 ) -> float:
+    if len(output) == 0 or len(source) == 0:
+        return 0.0
+
+    output_copy = output.copy()
+    source_copy = source.copy()
     total_source_element_count = 0
     total_match_element_count = 0
 
     unmatched_depth_output = {}
     unmatched_depth_source = {}
 
-    for k,v in output.items():
-        if k in source:
-            match_count = min(output[k], source[k])
+    for k,v in output_copy.items():
+        if k in source_copy:
+            match_count = min(output_copy[k], source_copy[k])
             total_match_element_count += match_count
             total_source_element_count += match_count
-            output[k] -= match_count
-            source[k] -= match_count
+            output_copy[k] -= match_count
+            source_copy[k] -= match_count
             
             element_type = k[0]
             if element_type not in unmatched_depth_output:
-                unmatched_depth_output[element_type] = output[k]
+                unmatched_depth_output[element_type] = output_copy[k]
             else:
-                unmatched_depth_output[element_type] += output[k]
+                unmatched_depth_output[element_type] += output_copy[k]
             if element_type not in unmatched_depth_source:
-                unmatched_depth_source[element_type] = source[k]
+                unmatched_depth_source[element_type] = source_copy[k]
             else:
-                unmatched_depth_source[element_type] += source[k]
+                unmatched_depth_source[element_type] += source_copy[k]
+
     for k,v in unmatched_depth_source.items():
+        total_source_element_count += unmatched_depth_source[k]
         if k in unmatched_depth_output:
             match_count = min(unmatched_depth_output[k], unmatched_depth_source[k])
             total_match_element_count += match_count * category_depth_weight
-            total_source_element_count += unmatched_depth_source[k]
 
-    return total_match_element_count / total_source_element_count
-
+    return min(max(total_match_element_count / total_source_element_count, 0.0), 1.0)
