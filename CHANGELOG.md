@@ -1,6 +1,9 @@
-## 0.10.22-dev3
+## 0.10.22-dev4
 
 ### Enhancements
+
+* **bump `unstructured-inference` to `0.7.3`** The updated version of `unstructured-inference` integrates `Chipperv2` and additional `Chipper` functionality, which includes automatic detection of GPU,
+bounding box prediction and hierarchical representation; it also improves element text by removing control characters from the text of all layout elements in the `hi_res` partitioning of pdfs and images.
 
 ### Features
 
