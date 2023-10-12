@@ -7,11 +7,10 @@ from PIL import Image
 from pytesseract import TesseractError
 from unstructured_inference.inference import layout
 
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.partition import image, ocr, pdf
-from unstructured.partition.json import partition_json
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -404,16 +403,11 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_msg_with_json(
-    filename="example-docs/layout-parser-paper-fast.jpg",
-):
-    elements = image.partition_image(filename=filename, strategy="auto")
-    test_elements = partition_json(text=elements_to_json(elements))
-
-    assert len(elements) == len(test_elements)
-    assert elements[0].metadata.page_number == test_elements[0].metadata.page_number
-    for i in range(len(elements)):
-        assert elements[i] == test_elements[i]
+def test_partition_msg_with_json():
+    elements = image.partition_image(
+        example_doc_path("layout-parser-paper-fast.jpg"), strategy="auto"
+    )
+    assert_round_trips_through_JSON(elements)
 
 
 def test_partition_image_with_ocr_has_coordinates_from_filename(
