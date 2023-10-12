@@ -458,7 +458,7 @@ class Text(Element):
     ):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
-        self.embeddings: Optional[str] = embeddings
+        self.embeddings: Optional[List[float]] = embeddings
 
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
