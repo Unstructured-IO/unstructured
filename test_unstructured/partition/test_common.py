@@ -1,8 +1,8 @@
 import pytest
 from PIL import Image
 from unstructured_inference.inference import layout
+from unstructured_inference.inference.elements import Rectangle
 from unstructured_inference.inference.layout import LayoutElement
-from unstructured_inference.inference.layoutelement import LocationlessLayoutElement
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
@@ -27,25 +27,34 @@ class MockPageLayout(layout.PageLayout):
     def __init__(self, number: int, image: Image):
         self.number = number
         self.image = image
+        self.image_metadata = {
+            "format": image.format if image else None,
+            "width": image.width if image else None,
+            "height": image.height if image else None,
+        }
 
     @property
     def elements(self):
         return [
-            LocationlessLayoutElement(
+            LayoutElement(
                 type="Headline",
                 text="Charlie Brown and the Great Pumpkin",
+                bbox=Rectangle(0, 0, 100, 10),
             ),
-            LocationlessLayoutElement(
+            LayoutElement(
                 type="Subheadline",
                 text="The Beginning",
+                bbox=Rectangle(0, 20, 50, 30),
             ),
-            LocationlessLayoutElement(
+            LayoutElement(
                 type="Text",
                 text="This time Charlie Brown had it really tricky...",
+                bbox=Rectangle(0, 40, 150, 50),
             ),
-            LocationlessLayoutElement(
+            LayoutElement(
                 type="Title",
                 text="Another book title in the same page",
+                bbox=Rectangle(0, 60, 100, 70),
             ),
         ]
 
@@ -54,7 +63,7 @@ class MockDocumentLayout(layout.DocumentLayout):
     @property
     def pages(self):
         return [
-            MockPageLayout(number=1, image=Image.new("1", (1, 1))),
+            MockPageLayout(number=1, image=Image.new("1", (300, 600))),
         ]
 
 
@@ -155,11 +164,8 @@ def test_normalize_layout_element_dict_misc():
 def test_normalize_layout_element_layout_element():
     layout_element = LayoutElement(
         type="Text",
-        x1=1,
-        y1=2,
-        x2=3,
-        y2=4,
         text="Some lovely text",
+        bbox=Rectangle(1, 2, 3, 4),
     )
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(
@@ -176,11 +182,8 @@ def test_normalize_layout_element_layout_element():
 def test_normalize_layout_element_layout_element_narrative_text():
     layout_element = LayoutElement(
         type="NarrativeText",
-        x1=1,
-        y1=2,
-        x2=3,
-        y2=4,
         text="Some lovely text",
+        bbox=Rectangle(1, 2, 3, 4),
     )
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(
@@ -197,11 +200,8 @@ def test_normalize_layout_element_layout_element_narrative_text():
 def test_normalize_layout_element_checked_box():
     layout_element = LayoutElement(
         type="Checked",
-        x1=1,
-        y1=2,
-        x2=3,
-        y2=4,
         text="",
+        bbox=Rectangle(1, 2, 3, 4),
     )
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(
@@ -218,11 +218,8 @@ def test_normalize_layout_element_checked_box():
 def test_normalize_layout_element_unchecked_box():
     layout_element = LayoutElement(
         type="Unchecked",
-        x1=1,
-        y1=2,
-        x2=3,
-        y2=4,
         text="",
+        bbox=Rectangle(1, 2, 3, 4),
     )
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(
@@ -239,11 +236,8 @@ def test_normalize_layout_element_unchecked_box():
 def test_normalize_layout_element_enumerated_list():
     layout_element = LayoutElement(
         type="List",
-        x1=1,
-        y1=2,
-        x2=3,
-        y2=4,
         text="1. I'm so cool! 2. You're cool too. 3. We're all cool!",
+        bbox=Rectangle(1, 2, 3, 4),
     )
     coordinate_system = PixelSpace(width=10, height=20)
     elements = common.normalize_layout_element(
@@ -272,11 +266,8 @@ def test_normalize_layout_element_enumerated_list():
 def test_normalize_layout_element_bulleted_list():
     layout_element = LayoutElement(
         type="List",
-        x1=1,
-        y1=2,
-        x2=3,
-        y2=4,
         text="* I'm so cool! * You're cool too. * We're all cool!",
+        bbox=Rectangle(1, 2, 3, 4),
     )
     coordinate_system = PixelSpace(width=10, height=20)
     elements = common.normalize_layout_element(
@@ -338,12 +329,6 @@ def test_convert_ms_office_table_to_text_works_with_empty_tables():
 )
 def test_contains_emoji(text, expected):
     assert contains_emoji(text) is expected
-
-
-def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
-    layout_elem_absent_coordinates = MockDocumentLayout()
-    elements = document_to_element_list(layout_elem_absent_coordinates)
-    assert elements[0].metadata.coordinates is None
 
 
 def test_get_page_image_metadata_and_coordinate_system():

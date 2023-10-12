@@ -69,13 +69,13 @@ class MockPageLayout(layout.PageLayout):
     @property
     def elements(self):
         return [
-            layout.LayoutElement(
-                type="Title",
+            layout.LayoutElement.from_coords(
                 x1=0,
                 y1=0,
                 x2=2,
                 y2=2,
                 text="Charlie Brown and the Great Pumpkin",
+                type="Title",
             ),
         ]
 
