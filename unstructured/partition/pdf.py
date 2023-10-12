@@ -633,7 +633,7 @@ def _process_pdfminer_pages(
                     system=coordinate_system,
                 )
                 page_element = list_page_element
-                updated_page_elements.pop(0)
+                updated_page_elements.pop()
 
             updated_page_elements.append(page_element)
 

@@ -1,11 +1,17 @@
 import functools
 import importlib
 import json
+import os
+import platform
+import subprocess
 from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, cast
 
+import requests
 from typing_extensions import ParamSpec
+
+from unstructured.__version__ import __version__
 
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
@@ -189,3 +195,47 @@ def validate_date_args(date: Optional[str] = None):
         f"The argument {date} does not satisfy the format: "
         "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
     )
+
+
+def scarf_analytics():
+    try:
+        subprocess.check_output("nvidia-smi")
+        gpu_present = True
+    except Exception:
+        gpu_present = False
+        pass
+
+    python_version = ".".join(platform.python_version().split(".")[:2])
+
+    try:
+        if os.getenv("SCARF_NO_ANALYTICS") != "true" and os.getenv("DO_NOT_TRACK") != "true":
+            if "dev" in __version__:
+                requests.get(
+                    "https://packages.unstructured.io/python-telemetry?version="
+                    + __version__
+                    + "&platform="
+                    + platform.system()
+                    + "&python"
+                    + python_version
+                    + "&arch="
+                    + platform.machine()
+                    + "&gpu="
+                    + str(gpu_present)
+                    + "&dev=true",
+                )
+            else:
+                requests.get(
+                    "https://packages.unstructured.io/python-telemetry?version="
+                    + __version__
+                    + "&platform="
+                    + platform.system()
+                    + "&python"
+                    + python_version
+                    + "&arch="
+                    + platform.machine()
+                    + "&gpu="
+                    + str(gpu_present)
+                    + "&dev=false",
+                )
+    except Exception:
+        pass
