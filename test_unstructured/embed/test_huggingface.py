@@ -1,3 +1,4 @@
+from unstructured.documents.elements import Text
 from unstructured.embed.huggingface import HuggingFaceEmbeddingEncoder
 
 HF = HuggingFaceEmbeddingEncoder()
