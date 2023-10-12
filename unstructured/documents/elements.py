@@ -454,7 +454,7 @@ class Text(Element):
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
-        embeddings: Optional[str] = None,
+        embeddings: Optional[List[float]] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
