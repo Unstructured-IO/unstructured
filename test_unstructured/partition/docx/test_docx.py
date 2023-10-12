@@ -24,6 +24,7 @@ from unstructured.documents.elements import (
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import _DocxPartitioner, partition_docx
 from unstructured.partition.json import partition_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 
@@ -106,6 +107,8 @@ def test_partition_docx_from_filename(
     assert elements[0].metadata.page_number is None
     for element in elements:
         assert element.metadata.filename == "mock_document.docx"
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {"docx"}
 
 
 def test_partition_docx_from_filename_with_metadata_filename(mock_document, tmpdir):
@@ -422,14 +425,6 @@ def test_partition_docx_with_json(mock_document, expected_elements, tmpdir):
         assert elements[i] == test_elements[i]
 
 
-def test_add_chunking_strategy_on_partition_docx(filename="example-docs/handbook-1p.docx"):
-    chunk_elements = partition_docx(filename, chunking_strategy="by_title")
-    elements = partition_docx(filename)
-    chunks = chunk_by_title(elements)
-    assert chunk_elements != elements
-    assert chunk_elements == chunks
-
-
 def test_parse_category_depth_by_style():
     partitioner = _DocxPartitioner("example-docs/category-level.docx", None, None, False, None)
 
@@ -489,3 +484,58 @@ def test_parse_category_depth_by_style_name():
 def test_parse_category_depth_by_style_ilvl():
     partitioner = _DocxPartitioner(None, None, None, False, None)
     assert partitioner._parse_category_depth_by_style_ilvl() == 0
+
+
+def test_add_chunking_strategy_on_partition_docx_default_args(
+    filename="example-docs/handbook-1p.docx",
+):
+    chunk_elements = partition_docx(filename, chunking_strategy="by_title")
+    elements = partition_docx(filename)
+    chunks = chunk_by_title(elements)
+
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_add_chunking_strategy_on_partition_docx(
+    filename="example-docs/fake-doc-emphasized-text.docx",
+):
+    chunk_elements = partition_docx(
+        filename,
+        chunking_strategy="by_title",
+        max_characters=9,
+        combine_text_under_n_chars=5,
+    )
+    elements = partition_docx(filename)
+    chunks = chunk_by_title(elements, max_characters=9, combine_text_under_n_chars=5)
+
+    assert chunk_elements == chunks
+    assert elements != chunk_elements
+
+    for chunk in chunks:
+        assert len(chunk.text) <= 9
+
+
+def test_partition_docx_element_metadata_has_languages():
+    filename = "example-docs/handbook-1p.docx"
+    elements = partition_docx(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_docx_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.docx"
+    elements = partition_docx(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+def test_partition_docx_respects_languages_arg():
+    filename = "example-docs/handbook-1p.docx"
+    elements = partition_docx(filename=filename, languages=["deu"])
+    assert elements[0].metadata.languages == ["deu"]
+
+
+def test_partition_docx_raises_TypeError_for_invalid_languages():
+    with pytest.raises(TypeError):
+        filename = "example-docs/handbook-1p.docx"
+        partition_docx(filename=filename, languages="eng")

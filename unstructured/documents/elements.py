@@ -20,6 +20,7 @@ from unstructured.documents.coordinates import (
     CoordinateSystem,
     RelativeCoordinateSystem,
 )
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
 class NoID(abc.ABC):
@@ -185,8 +186,21 @@ class ElementMetadata:
     # Metadata extracted via regex
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
 
+    # Chunking metadata fields
+    max_characters: Optional[int] = None
+    is_continuation: Optional[bool] = None
+
     # Detection Model Class Probabilities from Unstructured-Inference Hi-Res
     detection_class_prob: Optional[float] = None
+
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        detection_origin: Optional[str] = None
+
+    def __setattr__(self, key, value):
+        if not UNSTRUCTURED_INCLUDE_DEBUG_METADATA and key == "detection_origin":
+            return
+        else:
+            super().__setattr__(key, value)
 
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
@@ -198,7 +212,11 @@ class ElementMetadata:
             self.filename = filename
 
     def to_dict(self):
-        _dict = {key: value for key, value in self.__dict__.items() if value is not None}
+        _dict = {
+            key: value
+            for key, value in self.__dict__.items()
+            if value is not None and key != "detection_origin"
+        }
         if "regex_metadata" in _dict and not _dict["regex_metadata"]:
             _dict.pop("regex_metadata")
         if self.data_source:
@@ -333,9 +351,11 @@ class Element(abc.ABC):
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
+        detection_origin: Optional[str] = None,
     ):
         if metadata is None:
             metadata = ElementMetadata()
+            metadata.detection_origin = detection_origin
         self.id: Union[str, uuid.UUID, NoID, UUID] = element_id
         coordinates_metadata = (
             None
@@ -350,6 +370,7 @@ class Element(abc.ABC):
         self.metadata = metadata.merge(
             ElementMetadata(coordinates=coordinates_metadata),
         )
+        self.metadata.detection_origin = detection_origin
 
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())
@@ -395,6 +416,7 @@ class CheckBox(Element):
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
         metadata: Optional[ElementMetadata] = None,
+        detection_origin: Optional[str] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         super().__init__(
@@ -402,6 +424,7 @@ class CheckBox(Element):
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=metadata,
+            detection_origin=detection_origin,
         )
         self.checked: bool = checked
 
@@ -430,6 +453,7 @@ class Text(Element):
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
+        detection_origin: Optional[str] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
@@ -446,6 +470,7 @@ class Text(Element):
             metadata=metadata,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
+            detection_origin=detection_origin,
         )
 
     def __str__(self):
@@ -566,6 +591,14 @@ class Table(Text):
     pass
 
 
+class TableChunk(Table):
+    """An element for capturing chunks of tables."""
+
+    category = "Table"
+
+    pass
+
+
 class Header(Text):
     """An element for capturing document headers."""
 
@@ -605,7 +638,8 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "Page-footer": Footer,
     "Page-header": Header,  # Title?
     "Picture": Image,
-    "Section-header": Header,
+    # this mapping favors ensures yolox produces backward compatible categories
+    "Section-header": Title,
     "Headline": Title,
     "Subheadline": Title,
     "Abstract": NarrativeText,

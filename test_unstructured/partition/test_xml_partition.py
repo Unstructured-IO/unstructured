@@ -6,6 +6,7 @@ import pytest
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import NarrativeText, Title
 from unstructured.partition.json import partition_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.partition.xml import partition_xml
 from unstructured.staging.base import elements_to_json
 
@@ -22,6 +23,8 @@ def test_partition_xml_from_filename(filename):
 
     assert elements[0].text == "United States"
     assert elements[0].metadata.filename == filename
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {"xml"}
 
 
 def test_partition_xml_from_filename_with_metadata_filename():
@@ -288,3 +291,16 @@ def test_add_chunking_strategy_on_partition_xml(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_xml_element_metadata_has_languages():
+    filename = "example-docs/factbook.xml"
+    elements = partition_xml(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_xml_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.xml"
+    elements = partition_xml(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]

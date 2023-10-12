@@ -20,6 +20,7 @@ class Page(FromJSONMixin):
     parent: Parent
     url: str
     public_url: str
+    request_id: Optional[str] = None
     object: str = "page"
     icon: Optional[FileObject] = None
     cover: Optional[FileObject] = None

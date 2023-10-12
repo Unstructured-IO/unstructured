@@ -6,11 +6,13 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=sharepoint-azure-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 DESTINATION_INDEX="utic-test-ingest-fixtures-output-$(date +%s)"
 # The vector configs on the schema currently only exist on versions:
 # 2023-07-01-Preview, 2021-04-30-Preview, 2020-06-30-Preview
 API_VERSION=2023-07-01-Preview
+CI=${CI:-"false"}
 
 if [ -z "$SHAREPOINT_CLIENT_ID" ] || [ -z "$SHAREPOINT_CRED" ] ; then
    echo "Skipping Sharepoint ingest test because the SHAREPOINT_CLIENT_ID or SHAREPOINT_CRED env var is not set."
@@ -27,6 +29,9 @@ if [ -z "$AZURE_SEARCH_ENDPOINT" ] && [ -z "$AZURE_SEARCH_API_KEY" ]; then
    exit 0
 fi
 
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+
 function cleanup {
   response_code=$(curl -s -o /dev/null -w "%{http_code}" \
   "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
@@ -40,6 +45,12 @@ function cleanup {
     --header 'content-type: application/json'
   else
     echo "Index $DESTINATION_INDEX does not exist, nothing to delete"
+  fi
+
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$WORK_DIR"
+  if [ "$CI" == "true" ]; then
+    cleanup_dir "$DOWNLOAD_DIR"
   fi
 }
 
@@ -79,6 +90,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --embedding-api-key "$OPENAI_API_KEY" \
     --chunk-elements \
     --chunk-multipage-sections \
+    --work-dir "$WORK_DIR" \
     azure-cognitive-search \
     --key "$AZURE_SEARCH_API_KEY" \
     --endpoint "$AZURE_SEARCH_ENDPOINT" \

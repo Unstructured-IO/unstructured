@@ -6,7 +6,7 @@
 #
 alabaster==0.7.13
     # via sphinx
-babel==2.12.1
+babel==2.13.0
     # via sphinx
 beautifulsoup4==4.12.2
     # via
@@ -18,7 +18,7 @@ certifi==2023.7.22
     #   -c requirements/constraints.in
     #   -r requirements/build.in
     #   requests
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   requests
@@ -54,7 +54,7 @@ mdurl==0.1.2
     # via markdown-it-py
 myst-parser==2.0.0
     # via -r requirements/build.in
-packaging==23.1
+packaging==23.2
     # via
     #   -c requirements/base.txt
     #   sphinx
@@ -116,7 +116,7 @@ sphinxcontrib-serializinghtml==1.1.5
     # via
     #   -r requirements/build.in
     #   sphinx
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

@@ -14,10 +14,11 @@ import requests
 from dataclasses_json import DataClassJsonMixin
 
 from unstructured.chunking.title import chunk_by_title
-from unstructured.documents.elements import DataSourceMetadata, Element
-from unstructured.embed.interfaces import BaseEmbeddingEncoder
+from unstructured.documents.elements import DataSourceMetadata
+from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
+from unstructured.ingest.ingest_doc_json_mixin import IngestDocJsonMixin
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict, elements_from_json
@@ -36,13 +37,10 @@ class BaseConfig(DataClassJsonMixin, ABC):
 @dataclass
 class PartitionConfig(BaseConfig):
     # where to write structured data outputs
-    output_dir: str = "structured-output"
-    num_processes: int = 2
-    max_docs: t.Optional[int] = None
     pdf_infer_table_structure: bool = False
+    skip_infer_table_types: t.Optional[t.List[str]] = None
     strategy: str = "auto"
-    reprocess: bool = False
-    ocr_languages: str = "eng"
+    ocr_languages: t.Optional[t.List[str]] = None
     encoding: t.Optional[str] = None
     fields_include: t.List[str] = field(
         default_factory=lambda: ["element_id", "text", "type", "metadata", "embeddings"],
@@ -56,12 +54,22 @@ class PartitionConfig(BaseConfig):
 
 
 @dataclass
+class ProcessorConfig(BaseConfig):
+    reprocess: bool = False
+    verbose: bool = False
+    work_dir: str = str((Path.home() / ".cache" / "unstructured" / "ingest" / "pipeline").resolve())
+    output_dir: str = "structured-output"
+    num_processes: int = 2
+
+
+@dataclass
 class ReadConfig(BaseConfig):
     # where raw documents are stored for processing, and then removed if not preserve_downloads
     download_dir: str = ""
     re_download: bool = False
     preserve_downloads: bool = False
     download_only: bool = False
+    max_docs: t.Optional[int] = None
 
 
 @dataclass
@@ -83,16 +91,16 @@ class EmbeddingConfig(BaseConfig):
 class ChunkingConfig(BaseConfig):
     chunk_elements: bool = False
     multipage_sections: bool = True
-    combine_under_n_chars: int = 500
-    new_after_n_chars: int = 1500
+    combine_text_under_n_chars: int = 500
+    max_characters: int = 1500
 
     def chunk(self, elements: t.List[Element]) -> t.List[Element]:
         if self.chunk_elements:
             return chunk_by_title(
                 elements=elements,
                 multipage_sections=self.multipage_sections,
-                combine_under_n_chars=self.combine_under_n_chars,
-                new_after_n_chars=self.new_after_n_chars,
+                combine_text_under_n_chars=self.combine_text_under_n_chars,
+                max_characters=self.max_characters,
             )
         else:
             return elements
@@ -117,7 +125,7 @@ class SourceMetadata(DataClassJsonMixin, ABC):
 
 
 @dataclass
-class BaseIngestDoc(DataClassJsonMixin, ABC):
+class BaseIngestDoc(IngestDocJsonMixin, ABC):
     """An "ingest document" is specific to a connector, and provides
     methods to fetch a single raw document, store it locally for processing, any cleanup
     needed after successful processing of the doc, and the ability to write the doc's
@@ -126,34 +134,33 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     Crucially, it is not responsible for the actual processing of the raw document.
     """
 
+    processor_config: ProcessorConfig
     read_config: ReadConfig
-    partition_config: PartitionConfig
     connector_config: BaseConnectorConfig
-    source_metadata: t.Optional[SourceMetadata] = field(init=False, default=None)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._date_processed = None
-
-    def run_chunking(self, elements: t.List[Element]) -> t.List[Element]:
-        return elements
+    _source_metadata: t.Optional[SourceMetadata] = field(init=False, default=None)
+    _date_processed: t.Optional[str] = field(init=False, default=None)
 
     @property
-    def embedder(self) -> t.Optional[BaseEmbeddingEncoder]:
-        return None
+    def source_metadata(self) -> SourceMetadata:
+        if self._source_metadata is None:
+            self.update_source_metadata()
+        # Provide guarantee that the field was set by update_source_metadata()
+        if self._source_metadata is None:
+            raise ValueError("failed to set source metadata")
+        return self._source_metadata
+
+    @source_metadata.setter
+    def source_metadata(self, value: SourceMetadata):
+        self._source_metadata = value
 
     @property
     def date_created(self) -> t.Optional[str]:
         """The date the document was created on the source system."""
-        if self.source_metadata is None:
-            self.update_source_metadata()
         return self.source_metadata.date_created  # type: ignore
 
     @property
     def date_modified(self) -> t.Optional[str]:
         """The date the document was last modified on the source system."""
-        if self.source_metadata is None:
-            self.update_source_metadata()
         return self.source_metadata.date_modified  # type: ignore
 
     @property
@@ -165,14 +172,21 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     @property
     def exists(self) -> t.Optional[bool]:
         """Whether the document exists on the remote source."""
-        if self.source_metadata is None:
-            self.update_source_metadata()
         return self.source_metadata.exists  # type: ignore
 
     @property
     @abstractmethod
     def filename(self):
         """The local filename of the document after fetching from remote source."""
+
+    @property
+    def base_filename(self) -> t.Optional[str]:
+        if self.read_config.download_dir and self.filename:
+            download_path = str(Path(self.read_config.download_dir).resolve())
+            full_path = str(self.filename)
+            base_path = full_path.replace(download_path, "")
+            return base_path
+        return None
 
     @property
     @abstractmethod
@@ -188,8 +202,6 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     @property
     def source_url(self) -> t.Optional[str]:
         """The url of the source document."""
-        if self.source_metadata is None:
-            self.update_source_metadata()
         return self.source_metadata.source_url  # type: ignore
 
     @property
@@ -197,8 +209,6 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         """The version of the source document, this could be the last modified date, an
         explicit version number, or anything else that can be used to uniquely identify
         the version of the document."""
-        if self.source_metadata is None:
-            self.update_source_metadata()
         return self.source_metadata.version  # type: ignore
 
     @abstractmethod
@@ -227,7 +237,7 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
     # TODO: set as @abstractmethod and pass or raise NotImplementedError
     def update_source_metadata(self, **kwargs) -> None:
         """Sets the SourceMetadata and the  properties for the doc"""
-        self.source_metadata = SourceMetadata()
+        self._source_metadata = SourceMetadata()
 
     # NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
     # in addition to or instead of get_file()
@@ -241,18 +251,13 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
         """Determine if structured output for this doc already exists."""
         return self._output_filename.is_file() and self._output_filename.stat().st_size
 
-    def write_result(self):
-        """Write the structured json result for this doc. result must be json serializable."""
-        if self.read_config.download_only:
-            return
-        self._output_filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(self._output_filename, "w", encoding="utf8") as output_f:
-            json.dump(self.isd_elems_no_filename, output_f, ensure_ascii=False, indent=2)
-        logger.info(f"Wrote {self._output_filename}")
-
     @PartitionError.wrap
-    def partition_file(self, **partition_kwargs) -> t.List[t.Dict[str, t.Any]]:
-        if not self.partition_config.partition_by_api:
+    def partition_file(
+        self,
+        partition_config: PartitionConfig,
+        **partition_kwargs,
+    ) -> t.List[Element]:
+        if not partition_config.partition_by_api:
             logger.debug("Using local partition")
             elements = partition(
                 filename=str(self.filename),
@@ -267,14 +272,14 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
                 **partition_kwargs,
             )
         else:
-            endpoint = self.partition_config.partition_endpoint
+            endpoint = partition_config.partition_endpoint
 
             logger.debug(f"Using remote partition ({endpoint})")
 
             with open(self.filename, "rb") as f:
                 headers_dict = {}
-                if self.partition_config.api_key:
-                    headers_dict["UNSTRUCTURED-API-KEY"] = self.partition_config.api_key
+                if partition_config.api_key:
+                    headers_dict["UNSTRUCTURED-API-KEY"] = partition_config.api_key
                 response = requests.post(
                     f"{endpoint}",
                     files={"files": (str(self.filename), f)},
@@ -286,30 +291,31 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
             if response.status_code != 200:
                 raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
             elements = elements_from_json(text=json.dumps(response.json()))
-        elements = self.run_chunking(elements=elements)
-        if self.embedder:
-            logger.info("Running embedder to add vector content to elements")
-            elements = self.embedder.embed_documents(elements)
-        return convert_to_dict(elements)
+        return elements
 
-    def process_file(self, **partition_kwargs) -> t.Optional[t.List[t.Dict[str, t.Any]]]:
+    def process_file(
+        self,
+        partition_config: PartitionConfig,
+        **partition_kwargs,
+    ) -> t.Optional[t.List[t.Dict[str, t.Any]]]:
         self._date_processed = datetime.utcnow().isoformat()
         if self.read_config.download_only:
             return None
         logger.info(f"Processing {self.filename}")
 
-        isd_elems = self.partition_file(**partition_kwargs)
+        isd_elems_raw = self.partition_file(partition_config=partition_config, **partition_kwargs)
+        isd_elems = convert_to_dict(isd_elems_raw)
 
         self.isd_elems_no_filename: t.List[t.Dict[str, t.Any]] = []
         for elem in isd_elems:
             # type: ignore
-            if self.partition_config.metadata_exclude and self.partition_config.metadata_include:
+            if partition_config.metadata_exclude and partition_config.metadata_include:
                 raise ValueError(
                     "Arguments `--metadata-include` and `--metadata-exclude` are "
                     "mutually exclusive with each other.",
                 )
-            elif self.partition_config.metadata_exclude:
-                ex_list = self.partition_config.metadata_exclude
+            elif partition_config.metadata_exclude:
+                ex_list = partition_config.metadata_exclude
                 for ex in ex_list:
                     if "." in ex:  # handle nested fields
                         nested_fields = ex.split(".")
@@ -322,15 +328,15 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
                             current_elem.pop(field_to_exclude, None)
                     else:  # handle top-level fields
                         elem["metadata"].pop(ex, None)  # type: ignore[attr-defined]
-            elif self.partition_config.metadata_include:
-                in_list = self.partition_config.metadata_include
+            elif partition_config.metadata_include:
+                in_list = partition_config.metadata_include
                 for k in list(elem["metadata"].keys()):  # type: ignore[attr-defined]
                     if k not in in_list:
                         elem["metadata"].pop(k, None)  # type: ignore[attr-defined]
-            in_list = self.partition_config.fields_include
+            in_list = partition_config.fields_include
             elem = {k: v for k, v in elem.items() if k in in_list}
 
-            if self.partition_config.flatten_metadata:
+            if partition_config.flatten_metadata:
                 for k, v in elem["metadata"].items():  # type: ignore[attr-defined]
                     elem[k] = v
                 elem.pop("metadata")  # type: ignore[attr-defined]
@@ -344,21 +350,9 @@ class BaseIngestDoc(DataClassJsonMixin, ABC):
 class BaseSourceConnector(DataClassJsonMixin, ABC):
     """Abstract Base Class for a connector to a remote source, e.g. S3 or Google Drive."""
 
+    processor_config: ProcessorConfig
     read_config: ReadConfig
     connector_config: BaseConnectorConfig
-    partition_config: PartitionConfig
-
-    def __init__(
-        self,
-        read_config: ReadConfig,
-        connector_config: BaseConnectorConfig,
-        partition_config: PartitionConfig,
-    ):
-        """Expects a standard_config object that implements StandardConnectorConfig
-        and config object that implements BaseConnectorConfig."""
-        self.read_config = read_config
-        self.connector_config = connector_config
-        self.partition_config = partition_config
 
     @abstractmethod
     def cleanup(self, cur_dir=None):

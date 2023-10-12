@@ -195,17 +195,6 @@
   },
   {
     "type": "Title",
-    "element_id": "1064dcef42380cfdb90c668aa3a670a3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1,
-      "links": []
-    },
-    "text": "Table and ﬁgure"
-  },
-  {
-    "type": "Title",
     "element_id": "b27e559f6c00d2bde61efba5db252e31",
     "metadata": {
       "data_source": {},
@@ -214,6 +203,17 @@
       "links": []
     },
     "text": "Materials engineering"
+  },
+  {
+    "type": "Title",
+    "element_id": "1064dcef42380cfdb90c668aa3a670a3",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1,
+      "links": []
+    },
+    "text": "Table and ﬁgure"
   },
   {
     "type": "Title",
@@ -425,17 +425,6 @@
     "text": "The results of the experiment are presented in this session. The results obtained from weight loss method for stainless steel Type 316 immersed in 0.5 M H2SO4 solution in the absence and presence of different concentrations of egg shell powder (ES) are presented in Figs. 1–3 respectively. It can be seen clearly from these Figures that the efﬁciency of egg shell powder increase with the inhibitor con- centration, The increase in its efﬁciency could be as a result of increase in the constituent molecule"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2,
-      "links": []
-    },
-    "text": "30"
-  },
-  {
     "type": "Title",
     "element_id": "e28e0dc941accc8694040c63091b580c",
     "metadata": {
@@ -500,6 +489,17 @@
       "links": []
     },
     "text": "i"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2,
+      "links": []
+    },
+    "text": "30"
   },
   {
     "type": "UncategorizedText",
@@ -621,17 +621,6 @@
       "links": []
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d83c7ee736be931d85b78a4a60881ced",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "453"
   },
   {
     "type": "UncategorizedText",
@@ -1163,6 +1152,17 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "d83c7ee736be931d85b78a4a60881ced",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "453"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "48f89b630677c2cbb70e2ba05bf7a363",
     "metadata": {
       "data_source": {},
@@ -1547,17 +1547,6 @@
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "f626051bc94422f26f4b774a2bca105e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5,
-      "links": []
-    },
-    "text": "455"
-  },
-  {
     "type": "Title",
     "element_id": "6cad98316bfa45c17e82a1836920ed12",
     "metadata": {
@@ -1589,6 +1578,17 @@
       "links": []
     },
     "text": "Fig. 8. SEM/EDX image of stainless steel immersed in 0.5 M H2SO4 solution with the presence of inhibitor."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f626051bc94422f26f4b774a2bca105e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5,
+      "links": []
+    },
+    "text": "455"
   },
   {
     "type": "UncategorizedText",
@@ -1690,17 +1690,6 @@
     "text": "The corrosion rate (CR) was calculated using Eq. (1) [1–5]"
   },
   {
-    "type": "Title",
-    "element_id": "cecb8b44c9af4b76e85155170c509729",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6,
-      "links": []
-    },
-    "text": "Corrosion rate CRð"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "825c6ae49ec498c873be5355109ca093",
     "metadata": {
@@ -1724,14 +1713,14 @@
   },
   {
     "type": "Title",
-    "element_id": "53b531237b040202ad24f2c6e37aa792",
+    "element_id": "cecb8b44c9af4b76e85155170c509729",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
     },
-    "text": "ð1Þ"
+    "text": "Corrosion rate CRð"
   },
   {
     "type": "NarrativeText",
@@ -1765,17 +1754,6 @@
       "links": []
     },
     "text": "CRo"
-  },
-  {
-    "type": "Title",
-    "element_id": "41ceb2965d928f62e5bf4f63da952b22",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6,
-      "links": []
-    },
-    "text": "ð2Þ"
   },
   {
     "type": "Title",
@@ -1822,17 +1800,6 @@
     "text": "100 1"
   },
   {
-    "type": "Title",
-    "element_id": "8e8a7a21640179b38d95ff4450b84e59",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6,
-      "links": []
-    },
-    "text": "ð3Þ"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "118f0531277e022b44f152b0bf2dee7c",
     "metadata": {
@@ -1866,6 +1833,39 @@
     "text": "The potentiodynamic polarization method was performed on the prepared test samples immersed in 0.5 M H2SO4 solution in the presence and absence of different ES concentrations. A three electrode system was used; stainless steel Type 316 plate as working electrode with an exposed area of 1.0 cm2, platinum rod as counter electrode and silver chloride electrode as reference electrode. The electrode was polished, degreased in acetone and thoroughly rinsed with distilled water before the experiment. Current density against applied potential was plotted. The slope of the linear part in anodic and cathodic plots gives anodic and cathodic constants according to the Stern–Geary equation, and the"
   },
   {
+    "type": "Title",
+    "element_id": "53b531237b040202ad24f2c6e37aa792",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6,
+      "links": []
+    },
+    "text": "ð1Þ"
+  },
+  {
+    "type": "Title",
+    "element_id": "41ceb2965d928f62e5bf4f63da952b22",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6,
+      "links": []
+    },
+    "text": "ð2Þ"
+  },
+  {
+    "type": "Title",
+    "element_id": "8e8a7a21640179b38d95ff4450b84e59",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6,
+      "links": []
+    },
+    "text": "ð3Þ"
+  },
+  {
     "type": "NarrativeText",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
@@ -1875,17 +1875,6 @@
       "links": []
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "353767b239099863e13ca954e20a66c9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7,
-      "links": []
-    },
-    "text": "457"
   },
   {
     "type": "NarrativeText",
@@ -2152,5 +2141,16 @@
       ]
     },
     "text": "[5] O. Sanni, A.P.I. Popoola, O.S.I. Fayomi, Inhibition of engineering material in sulphuric acid solution using waste product, Contributed Papers from Materials Science and Technology (MS&T18), 2018. 〈https://doi.org/10.7449/2018/MST_2018_254_261〉."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "353767b239099863e13ca954e20a66c9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7,
+      "links": []
+    },
+    "text": "457"
   }
 ]

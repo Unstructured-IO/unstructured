@@ -7,12 +7,21 @@ cd "$SCRIPT_DIR"/.. || exit 1
 
 OUTPUT_FOLDER_NAME=jira-diff
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
+CI=${CI:-"false"}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-trap 'cleanup_dir "$OUTPUT_DIR"' EXIT
+function cleanup() {
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$WORK_DIR"
+  if [ "$CI" == "true" ]; then
+    cleanup_dir "$DOWNLOAD_DIR"
+  fi
+}
+trap cleanup EXIT
 
 if [ -z "$JIRA_INGEST_USER_EMAIL" ] || [ -z "$JIRA_INGEST_API_TOKEN" ]; then
    echo "Skipping Jira ingest test because the JIRA_INGEST_USER_EMAIL or JIRA_INGEST_API_TOKEN env var is not set."
@@ -53,7 +62,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --api-token "$JIRA_INGEST_API_TOKEN" \
         --projects "JCTP3" \
         --boards "1" \
-        --issues "JCTP2-4,JCTP2-7,JCTP2-8,10012,JCTP2-11"
+        --issues "JCTP2-4,JCTP2-7,JCTP2-8,10012,JCTP2-11" \
+        --work-dir "$WORK_DIR"
 
 
 

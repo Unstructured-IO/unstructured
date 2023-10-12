@@ -132,7 +132,8 @@ def partition(
     skip_infer_table_types: List[str] = ["pdf", "jpg", "png", "xls", "xlsx"],
     ssl_verify: bool = True,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
-    languages: List[str] = ["eng"],
+    languages: Optional[List[str]] = None,
+    detect_language_per_element: bool = False,
     pdf_infer_table_structure: bool = False,
     xml_keep_tags: bool = False,
     data_source_metadata: Optional[DataSourceMetadata] = None,
@@ -173,8 +174,13 @@ def partition(
         If the URL parameter is set, determines whether or not partition uses SSL verification
         in the HTTP request.
     languages
-        The languages present in the document, for use in partitioning and/or OCR. To use a language
-        with Tesseract, you'll first need to install the appropriate Tesseract language pack.
+        The languages present in the document, for use in partitioning and/or OCR. For partitioning
+        image or pdf documents with Tesseract, you'll first need to install the appropriate
+        Tesseract language pack. For other partitions, language is detected using naive Bayesian
+        filter via `langdetect`. Multiple languages indicates text could be in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     pdf_infer_table_structure
         If True and strategy=hi_res, any Table Elements extracted from a PDF will include an
         additional metadata field, "text_as_html," where the value (string) is a just a
@@ -200,13 +206,10 @@ def partition(
         )
     kwargs.setdefault("metadata_filename", metadata_filename)
 
-    if not isinstance(languages, list):
-        raise TypeError("The language parameter must be a list of language codes as strings.")
-
     if ocr_languages is not None:
         # check if languages was set to anything not the default value
         # languages and ocr_languages were therefore both provided - raise error
-        if languages != ["eng"]:
+        if languages is not None:
             raise ValueError(
                 "Only one of languages and ocr_languages should be specified. "
                 "languages is preferred. ocr_languages is marked for deprecation.",
@@ -251,24 +254,57 @@ def partition(
 
     if filetype == FileType.DOC:
         _partition_doc = _get_partition_with_extras("doc")
-        elements = _partition_doc(filename=filename, file=file, **kwargs)
+        elements = _partition_doc(
+            filename=filename,
+            file=file,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
     elif filetype == FileType.DOCX:
         _partition_docx = _get_partition_with_extras("docx")
-        elements = _partition_docx(filename=filename, file=file, **kwargs)
+        elements = _partition_docx(
+            filename=filename,
+            file=file,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
     elif filetype == FileType.ODT:
         _partition_odt = _get_partition_with_extras("odt")
-        elements = _partition_odt(filename=filename, file=file, **kwargs)
+        elements = _partition_odt(
+            filename=filename,
+            file=file,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
     elif filetype == FileType.EML:
-        elements = partition_email(filename=filename, file=file, encoding=encoding, **kwargs)
+        elements = partition_email(
+            filename=filename,
+            file=file,
+            encoding=encoding,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
     elif filetype == FileType.MSG:
         _partition_msg = _get_partition_with_extras("msg")
-        elements = _partition_msg(filename=filename, file=file, **kwargs)
+        elements = _partition_msg(
+            filename=filename,
+            file=file,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
     elif filetype == FileType.HTML:
         elements = partition_html(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
             encoding=encoding,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
     elif filetype == FileType.XML:
@@ -277,6 +313,8 @@ def partition(
             file=file,
             encoding=encoding,
             xml_keep_tags=xml_keep_tags,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
     elif filetype == FileType.EPUB:
@@ -285,6 +323,8 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
     elif filetype == FileType.ORG:
@@ -293,6 +333,8 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
     elif filetype == FileType.RST:
@@ -301,6 +343,8 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
     elif filetype == FileType.MD:
@@ -309,6 +353,8 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
     elif filetype == FileType.PDF:
@@ -340,6 +386,8 @@ def partition(
             file=file,
             encoding=encoding,
             paragraph_grouper=paragraph_grouper,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
     elif filetype == FileType.RTF:
@@ -348,6 +396,8 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
     elif filetype == FileType.PPT:
@@ -356,6 +406,8 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
     elif filetype == FileType.PPTX:
@@ -364,6 +416,8 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
     elif filetype == FileType.JSON:
@@ -375,13 +429,31 @@ def partition(
         elements = partition_json(filename=filename, file=file, **kwargs)
     elif (filetype == FileType.XLSX) or (filetype == FileType.XLS):
         _partition_xlsx = _get_partition_with_extras("xlsx")
-        elements = _partition_xlsx(filename=filename, file=file, **kwargs)
+        elements = _partition_xlsx(
+            filename=filename,
+            file=file,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
     elif filetype == FileType.CSV:
         _partition_csv = _get_partition_with_extras("csv")
-        elements = _partition_csv(filename=filename, file=file, **kwargs)
+        elements = _partition_csv(
+            filename=filename,
+            file=file,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
     elif filetype == FileType.TSV:
         _partition_tsv = _get_partition_with_extras("tsv")
-        elements = _partition_tsv(filename=filename, file=file, **kwargs)
+        elements = _partition_tsv(
+            filename=filename,
+            file=file,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
     elif filetype == FileType.EMPTY:
         elements = []
     else:

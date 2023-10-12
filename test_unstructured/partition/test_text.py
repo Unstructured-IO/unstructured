@@ -13,6 +13,7 @@ from unstructured.partition.text import (
     partition_text,
     split_content_to_fit_max,
 )
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -67,6 +68,8 @@ def test_partition_text_from_filename(filename, encoding):
     assert elements == EXPECTED_OUTPUT
     for element in elements:
         assert element.metadata.filename == filename
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {"text"}
 
 
 def test_partition_text_from_filename_with_metadata_filename():
@@ -165,9 +168,9 @@ def test_partition_text_from_bytes_file_default_encoding(filename):
         assert element.metadata.filename is None
 
 
-def test_auto_partition_element_metadata_user_provided_languages():
+def test_text_partition_element_metadata_user_provided_languages():
     filename = "example-docs/book-war-and-peace-1p.txt"
-    elements = partition_text(filename=filename, strategy="fast")
+    elements = partition_text(filename=filename, strategy="fast", languages=["en"])
     assert elements[0].metadata.languages == ["eng"]
 
 
@@ -514,3 +517,35 @@ def test_add_chunking_strategy_on_partition_text(filename="example-docs/norwich-
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_text_element_metadata_has_languages():
+    filename = "example-docs/norwich-city.txt"
+    elements = partition_text(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_text_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.txt"
+    elements = partition_text(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+def test_partition_text_respects_languages_arg():
+    filename = "example-docs/norwich-city.txt"
+    elements = partition_text(filename=filename, languages=["deu"])
+    assert elements[0].metadata.languages == ["deu"]
+
+
+def test_partition_text_element_metadata_raises_TypeError():
+    with pytest.raises(TypeError):
+        filename = "example-docs/norwich-city.txt"
+        partition_text(filename=filename, languages="eng")
+
+
+def test_partition_text_detects_more_than_3_languages():
+    filename = "example-docs/language-docs/UDHR_first_article_all.txt"
+    elements = partition_text(filename=filename, detect_language_per_element=True)
+    langs = list({element.metadata.languages[0] for element in elements})
+    assert len(langs) > 10

@@ -1,3 +1,5 @@
+import pytest
+
 from unstructured.partition import lang
 
 
@@ -73,3 +75,9 @@ def test_detect_languages_warns_for_auto_and_other_input(caplog):
     languages = ["en", "auto", "rus"]
     assert lang.detect_languages(text, languages) == ["eng"]
     assert "rest of the inputted languages will be ignored" in caplog.text
+
+
+def test_detect_languages_raises_TypeError_for_invalid_languages():
+    with pytest.raises(TypeError):
+        text = "This is a short sentence."
+        lang.detect_languages(text, languages="eng") == ["eng"]

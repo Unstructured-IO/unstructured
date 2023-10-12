@@ -9,7 +9,7 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   requests
@@ -19,7 +19,7 @@ idna==3.4
     #   requests
 praw==7.7.1
     # via -r requirements/ingest-reddit.in
-prawcore==2.3.0
+prawcore==2.4.0
     # via praw
 requests==2.31.0
     # via
@@ -28,10 +28,10 @@ requests==2.31.0
     #   update-checker
 update-checker==0.18.0
     # via praw
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-websocket-client==1.6.3
+websocket-client==1.6.4
     # via praw

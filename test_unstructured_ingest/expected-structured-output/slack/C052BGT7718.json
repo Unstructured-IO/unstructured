@@ -8,7 +8,10 @@
         "date_modified": "2023-04-07T22:19:56.520459"
       },
       "filename": "C052BGT7718.xml",
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "testing <reply> testing <reply> threads are cool"
   },
@@ -21,7 +24,10 @@
         "date_modified": "2023-04-07T22:19:56.520459"
       },
       "filename": "C052BGT7718.xml",
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "<@U051UBRR946> has joined the channel <reply> <@U051UBRR946> has joined the channel"
   },
@@ -34,7 +40,10 @@
         "date_modified": "2023-04-07T22:19:56.520459"
       },
       "filename": "C052BGT7718.xml",
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "<@U04ST78RXU3> has joined the channel <reply> <@U04ST78RXU3> has joined the channel"
   }

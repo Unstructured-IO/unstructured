@@ -9,6 +9,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Title
 from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -21,6 +22,8 @@ def test_partition_md_from_filename():
     assert len(elements) > 0
     for element in elements:
         assert element.metadata.filename == "README.md"
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {"md"}
 
 
 def test_partition_md_from_filename_returns_uns_elements():
@@ -276,7 +279,7 @@ def test_partition_md_with_json(
         assert elements[i] == test_elements[i]
 
 
-def test_add_chunking_strategy_on_partition_md(
+def test_add_chunking_strategy_by_title_on_partition_md(
     filename="example-docs/README.md",
 ):
     elements = partition_md(filename=filename)
@@ -284,3 +287,16 @@ def test_add_chunking_strategy_on_partition_md(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_md_element_metadata_has_languages():
+    filename = "example-docs/README.md"
+    elements = partition_md(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_md_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.md"
+    elements = partition_md(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]

@@ -1,5 +1,6 @@
 import typing as t
 from dataclasses import dataclass
+from datetime import datetime
 from urllib.parse import urlparse
 
 import requests
@@ -10,6 +11,7 @@ from unstructured.ingest.connector.git import (
     SimpleGitConfig,
 )
 from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.interfaces import SourceMetadata
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
@@ -52,8 +54,23 @@ class GitHubIngestDoc(GitIngestDoc):
     connector_config: SimpleGitHubConfig
     registry_name: str = "github"
 
-    def _fetch_and_write(self) -> None:
-        content_file = self.connector_config.get_repo().get_contents(self.path)
+    @property
+    def date_created(self) -> t.Optional[str]:
+        return None
+
+    @requires_dependencies(["github"], extras="github")
+    def _fetch_file(self):
+        from github.GithubException import UnknownObjectException
+
+        try:
+            content_file = self.connector_config.get_repo().get_contents(self.path)
+        except UnknownObjectException:
+            logger.error(f"File doesn't exists {self.connector_config.url}/{self.path}")
+            return None
+
+        return content_file
+
+    def _fetch_content(self, content_file):
         contents = b""
         if (
             not content_file.content  # type: ignore
@@ -61,14 +78,45 @@ class GitHubIngestDoc(GitIngestDoc):
             and content_file.size  # type: ignore
         ):
             logger.info("File too large for the GitHub API, using direct download link instead.")
+            # NOTE: Maybe add a raise_for_status to catch connection timeout or HTTP Errors?
             response = requests.get(content_file.download_url)  # type: ignore
             if response.status_code != 200:
                 logger.info("Direct download link has failed... Skipping this file.")
+                return None
             else:
                 contents = response.content
         else:
             contents = content_file.decoded_content  # type: ignore
+        return contents
 
+    def update_source_metadata(self, **kwargs):
+        content_file = kwargs.get("content_file", self._fetch_file())
+        if content_file is None:
+            self.source_metadata = SourceMetadata(
+                exists=False,
+            )
+            return
+
+        date_modified = datetime.strptime(
+            content_file.last_modified,
+            "%a, %d %b %Y %H:%M:%S %Z",
+        ).isoformat()
+        self.source_metadata = SourceMetadata(
+            date_modified=date_modified,
+            version=content_file.etag,
+            source_url=content_file.download_url,
+            exists=True,
+        )
+
+    def _fetch_and_write(self) -> None:
+        content_file = self._fetch_file()
+        self.update_source_metadata(content_file=content_file)
+        contents = self._fetch_content(content_file)
+        if contents is None:
+            raise ValueError(
+                f"Failed to retrieve file from repo "
+                f"{self.connector_config.url}/{self.path}. Check logs",
+            )
         with open(self.filename, "wb") as f:
             f.write(contents)
 
@@ -87,7 +135,7 @@ class GitHubSourceConnector(GitSourceConnector):
         return [
             GitHubIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 path=element.path,
             )
