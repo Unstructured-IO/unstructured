@@ -14,7 +14,8 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "cat",
+        "ita"
       ]
     },
     "text": "IssueID_IssueKey:10002     JCTP1-3"
@@ -34,7 +35,8 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "cat",
+        "ita"
       ]
     },
     "text": "ProjectID_Key:JCTP1     Jira Connector Test Project 1"
@@ -54,7 +56,8 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "cat",
+        "ita"
       ]
     },
     "text": "IssueType:Task"
@@ -74,7 +77,8 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "cat",
+        "ita"
       ]
     },
     "text": "Status:Done"
@@ -94,7 +98,8 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "cat",
+        "ita"
       ]
     },
     "text": "Priority:{'self': 'https://unstructured-jira-connector-test.atlassian.net/rest/api/2/priority/3', 'iconUrl': 'https://unstructured-jira-connector-test.atlassian.net/images/icons/priorities/medium.svg', 'name': 'Medium', 'id': '3'}"
@@ -114,7 +119,8 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "cat",
+        "ita"
       ]
     },
     "text": "AssigneeID_Name:{}     {}"
@@ -134,7 +140,8 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "cat",
+        "ita"
       ]
     },
     "text": "ReporterAdr_Name:devops+jira-connector@unstructured.io     Unstructured Devops"
@@ -154,7 +161,8 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "cat",
+        "ita"
       ]
     },
     "text": "Labels:"
@@ -174,7 +182,8 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "cat",
+        "ita"
       ]
     },
     "text": "Components:"
@@ -194,7 +203,8 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "cat",
+        "ita"
       ]
     },
     "text": "Unstructured Devops     My comment 1"
@@ -214,7 +224,8 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "cat",
+        "ita"
       ]
     },
     "text": "Test done 1"
@@ -234,7 +245,8 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "cat",
+        "ita"
       ]
     },
     "text": "_At iam decimum annum in spelunca iacet._ Quid ei reliquisti, nisi te, quoquo modo loqueretur, intellegere, quid diceret? Non laboro, inquit, de nomine. Duo Reges: constructio interrete. Nummus in Croesi divitiis obscuratur, pars est tamen divitiarum. Bork Itaque quantum adiit periculum! ad honestatem enim illum omnem conatum suum referebat, non ad voluptatem."
@@ -254,7 +266,8 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "cat",
+        "ita"
       ]
     },
     "text": "[Bork|http://loripsum.net/] Illi enim inter se dissentiunt. Et non ex maxima parte de tota iudicabis? [Refert tamen, quo modo.|http://loripsum.net/] [Quam ob rem tandem, inquit, non satisfacit?|http://loripsum.net/] Ex quo, id quod omnes expetunt, beate vivendi ratio inveniri et comparari potest."
@@ -274,7 +287,8 @@
       },
       "filetype": "text/plain",
       "languages": [
-        "eng"
+        "cat",
+        "ita"
       ]
     },
     "text": "Hic nihil fuit, quod quaereremus. Itaque haec cum illis est dissensio, cum Peripateticis nulla sane. Vos autem cum perspicuis dubia debeatis illustrare, dubiis perspicua conamini tollere. [Quae cum essent dicta, discessimus.|http://loripsum.net/] Nam, ut sint illa vendibiliora, haec uberiora certe sunt. [Equidem, sed audistine modo de Carneade?|http://loripsum.net/]"
