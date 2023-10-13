@@ -1,6 +1,5 @@
 import pytest
 
-
 from test_unstructured.partition.test_constants import (
     EXPECTED_TABLE_XLSX,
     EXPECTED_TEXT_XLSX,
