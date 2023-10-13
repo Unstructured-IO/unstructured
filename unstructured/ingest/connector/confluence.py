@@ -102,7 +102,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _output_filename(self):
         """Create output file path based on output directory, space id and document id."""
         output_file = f"{self.document_meta.document_id}.json"
-        return Path(self.partition_config.output_dir) / self.document_meta.space_id / output_file
+        return Path(self.processor_config.output_dir) / self.document_meta.space_id / output_file
 
     @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
@@ -253,7 +253,7 @@ class ConfluenceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         return [
             ConfluenceIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 document_meta=ConfluenceDocumentMeta(space_id, doc_id),
             )

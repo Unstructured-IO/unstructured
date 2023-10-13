@@ -82,7 +82,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _set_download_paths(self) -> None:
         """Parses the folder structure from the source and creates the download and output paths"""
         download_path = Path(f"{self.read_config.download_dir}")
-        output_path = Path(f"{self.partition_config.output_dir}")
+        output_path = Path(f"{self.processor_config.output_dir}")
 
         if parent_path := self.file_path:
             download_path = (
@@ -204,7 +204,7 @@ class OneDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         file_path = file_path[1:] if file_path[0] == "/" else file_path
         return OneDriveIngestDoc(
             connector_config=self.connector_config,
-            partition_config=self.partition_config,
+            processor_config=self.processor_config,
             read_config=self.read_config,
             file_name=file.name,
             file_path=file_path,

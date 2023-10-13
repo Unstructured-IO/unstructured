@@ -29,7 +29,7 @@ soupsieve==2.5
     # via
     #   -c requirements/base.txt
     #   beautifulsoup4
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

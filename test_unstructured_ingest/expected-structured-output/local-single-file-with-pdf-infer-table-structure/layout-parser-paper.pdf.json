@@ -11,13 +11,13 @@
   },
   {
     "type": "Header",
-    "element_id": "f03c6d91abe08ae952f1122ce62bb508",
+    "element_id": "2b55904c2fe851254b0221734a72deb4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "2103.15348v2 [cs.CV] 21 Jun"
+    "text": "n u J 1 2 ] V C . s c ["
   },
   {
     "type": "UncategorizedText",
@@ -31,7 +31,7 @@
   },
   {
     "type": "Title",
-    "element_id": "2f7cc75f6467bba468022c4c2875335e",
+    "element_id": "72c8dc05682ffa4a143f4e59501ecd84",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -41,7 +41,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7d5d472da16528a310bc18c9682ed62d",
+    "element_id": "4da978e09ded2156643e427e0f71cf88",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -51,7 +51,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "4fcc5b6364213b1efa9272bdce4f9fcd",
+    "element_id": "f54e4537371345c448859842761ec65e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -61,7 +61,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "be90d2640470e975e3402d19ba2c66cf",
+    "element_id": "c8cfb1cf0c9e6709f7ece87e26094434",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -71,7 +71,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e66a3d2b6c9a872c53e226d8e0cc0a0e",
+    "element_id": "98f930d9b2f5bbc33cafb4bbe439dc63",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -81,7 +81,7 @@
   },
   {
     "type": "Title",
-    "element_id": "3fa53fc0dab8ef96d05d8fd4c7e41b49",
+    "element_id": "8de2a6e07c3e4df67625a60f079764a4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -91,7 +91,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "bca638b88125eed8a8003e46a6055618",
+    "element_id": "2a92239d820b34481bc23e44e7767b05",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -101,7 +101,7 @@
   },
   {
     "type": "Title",
-    "element_id": "0119810584ee0b01e4d14dfd8c250bf2",
+    "element_id": "0778dedc6a5e78f11b66915003e6afde",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -111,7 +111,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "82d5520be5fd847464727f56151d316c",
+    "element_id": "c749ec9752e4f4b69435de6279e1d2d5",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -121,7 +121,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c1f1ba1630bc19bd24c1dfbc1548f2d8",
+    "element_id": "147e0762bc4da382a2b673af087c7c10",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -131,7 +131,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "836e6ef5cecc9a73356c0d5bee181829",
+    "element_id": "641105bcd721926cf18a80c1a138f998",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -141,13 +141,13 @@
   },
   {
     "type": "ListItem",
-    "element_id": "22b127e6d05ce12ad9b9170909c64bbc",
+    "element_id": "b63bb581fef5728c1d27774ceb25b22f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "1. An off-the-shelf toolkit for applying DL models for recognition, and other DIA tasks (Section Bp ayout det ection, character"
+    "text": "1. An oﬀ-the-shelf toolkit for applying DL models for layout detection, character recognition, and other DIA tasks (Section 3)"
   },
   {
     "type": "ListItem",
@@ -161,13 +161,13 @@
   },
   {
     "type": "ListItem",
-    "element_id": "90deab7b4ea81483c3431cebb1621c61",
+    "element_id": "f053840b2f6b2786b33533441b034e08",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "A rich repository of pre-trained neural network models (Model Zoo) underlies the off-the-shelf usage"
+    "text": "underlies the oﬀ-the-shelf usage"
   },
   {
     "type": "ListItem",
@@ -181,17 +181,17 @@
   },
   {
     "type": "ListItem",
-    "element_id": "e4b1d076c9e9c84a45bd11fcf816bddf",
+    "element_id": "ec6b1abc1c5e033ef92ab38cfee3b80b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Comprehensive tools for efficient document image tuning to support different levels of customization ata annotation and model"
+    "text": "tuning to support diﬀerent levels of customization"
   },
   {
     "type": "ListItem",
-    "element_id": "18b1855acfb386ae6e6a253da566e93b",
+    "element_id": "f98e90f859af76d260aa96b86cc57e27",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -201,7 +201,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1f0f5df7c23d4f8e8de4de3085abd7d8",
+    "element_id": "16e14d7bf31f029a5813c557a245af20",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -211,7 +211,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "aebca7fedab12541cd5af93183b619e9",
+    "element_id": "8a585b845f71ae5edf85991e661227f2",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -221,7 +221,7 @@
   },
   {
     "type": "Header",
-    "element_id": "4c2478cf439baab6ace34761eda527d9",
+    "element_id": "72c43f1a56f77795dacfdfe034f47354",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -231,7 +231,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "74a7758f83612467af8eea9d20e4a6f7",
+    "element_id": "31cbd7fa4b6e5d40d4f5de572cd7bd86",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -241,7 +241,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "9b8fc4816306f4f1b31874d53134979b",
+    "element_id": "d58c4eaa08e6195595233bbeb87ae331",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -251,7 +251,7 @@
   },
   {
     "type": "Title",
-    "element_id": "1513104c7bf6cd40223a7cc23798378f",
+    "element_id": "d2e1a97795476cc4aba05a95edc57860",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -261,7 +261,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "181670e0d50864954486b337b1d19118",
+    "element_id": "13105a0ebbeccd12a8785d2b83752720",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -271,7 +271,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "0ebd432f2495d0bfc8303eca930cc9e5",
+    "element_id": "1d6246af89ad959f51c99ebf74ba8819",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -281,7 +281,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "19c6112edbf782bfc4f5cf04829f57ad",
+    "element_id": "5051f4837b5344032779c265056506c8",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -301,13 +301,13 @@
   },
   {
     "type": "ListItem",
-    "element_id": "90b6d90b1496cbc35cb08e310e03d063",
+    "element_id": "c38b21939804a379980291ee06dc0387",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Shen et al. ~ N n"
+    "text": "4 Z. Shen et al."
   },
   {
     "type": "Image",
@@ -321,7 +321,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "3fd5be2cdc473424f58b9da0192dec01",
+    "element_id": "5aca548166e8ec0e670e39fbe0520256",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -331,7 +331,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "cd924e18fd419111b4ead552fb7cc36b",
+    "element_id": "787c5cea13c47adb33fa8ea482b1180c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -341,7 +341,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "de9b76ca2c36f4a1cc39c9bc69b75a45",
+    "element_id": "ebcf4a16b5baa55fe81e8b98f1443006",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -351,7 +351,7 @@
   },
   {
     "type": "Title",
-    "element_id": "740238ba10202556c962840e5c882446",
+    "element_id": "32e60b294a649b54069f8fdce6d3658e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -361,7 +361,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1f4bc06117d2be9d9e297dbe07aa05cd",
+    "element_id": "995c62dc17faaf10b13aa42abefe3ec6",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -371,7 +371,7 @@
   },
   {
     "type": "Header",
-    "element_id": "4c2478cf439baab6ace34761eda527d9",
+    "element_id": "72c43f1a56f77795dacfdfe034f47354",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -381,7 +381,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "b51f99cb953082a922ba43c09d4492b3",
+    "element_id": "77f06cc5e2c90400a79f0109988476c5",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -391,14 +391,14 @@
   },
   {
     "type": "Table",
-    "element_id": "34923b77ca76e1808956ade5e766f7c2",
+    "element_id": "c57f2166778009c6ccc9032ee8883253",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5,
       "text_as_html": "<table><thead><th>Dataset</th><th>| Base Mod</th><th>el'| Large Model</th><th>| Notes</th></thead><tr><td>PubLayNet B8]|</td><td>F/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA</td><td>M</td><td>-</td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper</td><td>F</td><td>-</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset</td><td>F/M</td><td>-</td><td>Layouts of history Japanese documents</td></tr></table>"
     },
-    "text": "Dataset | Base Model'| Large Model | Notes PubLayNet B8]| F/M M Layouts of modern scientific documents PRImA M - nned modern magazines and scientific reports Newspapei F - canned US newspapers from the 20th century TableBank F F Table region on modern scientific and business document HJDataset F/M - Layouts of history Japanese documents"
+    "text": "Base Model1 Large Model Notes Dataset PubLayNet [38] PRImA [3] Newspaper [17] TableBank [18] HJDataset [31] F / M M F F F / M M - - F - Layouts of modern scientiﬁc documents Layouts of scanned modern magazines and scientiﬁc reports Layouts of scanned US newspapers from the 20th century Table region on modern scientiﬁc and business document Layouts of history Japanese documents"
   },
   {
     "type": "Title",
@@ -462,7 +462,7 @@
   },
   {
     "type": "Footer",
-    "element_id": "c24bcb2cf98d6226bd805b6f99d3b61a",
+    "element_id": "f58e29ccb8c8b46f5876aec8c9684294",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -472,7 +472,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "9fb9573af5bf767f81cdaf2cf1a72cd9",
+    "element_id": "e937103da807b2445f302bd678119123",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -482,7 +482,7 @@
   },
   {
     "type": "Title",
-    "element_id": "9f26ca353a2c130a2e32f457d71c1350",
+    "element_id": "05df12485855b8bfb3552abbf90cfad4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -492,7 +492,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "11dff8778699e76422be6b86c9eaa62a",
+    "element_id": "2e74c8e7455e99acd9d85a11db6b5f6e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -502,17 +502,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e416e69991bf6a4b338df18ebdb6e712",
+    "element_id": "41140d5c71e1ee278c01309bf0cb354a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "import layoutparser as lp image = cv2.imread(\"image_file\") # load images model = lp.Detectron2LayoutModel ( \"1p://PubLayNet/faster_rcnn_R_50_FPN_3x/config\") layout = model.detect (image)"
+    "text": "1 import layoutparser as lp 2 image = cv2 . imread ( \" image_file \" ) # load images 3 model = lp . De t e c tro n2 Lay outM odel ( \" lp :// PubLayNet / f as t er _ r c nn _ R _ 50 _ F P N_ 3 x / config \" ) 4 5 layout = model . detect ( image )"
   },
   {
     "type": "NarrativeText",
-    "element_id": "3aff40c86aa58c0362102802f4ef172f",
+    "element_id": "812cacf0b2c9dd62a37d4361ab3e6eec",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -522,7 +522,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "5c44994a44f74b706d8a5e74cd753a8b",
+    "element_id": "2e73b03555667b9209d10b34a5f3a411",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -532,17 +532,17 @@
   },
   {
     "type": "Image",
-    "element_id": "2f498bdd91739a7083490999507420a5",
+    "element_id": "185e67615d123b35d38ea72e0cdb6d99",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 6
     },
-    "text": "33§3 fectange vada8883 Coordinate83 +*Block | [Block | [Read8 Extra features Tet | [Tye | [oder[ coordinatel textblock1 |» , see383 , textblock2 , layout] ]4A list of the layout elementsThe same transformation and operation APIs"
+    "text": "                        - ° . 3 a a 4 a 3 oo er ‘ 2 § 8 a 8 3 3 ‘ £ 4 A g a 9 ‘ 3 ¥ Coordinate g 4 5 3 + § 3 H Extra Features [O=\") [Bo] eaing i Text | | Type | | ower ° & a ¢ o [ coordinatel textblock1, 3 3 ’ g Q 3 , textblock2 , layoutl ] 4 q ® A list of the layout elements Ff  "
   },
   {
     "type": "FigureCaption",
-    "element_id": "cafae07120d714f0822e89865adf62da",
+    "element_id": "8625c5524829e0a8a6bc7e96d68b20f2",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -552,7 +552,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7461d30ee7c51c91bca8003792d43bfe",
+    "element_id": "dbae85429e87bb2c7eb4c9c942854fae",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -562,7 +562,7 @@
   },
   {
     "type": "Title",
-    "element_id": "acd4f4584a990134d927e19b6d7e5f88",
+    "element_id": "090531a7f1a39471d158a00394cb6568",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -572,7 +572,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "fb271c99cdcfca1001a1a7d56425c5b4",
+    "element_id": "f0a4ff01ca0d75d7cc17c8449b5390bd",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -582,7 +582,7 @@
   },
   {
     "type": "Title",
-    "element_id": "4c2478cf439baab6ace34761eda527d9",
+    "element_id": "72c43f1a56f77795dacfdfe034f47354",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -592,7 +592,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "f2a3e5fbb983d9132dddecc381ed6e0b",
+    "element_id": "e9b37f0afee4d75cdf9aa1ca1ac2c16a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -602,7 +602,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "eec800eef6e395c21feacd729868dd18",
+    "element_id": "92d5fb14680a0049488ec358e18011d7",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -612,7 +612,7 @@
   },
   {
     "type": "Title",
-    "element_id": "89c6cd1d893f782ea68d75737e3393fd",
+    "element_id": "84150b7fe95fda995dc59970e71d3b6b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -622,7 +622,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e284bd66511cfa064681253e7ac57a9a",
+    "element_id": "2c44a3b1b50fe609dd4e599aaa9a2a42",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -632,7 +632,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "55ab2654fa8c2c01de322b52f4fad508",
+    "element_id": "82d51f922a472021605996e1090eb1ff",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -642,7 +642,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7a151dbbe8b26ccdcb264ab005be5a36",
+    "element_id": "a5aaa103ed722fa6bfd700ec8edd554f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -652,7 +652,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "77ccbf022ce60ecfc6bac26bc6306a1d",
+    "element_id": "c7020e982bb4fc78992a74d74b2db961",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -672,17 +672,17 @@
   },
   {
     "type": "ListItem",
-    "element_id": "3993b330c2b3b86513c3edbcd33afc91",
+    "element_id": "b2f82a8b9096623d70752bdee08e3703",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "Z. Shen et al."
+    "text": "8 Z. Shen et al."
   },
   {
     "type": "NarrativeText",
-    "element_id": "6727ba436ddf5e47087d005ded6c049f",
+    "element_id": "128743def9375aa9fbfc67ceeb31ec04",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -712,14 +712,14 @@
   },
   {
     "type": "Table",
-    "element_id": "f73e2a20abbf1180916a4b29b15e3b32",
+    "element_id": "8f963c226c45bef6fa7f2644bc20b149",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8,
       "text_as_html": "<table><thead><th>block.pad(top, bottom,</th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></thead><tr><td>block.scale(fx, fy)</td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift(dx, dy)</td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1. intersect (block2)</td><td></td><td></td><td>Return the intersection region of blockl and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td>Return the union region of blockl and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td>Convert the absolute coordinates of block to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2) block. crop_image (image)</td><td></td><td></td><td>Calculate the absolute coordinates of blockl given the canvas block2’s absolute coordinates     Obtain the image segments in the block region</td></tr></table>"
     },
-    "text": "Operation Name Description block.pad(top, bottom, right, left) Enlarge the current block according to the input block.scale(fx, fy) Scale the current block given the ratio ion in x and y di block.shift(dx, dy) Move the current block with the shift distances in x and y direction block1.is_in(block2) Whether block] is inside of block2 ; Return the intersection region of block and block2. block1. intersect (block2) . . . Coordinate type to be determined based on the inputs. ; Return the union region of block1 and block2. block1.union(block2) . . . Coordinate type to be determined based on the inputs. Convert the absolute coordinates of block to block1.relative_to(block2) ' ' relative coordinates to block2 . Calculate the absolute coordinates of block1 given block1.condition_on(block2) . the canvas block2’s absolute coordinates block. (image) Obtain the in the block"
+    "text": "block.pad(top, bottom, right, left) Enlarge the current block according to the input Scale the current block given the ratio in x and y direction block.scale(fx, fy) Move the current block with the shift distances in x and y direction block.shift(dx, dy) Whether block1 is inside of block2 block1.is in(block2) block1.intersect(block2) block1.union(block2) Convert the absolute coordinates of block1 to relative coordinates to block2 block1.relative to(block2) Calculate the absolute coordinates of block1 given the canvas block2’s absolute coordinates block1.condition on(block2)"
   },
   {
     "type": "NarrativeText",
@@ -893,7 +893,7 @@
   },
   {
     "type": "Title",
-    "element_id": "709c2d8cd3b15512f8452715fab45e4f",
+    "element_id": "0c8b5878c9434b010582e935dc19da9b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -913,7 +913,7 @@
   },
   {
     "type": "Title",
-    "element_id": "d57c26aad19349fc98ee8822f24f19d9",
+    "element_id": "0778f018e259bb4c53ad7e04a5aaa9af",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -923,7 +923,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e07a3053a112880cf693f019d010cc19",
+    "element_id": "27a0e8b4541ec34bfdf6c52b7e06237d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -933,7 +933,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1ef9621705354b738772d2108d0fb6ab",
+    "element_id": "337a2fd3485821eeaf5d9ada5c7ab74a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -943,7 +943,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "4c2478cf439baab6ace34761eda527d9",
+    "element_id": "72c43f1a56f77795dacfdfe034f47354",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -953,17 +953,17 @@
   },
   {
     "type": "Image",
-    "element_id": "6df6057f894a166cf24fd34f64267f09",
+    "element_id": "975d6cb141cb0a0313375630ae063fa8",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "a ESStee eaeoooMode I: Showing Layout on the Original ImageMode Il: Drawing OCR'd Text at the Correspoding Position10g Bpunog vayoy feyds1q :1 vondo‘xog Burpunog vay apiH z word"
+    "text": "x09 Burpunog uayor Aeydsiq 1 vondo     10g Guypunog usyoy apir:z uondo Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR'd Text at the Correspoding Position"
   },
   {
     "type": "NarrativeText",
-    "element_id": "cc8ad6e0f933633a37b82200e6724f9e",
+    "element_id": "0770888d2e26bc88f295478d836d13bc",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -973,7 +973,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "19cc210888c40b3403e1992b335bccf7",
+    "element_id": "2e944a19489d47a5c007d491534ab343",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -983,7 +983,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "60c0620e0e68ad30f5cff23dd0ef53c5",
+    "element_id": "4da48f397c533740d510fc9004f29a1f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -993,7 +993,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7cc706ff50f3746845f312c011318d84",
+    "element_id": "8b762e8d2e1bbc81253ae6eb13e486ad",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1003,7 +1003,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "9bf176adca2cfa747e7f0255bfc3594a",
+    "element_id": "28df6f16ea44b96ebf6c8b686715f5ea",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1013,17 +1013,17 @@
   },
   {
     "type": "Image",
-    "element_id": "cd0055b04f6049e9d9bf49a4f309f7e9",
+    "element_id": "524928978dbb8d61879f01cd10aaad0f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "Text‘Token CategoriestieAddress(Numberig:3pio Bupeas uwunjog(a) Illustration of the original Japanese document with detected layout elements highlighted in colored boxesColumn CategoriesCRE) OR REKER te setPikes enceee+41ybiay pamoyy wnwrxey(b) Illustration of the recreated document with dense text structure for better OCR performance"
+    "text": "Intra-column reading order   Token Categories tie (Adress 2) tee (NE sumber Variable HEE company type Column Categories (J tite we) adaress —_ (7) section Header by ‘e * Column reading order         a a (a) Illustration of the original Japanese Maximum Allowed Height BRE B>e EER eR (b) Illustration of the recreated document with dense text structure for better OCR performance"
   },
   {
     "type": "NarrativeText",
-    "element_id": "f6d1c03644c4866a2dd06f8e432f6286",
+    "element_id": "81c96876fd12f0bd68cfe4cebc910036",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1033,7 +1033,7 @@
   },
   {
     "type": "Title",
-    "element_id": "a84f27645308850514566b3bb9d3efa0",
+    "element_id": "abf674029db2adb9d1944b45561de416",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1043,7 +1043,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ea475aba47ae4b4db2eeb1a96bc30797",
+    "element_id": "ea958ca4de2431c62a01a51ace78c921",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1053,7 +1053,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "966440df8a08ef481c35486bdb301d6a",
+    "element_id": "c37820b206a0ea27d42b4db4da758759",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1063,7 +1063,7 @@
   },
   {
     "type": "Title",
-    "element_id": "0e654d0b0bc44cbd58f1cb7c7b02c3c5",
+    "element_id": "1f9963e29820a25df2f26ba5f22fd733",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1073,7 +1073,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "9d4feeabd8c04d4b33897afb58e46f55",
+    "element_id": "ca963177810f8c3b64522859751655e7",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1083,7 +1083,7 @@
   },
   {
     "type": "Title",
-    "element_id": "4c2478cf439baab6ace34761eda527d9",
+    "element_id": "72c43f1a56f77795dacfdfe034f47354",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1093,7 +1093,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "5cdbcea58a81d8f7de9a4fa841107be1",
+    "element_id": "c5652cdf729305eb4b474db73d9732a4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1103,7 +1103,7 @@
   },
   {
     "type": "Title",
-    "element_id": "1fe1cb84a12b8216ea9d734262b3e4ec",
+    "element_id": "c2db3c9ed08076430c7524b7e3c1076f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1123,17 +1123,17 @@
   },
   {
     "type": "Image",
-    "element_id": "d32d5d93079c0053b7ef655185e47bb4",
+    "element_id": "b33b2bc3b9c416673c7f74c6a00c49d8",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "Annotate Layout Dataset(spe peepee,Active Learning LayoutAnnotation Toolkit4Layout Detection<—Deep Learning LayoutModel Training & Inference,4Post-processin Handy Data Structures &pl 9 APIs for Layout DataText Recognition Default and Customized: r OCR ModelsVisualization & Export |], bayou StructureVisualization & StorageThe Japanese DocumentDigitization PipelineHelpful LayoutParserModules"
+    "text": "                        (spe peepee, ‘Active Learning Layout Annotate Layout Dataset | + ‘Annotation Toolkit ¥ a Deep Leaming Layout Model Training & Inference, ¥ ; Handy Data Structures & Post-processing El Apis for Layout Det a LAR ror tye eats) 4 Text Recognition | <—— Default ane Customized ¥ ee Layout Structure Visualization & Export | <—— | visualization & Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules"
   },
   {
     "type": "NarrativeText",
-    "element_id": "fa19ab2536cbbb48c09de29fdebd52bd",
+    "element_id": "7f729881ca5ef5ee556e96246fa78528",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1143,7 +1143,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "3cbd8234ac0c6d29feb24e6202144aa8",
+    "element_id": "4a938b67ce50050a388cb3a1d19e5599",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1153,17 +1153,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "de8f09a4156ca73defac521bb354a297",
+    "element_id": "dd094fd6dc74291ed1c6612d65a060e0",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "& document page consists of eight rows like this. For simplicity we skip the row segmentation discussion and refer readers to the source code when available."
+    "text": "15 A document page consists of eight rows like this. For simplicity we skip the row segmentation discussion and refer readers to the source code when available."
   },
   {
     "type": "Title",
-    "element_id": "de2a222ad7b9cf1e5e5432f53c15996d",
+    "element_id": "e3221fd8edd58a8c026465fab665d928",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1173,7 +1173,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7174760d4c8d9b7b13da3918015312dc",
+    "element_id": "fd8fa97590b686b54db41b84e0add377",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1183,7 +1183,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "9b51c55d2dd4ffd289138fc4f66e11e6",
+    "element_id": "e129c45423c8e88740a1237481a22cd2",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1193,7 +1193,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "888b9c9ec4431146d744bc6f39e16fd0",
+    "element_id": "54dc8c33b479ec74e88874cd2c0a616c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1203,7 +1203,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "07be9fda679b805e67cf5e563eada033",
+    "element_id": "acfcaae53850b43f814bf04643363718",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1213,7 +1213,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "069379b2abcf2bed44f13bdaea90ec2d",
+    "element_id": "776ff927c4926b5a61aaa7ec9ef2e869",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1233,27 +1233,27 @@
   },
   {
     "type": "ListItem",
-    "element_id": "e67f07837a2a4c207b21a168c4f0aa6c",
+    "element_id": "e6aa0629950d567b0c8c8b6d1b39cd9f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 12
     },
-    "text": "This measures the overlap between the detected and ground-truth characters, the maximum is 1."
+    "text": "the maximum is 1."
   },
   {
     "type": "ListItem",
-    "element_id": "f06c47bb49334c82c636ac2d1fe9ec4e",
+    "element_id": "8a9ed739daba419123f271dce4be295a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 12
     },
-    "text": "'7 This measures the number of edits from the ground-truth text to the predicted text, and lower is better."
+    "text": "17 This measures the number of edits from the ground-truth text to the predicted text, and lower is better."
   },
   {
     "type": "ListItem",
-    "element_id": "4c2478cf439baab6ace34761eda527d9",
+    "element_id": "72c43f1a56f77795dacfdfe034f47354",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1263,17 +1263,17 @@
   },
   {
     "type": "Image",
-    "element_id": "f58d47bde7ebddd81c4a678c918a8f1b",
+    "element_id": "7d42bb6af1404a95a6e8870d5c4d07bf",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 13
     },
-    "text": "(2) Partial table atthe bottom (&) Full page table (6) Partial table at the top (d) Mis-detected tet line"
+    "text": "                                                                                                  (@) Partial table at the bottom (&) Full page table (6) Partial table at the top (d) Mis-detected tet line    "
   },
   {
     "type": "FigureCaption",
-    "element_id": "1a2b9e59d53ac38ee6affb3ffcda6b8c",
+    "element_id": "fed869ba2e01c3daf0816b48809a9790",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1283,7 +1283,7 @@
   },
   {
     "type": "Title",
-    "element_id": "76c98240da7b06b4b3fcf8109edbbaba",
+    "element_id": "cd43c1ef71b09de2a5c46062419dd4b4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1293,7 +1293,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "0f6c572efe499db5f3a396c3f898b39a",
+    "element_id": "06979af9f7bf72e15b5a4f378d5651c4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1303,7 +1303,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "d423e43627591688a7a55d37adbf14e7",
+    "element_id": "1c5af18d708d6b5143f58351b5a3f059",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1313,7 +1313,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "8ff0f0a5b4e520b95b6d74614366af1e",
+    "element_id": "af4a07cd0c723749e00e1238a013e9b3",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1323,7 +1323,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "91e724833d5794abbd5fd6ad6c54aa9f",
+    "element_id": "34146aaef7807c3d570b0fd1d1d95a9f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1333,7 +1333,7 @@
   },
   {
     "type": "Title",
-    "element_id": "a2a71736439cbc5e1445bddd40712b9b",
+    "element_id": "444b7d3480001e2e422559c09fc04e41",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1343,7 +1343,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ad29b99d522a90b8084b53f55ca78e02",
+    "element_id": "992e926b29c1f50bd6a710a37364da57",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1353,7 +1353,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "f85505b114cf50b99bc0ae7c3805774d",
+    "element_id": "4e85c94ea9d4564cdfc847d0312e1776",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1363,7 +1363,7 @@
   },
   {
     "type": "Title",
-    "element_id": "e56261e0bd30965b8e68ed2abb15b141",
+    "element_id": "a0d7deccf89e42d02a9d66b0c1889689",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1373,7 +1373,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "f7e8d95a8f2b84a4461e037b0a7b9704",
+    "element_id": "5c38ef04891d707aa9ef58c34413ee54",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1383,7 +1383,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "24862433f743a0910da62ec3fb4f537c",
+    "element_id": "fdd4f75f271a06fd05f220334c267202",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1393,7 +1393,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "79a1f55a3945eb6304697ec72847ed35",
+    "element_id": "ca3a95da41baaa8e801acfb997025998",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1403,7 +1403,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "cafb24e03d3f74ce81ba82312af7bfc2",
+    "element_id": "a16bebdda43cc5159e1b7eaa648570aa",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1413,17 +1413,17 @@
   },
   {
     "type": "ListItem",
-    "element_id": "49df59253e226989981b7fc9628ecd40",
+    "element_id": "44c08956586fa53e0d5e2c88d3eba785",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 14
     },
-    "text": "ot Deng, J., Dong, W., Socher, R., Li, L.J., Li, K., Fei-Fei, L.: ImageNet: A Large-Scale Hierarchical Image Database. In: CVPRO9 (2009)"
+    "text": "[5] Deng, J., Dong, W., Socher, R., Li, L.J., Li, K., Fei-Fei, L.: ImageNet: A Large-Scale Hierarchical Image Database. In: CVPR09 (2009)"
   },
   {
     "type": "ListItem",
-    "element_id": "b000578a41ffcc554faac04609d2f4e1",
+    "element_id": "cd068f1335b5e98ce7a668c734c3ffca",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1433,7 +1433,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c6e835fe03323406543926cc0f5a94de",
+    "element_id": "ed21b4eaf981727504a77bc51444751c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1443,7 +1443,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "4c2478cf439baab6ace34761eda527d9",
+    "element_id": "72c43f1a56f77795dacfdfe034f47354",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1463,7 +1463,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c8f5863d94cc9b9d77f153c6d1b0015a",
+    "element_id": "ade6873735c6be9677804c9634ed9dec",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1483,17 +1483,17 @@
   },
   {
     "type": "ListItem",
-    "element_id": "60fbf9d2525b5a22588082da96a41ff8",
+    "element_id": "77589f390ec51c072e05d82c60dcfeab",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 15
     },
-    "text": "He, K., Gkioxari, G., Dollar, P., Girshick, R.: Mask r-cnn. In: Proceedings of the IEEE international conference on computer vision. pp. 2961-2969 (2017)"
+    "text": "IEEE international conference on computer vision. pp. 2961–2969 (2017)"
   },
   {
     "type": "ListItem",
-    "element_id": "7ceaba2290e3f9c5f3754032ce4d5663",
+    "element_id": "8f1508523763d343728246a315e7ce89",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1503,17 +1503,17 @@
   },
   {
     "type": "ListItem",
-    "element_id": "a772a029ff3b22f4dca5f7df3fe1897b",
+    "element_id": "e3c8484f21642805e61903a9aa4adba8",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 15
     },
-    "text": "Kay, A.: Tesseract: An open-source optical character recognition engine. Linux J. 2007(159), 2 (Jul 2007)"
+    "text": "[14] Kay, A.: Tesseract: An open-source optical character recognition engine. Linux J. 2007(159), 2 (Jul 2007)"
   },
   {
     "type": "ListItem",
-    "element_id": "1f1a0fac1bae95f076ea34c955551632",
+    "element_id": "fbb53a1b98120c451da95a4666c78594",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1523,7 +1523,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "0aabfb2a8e358618179ec2e1d322e519",
+    "element_id": "490e08d6f295c2172516ec04be8a530a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1533,7 +1533,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "df18427a8013b4df36e8ac4e2ee5da3a",
+    "element_id": "2ce4e05a66c2f0f335cb795e064dfe26",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1543,7 +1543,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "257e7b8aef89c41e03bf837ea517885e",
+    "element_id": "ed3fbd8b8776e164e7d02dfa57e7f8fe",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1553,7 +1553,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "00c7abdd98fedd1746994d16ca44d45f",
+    "element_id": "8f319c83ff95c5f927749171e57d44fb",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1563,7 +1563,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "7a0afd734c99f6b076dc58b2e57cfec6",
+    "element_id": "3f1e59a4c91bb3b88df6c357b1d834dc",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1573,7 +1573,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "00d6ff1b3fb21f8a608f3b6269df56be",
+    "element_id": "d9de765c3196caee0fb4a1d730eed52c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1583,7 +1583,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "deecdfacbce71dd1425fd54010b2fad1",
+    "element_id": "7b9980045cdd3d64209cbc2d35575252",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1593,13 +1593,13 @@
   },
   {
     "type": "ListItem",
-    "element_id": "5c44994a44f74b706d8a5e74cd753a8b",
+    "element_id": "bb9e1ef93096188e34c6be00a58ead5c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 16
     },
-    "text": "6 Z. Shen et al."
+    "text": "16 Z. Shen et al."
   },
   {
     "type": "NarrativeText",
@@ -1613,7 +1613,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "21d151e4c182a1f441c3486d2f79afc0",
+    "element_id": "0f799e1e66cc92cf9d0d88aa327e46a1",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1623,7 +1623,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c9d8f6434425015c72f94fb212bba28f",
+    "element_id": "73731045a017a4af5d28a0d329a5b3ae",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1633,7 +1633,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "9c3e13a0e9738b846289bff06952da3b",
+    "element_id": "80e6b0ce1a9da436be112ea81ae6f742",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1653,7 +1653,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "bd680d8baa57cc15337de2e0c299d121",
+    "element_id": "5cce0aff59eb4a6c10cacd3a5b1dca3c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1673,17 +1673,17 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c1780f7a01a76540c5eb5cecf1a2270d",
+    "element_id": "090d32c2a94f4e868cafd598692d005a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 16
     },
-    "text": "Shen, Z., Zhao, J., Dell, M., Yu, Y., Li, W.: Olala: Object-level active learning based layout annotation. arXiv preprint arXiv:2010.01762 (2020)"
+    "text": "based layout annotation. arXiv preprint arXiv:2010.01762 (2020)"
   },
   {
     "type": "ListItem",
-    "element_id": "4c8ddc159ec208bb7f454603fcd7c4bd",
+    "element_id": "916d069c08c9d5bc3408ef856cb496e0",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1703,17 +1703,17 @@
   },
   {
     "type": "ListItem",
-    "element_id": "5657166191992144b2b06f2bd05ffabf",
+    "element_id": "1cad6b363bfdd2605da0d40f6007060a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 16
     },
-    "text": "github. com/facebookresearch/detectron2) (2019) Wu, Y., Kirillov, A., Massa, F., Lo, W.Y., Girshick, R.: Detectron2."
+    "text": "github.com/facebookresearch/detectron2 (2019)"
   },
   {
     "type": "ListItem",
-    "element_id": "6c94dd219ce339c358163833e20d099e",
+    "element_id": "b4233941aba94560bfacb596c7b3bb52",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1733,13 +1733,13 @@
   },
   {
     "type": "ListItem",
-    "element_id": "94ce48002d0ae80dc04f26a5dd2e8f11",
+    "element_id": "6a2460e2677fe2a88aad7c65764e06e9",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 16
     },
-    "text": "Xu, Y., Li, M., Cui, L., Huang, S., Wei, F., Zhou, M.: Layoutlm: Pre-training of text and layout for document image understanding (2019)"
+    "text": "text and layout for document image understanding (2019)"
   },
   {
     "type": "Title",
@@ -1753,12 +1753,12 @@
   },
   {
     "type": "ListItem",
-    "element_id": "435e423f8ca655521a6fe38e8e0a3e1d",
+    "element_id": "e5b16f1d7676cb17c5c2177ec90987f2",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 16
     },
-    "text": "Zhong, X., Tang, J., Yepes, A.J.: Publaynet: largest dataset ever for doc- ument layout analysis. In: 2019 International Conference on Document Analysis and Recognition (ICDAR). pp. 1015-1022. IEEE (Sep 2019). https: //doi.org/10.1109/ICDAR.2019.00166"
+    "text": "largest dataset ever for doc- In: 2019 International Conference on Document IEEE (Sep 2019). ument Analysis and Recognition (ICDAR). pp. 1015–1022. https://doi.org/10.1109/ICDAR.2019.00166 layout analysis."
   }
 ]

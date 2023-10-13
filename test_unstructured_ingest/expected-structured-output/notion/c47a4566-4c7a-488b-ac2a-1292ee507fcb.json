@@ -8,6 +8,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Page with every block"
@@ -21,6 +24,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "💡\n      \n      Notion Tip: Tag pages to let collaborators know what they can expect to use the page for. You can add one or many tags to any page in a wiki."
@@ -34,6 +40,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Heading 2"
@@ -47,6 +56,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "This is some new text"
@@ -60,6 +72,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "/9ba4d6da8a574cfc81ebceac1fde52bd"
@@ -85,6 +100,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "/9ba4d6da8a574cfc81ebceac1fde52bd"
@@ -104,6 +122,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "text_as_html": "<table><br><tbody><br><tr><td></td><td>column 1               </td><td>       </td><td>column 2      </td><td>  </td><td>pages                                                               </td><td>        </td><td></td><td>                     </td><td></td><td>        </td><td></td><td></td></tr><br><tr><td></td><td>c1r1                   </td><td>content</td><td>              </td><td>  </td><td>c2r1 table <br>          2023-08-08T09:00:00.000-04:00<br>            cell</td><td>        </td><td></td><td>Page with every block</td><td></td><td>        </td><td></td><td></td></tr><br><tr><td></td><td>c1r2 more              </td><td>content</td><td>              </td><td>  </td><td>c2r2 table                                                          </td><td>cell    </td><td></td><td>                     </td><td></td><td>Untitled</td><td></td><td></td></tr><br><tr><td></td><td>this is some green text</td><td>       </td><td>this is       </td><td>an</td><td>                                                                    </td><td>equation</td><td></td><td>                     </td><td></td><td>Untitled</td><td></td><td></td></tr><br><tr><td></td><td>text1                  </td><td>text2  </td><td>Multiline cell</td><td>  </td><td>Another cell                                                        </td><td>        </td><td></td><td>Untitled             </td><td></td><td>        </td><td></td><td></td></tr><br></tbody><br></table>"
     },
@@ -118,6 +139,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "E = {mc^2}"
@@ -131,6 +155,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Numbered list"
@@ -144,6 +171,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "A number child"
@@ -157,6 +187,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "A number grandchild"
@@ -170,6 +203,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "great"
@@ -183,6 +219,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "super great"
@@ -196,6 +235,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -209,6 +251,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "with test text"
@@ -222,6 +267,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Bullet one"
@@ -235,6 +283,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "A child bullet"
@@ -248,6 +299,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "A grandchild bullet"
@@ -261,6 +315,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "great"
@@ -274,6 +331,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "super great"
@@ -287,6 +347,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Bullet two"
@@ -300,6 +363,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "I quote myself testings Notion"
@@ -313,6 +379,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2,
       "link_urls": [
         "https://www.notion.so/icons/airplane_brown.svg"
@@ -332,6 +401,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2,
       "link_urls": [
         "https://www.wikipedia.org/"
@@ -351,6 +423,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2,
       "link_urls": [
         "https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG2tV4mrh1z3kXi5z_warlk"
@@ -370,6 +445,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "Child Database:"
@@ -383,6 +461,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2,
       "link_urls": [
         "https://www.notion.so/d1fad658f1cf4eedb0b5ee72b9f0b530"
@@ -402,6 +483,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "Child Page:"
@@ -415,6 +499,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2,
       "link_urls": [
         "https://www.notion.so/9ba4d6da8a574cfc81ebceac1fde52bd"
@@ -434,6 +521,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "This is my code caption"
@@ -447,6 +537,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "This is some text"
@@ -460,6 +553,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "This is text in next column"
@@ -473,6 +569,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "Final text in column"
@@ -486,6 +585,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "Heading 1 content"
@@ -499,6 +601,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526"

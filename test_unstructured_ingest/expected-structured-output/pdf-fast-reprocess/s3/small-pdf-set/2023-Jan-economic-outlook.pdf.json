@@ -33,15 +33,26 @@
     "text": "2023 JAN"
   },
   {
-    "type": "ListItem",
-    "element_id": "c4e0168ffab999611a92e8ebd8fe48a9",
+    "type": "Title",
+    "element_id": "85e4ff3addb38328ecc08ec49759def7",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
     },
-    "text": "The balance of risks remains tilted to the downside, but adverse risks have moderated since the October 2022 WEO. On the upside, a stronger boost from pent-up demand in numerous economies or a faster fall in inflation are plausible. On the downside, severe health outcomes in China could hold back the recovery, Russia’s war in Ukraine could escalate, and tighter global financing conditions could worsen debt distress. Financial markets could also suddenly reprice in response to adverse inflation news, while further geopolitical fragmentation could hamper economic progress."
+    "text": "Inflation Peaking amid Low Growth"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "f1d5f4ed63a14db581e985bf15416cdd",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2,
+      "links": []
+    },
+    "text": "Global growth is projected to fall from an estimated 3.4 percent in 2022 to 2.9 percent in 2023, then rise to 3.1 percent in 2024. The forecast for 2023 is 0.2 percentage point higher than predicted in the October 2022 World Economic Outlook (WEO) but below the historical (2000–19) average of 3.8 percent. The rise in central bank rates to fight inflation and Russia’s war in Ukraine continue to weigh on economic activity. The rapid spread of COVID-19 in China dampened growth in 2022, but the recent reopening has paved the way for a faster-than-expected recovery. Global inflation is expected to fall from 8.8 percent in 2022 to 6.6 percent in 2023 and 4.3 percent in 2024, still above pre-pandemic (2017–19) levels of about 3.5 percent."
   },
   {
     "type": "ListItem",
@@ -53,17 +64,6 @@
       "links": []
     },
     "text": "The balance of risks remains tilted to the downside, but adverse risks have moderated since the October 2022 WEO. On the upside, a stronger boost from pent-up demand in numerous economies or a faster fall in inflation are plausible. On the downside, severe health outcomes in China could hold back the recovery, Russia’s war in Ukraine could escalate, and tighter global financing conditions could worsen debt distress. Financial markets could also suddenly reprice in response to adverse inflation news, while further geopolitical fragmentation could hamper economic progress."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "5e9b501fc056965a744f6598d022f31d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2,
-      "links": []
-    },
-    "text": "In most economies, amid the cost-of-living crisis, the priority remains achieving sustained disinflation. With tighter monetary conditions and lower growth potentially affecting financial and debt stability, it is necessary to deploy macroprudential tools and strengthen debt restructuring frameworks. Accelerating COVID-19 vaccinations in China would safeguard the recovery, with positive cross-border spillovers. Fiscal support should be better targeted at those most affected by elevated food and energy prices, and broad-based fiscal relief measures should be withdrawn. Stronger multilateral cooperation is essential to preserve the gains from the rules-based multilateral system and to mitigate climate change by limiting emissions and raising green investment."
   },
   {
     "type": "ListItem",
@@ -121,17 +121,6 @@
     "text": "COVID-19 deepens China’s slowdown. Economic activity in China slowed in the fourth quarter amid multiple large COVID-19 outbreaks in Beijing and other densely populated localities. Renewed lockdowns accompanied the outbreaks until the relaxation of COVID-19 restrictions in November and December, which paved the way for a full reopening. Real estate investment continued to contract, and developer restructuring is proceeding slowly, amid the lingering property market crisis. Developers have yet to deliver on a large backlog of presold housing, and downward pressure is building on house prices (so far limited by home price floors). The authorities have responded with additional monetary and fiscal policy easing, new vaccination targets for the elderly, and steps to support the completion of unfinished real estate projects. However, consumer and business sentiment remained subdued in late 2022. China’s slowdown has reduced global trade growth and international commodity prices."
   },
   {
-    "type": "Title",
-    "element_id": "0cce65035ca66e9be782c845ddd606e2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Figure 1. Twin Peaks? Headline and Core Inflation (Percent, year over year)"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "c140ad5c30b6075c1a553eddacd8eca5",
     "metadata": {
@@ -141,6 +130,17 @@
       "links": []
     },
     "text": "Monetary policy starts to bite. Signs are apparent that monetary policy tightening is starting to cool demand and inflation, but the full impact is unlikely to be realized before 2024. Global headline inflation appears to have peaked in the third quarter of 2022 (Figure 1). Prices of fuel and nonfuel commodities have declined, lowering headline inflation, notably in the United States, the euro area, and Latin America. But underlying (core) inflation has not yet peaked in most economies and remains well above pre-pandemic levels. It has persisted amid second-round effects from earlier cost shocks and tight labor markets with robust wage growth as consumer demand has remained resilient. Medium-term inflation expectations generally remain anchored, but some gauges are up. These developments have caused central banks to raise rates faster than expected, especially in the United States and the euro area, and to signal that rates will stay elevated for longer. Core inflation is declining in some economies that have completed their tightening cycle—such as Brazil. Financial markets are displaying high sensitivity to inflation news, with equity markets rising following recent releases of lower inflation data in anticipation of interest rate cuts (Box 1), despite central banks’ communicating their resolve to tighten policy further. With the peak in US headline inflation and an acceleration in rate hikes by several non-US central banks, the dollar has weakened since September but remains significantly stronger than a year ago."
+  },
+  {
+    "type": "Title",
+    "element_id": "0cce65035ca66e9be782c845ddd606e2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Figure 1. Twin Peaks? Headline and Core Inflation (Percent, year over year)"
   },
   {
     "type": "Title",
@@ -176,17 +176,6 @@
     "text": "Euro area"
   },
   {
-    "type": "ListItem",
-    "element_id": "63e35649dd179389ecc7251e1503489a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "1. Headline Inflation"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "808caaef5b114d874a25b7fec21b5516",
     "metadata": {
@@ -198,15 +187,15 @@
     "text": "18 16 14 12 10 8 6 4 2 0 –2"
   },
   {
-    "type": "Title",
-    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
+    "type": "ListItem",
+    "element_id": "63e35649dd179389ecc7251e1503489a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
     },
-    "text": "Jan. 22"
+    "text": "1. Headline Inflation"
   },
   {
     "type": "Title",
@@ -253,6 +242,17 @@
     "text": "Jan. 20"
   },
   {
+    "type": "Title",
+    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jan. 22"
+  },
+  {
     "type": "UncategorizedText",
     "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
     "metadata": {
@@ -275,15 +275,15 @@
     "text": "Jul. 19"
   },
   {
-    "type": "Title",
-    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
+    "type": "UncategorizedText",
+    "element_id": "c2c7be4534a60790d1d18451c91dc138",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
     },
-    "text": "Jul. 22"
+    "text": "16 14 12 10 8 6 4 2 0"
   },
   {
     "type": "ListItem",
@@ -298,17 +298,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "c2c7be4534a60790d1d18451c91dc138",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "16 14 12 10 8 6 4 2 0"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "28a5aa3897d66de6c31caba99a4c337e",
     "metadata": {
       "data_source": {},
@@ -319,26 +308,15 @@
     "text": "–2"
   },
   {
-    "type": "Title",
-    "element_id": "646612b0a62b59fd13be769b4590a9ac",
+    "type": "UncategorizedText",
+    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
     },
-    "text": "Jul. 19"
-  },
-  {
-    "type": "Title",
-    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jul. 22"
+    "text": "Jan. 2019"
   },
   {
     "type": "Title",
@@ -361,17 +339,6 @@
       "links": []
     },
     "text": "Jul. 20"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3,
-      "links": []
-    },
-    "text": "Jan. 2019"
   },
   {
     "type": "Title",
@@ -405,6 +372,17 @@
       "links": []
     },
     "text": "Jan. 22"
+  },
+  {
+    "type": "Title",
+    "element_id": "646612b0a62b59fd13be769b4590a9ac",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jul. 19"
   },
   {
     "type": "NarrativeText",
@@ -430,6 +408,28 @@
   },
   {
     "type": "Title",
+    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jul. 22"
+  },
+  {
+    "type": "Title",
+    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3,
+      "links": []
+    },
+    "text": "Jul. 22"
+  },
+  {
+    "type": "Title",
     "element_id": "cc874418b59b7ecb37a2c938783fb5ce",
     "metadata": {
       "data_source": {},
@@ -449,17 +449,6 @@
       "links": []
     },
     "text": "Nov. 22"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4,
-      "links": []
-    },
-    "text": ""
   },
   {
     "type": "NarrativeText",
@@ -517,6 +506,17 @@
     "text": "For advanced economies, growth is projected to decline sharply from 2.7 percent in 2022 to 1.2 percent in 2023 before rising to 1.4 percent in 2024, with a downward revision of 0.2 percentage point for 2024. About 90 percent of advanced economies are projected to see a decline in growth in 2023."
   },
   {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4,
+      "links": []
+    },
+    "text": ""
+  },
+  {
     "type": "NarrativeText",
     "element_id": "e8461ba4bbf4110ce195ca03366ae1f0",
     "metadata": {
@@ -528,15 +528,26 @@
     "text": "In the United States, growth is projected to fall from 2.0 percent in 2022 to 1.4 percent in 2023 and 1.0 percent in 2024. With growth rebounding in the second half of 2024, growth in 2024 will be faster than in 2023 on a fourth-quarter-over-fourth-quarter basis, as in most advanced"
   },
   {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "type": "NarrativeText",
+    "element_id": "70f05b9620aa1b7236058898e7e59192",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5,
       "links": []
     },
-    "text": ""
+    "text": "economies. There is a 0.4 percentage point upward revision for annual growth in 2023, reflecting carryover effects from domestic demand resilience in 2022, but a 0.2 percentage point downward revision of growth in 2024 due to the steeper path of Federal Reserve rate hikes, to a peak of about 5.1 percent in 2023."
+  },
+  {
+    "type": "ListItem",
+    "element_id": "fd6c549473e196512c076844988f465c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5,
+      "links": []
+    },
+    "text": "Growth in the euro area is projected to bottom out at 0.7 percent in 2023 before rising to 1.6 percent in 2024. The 0.2 percentage point upward revision to the forecast for 2023 reflects the effects of faster rate hikes by the European Central Bank and eroding real incomes, offset by the carryover from the 2022 outturn, lower wholesale energy prices, and additional announcements of fiscal purchasing power support in the form of energy price controls and cash transfers."
   },
   {
     "type": "ListItem",
@@ -548,17 +559,6 @@
       "links": []
     },
     "text": "Growth in the United Kingdom is projected to be –0.6 percent in 2023, a 0.9 percentage point downward revision from October, reflecting tighter fiscal and monetary policies and financial conditions and still-high energy retail prices weighing on household budgets."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "b24771387a5318eeda21adaa49629186",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5,
-      "links": []
-    },
-    "text": "Growth in Japan is projected to rise to 1.8 percent in 2023, with continued monetary and fiscal policy support. High corporate profits from a depreciated yen and earlier delays in implementing previous projects will support business investment. In 2024, growth is expected to decline to 0.9 percent as the effects of past stimulus dissipate."
   },
   {
     "type": "ListItem",
@@ -595,17 +595,6 @@
   },
   {
     "type": "ListItem",
-    "element_id": "2ba41350ae3c684802f0e2b785c2d11b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5,
-      "links": []
-    },
-    "text": "Growth in emerging and developing Asia is expected to rise in 2023 and 2024 to 5.3 percent and 5.2 percent, respectively, after the deeper-than-expected slowdown in 2022 to 4.3 percent attributable to China’s economy. China’s real GDP slowdown in the fourth quarter of 2022 implies a 0.2 percentage point downgrade for 2022 growth to 3.0 percent—the first time in more than 40 years with China’s growth below the global average. Growth in China is projected to rise to 5.2 percent in 2023, reflecting rapidly improving mobility, and to fall to 4.5 percent in 2024 before settling at below 4 percent over the medium term amid declining business dynamism and slow progress on structural reforms. Growth in India is set to decline from 6.8 percent in 2022 to 6.1 percent in 2023 before picking up to 6.8 percent in 2024, with resilient domestic demand despite external headwinds. Growth in the ASEAN-5 countries (Indonesia, Malaysia, Philippines, Singapore, Thailand) is similarly projected to slow to 4.3 percent in 2023 and then pick up to 4.7 percent in 2024."
-  },
-  {
-    "type": "ListItem",
     "element_id": "afde979c99a73646915fe253c85c5a9c",
     "metadata": {
       "data_source": {},
@@ -621,7 +610,7 @@
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
-      "page_number": 6,
+      "page_number": 5,
       "links": []
     },
     "text": ""
@@ -647,6 +636,17 @@
       "links": []
     },
     "text": "Growth in the Middle East and Central Asia is projected to decline from 5.3 percent in 2022 to 3.2 percent in 2023, with a downward revision of 0.4 percentage point since October, mainly attributable to a steeper-than-expected growth slowdown in Saudi Arabia, from 8.7 percent in 2022 (which was stronger than expected by 1.1 percentage points) to 2.6 percent in 2023, with a negative revision of 1.1 percentage points. The downgrade for 2023 reflects mainly lower oil production in line with an agreement through OPEC+ (Organization of the Petroleum Exporting Countries, including Russia and other non-OPEC oil exporters), while non-oil growth is expected to remain robust. In sub-Saharan Africa, growth is projected to remain moderate at 3.8 percent in 2023 amid prolonged fallout from the COVID-19 pandemic, although with a modest upward revision since October, before picking up to 4.1 percent in 2024. The small upward revision for 2023 (0.1 percentage point) reflects Nigeria’s rising growth in 2023 due to measures to address insecurity issues in the oil sector. In South Africa, by contrast, after a COVID-19 reopening rebound in 2022, projected growth more than halves in 2023, to 1.2 percent, reflecting weaker external demand, power shortages, and structural constraints."
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6,
+      "links": []
+    },
+    "text": ""
   },
   {
     "type": "NarrativeText",
@@ -680,6 +680,17 @@
       "links": []
     },
     "text": "The balance of risks to the global outlook remains tilted to the downside, with scope for lower growth and higher inflation, but adverse risks have moderated since the October 2022 World Economic Outlook."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "8f81c653cbf1334344d3063cb9f4de04",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7,
+      "links": []
+    },
+    "text": "Table 1. Overview of the World Economic Outlook Projections (Percent change, unless noted otherwise)"
   },
   {
     "type": "Title",
@@ -1738,26 +1749,37 @@
     "text": "Pent-up demand boost: Fueled by the stock of excess private savings from the pandemic fiscal support and, in many cases, still-tight labor markets and solid wage growth, pent-up demand remains an upside risk to the growth outlook. In some advanced economies, recent data show that households are still on net adding to their stock of excess savings (as in some euro area countries and the United Kingdom) or have ample savings left (as in the United States). This leaves scope for a further boost to consumption—particularly of services, including tourism."
   },
   {
-    "type": "ListItem",
-    "element_id": "cf20f95904c591b6ac4ccd5d43fa8a98",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7,
-      "links": []
-    },
-    "text": "Pent-up demand boost: Fueled by the stock of excess private savings from the pandemic fiscal support and, in many cases, still-tight labor markets and solid wage growth, pent-up demand remains an upside risk to the growth outlook. In some advanced economies, recent data show that households are still on net adding to their stock of excess savings (as in some euro area countries and the United Kingdom) or have ample savings left (as in the United States). This leaves scope for a further boost to consumption—particularly of services, including tourism."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "type": "NarrativeText",
+    "element_id": "d379a79a55cecddeed62b21eb6a0ff00",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
     },
-    "text": ""
+    "text": "However, the boost to demand could stoke core inflation, leading to even tighter monetary policies and a stronger-than-expected slowdown later on. Pent-up demand could also fuel a stronger rebound in China."
+  },
+  {
+    "type": "ListItem",
+    "element_id": "2bbe57e6c291db638d3fcddca9e0199a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "Faster disinflation: An easing in labor market pressures in some advanced economies due to falling vacancies could cool wage inflation without necessarily increasing unemployment. A sharp fall in the prices of goods, as consumers shift back to services, could further push down inflation. Such developments could imply a “softer” landing with less monetary tightening."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "a2f806b25a06969405637298b4c85139",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": "Downside risks—Numerous downside risks continue to weigh on the global outlook, lowering growth while, in a number of cases, adding further to inflation:"
   },
   {
     "type": "ListItem",
@@ -1769,28 +1791,6 @@
       "links": []
     },
     "text": "China’s recovery stalling: Amid still-low population immunity levels and insufficient hospital capacity, especially outside the major urban areas, significant health consequences could hamper the recovery. A deepening crisis in the real estate market remains a major source of vulnerability, with risks of widespread defaults by developers and resulting financial sector instability. Spillovers to the rest of the world would operate primarily through lower demand and potentially renewed supply chain problems."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "90a90e12a4c6b8b74d3c8d20a76f22dc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "China’s recovery stalling: Amid still-low population immunity levels and insufficient hospital capacity, especially outside the major urban areas, significant health consequences could hamper the recovery. A deepening crisis in the real estate market remains a major source of vulnerability, with risks of widespread defaults by developers and resulting financial sector instability. Spillovers to the rest of the world would operate primarily through lower demand and potentially renewed supply chain problems."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "42ac57e394bf7c98d908745cefce0b80",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "War in Ukraine escalating: An escalation of the war in Ukraine remains a major source of vulnerability, particularly for Europe and lower-income countries. Europe is facing lower-than- anticipated gas prices, having stored enough gas to make shortages unlikely this winter. However, refilling storage with much-diminished Russian flows will be challenging ahead of next winter, particularly if it is a very cold one and China’s energy demand picks up, causing price spikes. A possible increase in food prices from a failed extension of the Black Sea grain initiative would put further pressure on lower-income countries that are experiencing food insecurity and have limited budgetary room to cushion the impact on households and businesses. With elevated food and fuel prices, social unrest may increase."
   },
   {
     "type": "ListItem",
@@ -1816,6 +1816,17 @@
   },
   {
     "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 8,
+      "links": []
+    },
+    "text": ""
+  },
+  {
+    "type": "ListItem",
     "element_id": "33ccff3014b460178e62d9c8021fd728",
     "metadata": {
       "data_source": {},
@@ -1824,17 +1835,6 @@
       "links": []
     },
     "text": "Sudden financial market repricing: A premature easing in financial conditions in response to lower headline inflation data could complicate anti-inflation policies and necessitate additional monetary tightening. For the same reason, unfavorable inflation data releases could trigger sudden repricing of assets and increase volatility in financial markets. Such movements could strain liquidity and the functioning of critical markets, with ripple effects on the real economy."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "75bd22ee0ba778cc3a616ed0a9b42292",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8,
-      "links": []
-    },
-    "text": "Geopolitical fragmentation: The war in Ukraine and the related international sanctions aimed at  pressuring Russia to end hostilities are splitting the world economy into blocs and reinforcing earlier geopolitical tensions, such as those associated with the US-China trade dispute."
   },
   {
     "type": "ListItem",
@@ -1925,15 +1925,37 @@
     "text": "1 See “Geo-Economic Fragmentation and the Future of Multilateralism,” IMF Staff Discussion Note 2023/001."
   },
   {
-    "type": "ListItem",
-    "element_id": "bd7674df887463bc9f05c8030a151dea",
+    "type": "NarrativeText",
+    "element_id": "1344e770221822b381fb428d9390a446",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
     },
-    "text": "Restraining the pandemic: Global coordination is needed to resolve bottlenecks in the global distribution of vaccines and treatments. Public support for the development of new vaccine technologies and the design of systematic responses to future epidemics also remains essential.  Addressing debt distress: Progress has been made for countries that requested debt treatment under the Group of Twenty’s Common Framework initiative, and more will be needed to strengthen it. It is also necessary to agree on mechanisms to resolve debt in a broader set of economies, including middle-income countries that are not eligible under the Common Framework. Non– Paris Club and private creditors have a crucial role to play in ensuring coordinated, effective, and timely debt resolution processes."
+    "text": "controls. The temporary and broad-based measures are becoming increasingly costly and should be withdrawn and replaced by targeted approaches. Preserving the energy price signal will encourage a reduction in energy consumption and limit the risks of shortages. Targeting can be achieved through social safety nets such as cash transfers to eligible households based on income or demographics or by transfers through electricity companies based on past energy consumption. Subsidies should be temporary and offset by revenue-generating measures, including one-time solidarity taxes on high- income households and companies, where appropriate."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "5f63f2b3388c5c9f2ab22f4136d4196d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "Reinforcing supply: Supply-side policies could address the key structural factors impeding growth— including market power, rent seeking, rigid regulation and planning, and inefficient education—and could help build resilience, reduce bottlenecks, and alleviate price pressures. A concerted push for investment along the supply chain of green energy technologies would bolster energy security and help advance progress on the green transition."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c64f29a38dae74989484539db014364f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 10,
+      "links": []
+    },
+    "text": "Strengthening multilateral cooperation—Urgent action is needed to limit the risks stemming from geopolitical fragmentation and to ensure cooperation on fundamental areas of common interest:"
   },
   {
     "type": "ListItem",
@@ -1945,17 +1967,6 @@
       "links": []
     },
     "text": "Restraining the pandemic: Global coordination is needed to resolve bottlenecks in the global distribution of vaccines and treatments. Public support for the development of new vaccine technologies and the design of systematic responses to future epidemics also remains essential.  Addressing debt distress: Progress has been made for countries that requested debt treatment under the Group of Twenty’s Common Framework initiative, and more will be needed to strengthen it. It is also necessary to agree on mechanisms to resolve debt in a broader set of economies, including middle-income countries that are not eligible under the Common Framework. Non– Paris Club and private creditors have a crucial role to play in ensuring coordinated, effective, and timely debt resolution processes."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "af6eef18ec41f4980c1a4cbb5b7d4fec",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "Strengthening global trade: Strengthening the global trading system would address risks associated with trade fragmentation. This can be achieved by rolling back restrictions on food exports and other essential items such as medicine, upgrading World Trade Organization (WTO) rules in critical areas such as agricultural and industrial subsidies, concluding and implementing new WTO-based agreements, and fully restoring the WTO dispute settlement system."
   },
   {
     "type": "ListItem",
@@ -1978,17 +1989,6 @@
       "links": []
     },
     "text": "Using the global financial safety net: With the cascading of shocks to the global economy, using the global financial safety net to its fullest extent is appropriate, including by proactively utilizing the IMF’s precautionary financial arrangements and channeling aid from the international community to low-income countries facing shocks."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "089c5759e7030e34a3b537d9e20bcd13",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10,
-      "links": []
-    },
-    "text": "Speeding the green transition: To meet governments’ climate change goals, it is necessary to swiftly implement credible mitigation policies. International coordination on carbon pricing or equivalent policies would facilitate faster decarbonization. Global cooperation is needed to build resilience to climate shocks, including through aid to vulnerable countries."
   },
   {
     "type": "ListItem",
@@ -2288,72 +2288,6 @@
     "text": "Slowing aggregate demand and weaker-than-expected inflation prints in some major advanced economies have prompted investors’ anticipation of a further reduction in the pace of future policy rate hikes. Corporate earnings forecasts have been cut due to headwinds from slowing demand, and margins have contracted across most regions. In addition, survey-based probabilities of recession have been increasing, particularly in the United States and Europe. However, upside risks to the inflation outlook remain. Despite the recent moderation in headline inflation, core inflation remains stubbornly high across most regions, labor markets are still tight, energy prices remain pressured by Russia’s ongoing war in Ukraine, and supply chain disruptions may reappear. To keep these risks in check, financial conditions will likely need to tighten further. If not, central banks may need to increase policy rates even more in order to achieve their inflation objectives."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "e7f6c011776e8db7cd330b54174fd76f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11,
-      "links": []
-    },
-    "text": "6"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ef2d127de37b942baad06145e54b0c61",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11,
-      "links": []
-    },
-    "text": "5"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11,
-      "links": []
-    },
-    "text": "4"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11,
-      "links": []
-    },
-    "text": "3"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11,
-      "links": []
-    },
-    "text": "2"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11,
-      "links": []
-    },
-    "text": "1"
-  },
-  {
     "type": "Title",
     "element_id": "6ef230728534d871e5126e2a55e12b26",
     "metadata": {
@@ -2385,6 +2319,17 @@
       "links": []
     },
     "text": "October 2022 GFSR"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "e7f6c011776e8db7cd330b54174fd76f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11,
+      "links": []
+    },
+    "text": "6"
   },
   {
     "type": "ListItem",
@@ -2616,5 +2561,60 @@
       "links": []
     },
     "text": "WEO Update © 2023 • ISBN: 979-8-40023-224-4"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ef2d127de37b942baad06145e54b0c61",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11,
+      "links": []
+    },
+    "text": "5"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11,
+      "links": []
+    },
+    "text": "4"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11,
+      "links": []
+    },
+    "text": "3"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11,
+      "links": []
+    },
+    "text": "2"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 11,
+      "links": []
+    },
+    "text": "1"
   }
 ]

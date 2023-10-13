@@ -20,6 +20,7 @@ from unstructured.documents.coordinates import (
     CoordinateSystem,
     RelativeCoordinateSystem,
 )
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
 class NoID(abc.ABC):
@@ -44,6 +45,7 @@ class DataSourceMetadata:
     date_created: Optional[str] = None
     date_modified: Optional[str] = None
     date_processed: Optional[str] = None
+    permissions_data: Optional[List[Dict[str, Any]]] = None
 
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
@@ -186,11 +188,27 @@ class ElementMetadata:
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
 
     # Chunking metadata fields
-    num_characters: Optional[int] = None
+    max_characters: Optional[int] = None
     is_continuation: Optional[bool] = None
 
     # Detection Model Class Probabilities from Unstructured-Inference Hi-Res
     detection_class_prob: Optional[float] = None
+
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        # -- The detection mechanism that emitted this element, for debugging purposes. Only
+        # -- defined when UNSTRUCTURED_INCLUDE_DEBUG_METADATA flag is True. Note the `compare=False`
+        # -- setting meaning it's value is not included when comparing two ElementMetadata instances
+        # -- for equality (`.__eq__()`).
+        detection_origin: Optional[str] = dc.field(default=None, compare=False)
+
+    def __setattr__(self, key: str, value: Any):
+        # -- Avoid triggering `AttributeError` when assigning to `metadata.detection_origin` when
+        # -- when the UNSTRUCTURED_INCLUDE_DEBUG_METADATA flag is False (and the `.detection_origin`
+        # -- field is not defined).
+        if not UNSTRUCTURED_INCLUDE_DEBUG_METADATA and key == "detection_origin":
+            return
+        else:
+            super().__setattr__(key, value)
 
     def __post_init__(self):
         if isinstance(self.filename, pathlib.Path):
@@ -198,11 +216,19 @@ class ElementMetadata:
 
         if self.filename is not None:
             file_directory, filename = os.path.split(self.filename)
-            self.file_directory = file_directory or None
+            # -- Only replace file-directory when we have something better. When ElementMetadata is
+            # -- being re-loaded from JSON, the file-directory we want will already be there and
+            # -- filename will be just the file-name portion of the path.
+            if file_directory:
+                self.file_directory = file_directory
             self.filename = filename
 
     def to_dict(self):
-        _dict = {key: value for key, value in self.__dict__.items() if value is not None}
+        _dict = {
+            key: value
+            for key, value in self.__dict__.items()
+            if value is not None and key != "detection_origin"
+        }
         if "regex_metadata" in _dict and not _dict["regex_metadata"]:
             _dict.pop("regex_metadata")
         if self.data_source:
@@ -285,7 +311,11 @@ def process_metadata() -> Callable[[Callable[_P, List[Element]]], Callable[_P, L
                     params[param.name] = param.default
 
             regex_metadata: Dict["str", "str"] = params.get("regex_metadata", {})
-            elements = _add_regex_metadata(elements, regex_metadata)
+            # -- don't write an empty `{}` to metadata.regex_metadata when no regex-metadata was
+            # -- requested, otherwise it will serialize (because it's not None) when it has no
+            # -- meaning or is even misleading. Also it complicates tests that don't use regex-meta.
+            if regex_metadata:
+                elements = _add_regex_metadata(elements, regex_metadata)
             unique_element_ids: bool = params.get("unique_element_ids", False)
             if unique_element_ids:
                 for element in elements:
@@ -337,9 +367,11 @@ class Element(abc.ABC):
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
+        detection_origin: Optional[str] = None,
     ):
         if metadata is None:
             metadata = ElementMetadata()
+            metadata.detection_origin = detection_origin
         self.id: Union[str, uuid.UUID, NoID, UUID] = element_id
         coordinates_metadata = (
             None
@@ -354,11 +386,12 @@ class Element(abc.ABC):
         self.metadata = metadata.merge(
             ElementMetadata(coordinates=coordinates_metadata),
         )
+        self.metadata.detection_origin = detection_origin
 
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "type": None,
             "element_id": self.id,
@@ -399,6 +432,7 @@ class CheckBox(Element):
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
         metadata: Optional[ElementMetadata] = None,
+        detection_origin: Optional[str] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         super().__init__(
@@ -406,6 +440,7 @@ class CheckBox(Element):
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             metadata=metadata,
+            detection_origin=detection_origin,
         )
         self.checked: bool = checked
 
@@ -434,9 +469,12 @@ class Text(Element):
         coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
+        detection_origin: Optional[str] = None,
+        embeddings: Optional[List[float]] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
+        self.embeddings: Optional[List[float]] = embeddings
 
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
@@ -450,6 +488,7 @@ class Text(Element):
             metadata=metadata,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
+            detection_origin=detection_origin,
         )
 
     def __str__(self):
@@ -461,6 +500,7 @@ class Text(Element):
                 (self.text == other.text),
                 (self.metadata.coordinates == other.metadata.coordinates),
                 (self.category == other.category),
+                (self.embeddings == other.embeddings),
             ],
         )
 
@@ -469,6 +509,8 @@ class Text(Element):
         out["element_id"] = self.id
         out["type"] = self.category
         out["text"] = self.text
+        if self.embeddings:
+            out["embeddings"] = self.embeddings
         return out
 
     def apply(self, *cleaners: Callable):

@@ -24,7 +24,7 @@ contourpy==1.1.1
     # via matplotlib
 cryptography==41.0.4
     # via pdfminer-six
-cycler==0.12.0
+cycler==0.12.1
     # via matplotlib
 effdet==0.4.1
     # via layoutparser
@@ -35,15 +35,17 @@ filelock==3.12.4
     #   transformers
 flatbuffers==23.5.26
     # via onnxruntime
-fonttools==4.43.0
+fonttools==4.43.1
     # via matplotlib
 fsspec==2023.9.1
     # via
     #   -c requirements/constraints.in
     #   huggingface-hub
+    #   torch
 huggingface-hub==0.17.3
     # via
     #   timm
+    #   tokenizers
     #   transformers
     #   unstructured-inference
 humanfriendly==10.0
@@ -91,8 +93,10 @@ omegaconf==2.3.0
     # via effdet
 onnx==1.14.1
     # via unstructured-inference
-onnxruntime==1.16.0
-    # via unstructured-inference
+onnxruntime==1.15.1
+    # via
+    #   -c requirements/constraints.in
+    #   unstructured-inference
 opencv-python==4.8.0.76
     # via
     #   -c requirements/constraints.in
@@ -145,7 +149,7 @@ pyparsing==3.0.9
     # via
     #   -c requirements/constraints.in
     #   matplotlib
-pypdfium2==4.20.0
+pypdfium2==4.21.0
     # via pdfplumber
 pytesseract==0.3.10
     # via layoutparser
@@ -164,9 +168,11 @@ pyyaml==6.0.1
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.3.1
-    # via unstructured-inference
-regex==2023.8.8
+rapidfuzz==3.4.0
+    # via
+    #   -c requirements/base.txt
+    #   unstructured-inference
+regex==2023.10.3
     # via
     #   -c requirements/base.txt
     #   transformers
@@ -195,15 +201,15 @@ sympy==1.12
     #   torch
 timm==0.9.7
     # via effdet
-tokenizers==0.13.3
+tokenizers==0.14.1
     # via transformers
-torch==2.0.1
+torch==2.1.0
     # via
     #   effdet
     #   layoutparser
     #   timm
     #   torchvision
-torchvision==0.15.2
+torchvision==0.16.0
     # via
     #   effdet
     #   layoutparser
@@ -214,7 +220,7 @@ tqdm==4.66.1
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.33.3
+transformers==4.34.0
     # via unstructured-inference
 typing-extensions==4.8.0
     # via
@@ -225,13 +231,13 @@ typing-extensions==4.8.0
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.6.6
+unstructured-inference==0.7.3
     # via -r requirements/extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via
     #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

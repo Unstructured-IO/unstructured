@@ -6,6 +6,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=sharepoint-azure-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 DESTINATION_INDEX="utic-test-ingest-fixtures-output-$(date +%s)"
 # The vector configs on the schema currently only exist on versions:
@@ -15,6 +16,11 @@ CI=${CI:-"false"}
 
 if [ -z "$SHAREPOINT_CLIENT_ID" ] || [ -z "$SHAREPOINT_CRED" ] ; then
    echo "Skipping Sharepoint ingest test because the SHAREPOINT_CLIENT_ID or SHAREPOINT_CRED env var is not set."
+   exit 0
+fi
+
+if [ -z "$SHAREPOINT_PERMISSIONS_APP_ID" ] || [ -z "$SHAREPOINT_PERMISSIONS_APP_CRED" ] || [ -z "$SHAREPOINT_PERMISSIONS_TENANT" ] ; then
+   echo "Skipping Sharepoint ingest test because the SHAREPOINT_PERMISSIONS_APP_ID, SHAREPOINT_PERMISSIONS_APP_CRED, or SHAREPOINT_PERMISSIONS_TENANT env var is not set."
    exit 0
 fi
 
@@ -47,6 +53,7 @@ function cleanup {
   fi
 
   cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$WORK_DIR"
   if [ "$CI" == "true" ]; then
     cleanup_dir "$DOWNLOAD_DIR"
   fi
@@ -83,11 +90,15 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --client-cred "$SHAREPOINT_CRED" \
     --client-id "$SHAREPOINT_CLIENT_ID" \
     --site "$SHAREPOINT_SITE" \
+    --permissions-application-id "$SHAREPOINT_PERMISSIONS_APP_ID" \
+    --permissions-client-cred "$SHAREPOINT_PERMISSIONS_APP_CRED" \
+    --permissions-tenant "$SHAREPOINT_PERMISSIONS_TENANT" \
     --path "Shared Documents" \
     --recursive \
     --embedding-api-key "$OPENAI_API_KEY" \
     --chunk-elements \
     --chunk-multipage-sections \
+    --work-dir "$WORK_DIR" \
     azure-cognitive-search \
     --key "$AZURE_SEARCH_API_KEY" \
     --endpoint "$AZURE_SEARCH_ENDPOINT" \
