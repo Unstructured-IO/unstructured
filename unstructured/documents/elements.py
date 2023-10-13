@@ -45,6 +45,7 @@ class DataSourceMetadata:
     date_created: Optional[str] = None
     date_modified: Optional[str] = None
     date_processed: Optional[str] = None
+    permissions_data: Optional[List[Dict[str, Any]]] = None
 
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}

@@ -15,6 +15,7 @@ from unstructured.ingest.pipeline.interfaces import (
     SourceNode,
     WriteNode,
 )
+from unstructured.ingest.pipeline.permissions import PermissionsDataCleaner
 from unstructured.ingest.pipeline.utils import get_ingest_doc_hash
 
 
@@ -26,6 +27,7 @@ class Pipeline(DataClassJsonMixin):
     partition_node: PartitionNode
     write_node: t.Optional[WriteNode] = None
     reformat_nodes: t.List[ReformatNode] = field(default_factory=list)
+    permissions_node: t.Optional[PermissionsDataCleaner] = None
 
     def initialize(self):
         ingest_log_streaming_init(logging.DEBUG if self.pipeline_context.verbose else logging.INFO)
@@ -79,3 +81,6 @@ class Pipeline(DataClassJsonMixin):
 
         if self.write_node:
             self.write_node(iterable=partitioned_jsons)
+
+        if self.permissions_node:
+            self.permissions_node.cleanup_permissions()
