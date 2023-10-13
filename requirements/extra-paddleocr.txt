@@ -31,7 +31,7 @@ contourpy==1.1.1
     # via matplotlib
 cssselect==1.2.0
     # via premailer
-cssutils==2.7.1
+cssutils==2.9.0
     # via premailer
 cycler==0.12.1
     # via matplotlib
@@ -191,7 +191,7 @@ scipy==1.10.1
     #   -c requirements/constraints.in
     #   imgaug
     #   scikit-image
-shapely==2.0.1
+shapely==2.0.2
     # via
     #   imgaug
     #   unstructured-paddleocr

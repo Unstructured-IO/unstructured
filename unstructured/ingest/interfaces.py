@@ -60,6 +60,7 @@ class ProcessorConfig(BaseConfig):
     work_dir: str = str((Path.home() / ".cache" / "unstructured" / "ingest" / "pipeline").resolve())
     output_dir: str = "structured-output"
     num_processes: int = 2
+    raise_on_error: bool = False
 
 
 @dataclass
@@ -107,6 +108,14 @@ class ChunkingConfig(BaseConfig):
 
 
 @dataclass
+class PermissionsConfig(BaseConfig):
+    application_id: t.Optional[str]
+    client_cred: t.Optional[str]
+    tenant: t.Optional[str]
+    pass
+
+
+@dataclass
 class WriteConfig(BaseConfig):
     pass
 
@@ -122,6 +131,7 @@ class SourceMetadata(DataClassJsonMixin, ABC):
     version: t.Optional[str] = None
     source_url: t.Optional[str] = None
     exists: t.Optional[bool] = None
+    permissions_data: t.Optional[t.List[t.Dict[str, t.Any]]] = None
 
 
 @dataclass
@@ -211,6 +221,13 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
         the version of the document."""
         return self.source_metadata.version  # type: ignore
 
+    @property
+    def permissions_data(self) -> t.Optional[t.List[t.Dict[str, t.Any]]]:
+        """Access control data, aka permissions or sharing, from the source system."""
+        if self.source_metadata is None:
+            self.update_source_metadata()
+        return self.source_metadata.permissions_data  # type: ignore
+
     @abstractmethod
     def cleanup_file(self):
         """Removes the local copy the file (or anything else) after successful processing."""
@@ -238,6 +255,12 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     def update_source_metadata(self, **kwargs) -> None:
         """Sets the SourceMetadata and the  properties for the doc"""
         self._source_metadata = SourceMetadata()
+
+    def update_permissions_data(self):
+        """Sets the _permissions_data property for the doc.
+        This property is later used to fill the corresponding SourceMetadata.permissions_data field,
+        and after that carries on to the permissions_data property."""
+        self._permissions_data: t.Optional[t.List[t.Dict]] = None
 
     # NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
     # in addition to or instead of get_file()
@@ -268,6 +291,7 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
                     date_created=self.date_created,
                     date_modified=self.date_modified,
                     date_processed=self.date_processed,
+                    permissions_data=self.permissions_data,
                 ),
                 **partition_kwargs,
             )
@@ -416,6 +440,38 @@ class SourceConnectorCleanupMixin:
                 self.cleanup(sub_dir)
         os.chdir("..")
         if len(os.listdir(cur_dir)) == 0:
+            os.rmdir(cur_dir)
+
+
+class PermissionsCleanupMixin:
+    processor_config: ProcessorConfig
+
+    def cleanup_permissions(self, cur_dir=None):
+        def has_no_folders(folder_path):
+            folders = [
+                item
+                for item in os.listdir(folder_path)
+                if os.path.isdir(os.path.join(folder_path, item))
+            ]
+            return len(folders) == 0
+
+        """Recursively clean up downloaded files and directories."""
+        if cur_dir is None:
+            cur_dir = Path(self.processor_config.output_dir, "permissions_data")
+        if cur_dir is None:
+            return
+        if Path(cur_dir).is_file():
+            cur_file = cur_dir
+            os.remove(cur_file)
+            return
+        sub_dirs = os.listdir(cur_dir)
+        os.chdir(cur_dir)
+        for sub_dir in sub_dirs:
+            # don't traverse symlinks, not that there every should be any
+            if not os.path.islink(sub_dir):
+                self.cleanup_permissions(sub_dir)
+        os.chdir("..")
+        if has_no_folders(cur_dir):
             os.rmdir(cur_dir)
 
 
