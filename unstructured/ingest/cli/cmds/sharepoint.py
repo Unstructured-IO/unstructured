@@ -21,9 +21,6 @@ from unstructured.ingest.runner import SharePointRunner
 class SharepointCliConfig(BaseConfig, CliMixin):
     client_id: t.Optional[str] = None
     client_cred: t.Optional[str] = None
-    permissions_application_id: t.Optional[str] = None
-    permissions_client_cred: t.Optional[str] = None
-    permissions_tenant: t.Optional[str] = None
     site: t.Optional[str] = None
     path: str = "Shared Documents"
     files_only: bool = False
