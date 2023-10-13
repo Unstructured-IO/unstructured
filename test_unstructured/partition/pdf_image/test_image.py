@@ -62,7 +62,7 @@ class MockPageLayout(layout.PageLayout):
     @property
     def elements(self):
         return [
-            layout.LayoutElement(
+            layout.LayoutElement.from_coords(
                 type="Title",
                 x1=0,
                 y1=0,

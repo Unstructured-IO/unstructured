@@ -80,9 +80,9 @@ def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     )
 
     expected_layout = [
-        TextRegion(10, 5, 25, 15, "Hello", source="OCR-tesseract"),
-        TextRegion(20, 15, 45, 35, "World", source="OCR-tesseract"),
-        TextRegion(30, 25, 65, 55, "!", source="OCR-tesseract"),
+        TextRegion.from_coords(10, 5, 25, 15, "Hello", source="OCR-tesseract"),
+        TextRegion.from_coords(20, 15, 45, 35, "World", source="OCR-tesseract"),
+        TextRegion.from_coords(30, 25, 65, 55, "!", source="OCR-tesseract"),
     ]
 
     assert ocr_layout == expected_layout
@@ -131,9 +131,9 @@ def test_get_ocr_layout_from_image_paddle(monkeypatch):
     ocr_layout = ocr.get_ocr_layout_from_image(image, ocr_languages="eng", entire_page_ocr="paddle")
 
     expected_layout = [
-        TextRegion(10, 5, 25, 15, "Hello", source="OCR-paddle"),
-        TextRegion(20, 15, 45, 35, "World", source="OCR-paddle"),
-        TextRegion(30, 25, 65, 55, "!", source="OCR-paddle"),
+        TextRegion.from_coords(10, 5, 25, 15, "Hello", source="OCR-paddle"),
+        TextRegion.from_coords(20, 15, 45, 35, "World", source="OCR-paddle"),
+        TextRegion.from_coords(30, 25, 65, 55, "!", source="OCR-paddle"),
     ]
 
     assert ocr_layout == expected_layout
@@ -169,9 +169,9 @@ def test_get_ocr_text_from_image_paddle(monkeypatch):
 @pytest.fixture()
 def mock_ocr_regions():
     return [
-        EmbeddedTextRegion(10, 10, 90, 90, text="0", source=None),
-        EmbeddedTextRegion(200, 200, 300, 300, text="1", source=None),
-        EmbeddedTextRegion(500, 320, 600, 350, text="3", source=None),
+        EmbeddedTextRegion.from_coords(10, 10, 90, 90, text="0", source=None),
+        EmbeddedTextRegion.from_coords(200, 200, 300, 300, text="1", source=None),
+        EmbeddedTextRegion.from_coords(500, 320, 600, 350, text="3", source=None),
     ]
 
 
@@ -179,13 +179,10 @@ def mock_ocr_regions():
 def mock_out_layout(mock_embedded_text_regions):
     return [
         LayoutElement(
-            r.x1,
-            r.y1,
-            r.x2,
-            r.y2,
             text=None,
             source=None,
             type="Text",
+            bbox=r.bbox,
         )
         for r in mock_embedded_text_regions
     ]
@@ -194,19 +191,19 @@ def mock_out_layout(mock_embedded_text_regions):
 def test_aggregate_ocr_text_by_block():
     expected = "A Unified Toolkit"
     ocr_layout = [
-        TextRegion(0, 0, 20, 20, "A"),
-        TextRegion(50, 50, 150, 150, "Unified"),
-        TextRegion(150, 150, 300, 250, "Toolkit"),
-        TextRegion(200, 250, 300, 350, "Deep"),
+        TextRegion.from_coords(0, 0, 20, 20, "A"),
+        TextRegion.from_coords(50, 50, 150, 150, "Unified"),
+        TextRegion.from_coords(150, 150, 300, 250, "Toolkit"),
+        TextRegion.from_coords(200, 250, 300, 350, "Deep"),
     ]
-    region = TextRegion(0, 0, 250, 350, "")
+    region = TextRegion.from_coords(0, 0, 250, 350, "")
 
     text = ocr.aggregate_ocr_text_by_block(ocr_layout, region, 0.5)
     assert text == expected
 
 
 def test_merge_text_regions(mock_embedded_text_regions):
-    expected = TextRegion(
+    expected = TextRegion.from_coords(
         x1=437.83888888888885,
         y1=317.319341111111,
         x2=1256.334784222222,
@@ -220,7 +217,7 @@ def test_merge_text_regions(mock_embedded_text_regions):
 
 def test_get_elements_from_ocr_regions(mock_embedded_text_regions):
     expected = [
-        LayoutElement(
+        LayoutElement.from_coords(
             x1=437.83888888888885,
             y1=317.319341111111,
             x2=1256.334784222222,
@@ -237,14 +234,7 @@ def test_get_elements_from_ocr_regions(mock_embedded_text_regions):
 @pytest.fixture()
 def mock_layout(mock_embedded_text_regions):
     return [
-        LayoutElement(
-            r.x1,
-            r.y1,
-            r.x2,
-            r.y2,
-            text=r.text,
-            type="UncategorizedText",
-        )
+        LayoutElement(text=r.text, type="UncategorizedText", bbox=r.bbox)
         for r in mock_embedded_text_regions
     ]
 
@@ -252,70 +242,70 @@ def mock_layout(mock_embedded_text_regions):
 @pytest.fixture()
 def mock_embedded_text_regions():
     return [
-        EmbeddedTextRegion(
+        EmbeddedTextRegion.from_coords(
             x1=453.00277777777774,
             y1=317.319341111111,
             x2=711.5338541666665,
             y2=358.28571222222206,
             text="LayoutParser:",
         ),
-        EmbeddedTextRegion(
+        EmbeddedTextRegion.from_coords(
             x1=726.4778125,
             y1=317.319341111111,
             x2=760.3308594444444,
             y2=357.1698966666667,
             text="A",
         ),
-        EmbeddedTextRegion(
+        EmbeddedTextRegion.from_coords(
             x1=775.2748177777777,
             y1=317.319341111111,
             x2=917.3579885555555,
             y2=357.1698966666667,
             text="Unified",
         ),
-        EmbeddedTextRegion(
+        EmbeddedTextRegion.from_coords(
             x1=932.3019468888888,
             y1=317.319341111111,
             x2=1071.8426522222221,
             y2=357.1698966666667,
             text="Toolkit",
         ),
-        EmbeddedTextRegion(
+        EmbeddedTextRegion.from_coords(
             x1=1086.7866105555556,
             y1=317.319341111111,
             x2=1141.2105142777777,
             y2=357.1698966666667,
             text="for",
         ),
-        EmbeddedTextRegion(
+        EmbeddedTextRegion.from_coords(
             x1=1156.154472611111,
             y1=317.319341111111,
             x2=1256.334784222222,
             y2=357.1698966666667,
             text="Deep",
         ),
-        EmbeddedTextRegion(
+        EmbeddedTextRegion.from_coords(
             x1=437.83888888888885,
             y1=367.13322999999986,
             x2=610.0171992222222,
             y2=406.9837855555556,
             text="Learning",
         ),
-        EmbeddedTextRegion(
+        EmbeddedTextRegion.from_coords(
             x1=624.9611575555555,
             y1=367.13322999999986,
             x2=741.6754646666665,
             y2=406.9837855555556,
             text="Based",
         ),
-        EmbeddedTextRegion(
+        EmbeddedTextRegion.from_coords(
             x1=756.619423,
             y1=367.13322999999986,
             x2=958.3867708333332,
             y2=406.9837855555556,
             text="Document",
         ),
-        EmbeddedTextRegion(
+        EmbeddedTextRegion.from_coords(
             x1=973.3307291666665,
             y1=367.13322999999986,
             x2=1092.0535042777776,
@@ -327,15 +317,7 @@ def mock_embedded_text_regions():
 
 def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
     ocr_elements = [
-        LayoutElement(
-            r.x1,
-            r.y1,
-            r.x2,
-            r.y2,
-            text=r.text,
-            source=None,
-            type="UncategorizedText",
-        )
+        LayoutElement(text=r.text, source=None, type="UncategorizedText", bbox=r.bbox)
         for r in mock_ocr_regions
     ]
 
@@ -351,21 +333,15 @@ def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
     # Check if the OCR-derived elements that are subregions of layout elements are removed
     for element in mock_layout:
         for ocr_element in ocr_elements:
-            if ocr_element.is_almost_subregion_of(element, ocr.SUBREGION_THRESHOLD_FOR_OCR):
+            if ocr_element.bbox.is_almost_subregion_of(
+                element.bbox, ocr.SUBREGION_THRESHOLD_FOR_OCR
+            ):
                 assert ocr_element not in final_layout
 
 
 def test_merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions):
     ocr_elements = [
-        LayoutElement(
-            r.x1,
-            r.y1,
-            r.x2,
-            r.y2,
-            text=r.text,
-            source=None,
-            type="UncategorizedText",
-        )
+        LayoutElement(text=r.text, source=None, type="UncategorizedText", bbox=r.bbox)
         for r in mock_ocr_regions
     ]
 
@@ -389,7 +365,7 @@ def test_merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions):
     ],
 )
 def test_pad_element_bboxes(padding, expected_bbox):
-    element = LayoutElement(
+    element = LayoutElement.from_coords(
         x1=10,
         y1=20,
         x2=30,
@@ -403,13 +379,13 @@ def test_pad_element_bboxes(padding, expected_bbox):
     padded_element = pad_element_bboxes(element, padding)
 
     padded_element_bbox = (
-        padded_element.x1,
-        padded_element.y1,
-        padded_element.x2,
-        padded_element.y2,
+        padded_element.bbox.x1,
+        padded_element.bbox.y1,
+        padded_element.bbox.x2,
+        padded_element.bbox.y2,
     )
     assert padded_element_bbox == expected_bbox
 
     # make sure the original element has not changed
-    original_element_bbox = (element.x1, element.y1, element.x2, element.y2)
+    original_element_bbox = (element.bbox.x1, element.bbox.y1, element.bbox.x2, element.bbox.y2)
     assert original_element_bbox == expected_original_element_bbox
