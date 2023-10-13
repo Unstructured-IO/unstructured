@@ -64,7 +64,7 @@ google-crc32c==1.5.0
     # via google-resumable-media
 google-resumable-media==2.6.0
     # via google-cloud-storage
-googleapis-common-protos==1.60.0
+googleapis-common-protos==1.61.0
     # via google-api-core
 idna==3.4
     # via
