@@ -16,7 +16,7 @@ jobs:
         docker-platform: ["linux/arm64"]
     runs-on: ubuntu-latest
     env:
-      SHORT_SHA: d726963
+      SHORT_SHA: 424242
     steps:
     - name: Set up Docker
       # Use the `docker` driver for AMD builds because the `docker-container` driver may fail to locally load the built image.
@@ -33,6 +33,7 @@ jobs:
         registry: quay.io
         username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
         password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
+    
     - name: Build images
       run: |
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
@@ -44,5 +45,13 @@ jobs:
           -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
+    - name: Push images
+      run: |
+        # write to the build repository to cache for the publish-images job
+        ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
+        docker push "$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA"
+    # - name: Pull ARM image
+    #   run: |
+    #     docker pull $DOCKER_BUILD_REPOSITORY:arm64-$SHORT_SHA
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
