@@ -25,6 +25,8 @@ def partition_ppt(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
+    languages: Optional[List[str]] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.
@@ -39,6 +41,13 @@ def partition_ppt(
         If True, includes a PageBreak element between slides
     metadata_last_modified
         The last modified date for the document.
+    languages
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     # Verify that only one of the arguments was provided
     if filename is None:
@@ -75,6 +84,8 @@ def partition_ppt(
             filename=pptx_filename,
             metadata_filename=metadata_filename,
             metadata_last_modified=metadata_last_modified or last_modification_date,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
         )
 
     # remove tmp.name from filename if parsing file

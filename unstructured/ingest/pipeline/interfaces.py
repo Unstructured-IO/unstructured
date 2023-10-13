@@ -49,6 +49,11 @@ class PipelineNode(DataClassJsonMixin, ABC):
 
     def __call__(self, iterable: t.Optional[t.Iterable[t.Any]] = None) -> t.Any:
         iterable = iterable if iterable else []
+        if iterable:
+            logger.info(
+                f"Calling {self.__class__.__name__} " f"with {len(iterable)} docs",  # type: ignore
+            )
+
         self.initialize()
         if not self.supported_multiprocessing():
             if iterable:
@@ -67,6 +72,9 @@ class PipelineNode(DataClassJsonMixin, ABC):
                 initargs=(logging.DEBUG if self.pipeline_context.verbose else logging.INFO,),
             ) as pool:
                 self.result = pool.map(self.run, iterable)
+        # Remove None which may be caused by failed docs that didn't raise an error
+        if isinstance(self.result, t.Iterable):
+            self.result = [r for r in self.result if r is not None]
         return self.result
 
     def supported_multiprocessing(self) -> bool:
@@ -121,7 +129,7 @@ class SourceNode(PipelineNode):
         super().initialize()
 
     @abstractmethod
-    def run(self, ingest_doc_json: str) -> str:
+    def run(self, ingest_doc_json: str) -> t.Optional[str]:
         pass
 
 
@@ -148,7 +156,7 @@ class PartitionNode(PipelineNode):
         return hashlib.sha256(json.dumps(hash_dict, sort_keys=True).encode()).hexdigest()[:32]
 
     @abstractmethod
-    def run(self, json_path: str) -> str:
+    def run(self, json_path: str) -> t.Optional[str]:
         pass
 
     def get_path(self) -> Path:
@@ -162,7 +170,9 @@ class ReformatNode(PipelineNode, ABC):
     content from partition before writing it
     """
 
-    pass
+    @abstractmethod
+    def run(self, elements_json: str) -> t.Optional[str]:
+        pass
 
 
 @dataclass
@@ -201,4 +211,19 @@ class CopyNode(PipelineNode):
 
     @abstractmethod
     def run(self, json_path: str):
+        pass
+
+
+@dataclass
+class PermissionsNode(PipelineNode):
+    """
+    Encapsulated logic to do operations on permissions related data.
+    """
+
+    def initialize(self):
+        logger.info("Running permissions node to cleanup the permissions folder")
+        super().initialize()
+
+    @abstractmethod
+    def run(self):
         pass

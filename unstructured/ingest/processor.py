@@ -8,6 +8,7 @@ from unstructured.ingest.interfaces import (
     ChunkingConfig,
     EmbeddingConfig,
     PartitionConfig,
+    PermissionsConfig,
     ProcessorConfig,
 )
 from unstructured.ingest.pipeline import (
@@ -15,6 +16,7 @@ from unstructured.ingest.pipeline import (
     DocFactory,
     Embedder,
     Partitioner,
+    PermissionsDataCleaner,
     Pipeline,
     PipelineContext,
     Reader,
@@ -33,6 +35,7 @@ def process_documents(
     dest_doc_connector: t.Optional[BaseDestinationConnector] = None,
     chunking_config: t.Optional[ChunkingConfig] = None,
     embedder_config: t.Optional[EmbeddingConfig] = None,
+    permissions_config: t.Optional[PermissionsConfig] = None,
 ) -> None:
     pipeline_config = PipelineContext.from_dict(processor_config.to_dict())
     doc_factory = DocFactory(
@@ -64,6 +67,11 @@ def process_documents(
         if dest_doc_connector
         else None
     )
+    permissions_data_cleaner = (
+        PermissionsDataCleaner(pipeline_context=pipeline_config, processor_config=processor_config)
+        if permissions_config
+        else None
+    )
     pipeline = Pipeline(
         pipeline_context=pipeline_config,
         doc_factory_node=doc_factory,
@@ -71,5 +79,6 @@ def process_documents(
         partition_node=partitioner,
         reformat_nodes=reformat_nodes,
         write_node=writer,
+        permissions_node=permissions_data_cleaner,
     )
     pipeline.run()
