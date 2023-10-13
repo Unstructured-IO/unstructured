@@ -58,5 +58,5 @@ jobs:
         echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
         DOCKER_PLATFORM="${{ matrix.docker-platform }}" DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA" \
-          make docker-test CI=true TEST_NAME=partition/test_text.py
+          make docker-test CI=true TEST_NAME=test_unstructured/partition/test_text.py
         DOCKER_IMAGE=$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA make docker-smoke-test
