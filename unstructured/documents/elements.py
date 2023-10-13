@@ -391,7 +391,7 @@ class Element(abc.ABC):
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "type": None,
             "element_id": self.id,
