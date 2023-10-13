@@ -1136,7 +1136,7 @@ def test_partition_languages_default_to_None():
 def test_partition_languages_incorrectly_defaults_to_English(tmpdir):
     # We don't totally rely on langdetect for short text, so text like the following that is
     # in German will be labeled as English.
-    german = "Das ist ein kurzer Satz."
+    german = "Ein kurzer Satz."
     filepath = os.path.join(tmpdir, "short-german.txt")
     with open(filepath, "w") as f:
         f.write(german)
