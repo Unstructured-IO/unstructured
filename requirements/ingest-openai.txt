@@ -40,6 +40,8 @@ frozenlist==1.4.0
     # via
     #   aiohttp
     #   aiosignal
+greenlet==3.0.0
+    # via sqlalchemy
 idna==3.4
     # via
     #   -c requirements/base.txt
@@ -97,7 +99,7 @@ requests==2.31.0
     #   tiktoken
 sniffio==1.3.0
     # via anyio
-sqlalchemy==2.0.21
+sqlalchemy==2.0.22
     # via langchain
 tenacity==8.2.3
     # via langchain
