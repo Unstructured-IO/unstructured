@@ -290,6 +290,7 @@ class _DocxPartitioner:
         for section_idx, section in enumerate(self._document.sections):
             yield from self._iter_section_page_breaks(section_idx, section)
             yield from self._iter_section_headers(section)
+            yield from self._iter_section_footers(section)
 
             for block_item in _SectBlockItemIterator.iter_sect_block_items(section, self._document):
                 # -- a block-item can only be a Paragraph ... --
@@ -300,8 +301,6 @@ class _DocxPartitioner:
                 # -- ... or a Table --
                 else:
                     yield from self._iter_table_element(block_item)
-
-            yield from self._iter_section_footers(section)
 
     @lazyproperty
     def _document(self) -> Document:
