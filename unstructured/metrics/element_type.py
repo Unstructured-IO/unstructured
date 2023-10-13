@@ -44,14 +44,18 @@ def calculate_element_type_percent_match(
     unmatched_depth_output = {}
     unmatched_depth_source = {}
 
+    # loop through the output list to find match with source
     for k, v in output_copy.items():
         if k in source_copy:
             match_count = min(output_copy[k], source_copy[k])
             total_match_element_count += match_count
             total_source_element_count += match_count
+
+            # update the dictionary by removing already matched values
             output_copy[k] -= match_count
             source_copy[k] -= match_count
 
+            # add unmatched leftovers to new dictionary
             element_type = k[0]
             if element_type not in unmatched_depth_output:
                 unmatched_depth_output[element_type] = output_copy[k]
@@ -62,6 +66,7 @@ def calculate_element_type_percent_match(
             else:
                 unmatched_depth_source[element_type] += source_copy[k]
 
+    # loop through the source list to match any existing partial match left
     for k, v in unmatched_depth_source.items():
         total_source_element_count += unmatched_depth_source[k]
         if k in unmatched_depth_output:
