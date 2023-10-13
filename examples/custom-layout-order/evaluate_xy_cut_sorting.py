@@ -5,6 +5,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import pdf2image
+from PIL import Image
 
 from unstructured.documents.elements import PageBreak
 from unstructured.partition.pdf import partition_pdf
@@ -101,35 +102,38 @@ def draw_elements(elements, images, output_type, output_dir, base_name, label):
 
 
 def run_partition_pdf(
-    pdf_path,
+    f_path,
     strategy,
-    scope,
-    images,
+    sort_mode,
+    filetype,
     output_type="plot",
     output_root_dir="",
 ):
-    print(f">>> Starting run_partition_pdf - f_path: {pdf_path} - strategy: {strategy}")
-    f_base_name = os.path.splitext(os.path.basename(pdf_path))[0]
+    print(f">>> Starting run_partition_pdf - f_path: {f_path} - strategy: {strategy} "
+          f"- sort_mode: {sort_mode} - filetype: {filetype}")
+    f_base_name = os.path.splitext(os.path.basename(f_path))[0]
 
     output_dir = os.path.join(output_root_dir, strategy, f_base_name)
     os.makedirs(output_dir, exist_ok=True)
 
-    if scope == "all":
-        original_elements = partition_pdf(
-            filename=pdf_path,
-            strategy=strategy,
-            include_page_breaks=True,
-            sort_mode=SORT_MODE_BASIC,
-        )
-        draw_elements(original_elements, images, output_type, output_dir, f_base_name, "original")
+    is_image = filetype == "image"
+
+    if is_image:
+        images = [Image.open(f_path)]
+    else:
+        images = pdf2image.convert_from_path(f_path)
 
     ordered_elements = partition_pdf(
-        filename=pdf_path,
+        filename=f_path,
         strategy=strategy,
         include_page_breaks=True,
-        sort_mode=SORT_MODE_XY_CUT,
+        sort_mode=sort_mode,
+        is_image=is_image,
     )
-    draw_elements(ordered_elements, images, output_type, output_dir, f_base_name, "result")
+    print("\n\n".join([str(el) for el in ordered_elements]))
+
+    draw_elements(ordered_elements, images, output_type, output_dir, f_base_name, sort_mode)
+
     print("<<< Finished run_partition_pdf")
 
 
@@ -137,26 +141,30 @@ def run():
     f_sub_path = sys.argv[1]
     strategy = sys.argv[2]
     scope = sys.argv[3]
+    filetype = sys.argv[4]
 
     base_dir = os.getcwd()
     output_root_dir = os.path.join(base_dir, "examples", "custom-layout-order", "output")
     os.makedirs(output_root_dir, exist_ok=True)
 
     f_path = os.path.join(base_dir, f_sub_path)
-    images = pdf2image.convert_from_path(f_path)
-    run_partition_pdf(f_path, strategy, scope, images, "image", output_root_dir)
+    run_partition_pdf(f_path, strategy, scope, filetype, "image", output_root_dir)
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 4:
+    if len(sys.argv) < 5:
         print(
             "Please provide the path to the file name as the first argument, the strategy as the "
             "second argument and the scope as the third argument.",
         )
         sys.exit(1)
 
-    if sys.argv[3] not in ["all", "xycut_only"]:
-        print("Invalid scope")
+    if sys.argv[3] not in [SORT_MODE_XY_CUT, SORT_MODE_BASIC]:
+        print("Invalid sort mode! The sort mode should be either `xy-cut` or `basic`")
+        sys.exit(1)
+
+    if sys.argv[4] not in ["pdf", "image"]:
+        print("Invalid filetype! The filetype should be eiter `pdf` or `image`")
         sys.exit(1)
 
     run()
