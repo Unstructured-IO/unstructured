@@ -8,13 +8,12 @@ from test_unstructured.partition.test_constants import (
     EXPECTED_TEXT,
     EXPECTED_TEXT_WITH_EMOJI,
 )
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
 from unstructured.partition.csv import partition_csv
-from unstructured.partition.json import partition_json
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-from unstructured.staging.base import elements_to_json
 
 EXPECTED_FILETYPE = "text/csv"
 
@@ -174,24 +173,10 @@ def test_partition_csv_from_file_without_metadata(
     assert elements[0].metadata.last_modified is None
 
 
-@pytest.mark.parametrize(
-    ("filename", "expected_text", "expected_table"),
-    [
-        ("stanley-cups.csv", EXPECTED_TEXT, EXPECTED_TABLE),
-        ("stanley-cups-with-emoji.csv", EXPECTED_TEXT_WITH_EMOJI, EXPECTED_TABLE_WITH_EMOJI),
-    ],
-)
-def test_partition_csv_with_json(filename, expected_text, expected_table):
-    f_path = f"example-docs/{filename}"
-    elements = partition_csv(filename=f_path)
-    test_elements = partition_json(text=elements_to_json(elements))
-
-    assert len(elements) == len(test_elements)
-    assert clean_extra_whitespace(elements[0].text) == clean_extra_whitespace(test_elements[0].text)
-    assert elements[0].metadata.text_as_html == test_elements[0].metadata.text_as_html
-    assert elements[0].metadata.filename == test_elements[0].metadata.filename
-    for i in range(len(elements)):
-        assert elements[i] == test_elements[i]
+@pytest.mark.parametrize("filename", ["stanley-cups.csv", "stanley-cups-with-emoji.csv"])
+def test_partition_csv_with_json(filename: str):
+    elements = partition_csv(filename=example_doc_path(filename))
+    assert_round_trips_through_JSON(elements)
 
 
 def test_add_chunking_strategy_to_partition_csv_non_default():
