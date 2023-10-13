@@ -8,7 +8,7 @@
 
 ### Fixes
 
-* **Fixes `under_non_alpha_ratio` dividing by zero** Although this function guarded against a specific cause of division by zero, there were edge cases slipping through like strings tih only whitespace. This update more generally prevents the function from performing a division by zero.
+* **Fixes `under_non_alpha_ratio` dividing by zero** Although this function guarded against a specific cause of division by zero, there were edge cases slipping through like strings with only whitespace. This update more generally prevents the function from performing a division by zero.
 
 ## 0.10.22
 
