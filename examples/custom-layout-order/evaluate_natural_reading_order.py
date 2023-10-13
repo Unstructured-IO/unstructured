@@ -126,7 +126,6 @@ def run_partition_pdf(
     ordered_elements = partition_pdf(
         filename=f_path,
         strategy=strategy,
-        model_name="chipperv2",
         include_page_breaks=True,
         sort_mode=sort_mode,
         is_image=is_image,
