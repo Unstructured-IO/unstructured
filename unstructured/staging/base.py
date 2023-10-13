@@ -41,6 +41,30 @@ TABLE_FIELDNAMES: List[str] = [
 ] + _get_metadata_table_fieldnames()
 
 
+def convert_to_text(elements: List[Element]) -> str:
+    """Converts a list of elements into clean, concatenated text."""
+    return "\n".join([e.text for e in elements if hasattr(e, "text") and e.text])
+
+
+def elements_to_text(
+    elements: List[Element],
+    filename: Optional[str] = None,
+    encoding: str = "utf-8",
+) -> Optional[str]:
+    """
+    Convert the text from the list of elements into clean, concatenated text.
+    Saves to a txt file if filename is specified.
+    Otherwise, return the text of the elements as a string.
+    """
+    element_cct = convert_to_text(elements)
+    if filename is not None:
+        with open(filename, "w", encoding=encoding) as f:
+            f.write(element_cct)
+            return None
+    else:
+        return element_cct
+
+
 def convert_to_isd(elements: List[Element]) -> List[Dict[str, Any]]:
     """Represents the document elements as an Initial Structured Document (ISD)."""
     isd: List[Dict[str, Any]] = []

@@ -113,6 +113,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
+      UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v3
@@ -216,6 +217,7 @@ jobs:
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+        UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
         source .venv-${{ matrix.extra }}/bin/activate
         # NOTE(newelh) - determine what needs to be installed here
@@ -288,6 +290,9 @@ jobs:
         SHAREPOINT_CLIENT_ID: ${{secrets.SHAREPOINT_CLIENT_ID}}
         SHAREPOINT_CRED: ${{secrets.SHAREPOINT_CRED}}
         SHAREPOINT_SITE: ${{secrets.SHAREPOINT_SITE}}
+        SHAREPOINT_PERMISSIONS_APP_ID: ${{secrets.SHAREPOINT_PERMISSIONS_APP_ID}}
+        SHAREPOINT_PERMISSIONS_APP_CRED: ${{secrets.SHAREPOINT_PERMISSIONS_APP_CRED}}
+        SHAREPOINT_PERMISSIONS_TENANT: ${{secrets.SHAREPOINT_PERMISSIONS_TENANT}}
         SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
         NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
@@ -422,5 +427,6 @@ jobs:
         run: |
           source .venv/bin/activate
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
+          echo "UNSTRUCTURED_HF_TOKEN=${{ secrets.HF_TOKEN }}" > uns_test_env_file
           make docker-build
           make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true

@@ -68,7 +68,7 @@ class MockPageLayout(layout.PageLayout):
     @property
     def elements(self):
         return [
-            layout.LayoutElement(
+            layout.LayoutElement.from_coords(
                 type="Title",
                 x1=0,
                 y1=0,
@@ -994,3 +994,27 @@ def test_check_annotations_within_element(threshold, expected):
     filtered = pdf.check_annotations_within_element(annotations, element_bbox, 1, threshold)
     results = [annotation in filtered for annotation in annotations]
     assert results == expected
+
+
+@pytest.fixture(scope="session")
+def chipper_results():
+    elements = pdf.partition_pdf(
+        "example-docs/layout-parser-paper-fast.pdf", strategy="hi_res", model_name="chipper"
+    )
+    return elements
+
+
+@pytest.fixture(scope="session")
+def chipper_children(chipper_results):
+    return [el for el in chipper_results if el.metadata.parent_id is not None]
+
+
+def test_chipper_has_hierarchy(chipper_children):
+    assert chipper_children
+
+
+def test_chipper_not_losing_parents(chipper_results, chipper_children):
+    assert all(
+        [el for el in chipper_results if el.id == child.metadata.parent_id]
+        for child in chipper_children
+    )
