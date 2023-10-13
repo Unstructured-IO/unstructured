@@ -1,4 +1,14 @@
-## 0.10.22-dev6
+## 0.10.23-dev0
+
+### Enhancements
+
+* **Add functionality to limit precision when serializing to json** Precision for `points` is limited to 1 decimal point if coordinates["system"] == "PixelSpace" (otherwise 2 decimal points?). Precision for `detection_class_prob` is limited to 5 decimal points.
+
+### Features
+
+### Fixes
+
+## 0.10.22
 
 ### Enhancements
 
