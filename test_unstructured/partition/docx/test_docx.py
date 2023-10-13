@@ -119,7 +119,7 @@ def test_partition_docx_processes_table(filename="example-docs/fake_table.docx")
 def test_partition_docx_grabs_header_and_footer(filename="example-docs/handbook-1p.docx"):
     elements = partition_docx(filename=filename)
     assert elements[0] == Header("US Trustee Handbook")
-    assert elements[-1] == Footer("Copyright")
+    assert elements[1] == Footer("Copyright")
     for element in elements:
         assert element.metadata.filename == "handbook-1p.docx"
 
@@ -127,7 +127,8 @@ def test_partition_docx_grabs_header_and_footer(filename="example-docs/handbook-
 def test_partition_docx_includes_pages_if_present(filename="example-docs/handbook-1p.docx"):
     elements = partition_docx(filename=filename, include_page_breaks=False)
     assert "PageBreak" not in [elem.category for elem in elements]
-    assert elements[1].metadata.page_number == 1
+    # -- elements 0 and 1 are Header and Footer respectively --
+    assert elements[2].metadata.page_number == 1
     assert elements[-2].metadata.page_number == 2
     for element in elements:
         assert element.metadata.filename == "handbook-1p.docx"
@@ -136,7 +137,8 @@ def test_partition_docx_includes_pages_if_present(filename="example-docs/handboo
 def test_partition_docx_includes_page_breaks(filename="example-docs/handbook-1p.docx"):
     elements = partition_docx(filename=filename, include_page_breaks=True)
     assert "PageBreak" in [elem.category for elem in elements]
-    assert elements[1].metadata.page_number == 1
+    # -- elements 0 and 1 are Header and Footer respectively --
+    assert elements[2].metadata.page_number == 1
     assert elements[-2].metadata.page_number == 2
     for element in elements:
         assert element.metadata.filename == "handbook-1p.docx"
