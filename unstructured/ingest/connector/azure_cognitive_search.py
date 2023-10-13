@@ -5,7 +5,6 @@ from dataclasses import dataclass
 
 import azure.core.exceptions
 
-from unstructured.documents.elements import Element
 from unstructured.ingest.error import WriteError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
@@ -14,7 +13,6 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.staging.base import convert_to_dict
 from unstructured.utils import requires_dependencies
 
 
@@ -84,11 +82,7 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
         if page_number := data.get("metadata", {}).get("page_number"):
             data["metadata"]["page_number"] = str(page_number)
 
-    def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
-        elements_dict = convert_to_dict(elements)
-        self.write_dict(json_list=elements_dict)
-
-    def write_dict(self, json_list: t.List[t.Dict[str, t.Any]]) -> None:
+    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
             f"writing {len(json_list)} documents to destination "
             f"index at {self.write_config.index}",

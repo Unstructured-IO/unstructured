@@ -484,8 +484,12 @@ class BaseDestinationConnector(DataClassJsonMixin, ABC):
         pass
 
     @abstractmethod
-    def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
+    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         pass
+
+    def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
+        elements_json = [e.to_dict() for e in elements]
+        self.write_dict(*args, json_list=elements_json, **kwargs)
 
 
 class SourceConnectorCleanupMixin:
