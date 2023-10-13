@@ -55,24 +55,6 @@ class SharepointCliConfig(BaseConfig, CliMixin):
                     This requires the app to be registered at a tenant level",
             ),
             click.Option(
-                ["--permissions-application-id"],
-                default=None,
-                type=str,
-                help="Application id for ingesting permission (rbac) data",
-            ),
-            click.Option(
-                ["--permissions-client-cred"],
-                default=None,
-                type=str,
-                help="Credentials for ingesting permission (rbac) data",
-            ),
-            click.Option(
-                ["--permissions-tenant"],
-                default=None,
-                type=str,
-                help="Sharepoint permission (rbac) tenant name, such as: abcde.onmicrosoft.com",
-            ),
-            click.Option(
                 ["--path"],
                 default="Shared Documents",
                 type=str,
