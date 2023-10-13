@@ -1137,9 +1137,7 @@
       "data_source": {},
       "filetype": "text/plain",
       "languages": [
-        "deu",
-        "nld",
-        "ind"
+        "eng"
       ]
     },
     "text": "Chinese, Mandarin (Beijing)"
@@ -1164,8 +1162,6 @@
       "data_source": {},
       "filetype": "text/plain",
       "languages": [
-        "ind",
-        "tgl",
         "eng"
       ]
     },
@@ -1190,7 +1186,6 @@
       "data_source": {},
       "filetype": "text/plain",
       "languages": [
-        "deu",
         "eng"
       ]
     },
@@ -1215,7 +1210,6 @@
       "data_source": {},
       "filetype": "text/plain",
       "languages": [
-        "ind",
         "eng"
       ]
     },
@@ -1266,7 +1260,6 @@
       "data_source": {},
       "filetype": "text/plain",
       "languages": [
-        "ind",
         "eng"
       ]
     },
@@ -3849,7 +3842,7 @@
       "data_source": {},
       "filetype": "text/plain",
       "languages": [
-        "tgl"
+        "eng"
       ]
     },
     "text": "Mongolian, Halh (Mongolian)"
@@ -6304,7 +6297,7 @@
       "data_source": {},
       "filetype": "text/plain",
       "languages": [
-        "swe"
+        "eng"
       ]
     },
     "text": "Vietnamese (Han nom)"
