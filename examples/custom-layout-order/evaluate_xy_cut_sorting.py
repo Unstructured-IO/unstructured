@@ -9,7 +9,7 @@ from PIL import Image
 
 from unstructured.documents.elements import PageBreak
 from unstructured.partition.pdf import partition_pdf
-from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
+from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT, SORT_MODE_DONT
 from unstructured.partition.utils.xycut import (
     bbox2points,
     recursive_xy_cut,
@@ -126,6 +126,7 @@ def run_partition_pdf(
     ordered_elements = partition_pdf(
         filename=f_path,
         strategy=strategy,
+        model_name="chipperv2",
         include_page_breaks=True,
         sort_mode=sort_mode,
         is_image=is_image,
@@ -140,7 +141,7 @@ def run_partition_pdf(
 def run():
     f_sub_path = sys.argv[1]
     strategy = sys.argv[2]
-    scope = sys.argv[3]
+    sort_mode = sys.argv[3]
     filetype = sys.argv[4]
 
     base_dir = os.getcwd()
@@ -148,19 +149,20 @@ def run():
     os.makedirs(output_root_dir, exist_ok=True)
 
     f_path = os.path.join(base_dir, f_sub_path)
-    run_partition_pdf(f_path, strategy, scope, filetype, "image", output_root_dir)
+    run_partition_pdf(f_path, strategy, sort_mode, filetype, "image", output_root_dir)
 
 
 if __name__ == '__main__':
     if len(sys.argv) < 5:
         print(
             "Please provide the path to the file name as the first argument, the strategy as the "
-            "second argument and the scope as the third argument.",
+            "second argument, the sort_mode as the third argument, and the filetype as fourth "
+            "argument.",
         )
         sys.exit(1)
 
-    if sys.argv[3] not in [SORT_MODE_XY_CUT, SORT_MODE_BASIC]:
-        print("Invalid sort mode! The sort mode should be either `xy-cut` or `basic`")
+    if sys.argv[3] not in [SORT_MODE_XY_CUT, SORT_MODE_BASIC, SORT_MODE_DONT]:
+        print("Invalid sort mode! The sort mode should be `xy-cut`, `basic`, or `dont`")
         sys.exit(1)
 
     if sys.argv[4] not in ["pdf", "image"]:
