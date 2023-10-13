@@ -1,4 +1,4 @@
-name: Test Publish
+name: Build And Push Docker Image
 
 on:
   push:
@@ -10,13 +10,23 @@ env:
   PYTHON_VERSION: "3.8"
 
 jobs:
-  test-build-images:
+  set-short-sha:
+    runs-on: ubuntu-latest
+    outputs:
+      short_sha: ${{ steps.set_short_sha.outputs.short_sha }}
+    steps:
+      - name: Set Short SHA
+        id: set_short_sha
+        run: echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+
+  build-images:
     strategy:
       matrix:
-        docker-platform: ["linux/arm64"]
+        docker-platform: ["linux/amd64"]
     runs-on: ubuntu-latest
+    needs: set-short-sha
     env:
-      SHORT_SHA: 424242
+      SHORT_SHA: ${{ needs.set-short-sha.outputs.short_sha }}
     steps:
     - name: Set up Docker
       # Use the `docker` driver for AMD builds because the `docker-container` driver may fail to locally load the built image.
@@ -33,30 +43,26 @@ jobs:
         registry: quay.io
         username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
         password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
-    
-    # - name: Build images
-    #   run: |
-    #     ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
-    #     DOCKER_BUILDKIT=1 docker buildx build --platform=$ARCH --load \
-    #       --build-arg PIP_VERSION=$PIP_VERSION \
-    #       --build-arg BUILDKIT_INLINE_CACHE=1 \
-    #       --progress plain \
-    #       --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
-    #       -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
+    - name: Build images
+      run: |
+        ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
+        DOCKER_BUILDKIT=1 docker buildx build --platform=$ARCH --load \
+          --build-arg PIP_VERSION=$PIP_VERSION \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          --progress plain \
+          --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
+          -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
-    # - name: Push images
-    #   run: |
-    #     # write to the build repository to cache for the publish-images job
-    #     ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
-    #     docker push "$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA"
-    - name: Pull ARM image
-      run: |
-        docker pull $DOCKER_BUILD_REPOSITORY:arm64-$SHORT_SHA
     - name: Test images
       run: |
         echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
+        echo "UNSTRUCTURED_HF_TOKEN=${{ secrets.HF_TOKEN }}" > uns_test_env_file
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
+        if [ "$ARCH" = "amd64" ]; then
         DOCKER_PLATFORM="${{ matrix.docker-platform }}" DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA" \
-          make docker-test CI=true TEST_FILE=test_unstructured/partition/test_text.py
-        DOCKER_IMAGE=$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA make docker-smoke-test
+          make docker-test CI=true
+        else
+          DOCKER_PLATFORM="${{ matrix.docker-platform }}" DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA" \
+            make docker-test CI=true TEST_FILE=test_unstructured/partition/test_text.py
+        fi
