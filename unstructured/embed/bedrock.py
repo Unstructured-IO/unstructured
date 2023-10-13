@@ -31,7 +31,7 @@ class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
         return np.array(self.bedrock_client.embed_query(query))
 
     def embed_documents(self, elements: List[Element]) -> List[Element]:
-        embeddings = [np.array(self.bedrock_client.embed_query(str(e))) for e in elements]
+        embeddings = [np.array(self.embed_query(str(e))) for e in elements]
         elements_with_embeddings = self._add_embeddings_to_elements(elements, embeddings)
         return elements_with_embeddings
 
