@@ -1,0 +1,3 @@
+from docx.oxml.xmlchemy import BaseOxmlElement
+
+class CT_LastRenderedPageBreak(BaseOxmlElement): ...

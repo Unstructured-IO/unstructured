@@ -82,3 +82,31 @@ def test_requires_dependencies_decorator_in_class():
             import numpy  # noqa: F401
 
     TestClass()
+
+
+@pytest.mark.parametrize("iterator", [[0, 1], (0, 1), range(10), [0], (0,), range(1)])
+def test_first_gives_first(iterator):
+    assert utils.first(iterator) == 0
+
+
+@pytest.mark.parametrize("iterator", [[], ()])
+def test_first_raises_if_empty(iterator):
+    with pytest.raises(ValueError):
+        utils.first(iterator)
+
+
+@pytest.mark.parametrize("iterator", [[0], (0,), range(1)])
+def test_only_gives_only(iterator):
+    assert utils.first(iterator) == 0
+
+
+@pytest.mark.parametrize("iterator", [[0, 1], (0, 1), range(10)])
+def test_only_raises_when_len_more_than_1(iterator):
+    with pytest.raises(ValueError):
+        utils.only(iterator) == 0
+
+
+@pytest.mark.parametrize("iterator", [[], ()])
+def test_only_raises_if_empty(iterator):
+    with pytest.raises(ValueError):
+        utils.only(iterator)

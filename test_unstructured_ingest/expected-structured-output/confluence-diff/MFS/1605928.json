@@ -14,6 +14,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83D\\uDDD3 Date"
@@ -33,6 +36,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83D\\uDC65 Participants"
@@ -52,6 +58,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -71,6 +80,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -90,6 +102,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83E\\uDD45 Goals"
@@ -109,6 +124,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -128,6 +146,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83D\\uDDE3 Discussion topics"
@@ -147,6 +168,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "text_as_html": "<table><br><tbody><br><tr><td>Time</td><td>Item</td><td>Presenter</td><td>Notes</td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br></tbody><br></table>"
     },
@@ -167,6 +191,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "✅ Action items"
@@ -186,6 +213,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -205,6 +235,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "⤴ Decisions"

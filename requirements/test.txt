@@ -54,7 +54,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.4
     # via yarl
-mypy==1.5.1
+mypy==1.6.0
     # via -r requirements/test.in
 mypy-extensions==1.0.0
     # via
@@ -113,7 +113,7 @@ tomli==2.0.1
     #   pytest
 types-click==7.1.8
     # via -r requirements/test.in
-types-markdown==3.4.2.10
+types-markdown==3.5.0.0
     # via -r requirements/test.in
 types-requests==2.31.0.6
     # via -r requirements/test.in
