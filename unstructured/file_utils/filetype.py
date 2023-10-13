@@ -562,7 +562,9 @@ def add_metadata_with_filetype(
                 metadata_kwargs = {
                     kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
                 }
-                elements = set_element_hierarchy(elements)
+                if not kwargs.get("model_name", "").startswith("chipper"):
+                    # NOTE(alan): Skip hierarchy if using chipper, as it should take care of that
+                    elements = set_element_hierarchy(elements)
 
                 for element in elements:
                     # NOTE(robinson) - Attached files have already run through this logic
