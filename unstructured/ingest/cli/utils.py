@@ -8,6 +8,7 @@ from unstructured.ingest.cli.interfaces import (
     CliEmbeddingConfig,
     CliMixin,
     CliPartitionConfig,
+    CliPermissionsConfig,
     CliProcessorConfig,
     CliReadConfig,
 )
@@ -39,6 +40,7 @@ def extract_configs(
         "embedding_config": CliEmbeddingConfig.from_dict(data),
         "chunking_config": CliChunkingConfig.from_dict(data),
         "processor_config": CliProcessorConfig.from_dict(data),
+        "permissions_config": CliPermissionsConfig.from_dict(data),
     }
     for v in validate:
         v.from_dict(data)
@@ -52,6 +54,7 @@ def add_options(cmd: click.Command, extras=t.List[t.Type[CliMixin]]) -> click.Co
         CliEmbeddingConfig,
         CliChunkingConfig,
         CliProcessorConfig,
+        CliPermissionsConfig,
     ]
     configs.extend(extras)
     for config in configs:

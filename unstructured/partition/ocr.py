@@ -11,14 +11,11 @@ import unstructured_pytesseract
 # unstructured.documents.elements.Image
 from PIL import Image as PILImage
 from PIL import ImageSequence
-from unstructured_inference.inference.elements import (
-    Rectangle,
-    TextRegion,
-    partition_groups_from_regions,
-)
+from unstructured_inference.inference.elements import TextRegion
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
+    partition_groups_from_regions,
 )
 from unstructured_pytesseract import Output
 
@@ -192,7 +189,12 @@ def supplement_page_layout_with_ocr(
             if element.text == "":
                 padded_element = pad_element_bboxes(element, padding=12)
                 cropped_image = image.crop(
-                    (padded_element.x1, padded_element.y1, padded_element.x2, padded_element.y2),
+                    (
+                        padded_element.bbox.x1,
+                        padded_element.bbox.y1,
+                        padded_element.bbox.x2,
+                        padded_element.bbox.y2,
+                    ),
                 )
                 text_from_ocr = get_ocr_text_from_image(
                     cropped_image,
@@ -216,10 +218,10 @@ def pad_element_bboxes(
     boxes of the element by extending the boundary outward (resp. inward)"""
 
     out_element = deepcopy(element)
-    out_element.x1 -= padding
-    out_element.x2 += padding
-    out_element.y1 -= padding
-    out_element.y2 += padding
+    out_element.bbox.x1 -= padding
+    out_element.bbox.x2 += padding
+    out_element.bbox.y1 -= padding
+    out_element.bbox.y2 += padding
     return out_element
 
 
@@ -314,7 +316,7 @@ def parse_ocr_data_tesseract(ocr_data: dict) -> List[TextRegion]:
         (x1, y1, x2, y2) = l, t, l + w, t + h
         text = ocr_data["text"][i]
         if text:
-            text_region = TextRegion(x1, y1, x2, y2, text=text, source="OCR-tesseract")
+            text_region = TextRegion.from_coords(x1, y1, x2, y2, text=text, source="OCR-tesseract")
             text_regions.append(text_region)
 
     return text_regions
@@ -350,7 +352,7 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
             y2 = max([i[1] for i in line[0]])
             text = line[1][0]
             if text:
-                text_region = TextRegion(x1, y1, x2, y2, text, source="OCR-paddle")
+                text_region = TextRegion.from_coords(x1, y1, x2, y2, text, source="OCR-paddle")
                 text_regions.append(text_region)
 
     return text_regions
@@ -399,8 +401,8 @@ def aggregate_ocr_text_by_block(
     extracted_texts = []
 
     for ocr_region in ocr_layout:
-        ocr_region_is_subregion_of_given_region = ocr_region.is_almost_subregion_of(
-            region,
+        ocr_region_is_subregion_of_given_region = ocr_region.bbox.is_almost_subregion_of(
+            region.bbox,
             subregion_threshold=subregion_threshold,
         )
         if ocr_region_is_subregion_of_given_region and ocr_region.text:
@@ -442,8 +444,8 @@ def supplement_layout_with_ocr_elements(
     ocr_regions_to_remove = []
     for ocr_region in ocr_layout:
         for el in layout:
-            ocr_region_is_subregion_of_out_el = ocr_region.is_almost_subregion_of(
-                cast(Rectangle, el),
+            ocr_region_is_subregion_of_out_el = ocr_region.bbox.is_almost_subregion_of(
+                el.bbox,
                 SUBREGION_THRESHOLD_FOR_OCR,
             )
             if ocr_region_is_subregion_of_out_el:
@@ -471,15 +473,7 @@ def get_elements_from_ocr_regions(ocr_regions: List[TextRegion]) -> List[LayoutE
     )
     merged_regions = [merge_text_regions(group) for group in grouped_regions]
     return [
-        LayoutElement(
-            r.x1,
-            r.y1,
-            r.x2,
-            r.y2,
-            text=r.text,
-            source=r.source,
-            type="UncategorizedText",
-        )
+        LayoutElement(text=r.text, source=r.source, type="UncategorizedText", bbox=r.bbox)
         for r in merged_regions
     ]
 
@@ -495,11 +489,11 @@ def merge_text_regions(regions: List[TextRegion]) -> TextRegion:
     - TextRegion: A single merged TextRegion object.
     """
 
-    min_x1 = min([tr.x1 for tr in regions])
-    min_y1 = min([tr.y1 for tr in regions])
-    max_x2 = max([tr.x2 for tr in regions])
-    max_y2 = max([tr.y2 for tr in regions])
+    min_x1 = min([tr.bbox.x1 for tr in regions])
+    min_y1 = min([tr.bbox.y1 for tr in regions])
+    max_x2 = max([tr.bbox.x2 for tr in regions])
+    max_y2 = max([tr.bbox.y2 for tr in regions])
 
     merged_text = " ".join([tr.text for tr in regions if tr.text])
 
-    return TextRegion(min_x1, min_y1, max_x2, max_y2, merged_text)
+    return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text)
