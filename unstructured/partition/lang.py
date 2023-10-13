@@ -238,8 +238,9 @@ def detect_languages(
     if languages[0] == "" or text.strip == "":
         return None
 
-    # Default to "eng" if text has only ascii characters and is short
-    if re.match(r"^[\x00-\x7F]+$", text) and len(text) < 20:
+    # If text contains special characters (like ñ, å, or Korean/Mandarin/etc.) it will NOT default
+    # to English. It will default to English if text is only ascii characters and is short.
+    if re.match(r"^[\x00-\x7F]+$", text) and len(text.split()) < 6:
         return ["eng"]
 
     # set seed for deterministic langdetect outputs

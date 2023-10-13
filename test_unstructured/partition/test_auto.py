@@ -1128,5 +1128,17 @@ def test_partition_default_does_not_overwrite_other_defaults():
 def test_partition_languages_default_to_None():
     filename = "example-docs/handbook-1p.docx"
     elements = partition(filename=filename, detect_language_per_element=True)
+    # PageBreak and other elements with no text will have `None` for `languages`
     none_langs = [element for element in elements if element.metadata.languages is None]
     assert none_langs[0].text == ""
+
+
+def test_partition_languages_incorrectly_defaults_to_English(tmpdir):
+    # We don't totally rely on langdetect for short text, so text like the following that is
+    # in German will be labeled as English.
+    german = "Das ist ein kurzer Satz."
+    filepath = os.path.join(tmpdir, "short-german.txt")
+    with open(filepath, "w") as f:
+        f.write(german)
+    elements = partition(filepath)
+    assert elements[0].metadata.languages == ["eng"]
