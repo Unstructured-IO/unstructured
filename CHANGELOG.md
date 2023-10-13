@@ -1,4 +1,15 @@
-## 0.10.22-dev6
+## 0.10.23-dev0
+
+### Enhancements
+
+* **Add functionality to limit precision when serializing to json** Precision for `points` is limited to 1 decimal point if coordinates["system"] == "PixelSpace" (otherwise 2 decimal points?). Precision for `detection_class_prob` is limited to 5 decimal points.
+* **Fix csv file detection logic when mime-type is text/plain** Previously the logic to detect csv file type was considering only first row's comma count comparing with the header_row comma count and both the rows being same line the result was always true, Now the logic is changed to consider the comma's count for all the lines except first line and compare with header_row comma count.
+
+### Features
+
+### Fixes
+
+## 0.10.22
 
 ### Enhancements
 
