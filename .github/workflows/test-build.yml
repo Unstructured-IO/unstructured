@@ -34,24 +34,29 @@ jobs:
         username: ${{ secrets.QUAY_IO_ROBOT_USERNAME }}
         password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
     
-    - name: Build images
-      run: |
-        ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
-        DOCKER_BUILDKIT=1 docker buildx build --platform=$ARCH --load \
-          --build-arg PIP_VERSION=$PIP_VERSION \
-          --build-arg BUILDKIT_INLINE_CACHE=1 \
-          --progress plain \
-          --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
-          -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
+    # - name: Build images
+    #   run: |
+    #     ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
+    #     DOCKER_BUILDKIT=1 docker buildx build --platform=$ARCH --load \
+    #       --build-arg PIP_VERSION=$PIP_VERSION \
+    #       --build-arg BUILDKIT_INLINE_CACHE=1 \
+    #       --progress plain \
+    #       --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
+    #       -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
-    - name: Push images
-      run: |
-        # write to the build repository to cache for the publish-images job
-        ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
-        docker push "$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA"
-    # - name: Pull ARM image
+    # - name: Push images
     #   run: |
-    #     docker pull $DOCKER_BUILD_REPOSITORY:arm64-$SHORT_SHA
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
+    #     # write to the build repository to cache for the publish-images job
+    #     ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
+    #     docker push "$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA"
+    - name: Pull ARM image
+      run: |
+        docker pull $DOCKER_BUILD_REPOSITORY:arm64-$SHORT_SHA
+    - name: Test images
+      run: |
+        echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
+        ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
+        DOCKER_PLATFORM="${{ matrix.docker-platform }}" DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA" \
+          make docker-test CI=true TEST_NAME=partition/test_text.py
+        DOCKER_IMAGE=$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA make docker-smoke-test
