@@ -20,6 +20,26 @@
     "text": "US Trustee Handbook"
   },
   {
+    "type": "Footer",
+    "element_id": "8dfc77ab4089e09d4397e12306086c19",
+    "metadata": {
+      "data_source": {
+        "url": "dropbox:///handbook-1p.docx",
+        "version": 295786627629610762742246339824936813778,
+        "record_locator": {
+          "protocol": "dropbox",
+          "remote_file_path": "/handbook-1p.docx"
+        }
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "header_footer_type": "primary"
+    },
+    "text": "Copyright"
+  },
+  {
     "type": "Title",
     "element_id": "8ed906945500938a06129c30763f300e",
     "metadata": {
@@ -309,25 +329,5 @@
       "page_number": 2
     },
     "text": "Although this Handbook is not intended to be a complete statutory reference, the standing trustee’s primary statutory duties are set forth in 11 U.S.C. § 1302, which incorporates by reference some of the duties of chapter 7 trustees found in 11 U.S.C. § 704.  These duties include, but are not limited to, the following:"
-  },
-  {
-    "type": "Footer",
-    "element_id": "8dfc77ab4089e09d4397e12306086c19",
-    "metadata": {
-      "data_source": {
-        "url": "dropbox:///handbook-1p.docx",
-        "version": 295786627629610762742246339824936813778,
-        "record_locator": {
-          "protocol": "dropbox",
-          "remote_file_path": "/handbook-1p.docx"
-        }
-      },
-      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "languages": [
-        "eng"
-      ],
-      "header_footer_type": "primary"
-    },
-    "text": "Copyright"
   }
 ]
