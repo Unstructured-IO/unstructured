@@ -31,7 +31,7 @@ contourpy==1.1.1
     # via matplotlib
 cssselect==1.2.0
     # via premailer
-cssutils==2.7.1
+cssutils==2.8.0
     # via premailer
 cycler==0.12.1
     # via matplotlib

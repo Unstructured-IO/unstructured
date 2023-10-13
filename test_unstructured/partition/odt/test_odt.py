@@ -1,12 +1,11 @@
 import os
 import pathlib
 
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Table, TableChunk, Title
-from unstructured.partition.json import partition_json
 from unstructured.partition.odt import partition_odt
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
@@ -155,15 +154,9 @@ def test_partition_odt_from_file_with_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_odt_with_json(
-    filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt"),
-):
-    elements = partition_odt(filename=filename, include_metadata=True)
-    test_elements = partition_json(text=elements_to_json(elements))
-
-    assert len(elements) == len(test_elements)
-    for i in range(len(elements)):
-        assert elements[i] == test_elements[i]
+def test_partition_odt_with_json():
+    elements = partition_odt(example_doc_path("fake.odt"), include_metadata=True)
+    assert_round_trips_through_JSON(elements)
 
 
 def test_add_chunking_strategy_on_partition_odt(

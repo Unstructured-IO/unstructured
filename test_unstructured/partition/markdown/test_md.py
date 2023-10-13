@@ -5,12 +5,11 @@ from unittest.mock import patch
 import pytest
 import requests
 
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Title
-from unstructured.partition.json import partition_json
 from unstructured.partition.md import partition_md
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -262,21 +261,11 @@ def test_partition_md_from_text_with_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_md_with_json(
-    filename="example-docs/README.md",
-):
-    with open(filename) as f:
+def test_partition_md_with_json():
+    with open(example_doc_path("README.md")) as f:
         text = f.read()
-
-    elements = partition_md(
-        text=text,
-    )
-    test_elements = partition_json(text=elements_to_json(elements))
-
-    assert len(elements) == len(test_elements)
-    assert elements[0].metadata.filename == test_elements[0].metadata.filename
-    for i in range(len(elements)):
-        assert elements[i] == test_elements[i]
+    elements = partition_md(text=text)
+    assert_round_trips_through_JSON(elements)
 
 
 def test_add_chunking_strategy_by_title_on_partition_md(
