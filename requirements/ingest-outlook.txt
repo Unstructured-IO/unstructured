@@ -9,9 +9,9 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-cffi==1.15.1
+cffi==1.16.0
     # via cryptography
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   requests
@@ -23,7 +23,7 @@ idna==3.4
     # via
     #   -c requirements/base.txt
     #   requests
-msal==1.24.0
+msal==1.24.1
     # via
     #   -r requirements/ingest-outlook.in
     #   office365-rest-python-client
@@ -42,7 +42,7 @@ requests==2.31.0
     #   -c requirements/base.txt
     #   msal
     #   office365-rest-python-client
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

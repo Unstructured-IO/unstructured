@@ -11,9 +11,9 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-cffi==1.15.1
+cffi==1.16.0
     # via cryptography
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   requests
@@ -34,7 +34,9 @@ more-itertools==10.1.0
 pendulum==2.1.2
     # via simple-salesforce
 platformdirs==3.10.0
-    # via zeep
+    # via
+    #   -c requirements/constraints.in
+    #   zeep
 pycparser==2.21
     # via cffi
 pyjwt==2.8.0
@@ -60,10 +62,11 @@ simple-salesforce==1.12.5
     # via -r requirements/ingest-salesforce.in
 six==1.16.0
     # via
+    #   -c requirements/base.txt
     #   isodate
     #   python-dateutil
     #   requests-file
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

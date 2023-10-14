@@ -66,7 +66,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     registry_name: str = "onedrive"
 
     def __post_init__(self):
-        self.ext = "".join(Path(self.file_name).suffixes)
+        self.ext = Path(self.file_name).suffix
         if not self.ext:
             raise ValueError("Unsupported file without extension.")
 
@@ -82,7 +82,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _set_download_paths(self) -> None:
         """Parses the folder structure from the source and creates the download and output paths"""
         download_path = Path(f"{self.read_config.download_dir}")
-        output_path = Path(f"{self.partition_config.output_dir}")
+        output_path = Path(f"{self.processor_config.output_dir}")
 
         if parent_path := self.file_path:
             download_path = (
@@ -94,9 +94,9 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         self.download_dir = download_path
         self.download_filepath = (download_path / self.file_name).resolve()
-        oname = f"{self.file_name[:-len(self.ext)]}.json"
+        output_filename = output_filename = self.file_name + ".json"
         self.output_dir = output_path
-        self.output_filepath = (output_path / oname).resolve()
+        self.output_filepath = (output_path / output_filename).resolve()
 
     @property
     def filename(self):
@@ -204,7 +204,7 @@ class OneDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         file_path = file_path[1:] if file_path[0] == "/" else file_path
         return OneDriveIngestDoc(
             connector_config=self.connector_config,
-            partition_config=self.partition_config,
+            processor_config=self.processor_config,
             read_config=self.read_config,
             file_name=file.name,
             file_path=file_path,

@@ -74,7 +74,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         query_hash = hashlib.sha256((self.connector_config.jq_query or "").encode()).hexdigest()[:8]
         output_file = f"{self.document_meta.document_id}-{query_hash}.json"
         return (
-            Path(self.partition_config.output_dir) / self.connector_config.index_name / output_file
+            Path(self.processor_config.output_dir) / self.connector_config.index_name / output_file
         )
 
     # TODO: change test fixtures such that examples with
@@ -214,7 +214,7 @@ class ElasticsearchSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnec
         return [
             ElasticsearchIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 document_meta=ElasticsearchDocumentMeta(self.connector_config.index_name, id),
             )

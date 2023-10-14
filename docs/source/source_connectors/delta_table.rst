@@ -1,5 +1,6 @@
 Delta Table
-==========
+===========
+
 Connect delta tables to your preprocessing pipeline, and batch process all your records using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
 
 First you'll need to install the delta table dependencies as shown here.
@@ -28,30 +29,20 @@ Run Locally
 
       .. code:: python
 
-        import subprocess
+        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
+        from unstructured.ingest.runner.delta_table import delta_table
 
-        command = [
-          "unstructured-ingest",
-          "delta-table",
-          "--table-uri", "s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/",
-          "--download-dir", "delta-table-ingest-download",
-          "--output-dir", "delta-table-example",
-          "--preserve-downloads",
-          "--storage_options", "AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY",
-          "--verbose",
-        ]
-
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            delta_table(
+                verbose=True,
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
+                    output_dir="delta-table-example",
+                    num_processes=2,
+                ),
+                table_uri="s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/",
+                storage_options="AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
+            )
 
 
 Run via the API
@@ -78,32 +69,24 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
       .. code:: python
 
-        import subprocess
+        import os
 
-        command = [
-          "unstructured-ingest",
-          "delta-table",
-          "--table-uri", "s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/",
-          "--download-dir", "delta-table-ingest-download",
-          "--output-dir", "delta-table-example",
-          "--preserve-downloads",
-          "--storage_options", "AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY",
-          "--verbose",
-          "--partition-by-api",
-          "--api-key", "<UNSTRUCTURED-API-KEY>",
-        ]
+        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
+        from unstructured.ingest.runner.delta_table import delta_table
 
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            delta_table(
+                verbose=True,
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
+                    output_dir="delta-table-example",
+                    num_processes=2,
+                    partition_by_api=True,
+                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
+                ),
+                table_uri="s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/",
+                storage_options="AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
+            )
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 

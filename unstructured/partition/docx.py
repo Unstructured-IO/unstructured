@@ -8,8 +8,8 @@ import os
 import tempfile
 from tempfile import SpooledTemporaryFile
 from typing import (
+    IO,
     Any,
-    BinaryIO,
     Dict,
     Iterator,
     List,
@@ -33,6 +33,7 @@ from docx.oxml.text.run import CT_R
 from docx.oxml.xmlchemy import BaseOxmlElement
 from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
+from docx.text.hyperlink import Hyperlink
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 from lxml import etree
@@ -47,6 +48,7 @@ from unstructured.documents.elements import (
     EmailAddress,
     Footer,
     Header,
+    Link,
     ListItem,
     NarrativeText,
     PageBreak,
@@ -62,6 +64,7 @@ from unstructured.partition.common import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
+from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -74,7 +77,7 @@ from unstructured.utils import dependency_exists, lazyproperty, requires_depende
 if dependency_exists("pypandoc"):
     import pypandoc
 
-
+DETECTION_ORIGIN: str = "docx"
 BlockElement: TypeAlias = Union[CT_P, CT_Tbl]
 BlockItem: TypeAlias = Union[Paragraph, DocxTable]
 
@@ -83,10 +86,12 @@ BlockItem: TypeAlias = Union[Paragraph, DocxTable]
 def convert_and_partition_docx(
     source_format: str,
     filename: Optional[str] = None,
-    file: Optional[BinaryIO] = None,
+    file: Optional[IO[bytes]] = None,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    languages: Optional[List[str]] = ["auto"],
+    detect_language_per_element: bool = False,
 ) -> List[Element]:
     """Converts a document to DOCX and then partitions it using partition_docx.
 
@@ -103,6 +108,13 @@ def convert_and_partition_docx(
     include_metadata
         Determines whether or not metadata is included in the metadata attribute on the elements in
         the output.
+    languages
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     exactly_one(filename=filename, file=file)
 
@@ -112,7 +124,7 @@ def convert_and_partition_docx(
             raise ValueError(f"The file {filename} does not exist.")
         return filename
 
-    def copy_to_tempfile(file: BinaryIO) -> str:
+    def copy_to_tempfile(file: IO[bytes]) -> str:
         """Return path to temporary copy of file to be converted."""
         with tempfile.NamedTemporaryFile(delete=False) as tmp:
             tmp.write(file.read())
@@ -127,7 +139,7 @@ def convert_and_partition_docx(
         # -- foo -> foo.docx --
         return f"{root_name}.docx"
 
-    file_path = validate_filename(filename) if filename else copy_to_tempfile(cast(BinaryIO, file))
+    file_path = validate_filename(filename) if filename else copy_to_tempfile(cast(IO[bytes], file))
 
     with tempfile.TemporaryDirectory() as tmpdir:
         docx_path = os.path.join(tmpdir, extract_docx_filename(file_path))
@@ -142,6 +154,8 @@ def convert_and_partition_docx(
             metadata_filename=metadata_filename,
             include_metadata=include_metadata,
             metadata_last_modified=metadata_last_modified,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
         )
 
     return elements
@@ -152,13 +166,15 @@ def convert_and_partition_docx(
 @add_chunking_strategy()
 def partition_docx(
     filename: Optional[str] = None,
-    file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]] = None,
+    file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
-    include_metadata: bool = True,
+    include_metadata: bool = True,  # used by decorator
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,
-    **kwargs: Any,
+    chunking_strategy: Optional[str] = None,  # used by decorator
+    languages: Optional[List[str]] = ["auto"],
+    detect_language_per_element: bool = False,
+    **kwargs: Any,  # used by decorator
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
 
@@ -173,19 +189,30 @@ def partition_docx(
         to .docx before partition. We want the original source filename in the metadata.
     metadata_last_modified
         The last modified date for the document.
+    languages
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     # -- verify that only one file-specifier argument was provided --
     exactly_one(filename=filename, file=file)
 
-    return list(
-        _DocxPartitioner.iter_document_elements(
-            filename,
-            file,
-            metadata_filename,
-            include_page_breaks,
-            metadata_last_modified,
-        ),
+    elements = _DocxPartitioner.iter_document_elements(
+        filename,
+        file,
+        metadata_filename,
+        include_page_breaks,
+        metadata_last_modified,
     )
+    elements = apply_lang_metadata(
+        elements=elements,
+        languages=languages,
+        detect_language_per_element=detect_language_per_element,
+    )
+    return list(elements)
 
 
 class _DocxPartitioner:
@@ -216,7 +243,7 @@ class _DocxPartitioner:
     def __init__(
         self,
         filename: Optional[str],
-        file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]],
+        file: Optional[IO[bytes]],
         metadata_filename: Optional[str],
         include_page_breaks: bool,
         metadata_last_modified: Optional[str],
@@ -232,7 +259,7 @@ class _DocxPartitioner:
     def iter_document_elements(
         cls,
         filename: Optional[str] = None,
-        file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]] = None,
+        file: Optional[IO[bytes]] = None,
         metadata_filename: Optional[str] = None,
         include_page_breaks: bool = True,
         metadata_last_modified: Optional[str] = None,
@@ -248,6 +275,18 @@ class _DocxPartitioner:
 
     def _iter_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in (docx) `document` in document order."""
+        # -- This implementation composes a collection of iterators into a "combined" iterator
+        # -- return value using `yield from`. You can think of the return value as an Element
+        # -- stream and each `yield from` as "add elements found by this function to the stream".
+        # -- This is functionally analogous to declaring `elements: List[Element] = []` at the top
+        # -- and using `elements.extend()` for the results of each of the function calls, but is
+        # -- more perfomant, uses less memory (avoids producing and then garbage-collecting all
+        # -- those small lists), is more flexible for later iterator operations like filter,
+        # -- chain, map, etc. and is perhaps more elegant and simpler to read once you have the
+        # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
+        # -- functions like `._iter_paragraph_elements()` where the "just return when done"
+        # -- characteristic of a generator avoids repeated code to form interim results into lists.
+
         for section_idx, section in enumerate(self._document.sections):
             yield from self._iter_section_page_breaks(section_idx, section)
             yield from self._iter_section_headers(section)
@@ -305,7 +344,7 @@ class _DocxPartitioner:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
         self._page_counter += 1
         if self._include_page_breaks:
-            yield PageBreak("")
+            yield PageBreak("", detection_origin=DETECTION_ORIGIN)
 
     def _is_list_item(self, paragraph: Paragraph) -> bool:
         """True when `paragraph` can be identified as a list-item."""
@@ -334,23 +373,27 @@ class _DocxPartitioner:
         if self._is_list_item(paragraph):
             clean_text = clean_bullets(text).strip()
             if clean_text:
-                yield ListItem(text=clean_text, metadata=metadata)
+                yield ListItem(
+                    text=clean_text,
+                    metadata=metadata,
+                    detection_origin=DETECTION_ORIGIN,
+                )
             return
 
         # -- determine element-type from an explicit Word paragraph-style if possible --
         TextSubCls = self._style_based_element_type(paragraph)
         if TextSubCls:
-            yield TextSubCls(text=text, metadata=metadata)
+            yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             return
 
         # -- try to recognize the element type by parsing its text --
         TextSubCls = self._parse_paragraph_text_for_element_type(paragraph)
         if TextSubCls:
-            yield TextSubCls(text=text, metadata=metadata)
+            yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             return
 
         # -- if all that fails we give it the default `Text` element-type --
-        yield Text(text, metadata=metadata)
+        yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
 
     def _iter_maybe_paragraph_page_breaks(self, paragraph: Paragraph) -> Iterator[PageBreak]:
         """Generate a `PageBreak` document element for each page-break in `paragraph`.
@@ -408,9 +451,11 @@ class _DocxPartitioner:
                 return
             yield Footer(
                 text=text,
+                detection_origin=DETECTION_ORIGIN,
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
+                    category_depth=0,
                 ),
             )
 
@@ -435,9 +480,11 @@ class _DocxPartitioner:
                 return
             yield Header(
                 text=text,
+                detection_origin=DETECTION_ORIGIN,
                 metadata=ElementMetadata(
                     filename=self._metadata_filename,
                     header_footer_type=header_footer_type,
+                    category_depth=0,  # -- headers are always at the root level}
                 ),
             )
 
@@ -468,7 +515,7 @@ class _DocxPartitioner:
         # -- predict when two page breaks will be needed and emit one of them. The second will be
         # -- emitted by the rendered page-break to follow.
 
-        if start_type == WD_SECTION_START.EVEN_PAGE:
+        if start_type == WD_SECTION_START.EVEN_PAGE:  # noqa
             # -- on an even page we need two total, add one to supplement the rendered page break
             # -- to follow. There is no "first-document-page" special case because 1 is odd.
             if not page_is_odd():
@@ -496,6 +543,7 @@ class _DocxPartitioner:
 
         yield Table(
             text_table,
+            detection_origin=DETECTION_ORIGIN,
             metadata=ElementMetadata(
                 text_as_html=html_table,
                 filename=self._metadata_filename,
@@ -551,16 +599,64 @@ class _DocxPartitioner:
         iter_p_emph, iter_p_emph_2 = itertools.tee(self._iter_paragraph_emphasis(paragraph))
         return ([e["text"] for e in iter_p_emph], [e["tag"] for e in iter_p_emph_2])
 
+    def _paragraph_link_meta(self, paragraph: Paragraph) -> Tuple[List[str], List[str], List[Link]]:
+        """Describes hyperlinks in `paragraph`, if any."""
+        if not paragraph.hyperlinks:
+            return [], [], []
+
+        def iter_paragraph_links() -> Iterator[Link]:
+            """Generate `Link` typed-dict for each external link in `paragraph`.
+
+            Word uses hyperlinks for internal "jumps" within the document, as well as for web and
+            other external locations. Only generate the external ones.
+            """
+            offset = 0
+            for item in paragraph.iter_inner_content():
+                if isinstance(item, Run):
+                    offset += len(item.text)
+                elif isinstance(item, Hyperlink):  # pyright: ignore[reportUnnecessaryIsInstance]
+                    text = item.text
+                    url = item.url
+                    start_index = offset
+                    offset += len(text)
+                    # -- docx hyperlinks include "internal" links, like a table-of-contents
+                    # -- (TOC) entry has a jump to the named heading in the document (e.g.
+                    # -- '#_Toc147925734'. Such links have a fragment but not an address
+                    # -- (URL). Treat those as regular text.
+                    if not url:
+                        continue
+                    # -- all Word hyperlinks should contain text, otherwise they have no
+                    # -- visual appearance on the document. Not expected, but technically possible
+                    # -- so filter these out too.
+                    if not text:
+                        continue
+                    yield Link(text=text, url=url, start_index=start_index)
+
+        links = list(iter_paragraph_links())
+        # -- link["text"] is allowed to be None by the declared type for `Link`, but never will be
+        # -- here because such a link is filtered out above. Use empty str to satisfy type-checker.
+        link_texts = [link["text"] or "" for link in links]
+        link_urls = [link["url"] for link in links]
+        return link_texts, link_urls, links
+
     def _paragraph_metadata(self, paragraph: Paragraph) -> ElementMetadata:
         """ElementMetadata object describing `paragraph`."""
+        category_depth = self._parse_category_depth_by_style(paragraph)
         emphasized_text_contents, emphasized_text_tags = self._paragraph_emphasis(paragraph)
-        return ElementMetadata(
-            filename=self._metadata_filename,
-            page_number=self._page_number,
-            last_modified=self._last_modified,
+        link_texts, link_urls, links = self._paragraph_link_meta(paragraph)
+        element_metadata = ElementMetadata(
+            category_depth=category_depth,
             emphasized_text_contents=emphasized_text_contents or None,
             emphasized_text_tags=emphasized_text_tags or None,
+            filename=self._metadata_filename,
+            last_modified=self._last_modified,
+            link_texts=link_texts or None,
+            link_urls=link_urls or None,
+            links=links or None,
+            page_number=self._page_number,
         )
+        element_metadata.detection_origin = "docx"
+        return element_metadata
 
     def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
         """Attempt to differentiate the element-type by inspecting the raw text."""
@@ -633,6 +729,52 @@ class _DocxPartitioner:
         """[contents, tags] pair describing emphasized text in `table`."""
         iter_tbl_emph, iter_tbl_emph_2 = itertools.tee(self._iter_table_emphasis(table))
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])
+
+    def _parse_category_depth_by_style(self, paragraph: Paragraph) -> int:
+        """Determine category depth from paragraph metadata"""
+
+        # Determine category depth from paragraph ilvl xpath
+        xpath = paragraph._element.xpath("./w:pPr/w:numPr/w:ilvl/@w:val")
+        if xpath:
+            return int(xpath[0])
+
+        # Determine category depth from style name
+        style_name = (paragraph.style and paragraph.style.name) or "Normal"
+        depth = self._parse_category_depth_by_style_name(style_name)
+
+        if depth > 0:
+            return depth
+        else:
+            # Check if category depth can be determined from style ilvl
+            return self._parse_category_depth_by_style_ilvl()
+
+    def _parse_category_depth_by_style_name(self, style_name: str) -> int:
+        """Parse category-depth from the style-name of `paragraph`.
+
+        Category depth is 0-indexed and relative to the other element types in the document.
+        """
+
+        def _extract_number(suffix: str) -> int:
+            return int(suffix.split()[-1]) - 1 if suffix.split()[-1].isdigit() else 0
+
+        # Heading styles
+        if style_name.startswith("Heading"):
+            return _extract_number(style_name)
+
+        if style_name == "Subtitle":
+            return 1
+
+        # List styles
+        list_prefixes = ["List", "List Bullet", "List Continue", "List Number"]
+        if any(style_name.startswith(prefix) for prefix in list_prefixes):
+            return _extract_number(style_name)
+
+        # Other styles
+        return 0
+
+    def _parse_category_depth_by_style_ilvl(self) -> int:
+        # TODO(newelh) Parsing category depth by style ilvl is not yet implemented
+        return 0
 
 
 class _SectBlockItemIterator:

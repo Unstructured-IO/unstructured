@@ -9,11 +9,11 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-cffi==1.15.1
+cffi==1.16.0
     # via
     #   cryptography
     #   pynacl
-charset-normalizer==3.2.0
+charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
     #   requests
@@ -27,20 +27,31 @@ idna==3.4
     #   requests
 pycparser==2.21
     # via cffi
-pygithub==1.59.1
+pygithub==2.1.1
     # via -r requirements/ingest-github.in
 pyjwt[crypto]==2.8.0
     # via pygithub
 pynacl==1.5.0
     # via pygithub
+python-dateutil==2.8.2
+    # via pygithub
 requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   pygithub
-urllib3==1.26.16
+six==1.16.0
+    # via
+    #   -c requirements/base.txt
+    #   python-dateutil
+typing-extensions==4.8.0
+    # via
+    #   -c requirements/base.txt
+    #   pygithub
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
+    #   pygithub
     #   requests
 wrapt==1.15.0
     # via deprecated

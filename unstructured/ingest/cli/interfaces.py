@@ -1,9 +1,55 @@
+import typing as t
 from abc import abstractmethod
+from gettext import ngettext
+from pathlib import Path
 
 import click
+from dataclasses_json.core import Json, _decode_dataclass
 
-from unstructured.ingest.cli.cmds.utils import DelimitedString
-from unstructured.ingest.interfaces import BaseConfig, PartitionConfig, ReadConfig
+from unstructured.ingest.interfaces import (
+    BaseConfig,
+    ChunkingConfig,
+    EmbeddingConfig,
+    PartitionConfig,
+    PermissionsConfig,
+    ProcessorConfig,
+    ReadConfig,
+)
+
+
+class DelimitedString(click.ParamType):
+    name = "delimited-string"
+
+    def __init__(self, delimiter: str = ",", choices: t.Optional[t.List[str]] = None):
+        self.choices = choices if choices else []
+        self.delimiter = delimiter
+
+    def convert(
+        self,
+        value: t.Any,
+        param: t.Optional[click.Parameter],
+        ctx: t.Optional[click.Context],
+    ) -> t.Any:
+        # In case a list is provided as the default, will not break
+        if isinstance(value, list):
+            split = [str(v).strip() for v in value]
+        else:
+            split = [v.strip() for v in value.split(self.delimiter)]
+        if not self.choices:
+            return split
+        choices_str = ", ".join(map(repr, self.choices))
+        for s in split:
+            if s not in self.choices:
+                self.fail(
+                    ngettext(
+                        "{value!r} is not {choice}.",
+                        "{value!r} is not one of {choices}.",
+                        len(self.choices),
+                    ).format(value=s, choice=choices_str, choices=choices_str),
+                    param,
+                    ctx,
+                )
+        return split
 
 
 class CliMixin:
@@ -11,6 +57,49 @@ class CliMixin:
     @abstractmethod
     def add_cli_options(cmd: click.Command) -> None:
         pass
+
+
+class CliProcessorConfig(ProcessorConfig, CliMixin):
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--reprocess"],
+                is_flag=True,
+                default=False,
+                help="Reprocess a downloaded file even if the relevant structured "
+                "output .json file in output directory already exists.",
+            ),
+            click.Option(
+                ["--output-dir"],
+                default="structured-output",
+                help="Where to place structured output .json files.",
+            ),
+            click.Option(
+                ["--work-dir"],
+                type=str,
+                default=str(
+                    (Path.home() / ".cache" / "unstructured" / "ingest" / "pipeline").resolve(),
+                ),
+                show_default=True,
+                help="Where to place working files when processing each step",
+            ),
+            click.Option(
+                ["--num-processes"],
+                default=2,
+                show_default=True,
+                help="Number of parallel processes with which to process docs",
+            ),
+            click.Option(
+                ["--raise-on-error"],
+                is_flag=True,
+                default=False,
+                help="Is set, will raise error if any doc in the pipeline fail. Otherwise will "
+                "log error and continue with other docs",
+            ),
+            click.Option(["-v", "--verbose"], is_flag=True, default=False),
+        ]
+        cmd.params.extend(options)
 
 
 class CliReadConfig(ReadConfig, CliMixin):
@@ -44,6 +133,12 @@ class CliReadConfig(ReadConfig, CliMixin):
                 "is not specified and "
                 "skip processing them through unstructured.",
             ),
+            click.Option(
+                ["--max-docs"],
+                default=None,
+                type=int,
+                help="If specified, process at most the specified number of documents.",
+            ),
         ]
         cmd.params.extend(options)
 
@@ -53,21 +148,10 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
     def add_cli_options(cmd: click.Command) -> None:
         options = [
             click.Option(
-                ["--output-dir"],
-                default="structured-output",
-                help="Where to place structured output .json files.",
-            ),
-            click.Option(
-                ["--num-processes"],
-                default=2,
-                show_default=True,
-                help="Number of parallel processes to process docs in.",
-            ),
-            click.Option(
-                ["--max-docs"],
+                ["--skip-infer-table-types"],
+                type=DelimitedString(),
                 default=None,
-                type=int,
-                help="If specified, process at most specified number of documents.",
+                help="Optional list of document types to skip table extraction on",
             ),
             click.Option(
                 ["--pdf-infer-table-structure"],
@@ -82,20 +166,13 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 "Default: auto. Other strategies include `fast` and `hi_res`.",
             ),
             click.Option(
-                ["--reprocess"],
-                is_flag=True,
-                default=False,
-                help="Reprocess a downloaded file even if the relevant structured "
-                "output .json file in output directory already exists.",
-            ),
-            click.Option(
                 ["--ocr-languages"],
-                default="eng",
+                default=None,
+                type=DelimitedString(delimiter="+"),
                 help="A list of language packs to specify which languages to use for OCR, "
                 "separated by '+' e.g. 'eng+deu' to use the English and German language packs. "
                 "The appropriate Tesseract "
-                "language pack needs to be installed."
-                "Default: eng",
+                "language pack needs to be installed.",
             ),
             click.Option(
                 ["--encoding"],
@@ -106,7 +183,7 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
             click.Option(
                 ["--fields-include"],
                 type=DelimitedString(),
-                default=["element_id", "text", "type", "metadata"],
+                default=["element_id", "text", "type", "metadata", "embeddings"],
                 help="Comma-delimited list. If set, include the specified top-level "
                 "fields in an element.",
             ),
@@ -184,3 +261,178 @@ class CliRemoteUrlConfig(BaseConfig, CliMixin):
             ),
         ]
         cmd.params.extend(options)
+
+
+class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--embedding-api-key"],
+                help="openai api key",
+            ),
+            click.Option(
+                ["--embedding-model-name"],
+                type=str,
+                default=None,
+            ),
+        ]
+        cmd.params.extend(options)
+
+    @classmethod
+    def from_dict(
+        cls,
+        kvs: Json,
+        *,
+        infer_missing=False,
+    ):
+        """
+        Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
+        This allows CLI arguments to be prepended with embedding_ during CLI invocation but
+        doesn't require that as part of the field names in this class
+        """
+        if isinstance(kvs, dict):
+            new_kvs = {
+                k[len("embedding_") :]: v  # noqa: E203
+                for k, v in kvs.items()
+                if k.startswith("embedding_")
+            }
+            if len(new_kvs.keys()) == 0:
+                return None
+            if not new_kvs.get("api_key", None):
+                return None
+            return _decode_dataclass(cls, new_kvs, infer_missing)
+        return _decode_dataclass(cls, kvs, infer_missing)
+
+
+class CliChunkingConfig(ChunkingConfig, CliMixin):
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--chunk-elements"],
+                is_flag=True,
+                default=False,
+            ),
+            click.Option(
+                ["--chunk-multipage-sections"],
+                is_flag=True,
+                default=False,
+            ),
+            click.Option(
+                ["--chunk-combine-under-n-chars"],
+                type=int,
+                default=500,
+                show_default=True,
+            ),
+            click.Option(
+                ["--chunk-new-after-n-chars"],
+                type=int,
+                default=1500,
+                show_default=True,
+            ),
+        ]
+        cmd.params.extend(options)
+
+    @classmethod
+    def from_dict(
+        cls,
+        kvs: Json,
+        *,
+        infer_missing=False,
+    ):
+        """
+        Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
+        This allows CLI arguments to be prepended with chunking_ during CLI invocation but
+        doesn't require that as part of the field names in this class
+        """
+        if isinstance(kvs, dict):
+            new_kvs = {}
+            if "chunk_elements" in kvs:
+                chunk_elements = kvs.pop("chunk_elements")
+                if not chunk_elements:
+                    return None
+                new_kvs["chunk_elements"] = chunk_elements
+            new_kvs.update(
+                {
+                    k[len("chunking_") :]: v  # noqa: E203
+                    for k, v in kvs.items()
+                    if k.startswith("chunking_")
+                },
+            )
+            if len(new_kvs.keys()) == 0:
+                return None
+            return _decode_dataclass(cls, new_kvs, infer_missing)
+        return _decode_dataclass(cls, kvs, infer_missing)
+
+
+class CliPermissionsConfig(PermissionsConfig, CliMixin):
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--permissions-application-id"],
+                type=str,
+                help="Microsoft Graph API application id",
+            ),
+            click.Option(
+                ["--permissions-client-cred"],
+                type=str,
+                help="Microsoft Graph API application credentials",
+            ),
+            click.Option(
+                ["--permissions-tenant"],
+                type=str,
+                help="e.g https://contoso.onmicrosoft.com to get permissions data within tenant.",
+            ),
+        ]
+        cmd.params.extend(options)
+
+    @classmethod
+    def from_dict(
+        cls,
+        kvs: Json,
+        *,
+        infer_missing=False,
+    ):
+        """
+        Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
+        This allows CLI arguments to be prepended with permissions_ during CLI invocation but
+        doesn't require that as part of the field names in this class. It also checks if the
+        CLI params are provided as intended.
+        """
+
+        if (
+            isinstance(kvs, dict)
+            and any(
+                [
+                    kvs["permissions_application_id"]
+                    or kvs["permissions_client_cred"]
+                    or kvs["permissions_tenant"],
+                ],
+            )
+            and not all(
+                [
+                    kvs["permissions_application_id"]
+                    and kvs["permissions_client_cred"]
+                    and kvs["permissions_tenant"],
+                ],
+            )
+        ):
+            raise ValueError(
+                "Please provide either none or all of the following optional values:\n"
+                "--permissions-application-id\n"
+                "--permissions-client-cred\n"
+                "--permissions-tenant",
+            )
+
+        if isinstance(kvs, dict):
+            new_kvs = {
+                k[len("permissions_") :]: v  # noqa: E203
+                for k, v in kvs.items()
+                if k.startswith("permissions_")
+            }
+            if len(new_kvs.keys()) == 0:
+                return None
+            return _decode_dataclass(cls, new_kvs, infer_missing)
+        return _decode_dataclass(cls, kvs, infer_missing)

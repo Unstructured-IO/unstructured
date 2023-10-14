@@ -3,6 +3,7 @@ import os
 import typing as t
 from dataclasses import dataclass
 from datetime import datetime as dt
+from multiprocessing import Process
 from pathlib import Path
 
 import pandas as pd
@@ -15,6 +16,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
@@ -26,7 +28,6 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class SimpleDeltaTableConfig(BaseConnectorConfig):
-    verbose: bool
     table_uri: t.Union[str, Path]
     version: t.Optional[int] = None
     storage_options: t.Optional[t.Dict[str, str]] = None
@@ -51,40 +52,21 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return os.path.splitext(basename)[0]
 
     @property
-    def source_url(self) -> t.Optional[str]:
-        """The url of the source document."""
-        return self.uri
-
-    @property
-    def date_created(self) -> t.Optional[str]:
-        """This is the creation time of the table itself, not the file or specific record"""
-        # TODO get creation time of file/record
-        return self.created_at
-
-    @property
     def filename(self):
         return (Path(self.read_config.download_dir) / f"{self.uri_filename()}.csv").resolve()
-
-    @property
-    def date_modified(self) -> t.Optional[str]:
-        """The date the document was last modified on the source system."""
-        return self.modified_date
 
     @property
     def _output_filename(self):
         """Create filename document id combined with a hash of the query to uniquely identify
         the output file."""
-        return Path(self.partition_config.output_dir) / f"{self.uri_filename()}.json"
+        return Path(self.processor_config.output_dir) / f"{self.uri_filename()}.json"
 
     def _create_full_tmp_dir_path(self):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
 
-    @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["fsspec"], extras="delta-table")
-    def get_file(self):
-        import pyarrow.parquet as pq
+    def _get_fs_from_uri(self):
         from fsspec.core import url_to_fs
 
         try:
@@ -94,6 +76,29 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 f"uri {self.uri} may be associated with a filesystem that "
                 f"requires additional dependencies: {error}",
             )
+        return fs
+
+    def update_source_metadata(self, **kwargs):
+        fs = kwargs.get("fs", self._get_fs_from_uri())
+        version = (
+            fs.checksum(self.uri) if fs.protocol != "gs" else fs.info(self.uri).get("etag", "")
+        )
+        file_exists = fs.exists(self.uri)
+        self.source_metadata = SourceMetadata(
+            date_created=self.created_at,
+            date_modified=self.modified_date,
+            version=version,
+            source_url=self.uri,
+            exists=file_exists,
+        )
+
+    @SourceConnectionError.wrap
+    @BaseIngestDoc.skip_if_file_exists
+    def get_file(self):
+        import pyarrow.parquet as pq
+
+        fs = self._get_fs_from_uri()
+        self.update_source_metadata(fs=fs)
         logger.info(f"using a {fs} filesystem to collect table data")
         self._create_full_tmp_dir_path()
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
@@ -136,7 +141,7 @@ class DeltaTableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         return [
             DeltaTableIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 uri=uri,
                 modified_date=mod_date_dict[os.path.basename(uri)],
@@ -177,8 +182,17 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
             f"writing {len(json_list)} rows to destination "
             f"table at {self.connector_config.table_uri}",
         )
-        write_deltalake(
-            table_or_uri=self.connector_config.table_uri,
-            data=pd.DataFrame(data={self.write_config.write_column: json_list}),
-            mode=self.write_config.mode,
+        # NOTE: deltalake writer on Linux sometimes can finish but still trigger a SIGABRT and cause
+        # ingest to fail, even though all tasks are completed normally. Putting the writer into a
+        # process mitigates this issue by ensuring python interpreter waits properly for deltalake's
+        # rust backend to finish
+        writer = Process(
+            target=write_deltalake,
+            kwargs={
+                "table_or_uri": self.connector_config.table_uri,
+                "data": pd.DataFrame(data={self.write_config.write_column: json_list}),
+                "mode": self.write_config.mode,
+            },
         )
+        writer.start()
+        writer.join()

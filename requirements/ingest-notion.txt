@@ -4,8 +4,10 @@
 #
 #    pip-compile requirements/ingest-notion.in
 #
-anyio==4.0.0
-    # via httpcore
+anyio==3.7.1
+    # via
+    #   -c requirements/constraints.in
+    #   httpcore
 certifi==2023.7.22
     # via
     #   -c requirements/base.txt

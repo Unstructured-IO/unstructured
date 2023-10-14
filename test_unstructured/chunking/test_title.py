@@ -31,7 +31,7 @@ def test_split_elements_by_title_and_table():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    sections = _split_elements_by_title_and_table(elements, combine_under_n_chars=0)
+    sections = _split_elements_by_title_and_table(elements, combine_text_under_n_chars=0)
 
     assert sections == [
         [
@@ -75,7 +75,7 @@ def test_chunk_by_title():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    chunks = chunk_by_title(elements, combine_under_n_chars=0)
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
 
     assert chunks == [
         CompositeElement(
@@ -112,7 +112,7 @@ def test_chunk_by_title_respects_section_change():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    chunks = chunk_by_title(elements, combine_under_n_chars=0)
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
 
     assert chunks == [
         CompositeElement(
@@ -147,7 +147,7 @@ def test_chunk_by_title_separates_by_page_number():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    chunks = chunk_by_title(elements, multipage_sections=False, combine_under_n_chars=0)
+    chunks = chunk_by_title(elements, multipage_sections=False, combine_text_under_n_chars=0)
 
     assert chunks == [
         CompositeElement(
@@ -182,7 +182,7 @@ def test_chunk_by_title_groups_across_pages():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    chunks = chunk_by_title(elements, multipage_sections=True, combine_under_n_chars=0)
+    chunks = chunk_by_title(elements, multipage_sections=True, combine_text_under_n_chars=0)
 
     assert chunks == [
         CompositeElement(
@@ -206,30 +206,63 @@ def test_add_chunking_strategy_on_partition_html():
     assert chunk_elements == chunks
 
 
+def test_add_chunking_strategy_respects_max_characters():
+    filename = "example-docs/example-10k-1p.html"
+    chunk_elements = partition_html(
+        filename,
+        chunking_strategy="by_title",
+        combine_text_under_n_chars=0,
+        new_after_n_chars=50,
+        max_characters=100,
+    )
+    elements = partition_html(filename)
+    chunks = chunk_by_title(
+        elements,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=50,
+        max_characters=100,
+    )
+
+    for chunk in chunks:
+        assert len(chunk.text) <= 100
+    for chunk_element in chunk_elements:
+        assert len(chunk_element.text) <= 100
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
 def test_add_chunking_strategy_on_partition_html_respects_multipage():
     filename = "example-docs/example-10k-1p.html"
     partitioned_elements_multipage_false_combine_chars_0 = partition_html(
         filename,
         chunking_strategy="by_title",
         multipage_sections=False,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     partitioned_elements_multipage_true_combine_chars_0 = partition_html(
         filename,
         chunking_strategy="by_title",
         multipage_sections=True,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     elements = partition_html(filename)
     cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(
         elements,
         multipage_sections=False,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(
         elements,
         multipage_sections=True,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     assert (
         partitioned_elements_multipage_false_combine_chars_0
@@ -244,7 +277,22 @@ def test_add_chunking_strategy_on_partition_html_respects_multipage():
     )
 
 
-def test_add_chunking_strategy_raises_error_for_invalid_n_chars():
+@pytest.mark.parametrize(
+    ("combine_text_under_n_chars", "new_after_n_chars", "max_characters"),
+    [
+        (-1, -1, -1),  # invalid chunk size
+        (0, 0, 0),  # invalid max_characters
+        (-5666, -6777, -8999),  # invalid chunk size
+        (-5, 40, 50),  # invalid chunk size
+        (50, 70, 20),  # max_characters needs to be greater than new_after_n_chars
+        (70, 50, 50),  # combine_text_under_n_chars needs to be les than new_after_n_chars
+    ],
+)
+def test_add_chunking_strategy_raises_error_for_invalid_n_chars(
+    combine_text_under_n_chars,
+    new_after_n_chars,
+    max_characters,
+):
     elements = [
         Title("A Great Day"),
         Text("Today is a great day."),
@@ -258,7 +306,52 @@ def test_add_chunking_strategy_raises_error_for_invalid_n_chars():
         CheckBox(),
     ]
     with pytest.raises(ValueError):
-        chunk_by_title(elements, combine_under_n_chars=1, new_after_n_chars=0)
+        chunk_by_title(
+            elements,
+            combine_text_under_n_chars=combine_text_under_n_chars,
+            new_after_n_chars=new_after_n_chars,
+            max_characters=max_characters,
+        )
+
+
+def test_chunk_by_title_drops_detection_class_prob():
+    elements = [
+        Title(
+            "A Great Day",
+            metadata=ElementMetadata(
+                detection_class_prob=0.5,
+            ),
+        ),
+        Text(
+            "Today is a great day.",
+            metadata=ElementMetadata(
+                detection_class_prob=0.62,
+            ),
+        ),
+        Text(
+            "It is sunny outside.",
+            metadata=ElementMetadata(
+                detection_class_prob=0.73,
+            ),
+        ),
+        Title(
+            "An Okay Day",
+            metadata=ElementMetadata(
+                detection_class_prob=0.84,
+            ),
+        ),
+        Text(
+            "Today is an okay day.",
+            metadata=ElementMetadata(
+                detection_class_prob=0.95,
+            ),
+        ),
+    ]
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
+    assert str(chunks[0]) == str(
+        CompositeElement("A Great Day\n\nToday is a great day.\n\nIt is sunny outside."),
+    )
+    assert str(chunks[1]) == str(CompositeElement("An Okay Day\n\nToday is an okay day."))
 
 
 def test_chunk_by_title_drops_extra_metadata():
@@ -335,7 +428,7 @@ def test_chunk_by_title_drops_extra_metadata():
         ),
     ]
 
-    chunks = chunk_by_title(elements, combine_under_n_chars=0)
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
 
     assert str(chunks[0]) == str(
         CompositeElement("A Great Day\n\nToday is a great day.\n\nIt is sunny outside."),

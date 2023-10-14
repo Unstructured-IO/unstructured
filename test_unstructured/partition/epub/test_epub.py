@@ -1,11 +1,11 @@
 import os
 import pathlib
 
+from test_unstructured.unit_utils import assert_round_trips_through_JSON
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Table, Text
 from unstructured.partition.epub import partition_epub
-from unstructured.partition.json import partition_json
-from unstructured.staging.base import elements_to_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 expected_sections = {
@@ -33,6 +33,8 @@ def test_partition_epub_from_filename():
         assert element.metadata.section is not None
         all_sections.add(element.metadata.section)
     assert all_sections == expected_sections
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {"epub"}
 
 
 def test_partition_epub_from_filename_returns_table_in_elements():
@@ -172,17 +174,11 @@ def test_partition_epub_from_file_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_epub_with_json(
-    filename=os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub"),
-):
+def test_partition_epub_with_json():
+    filename = "example-docs/winter-sports.epub"
     elements = partition_epub(filename=filename)
-    test_elements = partition_json(text=elements_to_json(elements))
 
-    assert len(elements) == len(test_elements)
-    assert elements[0].metadata.filename == test_elements[0].metadata.filename
-    assert elements[0].metadata.section == test_elements[0].metadata.section
-    for i in range(len(elements)):
-        elements[i] == test_elements[i]
+    assert_round_trips_through_JSON(elements)
 
 
 def test_add_chunking_strategy_on_partition_epub(
@@ -193,3 +189,37 @@ def test_add_chunking_strategy_on_partition_epub(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_add_chunking_strategy_on_partition_epub_non_default(
+    filename=os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub"),
+):
+    elements = partition_epub(filename=filename)
+    chunk_elements = partition_epub(
+        filename,
+        chunking_strategy="by_title",
+        max_characters=5,
+        new_after_n_chars=5,
+        combine_text_under_n_chars=0,
+    )
+    chunks = chunk_by_title(
+        elements,
+        max_characters=5,
+        new_after_n_chars=5,
+        combine_text_under_n_chars=0,
+    )
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_partition_epub_element_metadata_has_languages():
+    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "winter-sports.epub")
+    elements = partition_epub(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_epub_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.epub"
+    elements = partition_epub(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]

@@ -221,14 +221,7 @@ install-paddleocr:
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
 pip-compile:
-	@for file in $(shell ls requirements/*.in); do \
-		if [[ "$${file}" =~ "constraints" ]]; then \
-			continue; \
-		fi; \
-		echo "running: pip-compile --upgrade $${file}"; \
-		pip-compile --upgrade $${file}; \
-	done
-	cp requirements/build.txt docs/requirements.txt
+	@scripts/pip-compile.sh
 
 
 
@@ -248,11 +241,13 @@ uninstall-project-local:
 #################
 
 export CI ?= false
+export UNSTRUCTURED_INCLUDE_DEBUG_METADATA ?= false
 
 ## test:                    runs all unittests
 .PHONY: test
 test:
-	PYTHONPATH=. CI=$(CI) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
+	PYTHONPATH=. CI=$(CI) \
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
 
 .PHONY: test-unstructured-api-unit
 test-unstructured-api-unit:
@@ -261,7 +256,8 @@ test-unstructured-api-unit:
 .PHONY: test-no-extras
 # TODO(newelh) Add json test when fixed
 test-no-extras:
-	PYTHONPATH=. CI=$(CI) pytest \
+	PYTHONPATH=. CI=$(CI) \
+		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest \
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
 		test_${PACKAGE_NAME}/partition/test_html_partition.py \
@@ -295,7 +291,7 @@ test-extra-odt:
 .PHONY: test-extra-pdf-image
 test-extra-pdf-image:
 	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/pdf-image
+		test_${PACKAGE_NAME}/partition/pdf_image
 
 .PHONY: test-extra-pptx
 test-extra-pptx:
@@ -401,7 +397,9 @@ docker-test:
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/notebook-user/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
-	bash -c "CI=$(CI) pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
+	bash -c "CI=$(CI) \
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
+	pytest $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
 
 .PHONY: docker-smoke-test
 docker-smoke-test:

@@ -1,7 +1,7 @@
 [
   {
     "type": "Title",
-    "element_id": "720a6f5640af3333283ae0a2b6ef5d4d",
+    "element_id": "8b115710b659086909de658b116dd719",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -16,45 +16,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "a Department of the Treasury Internal Revenue Service"
-  },
-  {
-    "type": "Title",
-    "element_id": "88591a76b54e47215c0827ae8838ec13",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Instructions for Form 3115 (Rev. November 1987)"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "4a17cc01a68e2bf011ba1458d70f369a",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Application for Change in Accounting Method"
+    "text": "a Department of the Treasury Internal Revenue Service Instructions for Form 3115 (Rev. November 1987) Application for Change in Accounting Method"
   },
   {
     "type": "NarrativeText",
@@ -96,7 +58,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "828767cbc922e731b59894afba55fe10",
+    "element_id": "5d18f0234e23bc96198c9fb19601056a",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -111,7 +73,45 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "We ask for this information to carry out the Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws and to allow us to figure and collect the right amount of tax. You are required to give us this information."
+    "text": "We ask for this information to carry out the"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "b00492d57199616b7b5459cdf57a58d2",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws and to allow us to figure and collect the right amount of tax. You are required to us this information."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "0895a532e404a5c9ea96eac7982d268f",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "give"
   },
   {
     "type": "Title",
@@ -153,7 +153,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "2ef3cbc8d359155433a0028e73251f95",
+    "element_id": "fdb8017fc73bdc12f7200dece8b76c99",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -168,11 +168,49 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "File this form to request a change in your accounting method, including the accounting treatment of any item. If you are requesting a change in accounting period, use Form 1128, Application for Change in Accounting Period. For more information, see Publication 538, Accounting Periods and Methods. When filing Form 3115, taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115),"
+    "text": "File this form to request a change in your accounting method, including the accounting treatment of any item. If you are requesting a change in accounting period, use Form 1128, Application for Change in Accounting Period. For more information, see Publication 538, Accounting Periods and Methods."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "2127f2ab4fc4feb4d32460c8317bf02f",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Form 3115,"
+  },
+  {
+    "type": "Title",
+    "element_id": "cf9c7aa24a26aac4f0ec4b6395cbfdcc",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "When"
   },
   {
     "type": "NarrativeText",
-    "element_id": "84e7e32f584e2ee9f47ba593bf86c559",
+    "element_id": "7e3ae97a65f12ef0bb8b4d6b5f721f54",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -187,11 +225,30 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Generally, applicants must complete Section A. In addition, complete the appropriate sections (B-1 through H) for which a change Is desired."
+    "text": "filing taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115),"
+  },
+  {
+    "type": "Title",
+    "element_id": "093856d810a56c1557ce2b24c65abf3d",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Long-term contracts. —If"
   },
   {
     "type": "NarrativeText",
-    "element_id": "ed7dba38aff5b289c7b6c8a58e800279",
+    "element_id": "4a1ba7ce20dde03bf464633002f14b10",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -206,7 +263,159 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "You must give all relevant facts, including a detailed description of your present and proposed methods. You must also state the reason(s) you believe approval to make the requested change should be granted. Attach additional pages if more space is needed for explanations. Each page should show your name, address, and identifying number. State whether you desire a conference in the National Office if the Service proposes to disapprove your application."
+    "text": "are required to"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c7c37f80c11190ab9416495a0d9b7c6e",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "you change your method of accounting for long-term contracts under section 460, see Notice 87-61 (9/21/87), 1987-38 IRB 40, for the notification procedures that must be followed."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "6272a6df76820c927d081a1041e3c079",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes !n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of income attributable to the sale or furnishing of utility services no later than the year In which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these"
+  },
+  {
+    "type": "Title",
+    "element_id": "d3eda7d7ed44b4b43fcbfa6f83f6fad3",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "changes."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "faf2673a7d6b6f7c5bf7cae6770a4130",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Generally, applicants must complete Section In addition, complete the appropriate sections (B-1 through H) for which a change Is desired."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "e53657178cb6855ac4b2029197a64b0c",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "A."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "bf2a070cb9d03d056e70b26bebf1ef79",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "You must give all relevant facts, including a detailed description of your present and proposed methods. You must also state the reason(s) you believe approval to make the requested change should be granted. Attach additional pages if more space is needed for explanations. Each page should show your name, address, and identifying number."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "10626f80b0f7b25e661f8f82f5d7c454",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "State whether you desire a conference in National Office if the Service proposes to disapprove your application."
+  },
+  {
+    "type": "Title",
+    "element_id": "b9776d7ddf459c9ad5b0e1d6ac61e27b",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "the"
   },
   {
     "type": "Title",
@@ -229,7 +438,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "eb076cfd3d47e546c28611750afedc49",
+    "element_id": "582deac2def308ecc5250773e1683052",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -244,11 +453,11 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and"
+    "text": "Uniform capitalization rules and limitation on cash method.—If you are required to change your method of accounting under section,263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change 1s treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustrnents into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required."
   },
   {
     "type": "NarrativeText",
-    "element_id": "0b320308ba52d4a9625d29cadfc941a9",
+    "element_id": "550f9e99054c657264fb9bb26d3023de",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -263,64 +472,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Uniform capitalization rules and limitation on cash method.—If you are required to change your method of accounting under section,263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change 1s treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustrnents into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required. Disregard the instructions under Time and"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "ee134711b01cac75692565ae4f785fd4",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method—Section 448\"). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "7b7c33680de5c4a7cb165c103752579e",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Long-term contracts. —If you are required to change your method of accounting for long-term contracts under section 460, see Notice 87-61 (9/21/87), 1987-38 IRB 40, for the notification procedures that must be followed. Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes !n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of income attributable to the sale or furnishing of utility services no later than the year In which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these changes."
-  },
-  {
-    "type": "Title",
-    "element_id": "af8bdf713f162b09567c8d1a3a2d4de7",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Generally, applicants must file this form within the first 180 days of the tax year in which it is desired to make the change."
+    "text": "Disregard the instructions under Time and Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method—Section 448\"). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information."
   },
   {
     "type": "Title",
@@ -343,7 +495,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "2aebd5bbfbc983d52ed7aee8eb7bc7cc",
+    "element_id": "af8bdf713f162b09567c8d1a3a2d4de7",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -358,11 +510,11 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Taxpayers, other than exempt organizations, should file Form 3115 with the Commissioner of Internal Revenue, Attention: CC:C:4, 1111 Constitution Avenue, NW, Washington, DC 20224, Exempt organizations should file with the Assistant Commissioner (Employee Plans and Exempt Organizations), 1111 Constitution Avenue, NW, Washington, DC 20224. You should normally receive an acknowledgment of receipt of your application within 30 days. If you do not hear from IRS within 30 days of submitting your completed Form 3115, you may inquire as to the receipt of your application by writing to: Control Clerk, CC:C:4, Internal Revenue Service, Room 5040, 1111 Constitution Avenue, NW, Washington, DC 20224."
+    "text": "Generally, applicants must file this form within the first 180 days of the tax year in which it is desired to make the change."
   },
   {
     "type": "NarrativeText",
-    "element_id": "0ec978b05caa71414e2f4429b1d18f09",
+    "element_id": "9dda11db48254f5e0d0000afb5d1dd9b",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -377,10 +529,67 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "See section 5.03 of Rev. Proc. 84-74 for filing an early application."
+    "text": "Taxpayers, other than exempt organizations, should file Form 3115 with the Commissioner of Internal Revenue, Attention: CC:C:4, 1111 Constitution Avenue, NW, Washington, DC 20224, Exempt organizations should file with the Assistant Commissioner (Employee Plans and Exempt Organizations), 1111 Constitution Avenue, NW, Washington, DC 20224."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4d063cdbd131401fa29e1d0e824dc017",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "You should normally receive an acknowledgment of receipt of your application within 30 days. If you do not hear from IRS within 30 days of submitting your completed Form 3115, you may inquire as to the receipt of your application by writing to: Control Clerk, CC:C:4, Internal Revenue Service, Room 5040, 1111 Constitution Avenue, NW, Washington, DC 20224."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c56ebb2883fe0c95b8564fa3969f7010",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "See section 5.03 of Rev. Proc. 84-74 for filing early application."
   },
   {
     "type": "Title",
+    "element_id": "ea325d761f98c6b73320e442b67f2a35",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "an"
+  },
+  {
+    "type": "NarrativeText",
     "element_id": "12f877f0bd47f9b761ed7e74be1afacd",
     "metadata": {
       "data_source": {
@@ -476,7 +685,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "742730130f9c14403ad272eec208a456",
+    "element_id": "7d82c5876c5c1a3596338ae8cfbd1a50",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -491,11 +700,11 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Others.-—The employer identification number of an applicant other than an individual should be entered in this block."
+    "text": "Others.-—The employer identification number applicant other than an individual should be entered in this block."
   },
   {
-    "type": "ListItem",
-    "element_id": "ede9004eceddf828c2c928f62d0687a0",
+    "type": "Title",
+    "element_id": "ea325d761f98c6b73320e442b67f2a35",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -510,7 +719,26 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Signature Individuals. —An individual desiring the change should sign the application. If the application pertains to a husband and wife filing a joint income tax return, the names of both should appear in the heading and both should sign. Partnerships.—The form should be signed with the partnership name followed by the signature of one of the general partners and the words “General Partner.” Corporations, cooperatives, and insurance companies.—The form should show the name of the corporation, cooperative, or insurance company and the signature of the president, vice president, treasurer, assistant treasurer, or chief accounting officer (such as tax officer) authorized to sign, and his or her official title. Receivers, trustees, or assignees must sign any application they are required to file. For a subsidiary corporation filing a consolidated return with its parent, the form should be signed by an officer of the parent corporation. Fiduciaries.—The-form should show the name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrix, etc., having legal authority to sign, and his or her title. Preparer other than partner, officer, etc.—The signature of the individual preparing the application should appear in the space provided on page 6. If the individual or firm is also authorized to"
+    "text": "an"
+  },
+  {
+    "type": "Title",
+    "element_id": "28391d3bc64ec15cbb090426b04aa6b7",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "of"
   },
   {
     "type": "Title",
@@ -532,8 +760,8 @@
     "text": "Signature"
   },
   {
-    "type": "Title",
-    "element_id": "1df7107903f249d938fbf3710f50283a",
+    "type": "NarrativeText",
+    "element_id": "dc1531183c8e3f45a78f110ec1efe15f",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -548,7 +776,140 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "If the individual or firm is also authorized to represent the applicant before the IRS, receive a copy of the requested ruling, or perform any other act(s), the power of attorney must reflect such authorization(s)."
+    "text": "Individuals. —An individual desiring the change should sign the application. If the application pertains to a husband and wife filing a joint income tax return, the names of both should appear in the heading and both should sign."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "7d3a67d75914a504a52ec53998b796af",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Partnerships.—The form should be signed with the partnership name followed by the signature of one of the general partners and the words “General Partner.”"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9de285e8e3b042aa9ac86edde98a21a9",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Corporations, cooperatives, and insurance companies.—The form should show the name of the corporation, cooperative, or insurance company and the signature of the president, vice president, treasurer, assistant treasurer, or chief accounting officer (such as tax officer) authorized to sign, and his or her official title. Receivers, trustees, or assignees must sign any application they are required to file. For a subsidiary corporation filing a consolidated return with its parent, the form should be signed by an officer of the parent corporation."
+  },
+  {
+    "type": "Title",
+    "element_id": "f5ea55c27511707a88f8efadcdf50b55",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Fiduciaries.—The-form"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ca02af326f3caed052e30728481fc4fe",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "should show the name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrix, etc., having legal authority to sign, and his or her title."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "52e2b8e4b8527ae448e9db2dfd0c43c7",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Preparer other than partner, officer, etc.—The signature of the individual preparing the application should appear in the space provided on page 6."
+  },
+  {
+    "type": "Title",
+    "element_id": "ca978112ca1bbdcafac231b39a23dc4d",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "a"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "12a24aabbcef2cabc07babe12d9c82c5",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "If the individual or firm is also authorized to represent the applicant before the IRS, receive copy of the requested ruling, or perform any other act(s), the power of attorney must reflect such authorization(s)."
   },
   {
     "type": "Title",
@@ -590,7 +951,7 @@
   },
   {
     "type": "Title",
-    "element_id": "58703de56debc34a1d68e6ed6f8fd067",
+    "element_id": "8b838d95f7d4f66b5453307de1353ff4",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -605,11 +966,11 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Specific Instructions Section A"
+    "text": "Specific Instructions"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "33b0dd2cec2ea60810343af08d53ded2",
+    "type": "Title",
+    "element_id": "bc272940e494acf9441070d3eb4b79f6",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -624,11 +985,68 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Item 5a, page 1.—“Taxable income or (loss) from operations” is to be entered before application of any net operating loss deduction under section 172(a). Item 6, page 2.—The term “gross receipts” includes total sales (net of returns and allowances) and all amounts received for services. In addition, gross receipts include any income from investments and from incidental or outside sources (e.g., interest, dividends, rents, royalties, and annuities). However, if you are a resaler of personal property, exclude from gross receipts any amounts not derived in the ordinary course of a trade or business. Gross receipts do not include amounts received for sales taxes if, under the applicable state or local law, the tax is legally imposed on the purchaser of the good or service, and the taxpayer merely collects and remits the tax to the taxing authority. Item 7b, page 2.—If item 7b 1s “Yes,” indicate on a separate sheet the following for each separate trade or business: Nature of business"
+    "text": "Section A"
   },
   {
     "type": "NarrativeText",
-    "element_id": "c51052c424ee3b8b5a219015f66d4846",
+    "element_id": "b57b7502430c59194bb865cfa1bcfab5",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Item 5a, page 1.—“Taxable income or (loss) from operations” is to be entered before application of any net operating loss deduction under section 172(a)."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9eefeb9556d95a8dd563ff3270cae7f4",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Item 6, page 2.—The term “gross receipts” includes total sales (net of returns and allowances) and all amounts received for services. In addition, gross receipts include any income from investments and from incidental or outside sources (e.g., interest, dividends, rents, royalties, and annuities). However, if you are a resaler of personal property, exclude from gross receipts any amounts not derived in the ordinary course of a trade or business. Gross receipts do not include amounts received for sales taxes if, under the applicable state or local law, the tax is legally imposed on the purchaser of the good or service, and the taxpayer merely collects and remits the tax to the taxing authority."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "3e63f740940cd3ab94c17d2bbf48b13a",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Item 7b, page 2.—If item 7b 1s “Yes,” indicate on a separate sheet the following for each separate trade or business: Nature of business"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "3db206c935841c3dcd5b3a1d41e56b84",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -643,11 +1061,11 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "(manufacturing, retailer, wholesaler, etc.), employer identification number, overall method of accounting, and whether, in the last 6 years, that business has changed its accounting method, or is also changing its accounting method as part of this request or as a separate request. Item 11, page 2.—If you cannot provide the requested information, you may sign a statement under penalties of perjury that:"
+    "text": "(manufacturing, retailer, wholesaler, etc.), employer identification number, overall method of accounting, and whether, in the last 6 years, that business has changed its accounting method, or is also changing its accounting method as part of this request or as a separate request."
   },
   {
     "type": "NarrativeText",
-    "element_id": "1bbe995811e9fd4c3ce1b218cb641f4e",
+    "element_id": "48ddf405e03a362566cdbc32cc5cd11c",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -662,11 +1080,11 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "(1) Gives your best estimate of the percentage of the section 481(a) adjustment that would have been required if the requested change had been made for each of the 3 preceding years; and"
+    "text": "Item 11, page 2.—If you cannot provide the requested information, you may sign a statement under penalties of perjury that:"
   },
   {
     "type": "NarrativeText",
-    "element_id": "f7872ac379aa024934461d08fa31ebd9",
+    "element_id": "81f087b1fcf4c9870324336c6bc0de78",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -681,11 +1099,11 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "(2) Explains in detail why you cannot provide the requested information."
+    "text": "(1) Gives your best estimate of the percentage the section 481(a) adjustment that would have been required if the requested change had been made for each of the 3 preceding years; and"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "2de8f0b5003bcb8c12a4dc59c8e1f740",
+    "type": "Title",
+    "element_id": "28391d3bc64ec15cbb090426b04aa6b7",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -700,7 +1118,102 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "See section 5.06(2) of Rev. Proc. 84-74 for the required perjury statement that must be attached."
+    "text": "of"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "cde0777402fde810d0fb24b15df92b2b",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "(2) Explains in detail why you cannot provide requested information."
+  },
+  {
+    "type": "Title",
+    "element_id": "b9776d7ddf459c9ad5b0e1d6ac61e27b",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "the"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c855d896f610600602f04d9e31253c91",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "See section 5.06(2) of Rev. Proc. 84-74 for required perjury statement that must be attached."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "1734a701c8a3139ddcb5b857f697318f",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "If IRS later examines your return for the year change or for later years, it has the right to verify your statement at that time."
+  },
+  {
+    "type": "Title",
+    "element_id": "b9776d7ddf459c9ad5b0e1d6ac61e27b",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "the"
   },
   {
     "type": "NarrativeText",
@@ -720,25 +1233,6 @@
       "page_number": 2
     },
     "text": "Item 13, page 2.—Insert the actual number of tax years. Use of the term “since inception” 1s not acceptable. However, “more than 6 years” Is acceptable."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "678ecc0340dc8848f891bf12a555a3fd",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "If IRS later examines your return for the year of the change or for later years, it has the right to verify your statement at that time."
   },
   {
     "type": "Title",
@@ -798,27 +1292,8 @@
     "text": "Sections B-2 and B-3"
   },
   {
-    "type": "Title",
-    "element_id": "4688916bf1d6b205af02a0e954156688",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Limitation on the Use of the Cash Method of Accounting. —Except as provided below, C"
-  },
-  {
     "type": "NarrativeText",
-    "element_id": "aaf93c2be8f4f2db87bd760783fedfa5",
+    "element_id": "eac562ca19f6198691856c695e2790bd",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -833,7 +1308,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "corporations, partnerships with a C corporation as a partner, and tax shelters may not use the cash method of accounting. For purposes of this limitation, a trust subject to the tax on unrelated business income under section 511 1s treated as aC corporation with respect to its unrelated trade or business activities."
+    "text": "Limitation on the Use of the Cash Method of Accounting. —Except as provided below, C corporations, partnerships with a C corporation as a partner, and tax shelters may not use the cash method of accounting. For purposes of this limitation, a trust subject to the tax on unrelated business income under section 511 1s treated as aC corporation with respect to its unrelated trade or business activities."
   },
   {
     "type": "NarrativeText",
@@ -855,7 +1330,7 @@
     "text": "The limitation on the use of the cash method (except for tax shelters) does not apply to—"
   },
   {
-    "type": "ListItem",
+    "type": "NarrativeText",
     "element_id": "69bd87b2ad5873c030748e62adf61b89",
     "metadata": {
       "data_source": {
@@ -875,7 +1350,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "0607edfa2419dd0cdc80f457872fe238",
+    "element_id": "df67e4b3a4a1352209c2648b87d675e2",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -890,11 +1365,68 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "(2) Qualified personal service corporations. — A “qualified personal service corporation” is any corporation: (a) substantially all of the activities of which involve the performance of services in the fields of health, law,"
+    "text": "(2) Qualified personal service corporations. — A “qualified personal service corporation” is any corporation: (a) substantially all of the activities of which involve the performance of services in the fields of health, law, engineering, architecture, accounting, actuarial science, performing arts, or consulting, and (b)"
+  },
+  {
+    "type": "Title",
+    "element_id": "794f7062cf3f56f2c7d70702bd3d13e1",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Page 2"
+  },
+  {
+    "type": "Title",
+    "element_id": "b9776d7ddf459c9ad5b0e1d6ac61e27b",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "the"
+  },
+  {
+    "type": "Title",
+    "element_id": "28391d3bc64ec15cbb090426b04aa6b7",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "of"
   },
   {
     "type": "NarrativeText",
-    "element_id": "50d16fd6b40a428c3befaf6dd19c2dcd",
+    "element_id": "44902073e7cc4fa753f25d40e009dcef",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -909,11 +1441,11 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "engineering, architecture, accounting, actuarial science, performing arts, or consulting, and (b)"
+    "text": "substantially all of the stock of which is owned by employees performing the services, retired employees who had performed the services, any estate of any individual who had performed the services listed above, or any person who acquired stock of the corporation as a result of the death of an employee or retiree described above if the acquisition occurred within 2 years of death."
   },
   {
     "type": "NarrativeText",
-    "element_id": "64758ada28beed36481b14ce8dc67472",
+    "element_id": "b68a5b5b0d59122e0df42a96d68d2b5e",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -928,7 +1460,26 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "substantially all of the stock of which is owned by employees performing the services, retired employees who had performed the services, any estate of any individual who had performed the services listed above, or any person who acquired stock of the corporation as a result of the death of an employee or retiree described above if the acquisition occurred within 2 years of death. (3) Entities with gross receipts of $5,000,000 or less. —To qualify for this exception, the C corporation's or partnership’s annual average gross receipts for the three years ending with the prior tax year may not exceed $5,000,000. If the corporation or partnership was not in existence for the entire 3-year period, the period of existence is used to determine whether the corporation or partnership qualifies. If any tax year in the 3-year period is a short tax year, the corporation or partnership must annualize the gross receipts by multiplying the gross receipts by 12 and dividing the result by the number of months in the short period. For more information, see section 448 and Temporary Regulations section 1.448-1T."
+    "text": "(3) Entities with gross receipts of $5,000,000 or less. —To qualify for this exception, the C corporation's or partnership’s annual average gross receipts for the three years ending with the prior tax year may not exceed $5,000,000. If the corporation or partnership was not in existence for the entire 3-year period, the period of existence is used to determine whether the corporation or partnership qualifies. If any tax year in the 3-year period is a short tax year, the corporation or partnership must annualize the gross receipts by multiplying the gross receipts by 12 and dividing the result by the number of months in the short period."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "a50ed92585ec98497171f56bc829c16a",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "For more information, see section 448 and Temporary Regulations section 1.448-1T."
   },
   {
     "type": "Title",
@@ -951,7 +1502,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "6d2d2cfa00e5a8caec71ba799f60f8c6",
+    "element_id": "a9e8c96063f3fea7ea05eb3cd41ebe7a",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -966,11 +1517,11 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Applicants must give complete details about the present method of valuing inventory and the proposed method. State whether all or part of your inventory ts involved in the change. Inventories of retail merchants.—The retail method of pricing inventories does not contemplate valuation of goods at the retail selling price. The retail selling price of goods on hand must be reduced to approximate cost or cost or market, whichever Is lower, by the adjustments required in Regulations section 1.471-8."
+    "text": "Applicants must give complete details about the present method of valuing inventory and the proposed method. State whether all or part of your inventory ts involved in the change."
   },
   {
     "type": "NarrativeText",
-    "element_id": "357d52f500b965abc29ea60039de4fd8",
+    "element_id": "7e90b155b5cdb2481b1dfbb1118142c5",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -985,11 +1536,11 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "LIFO inventory changes.—Attach a schedule with all the required computations when changing the method of figuring LIFO inventories. If you are changing from LIFO to a non-LIFO method, attach a schedule with the following additional information:"
+    "text": "Inventories of retail merchants.—The retail method of pricing inventories does not contemplate valuation of goods at the retail selling price. The retail selling price of goods on hand must be reduced to approximate cost or cost or market, whichever Is lower, by the adjustments required in Regulations section 1.471-8."
   },
   {
     "type": "NarrativeText",
-    "element_id": "1ac3e7aa5a6139bd80f05a7ac1f63ddf",
+    "element_id": "bbd0f86d34b7622cfff546da0c15584d",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1004,11 +1555,30 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "(1) The specific types and classes of goods in the LIFO inventories involved in the proposed changes and the comparative value of such Inventories as of the end of the tax year preceding the year of change determined by: (a) the LIFO method, and (b) the proposed method and basis (such as FIFO cost or lower of cost or market). (2) State whether the proposed identification and valuation methods conform to the inventory method currently used with respect to non-LIFO Inventories, if any, or how such method is otherwise consistent with Regulations section 1.4726."
+    "text": "LIFO inventory changes.—Attach a schedule with all the required computations when changing the method of figuring LIFO inventories. you are changing from LIFO to a non-LIFO method, attach a schedule with the following additional information:"
+  },
+  {
+    "type": "Title",
+    "element_id": "1e3abf61a37e3cad36b11b459b1cc39e",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "If"
   },
   {
     "type": "NarrativeText",
-    "element_id": "6028c579dc843bb5aa2c704f46085914",
+    "element_id": "347f638641329c72c971a522ec07f6b1",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1023,7 +1593,102 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "(3) The termination event statement required by section 5.10 of Rev. Proc. 84-74 and an explanation if there has been a termination event."
+    "text": "(1) The specific types and classes of goods in the LIFO inventories involved in the proposed changes and the comparative value of such Inventories as of the end of the tax year preceding the year of change determined by: (a) the LIFO method, and (b) the proposed method and basis (such as FIFO cost or lower of cost or market)."
+  },
+  {
+    "type": "Title",
+    "element_id": "e850deb3f1e65c13e7cd728279a472bf",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "State whether the"
+  },
+  {
+    "type": "Title",
+    "element_id": "fd3dfa76050e048e229d35a01da6974a",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "identification"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "aca21cfeadca7d527dd36f01005ff44a",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "(2) proposed and valuation methods conform to the inventory method currently used with respect to non-LIFO Inventories, if any, or how such method is otherwise consistent with Regulations section 1.4726."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4a9430201a20b0868ab81c8c9e71b881",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "(3) The termination event statement required section 5.10 of Rev. Proc. 84-74 and an explanation if there has been a termination event."
+  },
+  {
+    "type": "Title",
+    "element_id": "a7e2d26e8d15814dd9c6a1bdc90585c8",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "by"
   },
   {
     "type": "Title",
@@ -1045,8 +1710,8 @@
     "text": "Section D"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "a8e72799229bc2d754f44ea167a6e7d6",
+    "type": "Title",
+    "element_id": "663ea1bfffe5038f3f0cf667f14c4257",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1061,7 +1726,83 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Applicants requesting to change their method of valuing property produced, property acquired for resale, or long-term contracts under section 263A or 460 MUST complete section D showing the treatment under both the present and proposed methods."
+    "text": "to"
+  },
+  {
+    "type": "Title",
+    "element_id": "7574058dd32c12eb33bc649b5e36bdcb",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "their method of"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "3167823c1d2039b4c48efe2f6c89b5c2",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Applicants requesting change valuing property produced, property acquired for resale, or long-term contracts under section 263A or 460 MUST complete section D showing the treatment under both the present and proposed methods."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "%"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4bde94dc330268d2f63a09423409c6d4",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "U.S. Government Printing Office: 1987—201-993/60166"
   },
   {
     "type": "Title",
@@ -1083,7 +1824,7 @@
     "text": "Section E"
   },
   {
-    "type": "ListItem",
+    "type": "NarrativeText",
     "element_id": "86fab9f7b35d56a2d48baf0782b7c53d",
     "metadata": {
       "data_source": {
@@ -1102,8 +1843,8 @@
     "text": "Section 460(f) provides that the term “long-term contract” means any contract for the manufacturing, building, installation, or construction of property that is not completed within the tax year in which it 1s entered into. However, a manufacturing contract will not qualify as a long-term contract unless the contract involves the manufacture of: (1) a unique item not normally included in your finished goods inventory, or (2) any item that normally requires more than 12 calendar months to complete."
   },
   {
-    "type": "ListItem",
-    "element_id": "84cea2af17bb3760234b42f4ea78e175",
+    "type": "NarrativeText",
+    "element_id": "825f9197a40400f76d2a527e8d7a2c71",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1118,7 +1859,26 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "All long-term contracts entered into after February 28, 1986, except for real property construction contracts expected to be completed within 2 years by contractors whose average annual gross receipts for the 3 prior tax years do not exceed $10,000,000, must be accounted for using either the percentage of completion- capitalized cost method or the percentage of completion method. See section 460. Caution: At the time these instructions were printed, Congress was considering legislation that would repeal the use of the percentage of completion-capitalized cost method for certain long-term contracts."
+    "text": "All long-term contracts entered into after February 28, 1986, except for real property construction contracts expected to be completed within 2 years by contractors whose average annual gross receipts for the 3 prior tax years do not exceed $10,000,000, must be accounted for using either the percentage of completion- capitalized cost method or the percentage of completion method. See section 460."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "dcf589bb37d079ecce4b375abc332606",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Caution: At the time these instructions were printed, Congress was considering legislation that would repeal the use of the percentage of completion-capitalized cost method for certain long-term contracts."
   },
   {
     "type": "Title",
@@ -1141,7 +1901,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "fa41a857716f30d6bbee384eada72a90",
+    "element_id": "cf5e2bc86b7c77533924eb940fd522d5",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1156,7 +1916,45 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "This section Is to be used only to request a change in a method of accounting for depreciation under section 167. Rev. Proc. 74-11 provides a procedure whereby applicants are considered to have obtained the consent of the Commissioner to change their method of accounting for depreciation. You must file Form 3115 with the Service Center where your return will be filed within the first 180 days of the tax year in which it is desired to make the change. Attach a copy of the form to the income tax return for the tax year of the change. Note: Do not use Form 3115 to make an election under section 168. Such an election may be made only on the tax return for the year in which the property 1s placed in service. In addition, Form 3115 is not to be used to request approval to revoke an election made under section 168. Such a request must be made in accordance with Rev. Proc. 87-1 (updated annually)."
+    "text": "This section Is to be used only to request a change in a method of accounting for depreciation under section 167."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "b8355dc568ea042f9da586188b404bca",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Rev. Proc. 74-11 provides a procedure whereby applicants are considered to have obtained the consent of the Commissioner to change their method of accounting for depreciation. You must file Form 3115 with the Service Center where your return will be filed within the first 180 days of the tax year in which it is desired to make the change. Attach a copy of the form to the income tax return for the tax year of the change."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "319882ba6726e29222f5522c53887960",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": 307846589923949318200712033143133817358,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "Note: Do not use Form 3115 to make an election under section 168. Such an election may be made only on the tax return for the year in which the property 1s placed in service. In addition, Form 3115 is not to be used to request approval to revoke an election made under section 168. Such a request must be made in accordance with Rev. Proc. 87-1 (updated annually)."
   },
   {
     "type": "Title",
@@ -1214,119 +2012,5 @@
       "page_number": 2
     },
     "text": "If you are making an election under section 458, show the applicable information under Regulations section 1.458-10."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c0a5f5aa4012d18970939d7bb8299e38",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "% U.S."
-  },
-  {
-    "type": "Title",
-    "element_id": "c71e90d2f497062ba8d068af0bed2a3d",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Government"
-  },
-  {
-    "type": "Title",
-    "element_id": "c0f169737344e28e87eb123df627ba6a",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Printing"
-  },
-  {
-    "type": "Title",
-    "element_id": "749720aad1daf3c5dfeda1d87555ff87",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Office:"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "de444aa0e8db0c05d86ad56e28d5fb26",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "1987—201-993/60166"
-  },
-  {
-    "type": "Title",
-    "element_id": "794f7062cf3f56f2c7d70702bd3d13e1",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": 307846589923949318200712033143133817358,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "Page 2"
   }
 ]

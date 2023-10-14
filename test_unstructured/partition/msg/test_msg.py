@@ -4,6 +4,7 @@ import pathlib
 import msg_parser
 import pytest
 
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     ElementMetadata,
@@ -11,10 +12,9 @@ from unstructured.documents.elements import (
     NarrativeText,
     Title,
 )
-from unstructured.partition.json import partition_json
 from unstructured.partition.msg import extract_msg_attachment_info, partition_msg
 from unstructured.partition.text import partition_text
-from unstructured.staging.base import elements_to_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
@@ -55,10 +55,13 @@ def test_partition_msg_from_filename():
             subject="Test Email",
             filetype="application/vnd.ms-outlook",
             parent_id=parent_id,
+            languages=["eng"],
         ).to_dict()
     )
     for element in elements:
         assert element.metadata.filename == "fake-email.msg"
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {"msg"}
 
 
 def test_partition_msg_from_filename_returns_uns_elements():
@@ -264,14 +267,8 @@ def test_partition_msg_custom_metadata_date(
 
 
 def test_partition_msg_with_json():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
-    elements = partition_msg(filename=filename)
-    test_elements = partition_json(text=elements_to_json(elements))
-
-    assert elements == test_elements
-    assert elements[0].metadata.sent_from == test_elements[0].metadata.sent_from
-    assert elements[0].metadata.sent_to[0] == test_elements[0].metadata.sent_to[0]
-    assert elements[0].metadata.subject == test_elements[0].metadata.subject
+    elements = partition_msg(example_doc_path("fake-email.msg"))
+    assert_round_trips_through_JSON(elements)
 
 
 def test_partition_msg_with_pgp_encrypted_message(
@@ -285,7 +282,7 @@ def test_partition_msg_with_pgp_encrypted_message(
     assert "Encrypted email detected" in caplog.text
 
 
-def test_add_chunking_strategy_on_partition_msg(
+def test_add_chunking_strategy_by_title_on_partition_msg(
     filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg"),
 ):
     elements = partition_msg(filename=filename)
@@ -293,3 +290,21 @@ def test_add_chunking_strategy_on_partition_msg(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_msg_element_metadata_has_languages():
+    filename = "example-docs/fake-email.msg"
+    elements = partition_msg(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_msg_respects_languages_arg():
+    filename = "example-docs/fake-email.msg"
+    elements = partition_msg(filename=filename, languages=["deu"])
+    assert all(element.metadata.languages == ["deu"] for element in elements)
+
+
+def test_partition_msg_raises_TypeError_for_invalid_languages():
+    with pytest.raises(TypeError):
+        filename = "example-docs/fake-email.msg"
+        partition_msg(filename=filename, languages="eng")

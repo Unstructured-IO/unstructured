@@ -1,18 +1,60 @@
-from typing import List
+import os
+from typing import List, Tuple
 
 import numpy as np
 
 from unstructured.documents.elements import CoordinatesMetadata, Element
 from unstructured.logger import trace_logger
-from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
-from unstructured.partition.utils.xycut import recursive_xy_cut
+from unstructured.partition.utils.constants import (
+    SORT_MODE_BASIC,
+    SORT_MODE_XY_CUT,
+)
+from unstructured.partition.utils.xycut import recursive_xy_cut, recursive_xy_cut_swapped
 
 
-def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> List[int]:
+def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> Tuple[int, int, int, int]:
+    """
+    Convert coordinates to a bounding box representation.
+
+    Parameters:
+        coordinates (CoordinatesMetadata): Metadata containing points to represent the bounding box.
+
+    Returns:
+        Tuple[int, int, int, int]: A tuple representing the bounding box in the format
+        (left, top, right, bottom).
+    """
+
     points = coordinates.points
     left, top = points[0]
     right, bottom = points[2]
-    return [int(left), int(top), int(right), int(bottom)]
+    return int(left), int(top), int(right), int(bottom)
+
+
+def shrink_bbox(bbox: Tuple[int, int, int, int], shrink_factor) -> Tuple[int, int, int, int]:
+    """
+    Shrink a bounding box by a given shrink factor while maintaining its top and left.
+
+    Parameters:
+        bbox (Tuple[int, int, int, int]): The original bounding box represented by
+        (left, top, right, bottom).
+        shrink_factor (float): The factor by which to shrink the bounding box (0.0 to 1.0).
+
+    Returns:
+        Tuple[int, int, int, int]: The shrunken bounding box represented by
+        (left, top, right, bottom).
+    """
+
+    left, top, right, bottom = bbox
+    width = right - left
+    height = bottom - top
+    new_width = width * shrink_factor
+    new_height = height * shrink_factor
+    dw = width - new_width
+    dh = height - new_height
+
+    new_right = right - dw
+    new_bottom = bottom - dh
+    return int(left), int(top), int(new_right), int(new_bottom)
 
 
 def coord_has_valid_points(coordinates: CoordinatesMetadata) -> bool:
@@ -37,6 +79,8 @@ def coord_has_valid_points(coordinates: CoordinatesMetadata) -> bool:
 def sort_page_elements(
     page_elements: List[Element],
     sort_mode: str = SORT_MODE_XY_CUT,
+    shrink_factor: float = 0.9,
+    xy_cut_primary_direction: str = "x",
 ) -> List[Element]:
     """
     Sorts a list of page elements based on the specified sorting mode.
@@ -56,6 +100,15 @@ def sort_page_elements(
     Returns:
     - List[Element]: A list of sorted page elements.
     """
+
+    shrink_factor = float(
+        os.environ.get("UNSTRUCTURED_XY_CUT_BBOX_SHRINK_FACTOR", shrink_factor),
+    )
+
+    xy_cut_primary_direction = os.environ.get(
+        "UNSTRUCTURED_XY_CUT_PRIMARY_DIRECTION",
+        xy_cut_primary_direction,
+    )
 
     if not page_elements:
         return []
@@ -82,9 +135,21 @@ def sort_page_elements(
     if sort_mode == SORT_MODE_XY_CUT:
         if not _coords_ok(strict_points=True):
             return page_elements
-        boxes = [coordinates_to_bbox(coords) for coords in coordinates_list]
+        shrunken_bboxes = []
+        for coords in coordinates_list:
+            bbox = coordinates_to_bbox(coords)
+            shrunken_bbox = shrink_bbox(bbox, shrink_factor)
+            shrunken_bboxes.append(shrunken_bbox)
+
         res: List[int] = []
-        recursive_xy_cut(np.asarray(boxes).astype(int), np.arange(len(boxes)), res)
+        xy_cut_sorting_func = (
+            recursive_xy_cut_swapped if xy_cut_primary_direction == "x" else recursive_xy_cut
+        )
+        xy_cut_sorting_func(
+            np.asarray(shrunken_bboxes).astype(int),
+            np.arange(len(shrunken_bboxes)),
+            res,
+        )
         sorted_page_elements = [page_elements[i] for i in res]
     elif sort_mode == SORT_MODE_BASIC:
         if not _coords_ok(strict_points=False):

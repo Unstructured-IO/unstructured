@@ -1,11 +1,11 @@
 import os
 import pathlib
 
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
-from unstructured.documents.elements import Table, Title
-from unstructured.partition.json import partition_json
+from unstructured.documents.elements import Table, TableChunk, Title
 from unstructured.partition.odt import partition_odt
-from unstructured.staging.base import elements_to_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
@@ -26,6 +26,10 @@ def test_partition_odt_from_filename():
     ]
     for element in elements:
         assert element.metadata.filename == "fake.odt"
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {
+            "docx",
+        }  # this file is processed by docx backend
 
 
 def test_partition_odt_from_filename_with_metadata_filename():
@@ -150,15 +154,9 @@ def test_partition_odt_from_file_with_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_odt_with_json(
-    filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt"),
-):
-    elements = partition_odt(filename=filename, include_metadata=True)
-    test_elements = partition_json(text=elements_to_json(elements))
-
-    assert len(elements) == len(test_elements)
-    for i in range(len(elements)):
-        assert elements[i] == test_elements[i]
+def test_partition_odt_with_json():
+    elements = partition_odt(example_doc_path("fake.odt"), include_metadata=True)
+    assert_round_trips_through_JSON(elements)
 
 
 def test_add_chunking_strategy_on_partition_odt(
@@ -169,3 +167,37 @@ def test_add_chunking_strategy_on_partition_odt(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_add_chunking_strategy_on_partition_odt_non_default():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
+    elements = partition_odt(filename=filename)
+    chunk_elements = partition_odt(
+        filename,
+        chunking_strategy="by_title",
+        max_characters=7,
+        combine_text_under_n_chars=5,
+    )
+    chunks = chunk_by_title(
+        elements,
+        max_characters=7,
+        combine_text_under_n_chars=5,
+    )
+    for chunk in chunk_elements:
+        if isinstance(chunk, TableChunk):
+            assert len(chunk.text) <= 7
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_partition_odt_element_metadata_has_languages():
+    filename = "example-docs/fake.odt"
+    elements = partition_odt(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_odt_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.odt"
+    elements = partition_odt(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]

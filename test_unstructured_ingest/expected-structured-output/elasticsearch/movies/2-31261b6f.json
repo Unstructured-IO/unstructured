@@ -11,7 +11,10 @@
           "document_id": "2"
         }
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "American"
   },
@@ -27,7 +30,10 @@
           "document_id": "2"
         }
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Unknown"
   },
@@ -43,7 +49,10 @@
           "document_id": "2"
         }
       },
-      "filetype": "text/plain"
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Before heading out to a baseball game at a nearby ballpark, sports fan Mr. Brown drinks several highball cocktails. He arrives at the ballpark to watch the game, but has become so inebriated that the game appears to him in reverse, with the players running the bases backwards and the baseball flying back into the pitcher's hand. After the game is over, Mr. Brown is escorted home by one of his friends. When they arrive at Brown's house, they encounter his wife who becomes furious with the friend and proceeds to physically assault him, believing he is responsible for her husband's severe intoxication. [1]"
   }

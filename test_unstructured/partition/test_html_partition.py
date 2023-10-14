@@ -6,13 +6,12 @@ import pytest
 import requests
 from requests.models import Response
 
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import ListItem, NarrativeText, Table, Title
+from unstructured.documents.elements import EmailAddress, ListItem, NarrativeText, Table, Title
 from unstructured.documents.html import HTMLTitle
 from unstructured.partition.html import partition_html
-from unstructured.partition.json import partition_json
-from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -610,15 +609,8 @@ def test_partition_html_grabs_emphasized_texts():
 
 
 def test_partition_html_with_json():
-    directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
-    filename = os.path.join(directory, "example-10k.html")
-    elements = partition_html(filename=filename)
-    test_elements = partition_json(text=elements_to_json(elements))
-
-    assert len(elements) == len(test_elements)
-    assert elements[0].metadata.filename == test_elements[0].metadata.filename
-    for i in range(len(elements)):
-        assert elements[i] == test_elements[i]
+    elements = partition_html(example_doc_path("example-10k.html"))
+    assert_round_trips_through_JSON(elements)
 
 
 def test_pre_tag_parsing_respects_order():
@@ -645,3 +637,38 @@ def test_add_chunking_strategy_on_partition_html(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_html_heading_title_detection():
+    html_text = """
+    <p>This is a section of narrative text, it's long, flows and has meaning</p>
+    <h1>This is a section of narrative text, it's long, flows and has meaning</h1>
+    <h2>A heading that is at the second level</h2>
+    <h3>Finally, the third heading</h3>
+    <h2>December 1-17, 2017</h2>
+    <h3>email@example.com</h3>
+    <h3><li>- bulleted item</li></h3>
+    """
+    elements = partition_html(text=html_text)
+    assert elements == [
+        NarrativeText("This is a section of narrative text, it's long, flows and has meaning"),
+        Title("This is a section of narrative text, it's long, flows and has meaning"),
+        Title("A heading that is at the second level"),
+        Title("Finally, the third heading"),
+        Title("December 1-17, 2017"),
+        EmailAddress("email@example.com"),
+        ListItem("- bulleted item"),
+    ]
+
+
+def test_partition_html_element_metadata_has_languages():
+    filename = "example-docs/example-10k.html"
+    elements = partition_html(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_html_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.html"
+    elements = partition_html(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]

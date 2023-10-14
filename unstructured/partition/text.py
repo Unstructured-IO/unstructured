@@ -1,3 +1,4 @@
+import copy
 import re
 import textwrap
 from typing import IO, Callable, List, Optional, Tuple
@@ -28,6 +29,7 @@ from unstructured.partition.common import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
+from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -166,10 +168,13 @@ def partition_text(
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
+    languages: Optional[List[str]] = ["auto"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
+    detect_language_per_element: bool = False,
+    detection_origin: Optional[str] = "text",
     **kwargs,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.
@@ -190,6 +195,13 @@ def partition_text(
         for formatting purposes.
     include_metadata
         Determines whether or not metadata is included in the output.
+    languages
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     max_partition
         The maximum number of characters to include in a partition. If None is passed,
         no maximum is applied.
@@ -240,22 +252,31 @@ def partition_text(
     )
 
     elements: List[Element] = []
-    metadata = (
-        ElementMetadata(
+    if include_metadata:
+        metadata = ElementMetadata(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
+            languages=languages,
         )
-        if include_metadata
-        else ElementMetadata()
-    )
+        metadata.detection_origin = detection_origin
+    else:
+        metadata = ElementMetadata()
+
     for ctext in file_content:
         ctext = ctext.strip()
 
         if ctext:
             element = element_from_text(ctext)
-            element.metadata = metadata
+            element.metadata = copy.deepcopy(metadata)
             elements.append(element)
 
+    elements = list(
+        apply_lang_metadata(
+            elements=elements,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+        ),
+    )
     return elements
 
 

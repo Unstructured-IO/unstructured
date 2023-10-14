@@ -29,7 +29,6 @@ class SimpleDiscordConfig(BaseConnectorConfig):
     channels: t.List[str]
     token: str
     days: t.Optional[int]
-    verbose: bool = False
 
     def __post_init__(self):
         if self.days:
@@ -65,7 +64,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @property
     def _output_filename(self):
         output_file = self.channel + ".json"
-        return Path(self.partition_config.output_dir) / output_file
+        return Path(self.processor_config.output_dir) / output_file
 
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
@@ -77,6 +76,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         from discord.ext import commands
 
         messages: t.List[discord.Message] = []
+        jumpurl: t.List[str] = []
         intents = discord.Intents.default()
         intents.message_content = True
         bot = commands.Bot(command_prefix=">", intents=intents)
@@ -88,15 +88,17 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 if self.days:
                     after_date = dt.datetime.utcnow() - dt.timedelta(days=self.days)
                 channel = bot.get_channel(int(self.channel))
+                jumpurl.append(channel.jump_url)  # type: ignore
                 async for msg in channel.history(after=after_date):  # type: ignore
                     messages.append(msg)
                 await bot.close()
             except Exception:
                 logger.error("Error fetching messages")
                 await bot.close()
+                raise
 
         bot.run(self.token)
-        jump_url = bot.get_channel(int(self.channel)).jump_url  # type: ignore
+        jump_url = None if len(jumpurl) < 1 else jumpurl[0]
         return messages, jump_url
 
     def update_source_metadata(self, **kwargs):
@@ -119,7 +121,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         self._create_full_tmp_dir_path()
-        if self.connector_config.verbose:
+        if self.processor_config.verbose:
             logger.debug(f"fetching {self} - PID: {os.getpid()}")
 
         messages, jump_url = self._get_messages()
@@ -159,7 +161,7 @@ class DiscordSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         return [
             DiscordIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 channel=channel,
                 days=self.connector_config.days,
