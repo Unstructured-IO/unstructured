@@ -207,7 +207,7 @@ def _get_connected_components(
     empty_cells = sheet.isna().T
     nodes_to_remove = [tuple(pair) for pair in node_array[empty_cells]]
     graph.remove_nodes_from(nodes_to_remove)
-    connected_components_as_nodes = list(nx.connected_components(graph))
+    connected_components_as_nodes = nx.connected_components(graph)
     connected_components = []
     for _component in connected_components_as_nodes:
         component = list(_component)
