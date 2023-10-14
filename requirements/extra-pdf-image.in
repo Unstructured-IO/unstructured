@@ -1,6 +1,7 @@
 -c constraints.in
 -c base.txt
 
+onnx
 pdf2image
 pdfminer.six
 # Do not move to contsraints.in, otherwise unstructured-inference will not be upgraded
