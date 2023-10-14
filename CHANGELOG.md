@@ -1,4 +1,4 @@
-## 0.10.23-dev1
+## 0.10.23-dev3
 
 ### Enhancements
 
@@ -11,6 +11,7 @@
 
 * **Cleans up temporary files after conversion** Previously a file conversion utility was leaving temporary files behind on the filesystem without removing them when no longer needed. This fix helps prevent an accumulation of temporary files taking up excessive disk space.
 * **Fixes `under_non_alpha_ratio` dividing by zero** Although this function guarded against a specific cause of division by zero, there were edge cases slipping through like strings with only whitespace. This update more generally prevents the function from performing a division by zero.
+* **Fixes recursion limit error that was being raised when partitioning Excel documents of a certain size** Previously we used a recursive method to find subtables within an excel sheet. However this would run afoul of Python's recursion depth limit when there was a contiguous block of more than 1000 cells within a sheet. This function has been updated to use the NetworkX library which avoids Python recursion issues.
 
 ## 0.10.22
 
