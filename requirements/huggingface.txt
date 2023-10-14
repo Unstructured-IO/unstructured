@@ -93,7 +93,9 @@ sympy==1.12
 tokenizers==0.14.1
     # via transformers
 torch==2.1.0
-    # via -r requirements/huggingface.in
+    # via
+    #   -c requirements/constraints.in
+    #   -r requirements/huggingface.in
 tqdm==4.66.1
     # via
     #   -c requirements/base.txt
