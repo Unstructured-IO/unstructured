@@ -32,6 +32,7 @@ certifi==2023.7.22
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
+    #   elasticsearch
     #   requests
 cffi==1.16.0
     # via cryptography
@@ -44,6 +45,8 @@ click==8.1.7
     # via
     #   -c requirements/base.txt
     #   pip-tools
+cmreshandler==1.0.0
+    # via super-gradients
 coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.1.1
@@ -51,9 +54,13 @@ contourpy==1.1.1
 coverage==5.3.1
     # via super-gradients
 cryptography==41.0.4
-    # via pdfminer-six
+    # via
+    #   deci-lab-client
+    #   pdfminer-six
 cycler==0.12.1
     # via matplotlib
+deci-lab-client==2.22.1
+    # via super-gradients
 deprecated==1.2.14
     # via super-gradients
 docutils==0.17.1
@@ -64,6 +71,10 @@ effdet==0.4.1
     # via layoutparser
 einops==0.3.2
     # via super-gradients
+elasticsearch==7.15.2
+    # via
+    #   cmreshandler
+    #   super-gradients
 filelock==3.12.4
     # via
     #   huggingface-hub
@@ -78,8 +89,6 @@ fsspec==2023.9.1
     #   -c requirements/constraints.in
     #   huggingface-hub
     #   torch
-future==0.18.3
-    # via treelib
 google-auth==2.23.3
     # via
     #   google-auth-oauthlib
@@ -175,7 +184,9 @@ omegaconf==2.3.0
     #   hydra-core
     #   super-gradients
 onnx==1.12.0
-    # via super-gradients
+    # via
+    #   deci-lab-client
+    #   super-gradients
 onnxruntime==1.15.1
     # via
     #   -c requirements/constraints.in
@@ -199,7 +210,6 @@ packaging==23.2
     #   onnxruntime
     #   pytesseract
     #   sphinx
-    #   super-gradients
     #   torchmetrics
     #   transformers
     #   unstructured-pytesseract
@@ -249,18 +259,22 @@ pyasn1==0.5.0
     #   rsa
 pyasn1-modules==0.3.0
     # via google-auth
-pycocotools==2.0.4
+pycocotools==2.0.7
     # via
+    #   -c requirements/constraints.in
     #   effdet
-    #   super-gradients
 pycparser==2.21
     # via cffi
+pydantic==1.10.13
+    # via
+    #   -c requirements/constraints.in
+    #   deci-lab-client
 pydeprecate==0.3.2
     # via torchmetrics
 pygments==2.16.1
-    # via
-    #   sphinx
-    #   super-gradients
+    # via sphinx
+pyjwt==2.8.0
+    # via deci-lab-client
 pyparsing==2.4.5
     # via
     #   -c requirements/constraints.in
@@ -275,6 +289,7 @@ pytesseract==0.3.10
 python-dateutil==2.8.2
     # via
     #   botocore
+    #   deci-lab-client
     #   matplotlib
     #   pandas
 python-multipart==0.0.6
@@ -306,6 +321,8 @@ regex==2023.10.3
 requests==2.31.0
     # via
     #   -c requirements/base.txt
+    #   cmreshandler
+    #   deci-lab-client
     #   huggingface-hub
     #   requests-oauthlib
     #   sphinx
@@ -336,6 +353,7 @@ scipy==1.10.1
 six==1.16.0
     # via
     #   -c requirements/base.txt
+    #   deci-lab-client
     #   python-dateutil
 snowballstemmer==2.2.0
     # via sphinx
@@ -360,7 +378,7 @@ sphinxcontrib-qthelp==1.0.3
     # via sphinx
 sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
-super-gradients==3.0.3
+super-gradients==2.0.1
     # via unstructured-inference
 supervision==0.15.0
     # via unstructured-inference
@@ -372,8 +390,6 @@ tensorboard==2.14.0
     # via super-gradients
 tensorboard-data-server==0.7.1
     # via tensorboard
-termcolor==1.1.0
-    # via super-gradients
 timm==0.9.7
     # via effdet
 tokenizers==0.14.1
@@ -386,6 +402,7 @@ tomli==2.0.1
 torch==2.1.0
     # via
     #   -c requirements/constraints.in
+    #   deci-lab-client
     #   effdet
     #   layoutparser
     #   super-gradients
@@ -409,14 +426,13 @@ tqdm==4.66.1
     #   transformers
 transformers==4.34.0
     # via unstructured-inference
-treelib==1.6.1
-    # via super-gradients
 typing-extensions==4.8.0
     # via
     #   -c requirements/base.txt
     #   huggingface-hub
     #   iopath
     #   onnx
+    #   pydantic
     #   torch
 tzdata==2023.3
     # via pandas
@@ -431,6 +447,7 @@ urllib3==1.26.17
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   botocore
+    #   elasticsearch
     #   requests
 werkzeug==3.0.0
     # via tensorboard
@@ -438,7 +455,6 @@ wheel==0.41.2
     # via
     #   -c requirements/constraints.in
     #   pip-tools
-    #   super-gradients
     #   tensorboard
 wrapt==1.15.0
     # via deprecated
