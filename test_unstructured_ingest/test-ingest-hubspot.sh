@@ -45,8 +45,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --api-token "$HUBSPOT_API_TOKEN" \
     --object-types "tickets,calls" \
-    --recursive
-
 
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

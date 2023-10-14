@@ -4,29 +4,28 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import Group, conform_click_options, DelimitedString
 from unstructured.ingest.cli.common import (
     log_options,
 )
-from unstructured.ingest.cli.interfaces import (
-    CliMixin,
-    CliPartitionConfig,
-    CliReadConfig,
-    CliRecursiveConfig,
-)
+from unstructured.ingest.cli.interfaces import CliMixin, DelimitedString
+from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
+from unstructured.ingest.connector.hubspot import HubSpotObjectTypes
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import hubspot as hubspot_fn
-from unstructured.ingest.connector.hubspot import HubSpotObjectTypes
+from unstructured.ingest.runner import HubSpotRunner
 
-OBJECT_TYPES = set([t.value for t in HubSpotObjectTypes])
+OBJECT_TYPES = {t.value for t in HubSpotObjectTypes}
 
-def validate_object_type(ctx , param, value):
+
+def validate_object_type(ctx, param, value):
     for obj in value:
         if obj not in OBJECT_TYPES:
-            raise click.ClickException(f"Invalid object type: <{obj}>,\
-                            must be one of {OBJECT_TYPES}")
+            raise click.ClickException(
+                f"Invalid object type: <{obj}>,\
+                            must be one of {OBJECT_TYPES}",
+            )
     return value
+
 
 @dataclass
 class HubSpotCliConfig(BaseConfig, CliMixin):
@@ -43,7 +42,7 @@ class HubSpotCliConfig(BaseConfig, CliMixin):
                 help="Access token to perform operations on Hubspot. \
                     Check \
                     https://developers.hubspot.com/docs/api/private-apps/ \
-                    for more info"
+                    for more info",
             ),
             click.Option(
                 ["--object-types"],
@@ -52,10 +51,13 @@ class HubSpotCliConfig(BaseConfig, CliMixin):
                 type=DelimitedString(),
                 is_flag=False,
                 callback=validate_object_type,
-                help=f"Object to include in the process. Must be a subset of {','.join(OBJECT_TYPES)}.\
-                    If the argument is omitted all objects listed will be processed."
-            )]
+                help=f"Object to include in the process.\
+                    Must be a subset of {','.join(OBJECT_TYPES)}.\
+                    If the argument is omitted all objects listed will be processed.",
+            ),
+        ]
         cmd.params.extend(options)
+
 
 @click.group(name="hubspot", invoke_without_command=True, cls=Group)
 @click.pass_context
@@ -67,11 +69,11 @@ def hubspot_source(ctx: click.Context, **options):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
     log_options(options, verbose=verbose)
     try:
-        read_config = CliReadConfig.from_dict(options)
-        partition_config = CliPartitionConfig.from_dict(options)
-        # Run for schema validation
-        HubSpotCliConfig.from_dict(options)
-        hubspot_fn(read_config=read_config, partition_config=partition_config, **options)
+        configs = extract_configs(options, validate=([HubSpotCliConfig]))
+        runner = HubSpotRunner(
+            **configs,
+        )
+        runner.run(**options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
@@ -79,11 +81,5 @@ def hubspot_source(ctx: click.Context, **options):
 
 def get_source_cmd() -> click.Group:
     cmd = hubspot_source
-    HubSpotCliConfig.add_cli_options(cmd)
-    CliRecursiveConfig.add_cli_options(cmd)
-
-    # Common CLI configs
-    CliReadConfig.add_cli_options(cmd)
-    CliPartitionConfig.add_cli_options(cmd)
-    cmd.params.append(click.Option(["-v", "--verbose"], is_flag=True, default=False))
+    add_options(cmd, extras=[HubSpotCliConfig])
     return cmd

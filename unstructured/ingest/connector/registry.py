@@ -16,8 +16,7 @@ from unstructured.ingest.connector.gcs import GcsIngestDoc
 from unstructured.ingest.connector.github import GitHubIngestDoc
 from unstructured.ingest.connector.gitlab import GitLabIngestDoc
 from unstructured.ingest.connector.google_drive import GoogleDriveIngestDoc
-from unstructured.ingest.connector.hubspot import HubSpotTicketIngestDoc
-from unstructured.ingest.connector.hubspot import HubSpotEmailIngestDoc
+from unstructured.ingest.connector.hubspot import HubSpotEmailIngestDoc, HubSpotTicketIngestDoc
 from unstructured.ingest.connector.jira import JiraIngestDoc
 from unstructured.ingest.connector.local import LocalIngestDoc
 from unstructured.ingest.connector.notion.connector import (
