@@ -99,7 +99,7 @@ def partition_md(
 
         text = response.text
 
-    html = markdown.markdown(text, extensions=['tables'])
+    html = markdown.markdown(text, extensions=["tables"])
 
     return partition_html(
         text=html,

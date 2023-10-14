@@ -33,7 +33,7 @@ class Embedder(ReformatNode):
             filename_ext = os.path.basename(elements_json_filename)
             filename = os.path.splitext(filename_ext)[0]
             hashed_filename = hashlib.sha256(
-                f"{self.create_hash()}{filename}".encode()
+                f"{self.create_hash()}{filename}".encode(),
             ).hexdigest()[:32]
             json_filename = f"{hashed_filename}.json"
             json_path = (Path(self.get_path()) / json_filename).resolve()
