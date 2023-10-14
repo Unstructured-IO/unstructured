@@ -60,13 +60,14 @@ docutils==0.17.1
     # via
     #   sphinx
     #   sphinx-rtd-theme
-effdet==0.3.0
+effdet==0.4.1
     # via layoutparser
 einops==0.3.2
     # via super-gradients
 filelock==3.12.4
     # via
     #   huggingface-hub
+    #   torch
     #   transformers
 flatbuffers==23.5.26
     # via onnxruntime
@@ -76,6 +77,7 @@ fsspec==2023.9.1
     # via
     #   -c requirements/constraints.in
     #   huggingface-hub
+    #   torch
 future==0.18.3
     # via treelib
 google-auth==2.23.3
@@ -115,7 +117,9 @@ importlib-resources==6.1.0
 iopath==0.1.10
     # via layoutparser
 jinja2==3.1.2
-    # via sphinx
+    # via
+    #   sphinx
+    #   torch
 jmespath==1.0.1
     # via
     #   boto3
@@ -142,6 +146,8 @@ matplotlib==3.7.2
     #   supervision
 mpmath==1.3.0
     # via sympy
+networkx==3.1
+    # via torch
 numpy==1.24.4
     # via
     #   -c requirements/base.txt
@@ -354,14 +360,14 @@ sphinxcontrib-qthelp==1.0.3
     # via sphinx
 sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
-stringcase==1.2.0
-    # via super-gradients
-super-gradients==3.0.5
+super-gradients==3.0.3
     # via unstructured-inference
 supervision==0.15.0
     # via unstructured-inference
 sympy==1.12
-    # via onnxruntime
+    # via
+    #   onnxruntime
+    #   torch
 tensorboard==2.14.0
     # via super-gradients
 tensorboard-data-server==0.7.1
@@ -377,8 +383,9 @@ tomli==2.0.1
     #   build
     #   pip-tools
     #   pyproject-hooks
-torch==1.12.0
+torch==2.1.0
     # via
+    #   -c requirements/constraints.in
     #   effdet
     #   layoutparser
     #   super-gradients
@@ -387,7 +394,7 @@ torch==1.12.0
     #   torchvision
 torchmetrics==0.8.0
     # via super-gradients
-torchvision==0.14.1
+torchvision==0.16.0
     # via
     #   effdet
     #   layoutparser
@@ -411,7 +418,6 @@ typing-extensions==4.8.0
     #   iopath
     #   onnx
     #   torch
-    #   torchvision
 tzdata==2023.3
     # via pandas
 unstructured-inference==0.7.4

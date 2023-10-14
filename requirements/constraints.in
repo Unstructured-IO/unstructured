@@ -41,6 +41,7 @@ fsspec==2023.9.1
 pandas<2.0.4
 # langchain limits anyio to below 4.0
 anyio<4.0
+torch>2
 # pinned in unstructured paddleocr
 opencv-python==4.8.0.76
 opencv-contrib-python==4.8.0.76
