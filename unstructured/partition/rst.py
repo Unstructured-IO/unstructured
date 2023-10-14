@@ -5,6 +5,8 @@ from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.html import convert_and_partition_html
 
+DETECTION_ORIGIN: str = "rst"
+
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.RST)
@@ -17,6 +19,8 @@ def partition_rst(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
+    languages: Optional[List[str]] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions an RST document. The document is first converted to HTML and then
@@ -32,7 +36,15 @@ def partition_rst(
         If True, the output will include page breaks if the filetype supports it.
     metadata_last_modified
         The last modified date for the document.
+    languages
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
+
     return convert_and_partition_html(
         source_format="rst",
         filename=filename,
@@ -40,4 +52,7 @@ def partition_rst(
         include_page_breaks=include_page_breaks,
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified,
+        languages=languages,
+        detect_language_per_element=detect_language_per_element,
+        detection_origin=DETECTION_ORIGIN,
     )

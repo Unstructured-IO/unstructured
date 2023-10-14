@@ -9,7 +9,7 @@ from unstructured.partition.utils.constants import (
     SORT_MODE_BASIC,
     SORT_MODE_XY_CUT,
 )
-from unstructured.partition.utils.xycut import recursive_xy_cut
+from unstructured.partition.utils.xycut import recursive_xy_cut, recursive_xy_cut_swapped
 
 
 def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> Tuple[int, int, int, int]:
@@ -32,7 +32,7 @@ def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> Tuple[int, int, int
 
 def shrink_bbox(bbox: Tuple[int, int, int, int], shrink_factor) -> Tuple[int, int, int, int]:
     """
-    Shrink a bounding box by a given shrink factor while maintaining its center.
+    Shrink a bounding box by a given shrink factor while maintaining its top and left.
 
     Parameters:
         bbox (Tuple[int, int, int, int]): The original bounding box represented by
@@ -49,14 +49,12 @@ def shrink_bbox(bbox: Tuple[int, int, int, int], shrink_factor) -> Tuple[int, in
     height = bottom - top
     new_width = width * shrink_factor
     new_height = height * shrink_factor
-    dw = (width - new_width) / 2
-    dh = (height - new_height) / 2
+    dw = width - new_width
+    dh = height - new_height
 
-    new_left = left + dw
     new_right = right - dw
-    new_top = top + dh
     new_bottom = bottom - dh
-    return int(new_left), int(new_top), int(new_right), int(new_bottom)
+    return int(left), int(top), int(new_right), int(new_bottom)
 
 
 def coord_has_valid_points(coordinates: CoordinatesMetadata) -> bool:
@@ -82,6 +80,7 @@ def sort_page_elements(
     page_elements: List[Element],
     sort_mode: str = SORT_MODE_XY_CUT,
     shrink_factor: float = 0.9,
+    xy_cut_primary_direction: str = "x",
 ) -> List[Element]:
     """
     Sorts a list of page elements based on the specified sorting mode.
@@ -104,6 +103,11 @@ def sort_page_elements(
 
     shrink_factor = float(
         os.environ.get("UNSTRUCTURED_XY_CUT_BBOX_SHRINK_FACTOR", shrink_factor),
+    )
+
+    xy_cut_primary_direction = os.environ.get(
+        "UNSTRUCTURED_XY_CUT_PRIMARY_DIRECTION",
+        xy_cut_primary_direction,
     )
 
     if not page_elements:
@@ -138,7 +142,10 @@ def sort_page_elements(
             shrunken_bboxes.append(shrunken_bbox)
 
         res: List[int] = []
-        recursive_xy_cut(
+        xy_cut_sorting_func = (
+            recursive_xy_cut_swapped if xy_cut_primary_direction == "x" else recursive_xy_cut
+        )
+        xy_cut_sorting_func(
             np.asarray(shrunken_bboxes).astype(int),
             np.arange(len(shrunken_bboxes)),
             res,

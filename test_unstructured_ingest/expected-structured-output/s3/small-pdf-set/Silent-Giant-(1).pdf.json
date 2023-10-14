@@ -1,24 +1,6 @@
 [
   {
     "type": "Title",
-    "element_id": "14547603bad3329c14c74b8c4e2ff8d9",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "//s88ciation"
-  },
-  {
-    "type": "Title",
     "element_id": "80f1cd7f1c8e281093a32842b1e5bbce",
     "metadata": {
       "data_source": {
@@ -37,7 +19,7 @@
   },
   {
     "type": "Title",
-    "element_id": "51174df4a3a78fe261885b1818b66876",
+    "element_id": "b0f30096c91b740f061fd09cc6b86f2b",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -55,7 +37,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e2b1006b190b699d597fdb0f1d73f8f9",
+    "element_id": "c56cacd540b7d88bfe08d824c0ced992",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -73,7 +55,25 @@
   },
   {
     "type": "Title",
-    "element_id": "2fa985d0a50e61b09ec22c447cc4b2c9",
+    "element_id": "14547603bad3329c14c74b8c4e2ff8d9",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "//s88ciation"
+  },
+  {
+    "type": "Title",
+    "element_id": "d4d5f1410356bb0053eeff6a9d2e84ae",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -91,7 +91,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1f4925fb064910ee923ccc1f6b20715b",
+    "element_id": "968d079b21338bb15f266e70ed001fed",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -109,25 +109,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "8e1e0570b2ba9211cc184c21a3ffbf90",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Nuclear energy is a proven solution with a long and well-established track record. Nuclear reactors – a grand total of 445 in 30 countries – are the low-carbon backbone of electricity systems, operating in the background, day in and day out, often out of sight and out of mind. Capable of generating immense amounts of clean power, they are the silent giants upon which we rely daily."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "46385c950e7da4d8e588686a541335c2",
+    "element_id": "b454d477ce7af47a3cce791045b27fb7",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -145,7 +127,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ae77460bce2d3a52d823954ccb9c708f",
+    "element_id": "b00c97f0af489349e26f90166924530c",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -163,7 +145,25 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c6d2fa859e6df9845dee4044d05ddbc5",
+    "element_id": "8ab9e34861e39e7de50648b982afd89e",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Nuclear energy is a proven solution with a long and well-established track record. Nuclear reactors – a grand total of 445 in 30 countries – are the low-carbon backbone of electricity systems, operating in the background, day in and day out, often out of sight and out of mind. Capable of generating immense amounts of clean power, they are the silent giants upon which we rely daily."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "2ee5188001ff61cf0d0e40659ce7bc49",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -181,7 +181,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e055395659c9e1aa4d5c0afb188e4a9e",
+    "element_id": "1d53fd350bd8dd3a38db6787b7ef77cf",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -199,7 +199,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "33a2aba13d6b228d8d6f792f16caa684",
+    "element_id": "01b622a95350cc48bafc9165732d661a",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -217,7 +217,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "9209d9a3c8ea19bed487dff9476428ee",
+    "element_id": "494d55b19020277b68f13daf5464a252",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -235,7 +235,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "ae74ee3ddcecd2ffb75672d469c80a0e",
+    "element_id": "d2bff80ca96af626923ef67c2a927f2f",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -271,7 +271,7 @@
   },
   {
     "type": "Footer",
-    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
+    "element_id": "0fc5165686190ca845407c03ad4572e8",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -288,8 +288,26 @@
     "text": "1"
   },
   {
+    "type": "Header",
+    "element_id": "5749fdd6b67e4204b3047ba33540bc87",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "2"
+  },
+  {
     "type": "Title",
-    "element_id": "257fa04b9d79fc46da551d720411595a",
+    "element_id": "3b5a5220792fcbec0b59d2088bc4c9ab",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -307,7 +325,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ca18f74506ddc1bca89179259f3ff4cb",
+    "element_id": "542bf86ba9bab1357e3aaa0b4ae0ff70",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -322,24 +340,6 @@
       "page_number": 4
     },
     "text": "Electricity is central to modern life – it powers our daily lives, as well as our dreams and ambitions. Demand has grown steadily for more than 100 years, and will continue to do so as many parts of the world continue to develop, and electrification takes a central role in efforts to decarbonize (Figure 1). With nearly a billion people around the world still living in the dark, without access to electricity, humanity has a responsibility to learn from the past - everyone has the right to enjoy a modern lifestyle in a way that does not cause harm to people or the planet."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b4af08fb653ae7dea99f3a48c2ff7f5d",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "45,000"
   },
   {
     "type": "Title",
@@ -360,8 +360,8 @@
     "text": "h W T"
   },
   {
-    "type": "Image",
-    "element_id": "d5aedf7912dfff3c661af8cd17426bac",
+    "type": "UncategorizedText",
+    "element_id": "b4af08fb653ae7dea99f3a48c2ff7f5d",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -375,7 +375,25 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "45,000       © Marine 40,000 M™@ csp 35,000 zz Solar PV Geothermal 30,000 ~ Mi Wind 25,000 — Il Bioenergy 20,000 = BB Hydro Nuclear 15,000 — Gas 10,000 — oi 5,000 __ Coal     2000 2010 2020 2030 2040"
+    "text": "45,000"
+  },
+  {
+    "type": "Image",
+    "element_id": "27a3cde643219ef7662f032684e06bd4",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "  Marine    CSP  40,000    Solar PV  35,000    Geothermal  30,000    Wind    Bioenergy  25,000    Hydro  20,000    Nuclear  15,000    Gas  10,000    Oil    Coal  5,000  0 "
   },
   {
     "type": "UncategorizedText",
@@ -469,7 +487,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "578e73d091a9463a76ea7502a6a92503",
+    "element_id": "befa378e171bb64fdf68091abf3501bd",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -487,7 +505,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "427b54db6e4b434f92954bc67db93473",
+    "element_id": "2ab7465d2e5fa24b6724907f968cd4aa",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -505,7 +523,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "92f6fd6a561b87154049d083b93b611d",
+    "element_id": "76b7731e68f6ef2b8958ea4f1ec351af",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -541,7 +559,7 @@
   },
   {
     "type": "Image",
-    "element_id": "81fe4504e383e98273c4a560382d82ee",
+    "element_id": "152a83b89c4b24f7f3db154d0c3ddc1b",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -555,7 +573,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "30,000,000   |_| High-carbon HE Low-carbon   25,000,000 20,000,000   15,000,000 10,000,000 5,000,000   1990 1995 2000 2005 2010 2015"
+    "text": "30,000,000    High-carbon    Low-carbon  25,000,000  20,000,000  15,000,000  10,000,000  5,000,000  0 "
   },
   {
     "type": "UncategorizedText",
@@ -667,7 +685,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "aa04bda99d06997f39a4b613c2c62be5",
+    "element_id": "e8facf920827e7bb6c64b065223f7c1e",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -684,26 +702,8 @@
     "text": "Figure 2. Worldwide electricity generation by fuel (1990-2016)ii"
   },
   {
-    "type": "Header",
-    "element_id": "53c234e5e8472b6ac51c1ae1cab3fe06",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "2"
-  },
-  {
     "type": "NarrativeText",
-    "element_id": "d841776bdfaae69274a3c8b898021653",
+    "element_id": "5f0bfed5240c4c0d50a2b4d2b56d8e6f",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -721,7 +721,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "10a72512425bbe7a4cdd6529b0337d90",
+    "element_id": "a58efe5247845dc40b0a648f1761ad5c",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -739,7 +739,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "030d3154a592248139651c5f8fbef1d5",
+    "element_id": "e81223a218fb419ef983253212ce7e22",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -757,7 +757,7 @@
   },
   {
     "type": "Footer",
-    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
+    "element_id": "70d25f2c1428def16804c3b346ee8d13",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -774,8 +774,26 @@
     "text": "3"
   },
   {
+    "type": "Footer",
+    "element_id": "0b0bd7ca2acebad288fe09c9d9595f1f",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "4"
+  },
+  {
     "type": "NarrativeText",
-    "element_id": "a53cecd93ffb9ec731b7974f1805e924",
+    "element_id": "6db8df46f6adb58be10bf8d88e53d42e",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -793,7 +811,7 @@
   },
   {
     "type": "Title",
-    "element_id": "899a2c517ba69726f3808d66f442e439",
+    "element_id": "d2b22b470eb3ab5829c6e3efb55e49a4",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -811,7 +829,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a8c17b6aa3cad915f2f7e0126706c2f5",
+    "element_id": "fde5c605b758e800b43c8e5844d0eb39",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -829,7 +847,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7562e707e991f1fb634fff41f2cae0e4",
+    "element_id": "c262b08f408059316ea2bfe106d4996b",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -847,7 +865,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1cde21cc10aa769a17ca11aa1e10823e",
+    "element_id": "45a4d31b0300260dec8f3f86ec2ba0ad",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -865,7 +883,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "af2424b7ec665072a2ee0bdcd901e244",
+    "element_id": "c550d4a50eaa40717f1d857bce491a81",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -880,24 +898,6 @@
       "page_number": 6
     },
     "text": "In regard to the need for a level playing field, we see that many of the world’s electricity markets operate in an unsustainable fashion, dominated by short-term thinking. Electricity supply which is affordable, reliable and available 24/7 generates broad societal benefits, and as seen in Figure 3, nuclear is one of the most affordable electricity sources."
-  },
-  {
-    "type": "Footer",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 6
-    },
-    "text": "4"
   },
   {
     "type": "Title",
@@ -919,7 +919,7 @@
   },
   {
     "type": "Image",
-    "element_id": "5b5f659ab2c445e9ed688dd79280a53e",
+    "element_id": "196f551acb55f0373a9d7fac6c9dbeab",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -933,11 +933,11 @@
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "        a ro)       0 » ec $ Se SW SS is é e » Pe US X? oe fe)"
+    "text": "300  250  200  150  100  50  0  O nshore Wind  Offshore Wind  N uclear  m ercial Photovoltaic  C oal  C C G T  C o m "
   },
   {
     "type": "FigureCaption",
-    "element_id": "a5846cd18e790db780cc03f9e5f63278",
+    "element_id": "c23c8bcefbe3c4d1e5b55df29b717fc1",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -955,25 +955,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "13ff2375260e277c2dfbc8826aa50a65",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Additionally, electricity markets fail to recognize the relative costs of different forms of electricity generation. Whilst the nuclear industry takes responsibility for its lifecycle costs (including decommissioning and waste management), other electricity generators do not. Fossil fuel generators are rarely required to pay the price in line with the environmental and health damage that their emissions cause, whilst the cost of wind and solar does not include the disposal of the sometimes toxic materials at the end of their life."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "9ad4cf48d0b9d0bbfd257214f3d050dd",
+    "element_id": "2e16c4200e350d951a1911e164cc7a7d",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -991,7 +973,25 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "4b3dad9b769c100e89b2c082e7d9e13e",
+    "element_id": "5b702c79a0deb88609b6a9b76a8ff4b1",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Additionally, electricity markets fail to recognize the relative costs of different forms of electricity generation. Whilst the nuclear industry takes responsibility for its lifecycle costs (including decommissioning and waste management), other electricity generators do not. Fossil fuel generators are rarely required to pay the price in line with the environmental and health damage that their emissions cause, whilst the cost of wind and solar does not include the disposal of the sometimes toxic materials at the end of their life."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "34e41476b3562e66cc04edd8a2ba4eb7",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1009,7 +1009,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "0ce74aa5e786157de72d5ae801d86cc4",
+    "element_id": "5e1e7b461ccf41232b3daf5b54d59399",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1027,7 +1027,7 @@
   },
   {
     "type": "Footer",
-    "element_id": "ef2d127de37b942baad06145e54b0c61",
+    "element_id": "aec400e3e65dc09b31513694bc9893b9",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1044,8 +1044,26 @@
     "text": "5"
   },
   {
+    "type": "Footer",
+    "element_id": "29399af043bbf069ecfd1abdcaee4b15",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "6"
+  },
+  {
     "type": "NarrativeText",
-    "element_id": "2cf9c478a20b21f5792941a179d926e9",
+    "element_id": "2fb9de7ce072904e3da50fc724ce8b12",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1078,6 +1096,24 @@
       "page_number": 8
     },
     "text": "140"
+  },
+  {
+    "type": "Image",
+    "element_id": "577fd212dac38df299e478d6b7ce5d74",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "120  120  99.5  100  71.9  80  60  40  20  8.5  1.78  0.245  <0.01  0  Offshore wind  O nshore wind (G erm any)  C oal  Oil  N atural gas  N uclear*  S olar P V  (U K) "
   },
   {
     "type": "NarrativeText",
@@ -1188,26 +1224,8 @@
     "text": "a t a F"
   },
   {
-    "type": "Image",
-    "element_id": "0fece208b80790baa3ae323ace21f818",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "                140 120 120 1 : 100 99.5 : 80 71.9 1 n 60 . 1 40 : “99 : 85 7g 0245 <0.01 0 : : : > S & 3} cs s\\ é fos < < Qg eS S ew ee © RS Rs ~a S Se fe) we"
-  },
-  {
     "type": "FigureCaption",
-    "element_id": "445676822969fb5177c0081d07449a70",
+    "element_id": "c12be3875fcb0e34681e80c68ced624f",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1225,7 +1243,7 @@
   },
   {
     "type": "Title",
-    "element_id": "98d83a387e3ac2261daaf8d936bf3e27",
+    "element_id": "3472694e01617965f38369c536bdc070",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1243,7 +1261,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1119369ba9a68924c64155762de72d8e",
+    "element_id": "49b5bd9868a164cf35b10cbb343ddba0",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1258,24 +1276,6 @@
       "page_number": 8
     },
     "text": "Nuclear energy is already making a significant contribution to providing the world with clean and abundant electricity, and has a proven track record of being a reliable workhorse around the world. Countries like France, Sweden and Switzerland have proven that it is possible to divorce economic growth from an increase in damaging emissions and over the timescales required to effectively challenge climate change and environmental degradation (Figures 5 and 6). Nuclear can ensure that fast-growing populations achieve rising standards of living – without having to sacrifice the planet or their own well-being."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ad57366865126e55649ecb23ae1d4888",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "100"
   },
   {
     "type": "UncategorizedText",
@@ -1296,8 +1296,8 @@
     "text": "%"
   },
   {
-    "type": "Image",
-    "element_id": "e56f1d3df6ddf93348f20c095337d639",
+    "type": "UncategorizedText",
+    "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1311,7 +1311,25 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "                    100 90 IB Coal i Gas/Oil 80 IB Biofuels/Waste 70 i Wind/Solar @ Hydro 60 @ Nuclear 50 40 30 20 10 0)  "
+    "text": "100"
+  },
+  {
+    "type": "Image",
+    "element_id": "1459b67becac6e70efecfcbc9312d3f0",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "  Coal  90    Gas/Oil  80    Biofuels/Waste    Wind/Solar  70    Hydro  60    Nuclear  50  40  30  20  10 "
   },
   {
     "type": "UncategorizedText",
@@ -1351,7 +1369,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "853637136575897a73cba3c5fb085e8c",
+    "element_id": "e720e656050a5b95706b7ffefb3ff505",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1369,7 +1387,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "2275583196d791405892aaca0d87743c",
+    "element_id": "0b7637d5dd3c0e09980fb400ebbdcf72",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1387,7 +1405,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "fd1b6d076800203a708efab109d9393a",
+    "element_id": "f18421197d4b12d362e1ededa3f3145f",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1404,8 +1422,8 @@
     "text": "Figure 5. The importance of nuclear in ensuring clean energy systems in France, Sweden and Switzerland ix"
   },
   {
-    "type": "Footer",
-    "element_id": "06e9d52c1720fca412803e3b07c4b228",
+    "type": "Image",
+    "element_id": "ff963f0df99d82f7c343649121217117",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1417,9 +1435,9 @@
         "date_modified": "2023-02-12T10:10:36"
       },
       "filetype": "application/pdf",
-      "page_number": 8
+      "page_number": 9
     },
-    "text": "6"
+    "text": "600    Non-hydro  500     ren. & waste    Nuclear  400    Natural gas  300    Hydro    Oil  200    Coal  100  0 "
   },
   {
     "type": "Title",
@@ -1440,26 +1458,8 @@
     "text": "h W T"
   },
   {
-    "type": "Image",
-    "element_id": "77d8044f595648ff9853b27fadd6ef94",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "    BB Non-hydro 500 i ren. & waste 400 z= Nuclear Natural gas 300 y -— EB Hydro i oil 200 —— -— BB Coal 100"
-  },
-  {
     "type": "FigureCaption",
-    "element_id": "ff8db11f410c00860c60393cc143175f",
+    "element_id": "3d193aba53b016527c3f658cdd6d99e2",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1477,7 +1477,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "3b5b3755bac62d7f53eb84cadc34c528",
+    "element_id": "13d3d626e6be5671aed83c1270851087",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1495,7 +1495,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "4f5cc927b953f3c49c562a22c88f863f",
+    "element_id": "c671a138a73229210d751a2857ff503d",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1513,7 +1513,7 @@
   },
   {
     "type": "Image",
-    "element_id": "36ca9b7cdbbcba729a46487cf86c07eb",
+    "element_id": "2f701c7144dd1588cdb70e2a188c1418",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1527,11 +1527,11 @@
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "One fuel pellet contains as much energy as a tonne of coal"
+    "text": "One fuel pellet contains as much energy as a tonne of coal "
   },
   {
     "type": "NarrativeText",
-    "element_id": "0e28734a89e6f2473c6bbd5c1bdaf50e",
+    "element_id": "a0fef2750bd4fbae8e9e28211ceea788",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1549,7 +1549,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "81a65c45b597c6647c9f984f7b2e3554",
+    "element_id": "37eafc6215975a858fa506f14ea98982",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1567,7 +1567,7 @@
   },
   {
     "type": "Header",
-    "element_id": "7902699be42c8a8e46fbbb4501726517",
+    "element_id": "c69b33366ea0bcfb6c30799a4100c6a0",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1584,8 +1584,26 @@
     "text": "7"
   },
   {
+    "type": "Footer",
+    "element_id": "671a02117af87c2371462f800d856f15",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "8"
+  },
+  {
     "type": "NarrativeText",
-    "element_id": "4c23c5c4e459d5f3f6f62cc6a06a816a",
+    "element_id": "c948e12a05e40ac00f3e5321f6ae7742",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1603,7 +1621,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "cd055b546424c5003939bb047a56abf0",
+    "element_id": "0748d61bf0b14f9f30e6cfbfb57034d4",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1621,7 +1639,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a654080ea22f70c397bca52fee82b82f",
+    "element_id": "395face9e1f924d1f2a0d746f317c5b9",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1639,7 +1657,7 @@
   },
   {
     "type": "Title",
-    "element_id": "e56261e0bd30965b8e68ed2abb15b141",
+    "element_id": "a0d7deccf89e42d02a9d66b0c1889689",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1836,26 +1854,8 @@
     "text": "International Energy Agency (2018), World Energy Outlook 2018. Data accessed from https://www.iea.org/weo/ – Based on the New Policies Scenario, which incorporates existing energy policies as well as an assessment of the results likely to stem from the implementation of announced policy intentions – with visual modification by World Nuclear Association. International Energy Agency (n.d.), Statistics. Accessed from: https://www.iea.org/statistics/?country=WORLD&year=2016&category=Electricity&indicator=ElecGenByFuel&mode =chart&dataTable=ELECTRICITYANDHEAT – with visual modifications by World Nuclear Association. International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ Intergovernmental Panel on Climate Change (2018), Special Report on Global Warming of 1.5 °C. Accessed from: https://www.ipcc.ch/sr15/ International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ International Energy Agency & OECD Nuclear Energy Agency (2015), Projected Costs of generating Electricity – 2015 Edition. Accessed from: https://www.oecd-nea.org/ndd/pubs/2015/7057-proj-costs-electricity-2015.pdf International Atomic Energy Agency (2015), Technical challenges in the application and licensing of digital instrumentation and control systems in nuclear power plants. Accessed from: https://www-pub.iaea.org/MTCD/ Publications/PDF/P1695_web.pdf"
   },
   {
-    "type": "Title",
-    "element_id": "ed171375d0bf81eaa5512140c3a29b8f",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "ix"
-  },
-  {
     "type": "ListItem",
-    "element_id": "c5693c397679aaeed0a80ac0c6b6dd20",
+    "element_id": "dcf0fcce0dd00a5335e8e42658aacc75",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1869,25 +1869,7 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "x bid."
-  },
-  {
-    "type": "ListItem",
-    "element_id": "9ec2f70cbe42f5dc5073a88246db2b7a",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "and NRC SOARCA study 2015 Paul-Scherrer Institute. Data for nuclear accidents modified to reflect UNSCEAR findings/recommendations (2012)"
+    "text": "viii Paul-Scherrer Institute. Data for nuclear accidents modified to reflect UNSCEAR findings/recommendations (2012)"
   },
   {
     "type": "UncategorizedText",
@@ -1908,8 +1890,44 @@
     "text": "and NRC SOARCA study 2015 International Energy Agency (2018), Electricity Information 2018 https://webstore.iea.org/electricity-information-2018-overview Ibid."
   },
   {
+    "type": "Title",
+    "element_id": "ed171375d0bf81eaa5512140c3a29b8f",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "ix"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "0b9ea5c0804f5a369317ffcf363badf3",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "x"
+  },
+  {
     "type": "NarrativeText",
-    "element_id": "ab9c4428d3394fd230d7636bea5030d5",
+    "element_id": "c2fb0a6722612bb6055e56fea799a81b",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1926,62 +1944,8 @@
     "text": "Photo credits: Front cover: Mike Baird; page 2: Vattenfall; page 4: Getty Images; page 5: Adobe Stock; page 6: Rosatom; page 8: Dean Calma, IAEA; page 10: Kazatomprom; page 11: EDF."
   },
   {
-    "type": "Footer",
-    "element_id": "aa67a169b0bba217aa0aa88a65346920",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "8"
-  },
-  {
     "type": "NarrativeText",
-    "element_id": "c48603fd38d3449d3afcd2dc18903083",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 12
-    },
-    "text": "World Nuclear Association Tower House 10 Southampton Street London WC2E 7HA United Kingdom"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "de49f1c955d7c8a4d1d6d261c1cf21ba",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 12
-    },
-    "text": "The Silent Giant © 2019 World Nuclear Association. Registered in England and Wales, company number 01215741"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "821daa4396c0087d9d5ee9240bc5c85c",
+    "element_id": "8ff63a0f4af4de37eff90952d575f76d",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1999,7 +1963,25 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "705da4db5e220010ddfd03d9452855e4",
+    "element_id": "06d4880e4a23a9520618a50bfbbdf940",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "World Nuclear Association Tower House 10 Southampton Street London WC2E 7HA United Kingdom"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4ac69378210b56e0c98be2d41e374769",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -2014,5 +1996,23 @@
       "page_number": 12
     },
     "text": "World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "3df4f87a759f8e1a2e3ab0a186ac16ef",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "The Silent Giant © 2019 World Nuclear Association. Registered in England and Wales, company number 01215741"
   }
 ]

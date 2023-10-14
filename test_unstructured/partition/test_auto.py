@@ -25,7 +25,6 @@ from unstructured.file_utils.filetype import FILETYPE_TO_MIMETYPE, FileType
 from unstructured.partition import auto
 from unstructured.partition.auto import _get_partition_with_extras, partition
 from unstructured.partition.common import convert_office_doc
-from unstructured.partition.pdf import default_hi_res_model
 from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -302,17 +301,19 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename, content_type, 
         strategy="hi_res",
     )
 
-    assert isinstance(elements[0], Title)
-    assert elements[0].text.startswith("LayoutParser")
+    idx = 3
+    assert isinstance(elements[idx], Title)
+    assert elements[idx].text.startswith("LayoutParser")
 
-    assert elements[0].metadata.filename == os.path.basename(filename)
-    assert elements[0].metadata.file_directory == os.path.split(filename)[0]
+    assert elements[idx].metadata.filename == os.path.basename(filename)
+    assert elements[idx].metadata.file_directory == os.path.split(filename)[0]
 
     # NOTE(alan): Xfail since new model skips the word Zejiang
     request.applymarker(pytest.mark.xfail)
 
-    assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Zejiang Shen")
+    idx += 1
+    assert isinstance(elements[idx], NarrativeText)
+    assert elements[idx].text.startswith("Zejiang Shen")
 
 
 def test_auto_partition_pdf_uses_table_extraction():
@@ -341,7 +342,7 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         include_page_breaks=False,
         infer_table_structure=False,
         strategy="fast",
-        languages=["eng"],
+        languages=None,
     )
 
 
@@ -361,30 +362,27 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
             strategy="hi_res",
         )
 
-    assert isinstance(elements[0], Title)
-    assert elements[0].text.startswith("LayoutParser")
+    idx = 3
+    assert isinstance(elements[idx], Title)
+    assert elements[idx].text.startswith("LayoutParser")
 
     # NOTE(alan): Xfail since new model misses the first word Zejiang
     request.applymarker(pytest.mark.xfail)
 
-    assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Zejiang Shen")
+    idx += 1
+    assert isinstance(elements[idx], NarrativeText)
+    assert elements[idx].text.startswith("Zejiang Shen")
 
 
 def test_auto_partition_formats_languages_for_tesseract():
     filename = "example-docs/chi_sim_image.jpeg"
     with patch(
-        "unstructured_inference.inference.layout.process_file_with_model",
-    ) as mock_process_file_with_model:
+        "unstructured.partition.ocr.process_file_with_ocr",
+    ) as mock_process_file_with_ocr:
         partition(filename, strategy="hi_res", languages=["zh"])
-        mock_process_file_with_model.assert_called_once_with(
-            filename,
-            is_image=True,
-            ocr_languages="chi_sim+chi_sim_vert+chi_tra+chi_tra_vert",
-            ocr_mode="entire_page",
-            extract_tables=False,
-            model_name=default_hi_res_model(),
-        )
+        _, kwargs = mock_process_file_with_ocr.call_args_list[0]
+        assert "ocr_languages" in kwargs
+        assert kwargs["ocr_languages"] == "chi_sim+chi_sim_vert+chi_tra+chi_tra_vert"
 
 
 def test_auto_partition_element_metadata_user_provided_languages():
@@ -425,9 +423,10 @@ def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, co
     )
 
     # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
-    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[0].text == first_line
-    assert elements[0].metadata.coordinates is not None
+    title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    idx = 2
+    assert elements[idx].text == title
+    assert elements[idx].metadata.coordinates is not None
 
 
 @pytest.mark.parametrize(
@@ -1053,21 +1052,74 @@ def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
 def test_add_chunking_strategy_chars_on_partition_auto_adds_is_continuation():
     filename = "example-docs/example-10k-1p.html"
 
-    # default chunk size in chars is 200
-    partitioned_table_elements_200_chars = [
+    table_elements = [e for e in partition(filename) if isinstance(e, Table)]
+    chunked_table_elements = [
         e
         for e in partition(
             filename,
-            chunking_strategy="by_num_characters",
+            chunking_strategy="by_title",
         )
         if isinstance(e, Table)
     ]
 
+    assert table_elements != chunked_table_elements
+
     i = 0
-    for table in partitioned_table_elements_200_chars:
+    for table in chunked_table_elements:
         # have to reset the counter to 0 here when we encounter a Table element
         if isinstance(table, Table):
             i = 0
         if i > 0 and isinstance(table, TableChunk):
             assert table.metadata.is_continuation is True
             i += 1
+
+
+EXAMPLE_LANG_DOCS = "example-docs/language-docs/eng_spa_mult."
+
+
+@pytest.mark.parametrize(
+    "file_extension",
+    [
+        "doc",
+        "docx",
+        "eml",
+        "epub",
+        "html",
+        "md",
+        "odt",
+        "org",
+        "ppt",
+        "pptx",
+        "rst",
+        "rtf",
+        "txt",
+        "xml",
+    ],
+)
+def test_partition_respects_language_arg(file_extension):
+    filename = EXAMPLE_LANG_DOCS + file_extension
+    elements = partition(filename=filename, languages=["deu"])
+    assert all(element.metadata.languages == ["deu"] for element in elements)
+
+
+def test_partition_respects_detect_language_per_element_arg():
+    filename = "example-docs/language-docs/eng_spa_mult.txt"
+    elements = partition(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+# check that the ["eng"] default in `partition` does not overwrite the ["auto"]
+# default in other `partition_` functions.
+def test_partition_default_does_not_overwrite_other_defaults():
+    # the default for `languages` is ["auto"] in partiton_text
+    from unstructured.partition.text import partition_text
+
+    # Use a document that is primarily in a language other than English
+    filename = "example-docs/language-docs/UDHR_first_article_all.txt"
+    text_elements = partition_text(filename)
+    assert text_elements[0].metadata.languages != ["eng"]
+
+    auto_elements = partition(filename)
+    assert auto_elements[0].metadata.languages != ["eng"]
+    assert auto_elements[0].metadata.languages == text_elements[0].metadata.languages

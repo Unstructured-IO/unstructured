@@ -1,7 +1,7 @@
 [
   {
     "type": "Title",
-    "element_id": "0b8804afbc4722108e877480e28462a6",
+    "element_id": "a683b44cbad86146f841c74d46c6425f",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -20,7 +20,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "46b1e4dae5ffd7cdcb2a6ed9f206a8ee",
+    "element_id": "af16ed1a4b463932f7a4084004540226",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -58,7 +58,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "d9644fb4b85468d186b132c91ca64f31",
+    "element_id": "0480125483856ec593d0dc47efed26a7",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -77,7 +77,7 @@
   },
   {
     "type": "Title",
-    "element_id": "c8e51fdc53c202393adad77f7f93ee5a",
+    "element_id": "5af85d9428f02bd89d9adcbafcddd56b",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -96,7 +96,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "d6df9cd66da09d30c16d194e877766ca",
+    "element_id": "69210a48a5d82a5d17035b355ffa007f",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -115,7 +115,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "04ff84b51fab69c07381ac794b740243",
+    "element_id": "f490ac00003fcf9c8e2048b7f84c7e03",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -134,7 +134,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "0b2857001b1a9eba5e46e26cba08e2ac",
+    "element_id": "ff686e6046cd8176988d8dec0d8adac4",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -153,7 +153,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "8b02f539eb8ccee5b3fc24f66858188c",
+    "element_id": "a8fefd2c51a2e783c60f4ad2947b8dc7",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -172,7 +172,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "469e981f34d1e6f2b420574ed8e932d2",
+    "element_id": "ba90804d766fc25305a415a9568ed86f",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -191,7 +191,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "4b8fc76cbba0e2fef79ff8bc668b1401",
+    "element_id": "d00f9c6e8d4992d5fffe2bfca4c5a61b",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -210,7 +210,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "69da7754428f154ee3b2906214d31ad9",
+    "element_id": "38bfc67c105fb76aa426f4d7c1045205",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -229,7 +229,7 @@
   },
   {
     "type": "Title",
-    "element_id": "37486ef32cbf05082d5dbff0581db762",
+    "element_id": "ea81396d7186842db62efca0a0b24158",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -248,7 +248,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "cfe4cc76625dc82267d95ec1dc7e7813",
+    "element_id": "eb990c6ddce9ef7d085d006a519f2ac4",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -286,7 +286,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "edd5f2f5a60a83c8899e533ac8bcd03c",
+    "element_id": "4d6d4f9d658c0c40e219af1bd65d6b85",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -305,7 +305,7 @@
   },
   {
     "type": "Title",
-    "element_id": "3c36cd10b2e64b9f2169f05abddd4981",
+    "element_id": "521a8660cf9df4a6eb675601e0378dc1",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -324,7 +324,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "987542acede56f098db655f02fb814a7",
+    "element_id": "f3953a4b1aa6bf42305393694fb4e428",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -343,7 +343,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "2e3cec7bff1e8c8d8e0087f0bcfa89f0",
+    "element_id": "79b682d97de5a63ee664ff7d1e5c4ea9",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -362,7 +362,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c6865d507571ccb14d37791134f27f61",
+    "element_id": "91ae53948262afff2ea72e0d3bc5cb98",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -381,7 +381,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "3f14cc0782485365bad0539f7b1bbb22",
+    "element_id": "393bc42351625088ac1ac8f75ee89400",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -400,7 +400,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c2e95867ed0f25e3d9fe1a6b97447ab9",
+    "element_id": "294abbac3c259144af3228a7fa06a3e2",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
@@ -437,7 +437,7 @@
     "text": "1 Kaggle is an online community for data scientists, serving as a platform for collaboration, competition, and learning: http://kaggle.com 2 In August 2017, Kaggle conducted an industry-wide survey to gain a clearer picture of the state of data science and machine learning. A standard set of questions were asked of all respondents, with more specific questions related to work for employed data scientists and questions related to learning for data scientists in training. Methodology and results: https://www.kaggle.com/kaggle/kaggle-survey-2017"
   },
   {
-    "type": "Footer",
+    "type": "UncategorizedText",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
       "data_source": {
@@ -456,7 +456,7 @@
     "text": "2"
   },
   {
-    "type": "UncategorizedText",
+    "type": "Footer",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
       "data_source": {

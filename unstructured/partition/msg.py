@@ -11,6 +11,7 @@ from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.email import convert_to_iso_8601
 from unstructured.partition.html import partition_html
+from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text import partition_text
 
 
@@ -28,6 +29,8 @@ def partition_msg(
     attachment_partitioner: Optional[Callable] = None,
     min_partition: Optional[int] = 0,
     chunking_strategy: Optional[str] = None,
+    languages: Optional[List[str]] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions a MSFT Outlook .msg file
@@ -53,6 +56,13 @@ def partition_msg(
     min_partition
         The minimum number of characters to include in a partition. Only applies if
         processing text/plain content.
+    languages
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     exactly_one(filename=filename, file=file)
 
@@ -69,7 +79,6 @@ def partition_msg(
     # ref: https://www.ietf.org/rfc/rfc2015.txt
     content_type = msg_obj.header_dict.get("Content-Type", "")
     is_encrypted = "encrypted" in content_type
-
     text = msg_obj.body
     elements: List[Element] = []
     if is_encrypted:
@@ -79,12 +88,20 @@ def partition_msg(
     elif text is None:
         pass
     elif "<html>" in text or "</div>" in text:
-        elements = partition_html(text=text)
+        elements = partition_html(
+            text=text,
+            languages=[""],
+            include_metadata=False,  # metadata is overwritten later, so no need to compute it here
+            detection_origin="msg",
+        )
     else:
         elements = partition_text(
             text=text,
             max_partition=max_partition,
             min_partition=min_partition,
+            languages=[""],
+            include_metadata=False,  # metadata is overwritten later, so no need to compute it here
+            detection_origin="msg",
         )
 
     metadata = build_msg_metadata(
@@ -117,6 +134,13 @@ def partition_msg(
                     element.metadata.attached_to_filename = metadata_filename or filename
                     elements.append(element)
 
+    elements = list(
+        apply_lang_metadata(
+            elements=elements,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+        ),
+    )
     return elements
 
 
@@ -124,6 +148,7 @@ def build_msg_metadata(
     msg_obj: msg_parser.MsOxMessage,
     filename: Optional[str],
     metadata_last_modified: Optional[str],
+    languages: Optional[List[str]] = ["auto"],
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     email_date = getattr(msg_obj, "sent_date", None)
@@ -138,13 +163,16 @@ def build_msg_metadata(
     if sent_to is not None:
         sent_to = [str(recipient) for recipient in sent_to]
 
-    return ElementMetadata(
+    element_metadata = ElementMetadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=getattr(msg_obj, "subject", None),
         last_modified=metadata_last_modified or email_date,
         filename=filename,
+        languages=languages,
     )
+    element_metadata.detection_origin = "msg"
+    return element_metadata
 
 
 def extract_msg_attachment_info(

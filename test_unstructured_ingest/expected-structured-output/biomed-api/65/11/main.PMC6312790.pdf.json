@@ -1,7 +1,7 @@
 [
   {
     "type": "Header",
-    "element_id": "c1f4b5ba045830c1866db8f8aa0b54ac",
+    "element_id": "fe4f2822da5bf5f7cae18c9d0081d312",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -11,7 +11,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "869adddb184177031536477262e0dde0",
+    "element_id": "721bbccb8e92736ad5776ad812dc8bca",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -21,7 +21,7 @@
   },
   {
     "type": "Title",
-    "element_id": "e6fa42b5b4d85001b900e47c050b645b",
+    "element_id": "01a8470646d06d1c29b9f43915ac04e0",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -31,7 +31,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "9234133787d0a6b3976b16569c0b5cf3",
+    "element_id": "aefc5298031dc9a700e66da55852c6b8",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -41,7 +41,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ac01687ab870e4bb6e7313db4654928a",
+    "element_id": "8bdb2c4b6997a1bbd7b948d7aeb402e2",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -51,7 +51,7 @@
   },
   {
     "type": "Title",
-    "element_id": "9ce2527454e3b72c1ba73e179779361d",
+    "element_id": "fcac8777e4bfd43297bbdb237a318b7f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -71,7 +71,7 @@
   },
   {
     "type": "Title",
-    "element_id": "4f14d967ea87a75ad1acee27ff34e59e",
+    "element_id": "6d1999c49562bd7c2b15a41327b8fc36",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -81,23 +81,13 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "cb64167b76eb9bc1d0dc4771969a3724",
+    "element_id": "53b670b88090fce85714890f1696853b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 1
     },
     "text": "Department of Chemical, Metallurgical and Materials Engineering, Tshwane University of Technology, Pretoria, South Africa"
-  },
-  {
-    "type": "Title",
-    "element_id": "3d71760ba4f1cc95873ee36178f97d82",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "ARTICLE INFO"
   },
   {
     "type": "NarrativeText",
@@ -111,13 +101,13 @@
   },
   {
     "type": "Title",
-    "element_id": "3d1626989d3e923485561f1e5bdeaa58",
+    "element_id": "3d71760ba4f1cc95873ee36178f97d82",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "ABSTRACT"
+    "text": "ARTICLE INFO"
   },
   {
     "type": "NarrativeText",
@@ -130,8 +120,18 @@
     "text": "a b s t r a c t"
   },
   {
+    "type": "Title",
+    "element_id": "3d1626989d3e923485561f1e5bdeaa58",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "ABSTRACT"
+  },
+  {
     "type": "NarrativeText",
-    "element_id": "4a03002c97925cd9397927ac823369e7",
+    "element_id": "ec72ddc98d060198a58854666bc2af39",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -141,7 +141,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "08bb309957586c280660c11c337dc6d7",
+    "element_id": "0b4c9205b52f320b7a727a310d1b9c61",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -151,7 +151,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "26c73759c3d3cc29d683910c034432da",
+    "element_id": "11cb61ac68da3f1039df950c887ac3db",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -181,7 +181,7 @@
   },
   {
     "type": "Title",
-    "element_id": "5abba9b1f2c341e0b299fa43a90d0e14",
+    "element_id": "c965cb5900649ea7abbf36e0d6a13547",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -191,7 +191,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ac89a2886224c42ad15982cd34421ff8",
+    "element_id": "a497ec33825f1793d0403f872220ffa5",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -211,13 +211,13 @@
   },
   {
     "type": "ListItem",
-    "element_id": "6190ca95b973d4a03fdf4c3b0b260af0",
+    "element_id": "1c2879aacaaeedb75720c6e9f57edf67",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Corresponding author. tayo.sanni@yahoo.com; SanniO@tut.ac.za E-mail address: tayo.sanni@yahoo.com (O. Sanni)."
+    "text": "E-mail address: tayo.sanni@yahoo.com (O. Sanni)."
   },
   {
     "type": "NarrativeText",
@@ -231,7 +231,7 @@
   },
   {
     "type": "Header",
-    "element_id": "78f135d64d5e1307cac651608256a418",
+    "element_id": "722bbe57a365b0aec3839d5228ca8c62",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -248,6 +248,36 @@
       "page_number": 2
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
+  },
+  {
+    "type": "Table",
+    "element_id": "82391aed75376c2c3bc734ad52ec73e4",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "How data were acquired The cleaned and weighed specimen was suspended in beakers con- taining 0.5 M H2SO4 solution of different concentrations of egg shell powder. The pre-weighed stainless steel samples were retrieved from the test solutions after every 24 h, cleaned appropriately, dried and reweighed. Raw, analyzed The difference between the weight at a given time and the initial weight of the specimen was taken as the weight loss, which was used to calculate the corrosion rate and inhibition efﬁciency. Inhibitor concentration, exposure time Department of Chemical, Metallurgical and Materials Engineering, Tshwane University of Technology, Pretoria, South Africa Data are available within this article O. Sanni, A. P. I. Popoola, and O. S. I. Fayomi, Enhanced corrosion resistance of stainless steel type 316 in sulphuric acid solution using eco-friendly waste product, Results in Physics, 9 (2018) 225–230. Data format Experimental factors Experimental features Data source location Accessibility Related research article"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "6928b78d26af54b6acb804ed319b5c05",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "How data were acquired"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "7ce6ee1aa50d28b85acf544f1db3e25c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "The cleaned and weighed specimen was suspended in beakers con- taining 0.5 M H2SO4 solution of different concentrations of egg shell powder. The pre-weighed stainless steel samples were retrieved from the test solutions after every 24 h, cleaned appropriately, dried and reweighed. Raw, analyzed The difference between the weight at a given time and the initial weight of the specimen was taken as the weight loss, which was used to calculate the corrosion rate and inhibition efﬁciency. Inhibitor concentration, exposure time Department of Chemical, Metallurgical and Materials Engineering, Tshwane University of Technology, Pretoria, South Africa Data are available within this article O. Sanni, A. P. I. Popoola, and O. S. I. Fayomi, Enhanced corrosion resistance of stainless steel type 316 in sulphuric acid solution using eco-friendly waste product, Results in Physics, 9 (2018) 225–230."
   },
   {
     "type": "Title",
@@ -280,38 +310,8 @@
     "text": "Accessibility Related research article"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "6928b78d26af54b6acb804ed319b5c05",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "How data were acquired"
-  },
-  {
-    "type": "Table",
-    "element_id": "5eb814dac721c11581f011fbca57a17e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "How data were acquired Data format Experimental factors Experimental features Data source location Accessibility Related research article The cleaned and weighed specimen was suspended in beakers con- taining 0.5 M H2SO, solution of different concentrations of egg shell powder. The pre-weighed stainless steel samples were retrieved from the test solutions after every 24h, cleaned appropriately, dried and reweighed. Raw, analyzed The difference between the weight at a given time and the initial weight of the specimen was taken as the weight loss, which was used to calculate the corrosion rate and inhibition efficiency. Inhibitor concentration, exposure time Department of Chemical, Metallurgical and Materials Engineering, Tshwane University of Technology, Pretoria, South Africa Data are available within this article O. Sanni, A. P. I. Popoola, and O. S. I. Fayomi, Enhanced corrosion resistance of stainless steel type 316 in sulphuric acid solution using eco-friendly waste product, Results in Physics, 9 (2018) 225-230."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "7ce6ee1aa50d28b85acf544f1db3e25c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "The cleaned and weighed specimen was suspended in beakers con- taining 0.5 M H2SO4 solution of different concentrations of egg shell powder. The pre-weighed stainless steel samples were retrieved from the test solutions after every 24 h, cleaned appropriately, dried and reweighed. Raw, analyzed The difference between the weight at a given time and the initial weight of the specimen was taken as the weight loss, which was used to calculate the corrosion rate and inhibition efﬁciency. Inhibitor concentration, exposure time Department of Chemical, Metallurgical and Materials Engineering, Tshwane University of Technology, Pretoria, South Africa Data are available within this article O. Sanni, A. P. I. Popoola, and O. S. I. Fayomi, Enhanced corrosion resistance of stainless steel type 316 in sulphuric acid solution using eco-friendly waste product, Results in Physics, 9 (2018) 225–230."
-  },
-  {
     "type": "Title",
-    "element_id": "e63f0ed399f0537c9ffeadfcae3baed6",
+    "element_id": "12edc7514919a752d95d3b8e626e45ca",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -321,7 +321,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "1daeb29ccbc793481f453c7f76b8795b",
+    "element_id": "eea806a9ad33194f383205ef0cce7774",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -331,7 +331,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "7aad924d1c00e3d50bc0c24beb00a9e5",
+    "element_id": "db51aa8084450acf421ebcc239afeaac",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -351,17 +351,17 @@
   },
   {
     "type": "ListItem",
-    "element_id": "b6cdef9ac2c39caf23c7413dcdb3c227",
+    "element_id": "1c4e65698ec8b13c8ea699224fba15c2",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "© The data can be used to examine the relationship between the process variable as it affect the nature of inhibition of metals."
+    "text": "nature of inhibition of metals."
   },
   {
     "type": "Title",
-    "element_id": "1c3f3de4e65aae5bd147f84779712a65",
+    "element_id": "869087d0a7770d68ff7b67de54507c6d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -371,7 +371,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "5034c7315aface0b263361d0eae1dd15",
+    "element_id": "59396eaa9450c0f5c87414c88588995c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -381,13 +381,13 @@
   },
   {
     "type": "Image",
-    "element_id": "6cbfbefb10bbbc9b57cd22704824934e",
+    "element_id": "ba559032c2f9f98c24e4c547af135b8e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Weight loss (mg)                 96 144 192 Exposure Time (Hours)"
+    "text": "30  10g 8g 6g 4g 2g Control  ) g m  (     s s o  20  l     t h g e W  i  10  48  96  144  192 "
   },
   {
     "type": "Title",
@@ -401,17 +401,17 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "45cd54c64e38abe8c1128a5979ca8cd5",
+    "element_id": "7e776fc583357f98358877d4c0b48b7f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Fig. 1. Weight loss versus exposure time for stainless steel immersed in 0.5M H2SO, solution in the absence and presence of ES."
+    "text": "Fig. 1. Weight loss versus exposure time for stainless steel presence of ES. immersed in 0.5 M H2SO4 solution in the absence and"
   },
   {
     "type": "NarrativeText",
-    "element_id": "8a54dcaa0e2720786903e26e84bd9e93",
+    "element_id": "f19a9b9a2dd2d7ebaa58eb2c98ecf702",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -420,14 +420,14 @@
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
   },
   {
-    "type": "Header",
-    "element_id": "135be522765ce267b8ca6debeeec6dc4",
+    "type": "Image",
+    "element_id": "f2e384e79a4fbce052f262a93ec46102",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "453"
+    "text": "2.7  1.8  10g 8g 6g 4g 2g Control  0.9  24  48  72  96  120  144  168  192  Exposure time "
   },
   {
     "type": "NarrativeText",
@@ -460,16 +460,6 @@
     "text": "i"
   },
   {
-    "type": "Image",
-    "element_id": "84d160dc9075c76de6f6d6c3f2651fe3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "    Corrosion rate (mm/year)             24 48 72 96 120 144 168 192 Exposure time"
-  },
-  {
     "type": "Title",
     "element_id": "239bb77f5ec344ce5e614979b8c49742",
     "metadata": {
@@ -481,23 +471,13 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "e5d46bc8ceb17f88e1cff33ecac97067",
+    "element_id": "7ecc0fe6294fecb9c560f3731532f042",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
     "text": "Fig. 2. Corrosion rate versus exposure time for stainless steel immersed in 0.5 M H2SO4 solution in the absence and presence of ES."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ad57366865126e55649ecb23ae1d4888",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "100"
   },
   {
     "type": "UncategorizedText",
@@ -510,14 +490,24 @@
     "text": "100 4"
   },
   {
-    "type": "Image",
-    "element_id": "0616fd3aee2db0cdd1a1565987b925ae",
+    "type": "UncategorizedText",
+    "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "  80 4 Inhibition Efficiency (%) a Ss 1   _—__. —o— 4g SS v- —a— 6g 74 —~X_ Senn, —y— 8g ~~. —6~ 10g —__, ~     —o- 2g       ol, T T T T T T T 1 20 40 60 80 100 120 140 160 180 Exposure Time 1e (Hours)"
+    "text": "100"
+  },
+  {
+    "type": "Image",
+    "element_id": "00c6c21aa97f59dc84190f023eaaf769",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "90  2g 4g 6g 8g 10g  80  )  %  70  (     y c n e c i f f  60  i  50  E n o i t i b h n I     40  i  30  20  10  0  20  40  60  80  100  120  140  160  180 "
   },
   {
     "type": "Title",
@@ -531,7 +521,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "950ca7babbae92e76df97f7ee57bc05c",
+    "element_id": "5b441ff866b6efc9e9a1d97675f16d57",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -541,7 +531,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "83f15bc914c3bfceaa571de50ab77f11",
+    "element_id": "0de81536210dbfaa5ed6cb4d8446887a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -551,7 +541,17 @@
   },
   {
     "type": "Header",
-    "element_id": "8d9bcdac558e606c913189b6ce8db44c",
+    "element_id": "0522c4531b49419253e7fcd53a6a1849",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "453"
+  },
+  {
+    "type": "Header",
+    "element_id": "231b7e5ddbae0ab42adfe20f19e194c1",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -561,7 +561,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "8a54dcaa0e2720786903e26e84bd9e93",
+    "element_id": "f19a9b9a2dd2d7ebaa58eb2c98ecf702",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -571,17 +571,17 @@
   },
   {
     "type": "Image",
-    "element_id": "b5ee6af3d776b0bbd2e581a3ab2ab2e1",
+    "element_id": "27b45633a0f31b9e01d179d70d7dc282",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Potential (Vv)nm°in°}aryT T T0.00001 0.001 olCurrent Density (A/cm2)"
+    "text": "    5 1 os = — 10; =o ° © —\" 205 i —~é é —ip a5 — Control -2 — & 2.5 T T T 0.0000001 + —-0.00001 0.001 O14 Current Density (A/cm2)"
   },
   {
     "type": "FigureCaption",
-    "element_id": "e8f34726e919c7e2f4d00f6fcf511ef8",
+    "element_id": "a2c77d1d5eec0137df5cf9ad22b05b89",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -600,14 +600,24 @@
     "text": "Table 1 Potentiodynamic polarization data for stainless steel in the absence and presence of ES in 0.5 M H2SO4 solution."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "9492908fadeab22ca81f18f2ba4f4f35",
+    "type": "Table",
+    "element_id": "150b064badb909ac7549f8064cf2caba",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "0 2 4 6 8 10"
+    "text": "icorr (A/cm2) Polarization resistance (Ω) Inhibitor concentration (g) bc (V/dec) ba (V/dec) Ecorr (V) (cid:3) 0.9393 (cid:3) 0.8276 (cid:3) 0.8825 (cid:3) 0.8027 (cid:3) 0.5896 (cid:3) 0.5356 0 2 4 6 8 10 0.0335 1.9460 0.0163 0.3233 0.1240 0.0382 0.0409 0.0596 0.2369 0.0540 0.0556 0.0086 0.0003 0.0002 0.0001 5.39E-05 5.46E-05 1.24E-05 24.0910 121.440 42.121 373.180 305.650 246.080 2.8163 1.5054 0.9476 0.4318 0.3772 0.0919"
+  },
+  {
+    "type": "Title",
+    "element_id": "6978574f5e6e70a2883ea5ea51aa34f7",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "icorr (A/cm2)"
   },
   {
     "type": "Title",
@@ -620,26 +630,6 @@
     "text": "Inhibitor concentration (g)"
   },
   {
-    "type": "Table",
-    "element_id": "9270ab0a1b3ba26a16991abcd0b45dfe",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Inhibitor be (V/dec) ba (V/dec) Ecorr (V) icorr (A/cm?) Polarization Corrosion concentration (g) resistance (Q) rate (mm/year) oO 0.0335 0.0409 0.0003 24.0910 2.8163 2 1.9460 0.0596 0.0002 121.440 1.5054 4 0.0163 0.2369 0.0001 42.121 0.9476 6 0.3233 0.0540 5.39E-05 373.180 0.4318 8 0.1240 0.0556 5.46E-05 305.650 0.3772 10 0.0382 0.0086 1.24E-05 246.080 0.0919"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "12751f842ba5664e7ad255016dbe371b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "0.0335 1.9460 0.0163 0.3233 0.1240 0.0382"
-  },
-  {
     "type": "Title",
     "element_id": "bcf00b4904f5661d6baef52e7e09e9b1",
     "metadata": {
@@ -648,16 +638,6 @@
       "page_number": 4
     },
     "text": "bc (V/dec)"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "727d4758bcfadaaf5156b8682cd39810",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "0.0409 0.0596 0.2369 0.0540 0.0556 0.0086"
   },
   {
     "type": "Title",
@@ -680,46 +660,6 @@
     "text": "Ecorr (V)"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "2a789110c863b30156d63234c8a51477",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "(cid:3) 0.9393 (cid:3) 0.8276 (cid:3) 0.8825 (cid:3) 0.8027 (cid:3) 0.5896 (cid:3) 0.5356"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d71f426079cb8c2bb3d960ce1e23d290",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "0.0003 0.0002 0.0001 5.39E-05 5.46E-05 1.24E-05"
-  },
-  {
-    "type": "Title",
-    "element_id": "6978574f5e6e70a2883ea5ea51aa34f7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "icorr (A/cm2)"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "1695e2ad2c62a337b135afbfc79ef69d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "24.0910 121.440 42.121 373.180 305.650 246.080"
-  },
-  {
     "type": "Title",
     "element_id": "7507a06cf675785949d6312f1776e444",
     "metadata": {
@@ -728,16 +668,6 @@
       "page_number": 4
     },
     "text": "Polarization resistance (Ω)"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "48bbf8e8b874e0e1f32be15f6c07c11c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "2.8163 1.5054 0.9476 0.4318 0.3772 0.0919"
   },
   {
     "type": "Title",
@@ -750,8 +680,78 @@
     "text": "Corrosion rate (mm/year)"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "2a789110c863b30156d63234c8a51477",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "(cid:3) 0.9393 (cid:3) 0.8276 (cid:3) 0.8825 (cid:3) 0.8027 (cid:3) 0.5896 (cid:3) 0.5356"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "9492908fadeab22ca81f18f2ba4f4f35",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "0 2 4 6 8 10"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "12751f842ba5664e7ad255016dbe371b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "0.0335 1.9460 0.0163 0.3233 0.1240 0.0382"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "727d4758bcfadaaf5156b8682cd39810",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "0.0409 0.0596 0.2369 0.0540 0.0556 0.0086"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d71f426079cb8c2bb3d960ce1e23d290",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "0.0003 0.0002 0.0001 5.39E-05 5.46E-05 1.24E-05"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "1695e2ad2c62a337b135afbfc79ef69d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "24.0910 121.440 42.121 373.180 305.650 246.080"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "48bbf8e8b874e0e1f32be15f6c07c11c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "2.8163 1.5054 0.9476 0.4318 0.3772 0.0919"
+  },
+  {
     "type": "NarrativeText",
-    "element_id": "ef5851c1e7629b7329ac014d7fb9e9e1",
+    "element_id": "5f9848745de2ea8e033fa60c5c042a02",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -781,17 +781,17 @@
   },
   {
     "type": "Image",
-    "element_id": "330ac6774a7bcf85ad0993abaab2a475",
+    "element_id": "5d44e8f4eeacb0f7c9b351db3adb88da",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "    12     2+ T T T 1 2 4 6 8 10 Concentration (g)"
+    "text": "12  10  8  0 / C  6  4  2  2  4  6  8  10  Concentration (g) "
   },
   {
     "type": "FigureCaption",
-    "element_id": "8e9636a780701abc4f16c3f890b8a83f",
+    "element_id": "a24d672821f7acb0bbe2c8a813debe16",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -801,7 +801,7 @@
   },
   {
     "type": "Header",
-    "element_id": "8a54dcaa0e2720786903e26e84bd9e93",
+    "element_id": "f19a9b9a2dd2d7ebaa58eb2c98ecf702",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -810,58 +810,18 @@
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
   },
   {
-    "type": "Header",
-    "element_id": "b5c1fe3f2fa0ef8280a53620dcb31175",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "455"
-  },
-  {
     "type": "Image",
-    "element_id": "caa364fead90039aae1f13d64dcb8b37",
+    "element_id": "273fb301b173075f79b2cbdab962e2ff",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEM HV: Q0KY WD: 14.89 rmrm‘DEM MAO: 209 x ‘Dor Pecforsence In nenospact"
-  },
-  {
-    "type": "Image",
-    "element_id": "a0463ca888a6f2c8c3ba40ba47be0f2f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "gEOOwaeSemny. z00RV | WD: 1424 renn rtirint VEoa3 Tescan20 yin Fertormaros in nancepace|"
-  },
-  {
-    "type": "Image",
-    "element_id": "88301d6b47b17df03b78789b9890a6f1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "°@¢Naafe«MgsSEM HY: 20.0KV 7 ETOP LU ULL UL OCT 0BEM IAAG: 400 x a"
+    "text": "SEM HV: Q0KY WD: 14.89 rmrm ‘9EM MAO: 209 x Det: DOE Pectomsence In nanospact"
   },
   {
     "type": "FigureCaption",
-    "element_id": "ccc8ab2aeabd9a0f745b9f0f6fcbef6e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "Fig. 7. SEM/EDX image of stainless steel immersed in 0.5 M H2SO4 solution without inhibitor."
-  },
-  {
-    "type": "FigureCaption",
-    "element_id": "6121f41a05c15afa2efe50af3e838da4",
+    "element_id": "d05dc63af5311bbc038193832984955e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -871,7 +831,27 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "d8bc58d446376a881b51208b9a8ee7b7",
+    "element_id": "0dcaad338c239bbf75e7c2a59a932d7d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "Fig. 7. SEM/EDX image of stainless steel immersed in 0.5 M H2SO4 solution without inhibitor."
+  },
+  {
+    "type": "Image",
+    "element_id": "520d1da08c86ce165cd2843e2dc27f98",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "SEMHV: 20.0KV WD: 15.54 mm EM ING: ACO x Dei: OSE"
+  },
+  {
+    "type": "FigureCaption",
+    "element_id": "be145f71b3a113e82026069ef4c9f433",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -881,7 +861,17 @@
   },
   {
     "type": "Header",
-    "element_id": "cdfba543ee8ef7fdb3d8b587648cc22d",
+    "element_id": "d76f8ad904c5a9e35001a900ae3ed88f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "455"
+  },
+  {
+    "type": "Header",
+    "element_id": "9bf474b2db1e3ee9304b15bce195346b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -891,7 +881,7 @@
   },
   {
     "type": "Header",
-    "element_id": "8a54dcaa0e2720786903e26e84bd9e93",
+    "element_id": "f19a9b9a2dd2d7ebaa58eb2c98ecf702",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -901,7 +891,7 @@
   },
   {
     "type": "Title",
-    "element_id": "e00efc537994ab576eaec5a387a5ebc0",
+    "element_id": "3a414521d26b866f142091764bcc8203",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -911,7 +901,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "d277e2ba1e8cbda383b0e51703c281c8",
+    "element_id": "f01d2d9e61623d168a81d2ebe27caca5",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -921,7 +911,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c90848f07a922eff3615e5aa1ee78a2f",
+    "element_id": "c335c40a5ae561ec29775b60fdde4801",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -931,7 +921,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "c07eeb615f8b0f2d544348b7f0655301",
+    "element_id": "389bd6e22f3ac105897fa0a75807197d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -941,7 +931,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "63584e8d8b4c14d1542778c155ee4b78",
+    "element_id": "bebf055a92b9b826a4f5e3ca16bf26f7",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -951,7 +941,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "df69621940968ac24afd990f838f8720",
+    "element_id": "017d2ebcb4cb3c55c319a81f455c22cd",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -961,23 +951,13 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c9b27a380aea7dc5245745a28309b5ce",
+    "element_id": "0af7fda53c3d6250b7db5bdca8b425fa",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 6
     },
     "text": "The corrosion rate (CR) was calculated using Eq. (1) [1–5]"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "1cf628987e0d8ee743a4fd01f662cc01",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6
-    },
-    "text": ". 87.6W Corrosion rate(CR) = (ar"
   },
   {
     "type": "UncategorizedText",
@@ -1000,6 +980,16 @@
     "text": "(cid:3)"
   },
   {
+    "type": "NarrativeText",
+    "element_id": "05b80da015b27ce53274cccfa0a1ffbf",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "Corrosion rate CRð"
+  },
+  {
     "type": "UncategorizedText",
     "element_id": "ba5ec51d07a4ac0e951608704431d59a",
     "metadata": {
@@ -1008,6 +998,66 @@
       "page_number": 6
     },
     "text": ")"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4fec98f0ec22ea41717dc57408c6f864",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "where: W is weight loss in mg, A is specimen surface area, T is immersion period in hours and D is the specimen density. From the corrosion rate, the surface coverage (θ) and inhibition efﬁciencies (IE %) were determined using Eqs. (2) and (3) respectively"
+  },
+  {
+    "type": "Formula",
+    "element_id": "aa6f7054b1f7b0d8d7cdbe5894c060de",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "θ ¼ CRo (cid:3) CR CRo"
+  },
+  {
+    "type": "Formula",
+    "element_id": "aa63e6aba52eb53a896d01e2c7ccc133",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "IE ð%Þ ¼ CRo (cid:3) CR 100 1 x CRo"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "14acadaed6bb4af2ffac3a4d5f5ccfb9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "where: CRo and CR are the corrosion rate in absence and presence of inhibitor respectively."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "d35e4d0bd7c3b68d87a080ef5cbc58b2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "2.3. Potentiodynamic polarization method"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "01f558c62bb60f363b05d4810359dc76",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "The potentiodynamic polarization method was performed on the prepared test samples immersed in 0.5 M H2SO4 solution in the presence and absence of different ES concentrations. A three electrode system was used; stainless steel Type 316 plate as working electrode with an exposed area of 1.0 cm2, platinum rod as counter electrode and silver chloride electrode as reference electrode. The electrode was polished, degreased in acetone and thoroughly rinsed with distilled water before the experiment. Current density against applied potential was plotted. The slope of the linear part in anodic and cathodic plots gives anodic and cathodic constants according to the Stern–Geary equation, and the"
   },
   {
     "type": "Title",
@@ -1020,26 +1070,6 @@
     "text": "ð1Þ"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "037926f4964663644ec21194965e103a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6
-    },
-    "text": "where: W is weight loss in mg, A is specimen surface area, T is immersion period in hours and D is the specimen density. From the corrosion rate, the surface coverage (θ) and inhibition efﬁciencies (IE %) were determined using Eqs. (2) and (3) respectively"
-  },
-  {
-    "type": "Formula",
-    "element_id": "59664b2fe1b21e796c905c904f07faae",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6
-    },
-    "text": "~ CRo"
-  },
-  {
     "type": "Title",
     "element_id": "41ceb2965d928f62e5bf4f63da952b22",
     "metadata": {
@@ -1048,16 +1078,6 @@
       "page_number": 6
     },
     "text": "ð2Þ"
-  },
-  {
-    "type": "Formula",
-    "element_id": "2ceed7a728acd831c0c4c14fc95a3db7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6
-    },
-    "text": "CRo=CR , 100 IE (0) = CR"
   },
   {
     "type": "Title",
@@ -1071,36 +1091,6 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "4e14cf7db9d9e827482861e7576a1d07",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6
-    },
-    "text": "where: CRo and CR are the corrosion rate in absence and presence of inhibitor respectively."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "5dda1fad7e503afe6240d736d50bbe7a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6
-    },
-    "text": "2.3. Potentiodynamic polarization method"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "f97dc933134705c39e5cb717f7813e07",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6
-    },
-    "text": "The potentiodynamic polarization method was performed on the prepared test samples immersed in 0.5 M H2SO4 solution in the presence and absence of different ES concentrations. A three electrode system was used; stainless steel Type 316 plate as working electrode with an exposed area of 1.0 cm2, platinum rod as counter electrode and silver chloride electrode as reference electrode. The electrode was polished, degreased in acetone and thoroughly rinsed with distilled water before the experiment. Current density against applied potential was plotted. The slope of the linear part in anodic and cathodic plots gives anodic and cathodic constants according to the Stern–Geary equation, and the"
-  },
-  {
-    "type": "NarrativeText",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
       "data_source": {},
@@ -1110,18 +1100,8 @@
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
   },
   {
-    "type": "Header",
-    "element_id": "b2dc92f9e9858319664f918c69457257",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "457"
-  },
-  {
     "type": "NarrativeText",
-    "element_id": "01f3f73499621b0a04142f29982336c1",
+    "element_id": "940fdd56bdabaede9bd2d4999f0f84a6",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1131,7 +1111,7 @@
   },
   {
     "type": "Title",
-    "element_id": "9619869f5960ea0375b649dd8cc388a5",
+    "element_id": "ee7d6fc036b5c1d6c5f5ebb9bf533f01",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1141,7 +1121,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "dbfead4a6bc5e94c6d8f7de9666b6f30",
+    "element_id": "387e6191442eebcb5c2b536384cda585",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1151,7 +1131,7 @@
   },
   {
     "type": "Title",
-    "element_id": "81db7fab0806640b0cbbac862671704f",
+    "element_id": "9478c846b097ffc916c7b084527ae320",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1161,7 +1141,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "eaf72c6c69d317c502026ecf01d28b09",
+    "element_id": "35399b6ef065014d1b8aadbe32c035a6",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1171,7 +1151,7 @@
   },
   {
     "type": "Title",
-    "element_id": "e56261e0bd30965b8e68ed2abb15b141",
+    "element_id": "a0d7deccf89e42d02a9d66b0c1889689",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1181,37 +1161,37 @@
   },
   {
     "type": "ListItem",
-    "element_id": "e275b10ccd88f5d2dbf9f2b2432eb64f",
+    "element_id": "5a9cda8b066365071a0f63ac2b4b9f03",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "[1] 0. Sanni, A.P.I. Popoola, O.S.I. Fayomi, Enhanced corrosion resistance of stainless steel type 316 in sulphuric acid solution using eco-friendly waste product, Results Phys. 9 (2018) 225-230."
+    "text": "[1] O. Sanni, A.P.I. Popoola, O.S.I. Fayomi, Enhanced corrosion resistance of stainless steel type 316 in sulphuric acid solution using eco-friendly waste product, Results Phys. 9 (2018) 225–230."
   },
   {
     "type": "ListItem",
-    "element_id": "5068dd4538c596c1d123fd612bdb99e3",
+    "element_id": "2782a9a4dd48cfa04cdbcadbb4463ae1",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "[2] O. Sanni, A.P.I. Popoola, A. Kolesnikov, Constitutive modeling for prediction of optimal process parameters in corrosion inhibition of austenitic stainless steel (Type 316)/acidic medium, Mater. Res. Express. 5 (10) (2018) 1-15."
+    "text": "[2] O. Sanni, A.P.I. Popoola, A. Kolesnikov, Constitutive modeling for prediction of optimal process parameters in corrosion inhibition of austenitic stainless steel (Type 316)/acidic medium, Mater. Res. Express. 5 (10) (2018) 1–15."
   },
   {
     "type": "ListItem",
-    "element_id": "76eb86296cfb136b12d4606217bd3ae3",
+    "element_id": "09194d18c5f6aa76c2d46e3e40eed2a8",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "[3] O. Sanni, A.P.I. Popoola, O.S.I. Fayomi, The inhibitive study of egg shell powder on UNS N08904 austenitic stainless steel corrosion in chloride solution, Def. Technol. 14 (2018) 463-468."
+    "text": "[3] O. Sanni, A.P.I. Popoola, O.S.I. Fayomi, The inhibitive study of egg shell powder on UNS N08904 austenitic stainless steel corrosion in chloride solution, Def. Technol. 14 (2018) 463–468."
   },
   {
     "type": "ListItem",
-    "element_id": "a3b65d4f88d6909004419ec92682d14a",
+    "element_id": "bf0eb624640aa4f8eb413def565b3024",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1221,12 +1201,22 @@
   },
   {
     "type": "ListItem",
-    "element_id": "3cd4caf23cd72a06fbf01b16df13ec1f",
+    "element_id": "18f7dc6f8ce23cbb7d7c78c627e72a1a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 7
     },
     "text": "[5] O. Sanni, A.P.I. Popoola, O.S.I. Fayomi, Inhibition of engineering material in sulphuric acid solution using waste product, Contributed Papers from Materials Science and Technology (MS&T18), 2018. 〈https://doi.org/10.7449/2018/MST_2018_254_261〉."
+  },
+  {
+    "type": "Header",
+    "element_id": "d3da688dd12a1b3f3194b302281a0ada",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "457"
   }
 ]

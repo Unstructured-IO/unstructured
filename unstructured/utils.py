@@ -1,11 +1,30 @@
 import functools
 import importlib
 import json
+import os
+import platform
+import subprocess
 from datetime import datetime
 from functools import wraps
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, cast
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+    cast,
+)
 
+import requests
 from typing_extensions import ParamSpec
+
+from unstructured.__version__ import __version__
 
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
@@ -189,3 +208,76 @@ def validate_date_args(date: Optional[str] = None):
         f"The argument {date} does not satisfy the format: "
         "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
     )
+
+
+def _first_and_remaining_iterator(it: Iterable) -> Tuple[Any, Iterator]:
+    iterator = iter(it)
+    try:
+        out = next(iterator)
+    except StopIteration:
+        raise ValueError(
+            "Expected at least 1 element in iterable from which to retrieve first, got empty "
+            "iterable.",
+        )
+    return out, iterator
+
+
+def first(it: Iterable) -> Any:
+    """Returns the first item from an iterable. Raises an error if the iterable is empty."""
+    out, _ = _first_and_remaining_iterator(it)
+    return out
+
+
+def only(it: Iterable) -> Any:
+    """Returns the only element from a singleton iterable. Raises an error if the iterable is not a
+    singleton."""
+    out, iterator = _first_and_remaining_iterator(it)
+    if any(True for _ in iterator):
+        raise ValueError(
+            "Expected only 1 element in passed argument, instead there are at least 2 elements.",
+        )
+    return out
+
+
+def scarf_analytics():
+    try:
+        subprocess.check_output("nvidia-smi")
+        gpu_present = True
+    except Exception:
+        gpu_present = False
+        pass
+
+    python_version = ".".join(platform.python_version().split(".")[:2])
+
+    try:
+        if os.getenv("SCARF_NO_ANALYTICS") != "true" and os.getenv("DO_NOT_TRACK") != "true":
+            if "dev" in __version__:
+                requests.get(
+                    "https://packages.unstructured.io/python-telemetry?version="
+                    + __version__
+                    + "&platform="
+                    + platform.system()
+                    + "&python"
+                    + python_version
+                    + "&arch="
+                    + platform.machine()
+                    + "&gpu="
+                    + str(gpu_present)
+                    + "&dev=true",
+                )
+            else:
+                requests.get(
+                    "https://packages.unstructured.io/python-telemetry?version="
+                    + __version__
+                    + "&platform="
+                    + platform.system()
+                    + "&python"
+                    + python_version
+                    + "&arch="
+                    + platform.machine()
+                    + "&gpu="
+                    + str(gpu_present)
+                    + "&dev=false",
+                )
+    except Exception:
+        pass

@@ -21,7 +21,7 @@
 <div>
   <p align="center">
   <a
-  href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-23kciff0y-bvzXxJkgtbXe5POo_rxMkw">
+  href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-20kd2e9ti-q5yz7RCa2nlyqmAba9vqRw">
     <img src="https://img.shields.io/badge/JOIN US ON SLACK-4A154B?style=for-the-badge&logo=slack&logoColor=white" />
   </a>
   <a href="https://www.linkedin.com/company/unstructuredio/">
@@ -47,7 +47,7 @@ While access to the hosted Unstructured API will remain free, API Keys are requi
 
 We are releasing the beta version of our Chipper model to deliver superior performance when processing high-resolution, complex documents. To start using the Chipper model in your API request, you can utilize the `hi_res_model_name=chipper` parameter. Please refer to the documentation [here](https://unstructured-io.github.io/unstructured/api.html#beta-version-hi-res-strategy-with-chipper-model).
 
-As the Chipper model is in beta version, we welcome feedback and suggestions. For those interested in testing the Chipper model, we encourage you to connect with us on [Slack community](https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-23kciff0y-bvzXxJkgtbXe5POo_rxMkw).
+As the Chipper model is in beta version, we welcome feedback and suggestions. For those interested in testing the Chipper model, we encourage you to connect with us on [Slack community](https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-20kd2e9ti-q5yz7RCa2nlyqmAba9vqRw).
 
 ## :eight_pointed_black_star: Quick Start
 
@@ -183,7 +183,7 @@ This README overviews how to install, use and develop the library. For more comp
 **Bricks** 🧱 in `unstructured` are the foundational elements that drive the data processing workflow within the system. These components provide users with the building blocks to build pipelines targeted at the documents they care about. The bricks fall into three categories:
 - :jigsaw: *Partitioning* bricks break raw documents into standard, structured elements.
 - :broom: *Cleaning* bricks remove unwanted text from documents, such as boilerplate and sentence fragments.
-- :performing_arts: *Staging* bricks format data for downstream tasks, such as ML inference and data labeling. 
+- :performing_arts: *Staging* bricks format data for downstream tasks, such as ML inference and data labeling.
 
 These bricks create a cohesive, streamlined process that enables effective data handling and analysis. Check out the available bricks and how to use them from the [Bricks documentation](https://unstructured-io.github.io/unstructured/bricks.html).
 
@@ -257,3 +257,4 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 ## :chart_with_upwards_trend: Analytics
 
 We’ve partnered with Scarf (https://scarf.sh) to collect anonymized user statistics to understand which features our community is using and how to prioritize product decision-making in the future. To learn more about how we collect and use this data, please read our [Privacy Policy](https://unstructured.io/privacy-policy).
+To opt out of this data collection, you can set the environment variable `SCARF_NO_ANALYTICS=true` before running any `unstructured` commands.

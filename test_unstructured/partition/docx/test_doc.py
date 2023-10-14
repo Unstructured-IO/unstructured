@@ -4,6 +4,7 @@ from tempfile import SpooledTemporaryFile
 import docx
 import pytest
 
+from test_unstructured.unit_utils import assert_round_trips_through_JSON
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     Address,
@@ -15,8 +16,6 @@ from unstructured.documents.elements import (
 from unstructured.partition.common import convert_office_doc
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
-from unstructured.partition.json import partition_json
-from unstructured.staging.base import elements_to_json
 
 
 @pytest.fixture()
@@ -272,18 +271,14 @@ def test_partition_doc_from_file_without_metadata_date(
     assert elements[0].metadata.date == "2020-07-05"
 
 
-def test_partition_doc_with_json(mock_document, expected_elements, tmpdir, capsys):
+def test_partition_doc_with_json(mock_document, tmpdir):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_document.save(docx_filename)
     convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-    elements = partition_doc(filename=doc_filename)
-    test_elements = partition_json(text=elements_to_json(elements))
 
-    assert len(elements) == len(test_elements)
-    assert elements[0].metadata.filename == test_elements[0].metadata.filename
-    for i in range(len(elements)):
-        assert elements[i] == test_elements[i]
+    elements = partition_doc(filename=doc_filename)
+    assert_round_trips_through_JSON(elements)
 
 
 def test_add_chunking_strategy_on_partition_doc(filename="example-docs/fake.doc"):
@@ -292,3 +287,16 @@ def test_add_chunking_strategy_on_partition_doc(filename="example-docs/fake.doc"
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_doc_element_metadata_has_languages():
+    filename = "example-docs/fake-doc-emphasized-text.doc"
+    elements = partition_doc(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_doc_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.doc"
+    elements = partition_doc(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
