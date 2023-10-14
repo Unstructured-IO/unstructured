@@ -11,6 +11,7 @@
 
 * **Cleans up temporary files after conversion** Previously a file conversion utility was leaving temporary files behind on the filesystem without removing them when no longer needed. This fix helps prevent an accumulation of temporary files taking up excessive disk space.
 * **Fixes `under_non_alpha_ratio` dividing by zero** Although this function guarded against a specific cause of division by zero, there were edge cases slipping through like strings with only whitespace. This update more generally prevents the function from performing a division by zero.
+* **Fix languages default** Previously the default language was being set to English when elements didn't have text or if langdetect could not detect the language. It now defaults to None so there is not misleading information about the language detected.
 
 ## 0.10.22
 
@@ -28,7 +29,6 @@
 
 ### Fixes
 
-* **Fix languages default** Previously the default language was being set to English when elements didn't have text or if langdetect could not detect the language. It now defaults to None so there is not misleading information about the language detected.
 * **Fixes PDF list parsing creating duplicate list items** Previously a bug in PDF list item parsing caused removal of other elements and duplication of the list item
 * **Fixes duplicated elements** Fixes issue where elements are duplicated when embeddings are generated. This will allow users to generate embeddings for their list of Elements without duplicating/breaking the orginal content.
 * **Fixes failure when flagging for embeddings through unstructured-ingest** Currently adding the embedding parameter to any connector results in a failure on the copy stage. This is resolves the issue by adding the IngestDoc to the context map in the embedding node's `run` method. This allows users to specify that connectors fetch embeddings without failure.
