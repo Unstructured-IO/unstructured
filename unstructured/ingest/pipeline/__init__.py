@@ -1,6 +1,7 @@
 from .doc_factory import DocFactory
 from .interfaces import PipelineContext, ReformatNode
 from .partition import Partitioner
+from .permissions import PermissionsDataCleaner
 from .pipeline import Pipeline
 from .reformat.chunking import Chunker
 from .reformat.embedding import Embedder
@@ -17,4 +18,5 @@ __all__ = [
     "Writer",
     "Chunker",
     "ReformatNode",
+    "PermissionsDataCleaner",
 ]

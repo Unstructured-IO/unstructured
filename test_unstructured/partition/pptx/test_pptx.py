@@ -11,6 +11,7 @@ import pytest
 from pptx.util import Inches
 from pytest_mock import MockFixture
 
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     ListItem,
@@ -19,9 +20,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition.json import partition_json
 from unstructured.partition.pptx import _PptxPartitioner, partition_pptx
-from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
@@ -356,19 +355,35 @@ def test_partition_pptx_from_file_with_custom_metadata_date(mocker: MockFixture)
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
+def test_partition_pptx_element_metadata_has_languages():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
+    elements = partition_pptx(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_pptx_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.pptx"
+    elements = partition_pptx(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    # languages other than English and Spanish are detected by this partitioner,
+    # so this test is slightly different from the other partition tests
+    langs = {element.metadata.languages[0] for element in elements}
+    assert "eng" in langs
+    assert "spa" in langs
+
+
+def test_partition_pptx_raises_TypeError_for_invalid_languages():
+    with pytest.raises(TypeError):
+        filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
+        partition_pptx(filename=filename, languages="eng")
+
+
 # == DescribePptxPartitionerDownstreamBehaviors ==================================================
 
 
 def test_partition_pptx_with_json():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
-    elements = partition_pptx(filename=filename)
-    test_elements = partition_json(text=elements_to_json(elements))
-
-    assert len(elements) == len(test_elements)
-    assert elements[0].metadata.filename == test_elements[0].metadata.filename
-
-    for i in range(len(elements)):
-        assert elements[i] == test_elements[i]
+    elements = partition_pptx(example_doc_path("fake-power-point.pptx"))
+    assert_round_trips_through_JSON(elements)
 
 
 def test_add_chunking_strategy_by_title_on_partition_pptx():

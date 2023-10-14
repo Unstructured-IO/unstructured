@@ -144,7 +144,7 @@ jsonschema-specifications==2023.7.1
     # via jsonschema
 jupyter==1.0.0
     # via -r requirements/dev.in
-jupyter-client==8.3.1
+jupyter-client==8.4.0
     # via
     #   ipykernel
     #   jupyter-console
@@ -153,7 +153,7 @@ jupyter-client==8.3.1
     #   qtconsole
 jupyter-console==6.6.3
     # via jupyter
-jupyter-core==5.3.2
+jupyter-core==5.4.0
     # via
     #   -c requirements/constraints.in
     #   ipykernel
@@ -178,7 +178,7 @@ jupyter-server==2.7.3
     #   notebook-shim
 jupyter-server-terminals==0.4.4
     # via jupyter-server
-jupyterlab==4.0.6
+jupyterlab==4.0.7
     # via notebook
 jupyterlab-pygments==0.2.2
     # via nbconvert
@@ -213,7 +213,7 @@ nest-asyncio==1.5.8
     # via ipykernel
 nodeenv==1.8.0
     # via pre-commit
-notebook==7.0.4
+notebook==7.0.5
     # via jupyter
 notebook-shim==0.2.3
     # via
@@ -251,7 +251,7 @@ platformdirs==3.10.0
     #   -c requirements/test.txt
     #   jupyter-core
     #   virtualenv
-pre-commit==3.4.0
+pre-commit==3.5.0
     # via -r requirements/dev.in
 prometheus-client==0.17.1
     # via jupyter-server
@@ -320,7 +320,7 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
-rpds-py==0.10.4
+rpds-py==0.10.6
     # via
     #   jsonschema
     #   referencing

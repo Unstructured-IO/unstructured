@@ -1,8 +1,10 @@
 import csv
 import io
 import json
+from copy import deepcopy
 from typing import Any, Dict, List, Optional
 
+from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
@@ -39,6 +41,30 @@ TABLE_FIELDNAMES: List[str] = [
 ] + _get_metadata_table_fieldnames()
 
 
+def convert_to_text(elements: List[Element]) -> str:
+    """Converts a list of elements into clean, concatenated text."""
+    return "\n".join([e.text for e in elements if hasattr(e, "text") and e.text])
+
+
+def elements_to_text(
+    elements: List[Element],
+    filename: Optional[str] = None,
+    encoding: str = "utf-8",
+) -> Optional[str]:
+    """
+    Convert the text from the list of elements into clean, concatenated text.
+    Saves to a txt file if filename is specified.
+    Otherwise, return the text of the elements as a string.
+    """
+    element_cct = convert_to_text(elements)
+    if filename is not None:
+        with open(filename, "w", encoding=encoding) as f:
+            f.write(element_cct)
+            return None
+    else:
+        return element_cct
+
+
 def convert_to_isd(elements: List[Element]) -> List[Dict[str, Any]]:
     """Represents the document elements as an Initial Structured Document (ISD)."""
     isd: List[Dict[str, Any]] = []
@@ -53,6 +79,27 @@ def convert_to_dict(elements: List[Element]) -> List[Dict[str, Any]]:
     return convert_to_isd(elements)
 
 
+def _fix_metadata_field_precision(elements: List[Element]) -> List[Element]:
+    out_elements = []
+    for element in elements:
+        el = deepcopy(element)
+        if el.metadata.coordinates:
+            precision = 1 if isinstance(el.metadata.coordinates.system, PixelSpace) else 2
+            points = el.metadata.coordinates.points
+            rounded_points = []
+            for point in points:
+                x, y = point
+                rounded_point = (round(x, precision), round(y, precision))
+                rounded_points.append(rounded_point)
+            el.metadata.coordinates.points = tuple(rounded_points)
+
+        if el.metadata.detection_class_prob:
+            el.metadata.detection_class_prob = round(el.metadata.detection_class_prob, 5)
+
+        out_elements.append(el)
+    return out_elements
+
+
 def elements_to_json(
     elements: List[Element],
     filename: Optional[str] = None,
@@ -63,7 +110,9 @@ def elements_to_json(
     Saves a list of elements to a JSON file if filename is specified.
     Otherwise, return the list of elements as a string.
     """
-    element_dict = convert_to_dict(elements)
+
+    pre_processed_elements = _fix_metadata_field_precision(elements)
+    element_dict = convert_to_dict(pre_processed_elements)
     if filename is not None:
         with open(filename, "w", encoding=encoding) as f:
             json.dump(element_dict, f, indent=indent)
