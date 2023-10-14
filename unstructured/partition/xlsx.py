@@ -1,6 +1,7 @@
 from tempfile import SpooledTemporaryFile
 from typing import IO, Any, BinaryIO, Dict, List, Optional, Tuple, Union, cast
 
+import networkx as nx
 import numpy as np
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
@@ -201,44 +202,26 @@ def _get_connected_components(
         overlapping components to return distinct components.
     """
     max_row, max_col = sheet.shape
-    visited = set()
+    graph: nx.Graph = nx.grid_2d_graph(max_row, max_col)
+    node_array = np.indices((max_row, max_col)).T
+    empty_cells = sheet.isna().T
+    nodes_to_remove = [tuple(pair) for pair in node_array[empty_cells]]
+    graph.remove_nodes_from(nodes_to_remove)
+    connected_components_as_nodes = list(nx.connected_components(graph))
     connected_components = []
+    for _component in connected_components_as_nodes:
+        component = list(_component)
+        min_x, min_y, max_x, max_y = _find_min_max_coord(component)
+        connected_components.append(
+            {
+                "component": component,
+                "min_x": min_x,
+                "min_y": min_y,
+                "max_x": max_x,
+                "max_y": max_y,
+            },
+        )
 
-    def dfs(row, col, component):
-        if (
-            row < 0
-            or row >= sheet.shape[0]
-            or col < 0
-            or col >= sheet.shape[1]
-            or (row, col) in visited
-        ):
-            return
-        visited.add((row, col))
-
-        if not pd.isna(sheet.iat[row, col]):
-            component.append((row, col))
-
-            # Explore neighboring cells
-            dfs(row - 1, col, component)  # Above
-            dfs(row + 1, col, component)  # Below
-            dfs(row, col - 1, component)  # Left
-            dfs(row, col + 1, component)  # Right
-
-    for row in range(max_row):
-        for col in range(max_col):
-            if (row, col) not in visited and not pd.isna(sheet.iat[row, col]):
-                component: List[dict] = []
-                dfs(row, col, component)
-                min_x, min_y, max_x, max_y = _find_min_max_coord(component)
-                connected_components.append(
-                    {
-                        "component": component,
-                        "min_x": min_x,
-                        "min_y": min_y,
-                        "max_x": max_x,
-                        "max_y": max_y,
-                    },
-                )
     if filter:
         connected_components = _filter_overlapping_tables(connected_components)
     return [
@@ -256,8 +239,8 @@ def _get_connected_components(
 
 
 def _filter_overlapping_tables(
-    connected_components: List[Dict[Any, Any]],
-) -> List[Dict[Any, Any]]:
+    connected_components: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
     """
     Filter out overlapping connected components to return distinct components.
     """
