@@ -4,12 +4,22 @@ from rapidfuzz.distance import Levenshtein
 
 from unstructured.cleaners.core import clean_bullets, remove_sentence_punctuation
 
+def calculate_accuracy(
+    output: str,
+    source: str,
+    weights: Tuple[int, int, int] = (2, 1, 1),
+) -> float:
+    """
+    Calculates accuracy by calling calculate_edit_distance function using `return_as=score`.
+    The function will return complement of the edit distance instead.
+    """
+    return calculate_edit_distance(output, source, weights, return_as="score")
 
 def calculate_edit_distance(
     output: str,
     source: str,
     weights: Tuple[int, int, int] = (2, 1, 1),
-    return_as: str = "score",
+    return_as: str = "distance",
 ) -> float:
     """
     Calculates edit distance using Levenshtein distance between two strings.
@@ -22,7 +32,7 @@ def calculate_edit_distance(
             distance calculation. Default is (2, 1, 1).
         return_as (str, optional): The type of result to return, one of
             ["score",, "distance"].
-            Default is "score".
+            Default is "distance".
 
     Returns:
         float: The calculated edit distance or similarity score between
