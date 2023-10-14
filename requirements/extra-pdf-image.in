@@ -5,7 +5,7 @@ pdf2image
 pdfminer.six
 # Do not move to contsraints.in, otherwise unstructured-inference will not be upgraded
 # when unstructured library is.
-unstructured-inference==0.7.3
+unstructured-inference==0.7.4
 # unstructured fork of pytesseract that provides an interface to allow for multiple output formats
 # from one tesseract call
 unstructured.pytesseract>=0.3.12
