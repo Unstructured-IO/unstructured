@@ -1,12 +1,13 @@
-from typing import Dict, Tuple
+from typing import Dict, Optional, Tuple
 
 from rapidfuzz.distance import Levenshtein
 
 from unstructured.cleaners.core import clean_bullets, remove_sentence_punctuation
 
+
 def calculate_accuracy(
-    output: str,
-    source: str,
+    output: Optional[str],
+    source: Optional[str],
     weights: Tuple[int, int, int] = (2, 1, 1),
 ) -> float:
     """
@@ -15,9 +16,10 @@ def calculate_accuracy(
     """
     return calculate_edit_distance(output, source, weights, return_as="score")
 
+
 def calculate_edit_distance(
-    output: str,
-    source: str,
+    output: Optional[str],
+    source: Optional[str],
     weights: Tuple[int, int, int] = (2, 1, 1),
     return_as: str = "distance",
 ) -> float:
@@ -54,9 +56,13 @@ def calculate_edit_distance(
     return_types = ["score", "distance"]
     if return_as not in return_types:
         raise ValueError("Invalid return value type. Expected one of: %s" % return_types)
-    distance = Levenshtein.distance(output, source, weights=weights)
-    char_len = len(source)
-    bounded_percentage_distance = min(max(distance / char_len, 0.0), 1.0)
+    output = _prepare_str(output)
+    source = _prepare_str(source)
+    distance = Levenshtein.distance(output, source, weights=weights)  # type: ignore
+    # lower bounded the char length for source string at 1.0 because to avoid division by zero
+    # in the case where source string is empty, the distance should be at 100%
+    source_char_len = max(len(source), 1.0)  # type: ignore
+    bounded_percentage_distance = min(max(distance / source_char_len, 0.0), 1.0)
     if return_as == "score":
         return 1 - bounded_percentage_distance
     elif return_as == "distance":
@@ -102,8 +108,8 @@ def bag_of_words(text: str) -> Dict[str, int]:
 
 
 def calculate_percent_missing_text(
-    output: str,
-    source: str,
+    output: Optional[str],
+    source: Optional[str],
 ) -> float:
     """
     Creates the bag of words (BOW) found in each input text and their frequencies, then compares the
@@ -121,6 +127,8 @@ def calculate_percent_missing_text(
 
     Returns the percentage of missing text represented as a decimal between 0 and 1.
     """
+    output = _prepare_str(output)
+    source = _prepare_str(source)
     output_bow = bag_of_words(output)
     source_bow = bag_of_words(source)
 
@@ -143,3 +151,9 @@ def calculate_percent_missing_text(
 
     fraction_missing = round(total_missing_word_count / total_source_word_count, 2)
     return min(fraction_missing, 1)  # limit to 100%
+
+
+def _prepare_str(string: Optional[str]) -> str:
+    if not string:
+        return string  # type: ignore
+    return ""
