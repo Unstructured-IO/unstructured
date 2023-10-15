@@ -90,3 +90,5 @@ for test in "${all_tests[@]}"; do
     echo "--------- FINISHED SCRIPT $test ---------"
   fi
 done
+
+./evaluation-metrics.sh
