@@ -212,3 +212,18 @@ class CopyNode(PipelineNode):
     @abstractmethod
     def run(self, json_path: str):
         pass
+
+
+@dataclass
+class PermissionsNode(PipelineNode):
+    """
+    Encapsulated logic to do operations on permissions related data.
+    """
+
+    def initialize(self):
+        logger.info("Running permissions node to cleanup the permissions folder")
+        super().initialize()
+
+    @abstractmethod
+    def run(self):
+        pass

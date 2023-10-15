@@ -45,6 +45,7 @@ class DataSourceMetadata:
     date_created: Optional[str] = None
     date_modified: Optional[str] = None
     date_processed: Optional[str] = None
+    permissions_data: Optional[List[Dict[str, Any]]] = None
 
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
@@ -390,7 +391,7 @@ class Element(abc.ABC):
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "type": None,
             "element_id": self.id,
