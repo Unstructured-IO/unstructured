@@ -7,6 +7,7 @@ from unstructured.documents.elements import (
     Element,
 )
 from unstructured.embed.interfaces import BaseEmbeddingEncoder
+from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
 
 
@@ -25,6 +26,7 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
 
         self.initialize()
 
+    @EmbeddingEncoderConnectionError.wrap
     @requires_dependencies(
         ["langchain", "huggingface"],
         extras="huggingface",
