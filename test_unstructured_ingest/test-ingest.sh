@@ -91,4 +91,4 @@ for test in "${all_tests[@]}"; do
   fi
 done
 
-./evaluation-metrics.sh
+./test_unstructured_ingest/evaluation-metrics.sh
