@@ -11,6 +11,9 @@
 
 ### Fixes
 
+* **Fix paddle model file not discoverable** Fixes issue where ocr_models/paddle_ocr.py file is not discoverable on PyPI by adding
+an `__init__.py` file under the folder.
+
 ## 0.10.23
 
 ### Enhancements
