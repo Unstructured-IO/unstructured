@@ -1,16 +1,21 @@
 import os
-import re
 import typing as t
 from contextlib import suppress
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path, PurePath
 
+from unstructured.ingest.compression_support import (
+    TAR_FILE_EXT,
+    ZIP_FILE_EXT,
+    CompressionSourceConnectorMixin,
+)
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
     BaseIngestDoc,
     BaseSourceConnector,
+    FsspecConfig,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
     SourceMetadata,
@@ -33,49 +38,8 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
 
 
 @dataclass
-class SimpleFsspecConfig(BaseConnectorConfig):
-    # fsspec specific options
-    path: str
-    recursive: bool = False
-    access_kwargs: dict = field(default_factory=dict)
-    protocol: str = field(init=False)
-    path_without_protocol: str = field(init=False)
-    dir_path: str = field(init=False)
-    file_path: str = field(init=False)
-
-    def get_access_kwargs(self) -> dict:
-        return self.access_kwargs
-
-    def __post_init__(self):
-        self.protocol, self.path_without_protocol = self.path.split("://")
-        if self.protocol not in SUPPORTED_REMOTE_FSSPEC_PROTOCOLS:
-            raise ValueError(
-                f"Protocol {self.protocol} not supported yet, only "
-                f"{SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported.",
-            )
-
-        # dropbox root is an empty string
-        match = re.match(rf"{self.protocol}://([\s])/", self.path)
-        if match and self.protocol == "dropbox":
-            self.dir_path = " "
-            self.file_path = ""
-            return
-
-        # just a path with no trailing prefix
-        match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.path)
-        if match:
-            self.dir_path = match.group(1)
-            self.file_path = ""
-            return
-
-        # valid path with a dir and/or file
-        match = re.match(rf"{self.protocol}://([^/\s]+?)/([^\s]*)", self.path)
-        if not match:
-            raise ValueError(
-                f"Invalid path {self.path}. Expected <protocol>://<dir-path>/<file-or-dir-path>.",
-            )
-        self.dir_path = match.group(1)
-        self.file_path = match.group(2) or ""
+class SimpleFsspecConfig(FsspecConfig, BaseConnectorConfig):
+    pass
 
 
 @dataclass
@@ -167,7 +131,11 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
 
 @dataclass
-class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
+class FsspecSourceConnector(
+    SourceConnectorCleanupMixin,
+    CompressionSourceConnectorMixin,
+    BaseSourceConnector,
+):
     """Objects of this class support fetching document(s) from"""
 
     connector_config: SimpleFsspecConfig
@@ -186,7 +154,7 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         ls_output = self.fs.ls(self.connector_config.path_without_protocol)
         if len(ls_output) < 1:
             raise ValueError(
-                f"No objects found in {self.connector_config.path}.",
+                f"No objects found in {self.connector_config.remote_url}.",
             )
 
     def _list_files(self):
@@ -212,15 +180,44 @@ class FsspecSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             ]
 
     def get_ingest_docs(self):
-        return [
-            self.ingest_doc_cls(
-                processor_config=self.processor_config,
+        files = self._list_files()
+        # remove compressed files
+        compressed_file_ext = TAR_FILE_EXT + ZIP_FILE_EXT
+        compressed_files = []
+        uncompressed_files = []
+        docs: t.List[BaseIngestDoc] = []
+        for file in files:
+            if any(file.endswith(ext) for ext in compressed_file_ext):
+                compressed_files.append(file)
+            else:
+                uncompressed_files.append(file)
+        docs.extend(
+            [
+                self.ingest_doc_cls(
+                    read_config=self.read_config,
+                    connector_config=self.connector_config,
+                    processor_config=self.processor_config,
+                    remote_file_path=file,
+                )
+                for file in uncompressed_files
+            ],
+        )
+        if not self.connector_config.uncompress:
+            return docs
+        for compressed_file in compressed_files:
+            compressed_doc = self.ingest_doc_cls(
                 read_config=self.read_config,
+                processor_config=self.processor_config,
                 connector_config=self.connector_config,
-                remote_file_path=file,
+                remote_file_path=compressed_file,
             )
-            for file in self._list_files()
-        ]
+            try:
+                local_ingest_docs = self.process_compressed_doc(doc=compressed_doc)
+                logger.info(f"adding {len(local_ingest_docs)} from {compressed_file}")
+                docs.extend(local_ingest_docs)
+            finally:
+                compressed_doc.cleanup_file()
+        return docs
 
 
 @dataclass
@@ -245,7 +242,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
 
         for doc in docs:
             s3_file_path = doc.base_filename
-            s3_folder = self.connector_config.path
+            s3_folder = self.connector_config.remote_url
 
             s3_output_path = str(PurePath(s3_folder, s3_file_path)) if s3_file_path else s3_folder
             logger.debug(f"Uploading {doc._output_filename} -> {s3_output_path}")

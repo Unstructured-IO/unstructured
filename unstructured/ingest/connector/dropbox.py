@@ -100,7 +100,7 @@ class DropboxSourceConnector(FsspecSourceConnector):
             return
         elif ls_output:
             raise ValueError(
-                f"No objects found in {self.connector_config.path}.",
+                f"No objects found in {self.connector_config.remote_url}.",
             )
         else:
             raise MissingFolderError(
