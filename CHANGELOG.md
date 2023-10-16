@@ -50,6 +50,7 @@ an `__init__.py` file under the folder.
 * **Expose skip_infer_table_types in ingest CLI.** For each connector a new `--skip-infer-table-types` parameter was added to map to the `skip_infer_table_types` partition argument. This gives more granular control to unstructured-ingest users, allowing them to specify the file types for which we should attempt table extraction.
 * **Add flag to ingest CLI to raise error if any single doc fails in pipeline** Currently if a single doc fails in the pipeline, the whole thing halts due to the error. This flag defaults to log an error but continue with the docs it can.
 * **Emit hyperlink metadata for DOCX file-type.** DOCX partitioner now adds `metadata.links`, `metadata.link_texts` and `metadata.link_urls` for elements that contain a hyperlink that points to an external resource. So-called "jump" links pointing to document internal locations (such as those found in a table-of-contents "jumping" to a chapter or section) are excluded.
+* **Add include_header argument for partition_csv and partition_tsv** Now supports retaining header rows in CSV and TSV documents element partitioning.
 
 ### Features
 

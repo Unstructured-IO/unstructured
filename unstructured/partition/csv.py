@@ -31,6 +31,7 @@ def partition_csv(
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    include_header: bool = False,
     include_metadata: bool = True,
     languages: Optional[List[str]] = ["auto"],
     # NOTE (jennings) partition_csv generates a single TableElement
@@ -49,6 +50,8 @@ def partition_csv(
         The filename to use for the metadata.
     metadata_last_modified
         The last modified date for the document.
+    include_header
+        Determines whether or not header info info is included in text and medatada.text_as_html.
     include_metadata
         Determines whether or not metadata is included in the output.
     languages
@@ -58,8 +61,10 @@ def partition_csv(
     """
     exactly_one(filename=filename, file=file)
 
+    header = 0 if include_header else None
+
     if filename:
-        table = pd.read_csv(filename, header=None)
+        table = pd.read_csv(filename, header=header)
         last_modification_date = get_last_modified_date(filename)
 
     elif file:
@@ -67,9 +72,9 @@ def partition_csv(
         f = spooled_to_bytes_io_if_needed(
             cast(Union[BinaryIO, SpooledTemporaryFile], file),
         )
-        table = pd.read_csv(f, header=None)
+        table = pd.read_csv(f, header=header)
 
-    html_text = table.to_html(index=False, header=False, na_rep="")
+    html_text = table.to_html(index=False, header=include_header, na_rep="")
     text = soupparser_fromstring(html_text).text_content()
 
     if include_metadata:
