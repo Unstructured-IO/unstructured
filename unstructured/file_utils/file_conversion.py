@@ -35,14 +35,15 @@ def convert_file_to_html_text(
     exactly_one(filename=filename, file=file)
 
     if file is not None:
-        tmp = tempfile.NamedTemporaryFile(delete=False)
-        tmp.write(file.read())
-        tmp.close()
-        html_text = convert_file_to_text(
-            filename=tmp.name,
-            source_format=source_format,
-            target_format="html",
-        )
+        with tempfile.NamedTemporaryFile() as tmp:
+            tmp.write(file.read())
+            tmp.flush()
+
+            html_text = convert_file_to_text(
+                filename=tmp.name,
+                source_format=source_format,
+                target_format="html",
+            )
     elif filename is not None:
         html_text = convert_file_to_text(
             filename=filename,
