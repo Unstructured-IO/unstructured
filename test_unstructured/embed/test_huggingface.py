@@ -4,7 +4,14 @@ from unstructured.embed.huggingface import HuggingFaceEmbeddingEncoder
 HF = HuggingFaceEmbeddingEncoder()
 
 
-def test_embed_documents():
+def test_embed_documents(mocker):
+    # Mocked client with the desired behavior for embed_documents
+    mock_client = mocker.MagicMock()
+    mock_client.embed_documents.return_value = [1, 2]
+
+    # Mock get_openai_client to return our mock_client
+    mocker.patch.object(HuggingFaceEmbeddingEncoder, "initialize", return_value=mock_client)
+
     model = HuggingFaceEmbeddingEncoder()
     elements = model.embed_documents(
         elements=[Text("This is sentence 1"), Text("This is sentence 2")],
