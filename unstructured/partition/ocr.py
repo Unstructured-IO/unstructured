@@ -32,6 +32,7 @@ def process_data_with_ocr(
     data: Union[bytes, BinaryIO],
     out_layout: "DocumentLayout",
     is_image: bool = False,
+    infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
@@ -68,6 +69,7 @@ def process_data_with_ocr(
             filename=tmp_file.name,
             out_layout=out_layout,
             is_image=is_image,
+            infer_table_structure=infer_table_structure,
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
@@ -79,13 +81,14 @@ def process_file_with_ocr(
     filename: str,
     out_layout: "DocumentLayout",
     is_image: bool = False,
+    infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given file and supplement the output DocumentLayout
-    from unsturcutured0inference with ocr.
+    from unsturcutured-inference with ocr.
 
     Parameters:
     - filename (str): The path to the input file, which can be an image or a PDF.
@@ -118,6 +121,7 @@ def process_file_with_ocr(
                     merged_page_layout = supplement_page_layout_with_ocr(
                         out_layout.pages[i],
                         image,
+                        infer_table_structure=infer_table_structure,
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
                     )
@@ -137,6 +141,7 @@ def process_file_with_ocr(
                         merged_page_layout = supplement_page_layout_with_ocr(
                             out_layout.pages[i],
                             image,
+                            infer_table_structure=infer_table_structure,
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
                         )
@@ -152,6 +157,7 @@ def process_file_with_ocr(
 def supplement_page_layout_with_ocr(
     page_layout: "PageLayout",
     image: PILImage,
+    infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
 ) -> "PageLayout":
