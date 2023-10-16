@@ -10,6 +10,7 @@ types-click
 flake8
 freezegun
 label_studio_sdk
+langchain
 mypy
 pydantic
 pytest-cov
