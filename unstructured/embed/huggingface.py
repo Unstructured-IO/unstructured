@@ -7,6 +7,7 @@ from unstructured.documents.elements import (
     Element,
 )
 from unstructured.embed.interfaces import BaseEmbeddingEncoder
+from unstructured.utils import requires_dependencies
 
 
 class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
@@ -24,6 +25,10 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
 
         self.initialize()
 
+    @requires_dependencies(
+        ["langchain", "huggingface"],
+        extras="huggingface",
+    )
     def initialize(self):
         """Creates a langchain HuggingFace object to embed elements."""
 

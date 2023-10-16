@@ -158,6 +158,7 @@ setup(
         "local-inference": all_doc_reqs,
         "paddleocr": load_requirements("requirements/extra-paddleocr.in"),
         "openai": load_requirements("requirements/ingest-openai.in"),
+        "langchain": load_requirements("requirements/langchain.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},
