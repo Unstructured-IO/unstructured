@@ -9,7 +9,7 @@ from PIL import Image
 
 from unstructured.documents.elements import PageBreak
 from unstructured.partition.pdf import partition_pdf
-from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT, SORT_MODE_DONT
+from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_DONT, SORT_MODE_XY_CUT
 from unstructured.partition.utils.xycut import (
     bbox2points,
     recursive_xy_cut,
@@ -118,10 +118,7 @@ def run_partition_pdf(
 
     is_image = filetype == "image"
 
-    if is_image:
-        images = [Image.open(f_path)]
-    else:
-        images = pdf2image.convert_from_path(f_path)
+    images = [Image.open(f_path)] if is_image else pdf2image.convert_from_path(f_path)
 
     ordered_elements = partition_pdf(
         filename=f_path,
