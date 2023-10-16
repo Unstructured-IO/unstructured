@@ -155,5 +155,5 @@ def calculate_percent_missing_text(
 
 def _prepare_str(string: Optional[str]) -> str:
     if not string:
-        return string  # type: ignore
-    return ""
+        return ""
+    return str(string)  # type: ignore

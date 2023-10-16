@@ -3,7 +3,7 @@
 import csv
 import os
 import statistics
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
 import click
 
@@ -51,6 +51,14 @@ def measure_edit_distance(
     export_dir: str,
     weights: Tuple[int, int, int],
 ) -> None:
+    """
+    Loops through the list of structured output from all of `output_dir` or selected files from
+    `output_list`, and compare with gold-standard of the same file name under `source_dir` or
+    selected files from `source_list`.
+
+    Calculates text accuracy and percent missing. After looped through the whole list, write to tsv.
+    Also calculates the aggregated accuracy and percent missing.
+    """
     if not output_list:
         output_list = os.listdir(f"{output_dir}")
     if not source_list:
@@ -101,7 +109,7 @@ def measure_edit_distance(
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_rows, headers)
 
 
-def _write_to_file(dir, filename, rows, headers):
+def _write_to_file(dir: str, filename: str, rows: List[Any], headers: List[Any]):
     if dir and not os.path.exists(dir):
         os.makedirs(dir)
     with open(os.path.join(os.path.join(dir, filename)), "w", newline="") as tsv:
@@ -110,17 +118,17 @@ def _write_to_file(dir, filename, rows, headers):
         writer.writerows(rows)
 
 
-def _mean(scores):
+def _mean(scores: List[float]):
     return statistics.mean(scores)
 
 
-def _stdev(scores):
+def _stdev(scores: List[float]):
     if len(scores) <= 1:
         return None
     return statistics.stdev(scores)
 
 
-def _pstdev(scores):
+def _pstdev(scores: List[float]):
     if len(scores) <= 1:
         return None
     return statistics.pstdev(scores)
