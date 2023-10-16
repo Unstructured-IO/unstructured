@@ -93,4 +93,4 @@ done
 
 echo "--------- RUNNING SCRIPT ./test_unstructured_ingest/evaluation-metrics.sh ---------"
 ./test_unstructured_ingest/evaluation-metrics.sh
-echo "--------- FINISHED SCRIPT $test ---------"
+echo "--------- FINISHED SCRIPT ./test_unstructured_ingest/evaluation-metrics.sh ---------"
