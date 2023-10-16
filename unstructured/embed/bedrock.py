@@ -50,14 +50,16 @@ class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
         extras="bedrock",
     )
     def get_bedrock_client(self):
-        if not hasattr(self, "bedrock_client"):
-            bedrock_runtime = boto3.client(
-                service_name="bedrock-runtime",
-                aws_access_key_id=self.aws_access_key_id,
-                aws_secret_access_key=self.aws_secret_access_key,
-                region_name=self.region_name
-            )
+        if getattr(self, "bedrock_client", None):
+            return self.bedrock_client
 
-            bedrock_client = BedrockEmbeddings(client=bedrock_runtime)
-            self.examplary_embedding = np.array(bedrock_client.embed_query("Q"))
-            return bedrock_client
+        bedrock_runtime = boto3.client(
+            service_name="bedrock-runtime",
+            aws_access_key_id=self.aws_access_key_id,
+            aws_secret_access_key=self.aws_secret_access_key,
+            region_name=self.region_name
+        )
+
+        bedrock_client = BedrockEmbeddings(client=bedrock_runtime)
+        self.examplary_embedding = np.array(bedrock_client.embed_query("Q"))
+        return bedrock_client
