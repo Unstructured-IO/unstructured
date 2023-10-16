@@ -1,7 +1,14 @@
+"""Implementation of chunking.
+
+Main entry point is the `@add_chunking_strategy()` decorator.
+"""
+
+from __future__ import annotations
+
 import copy
 import functools
 import inspect
-from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, List, cast
 
 from typing_extensions import ParamSpec
 
@@ -9,6 +16,7 @@ from unstructured.documents.elements import (
     CompositeElement,
     Element,
     ElementMetadata,
+    RegexMetadata,
     Table,
     TableChunk,
     Text,
@@ -16,10 +24,7 @@ from unstructured.documents.elements import (
 )
 
 
-def chunk_table_element(
-    element: Table,
-    max_characters: Optional[int] = 500,
-) -> List[Union[Table, TableChunk]]:
+def chunk_table_element(element: Table, max_characters: int = 500) -> List[Table | TableChunk]:
     text = element.text
     html = getattr(element, "text_as_html", None)
 
@@ -28,7 +33,7 @@ def chunk_table_element(
     ):
         return [element]
 
-    chunks: List[Union[Table, TableChunk]] = []
+    chunks: List[Table | TableChunk] = []
     metadata = copy.copy(element.metadata)
     is_continuation = False
 
@@ -56,10 +61,11 @@ def chunk_by_title(
     new_after_n_chars: int = 500,
     max_characters: int = 500,
 ) -> List[Element]:
-    """Uses title elements to identify sections within the document for chunking. Splits
-    off into a new section when a title is detected or if metadata changes, which happens
-    when page numbers or sections change. Cuts off sections once they have exceeded
-    a character length of max_characters.
+    """Uses title elements to identify sections within the document for chunking.
+
+    Splits off into a new CompositeElement when a title is detected or if metadata changes, which
+    happens when page numbers or sections change. Cuts off sections once they have exceeded a
+    character length of max_characters.
 
     Parameters
     ----------
@@ -115,15 +121,25 @@ def chunk_by_title(
         metadata = first_element.metadata
         start_char = 0
         for element in section:
+            # -- concatenate all element text in section into `text` --
             if isinstance(element, Text):
+                # -- add a blank line between "squashed" elements --
                 text += "\n\n" if text else ""
                 start_char = len(text)
                 text += element.text
+
+            # -- "chunk" metadata should include union of list-items in all its elements. Also,
+            # -- metadata like regex_metadata that records start and/or end positions of related
+            # -- text need those offsets adjusted.
             for attr, value in vars(element.metadata).items():
                 if isinstance(value, list):
+                    value = cast(List[Any], value)
+                    # -- get existing (list) value from chunk_metadata --
                     _value = getattr(metadata, attr, []) or []
 
+                    # TODO: this mutates the original, work on a copy instead.
                     if attr == "regex_metadata":
+                        value = cast(List[RegexMetadata], value)
                         for item in value:
                             item["start"] += start_char
                             item["end"] += start_char
@@ -239,7 +255,6 @@ def _drop_extra_metadata(
     return metadata_dict
 
 
-_T = TypeVar("_T")
 _P = ParamSpec("_P")
 
 
