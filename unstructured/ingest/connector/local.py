@@ -70,7 +70,9 @@ class LocalSourceConnector(BaseSourceConnector):
     """Objects of this class support fetching document(s) from local file system"""
 
     connector_config: SimpleLocalConfig
-    ingest_doc_cls: t.Type[LocalIngestDoc] = LocalIngestDoc
+
+    def __post_init__(self):
+        self.ingest_doc_cls: t.Type[LocalIngestDoc] = LocalIngestDoc
 
     def cleanup(self, cur_dir=None):
         """Not applicable to local file system"""
