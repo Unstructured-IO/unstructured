@@ -1,4 +1,4 @@
-## 0.10.24-dev0
+## 0.10.24-dev1
 
 ### Enhancements
 
@@ -9,6 +9,9 @@
 * **Adds element type percent match function** In order to evaluate the element type extracted, we add a function that calculates the matched percentage between two frequency dictionary.
 
 ### Fixes
+
+* **Fix paddle model file not discoverable** Fixes issue where ocr_models/paddle_ocr.py file is not discoverable on PyPI by adding
+an `__init__.py` file under the folder.
 
 ## 0.10.23
 
