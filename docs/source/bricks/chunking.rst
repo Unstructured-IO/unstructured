@@ -49,3 +49,30 @@ see the document chunked into sections instead of elements.
       print(chunk)
       print("\n\n" + "-"*80)
       input()
+
+``embed_table_references_in_text``
+----------------------------------
+
+The ``embed_table_references_in_text`` function searches for table references in the given 
+list of elements and embeds the corresponding 
+table's HTML content directly into the text where the reference occurs. This function also 
+ensures that in case of consecutive tables, the naming does not mistakenly assign the name 
+of the second table to the first one.
+
+The following shows an example of how to use ``embed_table_references_in_text``. You will
+see the document chunked into sections instead of elements.
+
+
+.. code:: python
+
+  from unstructured.partition.pdf import partition_pdf
+  from unstructured.chunking.embed_table_references_in_text import embed_table_references_in_text
+
+  filename = "example-docs/embed_search.pdf"
+  elements = partition_pdf(filename=filename, strategy='hi_res')
+  elements_with_tables_embedded = embed_table_references_in_text(elements)
+
+  for items in elements_with_tables_embedded:
+      print(items.text)
+      print(items.metadata)
+      print(" ")
