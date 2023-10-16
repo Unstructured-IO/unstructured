@@ -9,7 +9,7 @@ from docx.text.paragraph import Paragraph
 
 class Document(BlockItemContainer):
     def add_paragraph(
-        self, text: str = "", style: ParagraphStyle | str | None = None
+        self, text: str = "", style: ParagraphStyle | str | None = None,
     ) -> Paragraph: ...
     @property
     def element(self) -> CT_Document: ...

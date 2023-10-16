@@ -1,4 +1,4 @@
-## 0.10.23
+## 0.10.23-dev0
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 * **Improved inference speed for Chipper V2** API requests with 'hi_res_model_name=chipper' now have ~2-3x faster responses.
 
 ### Features
+
+* **Adds HuggingFaceEmbeddingEncoder** The HuggingFace Embedding Encoder uses a local embedding model as opposed to using an API.
 
 ### Fixes
 
