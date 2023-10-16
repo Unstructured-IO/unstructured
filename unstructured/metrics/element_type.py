@@ -45,7 +45,7 @@ def calculate_element_type_percent_match(
     unmatched_depth_source = {}
 
     # loop through the output list to find match with source
-    for k, v in output_copy.items():
+    for k, _ in output_copy.items():
         if k in source_copy:
             match_count = min(output_copy[k], source_copy[k])
             total_match_element_count += match_count
@@ -55,22 +55,36 @@ def calculate_element_type_percent_match(
             output_copy[k] -= match_count
             source_copy[k] -= match_count
 
-            # add unmatched leftovers to new dictionary
-            element_type = k[0]
-            if element_type not in unmatched_depth_output:
-                unmatched_depth_output[element_type] = output_copy[k]
-            else:
-                unmatched_depth_output[element_type] += output_copy[k]
-            if element_type not in unmatched_depth_source:
-                unmatched_depth_source[element_type] = source_copy[k]
-            else:
-                unmatched_depth_source[element_type] += source_copy[k]
+        # add unmatched leftovers from output_copy to a new dictionary
+        element_type = k[0]
+        if element_type not in unmatched_depth_output:
+            unmatched_depth_output[element_type] = output_copy[k]
+        else:
+            unmatched_depth_output[element_type] += output_copy[k]
+
+    # add unmatched leftovers from source_copy to a new dictionary
+    unmatched_depth_source = _convert_to_frequency_without_depth(source_copy)
 
     # loop through the source list to match any existing partial match left
-    for k, v in unmatched_depth_source.items():
+    for k, _ in unmatched_depth_source.items():
         total_source_element_count += unmatched_depth_source[k]
         if k in unmatched_depth_output:
             match_count = min(unmatched_depth_output[k], unmatched_depth_source[k])
             total_match_element_count += match_count * category_depth_weight
 
     return min(max(total_match_element_count / total_source_element_count, 0.0), 1.0)
+
+
+def _convert_to_frequency_without_depth(d: Dict) -> Dict:
+    """
+    Takes in element frequency with depth of format (type, tepth): value
+    and converts to dictionary without depth of format type: value
+    """
+    res = {}
+    for k, v in d.items():
+        element_type = k[0]
+        if element_type not in res:
+            res[element_type] = v
+        else:
+            res[element_type] += v
+    return res
