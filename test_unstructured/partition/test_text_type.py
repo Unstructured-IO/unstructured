@@ -317,3 +317,8 @@ def test_is_us_city_state_zip(text, expected):
 )
 def test_is_email_address(text, expected):
     assert text_type.is_email_address(text) is expected
+
+
+def test_under_non_alpha_ratio_zero_divide():
+    # Threw an error before changes
+    text_type.under_non_alpha_ratio(" ")
