@@ -334,6 +334,7 @@ jobs:
         make install-ingest-notion
         make install-ingest-delta-table
         pip install "unstructured[openai]"
+        pip install "unstructured[langchain]"
         ./test_unstructured_ingest/test-ingest.sh
 
   test_unstructured_api_unit:
