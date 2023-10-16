@@ -251,7 +251,7 @@ platformdirs==3.10.0
     #   -c requirements/test.txt
     #   jupyter-core
     #   virtualenv
-pre-commit==3.4.0
+pre-commit==3.5.0
     # via -r requirements/dev.in
 prometheus-client==0.17.1
     # via jupyter-server

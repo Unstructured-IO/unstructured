@@ -123,7 +123,7 @@ def delta_table_dest(ctx: click.Context, **options):
         DeltaTableCliWriteConfig.from_dict(options)
         runner_cls = runner_map[source_cmd]
         runner = runner_cls(
-            **configs,
+            **configs,  # type: ignore
             writer_type="delta_table",
             writer_kwargs=options,
         )
