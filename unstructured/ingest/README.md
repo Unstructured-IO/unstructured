@@ -36,13 +36,15 @@ just execute `unstructured/ingest/main.py`, e.g.:
        --output-dir s3-small-batch-output \
        --num-processes 2
 
-## Adding Data Connectors
+## Adding Source Data Connectors
 
 To add a connector, refer to [unstructured/ingest/connector/github.py](unstructured/ingest/connector/github.py) as example that implements the three relevant abstract base classes.
 
 If the connector has an available `fsspec` implementation, then refer to [unstructured/ingest/connector/s3.py](unstructured/ingest/connector/s3.py).
 
 Then, update [unstructured/ingest/main.py/cli](unstructured/ingest/cli) to add a subcommand associated with the connector, and hook it up to the parent group.
+
+Add an implementation of `BaseRunner` in the runner directory to connect the invocation of the CLI with the underlying connector created.
 
 Create at least one folder [examples/ingest](examples/ingest) with an easily reproducible
 script that shows the new connector in action.
@@ -95,18 +97,42 @@ In checklist form, the above steps are summarized as:
 
 `unstructured/ingest/main.py` is the entrypoint for the `unstructured-ingest` cli. It calls the cli Command as fetched from `cli.py` `get_cmd()`.
 
-`get_cmd()` aggregates all subcommands (one per connector) as defined in the cli.cmd module. Each of these per-connector commands define the connector specific options and import the relevant common options. They call out to the corollary cli.runner.[CONNECTOR].py module.
+The ingest directory is broken up in such a way that most of the code can be used with or without invoking the CLI itself:
 
-The runner is a vanilla (not Click wrapped) Python function which also explicitly exposes the connector specific arguments. It instantiates the connector with aggregated options / configs and passes it in call to `process_documents()` in `processor.py`.
+* **Connector:** This houses the main code that is responsible for reaching out to external data providers and pulling down the data (i.e. S3, Azure, etc)
+* **Runner:** This serves as the interface between the CLI specific commands and running the connector code. A base runner class exists that defines much of the common functionality across all connectors and allowed for typed methods to be defined to explicitly connect the CLI command to the specific connector.
+* **CLI:** This is where the `Click` python library is introduced to create the cli bindings that a user interacts with then invoking the CLI directly. Many of the common options across commands are abstracted away and add options dynamically to click commands.
 
-![unstructured ingest cli diagram](img/unstructured_ingest_cli_diagram.jpg)
+The ingest flow is similar to an ETL pipeline that gets defined at runtime based on user input:
 
-Given an instance of BaseConnector with a reference to its ConnectorConfig (BaseConnectorConfig and StandardConnectorConfig) and set of processing parameters, `process_documents()` instantiates the Processor class and calls its `run()` method.
+![unstructured ingest cli diagram](img/unstructured_ingest_cli_pipeline_diagram.png)
 
-The Processor class (operating in the Main Process) calls to the connector to fetch `get_ingest_docs()`, a list of lazy download IngestDocs, each a skinny serializable object with connection config. These IngestDocs are filtered (where output results already exist locally) and passed to a multiprocessing Pool. Each subprocess in the pool then operates as a Worker Process. The Worker Process first initializes a logger, since it is operating in its own spawn of the Python interpreter. It then calls the `process_document()` function in `doc_processor.generalized.py`.
+Each step in the pipeline caches the results in a default location if one is not provided to it. This allows for the pipeline
+to pick up where it ended if an error occurred before it finished without having to recompute everything that ran successfully.
+It uses a hash of the parameters passed in for each step along with the previous step to know if the results it already has are
+still valid or should be recomputed regardless of them existing already. This allows you to change parameters associated with a
+step in the tail end of the pipeline and it only recomputes from there.
 
-The `process_document()` function is given an IngestDoc, which has a reference to the respective ConnectorConfigs. Also defined is a global session_handler (of type BaseSessionHandler). This contains any session/connection relevant data for the IngestDoc that can be re-used when processing sibling IngestDocs from the same BaseConnector / config. If the value for the session_handle isn't assigned, a session_handle is created from the IngestDoc and assigned to the global variable, otherwise the existing global variable value ("session") is leveraged to process the IngestDoc. The function proceeds to call the IngestDoc's `get_file()`, `process_file()`, `write_result()`, and `clean_up()` methods.
+**Multiprocessing:** One of the options for the pipeline is how many processes to use. Not all steps support multiprocessing, but if they do, a multiprocessing Pool is used to speed up the process. For debugging purposes, if a single process is set, multiprocessing Pool isn't used at all.
 
-Once all multiprocessing subprocesses complete a final call to the BaseConnector `clean_up()` method is made.
+While all the configurations are added to a single Click command when the CLI is invoked as options, many of these are bundled together based on a particular step in the pipeline. A `BaseConfig`
+ is extended in the root interfaces file and then that can be extended once again in the cli-specific interfaces file which adds a function on how the fields in the base config should be mapped to `Click` options.
+### Configs
+* `PartitionConfig`: Data associated with running the partitioning over the files pulled down via the source connector.
+* `ProcessorConfig`: Data around the process as a whole, such as number of processes to use when running, where to store the final result of the pipeline, and if an error should be raised if a single doc fails. By default, the pipeline will continue with that it can, so if a doc fails out of many, an error will be logged and the rest will continue.
+* `ReadConfig`: Data associated with pulling the data from the source data provider, such as if it should be redownloaded, regardless of the files already existing.
+* `EmbeddingConfig`: Data associated with running an optional embedder on the data, which adds a new field to the output json for each element with it's associated embeddings vector.
+* `ChunkingConfig`: Data associated with running an optional chunker over the partitioned data.
+* `PermissionsConfig`: Data associated with pulling down permissions data (i.e. RBAC). This is an optional feature and if enabled, will append the information pulled down to the metadata associated with an element.
+* `WriteConfig`: Any specific data needed to write to a destination connector. This does not have to be used if not needed.
 
-![unstructured ingest processing diagram](img/unstructured_ingest_processing_diagram.jpg)
+For the flow of the pipeline, the only required steps are:
+* **Doc Factory:** This creates instances of `BaseIngestDoc` which provide references to a file on the source data provider without downloading anything yet.
+* **Source Node:** This is responsible for downloading and content and producing a representation of that content suitable for partitioning.
+* **Partitioner:** Responsible for running partition over the content produced by the previous source node.
+
+Optional Steps:
+* **Reformat Nodes:** Any number of reformat nodes can be set to modify the partitioned content. Currently chunking and embedding are supported.
+* **Write Node:** If set, write the results to a destination via a destination connector.
+
+Because there can be any number of reformat nodes, the final destination is not deterministic, so an extra step is added at the end of all reformat nodes to copy the final result to the location the user expects it to be when the pipeline ends.
