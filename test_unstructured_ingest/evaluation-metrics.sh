@@ -8,7 +8,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 # List all structured outputs to use in this evaluation
 OUTPUT_DIR=$SCRIPT_DIR/structured-output
 structured_outputs=(
-'local/example-10k.html.json',
+'local/example-10k.html.json'
 )
 
 # Download cct test from s3
