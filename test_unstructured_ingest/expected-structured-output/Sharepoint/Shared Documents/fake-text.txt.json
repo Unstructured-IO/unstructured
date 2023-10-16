@@ -11,7 +11,95 @@
           "site_url": "https://unstructuredio.sharepoint.com"
         },
         "date_created": "2023-06-16T05:04:55",
-        "date_modified": "2023-06-16T05:04:55"
+        "date_modified": "2023-06-16T05:04:55",
+        "permissions_data": [
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Owners",
+                "id": "3",
+                "loginName": "Communication site Owners"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Visitors",
+                "id": "4",
+                "loginName": "Communication site Visitors"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Members",
+                "id": "5",
+                "loginName": "Communication site Members"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "grantedToV2": {
+              "group": {
+                "@odata.type": "#microsoft.graph.sharePointIdentity",
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              },
+              "siteUser": {
+                "displayName": "Global Administrator",
+                "id": "7",
+                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "inheritedFrom": {}
+          }
+        ]
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -33,7 +121,95 @@
           "site_url": "https://unstructuredio.sharepoint.com"
         },
         "date_created": "2023-06-16T05:04:55",
-        "date_modified": "2023-06-16T05:04:55"
+        "date_modified": "2023-06-16T05:04:55",
+        "permissions_data": [
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Owners",
+                "id": "3",
+                "loginName": "Communication site Owners"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Visitors",
+                "id": "4",
+                "loginName": "Communication site Visitors"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Members",
+                "id": "5",
+                "loginName": "Communication site Members"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "grantedToV2": {
+              "group": {
+                "@odata.type": "#microsoft.graph.sharePointIdentity",
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              },
+              "siteUser": {
+                "displayName": "Global Administrator",
+                "id": "7",
+                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "inheritedFrom": {}
+          }
+        ]
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -55,7 +231,95 @@
           "site_url": "https://unstructuredio.sharepoint.com"
         },
         "date_created": "2023-06-16T05:04:55",
-        "date_modified": "2023-06-16T05:04:55"
+        "date_modified": "2023-06-16T05:04:55",
+        "permissions_data": [
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Owners",
+                "id": "3",
+                "loginName": "Communication site Owners"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Visitors",
+                "id": "4",
+                "loginName": "Communication site Visitors"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Members",
+                "id": "5",
+                "loginName": "Communication site Members"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "grantedToV2": {
+              "group": {
+                "@odata.type": "#microsoft.graph.sharePointIdentity",
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              },
+              "siteUser": {
+                "displayName": "Global Administrator",
+                "id": "7",
+                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "inheritedFrom": {}
+          }
+        ]
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -77,7 +341,95 @@
           "site_url": "https://unstructuredio.sharepoint.com"
         },
         "date_created": "2023-06-16T05:04:55",
-        "date_modified": "2023-06-16T05:04:55"
+        "date_modified": "2023-06-16T05:04:55",
+        "permissions_data": [
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Owners",
+                "id": "3",
+                "loginName": "Communication site Owners"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Visitors",
+                "id": "4",
+                "loginName": "Communication site Visitors"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Members",
+                "id": "5",
+                "loginName": "Communication site Members"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "grantedToV2": {
+              "group": {
+                "@odata.type": "#microsoft.graph.sharePointIdentity",
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              },
+              "siteUser": {
+                "displayName": "Global Administrator",
+                "id": "7",
+                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "inheritedFrom": {}
+          }
+        ]
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -99,7 +451,95 @@
           "site_url": "https://unstructuredio.sharepoint.com"
         },
         "date_created": "2023-06-16T05:04:55",
-        "date_modified": "2023-06-16T05:04:55"
+        "date_modified": "2023-06-16T05:04:55",
+        "permissions_data": [
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Owners",
+                "id": "3",
+                "loginName": "Communication site Owners"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Visitors",
+                "id": "4",
+                "loginName": "Communication site Visitors"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Members",
+                "id": "5",
+                "loginName": "Communication site Members"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "grantedToV2": {
+              "group": {
+                "@odata.type": "#microsoft.graph.sharePointIdentity",
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              },
+              "siteUser": {
+                "displayName": "Global Administrator",
+                "id": "7",
+                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "inheritedFrom": {}
+          }
+        ]
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -121,7 +561,95 @@
           "site_url": "https://unstructuredio.sharepoint.com"
         },
         "date_created": "2023-06-16T05:04:55",
-        "date_modified": "2023-06-16T05:04:55"
+        "date_modified": "2023-06-16T05:04:55",
+        "permissions_data": [
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Owners",
+                "id": "3",
+                "loginName": "Communication site Owners"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Visitors",
+                "id": "4",
+                "loginName": "Communication site Visitors"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Members",
+                "id": "5",
+                "loginName": "Communication site Members"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
+            "inheritedFrom": {}
+          },
+          {
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "grantedToV2": {
+              "group": {
+                "@odata.type": "#microsoft.graph.sharePointIdentity",
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              },
+              "siteUser": {
+                "displayName": "Global Administrator",
+                "id": "7",
+                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "inheritedFrom": {}
+          }
+        ]
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",

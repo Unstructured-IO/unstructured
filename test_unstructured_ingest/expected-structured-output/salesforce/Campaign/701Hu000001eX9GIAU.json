@@ -9,7 +9,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "attributes.type: Campaign"
   },
@@ -23,7 +26,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "attributes.url: /services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU"
   },
@@ -37,7 +43,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Id: 701Hu000001eX9GIAU"
   },
@@ -51,7 +60,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "IsDeleted: False"
   },
@@ -65,7 +77,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Name: DM Campaign to Top Customers - Nov 12-23, 2001"
   },
@@ -79,7 +94,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "ParentId: None"
   },
@@ -93,7 +111,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Type: Direct Mail"
   },
@@ -107,7 +128,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Status: Completed"
   },
@@ -121,7 +145,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "StartDate: 2022-12-04"
   },
@@ -135,7 +162,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "EndDate: 2022-12-15"
   },
@@ -149,7 +179,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "ExpectedRevenue: 2500000.0"
   },
@@ -163,7 +196,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "BudgetedCost: 25000.0"
   },
@@ -177,7 +213,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "ActualCost: 23500.0"
   },
@@ -191,7 +230,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "ExpectedResponse: 7.0"
   },
@@ -205,7 +247,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "NumberSent: 15000.0"
   },
@@ -219,7 +264,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "IsActive: True"
   },
@@ -233,7 +281,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "Description: None"
   },
@@ -247,7 +298,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "NumberOfLeads: 0"
   },
@@ -261,7 +315,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "NumberOfConvertedLeads: 0"
   },
@@ -275,7 +332,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "NumberOfContacts: 0"
   },
@@ -289,7 +349,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "NumberOfResponses: 0"
   },
@@ -303,7 +366,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "NumberOfOpportunities: 0"
   },
@@ -317,7 +383,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "NumberOfWonOpportunities: 0"
   },
@@ -331,7 +400,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "AmountAllOpportunities: 0.0"
   },
@@ -345,7 +417,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "AmountWonOpportunities: 0.0"
   },
@@ -359,7 +434,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "OwnerId: 005Hu00000Owz9uIAB"
   },
@@ -373,7 +451,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "CreatedDate: 2023-08-18T11:48:08.000+0000"
   },
@@ -387,7 +468,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "CreatedById: 005Hu00000Owz9uIAB"
   },
@@ -401,7 +485,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "LastModifiedDate: 2023-08-18T11:48:08.000+0000"
   },
@@ -415,7 +502,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "LastModifiedById: 005Hu00000Owz9uIAB"
   },
@@ -429,7 +519,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "SystemModstamp: 2023-08-18T11:48:08.000+0000"
   },
@@ -443,7 +536,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "LastActivityDate: None"
   },
@@ -457,7 +553,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "LastViewedDate: None"
   },
@@ -471,7 +570,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "LastReferencedDate: None"
   },
@@ -485,7 +587,10 @@
         "date_created": "2023-08-18T11:48:08",
         "date_modified": "2023-08-18T11:48:08"
       },
-      "filetype": "application/xml"
+      "filetype": "application/xml",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "CampaignMemberRecordTypeId: None"
   }

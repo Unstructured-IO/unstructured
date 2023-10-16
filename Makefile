@@ -291,7 +291,7 @@ test-extra-odt:
 .PHONY: test-extra-pdf-image
 test-extra-pdf-image:
 	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/pdf-image
+		test_${PACKAGE_NAME}/partition/pdf_image
 
 .PHONY: test-extra-pptx
 test-extra-pptx:
@@ -399,7 +399,7 @@ docker-test:
 	$(DOCKER_IMAGE) \
 	bash -c "CI=$(CI) \
 	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
-	pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
+	pytest $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
 
 .PHONY: docker-smoke-test
 docker-smoke-test:

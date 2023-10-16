@@ -4,6 +4,8 @@
 #
 #    pip-compile requirements/base.in
 #
+backoff==2.2.1
+    # via -r requirements/base.in
 beautifulsoup4==4.12.2
     # via -r requirements/base.in
 certifi==2023.7.22
@@ -45,6 +47,8 @@ packaging==23.2
 python-iso639==2023.6.15
     # via -r requirements/base.in
 python-magic==0.4.27
+    # via -r requirements/base.in
+rapidfuzz==3.4.0
     # via -r requirements/base.in
 regex==2023.10.3
     # via nltk

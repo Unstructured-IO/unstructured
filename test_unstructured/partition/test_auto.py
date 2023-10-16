@@ -342,7 +342,7 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         include_page_breaks=False,
         infer_table_structure=False,
         strategy="fast",
-        languages=["eng"],
+        languages=None,
     )
 
 
@@ -1052,21 +1052,93 @@ def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
 def test_add_chunking_strategy_chars_on_partition_auto_adds_is_continuation():
     filename = "example-docs/example-10k-1p.html"
 
-    # default chunk size in chars is 200
-    partitioned_table_elements_200_chars = [
+    table_elements = [e for e in partition(filename) if isinstance(e, Table)]
+    chunked_table_elements = [
         e
         for e in partition(
             filename,
-            chunking_strategy="by_num_characters",
+            chunking_strategy="by_title",
         )
         if isinstance(e, Table)
     ]
 
+    assert table_elements != chunked_table_elements
+
     i = 0
-    for table in partitioned_table_elements_200_chars:
+    for table in chunked_table_elements:
         # have to reset the counter to 0 here when we encounter a Table element
         if isinstance(table, Table):
             i = 0
         if i > 0 and isinstance(table, TableChunk):
             assert table.metadata.is_continuation is True
             i += 1
+
+
+EXAMPLE_LANG_DOCS = "example-docs/language-docs/eng_spa_mult."
+
+
+@pytest.mark.parametrize(
+    "file_extension",
+    [
+        "doc",
+        "docx",
+        "eml",
+        "epub",
+        "html",
+        "md",
+        "odt",
+        "org",
+        "ppt",
+        "pptx",
+        "rst",
+        "rtf",
+        "txt",
+        "xml",
+    ],
+)
+def test_partition_respects_language_arg(file_extension):
+    filename = EXAMPLE_LANG_DOCS + file_extension
+    elements = partition(filename=filename, languages=["deu"])
+    assert all(element.metadata.languages == ["deu"] for element in elements)
+
+
+def test_partition_respects_detect_language_per_element_arg():
+    filename = "example-docs/language-docs/eng_spa_mult.txt"
+    elements = partition(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+# check that the ["eng"] default in `partition` does not overwrite the ["auto"]
+# default in other `partition_` functions.
+def test_partition_default_does_not_overwrite_other_defaults():
+    # the default for `languages` is ["auto"] in partiton_text
+    from unstructured.partition.text import partition_text
+
+    # Use a document that is primarily in a language other than English
+    filename = "example-docs/language-docs/UDHR_first_article_all.txt"
+    text_elements = partition_text(filename)
+    assert text_elements[0].metadata.languages != ["eng"]
+
+    auto_elements = partition(filename)
+    assert auto_elements[0].metadata.languages != ["eng"]
+    assert auto_elements[0].metadata.languages == text_elements[0].metadata.languages
+
+
+def test_partition_languages_default_to_None():
+    filename = "example-docs/handbook-1p.docx"
+    elements = partition(filename=filename, detect_language_per_element=True)
+    # PageBreak and other elements with no text will have `None` for `languages`
+    none_langs = [element for element in elements if element.metadata.languages is None]
+    assert none_langs[0].text == ""
+
+
+def test_partition_languages_incorrectly_defaults_to_English(tmpdir):
+    # We don't totally rely on langdetect for short text, so text like the following that is
+    # in German will be labeled as English.
+    german = "Ein kurzer Satz."
+    filepath = os.path.join(tmpdir, "short-german.txt")
+    with open(filepath, "w") as f:
+        f.write(german)
+    elements = partition(filepath)
+    assert elements[0].metadata.languages == ["eng"]

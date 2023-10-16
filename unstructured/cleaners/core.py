@@ -2,7 +2,7 @@ import quopri
 import re
 import sys
 import unicodedata
-from typing import Tuple
+from typing import Optional, Tuple
 
 import numpy as np
 
@@ -299,6 +299,15 @@ tbl = dict.fromkeys(
 def remove_punctuation(s: str) -> str:
     """Removes punctuation from a given string."""
     s = s.translate(tbl)
+    return s
+
+
+def remove_sentence_punctuation(s: str, exclude_punctuation: Optional[list]) -> str:
+    tbl_new = tbl.copy()
+    if exclude_punctuation:
+        for punct in exclude_punctuation:
+            del tbl_new[ord(punct)]
+    s = s.translate(tbl_new)
     return s
 
 

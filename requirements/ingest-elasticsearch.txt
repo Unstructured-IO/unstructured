@@ -11,7 +11,7 @@ certifi==2023.7.22
     #   elastic-transport
 elastic-transport==8.4.1
     # via elasticsearch
-elasticsearch==8.10.0
+elasticsearch==8.10.1
     # via -r requirements/ingest-elasticsearch.in
 jq==1.6.0
     # via -r requirements/ingest-elasticsearch.in

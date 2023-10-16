@@ -183,7 +183,7 @@ This README overviews how to install, use and develop the library. For more comp
 **Bricks** 🧱 in `unstructured` are the foundational elements that drive the data processing workflow within the system. These components provide users with the building blocks to build pipelines targeted at the documents they care about. The bricks fall into three categories:
 - :jigsaw: *Partitioning* bricks break raw documents into standard, structured elements.
 - :broom: *Cleaning* bricks remove unwanted text from documents, such as boilerplate and sentence fragments.
-- :performing_arts: *Staging* bricks format data for downstream tasks, such as ML inference and data labeling. 
+- :performing_arts: *Staging* bricks format data for downstream tasks, such as ML inference and data labeling.
 
 These bricks create a cohesive, streamlined process that enables effective data handling and analysis. Check out the available bricks and how to use them from the [Bricks documentation](https://unstructured-io.github.io/unstructured/bricks.html).
 
@@ -257,3 +257,4 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 ## :chart_with_upwards_trend: Analytics
 
 We’ve partnered with Scarf (https://scarf.sh) to collect anonymized user statistics to understand which features our community is using and how to prioritize product decision-making in the future. To learn more about how we collect and use this data, please read our [Privacy Policy](https://unstructured.io/privacy-policy).
+To opt out of this data collection, you can set the environment variable `SCARF_NO_ANALYTICS=true` before running any `unstructured` commands.
