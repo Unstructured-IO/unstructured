@@ -321,6 +321,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 * Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
 * Re-enable test-ingest-confluence-diff for ingest tests
 * Fix syntax for ingest test check number of files
+* Fix csv and tsv partitioners loosing the first line of the files when creating elements
 
 ## 0.10.8
 
