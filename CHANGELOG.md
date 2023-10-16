@@ -1,4 +1,21 @@
-## 0.10.22-dev6
+## 0.10.23
+
+### Enhancements
+
+* **Add functionality to limit precision when serializing to json** Precision for `points` is limited to 1 decimal point if coordinates["system"] == "PixelSpace" (otherwise 2 decimal points?). Precision for `detection_class_prob` is limited to 5 decimal points.
+* **Fix csv file detection logic when mime-type is text/plain** Previously the logic to detect csv file type was considering only first row's comma count comparing with the header_row comma count and both the rows being same line the result was always true, Now the logic is changed to consider the comma's count for all the lines except first line and compare with header_row comma count.
+* **Improved inference speed for Chipper V2** API requests with 'hi_res_model_name=chipper' now have ~2-3x faster responses.
+
+### Features
+
+### Fixes
+
+* **Cleans up temporary files after conversion** Previously a file conversion utility was leaving temporary files behind on the filesystem without removing them when no longer needed. This fix helps prevent an accumulation of temporary files taking up excessive disk space.
+* **Fixes `under_non_alpha_ratio` dividing by zero** Although this function guarded against a specific cause of division by zero, there were edge cases slipping through like strings with only whitespace. This update more generally prevents the function from performing a division by zero.
+* **Fix languages default** Previously the default language was being set to English when elements didn't have text or if langdetect could not detect the language. It now defaults to None so there is not misleading information about the language detected.
+* **Fixes recursion limit error that was being raised when partitioning Excel documents of a certain size** Previously we used a recursive method to find subtables within an excel sheet. However this would run afoul of Python's recursion depth limit when there was a contiguous block of more than 1000 cells within a sheet. This function has been updated to use the NetworkX library which avoids Python recursion issues.
+
+## 0.10.22
 
 ### Enhancements
 

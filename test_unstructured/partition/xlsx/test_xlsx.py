@@ -1,3 +1,5 @@
+import sys
+
 import pytest
 
 from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT, EXPECTED_TITLE
@@ -232,3 +234,13 @@ def test_partition_eml_respects_detect_language_per_element():
     langs = {element.metadata.languages[0] for element in elements}
     assert "eng" in langs
     assert "spa" in langs
+
+
+def test_partition_xlsx_with_more_than_1k_cells():
+    old_recursion_limit = sys.getrecursionlimit()
+    try:
+        sys.setrecursionlimit(1000)
+        filename = "example-docs/more-than-1k-cells.xlsx"
+        partition_xlsx(filename=filename)
+    finally:
+        sys.setrecursionlimit(old_recursion_limit)
