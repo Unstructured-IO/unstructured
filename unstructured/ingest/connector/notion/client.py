@@ -32,8 +32,8 @@ def get_retry_handler(endpoint: Endpoint) -> Optional[RetryHandler]:
         return RetryHandler(
             backoff.expo,
             retryable_exceptions,
-            max_time=retry_strategy_config.max_time,
-            max_tries=retry_strategy_config.max_tries,
+            max_time=retry_strategy_config.max_retry_time,
+            max_tries=retry_strategy_config.max_retries,
             logger=endpoint.parent.logger,
             start_log_level=endpoint.parent.logger.level,
             backoff_log_level=endpoint.parent.logger.level,

@@ -67,14 +67,14 @@ class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
     def add_cli_options(cmd: click.Command) -> None:
         options = [
             click.Option(
-                ["--max-tries"],
+                ["--max-retries"],
                 default=None,
                 type=int,
                 help="If provided, will use this max retry for "
                 "back off strategy if http calls fail",
             ),
             click.Option(
-                ["--max-time"],
+                ["--max-retry-time"],
                 default=None,
                 type=float,
                 help="If provided, will attempt retries for this long as part "

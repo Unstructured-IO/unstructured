@@ -137,8 +137,8 @@ class SourceNode(PipelineNode):
             return RetryHandler(
                 backoff.expo,
                 SourceConnectionNetworkError,
-                max_time=retry_strategy_config.max_time,
-                max_tries=retry_strategy_config.max_tries,
+                max_time=retry_strategy_config.max_retry_time,
+                max_tries=retry_strategy_config.max_retries,
                 logger=logger,
                 start_log_level=logger.level,
                 backoff_log_level=logger.level,
