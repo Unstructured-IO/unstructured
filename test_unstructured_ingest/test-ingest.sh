@@ -91,4 +91,6 @@ for test in "${all_tests[@]}"; do
   fi
 done
 
+echo "--------- RUNNING SCRIPT ./test_unstructured_ingest/evaluation-metrics.sh ---------"
 ./test_unstructured_ingest/evaluation-metrics.sh
+echo "--------- FINISHED SCRIPT $test ---------"
