@@ -468,24 +468,6 @@
     "text": "4"
   },
   {
-    "type": "Title",
-    "element_id": "f8e3740e358309bd0570d4f3ca141793",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": 306475068461766865312866697521104206816,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "date_modified": "2023-02-12T10:09:32"
-      },
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Handguns"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
     "metadata": {
@@ -502,6 +484,24 @@
       "page_number": 4
     },
     "text": "3"
+  },
+  {
+    "type": "Title",
+    "element_id": "f8e3740e358309bd0570d4f3ca141793",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Handguns"
   },
   {
     "type": "Title",
@@ -558,8 +558,8 @@
     "text": "4"
   },
   {
-    "type": "Title",
-    "element_id": "1656c455012b016fbac5eac0a38397bd",
+    "type": "UncategorizedText",
+    "element_id": "4523540f1504cd17100c4835e85b7eef",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -573,7 +573,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Electric power (non-nuclear)"
+    "text": "17"
   },
   {
     "type": "UncategorizedText",
@@ -594,8 +594,8 @@
     "text": "9"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "4523540f1504cd17100c4835e85b7eef",
+    "type": "Title",
+    "element_id": "1656c455012b016fbac5eac0a38397bd",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -609,7 +609,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "17"
+    "text": "Electric power (non-nuclear)"
   },
   {
     "type": "UncategorizedText",
@@ -1548,24 +1548,6 @@
     "text": "References"
   },
   {
-    "type": "ListItem",
-    "element_id": "5389164ad375b2831f97d751f5bdb4e6",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": 306475068461766865312866697521104206816,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "date_modified": "2023-02-12T10:09:32"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "World Health Organization (2020). Road traffic injuries. Available at: https://www.who.int/news-room/fact-sheets/ detail/road-traffic-injuries"
-  },
-  {
     "type": "Title",
     "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
@@ -1585,7 +1567,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "f60b349ce3d55412b0f4e4a6b658c5ca",
+    "element_id": "5389164ad375b2831f97d751f5bdb4e6",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -1599,7 +1581,7 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "BBC (2020). Plane crash fatalities fell more than 50% in 2019. Available at: https://www.bbc.co.uk/news/ business-50953712"
+    "text": "World Health Organization (2020). Road traffic injuries. Available at: https://www.who.int/news-room/fact-sheets/ detail/road-traffic-injuries"
   },
   {
     "type": "Title",
@@ -1618,6 +1600,24 @@
       "page_number": 10
     },
     "text": "ii"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "f60b349ce3d55412b0f4e4a6b658c5ca",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "BBC (2020). Plane crash fatalities fell more than 50% in 2019. Available at: https://www.bbc.co.uk/news/ business-50953712"
   },
   {
     "type": "ListItem",
@@ -1656,24 +1656,6 @@
     "text": "iv United Nations Scientific Committee on the Effects of Radiation (2016). Report of the United Nations Scientific Committee on the Effects of Atomic Radiation. Accessed from: https://www.unscear.org/docs/publications/2016/ UNSCEAR_2016_GA-Report-CORR.pdf"
   },
   {
-    "type": "ListItem",
-    "element_id": "add0a2858326fca8ba9f6f4e6bbbdb28",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": 306475068461766865312866697521104206816,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "date_modified": "2023-02-12T10:09:32"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "International Energy Agency (2020). Global share of total energy supply by source, 2018. Key World Energy Statistics 2020. Available at: https://www.iea.org/data-and-statistics/charts/global-share-of-total-energy-supply-by- source-2018"
-  },
-  {
     "type": "Title",
     "element_id": "4c94485e0c21ae6c41ce1dfe7b6bface",
     "metadata": {
@@ -1690,6 +1672,24 @@
       "page_number": 10
     },
     "text": "v"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "add0a2858326fca8ba9f6f4e6bbbdb28",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "International Energy Agency (2020). Global share of total energy supply by source, 2018. Key World Energy Statistics 2020. Available at: https://www.iea.org/data-and-statistics/charts/global-share-of-total-energy-supply-by- source-2018"
   },
   {
     "type": "Title",
@@ -1855,24 +1855,6 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "8ff63a0f4af4de37eff90952d575f76d",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": 306475068461766865312866697521104206816,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "date_modified": "2023-02-12T10:09:32"
-      },
-      "filetype": "application/pdf",
-      "page_number": 12
-    },
-    "text": "+44 (0)20 7451 1520 www.world-nuclear.org info@world-nuclear.org"
-  },
-  {
-    "type": "NarrativeText",
     "element_id": "06d4880e4a23a9520618a50bfbbdf940",
     "metadata": {
       "data_source": {
@@ -1888,6 +1870,24 @@
       "page_number": 12
     },
     "text": "World Nuclear Association Tower House 10 Southampton Street London WC2E 7HA United Kingdom"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "8ff63a0f4af4de37eff90952d575f76d",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "+44 (0)20 7451 1520 www.world-nuclear.org info@world-nuclear.org"
   },
   {
     "type": "NarrativeText",
