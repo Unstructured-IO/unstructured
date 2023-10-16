@@ -77,7 +77,7 @@ def calculate_element_type_percent_match(
 
 def _convert_to_frequency_without_depth(d: Dict) -> Dict:
     """
-    Takes in element frequency with depth of format (type, tepth): value
+    Takes in element frequency with depth of format (type, depth): value
     and converts to dictionary without depth of format type: value
     """
     res = {}
