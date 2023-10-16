@@ -15,7 +15,7 @@ structured_outputs=(
 BUCKET_NAME=utic-dev-tech-fixtures
 FOLDER_NAME=small-cct
 CCT_DIR=$SCRIPT_DIR/gold-standard/$FOLDER_NAME
-aws s3 cp "s3://$BUCKET_NAME/$FOLDER_NAME" "$CCT_DIR" --recursive --no-sign-request
+AWS_PROFILE=none aws s3 cp "s3://$BUCKET_NAME/$FOLDER_NAME" "$CCT_DIR" --recursive --no-sign-request --debug
 
 PYTHONPATH=. ./unstructured/ingest/evaluate.py \
     --output_dir "$OUTPUT_DIR" \
