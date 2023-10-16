@@ -4,6 +4,8 @@ import json
 import os
 import platform
 import subprocess
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 from datetime import datetime
 from functools import wraps
 from typing import (
@@ -20,14 +22,34 @@ from typing import (
     Union,
     cast,
 )
+from matplotlib import colors
+from PIL import Image
+from pdf2image import convert_from_path
 
 import requests
 from typing_extensions import ParamSpec
 
 from unstructured.__version__ import __version__
 
-DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
+
+DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
+TYPE_TO_COLOUR_MAP = {
+    "Text": "blue",
+    "FigureCaption": "orange",
+    "NarrativeText": "green",
+    "Title": "red",
+    "Address": "purple",
+    "EmailAddress": "brown",
+    "Image": "pink",
+    "PageBreak": "gray",
+    "Table": "olive",
+    "Header": "cyan",
+    "Footer": "coral",
+    "Formula": "gold",
+    "ListItem": "skyblue",
+    "UncategorizedText": "slateblue",
+}
 
 _T = TypeVar("_T")
 _P = ParamSpec("_P")
@@ -281,3 +303,74 @@ def scarf_analytics():
                 )
     except Exception:
         pass
+
+
+def plot_image_with_bounding_boxes_coloured(file_path, elements, desired_width=20, save_images=False, save_coords=False,
+                                            output_folder=None, plot=False):
+    """draws bounding boxes superimposed in page-images for the document in file_path"""
+
+    if ".pdf" in file_path:
+        images = convert_from_path(file_path)
+    else:
+        images = [Image.open(file_path)]
+
+    print("num of pages: ", len(images))
+    bounding_boxes = [element.metadata.coordinates.to_dict()["points"] for element in elements]
+    text_labels = [f"{ix}. {element.category}" for ix, element in enumerate(elements, start=1)]
+
+    if len(images) > 1:
+        print("MULTIPLE IMAGES")
+        # split for pages
+        bounding_boxes = [bounding_boxes] * len(images)
+        text_labels = [text_labels] * len(images)
+    else:
+        bounding_boxes = [bounding_boxes]
+        text_labels = [text_labels]
+
+    for page_ix, image in enumerate(images):
+        if desired_width:
+            aspect_ratio = image.width / image.height
+            desired_height = desired_width / aspect_ratio
+            fig, ax = plt.subplots(figsize=(desired_width, desired_height))
+        else:
+            fig, ax = plt.subplots()
+
+        ax.imshow(image)
+
+        for bbox, label in zip(bounding_boxes[page_ix], text_labels[page_ix]):
+            x_min, y_min = bbox[0]
+            x_max, y_max = bbox[2]
+            width = x_max - x_min
+            height = y_max - y_min
+            rect = patches.Rectangle((x_min, y_min), width, height, linewidth=1, edgecolor='black', facecolor='none')
+            label_clean = "".join([ch for ch in label if ch.isalpha()]).strip()
+            rect.set_edgecolor(TYPE_TO_COLOUR_MAP[label_clean])
+            rect.set_facecolor(colors.to_rgba(TYPE_TO_COLOUR_MAP[label_clean], alpha=0.04))
+            ax.add_patch(rect)
+            ax.text(x_min, y_min - 5, label, fontsize=12, weight='bold', color=TYPE_TO_COLOUR_MAP[label_clean],
+                    bbox=dict(facecolor=(1.0, 1.0, 1.0, 0.7), edgecolor=(0.95, 0.95, 0.95, 0.0), pad=0.5))
+
+        if save_images or save_coords:
+            if not output_folder:
+                output_folder = "./"
+                print("No output_folder defined. Storing predictions in relative path './'")
+
+            if save_images:
+                image_path = f"{output_folder}/images_with_bboxes"
+                if not os.path.exists(image_path):
+                    os.makedirs(image_path)
+                plt.savefig(f'{image_path}/{file_path.split("/")[-1]}.png')
+
+            if save_coords:
+                annotations_path = f"{output_folder}/bboxes_coordinates"
+                if not os.path.exists(annotations_path):
+                    os.makedirs(annotations_path)
+                with open(f'{annotations_path}/{file_path.split("/")[-1]}.json', 'w') as json_file:
+                    json.dump(
+                        [{e_save.category: e_save.metadata.coordinates.to_dict()["points"]} for e_save in elements],
+                        json_file)
+
+        if plot:
+            plt.show()
+        else:
+            plt.close()
