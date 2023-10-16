@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Cleaning" href="cleaning.html" /><link rel="prev" title="Bricks" href="../bricks.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Partitioning - Unstructured 0.10.22 documentation</title>
+  <title>Partitioning - Unstructured 0.10.23 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -476,13 +476,13 @@ to the appropriate partitioning function. If you already know your document type
 <td><p>Yes</p></td>
 <td><p>None</p></td>
 </tr>
-<tr class="row-odd"><td><p>HTML Pages (<cite>.html</cite>)</p></td>
+<tr class="row-odd"><td><p>HTML Pages (<cite>.html</cite>/<cite>.htm</cite>)</p></td>
 <td><p><cite>partition_html</cite></p></td>
 <td><p>N/A</p></td>
 <td><p>No</p></td>
 <td><p>Encoding; Include Page Breaks</p></td>
 </tr>
-<tr class="row-even"><td><p>Images (<cite>.png</cite>/<cite>.jpg</cite>)</p></td>
+<tr class="row-even"><td><p>Images (<cite>.png</cite>/<cite>.jpg</cite>/<cite>.jpeg</cite>/<cite>.tiff</cite>)</p></td>
 <td><p><cite>partition_image</cite></p></td>
 <td><p>“auto”, “hi_res”, “ocr_only”</p></td>
 <td><p>Yes</p></td>
@@ -512,19 +512,19 @@ to the appropriate partitioning function. If you already know your document type
 <td><p>Yes</p></td>
 <td><p>Encoding; Include Page Breaks; Infer Table Structure; Max Partition; OCR Languages, Strategy</p></td>
 </tr>
-<tr class="row-odd"><td><p>Plain Text (<cite>.txt</cite>)</p></td>
+<tr class="row-odd"><td><p>Plain Text (<cite>.txt</cite>/<cite>.text</cite>/<cite>.log</cite>)</p></td>
 <td><p><cite>partition_text</cite></p></td>
 <td><p>N/A</p></td>
 <td><p>No</p></td>
 <td><p>Encoding; Max Partition; Paragraph Grouper</p></td>
 </tr>
-<tr class="row-even"><td><p>Power Points (<cite>.ppt</cite>)</p></td>
+<tr class="row-even"><td><p>PowerPoints (<cite>.ppt</cite>)</p></td>
 <td><p><cite>partition_ppt</cite></p></td>
 <td><p>N/A</p></td>
 <td><p>Yes</p></td>
 <td><p>Include Page Breaks</p></td>
 </tr>
-<tr class="row-odd"><td><p>Power Points (<cite>.pptx</cite>)</p></td>
+<tr class="row-odd"><td><p>PowerPoints (<cite>.pptx</cite>)</p></td>
 <td><p><cite>partition_pptx</cite></p></td>
 <td><p>N/A</p></td>
 <td><p>Yes</p></td>
@@ -565,6 +565,12 @@ to the appropriate partitioning function. If you already know your document type
 <td><p>N/A</p></td>
 <td><p>No</p></td>
 <td><p>Encoding; Max Partition; XML Keep Tags</p></td>
+</tr>
+<tr class="row-even"><td><p>Code Files (<cite>.js</cite>/<cite>.py</cite>/<cite>.java</cite>/ <cite>.cpp</cite>/<cite>.cc</cite>/<cite>.cxx</cite>/<cite>.c</cite>/<cite>.cs</cite>/ <cite>.php</cite>/<cite>.rb</cite>/<cite>.swift</cite>/<cite>.ts</cite>/<cite>.go</cite>)</p></td>
+<td><p><cite>partition_text</cite></p></td>
+<td><p>N/A</p></td>
+<td><p>No</p></td>
+<td><p>Encoding; Max Partition; Paragraph Grouper</p></td>
 </tr>
 </tbody>
 </table>
