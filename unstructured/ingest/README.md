@@ -38,7 +38,7 @@ just execute `unstructured/ingest/main.py`, e.g.:
 
 ## Adding Source Data Connectors
 
-To add a connector, refer to [unstructured/ingest/connector/github.py](unstructured/ingest/connector/github.py) as example that implements the three relevant abstract base classes.
+To add a connector, refer to [unstructured/ingest/connector/github.py](unstructured/ingest/connector/github.py) as an example that implements the three relevant abstract base classes.
 
 If the connector has an available `fsspec` implementation, then refer to [unstructured/ingest/connector/s3.py](unstructured/ingest/connector/s3.py).
 
@@ -55,6 +55,16 @@ You'll notice that the unstructured outputs for the new documents are expected
 to be checked into CI under test_unstructured_ingest/expected-structured-output/\<folder-name-relevant-to-your-dataset\>. So, you'll need to `git add` those json outputs so that `test-ingest.sh` passes in CI.
 
 The `main.py` flags of --re-download/--no-re-download , --download-dir, --preserve-downloads, --structured-output-dir, and --reprocess are honored by the connector.
+
+## Adding Destination Data Connectors
+
+To add a destination connector, refer to [unstructured/ingest/connector/delta-table.py](unstructured/ingest/connector/delta-table.py) as an example, which extends the `BaseDestinationConnector`, and the `WriteConfig`. It also shows how an existing data provider can be used for both a source and destination connector.
+
+Similar to the runner used to connect source connectors with the CLI, destination connectors require an entry in the writer map defined in [unstructured/ingest/runner/writers.py](unstructured/ingest/runner/writers.py). This allows any source connector to use any destination connector.
+
+Regarding the entry in the CLI, destination connectors are exposed as a subcommand that gets added to each source connector parent command. Special care needs to be taken here to not break the code being run by the source connector. Take a look at how the base runner class is dynamically pulled using the name of the parent CLI command in [unstructured/ingest/cli/cmds/delta_table.py](unstructured/ingest/cli/cmds/delta_table.py).
+
+Similar tests and examples should be added to demonstrate/validate the use of the destination connector similar to the steps laid out for a source connector.
 
 ### The checklist:
 
@@ -78,11 +88,11 @@ In checklist form, the above steps are summarized as:
   - [ ] The added dependencies should be imported at runtime when the new connector is invoked, rather than as top-level imports.
   - [ ] Add the decorator `unstructured.utils.requires_dependencies` on top of each class instance or function that uses those connector-specific dependencies e.g. for `GitHubConnector` should look like `@requires_dependencies(dependencies=["github"], extras="github")`
   - [ ] Run `make tidy` and `make check` to ensure linting checks pass.
-- [ ] Update ingest documentation [here](https://github.com/Unstructured-IO/unstructured/tree/eb8ce8913729826b62fd4e1224f70d67c5289b9d/docs/source)
+- [ ] Update ingest documentation [here](https://github.com/Unstructured-IO/unstructured/tree/main/docs/source)
 - [ ] For team members that are developing in the original repository:
   - [ ] If there are secret variables created for the connector tests, make sure to:
     - [ ] add the secrets into Github (contact someone with access)
-    - [ ] include the secret variables in [`ci.yml`](https://github.com/Unstructured-IO/unstructured/blob/eb8ce8913729826b62fd4e1224f70d67c5289b9d/.github/workflows/ci.yml) and [`ingest-test-fixtures-update-pr.yml`](https://github.com/Unstructured-IO/unstructured/blob/eb8ce8913729826b62fd4e1224f70d67c5289b9d/.github/workflows/ingest-test-fixtures-update-pr.yml)
+    - [ ] include the secret variables in [`ci.yml`](https://github.com/Unstructured-IO/unstructured/blob/main/.github/workflows/ci.yml) and [`ingest-test-fixtures-update-pr.yml`](https://github.com/Unstructured-IO/unstructured/blob/main/.github/workflows/ingest-test-fixtures-update-pr.yml)
     - [ ] add a make install line in the workflow configurations to be able to provide the workflow machine with the required dependencies on the connector while testing
     - [ ] Whenever necessary, use the [ingest update test fixtures](https://github.com/Unstructured-IO/unstructured/actions/workflows/ingest-test-fixtures-update-pr.yml) workflow to update the test fixtures.
 - [ ] Honors the conventions of `BaseConnectorConfig` defined in [unstructured/ingest/interfaces.py](unstructured/ingest/interfaces.py) which is passed through [the CLI](unstructured/ingest/main.py):
