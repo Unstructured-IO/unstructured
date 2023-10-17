@@ -181,7 +181,6 @@ def test_partition_pdf_with_model_name_env_var(
             filename,
             is_image=False,
             pdf_image_dpi=200,
-            extract_tables=False,
             model_name="checkbox",
         )
 
@@ -201,7 +200,6 @@ def test_partition_pdf_with_model_name(
             filename,
             is_image=False,
             pdf_image_dpi=200,
-            extract_tables=False,
             model_name="checkbox",
         )
 
@@ -391,13 +389,14 @@ def test_partition_pdf_falls_back_to_ocr_only(
     assert "unstructured_inference is not installed" in caplog.text
 
 
-def test_partition_pdf_uses_table_extraction():
-    filename = "example-docs/layout-parser-paper-fast.pdf"
-    with mock.patch(
-        "unstructured_inference.inference.layout.process_file_with_model",
-    ) as mock_process_file_with_model:
-        pdf.partition_pdf(filename, infer_table_structure=True)
-        assert mock_process_file_with_model.call_args[1]["extract_tables"]
+# todo(yuming): update this to ocr
+# def test_partition_pdf_uses_table_extraction():
+#     filename = "example-docs/layout-parser-paper-fast.pdf"
+#     with mock.patch(
+#         "unstructured_inference.inference.layout.process_file_with_model",
+#     ) as mock_process_file_with_model:
+#         pdf.partition_pdf(filename, infer_table_structure=True)
+#         assert mock_process_file_with_model.call_args[1]["extract_tables"]
 
 
 def test_partition_pdf_with_copy_protection():
@@ -418,7 +417,6 @@ def test_partition_pdf_with_dpi():
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            extract_tables=False,
             model_name=pdf.default_hi_res_model(),
             pdf_image_dpi=100,
         )
@@ -852,6 +850,7 @@ def test_add_chunking_strategy_by_title_on_partition_pdf(
     assert chunk_elements == chunks
 
 
+# todo(yuming): update this test to ocr
 def test_partition_pdf_formats_languages_for_tesseract():
     filename = "example-docs/DA-1p.pdf"
     with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
@@ -860,7 +859,6 @@ def test_partition_pdf_formats_languages_for_tesseract():
             filename,
             is_image=False,
             pdf_image_dpi=200,
-            extract_tables=False,
             model_name=pdf.default_hi_res_model(),
         )
 

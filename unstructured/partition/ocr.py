@@ -172,10 +172,10 @@ def supplement_page_layout_with_ocr(
     If mode is "individual_blocks", we find the elements from PageLayout
     with no text and add text from OCR to each element.
     """
-    ocr_agent = os.getenv("OCR_AGNET", "tesseract").lower()
+    ocr_agent = os.getenv("OCR_AGENT", "tesseract").lower()
     if ocr_agent not in ["paddle", "tesseract"]:
         raise ValueError(
-            "Environment variable OCR_AGNET",
+            "Environment variable OCR_AGENT",
             " must be set to 'tesseract' or 'paddle'.",
         )
 
