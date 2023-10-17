@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath("../.."))
 
 # -- Project information -----------------------------------------------------
 
-from unstructured.__version__ import __version__
+from unstructured.__version__ import __version__  # noqa: E402
 
 project = "Unstructured"
 copyright = "2022-2023, Unstructured Technologies"

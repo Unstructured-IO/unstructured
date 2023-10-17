@@ -9,7 +9,9 @@ from unstructured.ingest.cli.interfaces import (
     CliFilesStorageConfig,
 )
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
-from unstructured.ingest.interfaces import FsspecConfig
+from unstructured.ingest.interfaces import (
+    FsspecConfig,
+)
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import FsspecRunner
 
