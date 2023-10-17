@@ -11,6 +11,7 @@ flake8
 freezegun
 huggingface
 label_studio_sdk
+langchain
 mypy
 pydantic
 pytest-cov
