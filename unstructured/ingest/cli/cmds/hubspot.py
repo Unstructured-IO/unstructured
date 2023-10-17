@@ -17,16 +17,6 @@ from unstructured.ingest.runner import HubSpotRunner
 OBJECT_TYPES = {t.value for t in HubSpotObjectTypes}
 
 
-def validate_object_type(ctx, param, value) -> t.List[str]:
-    for obj in value:
-        if obj not in OBJECT_TYPES:
-            raise click.ClickException(
-                f"Invalid object type: <{obj}>,\
-                            must be one of {OBJECT_TYPES}",
-            )
-    return value
-
-
 def validate_custom_property(ctx, param, value) -> t.Dict[str, t.List[str]]:
     output: t.Dict[str, t.List[str]] = {}
     for custom_property in value:
@@ -62,9 +52,8 @@ class HubSpotCliConfig(BaseConfig, CliMixin):
                 ["--object-types"],
                 default=None,
                 required=False,
-                type=DelimitedString(),
+                type=DelimitedString(choices=OBJECT_TYPES),
                 is_flag=False,
-                callback=validate_object_type,
                 help=f"Object to include in the process.\
                     Must be a subset of {','.join(OBJECT_TYPES)}.\
                     If the argument is omitted all objects listed will be processed.",
