@@ -315,7 +315,10 @@ def parse_ocr_data_tesseract(ocr_data: dict) -> List[TextRegion]:
         )
         (x1, y1, x2, y2) = l, t, l + w, t + h
         text = ocr_data["text"][i]
-        if text:
+        if not text:
+            continue
+        cleaned_text = text.strip()
+        if cleaned_text:
             text_region = TextRegion.from_coords(x1, y1, x2, y2, text=text, source="OCR-tesseract")
             text_regions.append(text_region)
 
@@ -351,7 +354,10 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
             x2 = max([i[0] for i in line[0]])
             y2 = max([i[1] for i in line[0]])
             text = line[1][0]
-            if text:
+            if not text:
+                continue
+            cleaned_text = text.strip()
+            if cleaned_text:
                 text_region = TextRegion.from_coords(x1, y1, x2, y2, text, source="OCR-paddle")
                 text_regions.append(text_region)
 

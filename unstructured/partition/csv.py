@@ -59,7 +59,7 @@ def partition_csv(
     exactly_one(filename=filename, file=file)
 
     if filename:
-        table = pd.read_csv(filename)
+        table = pd.read_csv(filename, header=None)
         last_modification_date = get_last_modified_date(filename)
 
     elif file:
@@ -67,7 +67,7 @@ def partition_csv(
         f = spooled_to_bytes_io_if_needed(
             cast(Union[BinaryIO, SpooledTemporaryFile], file),
         )
-        table = pd.read_csv(f)
+        table = pd.read_csv(f, header=None)
 
     html_text = table.to_html(index=False, header=False, na_rep="")
     text = soupparser_fromstring(html_text).text_content()

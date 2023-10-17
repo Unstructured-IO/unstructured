@@ -165,11 +165,11 @@ jupyter-core==5.4.0
     #   nbconvert
     #   nbformat
     #   qtconsole
-jupyter-events==0.7.0
+jupyter-events==0.8.0
     # via jupyter-server
 jupyter-lsp==2.2.0
     # via jupyterlab
-jupyter-server==2.7.3
+jupyter-server==2.8.0
     # via
     #   jupyter-lsp
     #   jupyterlab
@@ -259,7 +259,7 @@ prompt-toolkit==3.0.39
     # via
     #   ipython
     #   jupyter-console
-psutil==5.9.5
+psutil==5.9.6
     # via ipykernel
 ptyprocess==0.7.0
     # via
