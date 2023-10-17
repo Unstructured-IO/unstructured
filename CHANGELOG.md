@@ -2,9 +2,14 @@
 
 ### Enhancements
 
+* **Add overlap option for split chunks.** Users can supply an `overlap: int` value on a partition function to start continuation chunks the specified number of characters "early", such that the last n characters of the prior chunk also appear as the first n characters of the following chunk, to improve semantic context.
+
 ### Features
 
 ### Fixes
+
+* **Fix out-of-order sequencing of split chunks.** Fixes behavior where "split" chunks were inserted at the beginning of the chunk sequence. This would produce a chunk sequence like [5a, 5b, 3a, 3b, 1, 2, 4] when sections 3 and 5 exceeded `max_characters`.
+* **Fix breaking chunks on regex-metadata matches.** Fixes "over-chunking" when `regex_metadata` was used, where every element that contained a regex-match would start a new chunk.
 
 ## 0.10.24
 
