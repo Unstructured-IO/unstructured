@@ -1,5 +1,7 @@
 import typing as t
 
+from unstructured.ingest.interfaces import BaseDestinationConnector
+
 
 def s3_writer(
     remote_url: str,
@@ -7,7 +9,7 @@ def s3_writer(
     endpoint_url: t.Optional[str] = None,
     verbose: bool = False,
     **kwargs,
-):
+) -> BaseDestinationConnector:
     from unstructured.ingest.connector.fsspec import FsspecWriteConfig
     from unstructured.ingest.connector.s3 import (
         S3DestinationConnector,
