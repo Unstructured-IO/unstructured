@@ -23,7 +23,6 @@ from unstructured.documents.elements import (
 from unstructured.partition.html import partition_html
 
 
-@pytest.mark.xfail(reason="out-of-order split-chunk inserts", raises=AssertionError, strict=True)
 def test_it_splits_a_large_section_into_multiple_chunks():
     elements: List[Element] = [
         Title("Introduction"),
