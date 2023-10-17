@@ -58,8 +58,25 @@ class DelimitedString(click.ParamType):
 class CliMixin:
     @staticmethod
     @abstractmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         pass
+
+    def add_cli_options(self, cmd: click.Command) -> None:
+        options_to_add = self.get_cli_options()
+        self.add_params(cmd, params=options_to_add)
+
+    @staticmethod
+    def add_params(cmd: click.Command, params: t.List[click.Parameter]):
+        existing_opts = []
+        for param in cmd.params:
+            existing_opts.extend(param.opts)
+
+        for param in params:
+            for opt in param.opts:
+                if opt in existing_opts:
+                    raise ValueError(f"{opt} is already defined on the command {cmd.name}")
+                existing_opts.append(opt)
+                cmd.params.append(param)
 
 
 class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):

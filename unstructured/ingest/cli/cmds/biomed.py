@@ -27,7 +27,7 @@ class BiomedCliConfig(BaseConfig, CliMixin):
     max_retries: int = 1
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--api-id"],
@@ -65,7 +65,7 @@ class BiomedCliConfig(BaseConfig, CliMixin):
                 help="Max requests to OA Web Service API.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="biomed", invoke_without_command=True, cls=Group)

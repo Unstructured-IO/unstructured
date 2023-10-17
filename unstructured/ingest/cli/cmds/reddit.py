@@ -26,7 +26,7 @@ class RedditCliConfig(BaseConfig, CliMixin):
     search_query: t.Optional[str] = None
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--client-id"],
@@ -69,7 +69,7 @@ class RedditCliConfig(BaseConfig, CliMixin):
                 help="user agent request header to use when calling Reddit API",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="reddit", invoke_without_command=True, cls=Group)
