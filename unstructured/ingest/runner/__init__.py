@@ -1,7 +1,9 @@
 import typing as t
+from typing import Type
 
 from .airtable import AirtableRunner
 from .azure import AzureRunner
+from .base_runner import FsspecBaseRunner, Runner
 from .biomed import BiomedRunner
 from .box import BoxRunner
 from .confluence import ConfluenceRunner
@@ -27,7 +29,7 @@ from .sharepoint import SharePointRunner
 from .slack import SlackRunner
 from .wikipedia import WikipediaRunner
 
-runner_map: t.Dict[str, t.Callable] = {
+runner_map: t.Dict[str, Type[Runner]] = {
     "airtable": AirtableRunner,
     "azure": AzureRunner,
     "biomed": BiomedRunner,
@@ -84,4 +86,6 @@ __all__ = [
     "SlackRunner",
     "WikipediaRunner",
     "runner_map",
+    "Runner",
+    "FsspecBaseRunner",
 ]
