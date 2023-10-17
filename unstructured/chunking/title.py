@@ -16,7 +16,6 @@ from unstructured.documents.elements import (
     CompositeElement,
     Element,
     ElementMetadata,
-    RegexMetadata,
     Table,
     TableChunk,
     Text,
@@ -128,24 +127,29 @@ def chunk_by_title(
                 start_char = len(text)
                 text += element.text
 
-            # -- "chunk" metadata should include union of list-items in all its elements. Also,
-            # -- metadata like regex_metadata that records start and/or end positions of related
-            # -- text need those offsets adjusted.
+            # -- "chunk" metadata should include union of list-items in all its elements --
             for attr, value in vars(element.metadata).items():
                 if isinstance(value, list):
                     value = cast(List[Any], value)
                     # -- get existing (list) value from chunk_metadata --
                     _value = getattr(metadata, attr, []) or []
-
                     # TODO: this mutates the original, work on a copy instead.
-                    if attr == "regex_metadata":
-                        value = cast(List[RegexMetadata], value)
-                        for item in value:
-                            item["start"] += start_char
-                            item["end"] += start_char
-
                     _value.extend(item for item in value if item not in _value)
                     setattr(metadata, attr, _value)
+
+            # -- consolidate any `regex_metadata` matches, adjusting the match start/end offsets --
+            element_regex_metadata = element.metadata.regex_metadata
+            if element_regex_metadata:
+                if metadata.regex_metadata is None:
+                    metadata.regex_metadata = {}
+                chunk_regex_metadata = metadata.regex_metadata
+                for regex_name, matches in element_regex_metadata.items():
+                    for m in matches:
+                        m["start"] += start_char
+                        m["end"] += start_char
+                    chunk_matches = chunk_regex_metadata.get(regex_name, [])
+                    chunk_matches.extend(matches)
+                    chunk_regex_metadata[regex_name] = chunk_matches
 
         # Check if text exceeds max_characters
         if len(text) > max_characters:

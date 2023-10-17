@@ -64,10 +64,6 @@ def test_split_elements_by_title_and_table():
     ]
 
 
-@pytest.mark.xfail(reason="regex_metadata was wrong type", raises=AssertionError, strict=True)
-# -- `ElementMetadata.regex_metadata` is `Dict[str, List[RegexMetadata]]`, not `List[RegexMetadata]`
-# -- when this is fixed, this test fails by isolating a chunk for "Today is a bad day", which is
-# -- where the regex-metadata appears.
 def test_chunk_by_title():
     elements: List[Element] = [
         Title("A Great Day", metadata=ElementMetadata(emphasized_text_contents=["Day"])),
