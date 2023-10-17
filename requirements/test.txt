@@ -8,7 +8,7 @@ appdirs==1.4.4
     # via label-studio-tools
 autoflake==2.2.1
     # via -r requirements/test.in
-black==23.9.1
+black==23.10.0
     # via -r requirements/test.in
 certifi==2023.7.22
     # via
@@ -132,7 +132,7 @@ typing-extensions==4.8.0
     #   black
     #   mypy
     #   pydantic
-urllib3==1.26.17
+urllib3==1.26.18
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
