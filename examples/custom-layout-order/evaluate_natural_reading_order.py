@@ -39,10 +39,9 @@ def extract_element_coordinates(elements):
     page_elements_coordinates = []
 
     for el in elements:
-        if isinstance(el, PageBreak):
-            if page_elements_coordinates:
-                elements_coordinates.append(page_elements_coordinates)
-                page_elements_coordinates = []
+        if isinstance(el, PageBreak) and page_elements_coordinates:
+            elements_coordinates.append(page_elements_coordinates)
+            page_elements_coordinates = []
         else:
             page_elements_coordinates.append(el.metadata.coordinates)
 
@@ -111,7 +110,7 @@ def run_partition_pdf(
 ):
     print(
         f">>> Starting run_partition_pdf - f_path: {f_path} - strategy: {strategy} "
-        f"- sort_mode: {sort_mode} - filetype: {filetype}"
+        f"- sort_mode: {sort_mode} - filetype: {filetype}",
     )
     f_base_name = os.path.splitext(os.path.basename(f_path))[0]
 
