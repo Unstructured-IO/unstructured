@@ -214,7 +214,9 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 @dataclass
 class SalesforceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleSalesforceConfig
-    ingest_doc_cls: t.Type[SalesforceIngestDoc] = SalesforceIngestDoc
+
+    def __post_init__(self):
+        self.ingest_doc_cls: t.Type[SalesforceIngestDoc] = SalesforceIngestDoc
 
     def initialize(self):
         pass

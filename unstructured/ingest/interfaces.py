@@ -47,6 +47,28 @@ class BaseConfig(DataClassJsonMixin, ABC):
 
 
 @dataclass
+class RetryStrategyConfig(BaseConfig):
+    """
+    Contains all info needed for decorator to pull from `self` for backoff
+    and retry triggered by exception.
+
+    Args:
+        max_retries: The maximum number of attempts to make before giving
+            up. Once exhausted, the exception will be allowed to escape.
+            The default value of None means there is no limit to the
+            number of tries. If a callable is passed, it will be
+            evaluated at runtime and its return value used.
+        max_retry_time: The maximum total amount of time to try for before
+            giving up. Once expired, the exception will be allowed to
+            escape. If a callable is passed, it will be
+            evaluated at runtime and its return value used.
+    """
+
+    max_retries: t.Optional[int] = None
+    max_retry_time: t.Optional[float] = None
+
+
+@dataclass
 class PartitionConfig(BaseConfig):
     # where to write structured data outputs
     pdf_infer_table_structure: bool = False

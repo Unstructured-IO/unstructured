@@ -30,17 +30,22 @@ Run Locally
 
       .. code:: python
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.slack import slack
+        import os
+
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import SlackRunner
 
         if __name__ == "__main__":
-            slack(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = SlackRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="slack-ingest-download",
                     num_processes=2,
                 ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+            )
+            runner.run(
                 channels=["12345678"],
                 token="12345678",
                 start_date="2023-04-01T01:00:00-08:00",
@@ -75,19 +80,23 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.slack import slack
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import SlackRunner
 
         if __name__ == "__main__":
-            slack(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = SlackRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="slack-ingest-download",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+            )
+            runner.run(
                 channels=["12345678"],
                 token="12345678",
                 start_date="2023-04-01T01:00:00-08:00",
