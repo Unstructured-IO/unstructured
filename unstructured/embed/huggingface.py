@@ -29,7 +29,7 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
     @EmbeddingEncoderConnectionError.wrap
     @requires_dependencies(
         ["langchain", "sentence_transformers"],
-        extras="huggingface",
+        extras="embed-huggingface",
     )
     def initialize(self):
         """Creates a langchain HuggingFace object to embed elements."""
