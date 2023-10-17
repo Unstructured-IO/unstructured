@@ -6,10 +6,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 
 # List all structured outputs to use in this evaluation
-OUTPUT_DIR=$SCRIPT_DIR/structured-output
-structured_outputs=(
-'local/example-10k.html.json'
-)
+OUTPUT_DIR=$SCRIPT_DIR/structured-output-eval
 
 # Download cct test from s3
 BUCKET_NAME=utic-dev-tech-fixtures
@@ -20,5 +17,6 @@ aws s3 cp "s3://$BUCKET_NAME/$FOLDER_NAME" "$CCT_DIR" --recursive --no-sign-requ
 
 PYTHONPATH=. ./unstructured/ingest/evaluate.py \
     --output_dir "$OUTPUT_DIR" \
-    --output_list "${structured_outputs[@]}" \
     --source_dir "$CCT_DIR" 
+
+# don't forget to clean on exit

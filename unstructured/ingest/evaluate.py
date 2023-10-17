@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import csv
+import logging
 import os
 import statistics
 from typing import Any, List, Optional, Tuple
@@ -9,6 +10,18 @@ import click
 
 from unstructured.metrics.text_extraction import calculate_accuracy, calculate_percent_missing_text
 from unstructured.staging.base import elements_from_json, elements_to_text
+
+logger = logging.getLogger("unstructured.ingest")
+handler = logging.StreamHandler()
+handler.name = "ingest_log_handler"
+formatter = logging.Formatter("%(asctime)s %(processName)-10s %(levelname)-8s %(message)s")
+handler.setFormatter(formatter)
+
+# Only want to add the handler once
+if "ingest_log_handler" not in [h.name for h in logger.handlers]:
+    logger.addHandler(handler)
+
+logger.setLevel(logging.DEBUG)
 
 
 @click.command()
@@ -60,19 +73,19 @@ def measure_edit_distance(
     Also calculates the aggregated accuracy and percent missing.
     """
     if not output_list:
-        output_list = os.listdir(f"{output_dir}")
+        output_list = _listdir_recursive(output_dir)
     if not source_list:
-        source_list = os.listdir(f"{source_dir}")
+        source_list = _listdir_recursive(source_dir)
 
     rows = []
     accuracy_scores: List[float] = []
     percent_missing_scores: List[float] = []
 
-    for doc in output_list:
+    for doc in output_list:  # type: ignore
         fn = (doc.split("/")[-1]).split(".json")[0]
         fn_txt = fn + ".txt"
         connector = doc.split("/")[0]
-        if fn_txt in source_list:
+        if fn_txt in source_list:  # type: ignore
             output_cct = elements_to_text(elements_from_json(os.path.join(output_dir, doc)))
             with open(f"{os.path.join(source_dir, fn_txt)}") as f:
                 source_cct = f.read()
@@ -107,6 +120,19 @@ def measure_edit_distance(
         ],
     )
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_rows, headers)
+
+
+def _listdir_recursive(dir: str):
+    listdir = []
+    for dirpath, _, filenames in os.walk(dir):
+        for filename in filenames:
+            # Remove the starting directory from the path to show the relative path
+            relative_path = os.path.relpath(dirpath, dir)
+            if relative_path == ".":
+                listdir.append(filename)
+            else:
+                listdir.append(f"{relative_path}/{filename}")
+    return listdir
 
 
 def _write_to_file(dir: str, filename: str, rows: List[Any], headers: List[Any]):
