@@ -6,6 +6,7 @@ Main entry point is the `@add_chunking_strategy()` decorator.
 from __future__ import annotations
 
 import copy
+import dataclasses as dc
 import functools
 import inspect
 from typing import Any, Callable, Dict, List, cast
@@ -122,7 +123,7 @@ def chunk_by_title(
             continue
 
         text = ""
-        metadata = first_element.metadata
+        chunk_meta = dc.replace(first_element.metadata)
         start_char = 0
         for element in section:
             # -- concatenate all element text in section into `text` --
@@ -137,17 +138,17 @@ def chunk_by_title(
                 if isinstance(value, list):
                     value = cast(List[Any], value)
                     # -- get existing (list) value from chunk_metadata --
-                    _value = getattr(metadata, attr, []) or []
-                    # TODO: this mutates the original, work on a copy instead.
+                    _value = getattr(chunk_meta, attr, []) or []
                     _value.extend(item for item in value if item not in _value)
-                    setattr(metadata, attr, _value)
+                    setattr(chunk_meta, attr, _value)
 
             # -- consolidate any `regex_metadata` matches, adjusting the match start/end offsets --
             element_regex_metadata = element.metadata.regex_metadata
             if element_regex_metadata:
-                if metadata.regex_metadata is None:
-                    metadata.regex_metadata = {}
-                chunk_regex_metadata = metadata.regex_metadata
+                element_regex_metadata = copy.deepcopy(element_regex_metadata)
+                if chunk_meta.regex_metadata is None:
+                    chunk_meta.regex_metadata = {}
+                chunk_regex_metadata = chunk_meta.regex_metadata
                 for regex_name, matches in element_regex_metadata.items():
                     for m in matches:
                         m["start"] += start_char
@@ -165,7 +166,7 @@ def chunk_by_title(
 
         while remaining > 0:
             end = min(start + max_characters, text_len)
-            chunked_elements.append(CompositeElement(text=text[start:end], metadata=metadata))
+            chunked_elements.append(CompositeElement(text=text[start:end], metadata=chunk_meta))
             start = end - overlap
             remaining = text_len - end
 
