@@ -41,6 +41,28 @@ def test_it_splits_a_large_section_into_multiple_chunks():
     ]
 
 
+@pytest.mark.xfail(reason="WIP", raises=AssertionError, strict=True)
+def test_it_overlaps_split_chunks_when_you_ask_it_to():
+    elements: List[Element] = [
+        Title("Introduction"),
+        # -- making text length such that it completely fills the last chunk tests the cutoff
+        # -- logic, that it doesn't create an additional chunk of length = overlap.
+        Text(
+            "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed lectus"
+            " porta volutpat. Ut ferment ipsum masa, et sed."
+        ),
+    ]
+
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=50, max_characters=50, overlap=10)
+
+    assert chunks == [
+        CompositeElement("Introduction"),
+        CompositeElement("Lorem ipsum dolor sit amet consectetur adipiscing "),
+        CompositeElement("dipiscing elit. In rhoncus ipsum sed lectus porta "),
+        CompositeElement("tus porta volutpat. Ut ferment ipsum masa, et sed."),
+    ]
+
+
 def test_split_elements_by_title_and_table():
     elements: List[Element] = [
         Title("A Great Day"),

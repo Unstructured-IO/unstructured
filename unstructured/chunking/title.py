@@ -59,6 +59,7 @@ def chunk_by_title(
     combine_text_under_n_chars: int = 500,
     new_after_n_chars: int = 500,
     max_characters: int = 500,
+    overlap: int = 0,
 ) -> List[Element]:
     """Uses title elements to identify sections within the document for chunking.
 
