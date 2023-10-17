@@ -17,7 +17,7 @@ from unstructured.ingest.runner import HubSpotRunner
 OBJECT_TYPES = {t.value for t in HubSpotObjectTypes}
 
 
-def validate_object_type(ctx, param, value):
+def validate_object_type(ctx, param, value) -> t.List[str]:
     for obj in value:
         if obj not in OBJECT_TYPES:
             raise click.ClickException(
@@ -27,13 +27,16 @@ def validate_object_type(ctx, param, value):
     return value
 
 
-def validate_custom_property(ctx, param, value):
-    output = []
-    for property_id in value:
-        if (propid := property_id.split(":")) and len(propid) < 2:
-            logger.warning(f"Wrong custom property format. Omitting: {propid}.")
+def validate_custom_property(ctx, param, value) -> t.Dict[str, t.List[str]]:
+    output: t.Dict[str, t.List[str]] = {}
+    for custom_property in value:
+        cprop = custom_property.split(":")
+        if len(cprop) < 2:
+            logger.warning(f"Wrong custom property format. Omitting: {cprop}")
+        elif cprop[0] not in OBJECT_TYPES:
+            logger.warning(f"Invalid object type: {cprop[0]}, must be one of {OBJECT_TYPES}")
         else:
-            output.append(propid)
+            output[cprop[0]] = output.get(cprop[0], []) + [cprop[1]]
     return output
 
 
@@ -41,7 +44,7 @@ def validate_custom_property(ctx, param, value):
 class HubSpotCliConfig(BaseConfig, CliMixin):
     api_token: str
     object_types: t.Optional[t.List[str]] = None
-    custom_properties: t.Optional[t.List[str]] = None
+    custom_properties: t.Optional[t.Dict[str, t.List[str]]] = None
 
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:

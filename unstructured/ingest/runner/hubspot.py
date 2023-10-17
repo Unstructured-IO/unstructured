@@ -12,7 +12,7 @@ class HubSpotRunner(Runner):
         self,
         api_token: str,
         object_types: t.Optional[t.List[str]] = None,
-        custom_properties: t.Optional[t.List[t.List[str]]] = None,
+        custom_properties: t.Optional[t.Dict[str, t.List[str]]] = None,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)

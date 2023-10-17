@@ -44,8 +44,7 @@ class SimpleHubSpotConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     params: t.Optional[str] = None
     properties: t.Optional[dict] = None
     object_types: t.Optional[t.List[str]] = None
-    custom_properties: t.Optional[t.List[t.List[str]]] = None
-    mapped_custom_properties: t.Optional[t.Dict[str, t.List[str]]] = None
+    custom_properties: t.Optional[t.Dict[str, t.List[str]]] = None
 
     @requires_dependencies(["hubspot-api-client"], extras="hubspot")
     def create_session_handle(self) -> HubSpotSessionHandle:
@@ -54,22 +53,13 @@ class SimpleHubSpotConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
         service = HubSpot(access_token=self.api_token)
         return HubSpotSessionHandle(service=service)
 
-    def __post_init__(self):
-        if self.custom_properties is None:
-            return
-        for otype, cprop in self.custom_properties:
-            self.mapped_custom_properties[otype] = self.mapped_custom_properties.get(  # type: ignore
-                otype,
-                [],
-            ) + [
-                cprop,
-            ]
-
 
 @dataclass
 class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
     connector_config: SimpleHubSpotConfig
     object_id: str
+    content_properties: t.List[str] = field(init=False)
+    registry_name: str
 
     @property
     def filename(self):
@@ -88,7 +78,7 @@ class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseI
     @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
-            "object_id": self.object_id,
+            f"{self.registry_name}_id": self.object_id,
         }
 
     @property
@@ -107,6 +97,12 @@ class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseI
             return None
         return response
 
+    def _add_custom_properties(self, obj_type):
+        if (self.connector_config.custom_properties is not None) and (
+            (cprops := self.connector_config.custom_properties.get(obj_type)) is not None
+        ):
+            self.content_properties += cprops
+
     def update_source_metadata(self, **kwargs) -> None:
         obj = kwargs.get("object", self.get_object())  # type: ignore
         if obj is None:
@@ -120,11 +116,24 @@ class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseI
             exists=True,
         )
 
+    def _join_object_properties(self, obj) -> str:
+        return "\n".join(
+            [
+                obj.properties[cprop]
+                for cprop in self.content_properties
+                if (obj.properties.get(cprop) is not None)
+            ],
+        )
+
 
 @dataclass
 class HubSpotCallIngestDoc(HubSpotIngestDoc):
     connector_config: SimpleHubSpotConfig
     registry_name: str = "hubspot_call"
+
+    def __post_init__(self):
+        self.content_properties = ["hs_call_title", "hs_call_body"]
+        self._add_custom_properties(HubSpotObjectTypes.CALLS.value)
 
     @requires_dependencies(["hubspot-api-client"], extras="hubspot")
     def get_object(self):
@@ -134,7 +143,7 @@ class HubSpotCallIngestDoc(HubSpotIngestDoc):
         return self._fetch_obj(
             method,
             NotFoundException,
-            properties=["hs_call_title", "hs_call_body"],
+            properties=self.content_properties,
         )
 
     @SourceConnectionError.wrap
@@ -142,11 +151,10 @@ class HubSpotCallIngestDoc(HubSpotIngestDoc):
     def get_file(self):
         call = self.get_object()
         self.update_source_metadata(object=call)
-        title = call.properties["hs_call_title"]
-        body = call.properties["hs_call_body"]
+        output = self._join_object_properties(call)
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
-            f.write(f"{title}\n{body}")
+            f.write(output)
         return
 
 
@@ -154,6 +162,10 @@ class HubSpotCallIngestDoc(HubSpotIngestDoc):
 class HubSpotCommunicationIngestDoc(HubSpotIngestDoc):
     connector_config: SimpleHubSpotConfig
     registry_name: str = "hubspot_communication"
+
+    def __post_init__(self):
+        self.content_properties = ["hs_communication_body"]
+        self._add_custom_properties(HubSpotObjectTypes.COMMUNICATIONS.value)
 
     @requires_dependencies(["hubspot-api-client"], extras="hubspot")
     def get_object(self):
@@ -166,12 +178,11 @@ class HubSpotCommunicationIngestDoc(HubSpotIngestDoc):
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
         communication = self.get_object()
-        print(communication)
         self.update_source_metadata(object=communication)
-        content = communication.properties["hs_communication_body"]
+        output = self._join_object_properties(communication)
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
-            f.write(content)
+            f.write(output)
         return
 
 
@@ -179,6 +190,10 @@ class HubSpotCommunicationIngestDoc(HubSpotIngestDoc):
 class HubSpotEmailIngestDoc(HubSpotIngestDoc):
     connector_config: SimpleHubSpotConfig
     registry_name: str = "hubspot_email"
+
+    def __post_init__(self):
+        self.content_properties = ["hs_email_subject", "hs_email_text"]
+        self._add_custom_properties(HubSpotObjectTypes.EMAILS.value)
 
     @requires_dependencies(["hubspot-api-client"], extras="hubspot")
     def get_object(self):
@@ -196,11 +211,10 @@ class HubSpotEmailIngestDoc(HubSpotIngestDoc):
     def get_file(self):
         email = self.get_object()
         self.update_source_metadata(object=email)
-        subject = email.properties["hs_email_subject"]
-        content = email.properties["hs_email_text"]
+        output = self._join_object_properties(email)
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
-            f.write(f"{subject}\n{content}")
+            f.write(output)
         return
 
 
@@ -208,6 +222,10 @@ class HubSpotEmailIngestDoc(HubSpotIngestDoc):
 class HubSpotNotesIngestDoc(HubSpotIngestDoc):
     connector_config: SimpleHubSpotConfig
     registry_name: str = "hubspot_note"
+
+    def __post_init__(self):
+        self.content_properties = ["hs_note_body"]
+        self._add_custom_properties(HubSpotObjectTypes.NOTES.value)
 
     @requires_dependencies(["hubspot-api-client"], extras="hubspot")
     def get_object(self):
@@ -221,10 +239,10 @@ class HubSpotNotesIngestDoc(HubSpotIngestDoc):
     def get_file(self):
         note = self.get_object()
         self.update_source_metadata(object=note)
-        content = note.properties["hs_note_body"]
+        output = self._join_object_properties(note)
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
-            f.write(content)
+            f.write(output)
         return
 
 
@@ -232,6 +250,10 @@ class HubSpotNotesIngestDoc(HubSpotIngestDoc):
 class HubSpotProductIngestDoc(HubSpotIngestDoc):
     connector_config: SimpleHubSpotConfig
     registry_name: str = "hubspot_product"
+
+    def __post_init__(self):
+        self.content_properties = ["description"]
+        self._add_custom_properties(HubSpotObjectTypes.PRODUCTS.value)
 
     @requires_dependencies(["hubspot-api-client"], extras="hubspot")
     def get_object(self):
@@ -245,10 +267,10 @@ class HubSpotProductIngestDoc(HubSpotIngestDoc):
     def get_file(self):
         product = self.get_object()
         self.update_source_metadata(object=product)
-        content = product.properties["description"]
+        output = self._join_object_properties(product)
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
-            f.write(content)
+            f.write(output)
         return
 
 
@@ -256,6 +278,10 @@ class HubSpotProductIngestDoc(HubSpotIngestDoc):
 class HubSpotTicketIngestDoc(HubSpotIngestDoc):
     connector_config: SimpleHubSpotConfig
     registry_name: str = "hubspot_ticket"
+
+    def __post_init__(self):
+        self.content_properties = ["subject", "content"]
+        self._add_custom_properties(HubSpotObjectTypes.PRODUCTS.value)
 
     @requires_dependencies(["hubspot-api-client"], extras="hubspot")
     def get_object(self):
@@ -269,11 +295,10 @@ class HubSpotTicketIngestDoc(HubSpotIngestDoc):
     def get_file(self):
         ticket = self.get_object()
         self.update_source_metadata(object=ticket)
-        subject = ticket.properties["subject"]
-        content = ticket.properties["content"]
+        output = self._join_object_properties(ticket)
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
-            f.write(f"{subject}\n{content}")
+            f.write(output)
         return
 
 
