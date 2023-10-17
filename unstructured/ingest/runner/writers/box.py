@@ -1,8 +1,10 @@
 import typing as t
 
 from unstructured.ingest.interfaces import BaseDestinationConnector
+from unstructured.utils import requires_dependencies
 
 
+@requires_dependencies(["boxfs", "fsspec"], extras="box")
 def box_writer(
     remote_url: str,
     box_app_config: t.Optional[str],
