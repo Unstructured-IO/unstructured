@@ -1,11 +1,10 @@
 import functools
 import importlib
 import json
+import logging
 import os
 import platform
 import subprocess
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 from datetime import datetime
 from functools import wraps
 from typing import (
@@ -22,16 +21,16 @@ from typing import (
     Union,
     cast,
 )
-from matplotlib import colors
-from PIL import Image
-from pdf2image import convert_from_path
 
+import magic
+import matplotlib.pyplot as plt
 import requests
+from matplotlib import colors, patches
+from pdf2image import convert_from_path
+from PIL import Image
 from typing_extensions import ParamSpec
 
 from unstructured.__version__ import __version__
-
-
 
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 TYPE_TO_COLOUR_MAP = {
@@ -305,31 +304,35 @@ def scarf_analytics():
         pass
 
 
-def plot_image_with_bounding_boxes_coloured(file_path, elements, desired_width=20, save_images=False, save_coords=False,
-                                            output_folder=None, plot=False):
-    """draws bounding boxes superimposed in page-images for the document in file_path"""
+def draw_bboxes_on_pdf_or_image(
+    file_path,
+    elements,
+    desired_width=20,
+    save_images=False,
+    save_coordinates=False,
+    output_folder=None,
+    plot=False,
+):
+    """draw superimposed bounding boxes in pdf|images per page for the document in file_path"""
 
-    if ".pdf" in file_path:
+    mimetype = magic.from_file(file_path)
+    if "PDF" in mimetype:
         images = convert_from_path(file_path)
-    else:
+    elif "image" in mimetype:
         images = [Image.open(file_path)]
-
-    print("num of pages: ", len(images))
-    bounding_boxes = [element.metadata.coordinates.to_dict()["points"] for element in elements]
-    text_labels = [f"{ix}. {element.category}" for ix, element in enumerate(elements, start=1)]
-
-    if len(images) > 1:
-        print("MULTIPLE IMAGES")
-        # split for pages
-        bounding_boxes = [bounding_boxes] * len(images)
-        text_labels = [text_labels] * len(images)
     else:
-        bounding_boxes = [bounding_boxes]
-        text_labels = [text_labels]
+        raise TypeError(f"file mimetype should be PDF or image. Yours is {mimetype}")
+
+    bounding_boxes = [[] for _ in range(len(images))]
+    text_labels = [[] for _ in range(len(images))]
+    for ix, element in enumerate(elements):
+        n_page = element.metadata.page_number - 1
+        bounding_boxes[n_page].append(element.metadata.coordinates.to_dict()["points"])
+        text_labels[n_page].append(f"{ix}. {element.category}")
 
     for page_ix, image in enumerate(images):
         if desired_width:
-            aspect_ratio = image.width / image.height
+            aspect_ratio = images[0].width / images[0].height
             desired_height = desired_width / aspect_ratio
             fig, ax = plt.subplots(figsize=(desired_width, desired_height))
         else:
@@ -342,15 +345,33 @@ def plot_image_with_bounding_boxes_coloured(file_path, elements, desired_width=2
             x_max, y_max = bbox[2]
             width = x_max - x_min
             height = y_max - y_min
-            rect = patches.Rectangle((x_min, y_min), width, height, linewidth=1, edgecolor='black', facecolor='none')
+            rect = patches.Rectangle(
+                (x_min, y_min),
+                width,
+                height,
+                linewidth=1,
+                edgecolor="black",
+                facecolor="none",
+            )
             label_clean = "".join([ch for ch in label if ch.isalpha()]).strip()
             rect.set_edgecolor(TYPE_TO_COLOUR_MAP[label_clean])
             rect.set_facecolor(colors.to_rgba(TYPE_TO_COLOUR_MAP[label_clean], alpha=0.04))
             ax.add_patch(rect)
-            ax.text(x_min, y_min - 5, label, fontsize=12, weight='bold', color=TYPE_TO_COLOUR_MAP[label_clean],
-                    bbox=dict(facecolor=(1.0, 1.0, 1.0, 0.7), edgecolor=(0.95, 0.95, 0.95, 0.0), pad=0.5))
+            ax.text(
+                x_min,
+                y_min - 5,
+                label,
+                fontsize=12,
+                weight="bold",
+                color=TYPE_TO_COLOUR_MAP[label_clean],
+                bbox={
+                    "facecolor": (1.0, 1.0, 1.0, 0.7),
+                    "edgecolor": (0.95, 0.95, 0.95, 0.0),
+                    "pad": 0.5,
+                },
+            )
 
-        if save_images or save_coords:
+        if save_images or save_coordinates:
             if not output_folder:
                 output_folder = "./"
                 print("No output_folder defined. Storing predictions in relative path './'")
@@ -359,16 +380,22 @@ def plot_image_with_bounding_boxes_coloured(file_path, elements, desired_width=2
                 image_path = f"{output_folder}/images_with_bboxes"
                 if not os.path.exists(image_path):
                     os.makedirs(image_path)
-                plt.savefig(f'{image_path}/{file_path.split("/")[-1]}.png')
+                plt.savefig(f'{image_path}/{file_path.split("/")[-1]}_{page_ix}.png')
 
-            if save_coords:
+            if save_coordinates:
                 annotations_path = f"{output_folder}/bboxes_coordinates"
                 if not os.path.exists(annotations_path):
                     os.makedirs(annotations_path)
-                with open(f'{annotations_path}/{file_path.split("/")[-1]}.json', 'w') as json_file:
+                with open(
+                    f'{annotations_path}/{file_path.split("/")[-1]}_{page_ix}.json', "w"
+                ) as json_file:
                     json.dump(
-                        [{e_save.category: e_save.metadata.coordinates.to_dict()["points"]} for e_save in elements],
-                        json_file)
+                        [
+                            {e_save.category: e_save.metadata.coordinates.to_dict()["points"]}
+                            for e_save in elements
+                        ],
+                        json_file,
+                    )
 
         if plot:
             plt.show()
