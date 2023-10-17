@@ -1,3 +1,4 @@
+import json
 import os
 import typing as t
 from contextlib import suppress
@@ -231,7 +232,15 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             **self.connector_config.get_access_kwargs(),
         )
 
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+    def write_dict(
+        self,
+        *args,
+        json_list: t.List[t.Dict[str, t.Any]],
+        filename: t.Optional[str] = None,
+        indent: int = 4,
+        encoding: str = "utf-8",
+        **kwargs,
+    ) -> None:
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
@@ -240,10 +249,17 @@ class FsspecDestinationConnector(BaseDestinationConnector):
 
         logger.info(f"Writing content using filesystem: {type(fs).__name__}")
 
+        s3_folder = self.connector_config.path_without_protocol
+        s3_output_path = str(PurePath(s3_folder, filename)) if filename else s3_folder
+        full_s3_path = f"s3://{s3_output_path}"
+        logger.debug(f"uploading content to {full_s3_path}")
+        fs.write_text(full_s3_path, json.dumps(json_list, indent=indent), encoding=encoding)
+
+    def write(self, docs: t.List[BaseIngestDoc]) -> None:
         for doc in docs:
             s3_file_path = doc.base_filename
-            s3_folder = self.connector_config.remote_url
-
-            s3_output_path = str(PurePath(s3_folder, s3_file_path)) if s3_file_path else s3_folder
-            logger.debug(f"Uploading {doc._output_filename} -> {s3_output_path}")
-            fs.put_file(lpath=doc._output_filename, rpath=s3_output_path)
+            filename = s3_file_path if s3_file_path else None
+            with open(doc._output_filename) as json_file:
+                logger.debug(f"uploading content from {doc._output_filename}")
+                json_list = json.load(json_file)
+                self.write_dict(json_list=json_list, filename=filename)

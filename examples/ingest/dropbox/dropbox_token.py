@@ -1,4 +1,5 @@
-# Make sure this is importing the official dropbox python package, not unstructured/ingest/connector/dropbox
+# Make sure this is importing the official dropbox python package,
+# not unstructured/ingest/connector/dropbox
 import dropbox
 from dropbox import DropboxOAuth2FlowNoRedirect
 
@@ -17,7 +18,9 @@ def get_access_and_refresh_token():
     app_secret = input("Enter app secret: ").strip()
 
     auth_flow = DropboxOAuth2FlowNoRedirect(
-        app_key, app_secret, token_access_type="offline",
+        app_key,
+        app_secret,
+        token_access_type="offline",
     )
 
     authorize_url = auth_flow.start()
@@ -49,7 +52,9 @@ def refresh_token():
     print("****************************************************")
 
     refresh_flow = dropbox.Dropbox(
-        app_key=app_key, app_secret=app_secret, oauth2_refresh_token=refresh_token,
+        app_key=app_key,
+        app_secret=app_secret,
+        oauth2_refresh_token=refresh_token,
     )
     print("Refreshing access token")
     refresh_flow.refresh_access_token()
