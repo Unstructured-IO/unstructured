@@ -1,3 +1,13 @@
+## 0.10.25-dev0
+
+### Enhancements
+
+### Features
+
+* **Add `utils` method `draw_bboxes_on_pdf_or_image` to plot returned element coordinates in each page image.** Using a PDF or image file and the returned element list from a detection model, this method superimposes the bounding boxes in page images with numeration and different colours per element type.
+
+### Fixes
+
 ## 0.10.24
 
 ### Enhancements
