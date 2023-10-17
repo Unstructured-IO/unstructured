@@ -20,7 +20,7 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-if [ -z "HUBSPOT_API_TOKEN" ]; then
+if [ -z "$HUBSPOT_API_TOKEN" ]; then
    echo "Skipping HubSpot ingest test because the HUBSPOT_API_TOKEN env var is not set."
    exit 0
 fi

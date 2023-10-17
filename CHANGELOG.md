@@ -1,4 +1,4 @@
-## 0.10.24-dev2
+## 0.10.24-dev3
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 ### Features
 
 * **Adds element type percent match function** In order to evaluate the element type extracted, we add a function that calculates the matched percentage between two frequency dictionary.
+* **Adds HubSpot Connector** Adds connector to retrieve call, communications, emails, notes, products and tickets from HubSpot
 
 ### Fixes
 
