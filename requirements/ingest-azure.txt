@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements/ingest-azure.in
 #
-adlfs==2023.9.0
+adlfs==2023.10.0
     # via -r requirements/ingest-azure.in
 aiohttp==3.8.6
     # via adlfs

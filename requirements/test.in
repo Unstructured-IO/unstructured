@@ -9,6 +9,7 @@ click>=8.1
 types-click
 flake8
 freezegun
+huggingface
 label_studio_sdk
 langchain
 mypy
