@@ -43,6 +43,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --preserve-downloads \
     --reprocess \
     --output-dir "$OUTPUT_DIR" \
-    --work-dir "$WORK_DIR"
+    --work-dir "$WORK_DIR" \
+    --max-retry-time 10 \
+    --verbose
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
