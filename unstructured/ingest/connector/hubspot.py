@@ -125,6 +125,22 @@ class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseI
             ],
         )
 
+    @SourceConnectionError.wrap
+    @BaseIngestDoc.skip_if_file_exists
+    def get_file(self):
+        obj = self.get_object()
+        if obj is None:
+            raise ValueError(
+                f"Failed to retrieve object {self.registry_name}",
+                f"with ID {self.object_id}",
+            )
+        self.update_source_metadata(object=obj)
+        output = self._join_object_properties(obj)
+        self.filename.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.filename, "w", encoding="utf8") as f:
+            f.write(output)
+        return
+
 
 @dataclass
 class HubSpotCallIngestDoc(HubSpotIngestDoc):
@@ -146,17 +162,6 @@ class HubSpotCallIngestDoc(HubSpotIngestDoc):
             properties=self.content_properties,
         )
 
-    @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
-    def get_file(self):
-        call = self.get_object()
-        self.update_source_metadata(object=call)
-        output = self._join_object_properties(call)
-        self.filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.filename, "w", encoding="utf8") as f:
-            f.write(output)
-        return
-
 
 @dataclass
 class HubSpotCommunicationIngestDoc(HubSpotIngestDoc):
@@ -173,17 +178,6 @@ class HubSpotCommunicationIngestDoc(HubSpotIngestDoc):
 
         method = self.session_handle.service.crm.objects.communications.basic_api.get_by_id
         return self._fetch_obj(method, NotFoundException, properties=["hs_communication_body"])
-
-    @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
-    def get_file(self):
-        communication = self.get_object()
-        self.update_source_metadata(object=communication)
-        output = self._join_object_properties(communication)
-        self.filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.filename, "w", encoding="utf8") as f:
-            f.write(output)
-        return
 
 
 @dataclass
@@ -206,17 +200,6 @@ class HubSpotEmailIngestDoc(HubSpotIngestDoc):
             properties=["hs_email_subject", "hs_email_text"],
         )
 
-    @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
-    def get_file(self):
-        email = self.get_object()
-        self.update_source_metadata(object=email)
-        output = self._join_object_properties(email)
-        self.filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.filename, "w", encoding="utf8") as f:
-            f.write(output)
-        return
-
 
 @dataclass
 class HubSpotNotesIngestDoc(HubSpotIngestDoc):
@@ -233,17 +216,6 @@ class HubSpotNotesIngestDoc(HubSpotIngestDoc):
 
         method = self.session_handle.service.crm.objects.notes.basic_api.get_by_id
         return self._fetch_obj(method, NotFoundException, properties=["hs_note_body"])
-
-    @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
-    def get_file(self):
-        note = self.get_object()
-        self.update_source_metadata(object=note)
-        output = self._join_object_properties(note)
-        self.filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.filename, "w", encoding="utf8") as f:
-            f.write(output)
-        return
 
 
 @dataclass
@@ -262,17 +234,6 @@ class HubSpotProductIngestDoc(HubSpotIngestDoc):
         method = self.session_handle.service.crm.products.basic_api.get_by_id
         return self._fetch_obj(method, NotFoundException, properties=["description"])
 
-    @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
-    def get_file(self):
-        product = self.get_object()
-        self.update_source_metadata(object=product)
-        output = self._join_object_properties(product)
-        self.filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.filename, "w", encoding="utf8") as f:
-            f.write(output)
-        return
-
 
 @dataclass
 class HubSpotTicketIngestDoc(HubSpotIngestDoc):
@@ -289,17 +250,6 @@ class HubSpotTicketIngestDoc(HubSpotIngestDoc):
 
         method = self.session_handle.service.crm.tickets.basic_api.get_by_id
         return self._fetch_obj(method, NotFoundException)
-
-    @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
-    def get_file(self):
-        ticket = self.get_object()
-        self.update_source_metadata(object=ticket)
-        output = self._join_object_properties(ticket)
-        self.filename.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.filename, "w", encoding="utf8") as f:
-            f.write(output)
-        return
 
 
 @dataclass
