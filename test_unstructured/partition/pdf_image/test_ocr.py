@@ -47,9 +47,8 @@ def test_process_file_with_ocr_invalid_filename(is_image):
         )
 
 
-# TODO(yuming): Add this for test coverage, please update/move it in CORE-1886
 def test_supplement_page_layout_with_ocr_invalid_ocr(monkeypatch):
-    monkeypatch.setenv("ENTIRE_PAGE_OCR", "invalid_ocr")
+    monkeypatch.setenv("OCR_AGENT", "invalid_ocr")
     with pytest.raises(ValueError):
         _ = ocr.supplement_page_layout_with_ocr(
             page_layout=None,
@@ -76,7 +75,7 @@ def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     ocr_layout = ocr.get_ocr_layout_from_image(
         image,
         ocr_languages="eng",
-        entire_page_ocr="tesseract",
+        ocr_agent="tesseract",
     )
 
     expected_layout = [
@@ -128,7 +127,7 @@ def test_get_ocr_layout_from_image_paddle(monkeypatch):
 
     image = Image.new("RGB", (100, 100))
 
-    ocr_layout = ocr.get_ocr_layout_from_image(image, ocr_languages="eng", entire_page_ocr="paddle")
+    ocr_layout = ocr.get_ocr_layout_from_image(image, ocr_languages="eng", ocr_agent="paddle")
 
     expected_layout = [
         TextRegion.from_coords(10, 5, 25, 15, "Hello", source="OCR-paddle"),
@@ -147,7 +146,7 @@ def test_get_ocr_text_from_image_tesseract(monkeypatch):
     )
     image = Image.new("RGB", (100, 100))
 
-    ocr_text = ocr.get_ocr_text_from_image(image, ocr_languages="eng", entire_page_ocr="tesseract")
+    ocr_text = ocr.get_ocr_text_from_image(image, ocr_languages="eng", ocr_agent="tesseract")
 
     assert ocr_text == "Hello World"
 
@@ -161,7 +160,7 @@ def test_get_ocr_text_from_image_paddle(monkeypatch):
 
     image = Image.new("RGB", (100, 100))
 
-    ocr_text = ocr.get_ocr_text_from_image(image, ocr_languages="eng", entire_page_ocr="paddle")
+    ocr_text = ocr.get_ocr_text_from_image(image, ocr_languages="eng", ocr_agent="paddle")
 
     assert ocr_text == "HelloWorld!"
 
