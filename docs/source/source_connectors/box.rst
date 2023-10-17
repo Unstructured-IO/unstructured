@@ -32,17 +32,20 @@ Run Locally
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.box import box
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import BoxRunner
 
         if __name__ == "__main__":
-            box(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = BoxRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="box-output",
                     num_processes=2,
                 ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+            )
+            runner.run(
                 box_app_config=os.getenv("BOX_APP_CONFIG_PATH"),
                 recursive=True,
                 remote_url="box://utic-test-ingest-fixtures",
@@ -76,19 +79,23 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.box import box
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import BoxRunner
 
         if __name__ == "__main__":
-            box(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = BoxRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="box-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+            )
+            runner.run(
                 box_app_config=os.getenv("BOX_APP_CONFIG_PATH"),
                 recursive=True,
                 remote_url="box://utic-test-ingest-fixtures",

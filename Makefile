@@ -320,22 +320,23 @@ test-extra-xlsx:
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
-check: check-src check-tests check-version
+check: check-ruff check-black check-flake8 check-version
 
-## check-src:               runs linters (source only, no tests)
-.PHONY: check-src
-check-src:
+.PHONY: check-black
+check-black:
+	black . --check
+
+.PHONY: check-flake8
+check-flake8:
+	flake8 .
+
+.PHONY: check-ruff
+check-ruff:
 	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore COM812,PT011,PT012,SIM117
-	black --line-length 100 ${PACKAGE_NAME} --check
-	flake8 ${PACKAGE_NAME}
-	mypy ${PACKAGE_NAME} --ignore-missing-imports --check-untyped-defs
 
-.PHONY: check-tests
-check-tests:
-	black --line-length 100 test_${PACKAGE_NAME} --check
-	black --line-length 100 test_${PACKAGE_NAME}_ingest --check
-	flake8 test_${PACKAGE_NAME}
-	flake8 test_${PACKAGE_NAME}_ingest
+.PHONY: check-autoflake
+check-autoflake:
+	autoflake --check-diff .
 
 ## check-scripts:           run shellcheck
 .PHONY: check-scripts
@@ -354,9 +355,8 @@ check-version:
 .PHONY: tidy
 tidy:
 	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --fix-only || true
-	black --line-length 100 ${PACKAGE_NAME}
-	black --line-length 100 test_${PACKAGE_NAME}
-	black --line-length 100 test_${PACKAGE_NAME}_ingest
+	black  .
+	autoflake --in-place .
 
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync

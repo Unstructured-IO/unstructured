@@ -25,7 +25,10 @@ class Reader(SourceNode):
                     doc.session_handle = session_handle
             # does the work necessary to load file into filesystem
             # in the future, get_file_handle() could also be supported
-            doc.get_file()
+            if self.retry_strategy:
+                self.retry_strategy(doc.get_file)
+            else:
+                doc.get_file()
             return doc.filename
         except Exception as e:
             if self.pipeline_context.raise_on_error:

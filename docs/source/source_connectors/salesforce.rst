@@ -34,17 +34,20 @@ Run Locally
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.salesforce import salesforce
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import SalesforceRunner
 
         if __name__ == "__main__":
-            salesforce(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = SalesforceRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="salesforce-output",
                     num_processes=2,
                 ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+            )
+            runner.run(
                 username=os.getenv("SALESFORCE_USERNAME"),
                 consumer_key=os.getenv("SALESFORCE_CONSUMER_KEY"),
                 private_key_path=os.getenv("SALESFORCE_PRIVATE_KEY_PATH"),
@@ -82,19 +85,23 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.salesforce import salesforce
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import SalesforceRunner
 
         if __name__ == "__main__":
-            salesforce(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = SalesforceRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="salesforce-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+            )
+            runner.run(
                 username=os.getenv("SALESFORCE_USERNAME"),
                 consumer_key=os.getenv("SALESFORCE_CONSUMER_KEY"),
                 private_key_path=os.getenv("SALESFORCE_PRIVATE_KEY_PATH"),

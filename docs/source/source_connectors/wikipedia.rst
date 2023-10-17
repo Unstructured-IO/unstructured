@@ -28,18 +28,22 @@ Run Locally
 
       .. code:: python
 
-        from unstructured.ingest.runner.wikipedia import wikipedia
-        from unstructured.ingest.interfaces import ReadConfig, PartitionConfig
+        import os
 
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import WikipediaRunner
 
         if __name__ == "__main__":
-            wikipedia(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = WikipediaRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="wikipedia-ingest-output",
-                    num_processes=2
+                    num_processes=2,
                 ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+            )
+            runner.run(
                 page_title="Open Source Software",
                 auto_suggest=False,
             )
@@ -70,19 +74,23 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.wikipedia import wikipedia
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import WikipediaRunner
 
         if __name__ == "__main__":
-            wikipedia(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = WikipediaRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="wikipedia-ingest-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+            )
+            runner.run(
                 page_title="Open Source Software",
                 auto_suggest=False,
             )

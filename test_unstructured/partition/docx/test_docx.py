@@ -496,7 +496,7 @@ def test_partition_docx_includes_hyperlink_metadata():
             "start_index": 11,
             "text": "link to foo.com",
             "url": "https://foo.com",
-        }
+        },
     ]
     assert metadata.link_texts == ["link to foo.com"]
     assert metadata.link_urls == ["https://foo.com"]
@@ -510,7 +510,7 @@ def test_partition_docx_includes_hyperlink_metadata():
             "start_index": 10,
             "text": "link to foo.com searching for bar",
             "url": "https://foo.com?q=bar",
-        }
+        },
     ]
     assert metadata.link_texts == ["link to foo.com searching for bar"]
     assert metadata.link_urls == ["https://foo.com?q=bar"]
@@ -524,7 +524,7 @@ def test_partition_docx_includes_hyperlink_metadata():
             "start_index": 10,
             "text": "link to foo.com introduction section",
             "url": "http://foo.com/#intro",
-        }
+        },
     ]
     assert metadata.link_texts == ["link to foo.com introduction section"]
     assert metadata.link_urls == ["http://foo.com/#intro"]
@@ -538,7 +538,7 @@ def test_partition_docx_includes_hyperlink_metadata():
             "start_index": 11,
             "text": "link to file",
             "url": "court-exif.jpg",
-        }
+        },
     ]
     assert metadata.link_texts == ["link to file"]
     assert metadata.link_urls == ["court-exif.jpg"]
