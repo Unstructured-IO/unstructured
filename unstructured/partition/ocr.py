@@ -17,7 +17,6 @@ from unstructured_inference.inference.layoutelement import (
     LayoutElement,
     partition_groups_from_regions,
 )
-from unstructured_inference.models import tables
 from unstructured_pytesseract import Output
 
 from unstructured.logger import logger
@@ -262,7 +261,7 @@ def supplement_element_with_table_extraction(
             )
             table_tokens = get_table_tokens_per_element(padded_element, ocr_layout)
             table_agent = init_table_agent()
-            element.text_as_html = table_agent.predict(cropped_image, table_tokens)
+            element.text_as_html = table_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
 
 
@@ -271,8 +270,8 @@ def get_table_tokens_per_element(
     ocr_layout: List[TextRegion],
 ) -> List[Dict]:
     """Prepre table tokens related to the given element for the table model."""
-    # TODO(yuming): update table_tokens from List[Dict] to a List[TABLE_TOKEN]
-    # where TABLE_TOKEN is a data class defined in unstructured-inference
+    # TODO(yuming): update table_tokens from List[Dict] to List[TABLE_TOKEN]
+    # where TABLE_TOKEN will be a data class defined in unstructured-inference
 
     table_tokens = None
     return table_tokens
@@ -281,6 +280,8 @@ def get_table_tokens_per_element(
 def init_table_agent():
     """Initialize a table agent from unstructured_inference as
     a global variable to ensure that we only load it once."""
+    from unstructured_inference.models import tables
+
     global table_agent
 
     table_agent = tables.UnstructuredTableTransformerModel()
