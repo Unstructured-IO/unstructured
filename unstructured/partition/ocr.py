@@ -1,7 +1,7 @@
 import os
 import tempfile
 from copy import deepcopy
-from typing import BinaryIO, List, Optional, Union, cast
+from typing import BinaryIO, Dict, List, Optional, Union, cast
 
 import numpy as np
 import pdf2image
@@ -17,15 +17,22 @@ from unstructured_inference.inference.layoutelement import (
     LayoutElement,
     partition_groups_from_regions,
 )
+from unstructured_inference.models import tables
 from unstructured_pytesseract import Output
 
 from unstructured.logger import logger
-from unstructured.partition.utils.constants import SUBREGION_THRESHOLD_FOR_OCR, OCRMode
+from unstructured.partition.utils.constants import (
+    IMAGE_CROP_PAD,
+    SUBREGION_THRESHOLD_FOR_OCR,
+    OCRMode,
+)
 
 # Force tesseract to be single threaded,
 # otherwise we see major performance problems
 if "OMP_THREAD_LIMIT" not in os.environ:
     os.environ["OMP_THREAD_LIMIT"] = "1"
+
+table_agent = None  # Define table_agent as a global variable
 
 
 def process_data_with_ocr(
@@ -179,23 +186,21 @@ def supplement_page_layout_with_ocr(
             " must be set to 'tesseract' or 'paddle'.",
         )
 
-    elements = page_layout.elements
+    ocr_layout = None
     if ocr_mode == OCRMode.FULL_PAGE.value:
         ocr_layout = get_ocr_layout_from_image(
             image,
             ocr_languages=ocr_languages,
             ocr_agent=ocr_agent,
         )
-        merged_page_layout_elements = merge_out_layout_with_ocr_layout(
-            elements,
-            ocr_layout,
+        page_layout.elements = merge_out_layout_with_ocr_layout(
+            out_layout=page_layout.elements,
+            ocr_layout=ocr_layout,
         )
-        elements[:] = merged_page_layout_elements
-        return page_layout
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
-        for element in elements:
+        for element in page_layout.elements:
             if element.text == "":
-                padded_element = pad_element_bboxes(element, padding=12)
+                padded_element = pad_element_bboxes(element, padding=IMAGE_CROP_PAD)
                 cropped_image = image.crop(
                     (
                         padded_element.bbox.x1,
@@ -204,18 +209,83 @@ def supplement_page_layout_with_ocr(
                         padded_element.bbox.y2,
                     ),
                 )
+                # Note(yuming): instead of getting OCR layout, we just need
+                # the text extraced from OCR for individual elements
                 text_from_ocr = get_ocr_text_from_image(
                     cropped_image,
                     ocr_languages=ocr_languages,
                     ocr_agent=ocr_agent,
                 )
                 element.text = text_from_ocr
-        return page_layout
     else:
         raise ValueError(
             "Invalid OCR mode. Parameter `ocr_mode` "
             "must be set to `entire_page` or `individual_blocks`.",
         )
+
+    # Note(yuming): use the OCR data from entire page OCR for table extraction
+    if infer_table_structure:
+        if ocr_layout is None:
+            ocr_layout = get_ocr_layout_from_image(
+                image,
+                ocr_languages=ocr_languages,
+                ocr_agent=ocr_agent,
+            )
+        page_layout.elements = supplement_element_with_table_extraction(
+            elements=page_layout.elements,
+            ocr_layout=ocr_layout,
+            image=image,
+        )
+
+    return page_layout
+
+
+def supplement_element_with_table_extraction(
+    elements: List[LayoutElement],
+    ocr_layout: List[TextRegion],
+    image: PILImage,
+) -> List[LayoutElement]:
+    """Supplement the existing layout with table extraction. Any Table elements
+    that are extracted will have a metadata field "text_as_html" where
+    the table's text content is rendered into an html string.
+    """
+    for element in elements:
+        if element.type == "Table":
+            padded_element = pad_element_bboxes(element, padding=IMAGE_CROP_PAD)
+            cropped_image = image.crop(
+                (
+                    padded_element.bbox.x1,
+                    padded_element.bbox.y1,
+                    padded_element.bbox.x2,
+                    padded_element.bbox.y2,
+                ),
+            )
+            table_tokens = get_table_tokens_per_element(padded_element, ocr_layout)
+            table_agent = init_table_agent()
+            element.text_as_html = table_agent.predict(cropped_image, table_tokens)
+    return elements
+
+
+def get_table_tokens_per_element(
+    element: LayoutElement,
+    ocr_layout: List[TextRegion],
+) -> List[Dict]:
+    """Prepre table tokens related to the given element for the table model."""
+    # TODO(yuming): update table_tokens from List[Dict] to a List[TABLE_TOKEN]
+    # where TABLE_TOKEN is a data class defined in unstructured-inference
+
+    table_tokens = None
+    return table_tokens
+
+
+def init_table_agent():
+    """Initialize a table agent from unstructured_inference as
+    a global variable to ensure that we only load it once."""
+    global table_agent
+
+    table_agent = tables.UnstructuredTableTransformerModel()
+    table_agent.initialize(model="microsoft/table-transformer-structure-recognition")
+    return table_agent
 
 
 def pad_element_bboxes(
