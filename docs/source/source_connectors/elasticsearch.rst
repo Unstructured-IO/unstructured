@@ -30,18 +30,24 @@ Run Locally
 
       .. code:: python
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.elasticsearch import elasticsearch
+        import os
+
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import ElasticSearchRunner
 
         if __name__ == "__main__":
-            elasticsearch(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = ElasticSearchRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="elasticsearch-ingest-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     metadata_exclude=["filename", "file_directory", "metadata.data_source.date_processed"],
                 ),
+            )
+            runner.run(
                 url="http://localhost:9200",
                 index_name="movies",
                 jq_query="{ethnicity, director, plot}",
@@ -75,20 +81,24 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.elasticsearch import elasticsearch
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import ElasticSearchRunner
 
         if __name__ == "__main__":
-            elasticsearch(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = ElasticSearchRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="elasticsearch-ingest-output",
                     num_processes=2,
-                    metadata_exclude=["filename", "file_directory", "metadata.data_source.date_processed"],
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
+                    metadata_exclude=["filename", "file_directory", "metadata.data_source.date_processed"],
                 ),
+            )
+            runner.run(
                 url="http://localhost:9200",
                 index_name="movies",
                 jq_query="{ethnicity, director, plot}",

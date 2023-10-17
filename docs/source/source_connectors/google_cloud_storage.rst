@@ -29,17 +29,22 @@ Run Locally
 
       .. code:: python
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.gcs import gcs
+        import os
+
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import GCSRunner
 
         if __name__ == "__main__":
-            gcs(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = GCSRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="gcs-output",
                     num_processes=2,
                 ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+            )
+            runner.run(
                 remote_url="gs://utic-test-ingest-fixtures-public/",
                 recursive=True,
             )
@@ -69,19 +74,23 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.gcs import gcs
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import GCSRunner
 
         if __name__ == "__main__":
-            gcs(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = GCSRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="gcs-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+            )
+            runner.run(
                 remote_url="gs://utic-test-ingest-fixtures-public/",
                 recursive=True,
             )
