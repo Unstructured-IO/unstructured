@@ -1,8 +1,18 @@
-## 0.10.24-dev2
+## 0.10.25-dev0
 
 ### Enhancements
 
+### Features
+
+### Fixes
+
+## 0.10.24
+
+### Enhancements
+
+* **Improve natural reading order** Some `OCR` elements with only spaces in the text have full-page width in the bounding box, which causes the `xycut` sorting to not work as expected. Now the logic to parse OCR results removes any elements with only spaces (more than one space).
 * **Ingest compression utilities and fsspec connector support** Generic utility code added to handle files that get pulled from a source connector that are either tar or zip compressed and uncompress them locally. This is then processed using a local source connector. Currently this functionality has been incorporated into the fsspec connector and all those inheriting from it (currently: Azure Blob Storage, Google Cloud Storage, S3, Box, and Dropbox).
+* **Ingest destination connectors support for writing raw list of elements** Along with the default write method used in the ingest pipeline to write the json content associated with the ingest docs, each destination connector can now also write a raw list of elements to the desired downstream location without having an ingest doc associated with it.
 
 ### Features
 
@@ -13,6 +23,8 @@
 
 * **Fix paddle model file not discoverable** Fixes issue where ocr_models/paddle_ocr.py file is not discoverable on PyPI by adding
 an `__init__.py` file under the folder.
+* **Chipper v2 Fixes** Includes fix for a memory leak and rare last-element bbox fix. (unstructured-inference==0.7.7)
+* **Fix image resizing issue** Includes fix related to resizing images in the tables pipeline. (unstructured-inference==0.7.6)
 
 ## 0.10.23
 
@@ -326,6 +338,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 * Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
 * Re-enable test-ingest-confluence-diff for ingest tests
 * Fix syntax for ingest test check number of files
+* Fix csv and tsv partitioners loosing the first line of the files when creating elements
 
 ## 0.10.8
 

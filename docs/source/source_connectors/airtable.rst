@@ -31,18 +31,21 @@ Run Locally
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.airtable import airtable
+        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig, ProcessorConfig
+        from unstructured.ingest.runner import AirtableRunner
 
         if __name__ == "__main__":
-            airtable(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = AirtableRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="airtable-ingest-output",
                     num_processes=2,
                 ),
-                personal_access_token=os.getenv("AIRTABLE_PERSONAL_ACCESS_TOKEN"),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig()
+            )
+            runner.run(
+                personal_access_token=os.getenv("AIRTABLE_PERSONAL_ACCESS_TOKEN")
             )
 
 Run via the API
@@ -72,19 +75,23 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.airtable import airtable
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import AirtableRunner
 
         if __name__ == "__main__":
-            airtable(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = AirtableRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="airtable-ingest-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+            )
+            runner.run(
                 personal_access_token=os.getenv("AIRTABLE_PERSONAL_ACCESS_TOKEN"),
             )
 

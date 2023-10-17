@@ -82,18 +82,7 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
         if page_number := data.get("metadata", {}).get("page_number"):
             data["metadata"]["page_number"] = str(page_number)
 
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
-        json_list = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                json_content = json.load(json_file)
-                for content in json_content:
-                    self.conform_dict(data=content)
-                logger.info(
-                    f"appending {len(json_content)} json elements from content in {local_path}",
-                )
-                json_list.extend(json_content)
+    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
             f"writing {len(json_list)} documents to destination "
             f"index at {self.write_config.index}",
@@ -120,3 +109,17 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
                     ],
                 ),
             )
+
+    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+        json_list: t.List[t.Dict[str, t.Any]] = []
+        for doc in docs:
+            local_path = doc._output_filename
+            with open(local_path) as json_file:
+                json_content = json.load(json_file)
+                for content in json_content:
+                    self.conform_dict(data=content)
+                logger.info(
+                    f"appending {len(json_content)} json elements from content in {local_path}",
+                )
+                json_list.extend(json_content)
+        self.write_dict(json_list=json_list)

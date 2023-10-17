@@ -14,13 +14,9 @@ anyio==3.7.1
     #   langchain
 appdirs==1.4.4
     # via label-studio-tools
-async-timeout==4.0.3
-    # via
-    #   aiohttp
-    #   langchain
-attrs==23.1.0
-    # via aiohttp
-black==23.10.0
+autoflake==2.2.1
+    # via -r requirements/test.in
+black==23.9.1
     # via -r requirements/test.in
 certifi==2023.7.22
     # via
@@ -133,7 +129,9 @@ pydantic==1.10.13
     #   langchain
     #   langsmith
 pyflakes==3.1.0
-    # via flake8
+    # via
+    #   autoflake
+    #   flake8
 pytest==7.4.2
     # via
     #   pytest-cov
@@ -152,8 +150,11 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
+<<<<<<< HEAD
     #   langchain
     #   langsmith
+=======
+>>>>>>> 775bfb7588b502ee44acb988534a9a80bbbb042b
 ruff==0.1.0
     # via -r requirements/test.in
 six==1.16.0
@@ -168,6 +169,7 @@ tenacity==8.2.3
     # via langchain
 tomli==2.0.1
     # via
+    #   autoflake
     #   black
     #   coverage
     #   mypy

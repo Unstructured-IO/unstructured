@@ -9,9 +9,11 @@ from unstructured.ingest.runner.utils import update_download_dir_remote_url
 class AzureRunner(FsspecBaseRunner):
     def run(
         self,
-        account_name: t.Optional[str],
-        account_key: t.Optional[str],
-        connection_string: t.Optional[str],
+        remote_url: str,
+        account_name: t.Optional[str] = None,
+        account_key: t.Optional[str] = None,
+        connection_string: t.Optional[str] = None,
+        recursive: bool = False,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
