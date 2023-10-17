@@ -159,12 +159,14 @@ def chunk_by_title(
         # -- split chunk into CompositeElements objects maxlen or smaller --
         text_len = len(text)
         start = 0
+        # -- we need to track remaining characters separately from `start` because overlap will be
+        # -- built into start.
         remaining = text_len
 
         while remaining > 0:
             end = min(start + max_characters, text_len)
             chunked_elements.append(CompositeElement(text=text[start:end], metadata=metadata))
-            start = end
+            start = end - overlap
             remaining = text_len - end
 
     return chunked_elements
@@ -260,10 +262,13 @@ _P = ParamSpec("_P")
 
 
 def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
-    """Decorator for chuncking text. Uses title elements to identify sections within the document
-    for chunking. Splits off a new section when a title is detected or if metadata changes,
-    which happens when page numbers or sections change. Cuts off sections once they have exceeded
-    a character length of max_characters."""
+    """Decorator for chunking text.
+
+    Uses title elements to identify sections within the document for chunking. Splits off a new
+    section when a title is detected or if metadata changes, which happens when page numbers or
+    sections change. Cuts off sections once they have exceeded a character length of
+    max_characters.
+    """
 
     def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
         if func.__doc__ and (
@@ -286,6 +291,9 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
                 + "\n\t\tmax_characters"
                 + "\n\t\t\tChunks elements text and text_as_html (if present) into chunks"
                 + "\n\t\t\tof length n characters, a hard max."
+                + "\n\t\toverlap"
+                + "\n\t\t\tNumber of characters to include from prior chunk when a semantic"
+                + "\n\t\t\tunit (section) must be split into multiple chunks."
             )
 
         @functools.wraps(func)
@@ -303,6 +311,7 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
                     combine_text_under_n_chars=params.get("combine_text_under_n_chars", 500),
                     new_after_n_chars=params.get("new_after_n_chars", 500),
                     max_characters=params.get("max_characters", 500),
+                    overlap=params.get("overlap", 0),
                 )
             return elements
 

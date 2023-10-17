@@ -41,7 +41,6 @@ def test_it_splits_a_large_section_into_multiple_chunks():
     ]
 
 
-@pytest.mark.xfail(reason="WIP", raises=AssertionError, strict=True)
 def test_it_overlaps_split_chunks_when_you_ask_it_to():
     elements: List[Element] = [
         Title("Introduction"),
