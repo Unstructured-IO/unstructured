@@ -151,25 +151,16 @@ def chunk_by_title(
                     chunk_matches.extend(matches)
                     chunk_regex_metadata[regex_name] = chunk_matches
 
-        # Check if text exceeds max_characters
-        if len(text) > max_characters:
-            # Chunk the text from the end to the beginning
-            while len(text) > 0:
-                if len(text) <= max_characters:
-                    # If the remaining text is shorter than max_characters
-                    # create a chunk from the beginning
-                    chunk_text = text
-                    text = ""
-                else:
-                    # Otherwise, create a chunk from the end
-                    chunk_text = text[-max_characters:]
-                    text = text[:-max_characters]
+        # -- split chunk into CompositeElements objects maxlen or smaller --
+        text_len = len(text)
+        start = 0
+        remaining = text_len
 
-                # Prepend the chunk to the beginning of the list
-                chunked_elements.insert(0, CompositeElement(text=chunk_text, metadata=metadata))
-        else:
-            # If it doesn't exceed, create a single CompositeElement
-            chunked_elements.append(CompositeElement(text=text, metadata=metadata))
+        while remaining > 0:
+            end = min(start + max_characters, text_len)
+            chunked_elements.append(CompositeElement(text=text[start:end], metadata=metadata))
+            start = end
+            remaining = text_len - end
 
     return chunked_elements
 
