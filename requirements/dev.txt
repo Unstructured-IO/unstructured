@@ -7,7 +7,6 @@
 anyio==3.7.1
     # via
     #   -c requirements/constraints.in
-    #   -c requirements/test.txt
     #   jupyter-server
 appnope==0.1.3
     # via
@@ -25,7 +24,6 @@ async-lru==2.0.4
     # via jupyterlab
 attrs==23.1.0
     # via
-    #   -c requirements/test.txt
     #   jsonschema
     #   referencing
 babel==2.13.0
@@ -136,9 +134,7 @@ jinja2==3.1.2
 json5==0.9.14
     # via jupyterlab-server
 jsonpointer==2.4
-    # via
-    #   -c requirements/test.txt
-    #   jsonschema
+    # via jsonschema
 jsonschema[format-nongpl]==4.19.1
     # via
     #   jupyter-events
@@ -339,9 +335,7 @@ six==1.16.0
     #   python-dateutil
     #   rfc3339-validator
 sniffio==1.3.0
-    # via
-    #   -c requirements/test.txt
-    #   anyio
+    # via anyio
 soupsieve==2.5
     # via
     #   -c requirements/base.txt
@@ -396,7 +390,7 @@ typing-extensions==4.8.0
     #   ipython
 uri-template==1.3.0
     # via jsonschema
-urllib3==1.26.17
+urllib3==1.26.18
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
