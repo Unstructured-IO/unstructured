@@ -10,6 +10,7 @@ from .azure import get_base_dest_cmd as azure_base_dest_cmd
 from .azure import get_base_src_cmd as azure_base_src_cmd
 from .azure_cognitive_search import get_base_dest_cmd as azure_cognitive_search_base_dest_cmd
 from .biomed import get_base_src_cmd as biomed_base_src_cmd
+from .box import get_base_dest_cmd as box_base_dest_cmd
 from .box import get_base_src_cmd as box_base_src_cmd
 from .confluence import get_base_src_cmd as confluence_base_src_cmd
 from .delta_table import get_base_dest_cmd as delta_table_dest_cmd
@@ -79,6 +80,7 @@ if src_duplicates:
 
 base_dest_cmd_fns: t.List[t.Callable[[], "BaseDestCmd"]] = [
     azure_base_dest_cmd,
+    box_base_dest_cmd,
     fsspec_base_dest_cmd,
     s3_base_dest_cmd,
     azure_cognitive_search_base_dest_cmd,
