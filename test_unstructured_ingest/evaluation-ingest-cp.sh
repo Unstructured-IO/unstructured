@@ -17,7 +17,7 @@ selected_outputs=$(cat "$SCRIPT_DIR/files/selected-outputs.txt")
 # If structured output file in this connector's outputs match the 
 # selected outputs in the txt file, copy to the destination
 for file in "${structured_outputs[@]}"; do
-  if [[ ${selected_outputs[*]} =~ "$(basename "$file")" ]] ; then
+  if [[ "${selected_outputs[*]}" =~ $(basename "$file") ]] ; then
     echo "-- Copying $file to $CP_DIR"
     cp "$file" "$CP_DIR"
   fi
