@@ -99,7 +99,7 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-ruff==0.0.292
+ruff==0.1.0
     # via -r requirements/test.in
 six==1.16.0
     # via
