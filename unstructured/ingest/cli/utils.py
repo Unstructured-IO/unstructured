@@ -11,6 +11,7 @@ from unstructured.ingest.cli.interfaces import (
     CliPermissionsConfig,
     CliProcessorConfig,
     CliReadConfig,
+    CliRetryStrategyConfig,
 )
 from unstructured.ingest.interfaces import (
     BaseConfig,
@@ -42,6 +43,7 @@ def extract_configs(
         "chunking_config": CliChunkingConfig.from_dict(data),
         "processor_config": CliProcessorConfig.from_dict(data),
         "permissions_config": CliPermissionsConfig.from_dict(data),
+        "retry_strategy_config": CliRetryStrategyConfig.from_dict(data),
     }
     if extras:
         for k, conf in extras.items():
@@ -59,6 +61,7 @@ def add_options(cmd: click.Command, extras=t.List[t.Type[CliMixin]]) -> click.Co
         CliChunkingConfig,
         CliProcessorConfig,
         CliPermissionsConfig,
+        CliRetryStrategyConfig,
     ]
     configs.extend(extras)
     for config in configs:

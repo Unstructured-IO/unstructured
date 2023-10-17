@@ -13,8 +13,8 @@ class ConfluenceRunner(Runner):
         url: str,
         user_email: str,
         api_token: str,
-        max_num_of_spaces: int,
-        max_num_of_docs_from_each_space: int,
+        max_num_of_spaces: int = 500,
+        max_num_of_docs_from_each_space: int = 100,
         spaces: t.Optional[t.List[str]] = None,
         **kwargs,
     ):

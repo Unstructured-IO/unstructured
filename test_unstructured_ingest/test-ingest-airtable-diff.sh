@@ -38,11 +38,13 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --download-dir "$DOWNLOAD_DIR" \
     --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
     --list-of-paths "$VARIED_DATA_BASE_ID $VARIED_DATA_BASE_ID_2" \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth,metadatda.languages \
     --num-processes "$max_processes" \
     --preserve-downloads \
     --reprocess \
     --output-dir "$OUTPUT_DIR" \
-    --work-dir "$WORK_DIR"
+    --work-dir "$WORK_DIR" \
+    --max-retry-time 10 \
+    --verbose
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

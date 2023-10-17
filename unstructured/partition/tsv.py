@@ -56,13 +56,13 @@ def partition_tsv(
 
     last_modification_date = None
     if filename:
-        table = pd.read_csv(filename, sep="\t")
+        table = pd.read_csv(filename, sep="\t", header=None)
         last_modification_date = get_last_modified_date(filename)
     elif file:
         f = spooled_to_bytes_io_if_needed(
             cast(Union[BinaryIO, SpooledTemporaryFile], file),
         )
-        table = pd.read_csv(f, sep="\t")
+        table = pd.read_csv(f, sep="\t", header=None)
         last_modification_date = get_last_modified_date_from_file(file)
 
     html_text = table.to_html(index=False, header=False, na_rep="")

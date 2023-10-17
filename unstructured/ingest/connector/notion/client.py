@@ -1,4 +1,3 @@
-import logging
 from typing import Any, Generator, List, Optional, Tuple
 
 import backoff
@@ -8,6 +7,7 @@ from notion_client import Client as NotionClient
 from notion_client.api_endpoints import BlocksChildrenEndpoint as NotionBlocksChildrenEndpoint
 from notion_client.api_endpoints import BlocksEndpoint as NotionBlocksEndpoint
 from notion_client.api_endpoints import DatabasesEndpoint as NotionDatabasesEndpoint
+from notion_client.api_endpoints import Endpoint
 from notion_client.api_endpoints import PagesEndpoint as NotionPagesEndpoint
 from notion_client.errors import RequestTimeoutError
 
@@ -17,27 +17,8 @@ from unstructured.ingest.connector.notion.types.database_properties import (
     map_cells,
 )
 from unstructured.ingest.connector.notion.types.page import Page
-from unstructured.ingest.ingest_backoff import RetryStrategy, on_exception
-from unstructured.ingest.logger import make_default_logger
-
-logger = make_default_logger(logging.INFO)
-
-
-def backoff_handler(details):
-    logger.info(
-        "Backing off {wait:0.1f} seconds after {tries} tries "
-        "calling function {target} with args {args} and kwargs "
-        "{kwargs}".format(**details),
-    )
-
-
-def giveup_handler(details):
-    logger.error(
-        "Gave up after {elapsed:0.1f} seconds/{tries} tries "
-        "calling function {target} with args {args} and kwargs "
-        "{kwargs}".format(**details),
-    )
-
+from unstructured.ingest.ingest_backoff import RetryHandler
+from unstructured.ingest.interfaces import RetryStrategyConfig
 
 retryable_exceptions = (
     httpx.TimeoutException,
@@ -46,35 +27,54 @@ retryable_exceptions = (
 )
 
 
-class BlocksChildrenEndpoint(NotionBlocksChildrenEndpoint):
-    def __init__(self, retry_strategy: Optional[RetryStrategy] = None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.retry_strategy = retry_strategy
+def get_retry_handler(endpoint: Endpoint) -> Optional[RetryHandler]:
+    if retry_strategy_config := getattr(endpoint, "retry_strategy_config"):
+        return RetryHandler(
+            backoff.expo,
+            retryable_exceptions,
+            max_time=retry_strategy_config.max_retry_time,
+            max_tries=retry_strategy_config.max_retries,
+            logger=endpoint.parent.logger,
+            start_log_level=endpoint.parent.logger.level,
+            backoff_log_level=endpoint.parent.logger.level,
+        )
+    return None
 
-    @on_exception(
-        backoff.expo,
-        retryable_exceptions,
-        on_backoff=backoff_handler,
-        on_giveup=giveup_handler,
-    )
+
+class BlocksChildrenEndpoint(NotionBlocksChildrenEndpoint):
+    def __init__(
+        self,
+        *args,
+        retry_strategy_config: Optional[RetryStrategyConfig] = None,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        self.retry_strategy_config = retry_strategy_config
+
+    @property
+    def retry_handler(self) -> Optional[RetryHandler]:
+        return get_retry_handler(self)
+
     def list(self, block_id: str, **kwargs: Any) -> Tuple[List[Block], dict]:
-        resp: dict = super().list(block_id=block_id, **kwargs)  # type: ignore
+        resp: dict = (
+            self.retry_handler(super().list, block_id=block_id, **kwargs)
+            if self.retry_handler
+            else super().list(block_id=block_id, **kwargs)
+        )  # type: ignore
         child_blocks = [Block.from_dict(data=b) for b in resp.pop("results", [])]
         return child_blocks, resp
 
-    @on_exception(
-        backoff.expo,
-        (httpx.TimeoutException, httpx.HTTPStatusError),
-        on_backoff=backoff_handler,
-        on_giveup=giveup_handler,
-    )
     def iterate_list(
         self,
         block_id: str,
         **kwargs: Any,
     ) -> Generator[List[Block], None, None]:
         while True:
-            response: dict = super().list(block_id=block_id, **kwargs)  # type: ignore
+            response: dict = (
+                self.retry_handler(super().list, block_id=block_id, **kwargs)
+                if self.retry_handler
+                else super().list(block_id=block_id, **kwargs)
+            )  # type: ignore
             child_blocks = [Block.from_dict(data=b) for b in response.pop("results", [])]
             yield child_blocks
 
@@ -84,26 +84,27 @@ class BlocksChildrenEndpoint(NotionBlocksChildrenEndpoint):
 
 
 class DatabasesEndpoint(NotionDatabasesEndpoint):
-    def __init__(self, retry_strategy: Optional[RetryStrategy] = None, *args, **kwargs):
+    def __init__(
+        self,
+        *args,
+        retry_strategy_config: Optional[RetryStrategyConfig] = None,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
-        self.retry_strategy = retry_strategy
+        self.retry_strategy_config = retry_strategy_config
 
-    @on_exception(
-        backoff.expo,
-        retryable_exceptions,
-        on_backoff=backoff_handler,
-        on_giveup=giveup_handler,
-    )
+    @property
+    def retry_handler(self) -> Optional[RetryHandler]:
+        return get_retry_handler(self)
+
     def retrieve(self, database_id: str, **kwargs: Any) -> Database:
-        resp: dict = super().retrieve(database_id=database_id, **kwargs)  # type: ignore
+        resp: dict = (
+            self.retry_handler(super().retrieve, database_id=database_id, **kwargs)
+            if (self.retry_handler)
+            else (super().retrieve(database_id=database_id, **kwargs))
+        )  # type: ignore
         return Database.from_dict(data=resp)
 
-    @on_exception(
-        backoff.expo,
-        retryable_exceptions,
-        on_backoff=backoff_handler,
-        on_giveup=giveup_handler,
-    )
     def retrieve_status(self, database_id: str, **kwargs) -> int:
         request = self.parent._build_request(
             method="HEAD",
@@ -111,37 +112,37 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
             auth=kwargs.get("auth"),
         )
         try:
-            response: httpx.Response = self.parent.client.send(request)  # type: ignore
+            response: httpx.Response = (
+                self.retry_handler(self.parent.client.send, request)
+                if (self.retry_handler)
+                else (self.parent.client.send(request))
+            )  # type: ignore
             return response.status_code
         except httpx.TimeoutException:
             raise RequestTimeoutError()
 
-    @on_exception(
-        backoff.expo,
-        retryable_exceptions,
-        on_backoff=backoff_handler,
-        on_giveup=giveup_handler,
-    )
     def query(self, database_id: str, **kwargs: Any) -> Tuple[List[Page], dict]:
         """Get a list of [Pages](https://developers.notion.com/reference/page) contained in the database.
 
         *[🔗 Endpoint documentation](https://developers.notion.com/reference/post-database-query)*
         """  # noqa: E501
-        resp: dict = super().query(database_id=database_id, **kwargs)  # type: ignore
+        resp: dict = (
+            self.retry_handler(super().query, database_id=database_id, **kwargs)
+            if (self.retry_handler)
+            else (super().query(database_id=database_id, **kwargs))
+        )  # type: ignore
         pages = [Page.from_dict(data=p) for p in resp.pop("results")]
         for p in pages:
             p.properties = map_cells(p.properties)
         return pages, resp
 
-    @on_exception(
-        backoff.expo,
-        retryable_exceptions,
-        on_backoff=backoff_handler,
-        on_giveup=giveup_handler,
-    )
     def iterate_query(self, database_id: str, **kwargs: Any) -> Generator[List[Page], None, None]:
         while True:
-            response: dict = super().query(database_id=database_id, **kwargs)  # type: ignore
+            response: dict = (
+                self.retry_handler(super().query, database_id=database_id, **kwargs)
+                if (self.retry_handler)
+                else (super().query(database_id=database_id, **kwargs))
+            )  # type: ignore
             pages = [Page.from_dict(data=p) for p in response.pop("results", [])]
             for p in pages:
                 p.properties = map_cells(p.properties)
@@ -155,46 +156,53 @@ class DatabasesEndpoint(NotionDatabasesEndpoint):
 class BlocksEndpoint(NotionBlocksEndpoint):
     def __init__(
         self,
-        retry_strategy: Optional[RetryStrategy] = None,
         *args: Any,
+        retry_strategy_config: Optional[RetryStrategyConfig] = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(*args, **kwargs)
-        self.children = BlocksChildrenEndpoint(*args, **kwargs)
-        self.retry_strategy = retry_strategy
+        self.retry_strategy_config = retry_strategy_config
+        self.children = BlocksChildrenEndpoint(
+            retry_strategy_config=retry_strategy_config,
+            *args,
+            **kwargs,
+        )
 
-    @on_exception(
-        backoff.expo,
-        retryable_exceptions,
-        on_backoff=backoff_handler,
-        on_giveup=giveup_handler,
-    )
+    @property
+    def retry_handler(self) -> Optional[RetryHandler]:
+        return get_retry_handler(self)
+
     def retrieve(self, block_id: str, **kwargs: Any) -> Block:
-        resp: dict = super().retrieve(block_id=block_id, **kwargs)  # type: ignore
+        resp: dict = (
+            self.retry_handler(super().retrieve, block_id=block_id, **kwargs)
+            if (self.retry_handler)
+            else (super().retrieve(block_id=block_id, **kwargs))
+        )  # type: ignore
         return Block.from_dict(data=resp)
 
 
 class PagesEndpoint(NotionPagesEndpoint):
-    def __init__(self, retry_strategy: Optional[RetryStrategy] = None, *args, **kwargs):
+    def __init__(
+        self,
+        *args,
+        retry_strategy_config: Optional[RetryStrategyConfig] = None,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
-        self.retry_strategy = retry_strategy
+        self.retry_strategy_config = retry_strategy_config
 
-    @on_exception(
-        backoff.expo,
-        retryable_exceptions,
-        on_backoff=backoff_handler,
-        on_giveup=giveup_handler,
-    )
+    @property
+    def retry_handler(self) -> Optional[RetryHandler]:
+        return get_retry_handler(self)
+
     def retrieve(self, page_id: str, **kwargs: Any) -> Page:
-        resp: dict = super().retrieve(page_id=page_id, **kwargs)  # type: ignore
+        resp: dict = (
+            self.retry_handler(super().retrieve, page_id=page_id, **kwargs)
+            if (self.retry_handler)
+            else (super().retrieve(page_id=page_id, **kwargs))
+        )  # type: ignore
         return Page.from_dict(data=resp)
 
-    @on_exception(
-        backoff.expo,
-        retryable_exceptions,
-        on_backoff=backoff_handler,
-        on_giveup=giveup_handler,
-    )
     def retrieve_status(self, page_id: str, **kwargs) -> int:
         request = self.parent._build_request(
             method="HEAD",
@@ -202,7 +210,11 @@ class PagesEndpoint(NotionPagesEndpoint):
             auth=kwargs.get("auth"),
         )
         try:
-            response: httpx.Response = self.parent.client.send(request)  # type: ignore
+            response: httpx.Response = (
+                self.retry_handler(self.parent.client.send, request)
+                if (self.retry_handler)
+                else (self.parent.client.send(request))
+            )  # type: ignore
             return response.status_code
         except httpx.TimeoutException:
             raise RequestTimeoutError()
@@ -211,11 +223,11 @@ class PagesEndpoint(NotionPagesEndpoint):
 class Client(NotionClient):
     def __init__(
         self,
-        retry_strategy: Optional[RetryStrategy] = None,
         *args: Any,
+        retry_strategy_config: Optional[RetryStrategyConfig] = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(*args, **kwargs)
-        self.blocks = BlocksEndpoint(retry_strategy=retry_strategy, parent=self)
-        self.pages = PagesEndpoint(retry_strategy=retry_strategy, parent=self)
-        self.databases = DatabasesEndpoint(retry_strategy=retry_strategy, parent=self)
+        self.blocks = BlocksEndpoint(retry_strategy_config=retry_strategy_config, parent=self)
+        self.pages = PagesEndpoint(retry_strategy_config=retry_strategy_config, parent=self)
+        self.databases = DatabasesEndpoint(retry_strategy_config=retry_strategy_config, parent=self)

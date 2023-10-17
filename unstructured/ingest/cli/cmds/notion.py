@@ -47,20 +47,6 @@ class NotionCliConfig(BaseConfig, CliMixin):
                 type=DelimitedString(),
                 help="Notion database IDs to pull text from",
             ),
-            click.Option(
-                ["--max-retries"],
-                default=None,
-                type=int,
-                help="If provided, will use this max retry for "
-                "back off strategy if http calls fail",
-            ),
-            click.Option(
-                ["--max-time"],
-                default=None,
-                type=float,
-                help="If provided, will attempt retries for this long as part "
-                "of back off strategy if http calls fail",
-            ),
         ]
         cmd.params.extend(options)
 
