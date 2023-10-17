@@ -45,10 +45,12 @@ def process_data_with_ocr(
     - data (Union[bytes, BinaryIO]): The input file data,
         which can be either bytes or a BinaryIO object.
 
-     - out_layout (DocumentLayout): The output layout from unstructured-inference.
+    - out_layout (DocumentLayout): The output layout from unstructured-inference.
 
     - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).
         Defaults to False.
+
+    - infer_table_structure (bool, optional):  If true, extract the table content.
 
     - ocr_languages (str, optional): The languages for OCR processing. Defaults to "eng" (English).
 
@@ -97,6 +99,8 @@ def process_file_with_ocr(
 
     - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).
         Defaults to False.
+
+    - infer_table_structure (bool, optional):  If true, extract the table content.
 
     - ocr_languages (str, optional): The languages for OCR processing. Defaults to "eng" (English).
 
