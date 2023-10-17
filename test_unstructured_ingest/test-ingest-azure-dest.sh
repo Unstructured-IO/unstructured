@@ -40,6 +40,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --output-dir "$OUTPUT_DIR" \
     --strategy fast \
     --verbose \
+    --reprocess \
     --input-path example-docs/fake-memo.pdf \
     --work-dir "$WORK_DIR" \
     azure \
