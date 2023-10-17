@@ -92,7 +92,7 @@ numpy==1.24.4
 omegaconf==2.3.0
     # via effdet
 onnx==1.14.1
-    # via unstructured-inference
+    # via -r requirements/extra-pdf-image.in
 onnxruntime==1.15.1
     # via
     #   -c requirements/constraints.in
@@ -125,7 +125,7 @@ pdfminer-six==20221105
     #   pdfplumber
 pdfplumber==0.10.2
     # via layoutparser
-pillow==10.0.1
+pillow==10.1.0
     # via
     #   layoutparser
     #   matplotlib
@@ -142,7 +142,9 @@ protobuf==4.23.4
     #   onnx
     #   onnxruntime
 pycocotools==2.0.7
-    # via effdet
+    # via
+    #   -c requirements/constraints.in
+    #   effdet
 pycparser==2.21
     # via cffi
 pyparsing==3.0.9
@@ -205,6 +207,7 @@ tokenizers==0.14.1
     # via transformers
 torch==2.1.0
     # via
+    #   -c requirements/constraints.in
     #   effdet
     #   layoutparser
     #   timm
@@ -231,7 +234,7 @@ typing-extensions==4.8.0
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.7.3
+unstructured-inference==0.7.5
     # via -r requirements/extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via

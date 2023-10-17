@@ -18,7 +18,7 @@ class CustomError(Exception, ABC):
             try:
                 return f(*args, **kwargs)
             except BaseException as error:
-                if not isinstance(error, cls):
+                if not isinstance(error, cls) and not issubclass(type(error), cls):
                     raise cls(cls.error_string.format(str(error))) from error
                 raise
 
@@ -26,6 +26,10 @@ class CustomError(Exception, ABC):
 
 
 class SourceConnectionError(CustomError):
+    error_string = "Error in getting data from upstream data source: {}"
+
+
+class SourceConnectionNetworkError(SourceConnectionError):
     error_string = "Error in connecting to upstream data source: {}"
 
 

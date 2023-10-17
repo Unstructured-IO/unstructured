@@ -17,10 +17,9 @@ def extract_element_coordinates(elements):
     page_elements_coordinates = []
 
     for el in elements:
-        if isinstance(el, PageBreak):
-            if page_elements_coordinates:
-                elements_coordinates.append(page_elements_coordinates)
-                page_elements_coordinates = []
+        if isinstance(el, PageBreak) and page_elements_coordinates:
+            elements_coordinates.append(page_elements_coordinates)
+            page_elements_coordinates = []
         else:
             page_elements_coordinates.append(el.metadata.coordinates)
 
@@ -31,7 +30,6 @@ def extract_element_coordinates(elements):
 
 
 def run_partition_pdf(f_path, strategy, images, output_dir):
-
     elements = partition_pdf(
         f_path,
         strategy=strategy,
@@ -64,11 +62,11 @@ def run(f_path, strategy):
     run_partition_pdf(f_path, strategy, images, output_dir_path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) < 3:
         print(
-            "Please provide the path to the file name as the first argument and the strategy as the "
-            "second argument.",
+            "Please provide the path to the file name as the first argument "
+            "and the strategy as the second argument.",
         )
         sys.exit(1)
 

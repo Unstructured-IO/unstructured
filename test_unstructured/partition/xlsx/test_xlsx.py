@@ -1,6 +1,12 @@
+import sys
+
 import pytest
 
-from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT, EXPECTED_TITLE
+from test_unstructured.partition.test_constants import (
+    EXPECTED_TABLE_XLSX,
+    EXPECTED_TEXT_XLSX,
+    EXPECTED_TITLE,
+)
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table, Text, Title
@@ -18,8 +24,8 @@ def test_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx")
     assert len(elements) == 4
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
-    assert elements[1].metadata.text_as_html == EXPECTED_TABLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
     assert elements[1].metadata.page_number == 1
     assert elements[1].metadata.filetype == EXPECTED_FILETYPE
     assert elements[1].metadata.page_name == EXCEPTED_PAGE_NAME
@@ -41,7 +47,7 @@ def test_partition_xlsx_from_filename_with_metadata_filename(
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert sum(isinstance(element, Title) for element in elements) == 2
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
     assert elements[0].metadata.filename == "test"
 
 
@@ -51,7 +57,7 @@ def test_partition_xlsx_from_filename_with_header(filename="example-docs/stanley
     assert len(elements) == 2
     assert (
         clean_extra_whitespace(elements[0].text)
-        == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT
+        == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
     )
     assert "<thead>" in elements[0].metadata.text_as_html
 
@@ -63,8 +69,8 @@ def test_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert len(elements) == 4
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
-    assert elements[1].metadata.text_as_html == EXPECTED_TABLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
     assert elements[1].metadata.page_number == 1
     assert elements[1].metadata.filetype == EXPECTED_FILETYPE
     assert elements[1].metadata.page_name == EXCEPTED_PAGE_NAME
@@ -76,7 +82,7 @@ def test_partition_xlsx_from_file_with_metadata_filename(filename="example-docs/
         elements = partition_xlsx(file=f, metadata_filename="test", include_header=False)
 
     assert sum(isinstance(element, Table) for element in elements) == 2
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
     assert elements[1].metadata.filename == "test"
 
 
@@ -88,7 +94,7 @@ def test_partition_xlsx_from_file_with_header(filename="example-docs/stanley-cup
     assert len(elements) == 2
     assert (
         clean_extra_whitespace(elements[0].text)
-        == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT
+        == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
     )
     assert "<thead>" in elements[0].metadata.text_as_html
 
@@ -99,7 +105,7 @@ def test_partition_xlsx_filename_exclude_metadata(filename="example-docs/stanley
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert len(elements) == 4
 
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
     assert elements[1].metadata.text_as_html is None
     assert elements[1].metadata.page_number is None
     assert elements[1].metadata.filetype is None
@@ -116,7 +122,7 @@ def test_partition_xlsx_from_file_exclude_metadata(filename="example-docs/stanle
     assert len(elements) == 4
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
     assert elements[0].metadata.text_as_html is None
     assert elements[0].metadata.page_number is None
     assert elements[0].metadata.filetype is None
@@ -232,3 +238,13 @@ def test_partition_eml_respects_detect_language_per_element():
     langs = {element.metadata.languages[0] for element in elements}
     assert "eng" in langs
     assert "spa" in langs
+
+
+def test_partition_xlsx_with_more_than_1k_cells():
+    old_recursion_limit = sys.getrecursionlimit()
+    try:
+        sys.setrecursionlimit(1000)
+        filename = "example-docs/more-than-1k-cells.xlsx"
+        partition_xlsx(filename=filename)
+    finally:
+        sys.setrecursionlimit(old_recursion_limit)

@@ -8,14 +8,13 @@ from unstructured.ingest.cli.common import (
     log_options,
 )
 from unstructured.ingest.cli.interfaces import (
+    CliFilesStorageConfig,
     CliMixin,
-    CliRecursiveConfig,
-    CliRemoteUrlConfig,
 )
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
-from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.interfaces import BaseConfig, FsspecConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import S3Runner, runner_map
+from unstructured.ingest.runner import FsspecBaseRunner, S3Runner, runner_map
 
 
 @dataclass
@@ -57,7 +56,11 @@ def s3_source(ctx: click.Context, **options):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
     log_options(options, verbose=verbose)
     try:
-        configs = extract_configs(options, validate=[S3CliConfig])
+        configs = extract_configs(
+            options,
+            validate=[S3CliConfig],
+            extras={"fsspec_config": FsspecConfig},
+        )
         s3_runner = S3Runner(
             **configs,  # type: ignore
         )
@@ -84,8 +87,15 @@ def s3_dest(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=[S3CliConfig])
         runner_cls = runner_map[source_cmd]
+        configs = extract_configs(
+            options,
+            validate=[S3CliConfig],
+            extras={"fsspec_config": FsspecConfig}
+            if issubclass(runner_cls, FsspecBaseRunner)
+            else None,
+        )
         runner = runner_cls(
-            **configs,
+            **configs,  # type: ignore
             writer_type="s3",
             writer_kwargs=options,
         )
@@ -100,11 +110,11 @@ def s3_dest(ctx: click.Context, **options):
 def get_dest_cmd() -> click.Command:
     cmd = s3_dest
     S3CliConfig.add_cli_options(cmd)
-    CliRemoteUrlConfig.add_cli_options(cmd)
+    CliFilesStorageConfig.add_cli_options(cmd)
     return cmd
 
 
 def get_source_cmd() -> click.Group:
     cmd = s3_source
-    add_options(cmd, extras=[S3CliConfig, CliRemoteUrlConfig, CliRecursiveConfig])
+    add_options(cmd, extras=[S3CliConfig, CliFilesStorageConfig])
     return cmd

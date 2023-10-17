@@ -33,17 +33,22 @@ Run Locally
 
       .. code:: python
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.reddit import reddit
+        import os
+
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import RedditRunner
 
         if __name__ == "__main__":
-            reddit(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = RedditRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="reddit-ingest-output",
                     num_processes=2,
                 ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+            )
+            runner.run(
                 subreddit_name="machinelearning",
                 client_id="<client id here>",
                 client_secret="<client secret here>",
@@ -83,19 +88,23 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.reddit import reddit
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import RedditRunner
 
         if __name__ == "__main__":
-            reddit(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = RedditRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="reddit-ingest-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+            )
+            runner.run(
                 subreddit_name="machinelearning",
                 client_id="<client id here>",
                 client_secret="<client secret here>",

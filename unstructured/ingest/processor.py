@@ -10,6 +10,7 @@ from unstructured.ingest.interfaces import (
     PartitionConfig,
     PermissionsConfig,
     ProcessorConfig,
+    RetryStrategyConfig,
 )
 from unstructured.ingest.pipeline import (
     Chunker,
@@ -36,13 +37,14 @@ def process_documents(
     chunking_config: t.Optional[ChunkingConfig] = None,
     embedder_config: t.Optional[EmbeddingConfig] = None,
     permissions_config: t.Optional[PermissionsConfig] = None,
+    retry_strategy_config: t.Optional[RetryStrategyConfig] = None,
 ) -> None:
     pipeline_config = PipelineContext.from_dict(processor_config.to_dict())
     doc_factory = DocFactory(
         pipeline_context=pipeline_config,
         source_doc_connector=source_doc_connector,
     )
-    reader = Reader(pipeline_context=pipeline_config)
+    reader = Reader(pipeline_context=pipeline_config, retry_strategy_config=retry_strategy_config)
     partitioner = Partitioner(pipeline_context=pipeline_config, partition_config=partition_config)
     reformat_nodes: t.List[ReformatNode] = []
     if embedder_config:

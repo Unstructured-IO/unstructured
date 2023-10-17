@@ -29,19 +29,22 @@ Run Locally
 
       .. code:: python
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.biomed import biomed
+        import os
+
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import BiomedRunner
 
         if __name__ == "__main__":
-            biomed(
-                verbose=True,
-                read_config=ReadConfig(
-                    preserve_downloads=True,
-                ),
-                partition_config=PartitionConfig(
-                    output_dir="biomed-ingest-output-path",
+            runner = BiomedRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
+                    output_dir="bioemt-ingest-output",
                     num_processes=2,
                 ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+            )
+            runner.run(
                 path="oa_pdf/07/07/sbaa031.073.PMC7234218.pdf",
             )
 
@@ -72,21 +75,23 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.biomed import biomed
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import BiomedRunner
 
         if __name__ == "__main__":
-            biomed(
-                verbose=True,
-                read_config=ReadConfig(
-                    preserve_downloads=True,
-                ),
-                partition_config=PartitionConfig(
-                    output_dir="biomed-ingest-output-path",
+            runner = BiomedRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
+                    output_dir="bioemt-ingest-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+            )
+            runner.run(
                 path="oa_pdf/07/07/sbaa031.073.PMC7234218.pdf",
             )
 
