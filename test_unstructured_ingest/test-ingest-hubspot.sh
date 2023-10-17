@@ -44,7 +44,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --output-dir "$OUTPUT_DIR" \
     --verbose \
     --api-token "$HUBSPOT_API_TOKEN" \
-    --object-types "tickets,calls" \
+    --object-types "calls,communications,emails,notes,products,tickets" \
+    --custom-properties "products:my_custom_property,tickets:another_custom_property"
 
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

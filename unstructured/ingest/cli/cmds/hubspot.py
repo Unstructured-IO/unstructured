@@ -27,10 +27,21 @@ def validate_object_type(ctx, param, value):
     return value
 
 
+def validate_custom_property(ctx, param, value):
+    output = []
+    for property_id in value:
+        if (propid := property_id.split(":")) and len(propid) < 2:
+            logger.warning(f"Wrong custom property format. Omitting: {propid}.")
+        else:
+            output.append(propid)
+    return output
+
+
 @dataclass
 class HubSpotCliConfig(BaseConfig, CliMixin):
     api_token: str
     object_types: t.Optional[t.List[str]] = None
+    custom_properties: t.Optional[t.List[str]] = None
 
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:
@@ -55,6 +66,19 @@ class HubSpotCliConfig(BaseConfig, CliMixin):
                     Must be a subset of {','.join(OBJECT_TYPES)}.\
                     If the argument is omitted all objects listed will be processed.",
             ),
+            click.Option(
+                ["--custom-properties"],
+                default=None,
+                required=False,
+                type=DelimitedString(),
+                is_flag=False,
+                callback=validate_custom_property,
+                help="Custom property to process information from.\
+                    It should be a comma separated list in the form\
+                        <object_type>:<custom_property_id>\
+                    Must be internal name of the variable. If the property is missing, \
+                        it will be omitted.",
+            ),
         ]
         cmd.params.extend(options)
 
@@ -71,7 +95,7 @@ def hubspot_source(ctx: click.Context, **options):
     try:
         configs = extract_configs(options, validate=([HubSpotCliConfig]))
         runner = HubSpotRunner(
-            **configs,
+            **configs,  # type: ignore
         )
         runner.run(**options)
     except Exception as e:

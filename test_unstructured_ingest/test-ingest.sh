@@ -43,6 +43,7 @@ all_tests=(
 'test-ingest-delta-table.sh'
 'test-ingest-jira.sh'
 'test-ingest-sharepoint.sh'
+'test-ingest-hubspot.sh'
 'test-ingest-embed.sh'
 )
 

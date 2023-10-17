@@ -325,6 +325,7 @@ jobs:
         make install-ingest-google-drive
         make install-ingest-github
         make install-ingest-gitlab
+        make install-ingest-hubspot
         make install-ingest-jira
         make install-ingest-onedrive
         make install-ingest-outlook

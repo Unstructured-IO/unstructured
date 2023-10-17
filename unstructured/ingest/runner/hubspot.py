@@ -12,6 +12,7 @@ class HubSpotRunner(Runner):
         self,
         api_token: str,
         object_types: t.Optional[t.List[str]] = None,
+        custom_properties: t.Optional[t.List[t.List[str]]] = None,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
@@ -36,6 +37,7 @@ class HubSpotRunner(Runner):
             connector_config=SimpleHubSpotConfig(
                 api_token=api_token,
                 object_types=object_types,
+                custom_properties=custom_properties,
             ),
             read_config=self.read_config,
             processor_config=self.processor_config,

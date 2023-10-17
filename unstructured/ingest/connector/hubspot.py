@@ -44,7 +44,8 @@ class SimpleHubSpotConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     params: t.Optional[str] = None
     properties: t.Optional[dict] = None
     object_types: t.Optional[t.List[str]] = None
-    ticket_content_tags: t.Optional[t.List[str]] = None
+    custom_properties: t.Optional[t.List[t.List[str]]] = None
+    mapped_custom_properties: t.Optional[t.Dict[str, t.List[str]]] = None
 
     @requires_dependencies(["hubspot-api-client"], extras="hubspot")
     def create_session_handle(self) -> HubSpotSessionHandle:
@@ -52,6 +53,17 @@ class SimpleHubSpotConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 
         service = HubSpot(access_token=self.api_token)
         return HubSpotSessionHandle(service=service)
+
+    def __post_init__(self):
+        if self.custom_properties is None:
+            return
+        for otype, cprop in self.custom_properties:
+            self.mapped_custom_properties[otype] = self.mapped_custom_properties.get(  # type: ignore
+                otype,
+                [],
+            ) + [
+                cprop,
+            ]
 
 
 @dataclass
@@ -87,13 +99,26 @@ class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseI
     def source_url(self) -> t.Optional[str]:
         return None
 
-    def get_object(self, get_by_id_method, not_found_exception):
+    def _fetch_obj(self, get_by_id_method, not_found_exception, **kwargs):
         try:
-            response = get_by_id_method(self.object_id)
+            response = get_by_id_method(self.object_id, **kwargs)
         except not_found_exception as e:
             logger.error(e)
             return None
         return response
+
+    def update_source_metadata(self, **kwargs) -> None:
+        obj = kwargs.get("object", self.get_object())  # type: ignore
+        if obj is None:
+            self.source_metadata = SourceMetadata(
+                exists=False,
+            )
+            return
+        self.source_metadata = SourceMetadata(
+            date_created=obj.created_at.isoformat(),
+            date_modified=obj.updated_at.isoformat(),
+            exists=True,
+        )
 
 
 @dataclass
@@ -102,30 +127,21 @@ class HubSpotCallIngestDoc(HubSpotIngestDoc):
     registry_name: str = "hubspot_call"
 
     @requires_dependencies(["hubspot-api-client"], extras="hubspot")
-    def get_call(self):
-        from hubspot.crm.objects.calls import NotFoundException
+    def get_object(self):
+        from hubspot.crm.objects.calls.exceptions import NotFoundException
 
         method = self.session_handle.service.crm.objects.calls.basic_api.get_by_id
-        return self.get_object(method, NotFoundException)
-
-    def update_source_metadata(self, **kwargs) -> None:
-        call = kwargs.get("call", self.get_call())
-        if call is None:
-            self.source_metadata = SourceMetadata(
-                exists=False,
-            )
-            return
-        self.source_metadata = SourceMetadata(
-            date_created=call.created_at.isoformat(),
-            date_modified=call.updated_at.isoformat(),
-            exists=True,
+        return self._fetch_obj(
+            method,
+            NotFoundException,
+            properties=["hs_call_title", "hs_call_body"],
         )
 
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        call = self.get_call()
-        self.update_source_metadata(call=call)
+        call = self.get_object()
+        self.update_source_metadata(object=call)
         title = call.properties["hs_call_title"]
         body = call.properties["hs_call_body"]
         self.filename.parent.mkdir(parents=True, exist_ok=True)
@@ -140,30 +156,18 @@ class HubSpotCommunicationIngestDoc(HubSpotIngestDoc):
     registry_name: str = "hubspot_communication"
 
     @requires_dependencies(["hubspot-api-client"], extras="hubspot")
-    def get_communication(self):
+    def get_object(self):
         from hubspot.crm.objects.communications.exceptions import NotFoundException
 
         method = self.session_handle.service.crm.objects.communications.basic_api.get_by_id
-        return self.get_object(method, NotFoundException)
-
-    def update_source_metadata(self, **kwargs) -> None:
-        communication = kwargs.get("communication", self.get_communication())
-        if communication is None:
-            self.source_metadata = SourceMetadata(
-                exists=False,
-            )
-            return
-        self.source_metadata = SourceMetadata(
-            date_created=communication.created_at.isoformat(),
-            date_modified=communication.updated_at.isoformat(),
-            exists=True,
-        )
+        return self._fetch_obj(method, NotFoundException, properties=["hs_communication_body"])
 
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        communication = self.get_communication()
-        self.update_source_metadata(ticket=communication)
+        communication = self.get_object()
+        print(communication)
+        self.update_source_metadata(object=communication)
         content = communication.properties["hs_communication_body"]
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
@@ -177,30 +181,21 @@ class HubSpotEmailIngestDoc(HubSpotIngestDoc):
     registry_name: str = "hubspot_email"
 
     @requires_dependencies(["hubspot-api-client"], extras="hubspot")
-    def get_email(self):
+    def get_object(self):
         from hubspot.crm.objects.emails.exceptions import NotFoundException
 
-        method = self.session_handle.service.crm.objects.emails.api.basic_api.get_by_id
-        return self.get_object(method, NotFoundException)
-
-    def update_source_metadata(self, **kwargs) -> None:
-        email = kwargs.get("email", self.get_email())
-        if email is None:
-            self.source_metadata = SourceMetadata(
-                exists=False,
-            )
-            return
-        self.source_metadata = SourceMetadata(
-            date_created=email.created_at.isoformat(),
-            date_modified=email.updated_at.isoformat(),
-            exists=True,
+        method = self.session_handle.service.crm.objects.emails.basic_api.get_by_id
+        return self._fetch_obj(
+            method,
+            NotFoundException,
+            properties=["hs_email_subject", "hs_email_text"],
         )
 
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        email = self.get_email()
-        self.update_source_metadata(email=email)
+        email = self.get_object()
+        self.update_source_metadata(object=email)
         subject = email.properties["hs_email_subject"]
         content = email.properties["hs_email_text"]
         self.filename.parent.mkdir(parents=True, exist_ok=True)
@@ -215,30 +210,17 @@ class HubSpotNotesIngestDoc(HubSpotIngestDoc):
     registry_name: str = "hubspot_note"
 
     @requires_dependencies(["hubspot-api-client"], extras="hubspot")
-    def get_note(self):
+    def get_object(self):
         from hubspot.crm.objects.notes.exceptions import NotFoundException
 
-        method = self.session_handle.service.crm.objects.notes.api.basic_api.get_by_id
-        return self.get_object(method, NotFoundException)
-
-    def update_source_metadata(self, **kwargs) -> None:
-        note = kwargs.get("note", self.get_note())
-        if note is None:
-            self.source_metadata = SourceMetadata(
-                exists=False,
-            )
-            return
-        self.source_metadata = SourceMetadata(
-            date_created=note.created_at.isoformat(),
-            date_modified=note.updated_at.isoformat(),
-            exists=True,
-        )
+        method = self.session_handle.service.crm.objects.notes.basic_api.get_by_id
+        return self._fetch_obj(method, NotFoundException, properties=["hs_note_body"])
 
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        note = self.get_note()
-        self.update_source_metadata(note=note)
+        note = self.get_object()
+        self.update_source_metadata(object=note)
         content = note.properties["hs_note_body"]
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
@@ -252,30 +234,17 @@ class HubSpotProductIngestDoc(HubSpotIngestDoc):
     registry_name: str = "hubspot_product"
 
     @requires_dependencies(["hubspot-api-client"], extras="hubspot")
-    def get_product(self):
+    def get_object(self):
         from hubspot.crm.products.exceptions import NotFoundException
 
-        method = self.session_handle.service.crm.products.api.basic_api.get_by_id
-        return self.get_object(method, NotFoundException)
-
-    def update_source_metadata(self, **kwargs) -> None:
-        product = kwargs.get("product", self.get_product())
-        if product is None:
-            self.source_metadata = SourceMetadata(
-                exists=False,
-            )
-            return
-        self.source_metadata = SourceMetadata(
-            date_created=product.created_at.isoformat(),
-            date_modified=product.updated_at.isoformat(),
-            exists=True,
-        )
+        method = self.session_handle.service.crm.products.basic_api.get_by_id
+        return self._fetch_obj(method, NotFoundException, properties=["description"])
 
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        product = self.get_product()
-        self.update_source_metadata(product=product)
+        product = self.get_object()
+        self.update_source_metadata(object=product)
         content = product.properties["description"]
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         with open(self.filename, "w", encoding="utf8") as f:
@@ -289,31 +258,17 @@ class HubSpotTicketIngestDoc(HubSpotIngestDoc):
     registry_name: str = "hubspot_ticket"
 
     @requires_dependencies(["hubspot-api-client"], extras="hubspot")
-    def get_ticket(self):
+    def get_object(self):
         from hubspot.crm.tickets.exceptions import NotFoundException
 
         method = self.session_handle.service.crm.tickets.basic_api.get_by_id
-
-        return self.get_object(method, NotFoundException)
-
-    def update_source_metadata(self, **kwargs) -> None:
-        ticket = kwargs.get("ticket", self.get_ticket())
-        if ticket is None:
-            self.source_metadata = SourceMetadata(
-                exists=False,
-            )
-            return
-        self.source_metadata = SourceMetadata(
-            date_created=ticket.created_at.isoformat(),
-            date_modified=ticket.updated_at.isoformat(),
-            exists=True,
-        )
+        return self._fetch_obj(method, NotFoundException)
 
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        ticket = self.get_ticket()
-        self.update_source_metadata(ticket=ticket)
+        ticket = self.get_object()
+        self.update_source_metadata(object=ticket)
         subject = ticket.properties["subject"]
         content = ticket.properties["content"]
         self.filename.parent.mkdir(parents=True, exist_ok=True)
@@ -397,13 +352,14 @@ class HubSpotSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
         if self.connector_config.object_types is not None:
             obj_method_resolver = {
-                k: obj_method_resolver.get(k) for k in self.connector_config.object_types
+                obj_name: obj_method_resolver.get(obj_name)  # type: ignore
+                for obj_name in self.connector_config.object_types
             }
 
-        ingest_docs: HubSpotIngestDoc = []
+        ingest_docs: t.List[HubSpotIngestDoc] = []
         for obj_name, obj_method in obj_method_resolver.items():
             logger.info(f"Retrieving - {obj_name}")
-            results: t.List[HubSpotIngestDoc] = obj_method()
-            ingest_docs += results
+            results: t.List[HubSpotIngestDoc] = obj_method()  # type: ignore
+            ingest_docs += results  # type: ignore
 
         return ingest_docs

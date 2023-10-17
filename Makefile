@@ -202,6 +202,11 @@ install-ingest-salesforce:
 install-ingest-jira:
 	python3 -m pip install -r requirements/ingest-jira.txt
 
+.PHONY: install-ingest-hubspot
+install-ingest-hubspot:
+	python3 -m pip install -r requirements/ingest-hubspot.txt
+
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
