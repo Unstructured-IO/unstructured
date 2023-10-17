@@ -150,11 +150,6 @@ requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-<<<<<<< HEAD
-    #   langchain
-    #   langsmith
-=======
->>>>>>> 775bfb7588b502ee44acb988534a9a80bbbb042b
 ruff==0.1.0
     # via -r requirements/test.in
 six==1.16.0
