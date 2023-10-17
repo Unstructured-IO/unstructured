@@ -33,17 +33,22 @@ Run Locally
 
       .. code:: python
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.onedrive import onedrive
+        import os
+
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import OneDriveRunner
 
         if __name__ == "__main__":
-            onedrive(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = OneDriveRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="onedrive-ingest-output",
                     num_processes=2,
                 ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+            )
+            runner.run(
                 client_id="<Azure AD app client-id>",
                 client_cred="<Azure AD app client-secret>",
                 authority_url="<Authority URL, default is https://login.microsoftonline.com>",
@@ -84,19 +89,23 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.onedrive import onedrive
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import OneDriveRunner
 
         if __name__ == "__main__":
-            onedrive(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = OneDriveRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="onedrive-ingest-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+            )
+            runner.run(
                 client_id="<Azure AD app client-id>",
                 client_cred="<Azure AD app client-secret>",
                 authority_url="<Authority URL, default is https://login.microsoftonline.com>",

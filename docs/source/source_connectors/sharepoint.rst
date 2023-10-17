@@ -35,17 +35,22 @@ Run Locally
 
       .. code:: python
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.sharepoint import sharepoint
+        import os
+
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import SharePointRunner
 
         if __name__ == "__main__":
-            sharepoint(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = SharePointRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="sharepoint-ingest-output",
                     num_processes=2,
                 ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+            )
+            runner.run(
                 client_id="<Microsoft Sharepoint app client-id>",
                 client_cred="<Microsoft Sharepoint app client-secret>",
                 site="<e.g https://contoso.sharepoint.com to process all sites within tenant>",
@@ -56,7 +61,6 @@ Run Locally
                 # Flag to process only files within the site(s)
                 files_only=True,
                 path="Shared Documents",
-                recursive=False,
             )
 
 Run via the API
@@ -92,19 +96,23 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.sharepoint import sharepoint
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import SharePointRunner
 
         if __name__ == "__main__":
-            sharepoint(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = SharePointRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="sharepoint-ingest-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+            )
+            runner.run(
                 client_id="<Microsoft Sharepoint app client-id>",
                 client_cred="<Microsoft Sharepoint app client-secret>",
                 site="<e.g https://contoso.sharepoint.com to process all sites within tenant>",
@@ -115,7 +123,6 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
                 # Flag to process only files within the site(s)
                 files_only=True,
                 path="Shared Documents",
-                recursive=False,
             )
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.

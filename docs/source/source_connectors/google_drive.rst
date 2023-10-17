@@ -30,17 +30,22 @@ Run Locally
 
       .. code:: python
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.google_drive import gdrive
+        import os
+
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import GoogleDriveRunner
 
         if __name__ == "__main__":
-            gdrive(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = GoogleDriveRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="google-drive-ingest-output",
                     num_processes=2,
                 ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+            )
+            runner.run(
                 drive_id="POPULATE WITH FILE OR FOLDER ID",
                 service_account_key="POPULATE WITH DRIVE SERVICE ACCOUNT KEY",
                 recursive=True,
@@ -74,19 +79,23 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.google_drive import gdrive
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import GoogleDriveRunner
 
         if __name__ == "__main__":
-            gdrive(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = GoogleDriveRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="google-drive-ingest-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+            )
+            runner.run(
                 drive_id="POPULATE WITH FILE OR FOLDER ID",
                 service_account_key="POPULATE WITH DRIVE SERVICE ACCOUNT KEY",
                 recursive=True,

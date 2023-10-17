@@ -85,6 +85,7 @@ def s3_dest(ctx: click.Context, **options):
     log_options(parent_options, verbose=verbose)
     log_options(options, verbose=verbose)
     try:
+        configs = extract_configs(options, validate=[S3CliConfig])
         runner_cls = runner_map[source_cmd]
         configs = extract_configs(
             options,

@@ -12,6 +12,7 @@ from unstructured.ingest.interfaces import (
     PermissionsConfig,
     ProcessorConfig,
     ReadConfig,
+    RetryStrategyConfig,
 )
 from unstructured.ingest.processor import process_documents
 from unstructured.ingest.runner.writers import writer_map
@@ -27,6 +28,7 @@ class Runner(ABC):
     embedding_config: t.Optional[EmbeddingConfig] = None
     chunking_config: t.Optional[ChunkingConfig] = None
     permissions_config: t.Optional[PermissionsConfig] = None
+    retry_strategy_config: t.Optional[RetryStrategyConfig] = None
 
     @abstractmethod
     def run(self, *args, **kwargs):
@@ -60,6 +62,7 @@ class Runner(ABC):
             embedder_config=self.embedding_config,
             chunking_config=self.chunking_config,
             permissions_config=self.get_permissions_config(),
+            retry_strategy_config=self.retry_strategy_config,
         )
 
 
