@@ -5,9 +5,9 @@ from unstructured.ingest.interfaces import BaseDestinationConnector
 
 def azure_writer(
     remote_url: str,
-    account_name: t.Optional[str],
-    account_key: t.Optional[str],
-    connection_string: t.Optional[str],
+    account_name: t.Optional[str] = None,
+    account_key: t.Optional[str] = None,
+    connection_string: t.Optional[str] = None,
     overwrite: bool = False,
     verbose: bool = False,
 ) -> BaseDestinationConnector:
