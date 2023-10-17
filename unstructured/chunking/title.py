@@ -83,17 +83,21 @@ def chunk_by_title(
         n characters (hard max)
     """
 
-    if not (
-        max_characters > 0
-        and combine_text_under_n_chars >= 0
-        and new_after_n_chars >= 0
-        and combine_text_under_n_chars <= new_after_n_chars
-        and combine_text_under_n_chars <= max_characters
-    ):
+    # -- validate arguments --
+    if max_characters <= 0:
+        raise ValueError(f"'max_characters' argument must be > 0, got {max_characters}")
+    if combine_text_under_n_chars < 0:
         raise ValueError(
-            "Invalid values for combine_text_under_n_chars, "
-            "new_after_n_chars, and/or max_characters.",
+            f"'combine_text_under_n_chars' argument must be >= 0, got {combine_text_under_n_chars}"
         )
+    if new_after_n_chars < 0:
+        raise ValueError(f"'new_after_n_chars' argument must be >= 0, got {new_after_n_chars}")
+    if combine_text_under_n_chars > new_after_n_chars:
+        raise ValueError("'combine_text_under_n_chars' cannot be greater than 'new_after_n_chars'")
+    if combine_text_under_n_chars > max_characters:
+        raise ValueError("'combine_text_under_n_chars' cannot be greater than 'max_characters'")
+    if overlap >= max_characters:
+        raise ValueError("'overlap' must be less than 'max_characters'")
 
     chunked_elements: List[Element] = []
     sections = _split_elements_by_title_and_table(

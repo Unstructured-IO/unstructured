@@ -334,20 +334,30 @@ def test_add_chunking_strategy_on_partition_html_respects_multipage():
 
 
 @pytest.mark.parametrize(
-    ("combine_text_under_n_chars", "new_after_n_chars", "max_characters"),
+    ("combine_text_under_n_chars", "new_after_n_chars", "max_characters", "overlap", "match"),
     [
-        (-1, -1, -1),  # invalid chunk size
-        (0, 0, 0),  # invalid max_characters
-        (-5666, -6777, -8999),  # invalid chunk size
-        (-5, 40, 50),  # invalid chunk size
-        (50, 70, 20),  # max_characters needs to be greater than new_after_n_chars
-        (70, 50, 50),  # combine_text_under_n_chars needs to be les than new_after_n_chars
+        # -- invalid max-chars --
+        (500, 500, -1, 0, "'max_characters' argument must be > 0, got -1"),
+        (500, 500, 0, 0, "'max_characters' argument must be > 0, got 0"),
+        # -- invalid combine-text-under --
+        (-5666, 500, 500, 0, "'combine_text_under_n_chars' argument must be >= 0, got -5666"),
+        # -- invalid new_after_n_chars --
+        (500, -7, 500, 0, "'new_after_n_chars' argument must be >= 0, got -7"),
+        # -- combine_text_under_n_chars cannot be greater than new_after_n_chars --
+        (70, 50, 500, 0, "'combine_text_under_n_chars' cannot be greater than 'new_after_n_chars'"),
+        # -- new_after_n_chars cannot be greater than max_characters --
+        (70, 70, 50, 0, "'combine_text_under_n_chars' cannot be greater than 'max_characters'"),
+        # -- overlap must be less than max_characters --
+        (500, 500, 500, 500, "'overlap' must be less than 'max_characters'"),
+        (500, 500, 500, 600, "'overlap' must be less than 'max_characters'"),
     ],
 )
 def test_add_chunking_strategy_raises_error_for_invalid_n_chars(
     combine_text_under_n_chars: int,
     new_after_n_chars: int,
     max_characters: int,
+    overlap: int,
+    match: str,
 ):
     elements: List[Element] = [
         Title("A Great Day"),
@@ -361,12 +371,13 @@ def test_add_chunking_strategy_raises_error_for_invalid_n_chars(
         Text("It is storming outside."),
         CheckBox(),
     ]
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=match):
         chunk_by_title(
             elements,
             combine_text_under_n_chars=combine_text_under_n_chars,
             new_after_n_chars=new_after_n_chars,
             max_characters=max_characters,
+            overlap=overlap,
         )
 
 
