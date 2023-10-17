@@ -374,7 +374,9 @@ def draw_bboxes_on_pdf_or_image(
         if save_images or save_coordinates:
             if not output_folder:
                 output_folder = "./"
-                logging.warning("No output_folder defined. Storing predictions in relative path './'")
+                logging.warning(
+                    "No output_folder defined. Storing predictions in relative path './'"
+                )
 
             if save_images:
                 image_path = f"{output_folder}/images_with_bboxes"
@@ -387,7 +389,8 @@ def draw_bboxes_on_pdf_or_image(
                 if not os.path.exists(annotations_path):
                     os.makedirs(annotations_path)
                 with open(
-                    f'{annotations_path}/{file_path.split("/")[-1]}_{page_ix}.json', "w"
+                    f'{annotations_path}/{file_path.split("/")[-1]}_{page_ix}.json',
+                    "w",
                 ) as json_file:
                     json.dump(
                         [
