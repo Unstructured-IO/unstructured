@@ -240,6 +240,7 @@ def _drop_extra_metadata(
         "parent_id",
         "category_depth",
         "detection_class_prob",
+        "regex_metadata",
     ]
     if not include_pages and "page_number" in metadata_dict:
         keys_to_drop.append("page_number")
