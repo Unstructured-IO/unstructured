@@ -124,23 +124,25 @@ def chunk_by_title(
 
         text = ""
         chunk_meta = dc.replace(first_element.metadata)
-        start_char = 0
+        start_offset = 0
         for element in section:
             # -- concatenate all element text in section into `text` --
             if isinstance(element, Text):
                 # -- add a blank line between "squashed" elements --
                 text += "\n\n" if text else ""
-                start_char = len(text)
+                start_offset = len(text)
                 text += element.text
 
             # -- "chunk" metadata should include union of list-items in all its elements --
-            for attr, value in vars(element.metadata).items():
-                if isinstance(value, list):
-                    value = cast(List[Any], value)
+            for list_attr_name, element_meta_list in vars(element.metadata).items():
+                if isinstance(element_meta_list, list):
+                    element_meta_list = cast(List[Any], element_meta_list)
                     # -- get existing (list) value from chunk_metadata --
-                    _value = getattr(chunk_meta, attr, []) or []
-                    _value.extend(item for item in value if item not in _value)
-                    setattr(chunk_meta, attr, _value)
+                    chunk_meta_list = getattr(chunk_meta, list_attr_name, []) or []
+                    chunk_meta_list.extend(
+                        item for item in element_meta_list if item not in chunk_meta_list
+                    )
+                    setattr(chunk_meta, list_attr_name, chunk_meta_list)
 
             # -- consolidate any `regex_metadata` matches, adjusting the match start/end offsets --
             element_regex_metadata = element.metadata.regex_metadata
@@ -151,8 +153,8 @@ def chunk_by_title(
                 chunk_regex_metadata = chunk_meta.regex_metadata
                 for regex_name, matches in element_regex_metadata.items():
                     for m in matches:
-                        m["start"] += start_char
-                        m["end"] += start_char
+                        m["start"] += start_offset
+                        m["end"] += start_offset
                     chunk_matches = chunk_regex_metadata.get(regex_name, [])
                     chunk_matches.extend(matches)
                     chunk_regex_metadata[regex_name] = chunk_matches
