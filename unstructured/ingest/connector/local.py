@@ -40,6 +40,13 @@ class LocalIngestDoc(BaseIngestDoc):
     registry_name: str = "local"
 
     @property
+    def base_filename(self) -> t.Optional[str]:
+        download_path = str(Path(self.connector_config.input_path).resolve())
+        full_path = str(self.filename)
+        base_path = full_path.replace(download_path, "")
+        return base_path
+
+    @property
     def filename(self):
         """The filename of the local file to be processed"""
         return Path(self.path)
