@@ -23,6 +23,25 @@ from unstructured.documents.elements import (
 from unstructured.partition.html import partition_html
 
 
+@pytest.mark.xfail(reason="out-of-order split-chunk inserts", raises=AssertionError, strict=True)
+def test_it_splits_a_large_section_into_multiple_chunks():
+    elements: List[Element] = [
+        Title("Introduction"),
+        Text(
+            "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed lectus"
+            " porta volutpat."
+        ),
+    ]
+
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=50, max_characters=50)
+
+    assert chunks == [
+        CompositeElement("Introduction"),
+        CompositeElement("Lorem ipsum dolor sit amet consectetur adipiscing "),
+        CompositeElement("elit. In rhoncus ipsum sed lectus porta volutpat."),
+    ]
+
+
 def test_split_elements_by_title_and_table():
     elements: List[Element] = [
         Title("A Great Day"),
