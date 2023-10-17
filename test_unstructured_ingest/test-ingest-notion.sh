@@ -38,7 +38,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --recursive \
     --verbose \
     --work-dir "$WORK_DIR" \
-    --max-time 30
+    --max-retry-time 30
 
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
