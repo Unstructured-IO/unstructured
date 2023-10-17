@@ -8,7 +8,6 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
-from urllib3.util import Retry
 
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
@@ -46,9 +45,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     id_: t.Optional[str]
     from_: t.Optional[str]
     until: t.Optional[str]
-    max_retries: int = 5
     request_timeout: int = 45
-    decay: float = 0.3
 
     def validate_api_inputs(self):
         valid = False
@@ -187,11 +184,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
         while endpoint_url:
             session = requests.Session()
-            retries = Retry(
-                total=self.connector_config.max_retries,
-                backoff_factor=self.connector_config.decay,
-            )
-            adapter = HTTPAdapter(max_retries=retries)
+            adapter = HTTPAdapter()
             session.mount("http://", adapter)
             session.mount("https://", adapter)
             response = session.get(endpoint_url, timeout=self.connector_config.request_timeout)

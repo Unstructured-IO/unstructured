@@ -81,7 +81,7 @@ class DeltaTableCliWriteConfig(BaseConfig, CliMixin):
     mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--write-column"],
@@ -99,7 +99,7 @@ class DeltaTableCliWriteConfig(BaseConfig, CliMixin):
                 "If 'ignore', will not write anything if table already exists.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.command(name="delta-table")

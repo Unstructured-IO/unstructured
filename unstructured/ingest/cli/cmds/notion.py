@@ -20,7 +20,7 @@ from unstructured.ingest.runner import NotionRunner
 
 @dataclass
 class NotionCliConfig(BaseConfig, CliMixin):
-    api_key: str
+    notion_api_key: str
     page_ids: t.Optional[t.List[str]]
     database_ids: t.Optional[t.List[str]]
     max_retries: t.Optional[int] = None
@@ -30,7 +30,7 @@ class NotionCliConfig(BaseConfig, CliMixin):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--api-key"],
+                ["--notion-api-key"],
                 required=True,
                 type=str,
                 help="API key for Notion api",
