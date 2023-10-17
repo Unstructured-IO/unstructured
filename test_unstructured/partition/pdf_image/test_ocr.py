@@ -334,8 +334,7 @@ def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
     for element in mock_layout:
         for ocr_element in ocr_elements:
             if ocr_element.bbox.is_almost_subregion_of(
-                element.bbox,
-                ocr.SUBREGION_THRESHOLD_FOR_OCR,
+                element.bbox, ocr.SUBREGION_THRESHOLD_FOR_OCR
             ):
                 assert ocr_element not in final_layout
 
