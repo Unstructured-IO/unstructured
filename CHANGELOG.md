@@ -1,4 +1,4 @@
-## 0.10.24-dev3
+## 0.10.24
 
 ### Enhancements
 
@@ -14,6 +14,8 @@
 
 * **Fix paddle model file not discoverable** Fixes issue where ocr_models/paddle_ocr.py file is not discoverable on PyPI by adding
 an `__init__.py` file under the folder.
+* **Chipper v2 Fixes** Includes fix for a memory leak and rare last-element bbox fix. (unstructured-inference==0.7.7)
+* **Fix image resizing issue** Includes fix related to resizing images in the tables pipeline. (unstructured-inference==0.7.6)
 
 ## 0.10.23
 
