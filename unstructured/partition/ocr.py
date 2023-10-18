@@ -195,12 +195,10 @@ def supplement_page_layout_with_ocr(
             ocr_languages=ocr_languages,
             ocr_agent=ocr_agent,
         )
-        merged_page_layout_elements = merge_out_layout_with_ocr_layout(
+        page_layout.elements[:] = merge_out_layout_with_ocr_layout(
             out_layout=page_layout.elements,
             ocr_layout=ocr_layout,
         )
-        if page_layout.elements != merged_page_layout_elements:
-            page_layout.elements = merged_page_layout_elements
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
         for element in page_layout.elements:
             if element.text == "":
@@ -235,7 +233,7 @@ def supplement_page_layout_with_ocr(
                 ocr_languages=ocr_languages,
                 ocr_agent=ocr_agent,
             )
-        page_layout.elements = supplement_element_with_table_extraction(
+        page_layout.elements[:] = supplement_element_with_table_extraction(
             elements=page_layout.elements,
             ocr_layout=ocr_layout,
             image=image,
