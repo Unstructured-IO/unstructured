@@ -5,3 +5,4 @@ jupyter
 ipython
 pip-tools
 pre-commit
+matplotlib
