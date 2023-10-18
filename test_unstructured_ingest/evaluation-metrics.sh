@@ -29,7 +29,6 @@ PYTHONPATH=. ./unstructured/ingest/evaluate.py \
     --source_dir "$CCT_DIR" \
     --export_dir "$EXPORT_DIR"
 
-export EDITOR=/bin/true
 PARENT_DIR=$(dirname "$SCRIPT_DIR")
 # Commit and push the changes
 git config --global --edit
