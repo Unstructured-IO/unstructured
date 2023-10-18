@@ -29,12 +29,11 @@ PYTHONPATH=. ./unstructured/ingest/evaluate.py \
     --source_dir "$CCT_DIR" \
     --export_dir "$EXPORT_DIR"
 
+export EDITOR=/bin/true
 PARENT_DIR=$(dirname "$SCRIPT_DIR")
 # Commit and push the changes
 git config --global --edit
 git commit --amend --reset-author
-git config --global merge.ff false
-
 git add "$PARENT_DIR"/"$EXPORT_DIR"
 git commit -m "Automated evaluation metric reports"
 git push origin HEAD:refs/heads/"$CURRENT_BRANCH"
