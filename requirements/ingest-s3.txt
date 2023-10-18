@@ -55,7 +55,7 @@ typing-extensions==4.8.0
     # via
     #   -c requirements/base.txt
     #   aioitertools
-urllib3==1.26.18
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

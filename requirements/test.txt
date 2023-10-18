@@ -4,25 +4,11 @@
 #
 #    pip-compile requirements/test.in
 #
-aiohttp==3.8.6
-    # via langchain
-aiosignal==1.3.1
-    # via aiohttp
-anyio==3.7.1
-    # via
-    #   -c requirements/constraints.in
-    #   langchain
 appdirs==1.4.4
     # via label-studio-tools
-async-timeout==4.0.3
-    # via
-    #   aiohttp
-    #   langchain
-attrs==23.1.0
-    # via aiohttp
 autoflake==2.2.1
     # via -r requirements/test.in
-black==23.10.0
+black==23.9.1
     # via -r requirements/test.in
 certifi==2023.7.22
     # via
@@ -32,7 +18,6 @@ certifi==2023.7.22
 charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
-    #   aiohttp
     #   requests
 click==8.1.7
     # via
@@ -43,61 +28,34 @@ coverage[toml]==7.3.2
     # via
     #   -r requirements/test.in
     #   pytest-cov
-dataclasses-json==0.6.1
-    # via
-    #   -c requirements/base.txt
-    #   langchain
 exceptiongroup==1.1.3
-    # via
-    #   anyio
-    #   pytest
+    # via pytest
 flake8==6.1.0
     # via -r requirements/test.in
 freezegun==1.2.2
     # via -r requirements/test.in
-frozenlist==1.4.0
-    # via
-    #   aiohttp
-    #   aiosignal
 grpcio==1.59.0
-    # via -r requirements/test.in
-huggingface==0.0.1
     # via -r requirements/test.in
 idna==3.4
     # via
     #   -c requirements/base.txt
-    #   anyio
     #   requests
     #   yarl
 iniconfig==2.0.0
     # via pytest
-jsonpatch==1.33
-    # via langchain
-jsonpointer==2.4
-    # via jsonpatch
 label-studio-sdk==0.0.32
     # via -r requirements/test.in
 label-studio-tools==0.0.3
     # via label-studio-sdk
-langchain==0.0.316
-    # via -r requirements/test.in
-langsmith==0.0.44
-    # via langchain
 lxml==4.9.3
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
     #   label-studio-tools
-marshmallow==3.20.1
-    # via
-    #   -c requirements/base.txt
-    #   dataclasses-json
 mccabe==0.7.0
     # via flake8
 multidict==6.0.4
-    # via
-    #   aiohttp
-    #   yarl
+    # via yarl
 mypy==1.6.0
     # via -r requirements/test.in
 mypy-extensions==1.0.0
@@ -105,17 +63,10 @@ mypy-extensions==1.0.0
     #   -c requirements/base.txt
     #   black
     #   mypy
-    #   typing-inspect
-numpy==1.24.4
-    # via
-    #   -c requirements/base.txt
-    #   -c requirements/constraints.in
-    #   langchain
 packaging==23.2
     # via
     #   -c requirements/base.txt
     #   black
-    #   marshmallow
     #   pytest
 pathspec==0.11.2
     # via black
@@ -132,8 +83,6 @@ pydantic==1.10.13
     #   -c requirements/constraints.in
     #   -r requirements/test.in
     #   label-studio-sdk
-    #   langchain
-    #   langsmith
 pyflakes==3.1.0
     # via
     #   autoflake
@@ -149,27 +98,17 @@ pytest-mock==3.11.1
 python-dateutil==2.8.2
     # via freezegun
 pyyaml==6.0.1
-    # via
-    #   langchain
-    #   vcrpy
+    # via vcrpy
 requests==2.31.0
     # via
     #   -c requirements/base.txt
     #   label-studio-sdk
-    #   langchain
-    #   langsmith
 ruff==0.1.0
     # via -r requirements/test.in
 six==1.16.0
     # via
     #   -c requirements/base.txt
     #   python-dateutil
-sniffio==1.3.0
-    # via anyio
-sqlalchemy==2.0.22
-    # via langchain
-tenacity==8.2.3
-    # via langchain
 tomli==2.0.1
     # via
     #   autoflake
@@ -193,13 +132,7 @@ typing-extensions==4.8.0
     #   black
     #   mypy
     #   pydantic
-    #   sqlalchemy
-    #   typing-inspect
-typing-inspect==0.9.0
-    # via
-    #   -c requirements/base.txt
-    #   dataclasses-json
-urllib3==1.26.18
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
@@ -210,6 +143,4 @@ vcrpy==5.1.0
 wrapt==1.15.0
     # via vcrpy
 yarl==1.9.2
-    # via
-    #   aiohttp
-    #   vcrpy
+    # via vcrpy

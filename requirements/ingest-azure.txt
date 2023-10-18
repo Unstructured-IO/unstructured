@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements/ingest-azure.in
 #
-adlfs==2023.10.0
+adlfs==2023.9.0
     # via -r requirements/ingest-azure.in
 aiohttp==3.8.6
     # via adlfs
@@ -94,7 +94,7 @@ typing-extensions==4.8.0
     #   -c requirements/base.txt
     #   azure-core
     #   azure-storage-blob
-urllib3==1.26.18
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

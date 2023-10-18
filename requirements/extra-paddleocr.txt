@@ -35,7 +35,7 @@ cssutils==2.9.0
     # via premailer
 cycler==0.12.1
     # via matplotlib
-cython==3.0.4
+cython==3.0.3
     # via unstructured-paddleocr
 et-xmlfile==1.1.0
     # via openpyxl
@@ -213,7 +213,7 @@ tzdata==2023.3
     # via pandas
 unstructured-paddleocr==2.6.1.3
     # via -r requirements/extra-paddleocr.in
-urllib3==1.26.18
+urllib3==1.26.17
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
