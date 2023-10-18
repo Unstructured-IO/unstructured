@@ -15,6 +15,11 @@
 ### Enhancements
 
 * **Add CI evaluation workflow** Adds evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
+* **Fsspec downstream connectors** New destination connector added to ingest CLI, users may now use `unstructured-ingest` to write to any of the following:
+  * Azure
+  * Box
+  * Dropbox
+  * Google Cloud Service
 
 ### Features
 
