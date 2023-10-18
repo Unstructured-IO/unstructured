@@ -8,9 +8,9 @@ attrdict==2.0.1
     # via unstructured-paddleocr
 babel==2.13.0
     # via flask-babel
-bce-python-sdk==0.8.90
+bce-python-sdk==0.8.92
     # via visualdl
-blinker==1.6.2
+blinker==1.6.3
     # via flask
 cachetools==5.3.1
     # via premailer
@@ -31,9 +31,9 @@ contourpy==1.1.1
     # via matplotlib
 cssselect==1.2.0
     # via premailer
-cssutils==2.7.1
+cssutils==2.9.0
     # via premailer
-cycler==0.12.0
+cycler==0.12.1
     # via matplotlib
 cython==3.0.3
     # via unstructured-paddleocr
@@ -134,7 +134,7 @@ pandas==2.0.3
     #   visualdl
 pdf2image==1.16.3
     # via unstructured-paddleocr
-pillow==10.0.1
+pillow==10.1.0
     # via
     #   imageio
     #   imgaug
@@ -150,7 +150,7 @@ protobuf==4.23.4
     # via
     #   -c requirements/constraints.in
     #   visualdl
-psutil==5.9.5
+psutil==5.9.6
     # via visualdl
 pyclipper==1.3.0.post5
     # via unstructured-paddleocr
@@ -171,7 +171,7 @@ pytz==2023.3.post1
     #   pandas
 pywavelets==1.4.1
     # via scikit-image
-rapidfuzz==3.3.1
+rapidfuzz==3.4.0
     # via
     #   -c requirements/base.txt
     #   unstructured-paddleocr
@@ -191,7 +191,7 @@ scipy==1.10.1
     #   -c requirements/constraints.in
     #   imgaug
     #   scikit-image
-shapely==2.0.1
+shapely==2.0.2
     # via
     #   imgaug
     #   unstructured-paddleocr

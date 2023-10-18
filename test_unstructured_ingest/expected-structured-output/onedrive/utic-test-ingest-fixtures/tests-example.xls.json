@@ -199,7 +199,10 @@
         "date_modified": "2023-08-24T03:00:43"
       },
       "filename": "tests-example.xls",
-      "filetype": "application/vnd.ms-excel"
+      "filetype": "application/vnd.ms-excel",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "http://www.cmu.edu/blackboard/files/evaluate/tests-example.xls"
   },
@@ -263,7 +266,10 @@
         "date_modified": "2023-08-24T03:00:43"
       },
       "filename": "tests-example.xls",
-      "filetype": "application/vnd.ms-excel"
+      "filetype": "application/vnd.ms-excel",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "1.0 (January 2012)"
   },
@@ -327,7 +333,10 @@
         "date_modified": "2023-08-24T03:00:43"
       },
       "filename": "tests-example.xls",
-      "filetype": "application/vnd.ms-excel"
+      "filetype": "application/vnd.ms-excel",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "bb-help@andrew.cmu.edu"
   },
@@ -391,7 +400,10 @@
         "date_modified": "2023-08-24T03:00:43"
       },
       "filename": "tests-example.xls",
-      "filetype": "application/vnd.ms-excel"
+      "filetype": "application/vnd.ms-excel",
+      "languages": [
+        "eng"
+      ]
     },
     "text": "This is an example and template for preparing Blackboard tests offline. See the full directions at: http://www.cmu.edu/blackboard/evaluate#manage_tests/import_questions"
   }

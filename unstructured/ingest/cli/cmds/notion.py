@@ -23,6 +23,8 @@ class NotionCliConfig(BaseConfig, CliMixin):
     api_key: str
     page_ids: t.Optional[t.List[str]]
     database_ids: t.Optional[t.List[str]]
+    max_retries: t.Optional[int] = None
+    max_time: t.Optional[float] = None
 
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:

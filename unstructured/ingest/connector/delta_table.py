@@ -166,20 +166,13 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
     def initialize(self):
         pass
 
-    @requires_dependencies(["deltalake"], extras="delta-table")
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+        # Need json list as strings
+        json_list_s = [json.dumps(e) for e in json_list]
         from deltalake.writer import write_deltalake
 
-        json_list = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                json_content = json.load(json_file)
-                json_items = [json.dumps(j) for j in json_content]
-                logger.info(f"converting {len(json_items)} rows from content in {local_path}")
-                json_list.extend(json_items)
         logger.info(
-            f"writing {len(json_list)} rows to destination "
+            f"writing {len(json_list_s)} rows to destination "
             f"table at {self.connector_config.table_uri}",
         )
         # NOTE: deltalake writer on Linux sometimes can finish but still trigger a SIGABRT and cause
@@ -190,9 +183,20 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
             target=write_deltalake,
             kwargs={
                 "table_or_uri": self.connector_config.table_uri,
-                "data": pd.DataFrame(data={self.write_config.write_column: json_list}),
+                "data": pd.DataFrame(data={self.write_config.write_column: json_list_s}),
                 "mode": self.write_config.mode,
             },
         )
         writer.start()
         writer.join()
+
+    @requires_dependencies(["deltalake"], extras="delta-table")
+    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+        json_list: t.List[t.Dict[str, t.Any]] = []
+        for doc in docs:
+            local_path = doc._output_filename
+            with open(local_path) as json_file:
+                json_content = json.load(json_file)
+                logger.info(f"converting {len(json_content)} rows from content in {local_path}")
+                json_list.extend(json_content)
+        self.write_dict(json_list=json_list)

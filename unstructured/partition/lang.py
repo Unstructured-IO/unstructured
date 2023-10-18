@@ -1,8 +1,10 @@
-from typing import List
+import re
+from typing import Iterable, Iterator, List, Optional
 
 import iso639
 from langdetect import DetectorFactory, detect_langs, lang_detect_exception
 
+from unstructured.documents.elements import Element
 from unstructured.logger import logger
 
 # pytesseract.get_languages(config="") only shows user installed language packs,
@@ -137,10 +139,12 @@ PYTESSERACT_LANGS = [
 ]
 
 
-def prepare_languages_for_tesseract(languages: List[str] = ["eng"]):
+def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
     """
     Entry point: convert languages (list of strings) into tesseract ocr langcode format (uses +)
     """
+    if languages is None:
+        raise ValueError("`languages` can not be `None`")
     converted_languages = list(
         filter(None, [convert_language_to_tesseract(lang) for lang in languages]),
     )
@@ -215,14 +219,29 @@ def _convert_to_standard_langcode(lang: str) -> str:
 
 def detect_languages(
     text: str,
-    languages: List[str] = ["auto"],
-) -> List[str]:
+    languages: Optional[List[str]] = ["auto"],
+) -> Optional[List[str]]:
     """
     Detects the list of languages present in the text (in the default "auto" mode),
     or formats and passes through the user inputted document languages if provided.
     """
-    if text.strip() == "":
-        return ["eng"]  # english as default
+    if not isinstance(languages, list):
+        raise TypeError(
+            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
+        )
+
+    # Skip language detection for partitioners that use other partitioners.
+    # For example, partition_msg relies on partition_html and partition_text, but the metadata
+    # gets overwritten after elements have been returned by _html and _text,
+    # so `languages` would be detected twice.
+    # Also return None if there is no text.
+    if languages[0] == "" or text.strip == "":
+        return None
+
+    # If text contains special characters (like ñ, å, or Korean/Mandarin/etc.) it will NOT default
+    # to English. It will default to English if text is only ascii characters and is short.
+    if re.match(r"^[\x00-\x7F]+$", text) and len(text.split()) < 5:
+        return ["eng"]
 
     # set seed for deterministic langdetect outputs
     DetectorFactory.seed = 0
@@ -247,7 +266,7 @@ def detect_languages(
             langdetect_result = detect_langs(text)
         except lang_detect_exception.LangDetectException as e:
             logger.warning(e)
-            return ["eng"]  # english as default
+            return None  # None as default
 
         # NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
         # Chinese variants. We normalizes these because there is a single model for Chinese
@@ -267,3 +286,48 @@ def detect_languages(
                 doc_languages.append(lang)
 
     return doc_languages
+
+
+def apply_lang_metadata(
+    elements: Iterable[Element],
+    languages: Optional[List[str]],
+    detect_language_per_element: bool = False,
+) -> Iterator[Element]:
+    """Detect and apply metadata.languages to each element in `elements`."""
+    # -- Note this function has a stream interface, but reads the full `elements` stream into memory
+    # -- before emitting the first updated element as output.
+
+    # The auto `partition` function uses `None` as a default because the default for
+    # `partition_pdf` and `partition_img` conflict with the other partitioners that use ["auto"]
+    if languages is None:
+        languages = ["auto"]
+
+    # Skip language detection for partitioners that use other partitioners.
+    # For example, partition_msg relies on partition_html and partition_text, but the metadata
+    # gets overwritten after elements have been returned by _html and _text,
+    # so `languages` would be detected twice.
+    if languages == [""]:
+        yield from elements
+        return
+
+    if not isinstance(elements, List):
+        elements = list(elements)
+
+    full_text = " ".join(e.text for e in elements if hasattr(e, "text"))
+    detected_languages = detect_languages(text=full_text, languages=languages)
+    if (
+        detected_languages is not None
+        and len(languages) == 1
+        and detect_language_per_element is False
+    ):
+        # -- apply detected language to each metadata --
+        for e in elements:
+            e.metadata.languages = detected_languages
+            yield e
+    else:
+        for e in elements:
+            if hasattr(e, "text"):
+                e.metadata.languages = detect_languages(e.text)
+                yield e
+            else:
+                yield e

@@ -8,13 +8,16 @@ from unstructured.ingest.interfaces import (
     ChunkingConfig,
     EmbeddingConfig,
     PartitionConfig,
+    PermissionsConfig,
     ProcessorConfig,
+    RetryStrategyConfig,
 )
 from unstructured.ingest.pipeline import (
     Chunker,
     DocFactory,
     Embedder,
     Partitioner,
+    PermissionsDataCleaner,
     Pipeline,
     PipelineContext,
     Reader,
@@ -33,13 +36,15 @@ def process_documents(
     dest_doc_connector: t.Optional[BaseDestinationConnector] = None,
     chunking_config: t.Optional[ChunkingConfig] = None,
     embedder_config: t.Optional[EmbeddingConfig] = None,
+    permissions_config: t.Optional[PermissionsConfig] = None,
+    retry_strategy_config: t.Optional[RetryStrategyConfig] = None,
 ) -> None:
     pipeline_config = PipelineContext.from_dict(processor_config.to_dict())
     doc_factory = DocFactory(
         pipeline_context=pipeline_config,
         source_doc_connector=source_doc_connector,
     )
-    reader = Reader(pipeline_context=pipeline_config)
+    reader = Reader(pipeline_context=pipeline_config, retry_strategy_config=retry_strategy_config)
     partitioner = Partitioner(pipeline_context=pipeline_config, partition_config=partition_config)
     reformat_nodes: t.List[ReformatNode] = []
     if embedder_config:
@@ -64,6 +69,11 @@ def process_documents(
         if dest_doc_connector
         else None
     )
+    permissions_data_cleaner = (
+        PermissionsDataCleaner(pipeline_context=pipeline_config, processor_config=processor_config)
+        if permissions_config
+        else None
+    )
     pipeline = Pipeline(
         pipeline_context=pipeline_config,
         doc_factory_node=doc_factory,
@@ -71,5 +81,6 @@ def process_documents(
         partition_node=partitioner,
         reformat_nodes=reformat_nodes,
         write_node=writer,
+        permissions_node=permissions_data_cleaner,
     )
     pipeline.run()

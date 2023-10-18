@@ -13,6 +13,8 @@ class NotionRunner(Runner):
         self,
         api_key: str,
         recursive: bool = False,
+        max_retries: t.Optional[int] = None,
+        max_time: t.Optional[float] = None,
         page_ids: t.Optional[t.List[str]] = None,
         database_ids: t.Optional[t.List[str]] = None,
         **kwargs,
@@ -60,6 +62,7 @@ class NotionRunner(Runner):
             ),
             read_config=self.read_config,
             processor_config=self.processor_config,
+            retry_strategy_config=self.retry_strategy_config,
         )
 
         self.process_documents(source_doc_connector=source_doc_connector)

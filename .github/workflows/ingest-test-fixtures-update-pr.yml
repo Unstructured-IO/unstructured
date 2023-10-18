@@ -15,7 +15,7 @@ jobs:
       (github.event_name == 'push' && contains(github.event.head_commit.message, 'ingest-test-fixtures-update'))
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
-      PYTHON_VERSION: "3.8"
+      PYTHON_VERSION: "3.10"
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
@@ -85,6 +85,9 @@ jobs:
           SHAREPOINT_CLIENT_ID: ${{secrets.SHAREPOINT_CLIENT_ID}}
           SHAREPOINT_CRED: ${{secrets.SHAREPOINT_CRED}}
           SHAREPOINT_SITE: ${{secrets.SHAREPOINT_SITE}}
+          SHAREPOINT_PERMISSIONS_APP_ID: ${{secrets.SHAREPOINT_PERMISSIONS_APP_ID}}
+          SHAREPOINT_PERMISSIONS_APP_CRED: ${{secrets.SHAREPOINT_PERMISSIONS_APP_CRED}}
+          SHAREPOINT_PERMISSIONS_TENANT: ${{secrets.SHAREPOINT_PERMISSIONS_TENANT}}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
@@ -92,6 +95,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
           AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           TABLE_OCR: "tesseract"
           ENTIRE_PAGE_OCR: "tesseract"
           OVERWRITE_FIXTURES: "true"
@@ -124,6 +128,7 @@ jobs:
           make install-ingest-wikipedia
           make install-ingest-notion
           make install-ingest-delta-table
+          pip install "unstructured[openai]"
           ./test_unstructured_ingest/test-ingest.sh
 
       - name: Save branch name to environment file
@@ -147,7 +152,9 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GH_CREATE_PR_TOKEN }}
-          add-paths: test_unstructured_ingest/expected-structured-output
+          add-paths:
+            test_unstructured_ingest/expected-structured-output
+            test_unstructured_ingest/metrics
           commit-message: "Update ingest test fixtures"
           branch: ${{ env.BRANCH_NAME }}
           title: "${{ env.PR_NAME }} <- Ingest test fixtures update"

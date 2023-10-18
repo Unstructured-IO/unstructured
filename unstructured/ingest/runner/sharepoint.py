@@ -1,5 +1,6 @@
 import hashlib
 import logging
+import typing as t
 
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.base_runner import Runner
@@ -12,6 +13,9 @@ class SharePointRunner(Runner):
         site: str,
         client_id: str,
         client_cred: str,
+        permissions_application_id: t.Optional[str],
+        permissions_client_cred: t.Optional[str],
+        permissions_tenant: t.Optional[str],
         path: str,
         files_only: bool = False,
         recursive: bool = False,
@@ -31,8 +35,15 @@ class SharePointRunner(Runner):
         )
 
         from unstructured.ingest.connector.sharepoint import (
+            SharepointPermissionsConfig,
             SharepointSourceConnector,
             SimpleSharepointConfig,
+        )
+
+        permissions_config = SharepointPermissionsConfig(
+            application_id=permissions_application_id,
+            client_cred=permissions_client_cred,
+            tenant=permissions_tenant,
         )
 
         source_doc_connector = SharepointSourceConnector(  # type: ignore
@@ -44,6 +55,7 @@ class SharePointRunner(Runner):
                 path=path,
                 process_pages=(not files_only),
                 recursive=recursive,
+                permissions_config=permissions_config,
             ),
             read_config=self.read_config,
         )

@@ -5,7 +5,6 @@
     "metadata": {
       "data_source": {
         "url": "https://drive.google.com/uc?id=117qrVqiCoR5EjYMsDHGdy3UMkEtKr9Q8&export=download",
-        "version": "15",
         "record_locator": {
           "drive_id": "1OQZ66OHBE30rNsNa7dweGLfRmXvkT_jr",
           "file_id": "117qrVqiCoR5EjYMsDHGdy3UMkEtKr9Q8"
@@ -14,6 +13,9 @@
         "date_modified": "2023-06-15T06:15:44"
       },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
       "emphasized_text_contents": [
         "Title"
       ],
@@ -29,7 +31,6 @@
     "metadata": {
       "data_source": {
         "url": "https://drive.google.com/uc?id=117qrVqiCoR5EjYMsDHGdy3UMkEtKr9Q8&export=download",
-        "version": "15",
         "record_locator": {
           "drive_id": "1OQZ66OHBE30rNsNa7dweGLfRmXvkT_jr",
           "file_id": "117qrVqiCoR5EjYMsDHGdy3UMkEtKr9Q8"
@@ -38,6 +39,9 @@
         "date_modified": "2023-06-15T06:15:44"
       },
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
       "emphasized_text_contents": [
         "This is a good reason to continue"
       ],

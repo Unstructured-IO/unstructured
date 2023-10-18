@@ -8,8 +8,10 @@ from unstructured.ingest.cli.interfaces import (
     CliEmbeddingConfig,
     CliMixin,
     CliPartitionConfig,
+    CliPermissionsConfig,
     CliProcessorConfig,
     CliReadConfig,
+    CliRetryStrategyConfig,
 )
 from unstructured.ingest.interfaces import (
     BaseConfig,
@@ -25,6 +27,7 @@ def conform_click_options(options: dict):
 
 def extract_configs(
     data: dict,
+    extras: t.Optional[t.Dict[str, t.Type[BaseConfig]]] = None,
     validate: t.Optional[t.List[t.Type[BaseConfig]]] = None,
 ) -> t.Dict[str, BaseConfig]:
     """
@@ -39,7 +42,12 @@ def extract_configs(
         "embedding_config": CliEmbeddingConfig.from_dict(data),
         "chunking_config": CliChunkingConfig.from_dict(data),
         "processor_config": CliProcessorConfig.from_dict(data),
+        "permissions_config": CliPermissionsConfig.from_dict(data),
+        "retry_strategy_config": CliRetryStrategyConfig.from_dict(data),
     }
+    if extras:
+        for k, conf in extras.items():
+            res[k] = conf.from_dict(data)
     for v in validate:
         v.from_dict(data)
     return res
@@ -52,6 +60,8 @@ def add_options(cmd: click.Command, extras=t.List[t.Type[CliMixin]]) -> click.Co
         CliEmbeddingConfig,
         CliChunkingConfig,
         CliProcessorConfig,
+        CliPermissionsConfig,
+        CliRetryStrategyConfig,
     ]
     configs.extend(extras)
     for config in configs:

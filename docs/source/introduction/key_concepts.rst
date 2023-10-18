@@ -6,7 +6,7 @@ Natural Language Processing (NLP) encompasses a broad spectrum of tasks and meth
 Data Ingestion
 --------------
 
-Unstructured's ``upstream connectors`` make data ingestion easy. They ensure that your data is accessible, up to date, and usable for any downstream task. If you'd like to read more on our upstream connectors, you can find details `here <../upstream_connectors.html>`__.
+Unstructured's ``upstream connectors`` make data ingestion easy. They ensure that your data is accessible, up to date, and usable for any downstream task. If you'd like to read more on our upstream connectors, you can find details `here <https://unstructured-io.github.io/unstructured/source_connectors.html>`__.
 
 Data Preprocessing
 ^^^^^^^^^^^^^^^^^^
@@ -61,7 +61,7 @@ is particularly beneficial for organizations that lack the means to develop and 
 
 A RAG workflow can be broken down into the following steps:
 
-1. **Data ingestion**: The first step is acquiring data from your relevant sources. At Unstructured we make this super easy with our `data connectors <https://unstructured-io.github.io/unstructured/upstream_connectors.html>`__.
+1. **Data ingestion**: The first step is acquiring data from your relevant sources. At Unstructured we make this super easy with our `data connectors <https://unstructured-io.github.io/unstructured/source_connectors.html>`__.
 
 2. **Data preprocessing and cleaning**: Once you've identified and collected your data sources a good practice is to remove any unnecessary artifacts within the dataset. At Unstructured we have a variety of different tools to remove unneccesary elements. Found `here <https://unstructured-io.github.io/unstructured/bricks.html>`_
 
