@@ -281,7 +281,12 @@ def get_table_tokens_per_element(
         if is_inside(ocr_region.bbox, table_element.bbox):
             table_tokens.append(
                 {
-                    "bbox": ocr_region.bbox,
+                    "bbox": [
+                        ocr_region.bbox.x1,
+                        ocr_region.bbox.y1,
+                        ocr_region.bbox.x2,
+                        ocr_region.bbox.y2,
+                    ],
                     "text": ocr_region.text,
                 },
             )

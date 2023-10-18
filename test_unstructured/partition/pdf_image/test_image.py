@@ -136,18 +136,17 @@ def test_partition_image_with_auto_strategy(
     assert isinstance(elements[idx].metadata.detection_class_prob, float)
 
 
-# todo(yuming): change this to ocr
-# def test_partition_image_with_table_extraction(
-#     filename="example-docs/layout-parser-paper-with-table.jpg",
-# ):
-#     elements = image.partition_image(
-#         filename=filename,
-#         strategy="hi_res",
-#         infer_table_structure=True,
-#     )
-#     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
-#     assert len(table) == 1
-#     assert "<table><thead><th>" in table[0]
+def test_partition_image_with_table_extraction(
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    elements = image.partition_image(
+        filename=filename,
+        strategy="hi_res",
+        infer_table_structure=True,
+    )
+    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert len(table) == 1
+    assert "<table><thead><th>" in table[0]
 
 
 def test_partition_image_with_multipage_tiff(

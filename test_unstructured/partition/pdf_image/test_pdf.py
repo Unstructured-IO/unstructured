@@ -389,14 +389,13 @@ def test_partition_pdf_falls_back_to_ocr_only(
     assert "unstructured_inference is not installed" in caplog.text
 
 
-# todo(yuming): update this to ocr
-# def test_partition_pdf_uses_table_extraction():
-#     filename = "example-docs/layout-parser-paper-fast.pdf"
-#     with mock.patch(
-#         "unstructured_inference.inference.layout.process_file_with_model",
-#     ) as mock_process_file_with_model:
-#         pdf.partition_pdf(filename, infer_table_structure=True)
-#         assert mock_process_file_with_model.call_args[1]["extract_tables"]
+def test_partition_pdf_uses_table_extraction():
+    filename = "example-docs/layout-parser-paper-fast.pdf"
+    with mock.patch(
+        "unstructured.partition.ocr.process_file_with_ocr",
+    ) as mock_process_file_with_model:
+        pdf.partition_pdf(filename, infer_table_structure=True)
+        assert mock_process_file_with_model.call_args[1]["infer_table_structure"]
 
 
 def test_partition_pdf_with_copy_protection():
@@ -850,17 +849,11 @@ def test_add_chunking_strategy_by_title_on_partition_pdf(
     assert chunk_elements == chunks
 
 
-# todo(yuming): update this test to ocr
 def test_partition_pdf_formats_languages_for_tesseract():
     filename = "example-docs/DA-1p.pdf"
-    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
+    with mock.patch.object(ocr, "process_file_with_ocr", mock.MagicMock()) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res", languages=["en"])
-        mock_process.assert_called_once_with(
-            filename,
-            is_image=False,
-            pdf_image_dpi=200,
-            model_name=pdf.default_hi_res_model(),
-        )
+        assert mock_process.call_args[1]["ocr_languages"] == "eng"
 
 
 def test_partition_pdf_warns_with_ocr_languages(caplog):
