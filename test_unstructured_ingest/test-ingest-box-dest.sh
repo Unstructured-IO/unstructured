@@ -1,5 +1,6 @@
+#!/usr/bin/env bash
 #TODO currently box api/sdk does not work to create folders and check for content similar to other fsspec ingest tests
-##!/usr/bin/env bash
+
 #
 #set -e
 #
