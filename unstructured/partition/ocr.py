@@ -487,7 +487,7 @@ def parse_ocr_data_tesseract(ocr_data: pd.DataFrame, zoom: float = 1) -> List[Te
     for idtx in ocr_data.itertuples():
         text = idtx.text
         if not text:
-            continue
+            continue  # todo(yuming): add case for this tho rare in real case
         cleaned_text = text.strip()
         if cleaned_text:
             x1 = idtx.left / zoom

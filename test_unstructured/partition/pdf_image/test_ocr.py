@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import pytest
 import unstructured_pytesseract
@@ -63,11 +64,11 @@ def test_get_ocr_layout_from_image_tesseract(monkeypatch):
         "image_to_data",
         lambda *args, **kwargs: pd.DataFrame(
             {
-                "left": [10, 20, 30],
-                "top": [5, 15, 25],
-                "width": [15, 25, 35],
-                "height": [10, 20, 30],
-                "text": ["Hello", "World", "!"],
+                "left": [10, 20, 30, None],
+                "top": [5, 15, 25, None],
+                "width": [15, 25, 35, None],
+                "height": [10, 20, 30, None],
+                "text": ["Hello", "World", "!", None],
             },
         ),
     )
@@ -230,6 +231,18 @@ def test_get_elements_from_ocr_regions(mock_embedded_text_regions):
 
     elements = ocr.get_elements_from_ocr_regions(mock_embedded_text_regions)
     assert elements == expected
+
+
+@pytest.mark.parametrize("zoom", [1, 0.1, 5, -1, 0])
+def test_zoom_image(zoom):
+    image = Image.new("RGB", (100, 100))
+    width, height = image.size
+    new_image = ocr.zoom_image(image, zoom)
+    new_w, new_h = new_image.size
+    if zoom <= 0:
+        zoom = 1
+    assert new_w == np.round(width * zoom, 0)
+    assert new_h == np.round(height * zoom, 0)
 
 
 @pytest.fixture()
