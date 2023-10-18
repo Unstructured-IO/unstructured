@@ -349,7 +349,7 @@ def pad_element_bboxes(
     return out_element
 
 
-def zoom_image(image: PILImage, zoom: float) -> PILImage:
+def zoom_image(image: PILImage, zoom: float = 1) -> PILImage:
     """scale an image based on the zoom factor using cv2; the scaled image is post processed by
     dilation then erosion to improve edge sharpness for OCR tasks"""
     if zoom <= 0:
@@ -388,6 +388,7 @@ def get_ocr_layout_from_image(
         ocr_layout = parse_ocr_data_paddle(ocr_data)
     else:
         logger.info("Processing OCR with tesseract...")
+        zoom = 1
         ocr_df: pd.DataFrame = unstructured_pytesseract.image_to_data(
             np.array(image),
             lang=ocr_languages,

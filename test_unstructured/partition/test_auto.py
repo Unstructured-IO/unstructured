@@ -431,7 +431,7 @@ def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, co
 
     # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 2
+    idx = 3
     assert elements[idx].text == title
     assert elements[idx].metadata.coordinates is not None
 
