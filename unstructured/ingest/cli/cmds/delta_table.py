@@ -11,9 +11,9 @@ from unstructured.ingest.cli.interfaces import (
     CliMixin,
 )
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
-from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.interfaces import BaseConfig, FsspecConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import DeltaTableRunner, runner_map
+from unstructured.ingest.runner import DeltaTableRunner, FsspecBaseRunner, runner_map
 
 
 @dataclass
@@ -118,7 +118,13 @@ def delta_table_dest(ctx: click.Context, **options):
     log_options(parent_options, verbose=verbose)
     log_options(options, verbose=verbose)
     try:
-        configs = extract_configs(parent_options, validate=[DeltaTableCliConfig])
+        runner_cls = runner_map[source_cmd]
+        configs = extract_configs(
+            parent_options,
+            extras={"fsspec_config": FsspecConfig}
+            if issubclass(runner_cls, FsspecBaseRunner)
+            else None,
+        )
         # Validate write configs
         DeltaTableCliWriteConfig.from_dict(options)
         runner_cls = runner_map[source_cmd]

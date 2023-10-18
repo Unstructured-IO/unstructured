@@ -85,15 +85,17 @@ def s3_dest(ctx: click.Context, **options):
     log_options(parent_options, verbose=verbose)
     log_options(options, verbose=verbose)
     try:
-        configs = extract_configs(options, validate=[S3CliConfig])
         runner_cls = runner_map[source_cmd]
         configs = extract_configs(
-            options,
+            parent_options,
             validate=[S3CliConfig],
             extras={"fsspec_config": FsspecConfig}
             if issubclass(runner_cls, FsspecBaseRunner)
             else None,
         )
+        # validate dest cli
+        S3CliConfig.from_dict(options)
+        CliFilesStorageConfig.from_dict(options)
         runner = runner_cls(
             **configs,  # type: ignore
             writer_type="s3",

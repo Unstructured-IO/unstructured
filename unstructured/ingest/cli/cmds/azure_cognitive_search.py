@@ -11,9 +11,9 @@ from unstructured.ingest.cli.interfaces import (
     CliMixin,
 )
 from unstructured.ingest.cli.utils import conform_click_options, extract_configs
-from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.interfaces import BaseConfig, FsspecConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import runner_map
+from unstructured.ingest.runner import FsspecBaseRunner, runner_map
 
 
 @dataclass
@@ -68,7 +68,13 @@ def azure_cognitive_search_dest(ctx: click.Context, **options):
     log_options(parent_options, verbose=verbose)
     log_options(options, verbose=verbose)
     try:
-        configs = extract_configs(options, validate=[AzureCognitiveSearchCliWriteConfig])
+        runner_cls = runner_map[source_cmd]
+        configs = extract_configs(
+            parent_options,
+            extras={"fsspec_config": FsspecConfig}
+            if issubclass(runner_cls, FsspecBaseRunner)
+            else None,
+        )
         runner_cls = runner_map[source_cmd]
         runner = runner_cls(
             **configs,  # type: ignore
