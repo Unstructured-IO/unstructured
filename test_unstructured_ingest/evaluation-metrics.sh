@@ -31,6 +31,6 @@ PYTHONPATH=. ./unstructured/ingest/evaluate.py \
 
 PARENT_DIR=$(dirname "$SCRIPT_DIR")
 # Commit and push the changes
-git add $PARENT_DIR/$EXPORT_DIR
+git add "$PARENT_DIR"/"$EXPORT_DIR"
 git commit -m "add evaluation metrics"
 git push
