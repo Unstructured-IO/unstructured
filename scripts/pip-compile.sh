@@ -8,8 +8,8 @@ if ! python -c "import sys; assert sys.version_info.major == $major and sys.vers
   exit 1
 fi
 
-pushd ./requirements
+pushd ./requirements || exit
 make ./*.txt
-popd
+popd || exit
 
 cp requirements/build.txt docs/requirements.txt
