@@ -130,10 +130,10 @@ def test_partition_image_with_auto_strategy(
     elements = image.partition_image(filename=filename, strategy="auto")
     titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 2
+    title_idx = 3
     assert titles[0].text == title
-    assert elements[idx].metadata.detection_class_prob is not None
-    assert isinstance(elements[idx].metadata.detection_class_prob, float)
+    assert elements[title_idx].metadata.detection_class_prob is not None
+    assert isinstance(elements[title_idx].metadata.detection_class_prob, float)
 
 
 # todo(yuming): change this to ocr
