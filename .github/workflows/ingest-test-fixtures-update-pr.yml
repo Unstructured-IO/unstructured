@@ -100,7 +100,6 @@ jobs:
           ENTIRE_PAGE_OCR: "tesseract"
           OVERWRITE_FIXTURES: "true"
           CI: "true"
-          CURRENT_BRANCH: ${{ github.ref }}
         run: |
           source .venv/bin/activate
           sudo apt-get update
@@ -153,7 +152,9 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GH_CREATE_PR_TOKEN }}
-          add-paths: test_unstructured_ingest/expected-structured-output
+          add-paths: 
+            - test_unstructured_ingest/expected-structured-output
+            - test_unstructured_ingest/metrics
           commit-message: "Update ingest test fixtures"
           branch: ${{ env.BRANCH_NAME }}
           title: "${{ env.PR_NAME }} <- Ingest test fixtures update"
