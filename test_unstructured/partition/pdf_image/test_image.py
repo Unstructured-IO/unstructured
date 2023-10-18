@@ -503,7 +503,7 @@ def test_partition_image_uses_model_name():
 @pytest.mark.parametrize(
     ("ocr_mode", "idx_title_element"),
     [
-        ("entire_page", 2),
+        ("entire_page", 3),
         ("individual_blocks", 1),
     ],
 )
