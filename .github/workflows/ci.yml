@@ -304,6 +304,7 @@ jobs:
         TABLE_OCR: "tesseract"
         ENTIRE_PAGE_OCR: "tesseract"
         CI: "true"
+        CURRENT_BRANCH: ${{ github.ref }}
       run: |
         source .venv/bin/activate
         sudo apt-get update

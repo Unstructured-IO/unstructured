@@ -34,5 +34,5 @@ PARENT_DIR=$(dirname "$SCRIPT_DIR")
 git config --global --edit
 git commit --amend --reset-author
 git add "$PARENT_DIR"/"$EXPORT_DIR"
-git commit -m "add evaluation metrics"
-git push origin HEAD:refs/heads/${{ github.ref }}
+git commit -m "automated evaluation metric reports"
+git push origin HEAD:refs/heads/"$CURRENT_BRANCH"
