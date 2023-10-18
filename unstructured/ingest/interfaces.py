@@ -132,6 +132,13 @@ class FsspecConfig(FileStorageConfig):
             self.file_path = ""
             return
 
+        # dropbox paths can start with slash
+        match = re.match(rf"{self.protocol}:///([^/\s]+?)/([^\s]*)", self.remote_url)
+        if match and self.protocol == "dropbox":
+            self.dir_path = match.group(1)
+            self.file_path = match.group(2) or ""
+            return
+
         # just a path with no trailing prefix
         match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.remote_url)
         if match:
