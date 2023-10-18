@@ -1,3 +1,4 @@
+import pandas as pd
 import pytest
 import unstructured_pytesseract
 from pdf2image.exceptions import PDFPageCountError
@@ -60,14 +61,15 @@ def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     monkeypatch.setattr(
         unstructured_pytesseract,
         "image_to_data",
-        lambda *args, **kwargs: {
-            "level": ["line", "line", "word"],
-            "left": [10, 20, 30],
-            "top": [5, 15, 25],
-            "width": [15, 25, 35],
-            "height": [10, 20, 30],
-            "text": ["Hello", "World", "!"],
-        },
+        lambda *args, **kwargs: pd.DataFrame(
+            {
+                "left": [10, 20, 30],
+                "top": [5, 15, 25],
+                "width": [15, 25, 35],
+                "height": [10, 20, 30],
+                "text": ["Hello", "World", "!"],
+            },
+        ),
     )
 
     image = Image.new("RGB", (100, 100))
