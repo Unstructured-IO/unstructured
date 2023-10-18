@@ -18,10 +18,13 @@ async-timeout==4.0.3
     #   langchain
 attrs==23.1.0
     # via aiohttp
-boto3==1.28.66
-    # via -r requirements/ingest-bedrock.in
-botocore==1.31.66
+boto3==1.28.17
     # via
+    #   -c requirements/constraints.in
+    #   -r requirements/ingest-bedrock.in
+botocore==1.31.17
+    # via
+    #   -c requirements/constraints.in
     #   boto3
     #   s3transfer
 certifi==2023.7.22
@@ -97,7 +100,7 @@ requests==2.31.0
     #   -c requirements/base.txt
     #   langchain
     #   langsmith
-s3transfer==0.7.0
+s3transfer==0.6.2
     # via boto3
 six==1.16.0
     # via

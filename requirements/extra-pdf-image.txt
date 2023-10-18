@@ -223,7 +223,7 @@ tqdm==4.66.1
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.34.0
+transformers==4.34.1
     # via unstructured-inference
 typing-extensions==4.8.0
     # via

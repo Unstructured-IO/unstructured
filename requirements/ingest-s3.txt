@@ -19,7 +19,9 @@ async-timeout==4.0.3
 attrs==23.1.0
     # via aiohttp
 botocore==1.31.17
-    # via aiobotocore
+    # via
+    #   -c requirements/constraints.in
+    #   aiobotocore
 charset-normalizer==3.3.0
     # via
     #   -c requirements/base.txt
