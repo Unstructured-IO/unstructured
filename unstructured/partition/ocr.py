@@ -3,7 +3,9 @@ import tempfile
 from copy import deepcopy
 from typing import BinaryIO, Dict, List, Optional, Union, cast
 
+import cv2
 import numpy as np
+import pandas as pd
 import pdf2image
 import unstructured_pytesseract
 
@@ -20,9 +22,10 @@ from unstructured_inference.inference.layoutelement import (
 from unstructured_pytesseract import Output
 
 from unstructured.logger import logger
+from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
-    IMAGE_CROP_PAD,
     SUBREGION_THRESHOLD_FOR_OCR,
+    TESSERACT_TEXT_HEIGHT,
     OCRMode,
 )
 
@@ -199,7 +202,7 @@ def supplement_page_layout_with_ocr(
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
         for element in page_layout.elements:
             if element.text == "":
-                padded_element = pad_element_bboxes(element, padding=IMAGE_CROP_PAD)
+                padded_element = pad_element_bboxes(element, padding=env_config.IMAGE_CROP_PAD)
                 cropped_image = image.crop(
                     (
                         padded_element.bbox.x1,
@@ -250,7 +253,7 @@ def supplement_element_with_table_extraction(
     """
     for element in elements:
         if element.type == "Table":
-            padded_element = pad_element_bboxes(element, padding=IMAGE_CROP_PAD)
+            padded_element = pad_element_bboxes(element, padding=env_config.IMAGE_CROP_PAD)
             cropped_image = image.crop(
                 (
                     padded_element.bbox.x1,
@@ -346,6 +349,27 @@ def pad_element_bboxes(
     return out_element
 
 
+def zoom_image(image: PILImage, zoom: float) -> PILImage:
+    """scale an image based on the zoom factor using cv2; the scaled image is post processed by
+    dilation then erosion to improve edge sharpness for OCR tasks"""
+    if zoom <= 0:
+        # no zoom but still does dilation and erosion
+        zoom = 1
+    new_image = cv2.resize(
+        cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR),
+        None,
+        fx=zoom,
+        fy=zoom,
+        interpolation=cv2.INTER_CUBIC,
+    )
+
+    kernel = np.ones((1, 1), np.uint8)
+    new_image = cv2.dilate(new_image, kernel, iterations=1)
+    new_image = cv2.erode(new_image, kernel, iterations=1)
+
+    return PILImage.fromarray(new_image)
+
+
 def get_ocr_layout_from_image(
     image: PILImage,
     ocr_languages: str = "eng",
@@ -355,7 +379,7 @@ def get_ocr_layout_from_image(
     Get the OCR layout from image as a list of text regions with paddle or tesseract.
     """
     if ocr_agent == "paddle":
-        logger.info("Processing entrie page OCR with paddle...")
+        logger.info("Processing OCR with paddle...")
         from unstructured.partition.utils.ocr_models import paddle_ocr
 
         # TODO(yuming): pass in language parameter once we
@@ -363,12 +387,37 @@ def get_ocr_layout_from_image(
         ocr_data = paddle_ocr.load_agent().ocr(np.array(image), cls=True)
         ocr_layout = parse_ocr_data_paddle(ocr_data)
     else:
-        ocr_data = unstructured_pytesseract.image_to_data(
+        logger.info("Processing OCR with tesseract...")
+        ocr_df: pd.DataFrame = unstructured_pytesseract.image_to_data(
             np.array(image),
             lang=ocr_languages,
-            output_type=Output.DICT,
+            output_type=Output.DATAFRAME,
         )
-        ocr_layout = parse_ocr_data_tesseract(ocr_data)
+        ocr_df = ocr_df.dropna()
+
+        # tesseract performance degrades when the text height is out of the preferred zone so we
+        # zoom the image (in or out depending on estimated text height) for optimum OCR results
+        # but this needs to be evaluated based on actual use case as the optimum scaling also
+        # depend on type of characters (font, language, etc); be careful about this
+        # functionality
+        text_height = ocr_df[TESSERACT_TEXT_HEIGHT].quantile(
+            env_config.TESSERACT_TEXT_HEIGHT_QUANTILE,
+        )
+        if (
+            text_height < env_config.TESSERACT_MIN_TEXT_HEIGHT
+            or text_height > env_config.TESSERACT_MAX_TEXT_HEIGHT
+        ):
+            # rounding avoids unnecessary precision and potential numerical issues assocaited
+            # with numbers very close to 1 inside cv2 image processing
+            zoom = np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1)
+            ocr_df = unstructured_pytesseract.image_to_data(
+                zoom_image(np.array(image), zoom),
+                lang=ocr_languages,
+                output_type=Output.DATAFRAME,
+            )
+            ocr_df = ocr_df.dropna()
+
+        ocr_layout = parse_ocr_data_tesseract(ocr_df)
     return ocr_layout
 
 
@@ -400,44 +449,45 @@ def get_ocr_text_from_image(
     return text_from_ocr
 
 
-def parse_ocr_data_tesseract(ocr_data: dict) -> List[TextRegion]:
+def parse_ocr_data_tesseract(ocr_data: pd.DataFrame, zoom: float = 1) -> List[TextRegion]:
     """
     Parse the OCR result data to extract a list of TextRegion objects from
     tesseract.
 
-    The function processes the OCR result dictionary, looking for bounding
+    The function processes the OCR result data frame, looking for bounding
     box information and associated text to create instances of the TextRegion
     class, which are then appended to a list.
 
     Parameters:
-    - ocr_data (dict): A dictionary containing the OCR result data, expected
-                      to have keys like "level", "left", "top", "width",
-                      "height", and "text".
+    - ocr_data (pd.DataFrame):
+        A Pandas DataFrame containing the OCR result data.
+        It should have columns like 'text', 'left', 'top', 'width', and 'height'.
+
+    - zoom (float, optional):
+        A zoom factor to scale the coordinates of the bounding boxes from image scaling.
+        Default is 1.
 
     Returns:
-    - List[TextRegion]: A list of TextRegion objects, each representing a
-                        detected text region within the OCR-ed image.
+    - List[TextRegion]:
+        A list of TextRegion objects, each representing a detected text region
+        within the OCR-ed image.
 
     Note:
     - An empty string or a None value for the 'text' key in the input
-      dictionary will result in its associated bounding box being ignored.
+      data frame will result in its associated bounding box being ignored.
     """
 
-    levels = ocr_data["level"]
     text_regions = []
-    for i, level in enumerate(levels):
-        (l, t, w, h) = (
-            ocr_data["left"][i],
-            ocr_data["top"][i],
-            ocr_data["width"][i],
-            ocr_data["height"][i],
-        )
-        (x1, y1, x2, y2) = l, t, l + w, t + h
-        text = ocr_data["text"][i]
+    for idtx in ocr_data.itertuples():
+        text = idtx.text
         if not text:
             continue
         cleaned_text = text.strip()
         if cleaned_text:
+            x1 = idtx.left / zoom
+            y1 = idtx.top / zoom
+            x2 = (idtx.left + idtx.width) / zoom
+            y2 = (idtx.top + idtx.height) / zoom
             text_region = TextRegion.from_coords(x1, y1, x2, y2, text=text, source="OCR-tesseract")
             text_regions.append(text_region)
 
