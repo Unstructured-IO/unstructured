@@ -1,5 +1,6 @@
 import tempfile
 import warnings
+from collection.abc import Iterable
 from typing import IO, List, Optional
 
 from ebooklib import epub
@@ -81,6 +82,9 @@ def partition_epub(
 
     # open issue that might resolve the chapter mapping of text
     # https://github.com/aerkalov/ebooklib/issues/289
+    if not isintance(book.toc, Iterable):
+        book.toc = [book.toc]
+
     for item in book.toc:
         # Some toc items may be tuple of multiple items, but all have the same href
         if isinstance(item, tuple):
