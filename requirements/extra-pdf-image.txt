@@ -125,7 +125,7 @@ pdfminer-six==20221105
     #   pdfplumber
 pdfplumber==0.10.2
     # via layoutparser
-pillow==10.0.1
+pillow==10.1.0
     # via
     #   layoutparser
     #   matplotlib
@@ -149,7 +149,7 @@ pyparsing==3.0.9
     # via
     #   -c requirements/constraints.in
     #   matplotlib
-pypdfium2==4.20.0
+pypdfium2==4.21.0
     # via pdfplumber
 pytesseract==0.3.10
     # via layoutparser
@@ -237,7 +237,7 @@ unstructured-pytesseract==0.3.12
     # via
     #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in
-urllib3==1.26.17
+urllib3==1.26.18
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

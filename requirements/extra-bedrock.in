@@ -1,4 +1,4 @@
--c constriants.in
+-c constraints.in
 -c base.txt
 
 boto3

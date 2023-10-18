@@ -8,7 +8,11 @@ lxml==4.9.3
     # via
     #   -c requirements/base.txt
     #   python-docx
-pypandoc==1.11
+pypandoc==1.12
     # via -r requirements/extra-odt.in
-python-docx==0.8.11
+python-docx==1.0.1
     # via -r requirements/extra-odt.in
+typing-extensions==4.8.0
+    # via
+    #   -c requirements/base.txt
+    #   python-docx
