@@ -342,6 +342,15 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
         return None
 
     @property
+    def base_output_filename(self) -> t.Optional[str]:
+        if self.processor_config.output_dir and self._output_filename:
+            output_path = str(Path(self.processor_config.output_dir).resolve())
+            full_path = str(self._output_filename)
+            base_path = full_path.replace(output_path, "")
+            return base_path
+        return None
+
+    @property
     @abstractmethod
     def _output_filename(self):
         """Filename of the structured output for this doc."""

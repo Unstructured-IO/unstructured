@@ -78,7 +78,7 @@ class LocalIngestDoc(BaseIngestDoc):
         """
         input_path = Path(self.connector_config.input_path)
         basename = (
-            f"{Path(self.path).name}.json"
+            f"{self.base_filename}.json"
             if input_path.is_file()
             else f"{Path(self.path).relative_to(input_path)}.json"
         )
