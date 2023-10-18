@@ -9,15 +9,12 @@ click>=8.1
 types-click
 flake8
 freezegun
-huggingface
 label_studio_sdk
-langchain
 mypy
 pydantic
 pytest-cov
 pytest-mock
 ruff
-sentence_transformers
 types-Markdown
 types-requests
 types-tabulate
