@@ -417,7 +417,7 @@ def get_ocr_layout_from_image(
             )
             ocr_df = ocr_df.dropna()
 
-        ocr_layout = parse_ocr_data_tesseract(ocr_df)
+        ocr_layout = parse_ocr_data_tesseract(ocr_df, zoom=zoom)
     return ocr_layout
 
 
