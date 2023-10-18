@@ -183,6 +183,46 @@ def test_chunk_by_title_separates_by_page_number():
     ]
 
 
+@pytest.mark.xfail(
+    reason="bug: chunks break on regex_metadata differences", raises=AssertionError, strict=True
+)
+def test_chunk_by_title_does_not_break_on_regex_metadata_change():
+    """Sectioner is insensitive to regex-metadata changes.
+
+    A regex-metadata match in an element does not signify a semantic boundary and a section should
+    not be split based on such a difference.
+    """
+    elements: List[Element] = [
+        Title(
+            "Lorem Ipsum",
+            metadata=ElementMetadata(
+                regex_metadata={"ipsum": [RegexMetadata(text="Ipsum", start=6, end=11)]}
+            ),
+        ),
+        Text(
+            "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
+            metadata=ElementMetadata(
+                regex_metadata={"dolor": [RegexMetadata(text="dolor", start=12, end=17)]}
+            ),
+        ),
+        Text(
+            "In rhoncus ipsum sed lectus porta volutpat.",
+            metadata=ElementMetadata(
+                regex_metadata={"ipsum": [RegexMetadata(text="ipsum", start=11, end=16)]}
+            ),
+        ),
+    ]
+
+    chunks = chunk_by_title(elements)
+
+    assert chunks == [
+        CompositeElement(
+            "Lorem Ipsum\n\nLorem ipsum dolor sit amet consectetur adipiscing elit.\n\nIn rhoncus"
+            " ipsum sed lectus porta volutpat."
+        )
+    ]
+
+
 @pytest.mark.xfail(reason="regex_metadata was wrong type", raises=AssertionError, strict=True)
 def test_chunk_by_title_groups_across_pages():
     elements: List[Element] = [
