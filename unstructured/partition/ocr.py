@@ -266,15 +266,57 @@ def supplement_element_with_table_extraction(
 
 
 def get_table_tokens_per_element(
-    element: LayoutElement,
+    table_element: LayoutElement,
     ocr_layout: List[TextRegion],
 ) -> List[Dict]:
-    """Prepre table tokens related to the given element for the table model."""
+    """Prepre table tokens within the given table element for the table model
+    from ocr layout of an entire image."""
     # TODO(yuming): update table_tokens from List[Dict] to List[TABLE_TOKEN]
     # where TABLE_TOKEN will be a data class defined in unstructured-inference
+    table_tokens = []
+    for ocr_region in ocr_layout:
+        if is_inside(ocr_region.bbox, table_element.bbox):
+            table_tokens.append(
+                {
+                    "bbox": ocr_region.bbox,
+                    "text": ocr_region.text,
+                },
+            )
 
-    table_tokens = None
+    # 'table_tokens' is a list of tokens
+    # Need to be in a relative reading order
+    # If no order is provided, use current order
+    for idx, token in enumerate(table_tokens):
+        if "span_num" not in token:
+            token["span_num"] = idx
+        if "line_num" not in token:
+            token["line_num"] = 0
+        if "block_num" not in token:
+            token["block_num"] = 0
+
     return table_tokens
+
+
+def is_inside(inner_bbox, outer_bbox):
+    """Check if the inner bounding box is entirely inside the outer bounding box"""
+    inner_x1, inner_y1, inner_x2, inner_y2 = (
+        inner_bbox.x1,
+        inner_bbox.y1,
+        inner_bbox.x2,
+        inner_bbox.y2,
+    )
+    outer_x1, outer_y1, outer_x2, outer_y2 = (
+        outer_bbox.x1,
+        outer_bbox.y1,
+        outer_bbox.x2,
+        outer_bbox.y2,
+    )
+    return (
+        inner_x1 >= outer_x1
+        and inner_y1 >= outer_y1
+        and inner_x2 <= outer_x2
+        and inner_y2 <= outer_y2
+    )
 
 
 def init_table_agent():
