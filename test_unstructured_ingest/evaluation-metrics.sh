@@ -7,6 +7,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 
 # List all structured outputs to use in this evaluation
 OUTPUT_DIR=$SCRIPT_DIR/structured-output-eval
+mkdir -p "$OUTPUT_DIR"
 
 # Download cct test from s3
 BUCKET_NAME=utic-dev-tech-fixtures
