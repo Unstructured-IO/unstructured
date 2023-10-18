@@ -1,7 +1,7 @@
 [
   {
     "type": "Title",
-    "element_id": "92405c82f76df8b2cbbc6047bd10e0ff",
+    "element_id": "898ffdb987b556da4dc7ccd1cf11f1b3",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -305,7 +305,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "067f3707c33a901f968188d9592065e9",
+    "element_id": "ca23ec8966835bea3ca9b191b53ada9d",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -457,7 +457,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7941057d83c91b25cee4374b3ab06eaa",
+    "element_id": "a720c5a62597e77c686cbc5df1c682ce",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -647,7 +647,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e72d9c8a779a47796c4362b7885aa80b",
+    "element_id": "cf50ba29fb549766117d8ff1d099da44",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",

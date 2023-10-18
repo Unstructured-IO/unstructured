@@ -35,17 +35,20 @@ Run Locally
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.outlook import outlook
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import OutlookRunner
 
         if __name__ == "__main__":
-            outlook(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = OutlookRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="outlook-output",
                     num_processes=2,
                 ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+            )
+            runner.run(
                 client_id=os.getenv("MS_CLIENT_ID"),
                 client_cred=os.getenv("MS_CLIENT_CRED"),
                 tenant=os.getenv("MS_TENANT_ID"),
@@ -81,19 +84,23 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.outlook import outlook
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import OutlookRunner
 
         if __name__ == "__main__":
-            outlook(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = OutlookRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="outlook-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+            )
+            runner.run(
                 client_id=os.getenv("MS_CLIENT_ID"),
                 client_cred=os.getenv("MS_CLIENT_CRED"),
                 tenant=os.getenv("MS_TENANT_ID"),

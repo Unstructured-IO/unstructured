@@ -1,0 +1,162 @@
+[
+  {
+    "type": "Title",
+    "element_id": "5fc3b3d02c954fce8bdb8742665da14d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "LayoutParser: A Unified Toolkit for DL-Based DIA 5,"
+  },
+  {
+    "type": "FigureCaption",
+    "element_id": "53522497f48d7f32acd862a28dee0253",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "‘Table 1: Current layout detection models in the LayoutParser model z00"
+  },
+  {
+    "type": "Table",
+    "element_id": "5abf71b206592971d65a1e67d1767283",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "Dataset | Bare Model! Large Mode! | Noter PablagNee [5] P/M M_|Tayous of moder scientie documents Rima [) « = | tagout of scanned modern magains and cee reports Newspaper [IT]| FP {Layout of ranned US nemepapers fom the 2h entry ‘Thbtebenk (i) | ‘able epon cn modern aciente and business document apace 1) |_P/M =| tagout of itary Inpanere documents"
+  },
+  {
+    "type": "FigureCaption",
+    "element_id": "5ea2a1fafef2b04f62fc83deab5c6a5d",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "Sek ca pe ogee ile Se riot (ade ines ores Tsbooe 09, pect, One ca nin moose cet acct ie Ptr LOND Bi (7) and Mask ‘hay tn Hee tens Te platen etd sete it bem ee me"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "62253f3b9ad80b81d9fe3656d597ba21",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "layout data structures, which are optimized for efficiency and versatility. 3) When necessary, users can employ existing or customized OCR models via the unified API provided in the OCR module. 4) LayoutParser comes with a set of utility fanctions for the visualization and storage of the layout data. 5) LayoutParser is also highly customizable, via its integration with functions for layout data annotation and model training We now provide detailed descriptions for each component."
+  },
+  {
+    "type": "Title",
+    "element_id": "958174bfb8153f0b2c1d247196bcf8b1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "3.1 Layout Detection Models"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f72c039d55d8062b540b8f075bf697fb",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "In LayoutParser, a layout model takes a document image as an input and generates a list of rectangular boxes for the target content regions. Different from traditional methods, it relies on deep convolutional neural networks rather than manually curated rules to identify content regions. It is formulated as an object detection problem and state-of-the-art’ models like Faster R-CNNY [28] and Mask R-CNN [12] are used. ‘This yields prediction results of high accuracy and makes it possible to build a concise, generalized interface for layout detection. LayoutParser, built upon Detectron? [38], provides a minimal API that can perform layout detection with only four lines of code in Python:"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "742f93af10c235d2612a2b85c7ce9294",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "\\ import layoutparser as 1p"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "79e0a3c1350f942562679b971915d272",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "2 image = cv2.imread(\"image_file\") # load images"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "("
+  },
+  {
+    "type": "ListItem",
+    "element_id": "cd84964c612152f5362ee38fab9cad62",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "» model = 1p. Detectron2LayoutModel"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "252ce669ee21ceee8521053e783bf50a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "\"1p: //PubLayllet /faster_renn_t |-50_FPI_3x/config\")"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "4"
+  },
+  {
+    "type": "Title",
+    "element_id": "cfacfd3ec33b9608b59a343d05da204c",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "detect"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "ec23428744214fb4e7dd4d5d25939ae9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "layout = model. (image)"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9e7beafe373dc2fbff761d7997defec9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "LayoutParser provides a wealth of pre-trained model weights using various datasets covering different languages, time periods, and document types. Due to domain shift [7], the prediction performance can notably drop when models are ap- plied to target samples that are significantly different from the training dataset. As document structures and layouts vary greatly in different domains, itis important to select models trained on adataset similar to the test samples. A semantic syntax is used for initializing the model weights in LayoutParser, using both the dataset name and model name 1p://<dataset-nane>/<nodel-archi tecture-nane>."
+  }
+]

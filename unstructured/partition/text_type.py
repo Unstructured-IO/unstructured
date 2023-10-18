@@ -253,8 +253,7 @@ def under_non_alpha_ratio(text: str, threshold: float = 0.5):
 
     alpha_count = len([char for char in text if char.strip() and char.isalpha()])
     total_count = len([char for char in text if char.strip()])
-    ratio = alpha_count / total_count
-    return ratio < threshold
+    return ((alpha_count / total_count) < threshold) if total_count > 0 else False
 
 
 def exceeds_cap_ratio(text: str, threshold: float = 0.5) -> bool:

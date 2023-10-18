@@ -1,20 +1,21 @@
+from __future__ import annotations
+
 import json
 import os
 import pathlib
 
 import pytest
 
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import group_broken_paragraphs
 from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
-from unstructured.partition.json import partition_json
 from unstructured.partition.text import (
     combine_paragraphs_less_than_min,
     partition_text,
     split_content_to_fit_max,
 )
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -493,22 +494,16 @@ def test_partition_text_with_unique_ids():
 
 
 @pytest.mark.parametrize(
-    ("filename", "encoding"),
+    ("file_name", "encoding"),
     [
         ("fake-text.txt", "utf-8"),
         ("fake-text.txt", None),
         ("fake-text-utf-16-be.txt", "utf-16-be"),
     ],
 )
-def test_partition_text_with_json(filename, encoding):
-    filename_path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-    elements = partition_text(filename=filename_path, encoding=encoding)
-    test_elements = partition_json(text=elements_to_json(elements))
-
-    assert len(elements) == len(test_elements)
-    assert elements[0].metadata.filename == test_elements[0].metadata.filename
-    for i in range(len(elements)):
-        assert elements[i] == test_elements[i]
+def test_partition_text_with_json(file_name: str, encoding: str | None):
+    elements = partition_text(example_doc_path(file_name), encoding=encoding)
+    assert_round_trips_through_JSON(elements)
 
 
 def test_add_chunking_strategy_on_partition_text(filename="example-docs/norwich-city.txt"):
@@ -547,5 +542,7 @@ def test_partition_text_element_metadata_raises_TypeError():
 def test_partition_text_detects_more_than_3_languages():
     filename = "example-docs/language-docs/UDHR_first_article_all.txt"
     elements = partition_text(filename=filename, detect_language_per_element=True)
-    langs = list({element.metadata.languages[0] for element in elements})
+    langs = list(
+        {element.metadata.languages[0] for element in elements if element.metadata.languages},
+    )
     assert len(langs) > 10

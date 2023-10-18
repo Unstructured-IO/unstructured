@@ -8,13 +8,17 @@ from dataclasses import dataclass, field
 from multiprocessing.managers import DictProxy
 from pathlib import Path
 
+import backoff
 from dataclasses_json import DataClassJsonMixin
 
+from unstructured.ingest.error import SourceConnectionNetworkError
+from unstructured.ingest.ingest_backoff import RetryHandler
 from unstructured.ingest.interfaces import (
     BaseDestinationConnector,
     BaseSourceConnector,
     PartitionConfig,
     ProcessorConfig,
+    RetryStrategyConfig,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
@@ -49,6 +53,11 @@ class PipelineNode(DataClassJsonMixin, ABC):
 
     def __call__(self, iterable: t.Optional[t.Iterable[t.Any]] = None) -> t.Any:
         iterable = iterable if iterable else []
+        if iterable:
+            logger.info(
+                f"Calling {self.__class__.__name__} " f"with {len(iterable)} docs",  # type: ignore
+            )
+
         self.initialize()
         if not self.supported_multiprocessing():
             if iterable:
@@ -67,6 +76,9 @@ class PipelineNode(DataClassJsonMixin, ABC):
                 initargs=(logging.DEBUG if self.pipeline_context.verbose else logging.INFO,),
             ) as pool:
                 self.result = pool.map(self.run, iterable)
+        # Remove None which may be caused by failed docs that didn't raise an error
+        if isinstance(self.result, t.Iterable):
+            self.result = [r for r in self.result if r is not None]
         return self.result
 
     def supported_multiprocessing(self) -> bool:
@@ -80,6 +92,7 @@ class PipelineNode(DataClassJsonMixin, ABC):
         if path := self.get_path():
             logger.info(f"Creating {path}")
             path.mkdir(parents=True, exist_ok=True)
+        ingest_log_streaming_init(logging.DEBUG if self.pipeline_context.verbose else logging.INFO)
 
     def get_path(self) -> t.Optional[Path]:
         return None
@@ -116,12 +129,28 @@ class SourceNode(PipelineNode):
     Output of logic expected to be the json outputs of the data itself
     """
 
+    retry_strategy_config: t.Optional[RetryStrategyConfig] = None
+
+    @property
+    def retry_strategy(self) -> t.Optional[RetryHandler]:
+        if retry_strategy_config := self.retry_strategy_config:
+            return RetryHandler(
+                backoff.expo,
+                SourceConnectionNetworkError,
+                max_time=retry_strategy_config.max_retry_time,
+                max_tries=retry_strategy_config.max_retries,
+                logger=logger,
+                start_log_level=logger.level,
+                backoff_log_level=logger.level,
+            )
+        return None
+
     def initialize(self):
         logger.info("Running source node to download data associated with ingest docs")
         super().initialize()
 
     @abstractmethod
-    def run(self, ingest_doc_json: str) -> str:
+    def run(self, ingest_doc_json: str) -> t.Optional[str]:
         pass
 
 
@@ -148,7 +177,7 @@ class PartitionNode(PipelineNode):
         return hashlib.sha256(json.dumps(hash_dict, sort_keys=True).encode()).hexdigest()[:32]
 
     @abstractmethod
-    def run(self, json_path: str) -> str:
+    def run(self, json_path: str) -> t.Optional[str]:
         pass
 
     def get_path(self) -> Path:
@@ -162,7 +191,9 @@ class ReformatNode(PipelineNode, ABC):
     content from partition before writing it
     """
 
-    pass
+    @abstractmethod
+    def run(self, elements_json: str) -> t.Optional[str]:
+        pass
 
 
 @dataclass
@@ -201,4 +232,19 @@ class CopyNode(PipelineNode):
 
     @abstractmethod
     def run(self, json_path: str):
+        pass
+
+
+@dataclass
+class PermissionsNode(PipelineNode):
+    """
+    Encapsulated logic to do operations on permissions related data.
+    """
+
+    def initialize(self):
+        logger.info("Running permissions node to cleanup the permissions folder")
+        super().initialize()
+
+    @abstractmethod
+    def run(self):
         pass
