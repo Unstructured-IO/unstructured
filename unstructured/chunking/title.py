@@ -1,4 +1,4 @@
-"""Implementation of chunking.
+"""Implementation of chunking by title.
 
 Main entry point is the `@add_chunking_strategy()` decorator.
 """
