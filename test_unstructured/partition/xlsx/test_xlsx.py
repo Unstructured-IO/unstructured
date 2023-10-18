@@ -226,6 +226,12 @@ def test_partition_xlsx_subtables(filename="example-docs/vodafone.xlsx"):
     assert len(elements) == 6
 
 
+def test_partition_xlsx_not_find_subtable(filename="example-docs/vodafone.xlsx"):
+    elements = partition_xlsx(filename, find_subtable=False)
+    assert sum(isinstance(element, Table) for element in elements) == 1
+    assert len(elements) == 1
+
+
 def test_partition_xlsx_element_metadata_has_languages():
     filename = "example-docs/stanley-cups.xlsx"
     elements = partition_xlsx(filename=filename)

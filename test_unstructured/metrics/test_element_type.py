@@ -40,6 +40,12 @@ def test_get_element_type_frequency(filename, frequency):
     assert elements_freq == frequency
 
 
+def test_get_element_type_frequency_zero_len():
+    elements = partition(filename=f"example-docs/blank.xlsx")
+    elements_freq = get_element_type_frequency(elements_to_json(elements))
+    assert len(elements_freq) == 0
+
+
 @pytest.mark.parametrize(
     ("filename", "expected_frequency", "percent_matched"),
     [
@@ -107,3 +113,11 @@ def test_calculate_element_type_percent_match(filename, expected_frequency, perc
         round(calculate_element_type_percent_match(elements_frequency, expected_frequency, 0.8), 2)
         == percent_matched[2]
     )
+
+
+def test_calculate_element_type_percent_match_zero_source_output():
+    with_frequency = {("Header", None): 1}
+    elements = partition(filename=f"example-docs/blank.xlsx")
+    no_frequency = get_element_type_frequency(elements_to_json(elements))
+    assert calculate_element_type_percent_match(with_frequency, no_frequency) == 0.0
+    assert calculate_element_type_percent_match(no_frequency, with_frequency) == 0.0

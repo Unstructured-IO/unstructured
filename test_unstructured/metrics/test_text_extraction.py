@@ -216,3 +216,10 @@ def test_calculate_percent_missing_text(output_text, source_text, expected_perce
         text_extraction.calculate_percent_missing_text(output_text, source_text)
         == expected_percentage
     )
+
+
+def test_error_return_type():
+    output_elements = partition(filename=f"example-docs/fake-text.txt")
+    source_elements = partition(filename=f"example-docs/fake-text.txt")
+    with pytest.raises(ValueError):
+        text_extraction.calculate_edit_distance(output_elements, source_elements, "typo")
