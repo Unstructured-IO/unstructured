@@ -21,6 +21,7 @@ from .dropbox import get_base_src_cmd as dropbox_base_src_cmd
 from .elasticsearch import get_base_src_cmd as elasticsearch_base_src_cmd
 from .fsspec import get_base_dest_cmd as fsspec_base_dest_cmd
 from .fsspec import get_base_src_cmd as fsspec_base_src_cmd
+from .gcs import get_base_dest_cmd as gcs_base_dest_cmd
 from .gcs import get_base_src_cmd as gcs_base_src_cmd
 from .github import get_base_src_cmd as github_base_src_cmd
 from .gitlab import get_base_src_cmd as gitlab_base_src_cmd
@@ -84,6 +85,7 @@ base_dest_cmd_fns: t.List[t.Callable[[], "BaseDestCmd"]] = [
     box_base_dest_cmd,
     dropbox_base_dest_cmd,
     fsspec_base_dest_cmd,
+    gcs_base_dest_cmd,
     s3_base_dest_cmd,
     azure_cognitive_search_base_dest_cmd,
     delta_table_dest_cmd,
