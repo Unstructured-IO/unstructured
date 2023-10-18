@@ -152,9 +152,9 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GH_CREATE_PR_TOKEN }}
-          add-paths: 
-            - test_unstructured_ingest/expected-structured-output
-            - test_unstructured_ingest/metrics
+          add-paths:
+            test_unstructured_ingest/expected-structured-output
+            test_unstructured_ingest/metrics
           commit-message: "Update ingest test fixtures"
           branch: ${{ env.BRANCH_NAME }}
           title: "${{ env.PR_NAME }} <- Ingest test fixtures update"
