@@ -256,11 +256,11 @@ def test_partition_image_default_strategy_hi_res():
         elements = image.partition_image(file=f)
 
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 2
-    assert elements[idx].text == title
-    assert elements[idx].metadata.coordinates is not None
-    assert elements[idx].metadata.detection_class_prob is not None
-    assert isinstance(elements[idx].metadata.detection_class_prob, float)
+    title_idx = 3
+    assert elements[title_idx].text == title
+    assert elements[title_idx].metadata.coordinates is not None
+    assert elements[title_idx].metadata.detection_class_prob is not None
+    assert isinstance(elements[title_idx].metadata.detection_class_prob, float)
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
         assert {element.metadata.detection_origin for element in elements} == {"image"}
 
