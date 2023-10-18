@@ -10,10 +10,11 @@ from unstructured.ingest.cli.common import (
 from unstructured.ingest.cli.interfaces import (
     CliMixin,
 )
-from unstructured.ingest.cli.utils import conform_click_options, extract_configs
-from unstructured.ingest.interfaces import BaseConfig, FsspecConfig
+from unstructured.ingest.cli.utils import conform_click_options, orchestrate_runner
+from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import FsspecBaseRunner, runner_map
+
+pass
 
 
 @dataclass
@@ -68,21 +69,12 @@ def azure_cognitive_search_dest(ctx: click.Context, **options):
     log_options(parent_options, verbose=verbose)
     log_options(options, verbose=verbose)
     try:
-        runner_cls = runner_map[source_cmd]
-        configs = extract_configs(
-            parent_options,
-            extras={"fsspec_config": FsspecConfig}
-            if issubclass(runner_cls, FsspecBaseRunner)
-            else None,
-        )
-        runner_cls = runner_map[source_cmd]
-        runner = runner_cls(
-            **configs,  # type: ignore
+        orchestrate_runner(
+            source_cmd=source_cmd,
             writer_type="azure_cognitive_search",
-            writer_kwargs=options,
-        )
-        runner.run(
-            **parent_options,
+            parent_options=parent_options,
+            options=options,
+            validate=[AzureCognitiveSearchCliWriteConfig],
         )
     except Exception as e:
         logger.error(e, exc_info=True)

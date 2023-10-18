@@ -10,10 +10,16 @@ from unstructured.ingest.cli.common import (
 from unstructured.ingest.cli.interfaces import (
     CliMixin,
 )
-from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
-from unstructured.ingest.interfaces import BaseConfig, FsspecConfig
+from unstructured.ingest.cli.utils import (
+    Group,
+    add_options,
+    conform_click_options,
+    extract_configs,
+    orchestrate_runner,
+)
+from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import DeltaTableRunner, FsspecBaseRunner, runner_map
+from unstructured.ingest.runner import DeltaTableRunner
 
 
 @dataclass
@@ -118,23 +124,12 @@ def delta_table_dest(ctx: click.Context, **options):
     log_options(parent_options, verbose=verbose)
     log_options(options, verbose=verbose)
     try:
-        runner_cls = runner_map[source_cmd]
-        configs = extract_configs(
-            parent_options,
-            extras={"fsspec_config": FsspecConfig}
-            if issubclass(runner_cls, FsspecBaseRunner)
-            else None,
-        )
-        # Validate write configs
-        DeltaTableCliWriteConfig.from_dict(options)
-        runner_cls = runner_map[source_cmd]
-        runner = runner_cls(
-            **configs,  # type: ignore
+        orchestrate_runner(
+            source_cmd=source_cmd,
             writer_type="delta_table",
-            writer_kwargs=options,
-        )
-        runner.run(
-            **parent_options,
+            parent_options=parent_options,
+            options=options,
+            validate=[DeltaTableCliWriteConfig],
         )
     except Exception as e:
         logger.error(e, exc_info=True)

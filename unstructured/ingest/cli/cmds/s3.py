@@ -11,10 +11,16 @@ from unstructured.ingest.cli.interfaces import (
     CliFilesStorageConfig,
     CliMixin,
 )
-from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
+from unstructured.ingest.cli.utils import (
+    Group,
+    add_options,
+    conform_click_options,
+    extract_configs,
+    orchestrate_runner,
+)
 from unstructured.ingest.interfaces import BaseConfig, FsspecConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import FsspecBaseRunner, S3Runner, runner_map
+from unstructured.ingest.runner import S3Runner
 
 
 @dataclass
@@ -85,24 +91,12 @@ def s3_dest(ctx: click.Context, **options):
     log_options(parent_options, verbose=verbose)
     log_options(options, verbose=verbose)
     try:
-        runner_cls = runner_map[source_cmd]
-        configs = extract_configs(
-            parent_options,
-            validate=[S3CliConfig],
-            extras={"fsspec_config": FsspecConfig}
-            if issubclass(runner_cls, FsspecBaseRunner)
-            else None,
-        )
-        # validate dest cli
-        S3CliConfig.from_dict(options)
-        CliFilesStorageConfig.from_dict(options)
-        runner = runner_cls(
-            **configs,  # type: ignore
+        orchestrate_runner(
+            source_cmd=source_cmd,
             writer_type="s3",
-            writer_kwargs=options,
-        )
-        runner.run(
-            **parent_options,
+            parent_options=parent_options,
+            options=options,
+            validate=[S3CliConfig, CliFilesStorageConfig],
         )
     except Exception as e:
         logger.error(e, exc_info=True)
