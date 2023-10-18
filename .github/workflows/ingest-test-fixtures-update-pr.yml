@@ -100,6 +100,7 @@ jobs:
           ENTIRE_PAGE_OCR: "tesseract"
           OVERWRITE_FIXTURES: "true"
           CI: "true"
+          CURRENT_BRANCH: ${{ github.ref }}
         run: |
           source .venv/bin/activate
           sudo apt-get update

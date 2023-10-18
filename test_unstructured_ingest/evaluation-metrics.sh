@@ -33,6 +33,8 @@ PARENT_DIR=$(dirname "$SCRIPT_DIR")
 # Commit and push the changes
 git config --global --edit
 git commit --amend --reset-author
+git config --global merge.ff false
+
 git add "$PARENT_DIR"/"$EXPORT_DIR"
-git commit -m "automated evaluation metric reports"
+git commit -m "Automated evaluation metric reports"
 git push origin HEAD:refs/heads/"$CURRENT_BRANCH"
