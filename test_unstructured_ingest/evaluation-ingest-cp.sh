@@ -18,7 +18,7 @@ selected_outputs=$(cat "$SCRIPT_DIR/files/selected-outputs.txt")
 # selected outputs in the txt file, copy to the destination
 for file in "${structured_outputs[@]}"; do
   if [[ "${selected_outputs[*]}" =~ $(basename "$file") ]] ; then
-    echo "-- Copying $file to $CP_DIR"
+    echo "----- Copying $file to $CP_DIR"
     cp "$file" "$CP_DIR"
   fi
 done 

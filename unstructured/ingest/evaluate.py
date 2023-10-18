@@ -120,6 +120,7 @@ def measure_edit_distance(
         ],
     )
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_rows, headers)
+    _display(agg_rows, headers)
 
 
 def _listdir_recursive(dir: str):
@@ -142,6 +143,24 @@ def _write_to_file(dir: str, filename: str, rows: List[Any], headers: List[Any])
         writer = csv.writer(tsv, delimiter="\t")
         writer.writerow(headers)
         writer.writerows(rows)
+
+
+def _display(rows, headers):
+    col_widths = [
+        max(len(headers[i]), max(len(str(row[i])) for row in rows)) for i in range(len(headers))
+    ]
+    click.echo(" ".join(headers[i].ljust(col_widths[i]) for i in range(len(headers))))
+    click.echo("-" * sum(col_widths) + "-" * (len(headers) - 1))
+    for row in rows:
+        formatted_row = []
+        for item in row:
+            if isinstance(item, float):
+                formatted_row.append(f"{item:.3f}")
+            else:
+                formatted_row.append(str(item))
+        click.echo(
+            " ".join(formatted_row[i].ljust(col_widths[i]) for i in range(len(formatted_row)))
+        )
 
 
 def _mean(scores: List[float]):
