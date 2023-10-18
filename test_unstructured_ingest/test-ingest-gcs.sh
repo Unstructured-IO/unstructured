@@ -29,7 +29,7 @@ fi
 
 # Create temporary service key file
 GCP_INGEST_SERVICE_KEY_FILE=$(mktemp)
-echo "$GCP_INGEST_SERVICE_KEY" >"$GCP_INGEST_SERVICE_KEY_FILE"
+echo "$GCP_INGEST_SERVICE_KEY" > "$GCP_INGEST_SERVICE_KEY_FILE"
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     gcs \

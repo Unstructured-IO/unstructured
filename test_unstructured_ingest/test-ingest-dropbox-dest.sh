@@ -9,6 +9,7 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 DESTINATION_DROPBOX="/test-output/$(date +%s)"
+CI=${CI:-"false"}
 
 if [ -z "$DROPBOX_APP_KEY" ] || [ -z "$DROPBOX_APP_SECRET" ] || [ -z "$DROPBOX_REFRESH_TOKEN" ]; then
    echo "Skipping Dropbox ingest test because one or more of these env vars is not set:"
@@ -25,6 +26,9 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
+  if [ "$CI" == "true" ]; then
+    cleanup_dir "$DOWNLOAD_DIR"
+  fi
 
   echo "deleting test folder $DESTINATION_DROPBOX"
   curl -X POST https://api.dropboxapi.com/2/files/delete_v2 \
