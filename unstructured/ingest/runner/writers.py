@@ -76,8 +76,36 @@ def delta_table_writer(
     )
 
 
+@requires_dependencies(["pinecone-client"], extras="pinecone")
+def pinecone_writer(
+    api_key: str,
+    index_name: str,
+    environment: str,
+    **kwargs,
+):
+    from unstructured.ingest.connector.pinecone import (
+        PineconeDestinationConnector,
+        PineconeWriteConfig,
+        SimplePineconeConfig,
+    )
+
+    return PineconeDestinationConnector(
+        connector_config=SimplePineconeConfig(
+            api_key=api_key,
+            index_name=index_name,
+            environment=environment,
+        ),
+        write_config=PineconeWriteConfig(
+            api_key=api_key,
+            index_name=index_name,
+            environment=environment,
+        ),
+    )
+
+
 writer_map: t.Dict[str, t.Callable] = {
     "s3": s3_writer,
     "delta_table": delta_table_writer,
     "azure_cognitive_search": azure_cognitive_search_writer,
+    "pinecone": pinecone_writer,
 }
