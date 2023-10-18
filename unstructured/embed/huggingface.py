@@ -1,7 +1,6 @@
 from typing import List, Optional
 
 import numpy as np
-from langchain.embeddings import HuggingFaceEmbeddings
 
 from unstructured.documents.elements import (
     Element,
@@ -26,24 +25,9 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
 
         self.initialize()
 
-    @EmbeddingEncoderConnectionError.wrap
-    @requires_dependencies(
-        ["langchain", "sentence_transformers"],
-        extras="embed-huggingface",
-    )
     def initialize(self):
         """Creates a langchain HuggingFace object to embed elements."""
-
-        self.hf = HuggingFaceEmbeddings(
-            model_name=self.model_name,
-            model_kwargs=self.model_kwargs,
-            encode_kwargs=self.encode_kwargs,
-            cache_folder=self.cache_folder,
-        )
-
-        self.examplary_embedding = self.hf.embed_query("Q")
-
-        return self.hf
+        self.hf = self.get_huggingface_client()
 
     def num_of_dimensions(self):
         return np.shape(self.examplary_embedding)
@@ -67,3 +51,24 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
             element.embeddings = embeddings[i]
             elements_w_embedding.append(element)
         return elements
+
+    @EmbeddingEncoderConnectionError.wrap
+    @requires_dependencies(
+        ["langchain", "sentence-transformers"],
+        extras="embed-huggingface",
+    )
+    def get_huggingface_client(self):
+        """Creates a langchain Huggingface python client to embed elements."""
+        if hasattr(self, "hf_client"):
+            return self.hf_client
+
+        from langchain.embeddings import HuggingFaceEmbeddings
+
+        hf_client = HuggingFaceEmbeddings(
+            model_name=self.model_name,
+            model_kwargs=self.model_kwargs,
+            encode_kwargs=self.encode_kwargs,
+            cache_folder=self.cache_folder,
+        )
+        self.examplary_embedding = hf_client.embed_query("Q")
+        return hf_client
