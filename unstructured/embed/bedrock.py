@@ -1,7 +1,6 @@
 from typing import List
 
 import numpy as np
-import boto3
 
 from unstructured.documents.elements import (
     Element,
@@ -9,10 +8,15 @@ from unstructured.documents.elements import (
 from unstructured.embed.interfaces import BaseEmbeddingEncoder
 from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
-from langchain.embeddings import BedrockEmbeddings
+
 
 class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
-    def __init__(self, aws_access_key_id: str, aws_secret_access_key: str, region_name: str = "us-west-2"):
+    def __init__(
+        self,
+        aws_access_key_id: str,
+        aws_secret_access_key: str,
+        region_name: str = "us-west-2",
+    ):
         self.aws_access_key_id = aws_access_key_id
         self.aws_secret_access_key = aws_secret_access_key
         self.region_name = region_name
@@ -39,7 +43,6 @@ class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
         assert len(elements) == len(embeddings)
         elements_w_embedding = []
         for i, element in enumerate(elements):
-            original_method = element.to_dict
             element.embeddings = embeddings[i]
             elements_w_embedding.append(element)
         return elements
@@ -53,11 +56,15 @@ class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
         if getattr(self, "bedrock_client", None):
             return self.bedrock_client
 
+        # delay import only when needed
+        import boto3
+        from langchain.embeddings import BedrockEmbeddings
+
         bedrock_runtime = boto3.client(
             service_name="bedrock-runtime",
             aws_access_key_id=self.aws_access_key_id,
             aws_secret_access_key=self.aws_secret_access_key,
-            region_name=self.region_name
+            region_name=self.region_name,
         )
 
         bedrock_client = BedrockEmbeddings(client=bedrock_runtime)
