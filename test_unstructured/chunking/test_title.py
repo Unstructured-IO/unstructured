@@ -107,7 +107,6 @@ def test_chunk_by_title():
     )
 
 
-@pytest.mark.xfail(reason="regex_metadata was wrong type", raises=AssertionError, strict=True)
 def test_chunk_by_title_respects_section_change():
     elements: List[Element] = [
         Title("A Great Day", metadata=ElementMetadata(section="first")),
@@ -145,7 +144,6 @@ def test_chunk_by_title_respects_section_change():
     ]
 
 
-@pytest.mark.xfail(reason="regex_metadata was wrong type", raises=AssertionError, strict=True)
 def test_chunk_by_title_separates_by_page_number():
     elements: List[Element] = [
         Title("A Great Day", metadata=ElementMetadata(page_number=1)),
@@ -183,9 +181,6 @@ def test_chunk_by_title_separates_by_page_number():
     ]
 
 
-@pytest.mark.xfail(
-    reason="bug: chunks break on regex_metadata differences", raises=AssertionError, strict=True
-)
 def test_chunk_by_title_does_not_break_on_regex_metadata_change():
     """Sectioner is insensitive to regex-metadata changes.
 
@@ -223,7 +218,6 @@ def test_chunk_by_title_does_not_break_on_regex_metadata_change():
     ]
 
 
-@pytest.mark.xfail(reason="regex_metadata was wrong type", raises=AssertionError, strict=True)
 def test_chunk_by_title_groups_across_pages():
     elements: List[Element] = [
         Title("A Great Day", metadata=ElementMetadata(page_number=1)),

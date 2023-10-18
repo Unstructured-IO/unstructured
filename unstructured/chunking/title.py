@@ -181,10 +181,10 @@ def _split_elements_by_title_and_table(
     section: List[Element] = []
 
     for i, element in enumerate(elements):
-        metadata_matches = True
+        metadata_differs = False
         if i > 0:
             last_element = elements[i - 1]
-            metadata_matches = _metadata_matches(
+            metadata_differs = _metadata_differs(
                 element.metadata,
                 last_element.metadata,
                 include_pages=not multipage_sections,
@@ -195,7 +195,7 @@ def _split_elements_by_title_and_table(
         new_section = (
             (section_length + len(str(element)) > max_characters)
             or (isinstance(element, Title) and section_length > combine_text_under_n_chars)
-            or (not metadata_matches or section_length > new_after_n_chars)
+            or (metadata_differs or section_length > new_after_n_chars)
         )
         if not isinstance(element, Text) or isinstance(element, Table):
             sections.append(section)
@@ -215,44 +215,20 @@ def _split_elements_by_title_and_table(
     return sections
 
 
-def _metadata_matches(
+def _metadata_differs(
     metadata1: ElementMetadata,
     metadata2: ElementMetadata,
     include_pages: bool = True,
 ) -> bool:
-    metadata_dict1 = metadata1.to_dict()
-    metadata_dict1 = _drop_extra_metadata(metadata_dict1, include_pages=include_pages)
+    """True when metadata differences between two elements indicate a semantic boundary.
 
-    metadata_dict2 = metadata2.to_dict()
-    metadata_dict2 = _drop_extra_metadata(metadata_dict2, include_pages=include_pages)
-
-    return metadata_dict1 == metadata_dict2
-
-
-def _drop_extra_metadata(
-    metadata_dict: Dict[str, Any],
-    include_pages: bool = True,
-) -> Dict[str, Any]:
-    keys_to_drop = [
-        "element_id",
-        "type",
-        "coordinates",
-        "parent_id",
-        "category_depth",
-        "detection_class_prob",
-    ]
-    if not include_pages and "page_number" in metadata_dict:
-        keys_to_drop.append("page_number")
-
-    for key, value in metadata_dict.items():
-        if isinstance(value, list):
-            keys_to_drop.append(key)
-
-    for key in keys_to_drop:
-        if key in metadata_dict:
-            del metadata_dict[key]
-
-    return metadata_dict
+    Currently this is only a page-number change or a section change.
+    """
+    if metadata1.section != metadata2.section:
+        return True
+    if include_pages and metadata1.page_number != metadata2.page_number:
+        return True
+    return False
 
 
 _P = ParamSpec("_P")
