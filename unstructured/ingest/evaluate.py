@@ -159,7 +159,7 @@ def _display(rows, headers):
             else:
                 formatted_row.append(str(item))
         click.echo(
-            " ".join(formatted_row[i].ljust(col_widths[i]) for i in range(len(formatted_row)))
+            " ".join(formatted_row[i].ljust(col_widths[i]) for i in range(len(formatted_row))),
         )
 
 

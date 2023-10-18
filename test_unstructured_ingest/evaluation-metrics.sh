@@ -23,6 +23,14 @@ function cleanup() {
 }
 trap cleanup EXIT
 
+EXPORT_DIR=evaluation-metrics
 PYTHONPATH=. ./unstructured/ingest/evaluate.py \
     --output_dir "$OUTPUT_DIR" \
-    --source_dir "$CCT_DIR" 
+    --source_dir "$CCT_DIR" \
+    --export_dir "$EXPORT_DIR"
+
+PARENT_DIR=$(dirname "$SCRIPT_DIR")
+# Commit and push the changes
+git add $PARENT_DIR/$EXPORT_DIR
+git commit -m "add evaluation metrics"
+git push
