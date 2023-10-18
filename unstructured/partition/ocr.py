@@ -411,7 +411,7 @@ def get_ocr_layout_from_image(
             # with numbers very close to 1 inside cv2 image processing
             zoom = np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1)
             ocr_df = unstructured_pytesseract.image_to_data(
-                zoom_image(np.array(image), zoom),
+                np.array(zoom_image(image, zoom)),
                 lang=ocr_languages,
                 output_type=Output.DATAFRAME,
             )
