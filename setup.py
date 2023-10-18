@@ -40,6 +40,7 @@ def load_requirements(file_list: Optional[Union[str, List[str]]] = None) -> List
 
 
 csv_reqs = load_requirements("requirements/extra-csv.in")
+bedrock_reqs = load_requirements("requirements/extra-bedrock.in")
 doc_reqs = load_requirements("requirements/extra-docx.in")
 docx_reqs = load_requirements("requirements/extra-docx.in")
 epub_reqs = load_requirements("requirements/extra-epub.in")
@@ -59,6 +60,7 @@ xlsx_reqs = load_requirements("requirements/extra-xlsx.in")
 all_doc_reqs = list(
     set(
         csv_reqs
+        + bedrock_reqs
         + docx_reqs
         + epub_reqs
         + image_reqs
@@ -111,6 +113,7 @@ setup(
         # Document specific extra requirements
         "all-docs": all_doc_reqs,
         "csv": csv_reqs,
+        "bedrock": bedrock_reqs,
         "doc": doc_reqs,
         "docx": docx_reqs,
         "epub": epub_reqs,
