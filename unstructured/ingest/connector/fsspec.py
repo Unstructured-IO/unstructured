@@ -256,9 +256,13 @@ class FsspecDestinationConnector(BaseDestinationConnector):
 
         logger.info(f"Writing content using filesystem: {type(fs).__name__}")
 
-        dest_folder = self.connector_config.path_without_protocol
-        dest_output_path = str(PurePath(dest_folder, filename)) if filename else dest_folder
-        full_dest_path = f"{self.connector_config.protocol}://{dest_output_path}"
+        output_folder = self.connector_config.path_without_protocol
+        output_folder = os.path.join(output_folder)  # Make sure folder ends with file seperator
+        filename = (
+            filename.strip(os.sep) if filename else filename
+        )  # Make sure filename doesn't begin with file seperator
+        output_path = str(PurePath(output_folder, filename)) if filename else output_folder
+        full_dest_path = f"{self.connector_config.protocol}://{output_path}"
         logger.debug(f"uploading content to {full_dest_path}")
         fs.write_text(
             full_dest_path,
@@ -269,7 +273,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         for doc in docs:
-            file_path = doc.base_filename
+            file_path = doc.base_output_filename
             filename = file_path if file_path else None
             with open(doc._output_filename) as json_file:
                 logger.debug(f"uploading content from {doc._output_filename}")
