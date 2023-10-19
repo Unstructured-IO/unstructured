@@ -46,7 +46,7 @@ class SimpleHubSpotConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     object_types: t.Optional[t.List[str]] = None
     custom_properties: t.Optional[t.Dict[str, t.List[str]]] = None
 
-    @requires_dependencies(["hubspot-api-client"], extras="hubspot")
+    @requires_dependencies(["hubspot"], extras="hubspot")
     def create_session_handle(self) -> HubSpotSessionHandle:
         from hubspot import HubSpot
 
@@ -151,7 +151,7 @@ class HubSpotCallIngestDoc(HubSpotIngestDoc):
         self.content_properties = ["hs_call_title", "hs_call_body"]
         self._add_custom_properties(HubSpotObjectTypes.CALLS.value)
 
-    @requires_dependencies(["hubspot-api-client"], extras="hubspot")
+    @requires_dependencies(["hubspot"], extras="hubspot")
     def get_object(self):
         from hubspot.crm.objects.calls.exceptions import NotFoundException
 
@@ -172,7 +172,7 @@ class HubSpotCommunicationIngestDoc(HubSpotIngestDoc):
         self.content_properties = ["hs_communication_body"]
         self._add_custom_properties(HubSpotObjectTypes.COMMUNICATIONS.value)
 
-    @requires_dependencies(["hubspot-api-client"], extras="hubspot")
+    @requires_dependencies(["hubspot"], extras="hubspot")
     def get_object(self):
         from hubspot.crm.objects.communications.exceptions import NotFoundException
 
@@ -189,7 +189,7 @@ class HubSpotEmailIngestDoc(HubSpotIngestDoc):
         self.content_properties = ["hs_email_subject", "hs_email_text"]
         self._add_custom_properties(HubSpotObjectTypes.EMAILS.value)
 
-    @requires_dependencies(["hubspot-api-client"], extras="hubspot")
+    @requires_dependencies(["hubspot"], extras="hubspot")
     def get_object(self):
         from hubspot.crm.objects.emails.exceptions import NotFoundException
 
@@ -210,7 +210,7 @@ class HubSpotNotesIngestDoc(HubSpotIngestDoc):
         self.content_properties = ["hs_note_body"]
         self._add_custom_properties(HubSpotObjectTypes.NOTES.value)
 
-    @requires_dependencies(["hubspot-api-client"], extras="hubspot")
+    @requires_dependencies(["hubspot"], extras="hubspot")
     def get_object(self):
         from hubspot.crm.objects.notes.exceptions import NotFoundException
 
@@ -227,7 +227,7 @@ class HubSpotProductIngestDoc(HubSpotIngestDoc):
         self.content_properties = ["description"]
         self._add_custom_properties(HubSpotObjectTypes.PRODUCTS.value)
 
-    @requires_dependencies(["hubspot-api-client"], extras="hubspot")
+    @requires_dependencies(["hubspot"], extras="hubspot")
     def get_object(self):
         from hubspot.crm.products.exceptions import NotFoundException
 
@@ -244,7 +244,7 @@ class HubSpotTicketIngestDoc(HubSpotIngestDoc):
         self.content_properties = ["subject", "content"]
         self._add_custom_properties(HubSpotObjectTypes.PRODUCTS.value)
 
-    @requires_dependencies(["hubspot-api-client"], extras="hubspot")
+    @requires_dependencies(["hubspot"], extras="hubspot")
     def get_object(self):
         from hubspot.crm.tickets.exceptions import NotFoundException
 
@@ -259,7 +259,7 @@ class HubSpotSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     def initialize(self):
         self.hubspot = self.connector_config.create_session_handle().service
 
-    @requires_dependencies(["hubspot-api-client"], extras="hubspot")
+    @requires_dependencies(["hubspot"], extras="hubspot")
     def _list_objects(self, get_page_method, ingest_doc_class):
         try:
             objects = get_page_method()
