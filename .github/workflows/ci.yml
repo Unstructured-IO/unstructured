@@ -264,11 +264,6 @@ jobs:
       uses: KengoTODA/actions-setup-docker-compose@v1
       with:
         version: '2.22.0'
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      timeout-minutes: 30
-      with:
-        limit-access-to-actor: true
     - name: Test Ingest (unit)
       run: |
         source .venv/bin/activate
