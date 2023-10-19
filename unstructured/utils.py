@@ -375,7 +375,7 @@ def draw_bboxes_on_pdf_or_image(
             if not output_folder:
                 output_folder = "./"
                 logging.warning(
-                    "No output_folder defined. Storing predictions in relative path './'"
+                    "No output_folder defined. Storing predictions in relative path './'",
                 )
 
             if save_images:
