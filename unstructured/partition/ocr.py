@@ -306,6 +306,7 @@ def get_table_tokens_per_element(
             table_tokens.append(
                 {
                     "bbox": [
+                        # token bound box is relative to table element
                         ocr_region.bbox.x1 - table_element.bbox.x1,
                         ocr_region.bbox.y1 - table_element.bbox.y1,
                         ocr_region.bbox.x2 - table_element.bbox.x1,
