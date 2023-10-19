@@ -8,7 +8,13 @@ from unittest.mock import patch
 import docx
 import pytest
 
-from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT, EXPECTED_TITLE
+from test_unstructured.partition.test_constants import (
+    EXPECTED_TABLE,
+    EXPECTED_TABLE_XLSX,
+    EXPECTED_TEXT,
+    EXPECTED_TEXT_XLSX,
+    EXPECTED_TITLE,
+)
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
@@ -342,7 +348,7 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         include_page_breaks=False,
         infer_table_structure=False,
         strategy="fast",
-        languages=["eng"],
+        languages=None,
     )
 
 
@@ -712,8 +718,8 @@ def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.x
     assert len(elements) == 4
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
-    assert elements[1].metadata.text_as_html == EXPECTED_TABLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
     assert elements[1].metadata.page_number == 1
     assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
@@ -727,8 +733,8 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert len(elements) == 4
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
-    assert elements[1].metadata.text_as_html == EXPECTED_TABLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
     assert elements[1].metadata.page_number == 1
     assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
@@ -1072,3 +1078,73 @@ def test_add_chunking_strategy_chars_on_partition_auto_adds_is_continuation():
         if i > 0 and isinstance(table, TableChunk):
             assert table.metadata.is_continuation is True
             i += 1
+
+
+EXAMPLE_LANG_DOCS = "example-docs/language-docs/eng_spa_mult."
+
+
+@pytest.mark.parametrize(
+    "file_extension",
+    [
+        "doc",
+        "docx",
+        "eml",
+        "epub",
+        "html",
+        "md",
+        "odt",
+        "org",
+        "ppt",
+        "pptx",
+        "rst",
+        "rtf",
+        "txt",
+        "xml",
+    ],
+)
+def test_partition_respects_language_arg(file_extension):
+    filename = EXAMPLE_LANG_DOCS + file_extension
+    elements = partition(filename=filename, languages=["deu"])
+    assert all(element.metadata.languages == ["deu"] for element in elements)
+
+
+def test_partition_respects_detect_language_per_element_arg():
+    filename = "example-docs/language-docs/eng_spa_mult.txt"
+    elements = partition(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+# check that the ["eng"] default in `partition` does not overwrite the ["auto"]
+# default in other `partition_` functions.
+def test_partition_default_does_not_overwrite_other_defaults():
+    # the default for `languages` is ["auto"] in partiton_text
+    from unstructured.partition.text import partition_text
+
+    # Use a document that is primarily in a language other than English
+    filename = "example-docs/language-docs/UDHR_first_article_all.txt"
+    text_elements = partition_text(filename)
+    assert text_elements[0].metadata.languages != ["eng"]
+
+    auto_elements = partition(filename)
+    assert auto_elements[0].metadata.languages != ["eng"]
+    assert auto_elements[0].metadata.languages == text_elements[0].metadata.languages
+
+
+def test_partition_languages_default_to_None():
+    filename = "example-docs/handbook-1p.docx"
+    elements = partition(filename=filename, detect_language_per_element=True)
+    # PageBreak and other elements with no text will have `None` for `languages`
+    none_langs = [element for element in elements if element.metadata.languages is None]
+    assert none_langs[0].text == ""
+
+
+def test_partition_languages_incorrectly_defaults_to_English(tmpdir):
+    # We don't totally rely on langdetect for short text, so text like the following that is
+    # in German will be labeled as English.
+    german = "Ein kurzer Satz."
+    filepath = os.path.join(tmpdir, "short-german.txt")
+    with open(filepath, "w") as f:
+        f.write(german)
+    elements = partition(filepath)
+    assert elements[0].metadata.languages == ["eng"]

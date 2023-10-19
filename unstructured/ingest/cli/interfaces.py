@@ -1,5 +1,6 @@
 import typing as t
 from abc import abstractmethod
+from dataclasses import fields
 from gettext import ngettext
 from pathlib import Path
 
@@ -10,9 +11,12 @@ from unstructured.ingest.interfaces import (
     BaseConfig,
     ChunkingConfig,
     EmbeddingConfig,
+    FileStorageConfig,
     PartitionConfig,
+    PermissionsConfig,
     ProcessorConfig,
     ReadConfig,
+    RetryStrategyConfig,
 )
 
 
@@ -58,6 +62,45 @@ class CliMixin:
         pass
 
 
+class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--max-retries"],
+                default=None,
+                type=int,
+                help="If provided, will use this max retry for "
+                "back off strategy if http calls fail",
+            ),
+            click.Option(
+                ["--max-retry-time"],
+                default=None,
+                type=float,
+                help="If provided, will attempt retries for this long as part "
+                "of back off strategy if http calls fail",
+            ),
+        ]
+        cmd.params.extend(options)
+
+    @classmethod
+    def from_dict(
+        cls,
+        kvs: Json,
+        *,
+        infer_missing=False,
+    ):
+        """
+        Return None if none of the fields are being populated
+        """
+        if isinstance(kvs, dict):
+            field_names = {field.name for field in fields(cls) if field.name in kvs}
+            field_values = [kvs.get(n) for n in field_names if kvs.get(n)]
+            if not field_values:
+                return None
+        return _decode_dataclass(cls, kvs, infer_missing)
+
+
 class CliProcessorConfig(ProcessorConfig, CliMixin):
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:
@@ -88,6 +131,13 @@ class CliProcessorConfig(ProcessorConfig, CliMixin):
                 default=2,
                 show_default=True,
                 help="Number of parallel processes with which to process docs",
+            ),
+            click.Option(
+                ["--raise-on-error"],
+                is_flag=True,
+                default=False,
+                help="Is set, will raise error if any doc in the pipeline fail. Otherwise will "
+                "log error and continue with other docs",
             ),
             click.Option(["-v", "--verbose"], is_flag=True, default=False),
         ]
@@ -140,6 +190,12 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
     def add_cli_options(cmd: click.Command) -> None:
         options = [
             click.Option(
+                ["--skip-infer-table-types"],
+                type=DelimitedString(),
+                default=None,
+                help="Optional list of document types to skip table extraction on",
+            ),
+            click.Option(
                 ["--pdf-infer-table-structure"],
                 default=False,
                 help="If set to True, partition will include the table's text "
@@ -153,12 +209,12 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
             ),
             click.Option(
                 ["--ocr-languages"],
-                default="eng",
+                default=None,
+                type=DelimitedString(delimiter="+"),
                 help="A list of language packs to specify which languages to use for OCR, "
                 "separated by '+' e.g. 'eng+deu' to use the English and German language packs. "
                 "The appropriate Tesseract "
-                "language pack needs to be installed."
-                "Default: eng",
+                "language pack needs to be installed.",
             ),
             click.Option(
                 ["--encoding"],
@@ -234,9 +290,7 @@ class CliRecursiveConfig(BaseConfig, CliMixin):
         cmd.params.extend(options)
 
 
-class CliRemoteUrlConfig(BaseConfig, CliMixin):
-    remote_url: str
-
+class CliFilesStorageConfig(FileStorageConfig, CliMixin):
     @staticmethod
     def add_cli_options(cmd: click.Command) -> None:
         options = [
@@ -244,6 +298,21 @@ class CliRemoteUrlConfig(BaseConfig, CliMixin):
                 ["--remote-url"],
                 required=True,
                 help="Remote fsspec URL formatted as `protocol://dir/path`",
+            ),
+            click.Option(
+                ["--uncompress"],
+                type=bool,
+                default=False,
+                is_flag=True,
+                help="Uncompress any archived files. Currently supporting zip and tar "
+                "files based on file extension.",
+            ),
+            click.Option(
+                ["--recursive"],
+                is_flag=True,
+                default=False,
+                help="Recursively download files in their respective folders "
+                "otherwise stop at the files in provided folder level.",
             ),
         ]
         cmd.params.extend(options)
@@ -274,12 +343,12 @@ class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
     ):
         """
         Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
-        This allows CLI arguments to be prepended with chunk_ during CLI invocation but
+        This allows CLI arguments to be prepended with embedding_ during CLI invocation but
         doesn't require that as part of the field names in this class
         """
         if isinstance(kvs, dict):
             new_kvs = {
-                k[len("embedding-") :]: v  # noqa: E203
+                k[len("embedding_") :]: v  # noqa: E203
                 for k, v in kvs.items()
                 if k.startswith("embedding_")
             }
@@ -346,6 +415,78 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                     if k.startswith("chunking_")
                 },
             )
+            if len(new_kvs.keys()) == 0:
+                return None
+            return _decode_dataclass(cls, new_kvs, infer_missing)
+        return _decode_dataclass(cls, kvs, infer_missing)
+
+
+class CliPermissionsConfig(PermissionsConfig, CliMixin):
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--permissions-application-id"],
+                type=str,
+                help="Microsoft Graph API application id",
+            ),
+            click.Option(
+                ["--permissions-client-cred"],
+                type=str,
+                help="Microsoft Graph API application credentials",
+            ),
+            click.Option(
+                ["--permissions-tenant"],
+                type=str,
+                help="e.g https://contoso.onmicrosoft.com to get permissions data within tenant.",
+            ),
+        ]
+        cmd.params.extend(options)
+
+    @classmethod
+    def from_dict(
+        cls,
+        kvs: Json,
+        *,
+        infer_missing=False,
+    ):
+        """
+        Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
+        This allows CLI arguments to be prepended with permissions_ during CLI invocation but
+        doesn't require that as part of the field names in this class. It also checks if the
+        CLI params are provided as intended.
+        """
+
+        if (
+            isinstance(kvs, dict)
+            and any(
+                [
+                    kvs["permissions_application_id"]
+                    or kvs["permissions_client_cred"]
+                    or kvs["permissions_tenant"],
+                ],
+            )
+            and not all(
+                [
+                    kvs["permissions_application_id"]
+                    and kvs["permissions_client_cred"]
+                    and kvs["permissions_tenant"],
+                ],
+            )
+        ):
+            raise ValueError(
+                "Please provide either none or all of the following optional values:\n"
+                "--permissions-application-id\n"
+                "--permissions-client-cred\n"
+                "--permissions-tenant",
+            )
+
+        if isinstance(kvs, dict):
+            new_kvs = {
+                k[len("permissions_") :]: v  # noqa: E203
+                for k, v in kvs.items()
+                if k.startswith("permissions_")
+            }
             if len(new_kvs.keys()) == 0:
                 return None
             return _decode_dataclass(cls, new_kvs, infer_missing)

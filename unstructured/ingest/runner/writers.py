@@ -25,7 +25,7 @@ def s3_writer(
     return S3DestinationConnector(
         write_config=WriteConfig(),
         connector_config=SimpleS3Config(
-            path=remote_url,
+            remote_url=remote_url,
             access_kwargs=access_kwargs,
         ),
     )

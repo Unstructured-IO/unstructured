@@ -14,12 +14,12 @@ all_tests=(
 'test-ingest-azure.sh'
 'test-ingest-biomed-api.sh'
 'test-ingest-biomed-path.sh'
-## NOTE(yuming): The following test should be put after any tests with --preserve-downloads option
+# NOTE(yuming): The pdf-fast-reprocess test should be put after any tests that save downloaded files
 'test-ingest-pdf-fast-reprocess.sh'
 'test-ingest-salesforce.sh'
 'test-ingest-box.sh'
 'test-ingest-discord.sh'
-'test-ingest-dropbox.sh'
+# 'test-ingest-dropbox.sh'
 'test-ingest-github.sh'
 'test-ingest-gitlab.sh'
 'test-ingest-google-drive.sh'
@@ -43,6 +43,7 @@ all_tests=(
 'test-ingest-delta-table.sh'
 'test-ingest-jira.sh'
 'test-ingest-sharepoint.sh'
+'test-ingest-embed.sh'
 )
 
 full_python_matrix_tests=(

@@ -9,7 +9,7 @@ from typing import IO, Any, BinaryIO, Iterator, List, Optional, Sequence, Tuple,
 import numpy as np
 import pdf2image
 import PIL
-from pdfminer.converter import PDFPageAggregator, PDFResourceManager
+from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import (
     LAParams,
     LTChar,
@@ -18,7 +18,7 @@ from pdfminer.layout import (
     LTItem,
     LTTextBox,
 )
-from pdfminer.pdfinterp import PDFPageInterpreter
+from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
@@ -60,7 +60,12 @@ from unstructured.partition.lang import (
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
-from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT, OCRMode
+from unstructured.partition.utils.constants import (
+    SORT_MODE_BASIC,
+    SORT_MODE_DONT,
+    SORT_MODE_XY_CUT,
+    OCRMode,
+)
 from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     sort_page_elements,
@@ -133,9 +138,6 @@ def partition_pdf(
     """
     exactly_one(filename=filename, file=file)
 
-    if not isinstance(languages, list):
-        raise TypeError("The language parameter must be a list of language codes as strings.")
-
     if ocr_languages is not None:
         # check if languages was set to anything not the default value
         # languages and ocr_languages were therefore both provided - raise error
@@ -204,7 +206,7 @@ def partition_pdf_or_image(
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
-    languages: List[str] = ["eng"],
+    languages: Optional[List[str]] = ["eng"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
@@ -216,8 +218,15 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
+    # The auto `partition` function uses `None` as a default because the default for
+    # `partition_pdf` and `partition_img` conflict with the other partitioners that use ["auto"]
+    if languages is None:
+        languages = ["eng"]
+
     if not isinstance(languages, list):
-        raise TypeError("The language parameter must be a list of language codes as strings.")
+        raise TypeError(
+            "The language parameter must be a list of language codes as strings, ex. ['eng']",
+        )
 
     if ocr_languages is not None:
         if languages != ["eng"]:
@@ -321,7 +330,7 @@ def _partition_pdf_or_image_local(
     is_image: bool = False,
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
-    languages: List[str] = ["eng"],
+    languages: Optional[List[str]] = ["eng"],
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
@@ -373,14 +382,18 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
             **process_with_model_kwargs,
         )
-        final_layout = process_file_with_ocr(
-            filename,
-            out_layout,
-            is_image=is_image,
-            ocr_languages=ocr_languages,
-            ocr_mode=ocr_mode,
-            pdf_image_dpi=pdf_image_dpi,
-        )
+        if model_name.startswith("chipper"):
+            # NOTE(alan): We shouldn't do OCR with chipper
+            final_layout = out_layout
+        else:
+            final_layout = process_file_with_ocr(
+                filename,
+                out_layout,
+                is_image=is_image,
+                ocr_languages=ocr_languages,
+                ocr_mode=ocr_mode,
+                pdf_image_dpi=pdf_image_dpi,
+            )
     else:
         out_layout = process_data_with_model(
             file,
@@ -390,16 +403,24 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
             **process_with_model_kwargs,
         )
-        if hasattr(file, "seek"):
-            file.seek(0)
-        final_layout = process_data_with_ocr(
-            file,
-            out_layout,
-            is_image=is_image,
-            ocr_languages=ocr_languages,
-            ocr_mode=ocr_mode,
-            pdf_image_dpi=pdf_image_dpi,
-        )
+        if model_name.startswith("chipper"):
+            # NOTE(alan): We shouldn't do OCR with chipper
+            final_layout = out_layout
+        else:
+            if hasattr(file, "seek"):
+                file.seek(0)
+            final_layout = process_data_with_ocr(
+                file,
+                out_layout,
+                is_image=is_image,
+                ocr_languages=ocr_languages,
+                ocr_mode=ocr_mode,
+                pdf_image_dpi=pdf_image_dpi,
+            )
+
+    # NOTE(alan): starting with v2, chipper sorts the elements itself.
+    if model_name == "chipper":
+        kwargs["sort_mode"] = SORT_MODE_DONT
 
     elements = document_to_element_list(
         final_layout,
@@ -434,7 +455,9 @@ def _partition_pdf_or_image_local(
                 " ",
                 el.text or "",
             ).strip()
-            if el.text or isinstance(el, PageBreak):
+            # NOTE(alan): with chipper there are parent elements with no text we don't want to
+            # filter those out and leave the children orphaned.
+            if el.text or isinstance(el, PageBreak) or model_name.startswith("chipper"):
                 out_elements.append(cast(Element, el))
 
     return out_elements
@@ -629,7 +652,7 @@ def _process_pdfminer_pages(
                     system=coordinate_system,
                 )
                 page_element = list_page_element
-                updated_page_elements.pop(0)
+                updated_page_elements.pop()
 
             updated_page_elements.append(page_element)
 
@@ -774,7 +797,7 @@ def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
     include_page_breaks: bool = False,
-    languages: List[str] = ["eng"],
+    languages: Optional[List[str]] = ["eng"],
     is_image: bool = False,
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
@@ -1097,12 +1120,13 @@ def check_annotations_within_element(
     """
     annotations_within_element = []
     for annotation in annotation_list:
-        if annotation["page_number"] == page_number and (
-            calculate_intersection_area(element_bbox, annotation["bbox"])
-            / calculate_bbox_area(annotation["bbox"])
-            > threshold
-        ):
-            annotations_within_element.append(annotation)
+        if annotation["page_number"] == page_number:
+            annotation_bbox_size = calculate_bbox_area(annotation["bbox"])
+            if annotation_bbox_size and (
+                calculate_intersection_area(element_bbox, annotation["bbox"]) / annotation_bbox_size
+                > threshold
+            ):
+                annotations_within_element.append(annotation)
     return annotations_within_element
 
 
@@ -1136,7 +1160,7 @@ def get_word_bounding_box_from_element(
                 characters.append(character)
                 char = character.get_text()
 
-                if not char.strip():
+                if word and not char.strip():
                     words.append(
                         {"text": word, "bbox": (x1, y1, x2, y2), "start_index": start_index},
                     )
@@ -1187,7 +1211,6 @@ def map_bbox_and_index(words: List[dict], annot: dict):
         annot["text"] = ""
         annot["start_index"] = -1
         return annot
-
     distance_from_bbox_start = np.sqrt(
         (annot["bbox"][0] - np.array([word["bbox"][0] for word in words])) ** 2
         + (annot["bbox"][1] - np.array([word["bbox"][1] for word in words])) ** 2,

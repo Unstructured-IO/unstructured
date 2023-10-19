@@ -1,6 +1,7 @@
 from tempfile import SpooledTemporaryFile
 from typing import IO, Any, BinaryIO, Dict, List, Optional, Tuple, Union, cast
 
+import networkx as nx
 import numpy as np
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
@@ -24,7 +25,7 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.lang import detect_languages
+from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
@@ -43,7 +44,8 @@ def partition_xlsx(
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
-    languages: List[str] = ["auto"],
+    languages: Optional[List[str]] = ["auto"],
+    detect_language_per_element: bool = False,
     metadata_last_modified: Optional[str] = None,
     include_header: bool = False,
     find_subtable: bool = True,
@@ -60,17 +62,19 @@ def partition_xlsx(
     include_metadata
         Determines whether or not metadata is included in the output.
     languages
-        The list of languages present in the document.
+        User defined value for metadata.languages if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     metadata_last_modified
         The day of the last modification
     include_header
         Determines whether or not header info info is included in text and medatada.text_as_html
     """
     exactly_one(filename=filename, file=file)
-    if not isinstance(languages, list):
-        raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
-        )
+
     last_modification_date = None
     header = 0 if include_header else None
 
@@ -140,10 +144,8 @@ def partition_xlsx(
 
                 if front_non_consecutive is not None:
                     for content in single_non_empty_row_contents[: front_non_consecutive + 1]:
-                        languages = detect_languages(str(content), languages)
                         element = _check_content_element_type(str(content))
                         element.metadata = metadata
-                        element.metadata.languages = languages
                         elements.append(element)
 
                 if subtable is not None and len(subtable) == 1:
@@ -154,23 +156,26 @@ def partition_xlsx(
                     # parse subtables as html
                     html_text = subtable.to_html(index=False, header=include_header, na_rep="")
                     text = soupparser_fromstring(html_text).text_content()
-                    languages = detect_languages(text, languages)
                     subtable = Table(text=text)
                     subtable.metadata = metadata
                     subtable.metadata.text_as_html = html_text
-                    subtable.metadata.languages = languages
                     elements.append(subtable)
 
                 if front_non_consecutive is not None and last_non_consecutive is not None:
                     for content in single_non_empty_row_contents[
                         front_non_consecutive + 1 :  # noqa: E203
                     ]:
-                        languages = detect_languages(str(content), languages)
                         element = _check_content_element_type(str(content))
                         element.metadata = metadata
-                        element.metadata.languages = languages
                         elements.append(element)
 
+    elements = list(
+        apply_lang_metadata(
+            elements=elements,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+        ),
+    )
     return elements
 
 
@@ -197,44 +202,26 @@ def _get_connected_components(
         overlapping components to return distinct components.
     """
     max_row, max_col = sheet.shape
-    visited = set()
+    graph: nx.Graph = nx.grid_2d_graph(max_row, max_col)
+    node_array = np.indices((max_row, max_col)).T
+    empty_cells = sheet.isna().T
+    nodes_to_remove = [tuple(pair) for pair in node_array[empty_cells]]
+    graph.remove_nodes_from(nodes_to_remove)
+    connected_components_as_nodes = nx.connected_components(graph)
     connected_components = []
+    for _component in connected_components_as_nodes:
+        component = list(_component)
+        min_x, min_y, max_x, max_y = _find_min_max_coord(component)
+        connected_components.append(
+            {
+                "component": component,
+                "min_x": min_x,
+                "min_y": min_y,
+                "max_x": max_x,
+                "max_y": max_y,
+            },
+        )
 
-    def dfs(row, col, component):
-        if (
-            row < 0
-            or row >= sheet.shape[0]
-            or col < 0
-            or col >= sheet.shape[1]
-            or (row, col) in visited
-        ):
-            return
-        visited.add((row, col))
-
-        if not pd.isna(sheet.iat[row, col]):
-            component.append((row, col))
-
-            # Explore neighboring cells
-            dfs(row - 1, col, component)  # Above
-            dfs(row + 1, col, component)  # Below
-            dfs(row, col - 1, component)  # Left
-            dfs(row, col + 1, component)  # Right
-
-    for row in range(max_row):
-        for col in range(max_col):
-            if (row, col) not in visited and not pd.isna(sheet.iat[row, col]):
-                component: List[dict] = []
-                dfs(row, col, component)
-                min_x, min_y, max_x, max_y = _find_min_max_coord(component)
-                connected_components.append(
-                    {
-                        "component": component,
-                        "min_x": min_x,
-                        "min_y": min_y,
-                        "max_x": max_x,
-                        "max_y": max_y,
-                    },
-                )
     if filter:
         connected_components = _filter_overlapping_tables(connected_components)
     return [
@@ -252,8 +239,8 @@ def _get_connected_components(
 
 
 def _filter_overlapping_tables(
-    connected_components: List[Dict[Any, Any]],
-) -> List[Dict[Any, Any]]:
+    connected_components: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
     """
     Filter out overlapping connected components to return distinct components.
     """
