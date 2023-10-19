@@ -255,7 +255,9 @@ jobs:
       run: |
         python${{ matrix.python-version}} -m venv .venv
         source .venv/bin/activate
-        mkdir "$NLTK_DATA"
+        if [[ ! -d ${{ github.workspace }}/nltk_data ]]; then
+          mkdir "$NLTK_DATA"
+        fi
         make install-ci
     - name: Setup docker-compose
       uses: KengoTODA/actions-setup-docker-compose@v1
