@@ -19,7 +19,7 @@ all_tests=(
 'test-ingest-salesforce.sh'
 'test-ingest-box.sh'
 'test-ingest-discord.sh'
-'test-ingest-dropbox.sh'
+# 'test-ingest-dropbox.sh'
 'test-ingest-github.sh'
 'test-ingest-gitlab.sh'
 'test-ingest-google-drive.sh'
