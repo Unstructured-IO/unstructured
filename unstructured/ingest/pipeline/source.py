@@ -26,7 +26,7 @@ class Reader(SourceNode):
                     # session handle if one is not already defined
                     session_handle = doc.session_handle
                 else:
-                    doc.session_handle = session_handle
+                    doc._session_handle = session_handle
             # does the work necessary to load file into filesystem
             # in the future, get_file_handle() could also be supported
             if self.retry_strategy:
