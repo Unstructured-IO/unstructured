@@ -228,6 +228,7 @@ def supplement_page_layout_with_ocr(
     # Note(yuming): use the OCR data from entire page OCR for table extraction
     if infer_table_structure:
         if ocr_layout is None:
+            # Note(yuming): ocr_layout is None for individual_blocks ocr_mode
             ocr_layout = get_ocr_layout_from_image(
                 image,
                 ocr_languages=ocr_languages,
@@ -253,7 +254,8 @@ def supplement_element_with_table_extraction(
     """
     for element in elements:
         if element.type == "Table":
-            padded_element = pad_element_bboxes(element, padding=env_config.IMAGE_CROP_PAD)
+            padding = env_config.IMAGE_CROP_PAD
+            padded_element = pad_element_bboxes(element, padding=padding)
             cropped_image = image.crop(
                 (
                     padded_element.bbox.x1,
@@ -262,7 +264,14 @@ def supplement_element_with_table_extraction(
                     padded_element.bbox.y2,
                 ),
             )
-            table_tokens = get_table_tokens_per_element(padded_element, ocr_layout)
+            padded_ocr_layout = []
+            for i, ocr_region in enumerate(ocr_layout):
+                padded_ocr_region = pad_element_bboxes(ocr_region, padding=padding)
+                padded_ocr_layout.append(padded_ocr_region)
+            table_tokens = get_table_tokens_per_element(
+                padded_element,
+                padded_ocr_layout,
+            )
             table_agent = init_table_agent()
             element.text_as_html = table_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
@@ -282,10 +291,10 @@ def get_table_tokens_per_element(
             table_tokens.append(
                 {
                     "bbox": [
-                        ocr_region.bbox.x1,
-                        ocr_region.bbox.y1,
-                        ocr_region.bbox.x2,
-                        ocr_region.bbox.y2,
+                        ocr_region.bbox.x1 - table_element.bbox.x1,
+                        ocr_region.bbox.y1 - table_element.bbox.y1,
+                        ocr_region.bbox.x2 - table_element.bbox.x1,
+                        ocr_region.bbox.y2 - table_element.bbox.y1,
                     ],
                     "text": ocr_region.text,
                 },
@@ -487,7 +496,7 @@ def parse_ocr_data_tesseract(ocr_data: pd.DataFrame, zoom: float = 1) -> List[Te
     for idtx in ocr_data.itertuples():
         text = idtx.text
         if not text:
-            continue  # todo(yuming): add case for this tho rare in real case
+            continue
         cleaned_text = text.strip()
         if cleaned_text:
             x1 = idtx.left / zoom
