@@ -539,6 +539,7 @@ def test_partition_image_hi_res_ocr_mode_with_table_extraction(ocr_mode):
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 1
     assert "<table><thead><th>" in table[0]
+    assert "Layouts of history Japanese documents" in table[0]
 
 
 # todo(yuming): add test for https://github.com/Unstructured-IO/unstructured/issues/1564
