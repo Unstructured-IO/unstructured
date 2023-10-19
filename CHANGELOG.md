@@ -1,4 +1,4 @@
-## 0.10.25-dev3
+## 0.10.25-dev4
 
 ### Enhancements
 
@@ -10,6 +10,7 @@
 ### Fixes
 
 * **Import PDFResourceManager more directly** We were importing `PDFResourceManager` from `pdfminer.converter` which was causing an error for some users. We changed to import from the actual location of `PDFResourceManager`, which is `pdfminer.pdfinterp`.
+* **Fix language detection of elements with empty strings** This resolves a warning message that was raised by `langdetect` if the language was attempted to be detected on an empty string. Language detection is now skipped for empty strings.
 
 ## 0.10.24
 
