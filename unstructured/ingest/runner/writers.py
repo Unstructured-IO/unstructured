@@ -76,7 +76,7 @@ def delta_table_writer(
     )
 
 
-@requires_dependencies(["pinecone-client"], extras="pinecone")
+@requires_dependencies(["pinecone"], extras="pinecone")
 def pinecone_writer(
     api_key: str,
     index_name: str,

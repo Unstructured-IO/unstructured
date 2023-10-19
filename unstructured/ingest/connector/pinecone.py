@@ -37,7 +37,7 @@ class PineconeDestinationConnector(BaseDestinationConnector):
     connector_config: SimplePineconeConfig
 
     @DestinationConnectionError.wrap
-    @requires_dependencies(["pinecone-client"], extras="pinecone")
+    @requires_dependencies(["pinecone"], extras="pinecone")
     def initialize(self):
         import pinecone
 
