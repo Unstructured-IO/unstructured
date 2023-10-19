@@ -4,6 +4,9 @@ import os
 import pytest
 
 from unstructured import utils
+from unstructured.documents.elements import NarrativeText, Title, ElementMetadata
+from unstructured.documents.coordinates import PixelSpace
+from contextlib import nullcontext as does_not_raise
 
 
 @pytest.fixture()
@@ -110,3 +113,52 @@ def test_only_raises_when_len_more_than_1(iterator):
 def test_only_raises_if_empty(iterator):
     with pytest.raises(ValueError):
         utils.only(iterator)
+
+
+@pytest.mark.parametrize(
+    "filename, file, elements, expectation",
+    [
+        ("example-docs/layout-parser-paper-fast.jpg", None,
+         [
+             Title(
+                 text="Some lovely title",
+                 coordinates=((4, 5), (4, 8), (7, 8), (7, 5)),
+                 coordinate_system=PixelSpace(width=10, height=20),
+                 metadata=ElementMetadata(page_number=1)
+             ),
+             NarrativeText(
+                 text="Some lovely text",
+                 coordinates=((2, 3), (2, 6), (5, 6), (5, 3)),
+                 coordinate_system=PixelSpace(width=10, height=20),
+                 metadata=ElementMetadata(page_number=1)
+             )
+         ],
+         does_not_raise()),
+        ("example-docs/loremipsum-flat.pdf", None,
+         [
+             Title(
+                 text="Some lovely title",
+                 coordinates=((4, 5), (4, 8), (7, 8), (7, 5)),
+                 coordinate_system=PixelSpace(width=10, height=20),
+                 metadata=ElementMetadata(page_number=1)
+             ),
+             NarrativeText(
+                 text="Some lovely text",
+                 coordinates=((2, 3), (2, 6), (5, 6), (5, 3)),
+                 coordinate_system=PixelSpace(width=10, height=20),
+                 metadata=ElementMetadata(page_number=1)
+             )
+         ],
+         does_not_raise())
+    ]
+)
+def test_draw_bboxes_on_pdf_or_image(filename, file, elements, expectation):
+    with expectation:
+        utils.draw_bboxes_on_pdf_or_image(
+            filename,
+            elements,
+            save_images=False,
+            save_coordinates=False,
+            output_folder=None,
+            plot=False
+        )
