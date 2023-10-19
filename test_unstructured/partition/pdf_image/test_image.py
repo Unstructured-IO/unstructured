@@ -521,20 +521,25 @@ def test_partition_image_hi_res_invalid_ocr_mode():
         _ = image.partition_image(filename=filename, ocr_mode="invalid_ocr_mode", strategy="hi_res")
 
 
-# todo(yuming): update me!   (add for both image and pdf)
-# @pytest.mark.parametrize(
-#     ("ocr_mode", "idx_title_element"),
-#     [
-#         ("entire_page", 3),
-#         ("individual_blocks", 1),
-#     ],
-# )
-# def test_partition_image_hi_res_ocr_mode_with_table_extraction(ocr_mode, idx_title_element):
-#     filename = "example-docs/layout-parser-paper-fast.jpg"
-#     elements = image.partition_image(filename=filename, ocr_mode=ocr_mode, strategy="hi_res")
-#     first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-#     # Note(yuming): idx_title_element is different based on xy-cut and ocr mode
-#     assert elements[idx_title_element].text == first_line
+@pytest.mark.parametrize(
+    ("ocr_mode"),
+    [
+        ("entire_page"),
+        ("individual_blocks"),
+    ],
+)
+def test_partition_image_hi_res_ocr_mode_with_table_extraction(ocr_mode):
+    filename = "example-docs/layout-parser-paper-with-table.jpg"
+    elements = image.partition_image(
+        filename=filename,
+        ocr_mode=ocr_mode,
+        strategy="hi_res",
+        infer_table_structure=True,
+    )
+    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert len(table) == 1
+    assert "<table><thead><th>" in table[0]
+
 
 # todo(yuming): add test for https://github.com/Unstructured-IO/unstructured/issues/1564
 # will be fixed in this pr, maybe use it as one page pdf test
