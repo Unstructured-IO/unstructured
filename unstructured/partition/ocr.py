@@ -34,7 +34,8 @@ from unstructured.partition.utils.constants import (
 if "OMP_THREAD_LIMIT" not in os.environ:
     os.environ["OMP_THREAD_LIMIT"] = "1"
 
-table_agent = None  # Define table_agent as a global variable
+# Define table_agent as a global variable
+table_agent = None
 
 
 def process_data_with_ocr(
