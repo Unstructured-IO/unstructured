@@ -264,13 +264,9 @@ def supplement_element_with_table_extraction(
                     padded_element.bbox.y2,
                 ),
             )
-            padded_ocr_layout = []
-            for i, ocr_region in enumerate(ocr_layout):
-                padded_ocr_region = pad_element_bboxes(ocr_region, padding=padding)
-                padded_ocr_layout.append(padded_ocr_region)
             table_tokens = get_table_tokens_per_element(
                 padded_element,
-                padded_ocr_layout,
+                ocr_layout,
             )
             table_agent = init_table_agent()
             element.text_as_html = table_agent.predict(cropped_image, ocr_tokens=table_tokens)
@@ -281,8 +277,27 @@ def get_table_tokens_per_element(
     table_element: LayoutElement,
     ocr_layout: List[TextRegion],
 ) -> List[Dict]:
-    """Prepre table tokens within the given table element for the table model
-    from ocr layout of an entire image."""
+    """
+    Extract and prepare table tokens within the specified table element
+    based on the OCR layout of an entire image.
+
+    Parameters:
+    - table_element (LayoutElement): The table element for which table tokens
+      should be extracted. It typically represents the bounding box of the table.
+    - ocr_layout (List[TextRegion]): A list of TextRegion objects representing
+      the OCR layout of the entire image.
+
+    Returns:
+    - List[Dict]: A list of dictionaries, each containing information about a table
+      token within the specified table element. Each dictionary includes the
+      following fields:
+        - 'bbox': A list of four coordinates [x1, y1, x2, y2]
+                    relative to the table element's bounding box.
+        - 'text': The text content of the table token.
+        - 'span_num': (Optional) The span number of the table token.
+        - 'line_num': (Optional) The line number of the table token.
+        - 'block_num': (Optional) The block number of the table token.
+    """
     # TODO(yuming): update table_tokens from List[Dict] to List[TABLE_TOKEN]
     # where TABLE_TOKEN will be a data class defined in unstructured-inference
     table_tokens = []
