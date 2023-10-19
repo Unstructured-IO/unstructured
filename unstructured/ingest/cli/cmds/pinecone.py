@@ -9,10 +9,12 @@ from unstructured.ingest.cli.common import (
 from unstructured.ingest.cli.interfaces import (
     CliMixin,
 )
-from unstructured.ingest.cli.utils import conform_click_options, extract_configs
+from unstructured.ingest.cli.utils import (
+    conform_click_options,
+    orchestrate_runner,
+)
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import runner_map
 
 
 @dataclass
@@ -64,16 +66,12 @@ def pinecone_dest(ctx: click.Context, **options):
     log_options(parent_options, verbose=verbose)
     log_options(options, verbose=verbose)
     try:
-        configs = extract_configs(options, validate=[PineconeCliWriteConfig])
-        runner_cls = runner_map[source_cmd]
-        # import pdb; pdb.set_trace()
-        runner = runner_cls(
-            **configs,  # type: ignore
+        orchestrate_runner(
+            source_cmd=source_cmd,
             writer_type="pinecone",
-            writer_kwargs=options,
-        )
-        runner.run(
-            **parent_options,
+            parent_options=parent_options,
+            options=options,
+            validate=[PineconeCliWriteConfig],
         )
     except Exception as e:
         logger.error(e, exc_info=True)
