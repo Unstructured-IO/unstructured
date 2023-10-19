@@ -264,6 +264,11 @@ jobs:
       uses: KengoTODA/actions-setup-docker-compose@v1
       with:
         version: '2.22.0'
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      timeout-minutes: 30
+      with:
+        limit-access-to-actor: true
     - name: Test Ingest (unit)
       run: |
         source .venv/bin/activate
@@ -391,7 +396,7 @@ jobs:
   changelog:
     runs-on: ubuntu-latest
     steps:
-    # need to checkout otherwise paths-filter will fail on merge-queue trigger 
+    # need to checkout otherwise paths-filter will fail on merge-queue trigger
     - uses: actions/checkout@v3
     - if: github.ref != 'refs/heads/main'
       uses: dorny/paths-filter@v2
