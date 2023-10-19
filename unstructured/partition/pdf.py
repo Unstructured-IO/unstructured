@@ -58,8 +58,9 @@ from unstructured.partition.lang import (
     convert_old_ocr_languages_to_languages,
     prepare_languages_for_tesseract,
 )
+from unstructured.partition.ocr import process_data_with_ocr, process_file_with_ocr
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
-from unstructured.partition.text import element_from_text, partition_text
+from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.constants import (
     SORT_MODE_BASIC,
     SORT_MODE_DONT,
@@ -318,6 +319,7 @@ def partition_pdf_or_image(
                 max_partition=max_partition,
                 min_partition=min_partition,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
+                **kwargs,
             )
 
     return layout_elements
@@ -799,84 +801,42 @@ def _partition_pdf_or_image_with_ocr(
     include_page_breaks: bool = False,
     languages: Optional[List[str]] = ["eng"],
     is_image: bool = False,
-    max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
+    **kwargs,
 ):
     """Partitions an image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
-    import unstructured_pytesseract
 
     ocr_languages = prepare_languages_for_tesseract(languages)
 
-    if is_image:
-        if file is not None:
-            image = PIL.Image.open(file)
-            text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
-                np.array(image),
-                extensions=["txt", "box"],
-                lang=ocr_languages,
-            )
-        else:
-            image = PIL.Image.open(filename)
-            text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
-                np.array(image),
-                extensions=["txt", "box"],
-                lang=ocr_languages,
-            )
-        elements = partition_text(
-            text=text,
-            max_partition=max_partition,
-            min_partition=min_partition,
-            metadata_last_modified=metadata_last_modified,
-            detection_origin="OCR",
+    if file is None:
+        layout = process_file_with_ocr(
+            filename,
+            out_layout=None,
+            is_image=is_image,
+            ocr_languages=ocr_languages,
         )
-        width, height = image.size
-        _add_pytesseract_bboxes_to_elements(
-            elements=cast(List[Text], elements),
-            bboxes_string=_bboxes,
-            width=width,
-            height=height,
-        )
-
     else:
-        elements = []
-        page_number = 0
-        for image in convert_pdf_to_images(filename, file):
-            page_number += 1
-            metadata = ElementMetadata(
-                filename=filename,
-                page_number=page_number,
-                last_modified=metadata_last_modified,
-                languages=languages,
-            )
-            metadata.detection_origin = "OCR"
-            _text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
-                image,
-                extensions=["txt", "box"],
-                lang=ocr_languages,
-            )
-            width, height = image.size
+        layout = process_data_with_ocr(
+            file,
+            out_layout=None,
+            is_image=is_image,
+            ocr_languages=ocr_languages,
+        )
 
-            _elements = partition_text(
-                text=_text,
-                max_partition=max_partition,
-                min_partition=min_partition,
-            )
+    elements = document_to_element_list(
+        layout,
+        sortable=True,
+        include_page_breaks=include_page_breaks,
+        last_modification_date=metadata_last_modified,
+        # NOTE(crag): do not attempt to derive ListItem's from a layout-recognized "List"
+        # block with NLP rules. Otherwise, the assumptions in
+        # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
+        infer_list_items=False,
+        detection_origin="image" if is_image else "pdf",
+        **kwargs,
+    )
 
-            for element in _elements:
-                element.metadata = metadata
-
-            _add_pytesseract_bboxes_to_elements(
-                elements=cast(List[Text], _elements),
-                bboxes_string=_bboxes,
-                width=width,
-                height=height,
-            )
-
-            elements.extend(_elements)
-            if include_page_breaks:
-                elements.append(PageBreak(text=""))
     return elements
 
 

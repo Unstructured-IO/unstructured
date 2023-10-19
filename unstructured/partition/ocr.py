@@ -30,7 +30,7 @@ if "OMP_THREAD_LIMIT" not in os.environ:
 
 def process_data_with_ocr(
     data: Union[bytes, BinaryIO],
-    out_layout: "DocumentLayout",
+    out_layout: Optional["DocumentLayout"],
     is_image: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
@@ -77,7 +77,7 @@ def process_data_with_ocr(
 
 def process_file_with_ocr(
     filename: str,
-    out_layout: "DocumentLayout",
+    out_layout: Optional["DocumentLayout"],
     is_image: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
@@ -115,8 +115,18 @@ def process_file_with_ocr(
                 for i, image in enumerate(ImageSequence.Iterator(images)):
                     image = image.convert("RGB")
                     image.format = format
+                    if out_layout:
+                        page_layout = out_layout.pages[i]
+                    else:
+                        page_layout = PageLayout(number=i + 1, image=image, layout=None)
+                        page_layout.image_metadata = {
+                            "format": image.format,
+                            "width": image.width,
+                            "height": image.height,
+                        }
+                        page_layout.image = None
                     merged_page_layout = supplement_page_layout_with_ocr(
-                        out_layout.pages[i],
+                        page_layout,
                         image,
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
@@ -134,8 +144,18 @@ def process_file_with_ocr(
                 image_paths = cast(List[str], _image_paths)
                 for i, image_path in enumerate(image_paths):
                     with PILImage.open(image_path) as image:
+                        if out_layout:
+                            page_layout = out_layout.pages[i]
+                        else:
+                            page_layout = PageLayout(number=i + 1, image=image, layout=None)
+                            page_layout.image_metadata = {
+                                "format": image.format,
+                                "width": image.width,
+                                "height": image.height,
+                            }
+                            page_layout.image = None
                         merged_page_layout = supplement_page_layout_with_ocr(
-                            out_layout.pages[i],
+                            page_layout,
                             image,
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
@@ -378,20 +398,25 @@ def merge_out_layout_with_ocr_layout(
     supplemented with the OCR layout.
     """
 
-    out_regions_without_text = [region for region in out_layout if not region.text]
+    if len(out_layout) > 0:
+        # NOTE(christine): "hi_res" strategy
+        out_regions_without_text = [region for region in out_layout if not region.text]
 
-    for out_region in out_regions_without_text:
-        out_region.text = aggregate_ocr_text_by_block(
-            ocr_layout,
-            out_region,
-            SUBREGION_THRESHOLD_FOR_OCR,
+        for out_region in out_regions_without_text:
+            out_region.text = aggregate_ocr_text_by_block(
+                ocr_layout,
+                out_region,
+                SUBREGION_THRESHOLD_FOR_OCR,
+            )
+
+        final_layout = (
+            supplement_layout_with_ocr_elements(out_layout, ocr_layout)
+            if supplement_with_ocr_elements
+            else out_layout
         )
-
-    final_layout = (
-        supplement_layout_with_ocr_elements(out_layout, ocr_layout)
-        if supplement_with_ocr_elements
-        else out_layout
-    )
+    else:
+        # NOTE(christine): "ocr_only" strategy
+        final_layout = get_elements_from_ocr_regions(ocr_layout)
 
     return final_layout
 
