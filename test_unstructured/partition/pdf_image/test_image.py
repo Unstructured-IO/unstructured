@@ -542,10 +542,6 @@ def test_partition_image_hi_res_ocr_mode_with_table_extraction(ocr_mode):
     assert "Layouts of history Japanese documents" in table[0]
 
 
-# todo(yuming): add test for https://github.com/Unstructured-IO/unstructured/issues/1564
-# will be fixed in this pr, maybe use it as one page pdf test
-
-
 def test_partition_image_raises_TypeError_for_invalid_languages():
     filename = "example-docs/layout-parser-paper-fast.jpg"
     with pytest.raises(TypeError):
