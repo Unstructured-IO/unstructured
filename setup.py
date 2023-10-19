@@ -160,6 +160,7 @@ setup(
         "openai": load_requirements("requirements/ingest-openai.in"),
         "embed-huggingface": load_requirements("requirements/embed-huggingface.in"),
         "bedrock": load_requirements("requirements/ingest-bedrock.in"),
+        "audio": load_requirements("requirements/audio.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},
