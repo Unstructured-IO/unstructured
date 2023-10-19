@@ -31,7 +31,7 @@ class ENVConfig:
     @property
     def IMAGE_CROP_PAD(self) -> int:
         """extra image content to add around an identified element region; measured in pixels"""
-        return self._get_int("IMAGE_CROP_PAD", 12)
+        return self._get_int("IMAGE_CROP_PAD", 0)
 
     @property
     def TESSERACT_TEXT_HEIGHT_QUANTILE(self) -> float:
