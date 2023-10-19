@@ -202,6 +202,10 @@ install-ingest-salesforce:
 install-ingest-jira:
 	python3 -m pip install -r requirements/ingest-jira.txt
 
+.PHONY: install-embed-huggingface
+install-embed-huggingface:
+	python3 -m pip install -r requirements/embed-huggingface.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt

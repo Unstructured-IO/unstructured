@@ -9,7 +9,7 @@ from typing import IO, Any, BinaryIO, Iterator, List, Optional, Sequence, Tuple,
 import numpy as np
 import pdf2image
 import PIL
-from pdfminer.converter import PDFPageAggregator, PDFResourceManager
+from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import (
     LAParams,
     LTChar,
@@ -18,7 +18,7 @@ from pdfminer.layout import (
     LTItem,
     LTTextBox,
 )
-from pdfminer.pdfinterp import PDFPageInterpreter
+from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
