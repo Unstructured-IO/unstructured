@@ -13,8 +13,7 @@ from pathlib import Path
 
 import requests
 from dataclasses_json import DataClassJsonMixin
-from dataclasses_json.core import _ExtendedEncoder
-from dataclasses_json.mm import JsonData
+from dataclasses_json.core import Json, _decode_dataclass, _ExtendedEncoder
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
@@ -278,24 +277,8 @@ class IngestDocJsonMixin(DataClassJsonMixin):
         )
 
     @classmethod
-    def from_json(
-        cls: t.Type[A],
-        s: JsonData,
-        *,
-        parse_float=None,
-        parse_int=None,
-        parse_constant=None,
-        infer_missing=False,
-        **kw,
-    ) -> A:
-        kvs = json.loads(
-            s,
-            parse_float=parse_float,
-            parse_int=parse_int,
-            parse_constant=parse_constant,
-            **kw,
-        )
-        doc = cls.from_dict(kvs, infer_missing=infer_missing)
+    def from_dict(cls: t.Type[A], kvs: Json, *, infer_missing=False) -> A:
+        doc = _decode_dataclass(cls, kvs, infer_missing)
         if meta := kvs.get("_source_metadata"):
             setattr(doc, "_source_metadata", SourceMetadata.from_dict(meta))
         if date_processed := kvs.get("_date_processed"):
