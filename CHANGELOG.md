@@ -1,8 +1,10 @@
-## 0.10.25-dev0
+## 0.10.25-dev1
 
 ### Enhancements
 
 ### Features
+
+* **Add AWS bedrock embedding connector** `unstructured.embed.bedrock` now provides a connector to use AWS bedrock's `titan-embed-text` model to generate embeddings for elements. This features requires valid AWS bedrock setup and an internet connectionto run.
 
 ### Fixes
 
