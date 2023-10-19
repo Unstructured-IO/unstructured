@@ -13,16 +13,19 @@ from pathlib import Path
 
 import requests
 from dataclasses_json import DataClassJsonMixin
+from dataclasses_json.core import _ExtendedEncoder
+from dataclasses_json.mm import JsonData
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
-from unstructured.ingest.ingest_doc_json_mixin import IngestDocJsonMixin
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict, elements_from_json
+
+A = t.TypeVar("A", bound="DataClassJsonMixin")
 
 SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "s3",
@@ -216,6 +219,88 @@ class SourceMetadata(DataClassJsonMixin, ABC):
     source_url: t.Optional[str] = None
     exists: t.Optional[bool] = None
     permissions_data: t.Optional[t.List[t.Dict[str, t.Any]]] = None
+
+
+class IngestDocJsonMixin(DataClassJsonMixin):
+    """
+    Inherently, DataClassJsonMixin does not add in any @property fields to the json/dict
+    created from the dataclass. This explicitly sets properties to look for on the IngestDoc
+    class when creating the json/dict for serialization purposes.
+    """
+
+    properties_to_serialize = [
+        "base_filename",
+        "date_created",
+        "date_modified",
+        "date_processed",
+        "exists",
+        "filename",
+        "_output_filename",
+        "record_locator",
+        "source_url",
+        "version",
+        "_source_metadata",
+    ]
+
+    def to_json(
+        self,
+        *,
+        skipkeys: bool = False,
+        ensure_ascii: bool = True,
+        check_circular: bool = True,
+        allow_nan: bool = True,
+        indent: t.Optional[t.Union[int, str]] = None,
+        separators: t.Optional[t.Tuple[str, str]] = None,
+        default: t.Optional[t.Callable] = None,
+        sort_keys: bool = False,
+        **kw,
+    ) -> str:
+        as_dict = self.to_dict(encode_json=False)
+        for prop in self.properties_to_serialize:
+            val = getattr(self, prop)
+            if isinstance(val, Path):
+                val = str(val)
+            if isinstance(val, DataClassJsonMixin):
+                val = val.to_dict(encode_json=False)
+            as_dict[prop] = val
+        return json.dumps(
+            as_dict,
+            cls=_ExtendedEncoder,
+            skipkeys=skipkeys,
+            ensure_ascii=ensure_ascii,
+            check_circular=check_circular,
+            allow_nan=allow_nan,
+            indent=indent,
+            separators=separators,
+            default=default,
+            sort_keys=sort_keys,
+            **kw,
+        )
+
+    @classmethod
+    def from_json(
+        cls: t.Type[A],
+        s: JsonData,
+        *,
+        parse_float=None,
+        parse_int=None,
+        parse_constant=None,
+        infer_missing=False,
+        **kw,
+    ) -> A:
+        kvs = json.loads(
+            s,
+            parse_float=parse_float,
+            parse_int=parse_int,
+            parse_constant=parse_constant,
+            **kw,
+        )
+        doc = cls.from_dict(kvs, infer_missing=infer_missing)
+        if meta := kvs.get("_source_metadata"):
+            setattr(doc, "_source_metadata", SourceMetadata.from_dict(meta))
+        if date_processed := kvs.get("_date_processed"):
+            setattr(doc, "_date_processed", date_processed)
+        return doc
 
 
 @dataclass
