@@ -1,10 +1,11 @@
-## 0.10.25-dev1
+## 0.10.25-dev2
 
 ### Enhancements
 
 ### Features
 
-* **Adds HubSpot Connector** Adds connector to retrieve call, communications, emails, notes, products and tickets from HubSpot
+* **Adds HubSpot connector** Adds connector to retrieve call, communications, emails, notes, products and tickets from HubSpot
+* **Add AWS bedrock embedding connector** `unstructured.embed.bedrock` now provides a connector to use AWS bedrock's `titan-embed-text` model to generate embeddings for elements. This features requires valid AWS bedrock setup and an internet connectionto run.
 
 ### Fixes
 
