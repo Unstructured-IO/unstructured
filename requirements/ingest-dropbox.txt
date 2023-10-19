@@ -40,7 +40,7 @@ six==1.16.0
     #   stone
 stone==3.3.1
     # via dropbox
-urllib3==1.26.17
+urllib3==1.26.18
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

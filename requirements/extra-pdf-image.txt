@@ -223,7 +223,7 @@ tqdm==4.66.1
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.34.0
+transformers==4.34.1
     # via unstructured-inference
 typing-extensions==4.8.0
     # via
@@ -234,13 +234,13 @@ typing-extensions==4.8.0
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.7.5
+unstructured-inference==0.7.7
     # via -r requirements/extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via
     #   -c requirements/constraints.in
     #   -r requirements/extra-pdf-image.in
-urllib3==1.26.17
+urllib3==1.26.18
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
