@@ -1,10 +1,15 @@
-## 0.10.25-dev1
+## 0.10.25-dev2
 
 ### Enhancements
 
 ### Features
 
+* **Adds HuggingFaceEmbeddingEncoder** The HuggingFace Embedding Encoder uses a local embedding model as opposed to using an API.
+* **Add AWS bedrock embedding connector** `unstructured.embed.bedrock` now provides a connector to use AWS bedrock's `titan-embed-text` model to generate embeddings for elements. This features requires valid AWS bedrock setup and an internet connectionto run.
+
 ### Fixes
+
+* **Import PDFResourceManager more directly** We were importing `PDFResourceManager` from `pdfminer.converter` which was causing an error for some users. We changed to import from the actual location of `PDFResourceManager`, which is `pdfminer.pdfinterp`.
 
 ## 0.10.24
 
@@ -16,7 +21,6 @@
 
 ### Features
 
-* **Adds HuggingFaceEmbeddingEncoder** The HuggingFace Embedding Encoder uses a local embedding model as opposed to using an API.
 * **Adds element type percent match function** In order to evaluate the element type extracted, we add a function that calculates the matched percentage between two frequency dictionary.
 
 ### Fixes

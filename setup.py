@@ -159,6 +159,7 @@ setup(
         "paddleocr": load_requirements("requirements/extra-paddleocr.in"),
         "openai": load_requirements("requirements/ingest-openai.in"),
         "embed-huggingface": load_requirements("requirements/embed-huggingface.in"),
+        "bedrock": load_requirements("requirements/ingest-bedrock.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},
