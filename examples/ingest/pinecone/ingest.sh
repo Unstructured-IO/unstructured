@@ -15,7 +15,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
          --output-dir s3-small-batch-output-to-pinecone \
          --num-processes 2 \
          --verbose \
-        --strategy fast \
+         --strategy fast \
+         --embedding-api-key "$OPENAI_API_KEY" \
+         --chunk-elements \
+         --chunk-multipage-sections \
         pinecone \
         --api-key "$PINECONE_API_KEY" \
         --index-name ingest-test \
