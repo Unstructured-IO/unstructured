@@ -64,11 +64,11 @@ def test_get_ocr_layout_from_image_tesseract(monkeypatch):
         "image_to_data",
         lambda *args, **kwargs: pd.DataFrame(
             {
-                "left": [10, 20, 30, None],
-                "top": [5, 15, 25, None],
-                "width": [15, 25, 35, None],
-                "height": [10, 20, 30, None],
-                "text": ["Hello", "World", "!", None],
+                "left": [10, 20, 30, 0],
+                "top": [5, 15, 25, 0],
+                "width": [15, 25, 35, 0],
+                "height": [10, 20, 30, 0],
+                "text": ["Hello", "World", "!", ""],
             },
         ),
     )
@@ -108,6 +108,12 @@ def mock_ocr(*args, **kwargs):
             (
                 [(30, 25), (65, 25), (65, 55), (30, 55)],
                 ["!"],
+            ),
+        ],
+        [
+            (
+                [(0, 0), (0, 0), (0, 0), (0, 0)],
+                [""],
             ),
         ],
     ]
