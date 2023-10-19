@@ -118,6 +118,45 @@ class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
         return _decode_dataclass(cls, kvs, infer_missing)
 
 
+class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
+    @staticmethod
+    def add_cli_options(cmd: click.Command) -> None:
+        options = [
+            click.Option(
+                ["--max-retries"],
+                default=None,
+                type=int,
+                help="If provided, will use this max retry for "
+                "back off strategy if http calls fail",
+            ),
+            click.Option(
+                ["--max-retry-time"],
+                default=None,
+                type=float,
+                help="If provided, will attempt retries for this long as part "
+                "of back off strategy if http calls fail",
+            ),
+        ]
+        cmd.params.extend(options)
+
+    @classmethod
+    def from_dict(
+        cls,
+        kvs: Json,
+        *,
+        infer_missing=False,
+    ):
+        """
+        Return None if none of the fields are being populated
+        """
+        if isinstance(kvs, dict):
+            field_names = {field.name for field in fields(cls) if field.name in kvs}
+            field_values = [kvs.get(n) for n in field_names if kvs.get(n)]
+            if not field_values:
+                return None
+        return _decode_dataclass(cls, kvs, infer_missing)
+
+
 class CliProcessorConfig(ProcessorConfig, CliMixin):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
