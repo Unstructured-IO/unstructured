@@ -1,12 +1,15 @@
-## 0.10.25-dev0
+## 0.10.25-dev2
 
 ### Enhancements
 
 ### Features
 
 * **Add `utils` method `draw_bboxes_on_pdf_or_image` to plot returned element coordinates in each page image.** Using a PDF or image file and the returned element list from a detection model, this method superimposes the bounding boxes in page images with numeration and different colours per element type.
+* **Add AWS bedrock embedding connector** `unstructured.embed.bedrock` now provides a connector to use AWS bedrock's `titan-embed-text` model to generate embeddings for elements. This features requires valid AWS bedrock setup and an internet connectionto run.
 
 ### Fixes
+
+* **Import PDFResourceManager more directly** We were importing `PDFResourceManager` from `pdfminer.converter` which was causing an error for some users. We changed to import from the actual location of `PDFResourceManager`, which is `pdfminer.pdfinterp`.
 
 ## 0.10.24
 
