@@ -251,7 +251,7 @@ jobs:
           nltk_data
         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
     - name: Setup virtual environment (no cache hit)
-      if: always()
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
         python${{ matrix.python-version}} -m venv .venv
         source .venv/bin/activate
