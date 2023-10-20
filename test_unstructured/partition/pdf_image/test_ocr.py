@@ -410,3 +410,40 @@ def test_pad_element_bboxes(padding, expected_bbox):
     # make sure the original element has not changed
     original_element_bbox = (element.bbox.x1, element.bbox.y1, element.bbox.x2, element.bbox.y2)
     assert original_element_bbox == expected_original_element_bbox
+
+
+@pytest.fixture()
+def table_element():
+    table = LayoutElement.from_coords(x1=10, y1=20, x2=50, y2=70, text="I am a table", type="Table")
+    return table
+
+
+@pytest.fixture()
+def ocr_layout():
+    ocr_regions = [
+        TextRegion.from_coords(x1=15, y1=25, x2=35, y2=45, text="Token1"),
+        TextRegion.from_coords(x1=40, y1=30, x2=45, y2=50, text="Token2"),
+    ]
+    return ocr_regions
+
+
+def test_get_table_tokens_per_element(table_element, ocr_layout):
+    table_tokens = ocr.get_table_tokens_per_element(table_element, ocr_layout)
+    expected_tokens = [
+        {
+            "bbox": [5, 5, 25, 25],
+            "text": "Token1",
+            "span_num": 0,
+            "line_num": 0,
+            "block_num": 0,
+        },
+        {
+            "bbox": [30, 10, 35, 30],
+            "text": "Token2",
+            "span_num": 1,
+            "line_num": 0,
+            "block_num": 0,
+        },
+    ]
+
+    assert table_tokens == expected_tokens

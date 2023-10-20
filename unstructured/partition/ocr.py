@@ -303,7 +303,7 @@ def get_table_tokens_per_element(
     # where TABLE_TOKEN will be a data class defined in unstructured-inference
     table_tokens = []
     for ocr_region in ocr_layout:
-        if is_inside(ocr_region.bbox, table_element.bbox):
+        if ocr_region.bbox.is_in(table_element.bbox):
             table_tokens.append(
                 {
                     "bbox": [
@@ -329,28 +329,6 @@ def get_table_tokens_per_element(
             token["block_num"] = 0
 
     return table_tokens
-
-
-def is_inside(inner_bbox, outer_bbox):
-    """Check if the inner bounding box is entirely inside the outer bounding box"""
-    inner_x1, inner_y1, inner_x2, inner_y2 = (
-        inner_bbox.x1,
-        inner_bbox.y1,
-        inner_bbox.x2,
-        inner_bbox.y2,
-    )
-    outer_x1, outer_y1, outer_x2, outer_y2 = (
-        outer_bbox.x1,
-        outer_bbox.y1,
-        outer_bbox.x2,
-        outer_bbox.y2,
-    )
-    return (
-        inner_x1 >= outer_x1
-        and inner_y1 >= outer_y1
-        and inner_x2 <= outer_x2
-        and inner_y2 <= outer_y2
-    )
 
 
 def init_table_agent():
