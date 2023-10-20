@@ -83,6 +83,7 @@ for test in "${all_tests[@]}"; do
     echo "--------- SKIPPING SCRIPT $test ---------"
     continue
   fi
+
   if [[ "${tests_to_ignore[*]}" =~ $test ]]; then
     echo "--------- RUNNING SCRIPT $test --- IGNORING FAILURES"
     set +e
