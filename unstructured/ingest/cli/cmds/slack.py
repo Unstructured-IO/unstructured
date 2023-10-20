@@ -25,7 +25,7 @@ class SlackCliConfig(BaseConfig, CliMixin):
     end_date: t.Optional[str] = None
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--token"],
@@ -56,7 +56,7 @@ class SlackCliConfig(BaseConfig, CliMixin):
                 "YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="slack", invoke_without_command=True, cls=Group)
