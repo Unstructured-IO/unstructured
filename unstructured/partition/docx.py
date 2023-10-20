@@ -287,6 +287,10 @@ class _DocxPartitioner:
         # -- functions like `._iter_paragraph_elements()` where the "just return when done"
         # -- characteristic of a generator avoids repeated code to form interim results into lists.
 
+        if not self._document.sections:
+            for paragraph in self._document.paragraphs:
+                yield from self._iter_paragraph_elements(paragraph)
+
         for section_idx, section in enumerate(self._document.sections):
             yield from self._iter_section_page_breaks(section_idx, section)
             yield from self._iter_section_headers(section)

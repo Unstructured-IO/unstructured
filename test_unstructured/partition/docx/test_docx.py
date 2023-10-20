@@ -27,6 +27,15 @@ from unstructured.partition.docx import _DocxPartitioner, partition_docx
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
+def test_parition_docx_from_team_chat():
+    elements = partition_docx(filename="example-docs/teams_chat.docx")
+    assert [element.text for element in elements] == [
+        "0:0:0.0 --> 0:0:1.510\nSome Body\nOK. Yeah.",
+        "0:0:3.270 --> 0:0:4.250\nJames Bond\nUmm.",
+    ]
+    assert all(element.category == "UncategorizedText" for element in elements)
+
+
 def test_partition_docx_from_filename(
     mock_document_filename: str,
     expected_elements: List[Element],
