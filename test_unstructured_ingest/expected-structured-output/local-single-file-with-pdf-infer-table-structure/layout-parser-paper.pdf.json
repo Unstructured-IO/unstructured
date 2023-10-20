@@ -11,7 +11,7 @@
   },
   {
     "type": "Header",
-    "element_id": "2b55904c2fe851254b0221734a72deb4",
+    "element_id": "e6c39406d5eeebf72734fc811c294a05",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -80,14 +80,24 @@
     "text": "Keywords: Document Image Analysis · Deep Learning · Layout Analysis · Character Recognition · Open Source library · Toolkit."
   },
   {
-    "type": "Title",
-    "element_id": "8de2a6e07c3e4df67625a60f079764a4",
+    "type": "UncategorizedText",
+    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Introduction"
+    "text": "1"
+  },
+  {
+    "type": "Title",
+    "element_id": "352d3dd2452ac6a0fee997ac04d0d6a9",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "1 Introduction"
   },
   {
     "type": "NarrativeText",
@@ -311,13 +321,13 @@
   },
   {
     "type": "Image",
-    "element_id": "2326155e29fbcc80862533eba5d9c75c",
+    "element_id": "d1b137bdc9626f5b50962a3a11ce0ffb",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Efficient Data Annotation Model Customization Document Images Community Platform ‘a >) ¥ DIA Model Hub i .) Customized Model Training] == | Layout Detection Models | ——= DIA Pipeline Sharing ~ OCR Module = { Layout Data stuctue ) = (storage Visualization VY"
+    "text": "Efficient Data Annotation Model Customization Document Images Community Platform ‘a >) ¥ DIA Model Hub fC ..) Customized Model Training] == | Layout Detection Models | ——= DIA Pipeline Sharing — OCR Module = { Layout Data stuctue ) = (storage Visualization VY"
   },
   {
     "type": "NarrativeText",
@@ -396,7 +406,7 @@
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5,
-      "text_as_html": "<table><thead><th>Dataset</th><th>| Base Mod</th><th>el'| Large Model</th><th>| Notes</th></thead><tr><td>PubLayNet B8]|</td><td>F/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA</td><td>M</td><td>-</td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper</td><td>F</td><td>-</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset</td><td>F/M</td><td>-</td><td>Layouts of history Japanese documents</td></tr></table>"
+      "text_as_html": "<table><thead><th>Dataset</th><th>| Base Model'|</th><th>| Notes</th></thead><tr><td>PubLayNet</td><td>B8]| F/M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA</td><td>M</td><td>nned modern magazines and scientific reports</td></tr><tr><td>Newspapei</td><td>F</td><td>canned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset</td><td>F/M</td><td>Layouts of history Japanese documents</td></tr></table>"
     },
     "text": "Base Model1 Large Model Notes Dataset PubLayNet [38] PRImA [3] Newspaper [17] TableBank [18] HJDataset [31] F / M M F F F / M M - - F - Layouts of modern scientiﬁc documents Layouts of scanned modern magazines and scientiﬁc reports Layouts of scanned US newspapers from the 20th century Table region on modern scientiﬁc and business document Layouts of history Japanese documents"
   },
@@ -532,13 +542,13 @@
   },
   {
     "type": "Image",
-    "element_id": "3b30176246b01e00c3051a7e2a11669c",
+    "element_id": "9b587f297ab7322251702a14d49b43a1",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 6
     },
-    "text": "- ° . 3 a a 4 a 3 oo er ‘ 2 § 8 a 8 3 3 ‘ £ 4 A g a 9 ‘ 3 ¥ Coordinate g 4 5 3 + § 3 H Extra Features [O=\") [Bo] eaing i Text | | Type | | ower ° & a ¢ o [ coordinatel textblock1, 3 3 ’ g Q 3 , textblock2 , layoutl ] 4 q ® A list of the layout elements Ff"
+    "text": "- * ° 8 a 4 a 3 fectange vada! 4 8 4 i v 8 o [S) af t J f a i ‘ g 4 Coordinate § a 8 3 + 4 * v 8 Extra features =| 90%) | Hock) Reading é ret | | Type | | order ° a ¢ @ [ coordinatel textblock1 , 8 » , see 3 H 3 , textblock2 , layoutl ] 3 q ® A list of the layout elements Ff"
   },
   {
     "type": "FigureCaption",
@@ -717,7 +727,7 @@
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 8,
-      "text_as_html": "<table><thead><th>block.pad(top, bottom,</th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></thead><tr><td>block.scale(fx, fy)</td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift(dx, dy)</td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1. intersect (block2)</td><td></td><td></td><td>Return the intersection region of blockl and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td>Return the union region of blockl and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td>Convert the absolute coordinates of block to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2) block. crop_image (image)</td><td></td><td></td><td>Calculate the absolute coordinates of blockl given the canvas block2’s absolute coordinates     Obtain the image segments in the block region</td></tr></table>"
+      "text_as_html": "<table><thead><th>block.pad(top,</th><th>bottom,</th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></thead><tr><td>block.scale(fx,</td><td>fy)</td><td></td><td></td><td>Scale the current block given the ratio ion in x and y di</td></tr><tr><td>block.shift(dx,</td><td>dy)</td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>; block1. intersect</td><td>(block2)</td><td></td><td></td><td>Return the intersection region of block and block2. . . . Coordinate type to be determined based on the</td></tr><tr><td>; block1.union(block2)</td><td></td><td></td><td></td><td>Return the union region of block1 and block2. . . . Coordinate type to be determined based on the</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td></td><td>Convert the absolute coordinates of blockl to : : relative coordinates to block2</td></tr><tr><td>. block1.condition_on(block2)</td><td></td><td></td><td></td><td>Calculate the absolute coordinates of block1 given . the canvas block2’s absolute coordinates</td></tr></table>"
     },
     "text": "block.pad(top, bottom, right, left) Enlarge the current block according to the input Scale the current block given the ratio in x and y direction block.scale(fx, fy) Move the current block with the shift distances in x and y direction block.shift(dx, dy) Whether block1 is inside of block2 block1.is in(block2) block1.intersect(block2) block1.union(block2) Convert the absolute coordinates of block1 to relative coordinates to block2 block1.relative to(block2) Calculate the absolute coordinates of block1 given the canvas block2’s absolute coordinates block1.condition on(block2)"
   },
@@ -953,13 +963,13 @@
   },
   {
     "type": "Image",
-    "element_id": "294441b6458d8a005ea7588ecb6efc10",
+    "element_id": "2f8e4199aa09bc160c96ecb90b70b284",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "x09 Burpunog uayor Aeydsiq 1 vondo 10g Guypunog usyoy apir:z uondo Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR'd Text at the Correspoding Position"
+    "text": "0g Burpunog uayor Aeydsia :1 vondo 10g Guypunog usyo1 apiy:z uondo, Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR'd Text at the Correspoding Position"
   },
   {
     "type": "NarrativeText",
@@ -1013,13 +1023,13 @@
   },
   {
     "type": "Image",
-    "element_id": "6e6e9ba62b25fdfb8734842354a7ce64",
+    "element_id": "affb50a5463cc1280230cf5cfb03920f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "Intra-column reading order Token Categories tie (Adress 2) tee (NE sumber Variable HEE company type Column Categories (J tite we) adaress —_ (7) section Header by ‘e * Column reading order a a (a) Illustration of the original Japanese Maximum Allowed Height BRE B>e EER eR (b) Illustration of the recreated document with dense text structure for better OCR performance"
+    "text": "Intra-column reading order Token Categories tie (Adress tee ( wumber Variabte HEE company ype Column Categories (J tite we) address —_ (7) Section ear 7 ‘ao * Column reading order a a (a) Illustration of the original Japanese Maximum Allowed Height BRE B>e EER aR (b) Illustration of the recreated document with dense text structure for better OCR performance"
   },
   {
     "type": "NarrativeText",
@@ -1123,13 +1133,13 @@
   },
   {
     "type": "Image",
-    "element_id": "e55a2d8ec9ea5f1d6c11788f33f2b97d",
+    "element_id": "c0bc937a4f9e9d3de0b068f46a057720",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "(spe peepee, ‘Active Learning Layout Annotate Layout Dataset | + ‘Annotation Toolkit ¥ a Deep Leaming Layout Model Training & Inference, ¥ ; Handy Data Structures & Post-processing El Apis for Layout Det a LAR ror tye eats) 4 Text Recognition | <—— Default ane Customized ¥ ee Layout Structure Visualization & Export | <—— | visualization & Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules"
+    "text": "(gee peepee, Aative Learning Layout Annotate Layout Dataset} <——— | 1. otation Toolkit ¥ aia Deep Leaming Layout Model Training & Inference, y en Handy Data Structures & Lees Lats for Layout Data_) 4 Text Recognition | <—— Default ane Customized ¥ ee : ayout Structure Visualization & Export |i Visualization & Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules"
   },
   {
     "type": "NarrativeText",
@@ -1263,13 +1273,13 @@
   },
   {
     "type": "Image",
-    "element_id": "7f494d0f1a8170f2ed0da01c039fcbd2",
+    "element_id": "f9b90a8f60060bf9550ebd94fb84179f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 13
     },
-    "text": "(@) Partial table at the bottom (&) Full page table (6) Partial table at the top (d) Mis-detected tet line"
+    "text": "(@) Partial table at the bottom () Full page table (6) Partial table at the top (@) Mis-detected text line"
   },
   {
     "type": "FigureCaption",

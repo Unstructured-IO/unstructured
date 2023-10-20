@@ -55,7 +55,7 @@
   },
   {
     "type": "Title",
-    "element_id": "14547603bad3329c14c74b8c4e2ff8d9",
+    "element_id": "4239dbff9d7a6f86e332763bc1ef24c4",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -69,7 +69,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "//s88ciation"
+    "text": "//#88ciation"
   },
   {
     "type": "Title",
@@ -1315,7 +1315,7 @@
   },
   {
     "type": "Image",
-    "element_id": "1459b67becac6e70efecfcbc9312d3f0",
+    "element_id": "d633023410d076d9f092df6623074daa",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1329,25 +1329,7 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "  Coal  90    Gas/Oil  80    Biofuels/Waste    Wind/Solar  70    Hydro  60    Nuclear  50  40  30  20  10 "
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "5feceb66ffc86f38d952786c6d696c79",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": 177372694731575984083482917563244941766,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "0"
+    "text": "  Coal  90    Gas/Oil  80    Biofuels/Waste    Wind/Solar  70    Hydro  60    Nuclear  50  40  30  20  10  0 "
   },
   {
     "type": "Title",
@@ -1368,8 +1350,8 @@
     "text": "France"
   },
   {
-    "type": "FigureCaption",
-    "element_id": "e720e656050a5b95706b7ffefb3ff505",
+    "type": "Title",
+    "element_id": "853637136575897a73cba3c5fb085e8c",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1458,8 +1440,8 @@
     "text": "h W T"
   },
   {
-    "type": "FigureCaption",
-    "element_id": "3d193aba53b016527c3f658cdd6d99e2",
+    "type": "UncategorizedText",
+    "element_id": "ec54e99514663edb97adef400fbf34a7",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1473,7 +1455,43 @@
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "1974 1980 1985 1990 1995 2000 2005 2010 2017"
+    "text": "1974"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "a2c54f65d066210267b404e8386a7f4c",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "1980 1985 1990 1995 2000 2005 2010"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "46e67c525617663b392a53c0e94ba79e",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 9
+    },
+    "text": "2017"
   },
   {
     "type": "FigureCaption",
