@@ -27,7 +27,7 @@ class ConfluenceCliConfig(BaseConfig, CliMixin):
     max_num_of_spaces: int = 500
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--api-token"],
@@ -71,7 +71,7 @@ class ConfluenceCliConfig(BaseConfig, CliMixin):
                 "--spaces and --num-of-spaces cannot be used at the same time",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="confluence", invoke_without_command=True, cls=Group)

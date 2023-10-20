@@ -197,7 +197,6 @@ class PermissionsConfig(BaseConfig):
     application_id: t.Optional[str]
     client_cred: t.Optional[str]
     tenant: t.Optional[str]
-    pass
 
 
 @dataclass
@@ -316,7 +315,6 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     @abstractmethod
     def cleanup_file(self):
         """Removes the local copy the file (or anything else) after successful processing."""
-        pass
 
     @staticmethod
     def skip_if_file_exists(func):
@@ -353,7 +351,6 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     @SourceConnectionError.wrap
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
-        pass
 
     def has_output(self) -> bool:
         """Determine if structured output for this doc already exists."""
@@ -469,13 +466,11 @@ class BaseSourceConnector(DataClassJsonMixin, ABC):
         temporary download dirs that are empty.
 
         By convention, documents that failed to process are typically not cleaned up."""
-        pass
 
     @abstractmethod
     def initialize(self):
         """Initializes the connector. Should also validate the connector is properly
         configured: e.g., list a single a document from the source."""
-        pass
 
     @abstractmethod
     def get_ingest_docs(self):
@@ -483,7 +478,6 @@ class BaseSourceConnector(DataClassJsonMixin, ABC):
         This does not imply downloading all the raw documents themselves,
         rather each IngestDoc is capable of fetching its content (in another process)
         with IngestDoc.get_file()."""
-        pass
 
 
 @dataclass
@@ -499,7 +493,6 @@ class BaseDestinationConnector(DataClassJsonMixin, ABC):
     def initialize(self):
         """Initializes the connector. Should also validate the connector is properly
         configured."""
-        pass
 
     @abstractmethod
     def write(self, docs: t.List[BaseIngestDoc]) -> None:

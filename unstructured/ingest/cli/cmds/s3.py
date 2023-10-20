@@ -23,7 +23,7 @@ class S3CliConfig(BaseConfig, CliMixin):
     endpoint_url: t.Optional[str] = None
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--anonymous"],
@@ -39,7 +39,7 @@ class S3CliConfig(BaseConfig, CliMixin):
                 "connecting to non-AWS S3 buckets.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="s3", invoke_without_command=True, cls=Group)
