@@ -56,6 +56,7 @@ def partition_pptx(
     include_metadata: bool = True,
     metadata_last_modified: Optional[str] = None,
     include_slide_notes: bool = False,
+infer_table_structure: bool = True,
     chunking_strategy: Optional[str] = None,
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
@@ -79,6 +80,12 @@ def partition_pptx(
         The last modified date for the document.
     include_slide_notes
         If True, includes the slide notes as element
+    infer_table_structure
+        If True, any Table elements that are extracted will also have a metadata field
+        named "text_as_html" where the table's text content is rendered into an html string.
+        I.e., rows and cells are preserved.
+        Whether True or False, the "text" field is always present in any Table element
+        and is the text content of the table (no structure).
     languages
         User defined value for `metadata.languages` if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be

@@ -168,6 +168,7 @@ def partition_text(
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
+infer_table_structure: bool = True,
     languages: Optional[List[str]] = ["auto"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
@@ -195,6 +196,12 @@ def partition_text(
         for formatting purposes.
     include_metadata
         Determines whether or not metadata is included in the output.
+    infer_table_structure
+        If True, any Table elements that are extracted will also have a metadata field
+        named "text_as_html" where the table's text content is rendered into an html string.
+        I.e., rows and cells are preserved.
+        Whether True or False, the "text" field is always present in any Table element
+        and is the text content of the table (no structure).
     languages
         User defined value for `metadata.languages` if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
