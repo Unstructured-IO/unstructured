@@ -198,11 +198,20 @@ def supplement_page_layout_with_ocr(
             ocr_languages=ocr_languages,
             entire_page_ocr=entire_page_ocr,
         )
-        merged_page_layout_elements = merge_out_layout_with_ocr_layout(
-            elements,
-            ocr_layout,
+        ocr_text = get_ocr_text_from_image(
+            image,
+            ocr_languages=ocr_languages,
+            entire_page_ocr=entire_page_ocr,
         )
-        elements[:] = merged_page_layout_elements
+
+        if len(elements) > 0:
+            merged_page_layout_elements = merge_out_layout_with_ocr_layout(
+                elements,
+                ocr_layout,
+            )
+            elements[:] = merged_page_layout_elements
+        else:
+            elements[:] = refine_ocr_elements(ocr_layout, ocr_text)
         return page_layout
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
         for element in elements:
@@ -528,3 +537,32 @@ def merge_text_regions(regions: List[TextRegion]) -> TextRegion:
     merged_text = " ".join([tr.text for tr in regions if tr.text])
 
     return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text)
+
+
+def refine_ocr_elements(ocr_layout, ocr_text):
+    text_sections = ocr_text.split("\n\n")
+    grouped_regions = []
+    for text_section in text_sections:
+        regions = []
+        words = text_section.replace("\n", " ").split()
+        for ocr_region in ocr_layout:
+            if not words:
+                break
+            if ocr_region.text in words:
+                regions.append(ocr_region)
+                words.remove(ocr_region.text)
+
+        if not regions:
+            continue
+
+        for r in regions:
+            ocr_layout.remove(r)
+
+        grouped_regions.append(regions)
+
+    merged_regions = [merge_text_regions(group) for group in grouped_regions]
+
+    return [
+        LayoutElement(text=r.text, source=r.source, type="UncategorizedText", bbox=r.bbox)
+        for r in merged_regions
+    ]
