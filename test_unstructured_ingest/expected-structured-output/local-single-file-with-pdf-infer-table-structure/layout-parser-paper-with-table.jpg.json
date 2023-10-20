@@ -3,7 +3,16 @@
     "type": "Title",
     "element_id": "8e5839c2fb9b4d6b78cd2b1c1f5bed02",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
@@ -13,7 +22,16 @@
     "type": "FigureCaption",
     "element_id": "f2c0641f368a9449a58ec35931e4ae81",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
@@ -23,7 +41,16 @@
     "type": "Table",
     "element_id": "cbbf7b2ca7e0cda98760d1a4dfb657a8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
@@ -43,7 +70,16 @@
     "type": "FigureCaption",
     "element_id": "2ad24f5a5e3078b568fa6e9525e64f77",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
@@ -53,7 +89,16 @@
     "type": "NarrativeText",
     "element_id": "10d504d8b13f993462c1fb2b259a637c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
@@ -63,7 +108,16 @@
     "type": "Title",
     "element_id": "958174bfb8153f0b2c1d247196bcf8b1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
@@ -73,7 +127,16 @@
     "type": "NarrativeText",
     "element_id": "6308564d51ecc38117d56ca4d886e7b7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
@@ -83,17 +146,130 @@
     "type": "ListItem",
     "element_id": "ef6eafe86d89bc2e0af554aeab05a317",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
     "text": "import layoutparser as lp"
   },
   {
+    "type": "ListItem",
+    "element_id": "79e0a3c1350f942562679b971915d272",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "2 image = cv2.imread(\"image_file\") # load images"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "("
+  },
+  {
+    "type": "ListItem",
+    "element_id": "cd84964c612152f5362ee38fab9cad62",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "» model = 1p. Detectron2LayoutModel"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "252ce669ee21ceee8521053e783bf50a",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "\"1p: //PubLayllet /faster_renn_t |-50_FPI_3x/config\")"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "4"
+  },
+  {
     "type": "Title",
     "element_id": "3aaabff05e0eb86a34fc7d72e421f2e0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
@@ -103,7 +279,16 @@
     "type": "ListItem",
     "element_id": "cbb879049df7bd737ffc487a61b05f70",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
@@ -153,8 +338,18 @@
     "type": "NarrativeText",
     "element_id": "26b798107369c9c8a5e68a19f68cf7ec",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "date_created": "2023-10-20 17:55:18.995001",
+        "date_modified": "2023-10-20 17:55:18.995001",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
+      "page_number": 1
       "page_number": 1
     },
     "text": "LayoutParser provides a wealth of pre-trained model weights using various datasets covering different languages, time periods, and document types. Due to domain shift [7], the prediction performance can notably drop when models are ap- plied to target samples that are significantly different from the training dataset. As document structures and layouts vary greatly in different domains, it is important to select models trained on a dataset similar to the test samples. A semantic syntax is used for initializing the model weights in Layout Parser, using both the dataset name and model name 1p://<dataset-name>/<model-architecture-name>."
