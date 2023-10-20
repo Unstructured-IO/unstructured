@@ -77,6 +77,8 @@ def measure_edit_distance(
     if not source_list:
         source_list = _listdir_recursive(source_dir)
 
+    click.echo(os.path.isdir(export_dir))
+
     rows = []
     accuracy_scores: List[float] = []
     percent_missing_scores: List[float] = []
@@ -98,6 +100,7 @@ def measure_edit_distance(
 
     headers = ["filename", "connector", "cct-accuracy", "cct-%missing"]
     _write_to_file(export_dir, "all-docs-cct.tsv", rows, headers)
+    click.echo(os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv")))
 
     headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
     agg_rows = []
@@ -120,6 +123,7 @@ def measure_edit_distance(
         ],
     )
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_rows, headers)
+    click.echo(os.path.isfile(os.path.join(export_dir, "aggregate-scores-cct.tsv")))
     _display(agg_rows, headers)
 
 
