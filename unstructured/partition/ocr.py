@@ -19,7 +19,7 @@ from unstructured_inference.inference.layoutelement import (
     LayoutElement,
     partition_groups_from_regions,
 )
-from unstructured_inference.models import tables
+from unstructured_inference.models.tables import UnstructuredTableTransformerModel
 from unstructured_pytesseract import Output
 
 from unstructured.logger import logger
@@ -251,7 +251,7 @@ def supplement_element_with_table_extraction(
     elements: List[LayoutElement],
     ocr_layout: List[TextRegion],
     image: PILImage,
-    table_agent: "tables.UnstructuredTableTransformerModel",
+    table_agent: "UnstructuredTableTransformerModel",
 ) -> List[LayoutElement]:
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata field "text_as_html" where
@@ -341,7 +341,7 @@ def init_table_agent():
     global table_agent
 
     if table_agent is None:
-        table_agent = tables.UnstructuredTableTransformerModel()
+        table_agent = UnstructuredTableTransformerModel()
         table_agent.initialize(model="microsoft/table-transformer-structure-recognition")
 
     return table_agent
