@@ -334,6 +334,9 @@ def _partition_pdf_or_image_local(
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    extract_images_in_pdf: bool = False,
+    image_output_dir_path: Optional[str] = None,
+    pdf_image_dpi: Optional[int] = None,
     **kwargs,
 ) -> List[Element]:
     """Partition using package installed locally."""
@@ -350,7 +353,6 @@ def _partition_pdf_or_image_local(
     ocr_languages = prepare_languages_for_tesseract(languages)
 
     model_name = model_name or default_hi_res_model()
-    pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
     if pdf_image_dpi is None:
         pdf_image_dpi = 300 if model_name == "chipper" else 200
     if (pdf_image_dpi < 300) and (model_name == "chipper"):
@@ -358,19 +360,6 @@ def _partition_pdf_or_image_local(
             "The Chipper model performs better when images are rendered with DPI >= 300 "
             f"(currently {pdf_image_dpi}).",
         )
-
-    # NOTE(christine): Need to extract images from PDF's
-    extract_images_in_pdf = kwargs.get("extract_images_in_pdf", False)
-    image_output_dir_path = kwargs.get("image_output_dir_path", None)
-    process_with_model_extra_kwargs = {
-        "extract_images_in_pdf": extract_images_in_pdf,
-        "image_output_dir_path": image_output_dir_path,
-    }
-
-    process_with_model_kwargs = {}
-    for key, value in process_with_model_extra_kwargs.items():
-        if value:
-            process_with_model_kwargs[key] = value
 
     if file is None:
         # NOTE(christine): out_layout = extracted_layout + inferred_layout
@@ -380,7 +369,8 @@ def _partition_pdf_or_image_local(
             extract_tables=infer_table_structure,
             model_name=model_name,
             pdf_image_dpi=pdf_image_dpi,
-            **process_with_model_kwargs,
+            extract_images_in_pdf=extract_images_in_pdf,
+            image_output_dir_path=image_output_dir_path,
         )
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
@@ -401,7 +391,8 @@ def _partition_pdf_or_image_local(
             extract_tables=infer_table_structure,
             model_name=model_name,
             pdf_image_dpi=pdf_image_dpi,
-            **process_with_model_kwargs,
+            extract_images_in_pdf=extract_images_in_pdf,
+            image_output_dir_path=image_output_dir_path,
         )
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper

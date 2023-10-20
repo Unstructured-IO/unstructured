@@ -180,9 +180,11 @@ def test_partition_pdf_with_model_name_env_var(
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            pdf_image_dpi=200,
-            extract_tables=False,
+            pdf_image_dpi=mock.ANY,
+            extract_tables=mock.ANY,
             model_name="checkbox",
+            extract_images_in_pdf=mock.ANY,
+            image_output_dir_path=mock.ANY,
         )
 
 
@@ -200,9 +202,11 @@ def test_partition_pdf_with_model_name(
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            pdf_image_dpi=200,
-            extract_tables=False,
+            pdf_image_dpi=mock.ANY,
+            extract_tables=mock.ANY,
             model_name="checkbox",
+            extract_images_in_pdf=mock.ANY,
+            image_output_dir_path=mock.ANY,
         )
 
 
@@ -418,9 +422,11 @@ def test_partition_pdf_with_dpi():
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            extract_tables=False,
+            extract_tables=mock.ANY,
             model_name=pdf.default_hi_res_model(),
             pdf_image_dpi=100,
+            extract_images_in_pdf=mock.ANY,
+            image_output_dir_path=mock.ANY,
         )
 
 
@@ -859,9 +865,11 @@ def test_partition_pdf_formats_languages_for_tesseract():
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            pdf_image_dpi=200,
-            extract_tables=False,
+            pdf_image_dpi=mock.ANY,
+            extract_tables=mock.ANY,
             model_name=pdf.default_hi_res_model(),
+            extract_images_in_pdf=mock.ANY,
+            image_output_dir_path=mock.ANY,
         )
 
 
