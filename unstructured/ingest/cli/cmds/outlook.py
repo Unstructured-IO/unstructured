@@ -28,7 +28,7 @@ class OutlookCliConfig(BaseConfig, CliMixin):
     authority_url: t.Optional[str] = "https://login.microsoftonline.com"
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--client-id"],
@@ -68,7 +68,7 @@ class OutlookCliConfig(BaseConfig, CliMixin):
                 "https://login.microsoftonline.com",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="outlook", invoke_without_command=True, cls=Group)

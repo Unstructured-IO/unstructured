@@ -1,4 +1,5 @@
 import logging
+import typing as t
 from dataclasses import dataclass
 
 import click
@@ -22,7 +23,7 @@ class AzureCognitiveSearchCliWriteConfig(BaseConfig, CliMixin):
     index: str
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--key"],
@@ -48,7 +49,7 @@ class AzureCognitiveSearchCliWriteConfig(BaseConfig, CliMixin):
                 help="The name of the index to connect to",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.command(name="azure-cognitive-search")

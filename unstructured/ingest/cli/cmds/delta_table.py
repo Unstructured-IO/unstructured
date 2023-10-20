@@ -24,7 +24,7 @@ class DeltaTableCliConfig(BaseConfig, CliMixin):
     without_files: bool = False
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--table-uri"],
@@ -51,7 +51,7 @@ class DeltaTableCliConfig(BaseConfig, CliMixin):
                 help="If set, will load table without tracking files.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="delta-table", invoke_without_command=True, cls=Group)
@@ -81,7 +81,7 @@ class DeltaTableCliWriteConfig(BaseConfig, CliMixin):
     mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--write-column"],
@@ -99,7 +99,7 @@ class DeltaTableCliWriteConfig(BaseConfig, CliMixin):
                 "If 'ignore', will not write anything if table already exists.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.command(name="delta-table")

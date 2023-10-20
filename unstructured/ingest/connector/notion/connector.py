@@ -26,7 +26,7 @@ class SimpleNotionConfig(BaseConnectorConfig):
     page_ids: t.List[str]
     database_ids: t.List[str]
     recursive: bool
-    api_key: str
+    notion_api_key: str
 
 
 @dataclass
@@ -293,7 +293,7 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         # Pin the version of the api to avoid schema changes
         self.client = NotionClient(
             notion_version=NOTION_API_VERSION,
-            auth=self.connector_config.api_key,
+            auth=self.connector_config.notion_api_key,
             logger=logger,
             log_level=logger.level,
             retry_strategy_config=self.retry_strategy_config,
@@ -361,7 +361,7 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                     retry_strategy_config=self.retry_strategy_config,
                     read_config=self.read_config,
                     page_id=page_id,
-                    api_key=self.connector_config.api_key,
+                    api_key=self.connector_config.notion_api_key,
                 )
                 for page_id in self.connector_config.page_ids
             ]
@@ -373,7 +373,7 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                     retry_strategy_config=self.retry_strategy_config,
                     read_config=self.read_config,
                     database_id=database_id,
-                    api_key=self.connector_config.api_key,
+                    api_key=self.connector_config.notion_api_key,
                 )
                 for database_id in self.connector_config.database_ids
             ]
@@ -411,7 +411,7 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                         retry_strategy_config=self.retry_strategy_config,
                         read_config=self.read_config,
                         page_id=page_id,
-                        api_key=self.connector_config.api_key,
+                        api_key=self.connector_config.notion_api_key,
                     )
                     for page_id in child_pages
                 ]
@@ -429,7 +429,7 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                         retry_strategy_config=self.retry_strategy_config,
                         read_config=self.read_config,
                         database_id=database_id,
-                        api_key=self.connector_config.api_key,
+                        api_key=self.connector_config.notion_api_key,
                     )
                     for database_id in child_databases
                 ]
