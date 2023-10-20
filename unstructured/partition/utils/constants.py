@@ -2,6 +2,11 @@ import os
 from enum import Enum
 
 
+class Source(Enum):
+    OCR_TESSERACT = "ocr_tesseract"
+    OCR_PADDLE = "ocr_paddle"
+
+
 class OCRMode(Enum):
     INDIVIDUAL_BLOCKS = "individual_blocks"
     FULL_PAGE = "entire_page"

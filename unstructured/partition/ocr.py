@@ -23,7 +23,7 @@ from unstructured.logger import logger
 from unstructured.partition.utils.constants import (
     SUBREGION_THRESHOLD_FOR_OCR,
     OCRMode,
-    OCROutputType,
+    OCROutputType, Source,
 )
 
 # Force tesseract to be single threaded,
@@ -342,7 +342,7 @@ def parse_ocr_data_tesseract(ocr_data: dict) -> List[TextRegion]:
             continue
         cleaned_text = text.strip()
         if cleaned_text:
-            text_region = TextRegion.from_coords(x1, y1, x2, y2, text=cleaned_text, source="OCR-tesseract")
+            text_region = TextRegion.from_coords(x1, y1, x2, y2, text=cleaned_text, source=Source.OCR_TESSERACT)
             text_regions.append(text_region)
 
     return text_regions
@@ -381,7 +381,7 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
                 continue
             cleaned_text = text.strip()
             if cleaned_text:
-                text_region = TextRegion.from_coords(x1, y1, x2, y2, cleaned_text, source="OCR-paddle")
+                text_region = TextRegion.from_coords(x1, y1, x2, y2, cleaned_text, source=Source.OCR_PADDLE)
                 text_regions.append(text_region)
 
     return text_regions
