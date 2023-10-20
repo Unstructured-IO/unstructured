@@ -13,6 +13,7 @@ doc = LocalIngestDoc(
     processor_config=ProcessorConfig(),
     read_config=ReadConfig(),
 )
+doc.update_source_metadata()
 serialized_json = doc.to_json()
 
 

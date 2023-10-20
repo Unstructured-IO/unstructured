@@ -227,19 +227,31 @@ class IngestDocJsonMixin(DataClassJsonMixin):
     class when creating the json/dict for serialization purposes.
     """
 
-    properties_to_serialize = [
-        "base_filename",
+    metadata_properties = [
         "date_created",
         "date_modified",
         "date_processed",
         "exists",
+        "permissions_data",
+        "version",
+        "source_url",
+    ]
+    properties_to_serialize = [
+        "base_filename",
         "filename",
         "_output_filename",
         "record_locator",
-        "source_url",
-        "version",
         "_source_metadata",
     ]
+
+    def add_props(self, as_dict: dict, props: t.List[str]):
+        for prop in props:
+            val = getattr(self, prop)
+            if isinstance(val, Path):
+                val = str(val)
+            if isinstance(val, DataClassJsonMixin):
+                val = val.to_dict(encode_json=False)
+            as_dict[prop] = val
 
     def to_json(
         self,
@@ -255,13 +267,10 @@ class IngestDocJsonMixin(DataClassJsonMixin):
         **kw,
     ) -> str:
         as_dict = self.to_dict(encode_json=False)
-        for prop in self.properties_to_serialize:
-            val = getattr(self, prop)
-            if isinstance(val, Path):
-                val = str(val)
-            if isinstance(val, DataClassJsonMixin):
-                val = val.to_dict(encode_json=False)
-            as_dict[prop] = val
+        self.add_props(as_dict=as_dict, props=self.properties_to_serialize)
+        if getattr(self, "_source_metadata") is not None:
+            self.add_props(as_dict=as_dict, props=self.metadata_properties)
+
         return json.dumps(
             as_dict,
             cls=_ExtendedEncoder,
