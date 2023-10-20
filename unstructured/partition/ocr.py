@@ -284,28 +284,22 @@ def get_ocr_data_from_image(
         ocr_data = paddle_ocr.load_agent().ocr(np.array(image), cls=True)
         ocr_layout = parse_ocr_data_paddle(ocr_data)
         if output_type == OCROutputType.STRING:
-            text_from_ocr = ""
-            for text_region in ocr_layout:
-                text_from_ocr += text_region.text
-            output_data = text_from_ocr
+            output_data = "\n\n".join([r.text for r in ocr_layout])
         else:
             output_data = ocr_layout
     else:
         if output_type == OCROutputType.STRING:
-            text_from_ocr = unstructured_pytesseract.image_to_string(
+            output_data = unstructured_pytesseract.image_to_string(
                 np.array(image),
                 lang=ocr_languages,
-                output_type=Output.DICT,
-            )["text"]
-            output_data = text_from_ocr
+            )
         else:
             ocr_data = unstructured_pytesseract.image_to_data(
                 np.array(image),
                 lang=ocr_languages,
                 output_type=Output.DICT,
             )
-            ocr_layout = parse_ocr_data_tesseract(ocr_data)
-            output_data = ocr_layout
+            output_data = parse_ocr_data_tesseract(ocr_data)
 
     return output_data
 
@@ -348,7 +342,7 @@ def parse_ocr_data_tesseract(ocr_data: dict) -> List[TextRegion]:
             continue
         cleaned_text = text.strip()
         if cleaned_text:
-            text_region = TextRegion.from_coords(x1, y1, x2, y2, text=text, source="OCR-tesseract")
+            text_region = TextRegion.from_coords(x1, y1, x2, y2, text=cleaned_text, source="OCR-tesseract")
             text_regions.append(text_region)
 
     return text_regions
@@ -387,7 +381,7 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
                 continue
             cleaned_text = text.strip()
             if cleaned_text:
-                text_region = TextRegion.from_coords(x1, y1, x2, y2, text, source="OCR-paddle")
+                text_region = TextRegion.from_coords(x1, y1, x2, y2, cleaned_text, source="OCR-paddle")
                 text_regions.append(text_region)
 
     return text_regions
