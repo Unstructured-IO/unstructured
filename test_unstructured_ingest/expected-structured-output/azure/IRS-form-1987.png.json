@@ -1,7 +1,7 @@
 [
   {
     "type": "Title",
-    "element_id": "898ffdb987b556da4dc7ccd1cf11f1b3",
+    "element_id": "b936b2ee403883f6bff0295edb71fae1",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -16,7 +16,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "rh Department of the Treasury Internal Revenue Service Instructions for Form 3115 (Rev. November 1987) Application for Change in Accoun ig Method"
+    "text": "FM) Department of the Treasury Internal Revenue Service Instructions for Form 3115 (Rev. November 1987) Application for Change in Accounting Method"
   },
   {
     "type": "NarrativeText",
@@ -77,7 +77,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c9bc33e913a25aaffa8367aa11bc8ed9",
+    "element_id": "1dc07a295891aaf9dfd2559efee66ab2",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -92,7 +92,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws an¢ to allow us to figure and collect the nght amount of tax. You are required to this information."
+    "text": "Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws and to allow us to figure and collect the right amount of tax. You are required to this information."
   },
   {
     "type": "NarrativeText",
@@ -153,7 +153,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "f9b8e17da7a31507773f78959378e09c",
+    "element_id": "fdb8017fc73bdc12f7200dece8b76c99",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -168,26 +168,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "File this form to request a change in your accounting method, including the accounting treatment of any item. if you are requesting 2 change in accounting period, use Form 1128, Application for Change in Accounting Period. For more information, see Publication 538, Accounting Periods and Methods,"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "2127f2ab4fc4feb4d32460c8317bf02f",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "Form 3115,"
+    "text": "File this form to request a change in your accounting method, including the accounting treatment of any item. If you are requesting a change in accounting period, use Form 1128, Application for Change in Accounting Period. For more information, see Publication 538, Accounting Periods and Methods."
   },
   {
     "type": "Title",
@@ -209,8 +190,8 @@
     "text": "When"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "06658399dddcd1d4d4fda8f9fa90fd53",
+    "type": "UncategorizedText",
+    "element_id": "2127f2ab4fc4feb4d32460c8317bf02f",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -225,11 +206,11 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "filing taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current. revision date of Form 3115)"
+    "text": "Form 3115,"
   },
   {
     "type": "NarrativeText",
-    "element_id": "03c4a83e399f2f669047b3fcfeae5867",
+    "element_id": "d3c76e8e037d3aec863db1d768b81f6d",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -244,7 +225,26 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Long-term contracts.—If you are required to"
+    "text": "filing taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115)."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4e7936ce3e93c2ae3ca21444e573c208",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "Long-term contracts. —If you are required to"
   },
   {
     "type": "NarrativeText",
@@ -267,7 +267,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "463ce4107785bb9854ad10b81d93dc7f",
+    "element_id": "c259777a4c46933ffda4f8b06922fcfd",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -282,7 +282,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Other methods. —Unless the Service has published a regulation or procedure to the contrary, all other changes in accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of mcome attributable to the sale or furnishing of utility services no later than the year in which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these"
+    "text": "Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes 1n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the inclusion of income attributable to the sale or furnishing of utility services no later than the year in which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these"
   },
   {
     "type": "Title",
@@ -305,7 +305,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ca23ec8966835bea3ca9b191b53ada9d",
+    "element_id": "790998c70f51276d6fae7db8df6e8351",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -320,26 +320,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Generally, applicants must complete Section In addition, complete the appropriate sections (B:1 through H) for which a change is desired."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "e16bce609163ec96985ae522ca81502a",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "‘A."
+    "text": "Generally, applicants must complete Section A. In addition, complete the appropriate sections (B-1 through H) for which a change ts desired."
   },
   {
     "type": "NarrativeText",
@@ -362,7 +343,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "25f830e7c39c115c9937eb9d11cfb1f2",
+    "element_id": "505160cf4f5ef1cf128734840a8c98d1",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -377,7 +358,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "State whether you desire a conference in the National Office if the Service proposes to disapprove your application"
+    "text": "State whether you desire a conference in the National Office if the Service proposes to disapprove your application."
   },
   {
     "type": "Title",
@@ -400,7 +381,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c10c0c63b05172dff854d1d0e570c588",
+    "element_id": "6fef08d976462f03567612cbea207d0b",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -415,11 +396,11 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Uniform capitalization rules and limitation on cash method.—If you are required to change your method of accounting under section, 263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (imiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (\"Act\"), the change is treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to cchange from the cash method under section 448 have 10 years to take the adjustments into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required"
+    "text": "Uniform capitalization rules and limitation on cash method.—If you are required to change your method of accounting under sectior,263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change is treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustments into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required."
   },
   {
     "type": "NarrativeText",
-    "element_id": "fc2252774c86adc22225761fc0bee985",
+    "element_id": "207be7b7dc9e8cd420376c5aef291cfc",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -434,7 +415,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Disregard the instructions under Time and Place for Filing and Late Applications. instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(2) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3118 eg. “Automatic Change to Accrual Method—Section 448”). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information"
+    "text": "Disregard the instructions under Time and Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method Section 448\"). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information."
   },
   {
     "type": "Title",
@@ -457,7 +438,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a720c5a62597e77c686cbc5df1c682ce",
+    "element_id": "af8bdf713f162b09567c8d1a3a2d4de7",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -472,11 +453,11 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Generally, applicants must file this form within the first 180 days of the tax year in which itis desired to make the change."
+    "text": "Generally, applicants must file this form within the first 180 days of the tax year in which it is desired to make the change."
   },
   {
     "type": "NarrativeText",
-    "element_id": "9dda11db48254f5e0d0000afb5d1dd9b",
+    "element_id": "1bf38b8fd54e59f8ec042e22cc5c5a89",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -491,7 +472,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Taxpayers, other than exempt organizations, should file Form 3115 with the Commissioner of Internal Revenue, Attention: CC:C:4, 1111 Constitution Avenue, NW, Washington, DC 20224, Exempt organizations should file with the Assistant Commissioner (Employee Plans and Exempt Organizations), 1111 Constitution Avenue, NW, Washington, DC 20224."
+    "text": "Taxpayers, other than exempt organizations, should file Form 3115 with the Commissioner of Internal Revenue, Attention: CC:C:4, 1111 Constitution Avenue, NW, Washington, DC 20224. Exempt organizations should file with the Assistant Commissioner (Employee Plans and Exempt Organizations), 1111 Constitution Avenue, NW, Washington, DC 20224."
   },
   {
     "type": "NarrativeText",
@@ -514,7 +495,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e3e2ccf4f0d1524d4f5ce42e8f2d1efa",
+    "element_id": "c56ebb2883fe0c95b8564fa3969f7010",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -529,7 +510,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "See section 5.03 of Rev. Proc. 84-74 for filing early application,"
+    "text": "See section 5.03 of Rev. Proc. 84-74 for filing early application."
   },
   {
     "type": "Title",
@@ -552,7 +533,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "11cb901986e9621aadbd76e6f7400809",
+    "element_id": "12f877f0bd47f9b761ed7e74be1afacd",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -567,7 +548,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Note: If this form is being filed in accordance with Rey. Proc. 74-11, see Section G below."
+    "text": "Note: /f this form is being filed in accordance with Rev. Proc. 74-11, see Section G below."
   },
   {
     "type": "Title",
@@ -590,7 +571,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "8474975a0cd563b9feee81d0e540ffd3",
+    "element_id": "d6fca66a91f1ac21a81f0123a2641176",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -605,7 +586,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "If your application is filed after the 180-day period, itis late. The application will be considered for processing only upon a showing of “good cause” and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev. Proc. 79-63."
+    "text": "If your application is filed after the 180-day period, it is late. The application will be considered for processing only upon a showing of “good cause\" and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev. Proc. 79-63."
   },
   {
     "type": "Title",
@@ -628,7 +609,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ec3c2d03b846d2a186fc9a8f318f688b",
+    "element_id": "8605ee209656c311cec7ce4b001caab2",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -643,11 +624,11 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Individuals. —An individual should enter his or her social security number in this block. If the application is made on behalf of a husband and wife who file their income tax return jointly, enter the social security numbers of both."
+    "text": "Individuals.—An individual should enter his or her social security number in this block. If the application is made on behalf of a husband and wife who file their income tax return jointly, enter the social security numbers of both."
   },
   {
     "type": "NarrativeText",
-    "element_id": "cf50ba29fb549766117d8ff1d099da44",
+    "element_id": "7d82c5876c5c1a3596338ae8cfbd1a50",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -662,7 +643,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Others.-—The employer identification number applicant other than an individual should be entered in this block,"
+    "text": "Others.-—The employer identification number applicant other than an individual should be entered in this block."
   },
   {
     "type": "Title",
@@ -703,8 +684,8 @@
     "text": "of"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "48cd565f152ff17bab8eba19eb23db34",
+    "type": "Title",
+    "element_id": "f1a73e2204a114077f988c9da98d7f8b",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -719,11 +700,11 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Individuals.—An individual desiring the change should sign the application. Ifthe application pertains to a husband and wife filing a joint Income tax return, the names of both should appear in the heading and both should"
+    "text": "Signature"
   },
   {
-    "type": "Title",
-    "element_id": "0b6f395ca14ac202374d5cff678b7115",
+    "type": "NarrativeText",
+    "element_id": "dc1531183c8e3f45a78f110ec1efe15f",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -738,7 +719,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "sign"
+    "text": "Individuals. —An individual desiring the change should sign the application. If the application pertains to a husband and wife filing a joint income tax return, the names of both should appear in the heading and both should sign."
   },
   {
     "type": "NarrativeText",
@@ -761,7 +742,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ee6a9bcef7e5e33bc26f419812e2c77a",
+    "element_id": "9de285e8e3b042aa9ac86edde98a21a9",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -776,7 +757,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Corporations, cooperatives, and insurance companies.—The form should show the name of the corporation, cooperative, or insurance Company and the signature of the president, vice president, treasurer, assistant treasurer, or chief accounting officer (such as tax officer) authorized tosign, and his or her official title. Receivers, trustees, or assignees must sign any application they are required to file, For a subsidiary corporation filing a consolidated return with its parent, the form should be signed by an officer of the parent corporation,"
+    "text": "Corporations, cooperatives, and insurance companies.—The form should show the name of the corporation, cooperative, or insurance company and the signature of the president, vice president, treasurer, assistant treasurer, or chief accounting officer (such as tax officer) authorized to sign, and his or her official title. Receivers, trustees, or assignees must sign any application they are required to file. For a subsidiary corporation filing a consolidated return with its parent, the form should be signed by an officer of the parent corporation."
   },
   {
     "type": "NarrativeText",
@@ -799,7 +780,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e3c8d21cabd10cc36b53107e58a5be8d",
+    "element_id": "15388163cb5265b432737b06d98790e5",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -814,7 +795,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrx, etc’, having legal authority to'sign, and his or her ttle."
+    "text": "name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrix, etc., having legal authority to sign, and his or her title."
   },
   {
     "type": "NarrativeText",
@@ -836,25 +817,6 @@
     "text": "Preparer other than partner, officer, etc.—The signature of the individual preparing the application should appear in the space provided on page 6."
   },
   {
-    "type": "NarrativeText",
-    "element_id": "8200352b4e91b1be4f14e9248d50380a",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": 328871203465633719836776597535876541325,
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "Ifthe individual or firm is also authorized to represent the applicant before the IRS, receive copy of the requested ruling, or perform any other act(s), the power of attorney must reflect such authorization(s)."
-  },
-  {
     "type": "Title",
     "element_id": "ca978112ca1bbdcafac231b39a23dc4d",
     "metadata": {
@@ -872,6 +834,25 @@
       "page_number": 1
     },
     "text": "a"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "12a24aabbcef2cabc07babe12d9c82c5",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.png",
+        "version": 328871203465633719836776597535876541325,
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.png"
+        },
+        "date_created": "2023-03-10T09:44:55+00:00",
+        "date_modified": "2023-03-10T09:44:55+00:00"
+      },
+      "filetype": "image/png",
+      "page_number": 1
+    },
+    "text": "If the individual or firm is also authorized to represent the applicant before the IRS, receive copy of the requested ruling, or perform any other act(s), the power of attorney must reflect such authorization(s)."
   },
   {
     "type": "Title",
@@ -894,7 +875,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "762e2a39ed1a3ef5d3d4c83dd5dcc0e8",
+    "element_id": "e5a2893bc6d1da570465f39fa3a8da15",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -909,7 +890,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Taxpayers that are members of an affiliated group filing a consolidated return that seeks to Change to the same accounting method for more than one member of the group must file a separate Form 3115 for each such member."
+    "text": "Taxpayers that are members of an affiliated group filing a consolidated return that seeks to change to the same accounting method for more than one member of the group must file a separate Form 3115 for each such member."
   },
   {
     "type": "Title",
@@ -951,7 +932,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a6c53a8898025076b8c0397178f95fa3",
+    "element_id": "b57b7502430c59194bb865cfa1bcfab5",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -966,11 +947,11 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Item 5a, page 1.—“Taxable income or (loss) from operations” is to be entered before application of any net operating loss deduction under section 172(a)"
+    "text": "Item 5a, page 1.—“Taxable income or (loss) from operations” is to be entered before application of any net operating loss deduction under section 172(a)."
   },
   {
     "type": "NarrativeText",
-    "element_id": "e9278d083996ccb1f39236b8064b28cd",
+    "element_id": "1c43ecf3a4844d9537d924d892d7c546",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -985,11 +966,11 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Item 6, page 2.—The term “gross receipts” Includes total sales (net of returns and allowances) and all amounts received for services. in addition, gross receipts include any income from investments and from incidental or outside sources (e.g., interest, dividends, rents, royalties, and annuities). However, if you area resaler of personal property, exclude from gross receipts any amounts not derived in the ordinary course of a trade or business. Gross receipts do not include amounts received for sales taxes if, tunder the applicable state or local law, the taxis legally imposed on the purchaser of the good or service, and the taxpayer merely collects and remits the tax to the taxing authority."
+    "text": "Item 6, page 2.—The term “gross receipts” includes total sales (net of returns and allowances) and all amounts received for services. In addition, gross receipts include any income from investments and from incidental or outside sources (e.g., interest, dividends, rents, royalties, and annuities). However, if you area resaler of personal property, exclude from gross receipts any amounts not derived in the ordinary course of a trade or business. Gross receipts do not include amounts received for sales taxes if, under the applicable state or local law, the tax is legatly imposed on the purchaser of the good or service, and the taxpayer merely collects and remits the tax to the taxing authority."
   },
   {
     "type": "NarrativeText",
-    "element_id": "4b4424f821633ea87deab36702d4c113",
+    "element_id": "372359d8718b28cc34e7a5f1fdd05213",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -1004,6 +985,6 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Item 7b, page 2.—If item 7b 1s \"Yes,\" indicate ona separate sheet the following for each separate trade or business: Nature of business"
+    "text": "Item 7b, page 2.—If item 7b 1s “Yes,” indicate ona separate sheet the following for each separate trade or business: Nature of business"
   }
 ]

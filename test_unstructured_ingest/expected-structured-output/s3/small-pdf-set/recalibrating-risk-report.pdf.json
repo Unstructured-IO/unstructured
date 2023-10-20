@@ -414,6 +414,24 @@
     "text": "1"
   },
   {
+    "type": "Title",
+    "element_id": "602d25f25cca4ebb709f8b48f54d99d9",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Motor vehicles"
+  },
+  {
     "type": "UncategorizedText",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
@@ -432,8 +450,8 @@
     "text": "2"
   },
   {
-    "type": "Title",
-    "element_id": "602d25f25cca4ebb709f8b48f54d99d9",
+    "type": "UncategorizedText",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -447,7 +465,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "Motor vehicles"
+    "text": "4"
   },
   {
     "type": "UncategorizedText",
@@ -468,24 +486,6 @@
     "text": "3"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": 306475068461766865312866697521104206816,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "date_modified": "2023-02-12T10:09:32"
-      },
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "4"
-  },
-  {
     "type": "Title",
     "element_id": "f8e3740e358309bd0570d4f3ca141793",
     "metadata": {
@@ -502,6 +502,24 @@
       "page_number": 4
     },
     "text": "Handguns"
+  },
+  {
+    "type": "Title",
+    "element_id": "eda8f72476c539920d2c0e3515ba4b07",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "Smoking"
   },
   {
     "type": "UncategorizedText",
@@ -538,42 +556,6 @@
       "page_number": 4
     },
     "text": "4"
-  },
-  {
-    "type": "Title",
-    "element_id": "eda8f72476c539920d2c0e3515ba4b07",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": 306475068461766865312866697521104206816,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "date_modified": "2023-02-12T10:09:32"
-      },
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Smoking"
-  },
-  {
-    "type": "Title",
-    "element_id": "1656c455012b016fbac5eac0a38397bd",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": 306475068461766865312866697521104206816,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "date_modified": "2023-02-12T10:09:32"
-      },
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Electric power (non-nuclear)"
   },
   {
     "type": "UncategorizedText",
@@ -612,8 +594,8 @@
     "text": "9"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "785f3ec7eb32f30b90cd0fcf3657d388",
+    "type": "Title",
+    "element_id": "1656c455012b016fbac5eac0a38397bd",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -627,7 +609,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "22"
+    "text": "Electric power (non-nuclear)"
   },
   {
     "type": "UncategorizedText",
@@ -667,7 +649,7 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
+    "element_id": "785f3ec7eb32f30b90cd0fcf3657d388",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -681,7 +663,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "30"
+    "text": "22"
   },
   {
     "type": "UncategorizedText",
@@ -702,6 +684,24 @@
     "text": "25"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "30"
+  },
+  {
     "type": "Title",
     "element_id": "ed3861e631428b9b77e2bdc0384d2cbe",
     "metadata": {
@@ -718,24 +718,6 @@
       "page_number": 4
     },
     "text": "Vaccinations"
-  },
-  {
-    "type": "Title",
-    "element_id": "4d7c9c95f808a09f6b0bcfe8b255e537",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": 306475068461766865312866697521104206816,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "date_modified": "2023-02-12T10:09:32"
-      },
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Figure 1. Ordering of perceived risks for 30 activities and technologies1,iii"
   },
   {
     "type": "NarrativeText",
@@ -954,8 +936,8 @@
     "text": "a t a F"
   },
   {
-    "type": "Image",
-    "element_id": "6e43331d224358d0cc41a5c1d2115cca",
+    "type": "UncategorizedText",
+    "element_id": "6a3adc54db5128f797d4a12855193373",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -969,7 +951,25 @@
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "24.6  25  20  18.4  15  10  4.6  5  2.8  0.07  0.04  0.02  0.01  0  C oal  Oil  Bio m ass  N atural gas  Wind  H ydropo w er  S olar  N uclear "
+    "text": "24.6"
+  },
+  {
+    "type": "Image",
+    "element_id": "0bcb3759fa68b68d784c3c3963253c90",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": 306475068461766865312866697521104206816,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "25  20  18.4  15  10  4.6  5  2.8  0.07  0.04  0.02  0.01  0  C oal  Oil  Bio m ass  N atural gas  Wind  H ydropo w er  S olar  N uclear "
   },
   {
     "type": "FigureCaption",
@@ -1062,8 +1062,8 @@
     "text": "3"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "type": "Footer",
+    "element_id": "0b0bd7ca2acebad288fe09c9d9595f1f",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -1764,26 +1764,8 @@
     "text": "viii National Cancer Institute (2020). Cancer statistics. Available at: https://www.cancer.gov/about-cancer/ understanding/statistics"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "94178a8c2e84bf4b8f2eed9c79d7cfd5",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": 306475068461766865312866697521104206816,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "date_modified": "2023-02-12T10:09:32"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "ix Cancer Research UK (n.d.). Cancer risk statistics. Available at: https://www.cancerresearchuk.org/health-"
-  },
-  {
     "type": "ListItem",
-    "element_id": "b2ab950d4b82e7d8ced8c2ef2e25b96c",
+    "element_id": "bbea23b1fb74c1188b13acbf2b55c077",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
@@ -1797,7 +1779,7 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "professional/cancer-statistics/risk"
+    "text": "ix Cancer Research UK (n.d.). Cancer risk statistics. Available at: https://www.cancerresearchuk.org/health- professional/cancer-statistics/risk"
   },
   {
     "type": "ListItem",
@@ -1888,24 +1870,6 @@
       "page_number": 12
     },
     "text": "World Nuclear Association Tower House 10 Southampton Street London WC2E 7HA United Kingdom"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "bda050585a00f0f6cb502350559d7553",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": 306475068461766865312866697521104206816,
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "date_modified": "2023-02-12T10:09:32"
-      },
-      "filetype": "application/pdf",
-      "page_number": 12
-    },
-    "text": "—"
   },
   {
     "type": "NarrativeText",

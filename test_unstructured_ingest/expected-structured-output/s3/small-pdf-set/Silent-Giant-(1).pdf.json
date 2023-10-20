@@ -55,7 +55,7 @@
   },
   {
     "type": "Title",
-    "element_id": "25d3a3a6886f4618a5aa9b5245d12333",
+    "element_id": "14547603bad3329c14c74b8c4e2ff8d9",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -69,7 +69,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "/ASSOCIATION"
+    "text": "//s88ciation"
   },
   {
     "type": "Title",
@@ -1171,7 +1171,7 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
+    "element_id": "380918b946a526640a40df5dced65167",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1185,7 +1185,7 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "%"
+    "text": "="
   },
   {
     "type": "NarrativeText",
@@ -1279,6 +1279,24 @@
   },
   {
     "type": "UncategorizedText",
+    "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "%"
+  },
+  {
+    "type": "UncategorizedText",
     "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
       "data_source": {
@@ -1297,7 +1315,7 @@
   },
   {
     "type": "Image",
-    "element_id": "d633023410d076d9f092df6623074daa",
+    "element_id": "1459b67becac6e70efecfcbc9312d3f0",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1311,11 +1329,11 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "  Coal  90    Gas/Oil  80    Biofuels/Waste    Wind/Solar  70    Hydro  60    Nuclear  50  40  30  20  10  0 "
+    "text": "  Coal  90    Gas/Oil  80    Biofuels/Waste    Wind/Solar  70    Hydro  60    Nuclear  50  40  30  20  10 "
   },
   {
     "type": "UncategorizedText",
-    "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
+    "element_id": "5feceb66ffc86f38d952786c6d696c79",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1329,7 +1347,7 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "%"
+    "text": "0"
   },
   {
     "type": "Title",
@@ -1350,8 +1368,8 @@
     "text": "France"
   },
   {
-    "type": "Title",
-    "element_id": "853637136575897a73cba3c5fb085e8c",
+    "type": "FigureCaption",
+    "element_id": "e720e656050a5b95706b7ffefb3ff505",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1729,6 +1747,24 @@
   },
   {
     "type": "Title",
+    "element_id": "d3fc2842ddfad4c8d3859f84d4439bfd",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "Vv"
+  },
+  {
+    "type": "Title",
     "element_id": "4c94485e0c21ae6c41ce1dfe7b6bface",
     "metadata": {
       "data_source": {
@@ -1747,7 +1783,7 @@
   },
   {
     "type": "Title",
-    "element_id": "4ab924a2c4364b07abe1862cb7cd2df5",
+    "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -1761,7 +1797,7 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "Vi"
+    "text": "vi"
   },
   {
     "type": "Title",

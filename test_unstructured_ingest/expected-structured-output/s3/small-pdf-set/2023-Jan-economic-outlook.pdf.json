@@ -955,7 +955,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "328e50be7f756c6202ce3ec4e5b124a8",
+    "element_id": "30c61ae1849c6b38dd09c21d3d4f5951",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
@@ -969,7 +969,7 @@
       "filetype": "application/pdf",
       "page_number": 6
     },
-    "text": "International Monetary Fund | January 2023 5"
+    "text": "International Monetary Fund | January 2023. 5"
   },
   {
     "type": "Title",
@@ -2971,7 +2971,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "9fa4965a8077a9b4e5a811f3edda826b",
+    "element_id": "7250b07d7951c2b7b39c79195f4e69e7",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
@@ -2985,7 +2985,7 @@
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "International Monetary Fund | January 2023 7"
+    "text": "International Monetary Fund | January 2023. 7"
   },
   {
     "type": "Title",
@@ -3547,7 +3547,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "db4302b8b58895480ce07bfcba6a1644",
+    "element_id": "bab943d841e99d44807adb96ef9ef925",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
@@ -3561,7 +3561,7 @@
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "10 International Monetary Fund | January 2023"
+    "text": "10 — International Monetary Fund | January 2023"
   },
   {
     "type": "NarrativeText",
