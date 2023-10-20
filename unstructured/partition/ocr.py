@@ -204,14 +204,12 @@ def supplement_page_layout_with_ocr(
             entire_page_ocr=entire_page_ocr,
         )
 
-        if len(elements) > 0:
-            merged_page_layout_elements = merge_out_layout_with_ocr_layout(
-                elements,
-                ocr_layout,
-            )
-            elements[:] = merged_page_layout_elements
-        else:
-            elements[:] = refine_ocr_elements(ocr_layout, ocr_text)
+        merged_page_layout_elements = merge_out_layout_with_ocr_layout(
+            elements,
+            ocr_layout,
+            ocr_text,
+        )
+        elements[:] = merged_page_layout_elements
         return page_layout
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
         for element in elements:
@@ -396,6 +394,7 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
 def merge_out_layout_with_ocr_layout(
     out_layout: List[LayoutElement],
     ocr_layout: List[TextRegion],
+    ocr_text: Optional[str] = None,
     supplement_with_ocr_elements: bool = True,
 ) -> List[LayoutElement]:
     """
@@ -408,7 +407,7 @@ def merge_out_layout_with_ocr_layout(
     """
 
     if len(out_layout) > 0:
-        # NOTE(christine): "hi_res" strategy
+        # NOTE(christine): "hi_res" strategy path
         out_regions_without_text = [region for region in out_layout if not region.text]
 
         for out_region in out_regions_without_text:
@@ -424,8 +423,12 @@ def merge_out_layout_with_ocr_layout(
             else out_layout
         )
     else:
-        # NOTE(christine): "ocr_only" strategy
-        final_layout = get_elements_from_ocr_regions(ocr_layout)
+        # NOTE(christine): "ocr_only" strategy path
+        final_layout = get_elements_from_ocr_regions(
+            ocr_regions=ocr_layout,
+            ocr_text=ocr_text,
+            group_by_ocr_text=True,
+        )
 
     return final_layout
 
@@ -502,16 +505,46 @@ def supplement_layout_with_ocr_elements(
     return final_layout
 
 
-def get_elements_from_ocr_regions(ocr_regions: List[TextRegion]) -> List[LayoutElement]:
+def get_elements_from_ocr_regions(
+    ocr_regions: List[TextRegion],
+    ocr_text: Optional[str] = None,
+    group_by_ocr_text: bool = False,
+) -> List[LayoutElement]:
     """
     Get layout elements from OCR regions
     """
 
-    grouped_regions = cast(
-        List[List[TextRegion]],
-        partition_groups_from_regions(ocr_regions),
-    )
+    if group_by_ocr_text and not ocr_text:
+        raise ValueError("If `group_by_ocr_text` is set to `True`, `ocr_text` must be provided.")
+
+    if group_by_ocr_text:
+        text_sections = ocr_text.split("\n\n")
+        grouped_regions = []
+        for text_section in text_sections:
+            regions = []
+            words = text_section.replace("\n", " ").split()
+            for ocr_region in ocr_regions:
+                if not words:
+                    break
+                if ocr_region.text in words:
+                    regions.append(ocr_region)
+                    words.remove(ocr_region.text)
+
+            if not regions:
+                continue
+
+            for r in regions:
+                ocr_regions.remove(r)
+
+            grouped_regions.append(regions)
+    else:
+        grouped_regions = cast(
+            List[List[TextRegion]],
+            partition_groups_from_regions(ocr_regions),
+        )
+
     merged_regions = [merge_text_regions(group) for group in grouped_regions]
+
     return [
         LayoutElement(text=r.text, source=r.source, type="UncategorizedText", bbox=r.bbox)
         for r in merged_regions
@@ -537,32 +570,3 @@ def merge_text_regions(regions: List[TextRegion]) -> TextRegion:
     merged_text = " ".join([tr.text for tr in regions if tr.text])
 
     return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text)
-
-
-def refine_ocr_elements(ocr_layout, ocr_text):
-    text_sections = ocr_text.split("\n\n")
-    grouped_regions = []
-    for text_section in text_sections:
-        regions = []
-        words = text_section.replace("\n", " ").split()
-        for ocr_region in ocr_layout:
-            if not words:
-                break
-            if ocr_region.text in words:
-                regions.append(ocr_region)
-                words.remove(ocr_region.text)
-
-        if not regions:
-            continue
-
-        for r in regions:
-            ocr_layout.remove(r)
-
-        grouped_regions.append(regions)
-
-    merged_regions = [merge_text_regions(group) for group in grouped_regions]
-
-    return [
-        LayoutElement(text=r.text, source=r.source, type="UncategorizedText", bbox=r.bbox)
-        for r in merged_regions
-    ]
