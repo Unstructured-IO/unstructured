@@ -1,6 +1,6 @@
 import tempfile
 import warnings
-from collection.abc import Iterable
+from collections.abc import Iterable
 from typing import IO, List, Optional
 
 from ebooklib import epub
