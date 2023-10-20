@@ -176,14 +176,14 @@ class WikipediaSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector)
                 connector_config=self.connector_config,
                 read_config=self.read_config,
             ),
-            WikipediaIngestHTMLDoc(
-                processor_config=self.processor_config,
-                connector_config=self.connector_config,
-                read_config=self.read_config,
-            ),
-            WikipediaIngestSummaryDoc(
-                processor_config=self.processor_config,
-                connector_config=self.connector_config,
-                read_config=self.read_config,
-            ),
+            # WikipediaIngestHTMLDoc(
+            #     processor_config=self.processor_config,
+            #     connector_config=self.connector_config,
+            #     read_config=self.read_config,
+            # ),
+            # WikipediaIngestSummaryDoc(
+            #     processor_config=self.processor_config,
+            #     connector_config=self.connector_config,
+            #     read_config=self.read_config,
+            # ),
         ]

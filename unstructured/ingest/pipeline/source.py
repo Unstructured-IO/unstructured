@@ -1,7 +1,7 @@
 import typing as t
 from dataclasses import dataclass
 
-from unstructured.ingest.connector.registry import create_ingest_doc_from_json
+from unstructured.ingest.connector.registry import create_ingest_doc_from_dict
 from unstructured.ingest.interfaces import BaseSessionHandle, IngestDocSessionHandleMixin
 from unstructured.ingest.logger import logger
 from unstructured.ingest.pipeline.interfaces import SourceNode
@@ -13,11 +13,10 @@ session_handle: t.Optional[BaseSessionHandle] = None
 
 @dataclass
 class Reader(SourceNode):
-    def run(self, ingest_doc_json: str) -> t.Optional[str]:
-        init_hash = get_ingest_doc_hash(ingest_doc_json)
+    def run(self, ingest_doc_dict: dict) -> t.Optional[str]:
         try:
             global session_handle
-            doc = create_ingest_doc_from_json(ingest_doc_json)
+            doc = create_ingest_doc_from_dict(ingest_doc_dict)
             if isinstance(doc, IngestDocSessionHandleMixin):
                 if session_handle is None:
                     # create via doc.session_handle, which is a property that creates a
@@ -31,13 +30,13 @@ class Reader(SourceNode):
                 self.retry_strategy(doc.get_file)
             else:
                 doc.get_file()
-            self.pipeline_context.ingest_docs_map[init_hash] = doc.to_json()
+            ingest_doc_dict.update(doc.to_dict())
             return doc.filename
         except Exception as e:
             if self.pipeline_context.raise_on_error:
                 raise
             logger.error(
-                f"failed to get data associated with source doc: {ingest_doc_json}, {e}",
+                f"failed to get data associated with source doc: {ingest_doc_dict}, {e}",
                 exc_info=True,
             )
             return None

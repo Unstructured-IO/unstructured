@@ -48,24 +48,22 @@ class Pipeline(DataClassJsonMixin):
         self.initialize()
         manager = mp.Manager()
         self.pipeline_context.ingest_docs_map = manager.dict()
-        json_docs = self.doc_factory_node()
-        if not json_docs:
+        dict_docs = self.doc_factory_node()
+        if not dict_docs:
             logger.info("no docs found to process")
             return
         logger.info(
-            f"processing {len(json_docs)} docs via "
+            f"processing {len(dict_docs)} docs via "
             f"{self.pipeline_context.num_processes} processes",
         )
-        for doc in json_docs:
+        for doc in dict_docs:
+            print(f"******** DOC: {doc}")
             self.pipeline_context.ingest_docs_map[get_ingest_doc_hash(doc)] = doc
-        fetched_filenames = self.source_node(iterable=json_docs)
+        fetched_filenames = self.source_node(iterable=dict_docs)
         if not fetched_filenames:
             logger.info("No files to run partition over")
             return
-        # By passing in the values from the map, allows changes to persist from the source node
-        partitioned_jsons = self.partition_node(
-            iterable=self.pipeline_context.ingest_docs_map.values(),
-        )
+        partitioned_jsons = self.partition_node(iterable=dict_docs)
         if not partitioned_jsons:
             logger.info("No files to process after partitioning")
             return

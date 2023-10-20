@@ -115,7 +115,7 @@ class DocFactoryNode(PipelineNode):
         self.source_doc_connector.initialize()
 
     @abstractmethod
-    def run(self, *args, **kwargs) -> t.Iterable[str]:
+    def run(self, *args, **kwargs) -> t.Iterable[dict]:
         pass
 
     def supported_multiprocessing(self) -> bool:
