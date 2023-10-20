@@ -19,6 +19,7 @@ from unstructured_inference.inference.layoutelement import (
     LayoutElement,
     partition_groups_from_regions,
 )
+from unstructured_inference.models import tables
 from unstructured_pytesseract import Output
 
 from unstructured.logger import logger
@@ -228,6 +229,7 @@ def supplement_page_layout_with_ocr(
 
     # Note(yuming): use the OCR data from entire page OCR for table extraction
     if infer_table_structure:
+        table_agent = init_table_agent()
         if ocr_layout is None:
             # Note(yuming): ocr_layout is None for individual_blocks ocr_mode
             ocr_layout = get_ocr_layout_from_image(
@@ -239,6 +241,7 @@ def supplement_page_layout_with_ocr(
             elements=page_layout.elements,
             ocr_layout=ocr_layout,
             image=image,
+            table_agent=table_agent,
         )
 
     return page_layout
@@ -248,6 +251,7 @@ def supplement_element_with_table_extraction(
     elements: List[LayoutElement],
     ocr_layout: List[TextRegion],
     image: PILImage,
+    table_agent: "tables.UnstructuredTableTransformerModel",
 ) -> List[LayoutElement]:
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata field "text_as_html" where
@@ -269,7 +273,6 @@ def supplement_element_with_table_extraction(
                 padded_element,
                 ocr_layout,
             )
-            table_agent = init_table_agent()
             element.text_as_html = table_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
 
@@ -334,12 +337,13 @@ def get_table_tokens_per_element(
 def init_table_agent():
     """Initialize a table agent from unstructured_inference as
     a global variable to ensure that we only load it once."""
-    from unstructured_inference.models import tables
 
     global table_agent
 
-    table_agent = tables.UnstructuredTableTransformerModel()
-    table_agent.initialize(model="microsoft/table-transformer-structure-recognition")
+    if table_agent is None:
+        table_agent = tables.UnstructuredTableTransformerModel()
+        table_agent.initialize(model="microsoft/table-transformer-structure-recognition")
+
     return table_agent
 
 
