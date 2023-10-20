@@ -58,13 +58,30 @@ class DelimitedString(click.ParamType):
 class CliMixin:
     @staticmethod
     @abstractmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         pass
+
+    @classmethod
+    def add_cli_options(cls, cmd: click.Command) -> None:
+        options_to_add = cls.get_cli_options()
+        CliMixin.add_params(cmd, params=options_to_add)
+
+    def add_params(cmd: click.Command, params: t.List[click.Parameter]):
+        existing_opts = []
+        for param in cmd.params:
+            existing_opts.extend(param.opts)
+
+        for param in params:
+            for opt in param.opts:
+                if opt in existing_opts:
+                    raise ValueError(f"{opt} is already defined on the command {cmd.name}")
+                existing_opts.append(opt)
+                cmd.params.append(param)
 
 
 class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--max-retries"],
@@ -81,7 +98,7 @@ class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
                 "of back off strategy if http calls fail",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
     @classmethod
     def from_dict(
@@ -103,7 +120,7 @@ class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
 
 class CliProcessorConfig(ProcessorConfig, CliMixin):
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--reprocess"],
@@ -141,12 +158,12 @@ class CliProcessorConfig(ProcessorConfig, CliMixin):
             ),
             click.Option(["-v", "--verbose"], is_flag=True, default=False),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 class CliReadConfig(ReadConfig, CliMixin):
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--download-dir"],
@@ -182,12 +199,12 @@ class CliReadConfig(ReadConfig, CliMixin):
                 help="If specified, process at most the specified number of documents.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 class CliPartitionConfig(PartitionConfig, CliMixin):
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--skip-infer-table-types"],
@@ -270,14 +287,14 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 help="API Key for partition endpoint.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 class CliRecursiveConfig(BaseConfig, CliMixin):
     recursive: bool
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--recursive"],
@@ -287,12 +304,12 @@ class CliRecursiveConfig(BaseConfig, CliMixin):
                 "otherwise stop at the files in provided folder level.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 class CliFilesStorageConfig(FileStorageConfig, CliMixin):
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--remote-url"],
@@ -315,12 +332,12 @@ class CliFilesStorageConfig(FileStorageConfig, CliMixin):
                 "otherwise stop at the files in provided folder level.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--embedding-api-key"],
@@ -332,7 +349,7 @@ class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
                 default=None,
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
     @classmethod
     def from_dict(
@@ -362,7 +379,7 @@ class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
 
 class CliChunkingConfig(ChunkingConfig, CliMixin):
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--chunk-elements"],
@@ -387,7 +404,7 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 show_default=True,
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
     @classmethod
     def from_dict(
@@ -423,7 +440,7 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
 
 class CliPermissionsConfig(PermissionsConfig, CliMixin):
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--permissions-application-id"],
@@ -441,7 +458,7 @@ class CliPermissionsConfig(PermissionsConfig, CliMixin):
                 help="e.g https://contoso.onmicrosoft.com to get permissions data within tenant.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
     @classmethod
     def from_dict(

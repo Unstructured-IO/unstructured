@@ -26,13 +26,9 @@ from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_ME
 class NoID(abc.ABC):
     """Class to indicate that an element do not have an ID."""
 
-    pass
-
 
 class UUID(abc.ABC):
     """Class to indicate that an element should have a UUID."""
-
-    pass
 
 
 @dc.dataclass
@@ -531,23 +527,17 @@ class Formula(Text):
 
     category = "Formula"
 
-    pass
-
 
 class CompositeElement(Text):
     """A section of text consisting of a combination of elements."""
 
     category = "CompositeElement"
 
-    pass
-
 
 class FigureCaption(Text):
     """An element for capturing text associated with figure captions."""
 
     category = "FigureCaption"
-
-    pass
 
 
 class NarrativeText(Text):
@@ -556,15 +546,11 @@ class NarrativeText(Text):
 
     category = "NarrativeText"
 
-    pass
-
 
 class ListItem(Text):
     """ListItem is a NarrativeText element that is part of a list."""
 
     category = "ListItem"
-
-    pass
 
 
 class Title(Text):
@@ -572,30 +558,23 @@ class Title(Text):
 
     category = "Title"
 
-    pass
-
 
 class Address(Text):
     """A text element for capturing addresses."""
 
     category = "Address"
 
-    pass
-
 
 class EmailAddress(Text):
     """A text element for capturing addresses"""
 
     category = "EmailAddress"
-    pass
 
 
 class Image(Text):
     """A text element for capturing image metadata."""
 
     category = "Image"
-
-    pass
 
 
 class PageBreak(Text):
@@ -609,15 +588,11 @@ class Table(Text):
 
     category = "Table"
 
-    pass
-
 
 class TableChunk(Table):
     """An element for capturing chunks of tables."""
 
     category = "Table"
-
-    pass
 
 
 class Header(Text):
@@ -625,15 +600,11 @@ class Header(Text):
 
     category = "Header"
 
-    pass
-
 
 class Footer(Text):
     """An element for capturing document footers."""
 
     category = "Footer"
-
-    pass
 
 
 TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
