@@ -284,6 +284,50 @@ def scarf_analytics():
         pass
 
 
+def ngrams(s, n):
+    """Generate n-grams from a string"""
+
+    ngrams_list = []
+    for i in range(len(s) - n + 1):
+        ngrams_list.append(tuple(s[i : i + n]))
+    return ngrams_list
+
+
+def calculate_shared_ngram_percentage(string_A, string_B, n):
+    """Calculate the percentage of common_ngrams between string_A and string_B
+    with reference to the total number of ngrams in string_A"""
+
+    string_A_ngrams = ngrams(string_A.split(), n)
+    string_B_ngrams = ngrams(string_B.split(), n)
+
+    if not string_A_ngrams:
+        return 0
+
+    common_ngrams = set(string_A_ngrams) & set(string_B_ngrams)
+    percentage = (len(common_ngrams) / len(string_A_ngrams)) * 100
+    return percentage, common_ngrams
+
+
+def calculate_largest_ngram_percentage(string_A, string_B):
+    """Iteratively calculate_shared_ngram_percentage starting from the biggest
+    ngram possible until is >0.0%"""
+
+    if len(string_A.split()) < len(string_B.split()):
+        n = len(string_A.split()) - 1
+    else:
+        n = len(string_B.split()) - 1
+        string_A, string_B = string_B, string_A
+    n_str = str(n)
+    ngram_percentage = 0
+    while not ngram_percentage:
+        ngram_percentage, shared_ngrams = calculate_shared_ngram_percentage(string_A, string_B, n)
+        if n == 0:
+            break
+        else:
+            n -= 1
+    return round(ngram_percentage, 2), shared_ngrams, n_str
+
+
 def is_parent_box(
     parent_target,
     child_target,
@@ -324,7 +368,6 @@ def calculate_overlap_percentage(box1, box2, intersection_ratio_method="total"):
     x2, y2 = box1[2]
     x3, y3 = box2[0]
     x4, y4 = box2[2]
-
     area_box1 = (x2 - x1) * (y2 - y1)
     area_box2 = (x4 - x3) * (y4 - y3)
     x_intersection1 = max(x1, x3)
@@ -335,16 +378,17 @@ def calculate_overlap_percentage(box1, box2, intersection_ratio_method="total"):
         0,
         y_intersection2 - y_intersection1,
     )
+    max_area = max(area_box1, area_box2)
+    min_area = min(area_box1, area_box2)
+    total_area = area_box1 + area_box2
     overlap_percentage = 0
-    max_area, min_area, total_area = None, None, area_box1 + area_box2
+
     if intersection_ratio_method == "parent":
-        max_area = max(area_box1, area_box2)
         if max_area == 0:
             return 0
         overlap_percentage = (intersection_area / max_area) * 100
 
     elif intersection_ratio_method == "partial":
-        min_area = min(area_box1, area_box2)
         if min_area == 0:
             return 0
         overlap_percentage = (intersection_area / min_area) * 100
@@ -366,21 +410,29 @@ def catch_overlapping_bboxes(
     num_pages = elements[-1].metadata.page_number
     bounding_boxes = [[] for _ in range(num_pages)]
     text_labels = [[] for _ in range(num_pages)]
+    text_content = [[] for _ in range(num_pages)]
 
     for ix, element in enumerate(elements):
         n_page_to_ix = element.metadata.page_number - 1
         bounding_boxes[n_page_to_ix].append(element.metadata.coordinates.to_dict()["points"])
         text_labels[n_page_to_ix].append(f"{ix}. {element.category}")
+        text_content[n_page_to_ix].append(element.text)
 
     overlapping_flag = False
-    for page_number, (page_bboxes, page_labels) in enumerate(
-        zip(bounding_boxes, text_labels),
+    overlapping_cases = []
+    for page_number, (page_bboxes, page_labels, page_text) in enumerate(
+        zip(bounding_boxes, text_labels, text_content),
         start=1,
     ):
         page_bboxes_combinations = list(combinations(page_bboxes, 2))
         page_labels_combinations = list(combinations(page_labels, 2))
+        text_content_combinations = list(combinations(page_text, 2))
 
-        for box_pair, label_pair in zip(page_bboxes_combinations, page_labels_combinations):
+        for box_pair, label_pair, text_pair in zip(
+            page_bboxes_combinations,
+            page_labels_combinations,
+            text_content_combinations,
+        ):
             box1, box2 = box_pair
             type1, type2 = label_pair
             ix_element1 = "".join([ch for ch in type1 if ch.isnumeric()])
@@ -393,30 +445,44 @@ def catch_overlapping_bboxes(
             x_top_right_2, y_top_right_2 = box2[2]
             horizontal_overlap = x_bottom_left_1 < x_top_right_2 and x_top_right_1 > x_bottom_left_2
             vertical_overlap = y_bottom_left_1 < y_top_right_2 and y_top_right_1 > y_bottom_left_2
+            overlapping_elements, overlapping_case, overlap_percentage, largest_ngram_percentage = (
+                None,
+                None,
+                None,
+                None,
+            )
 
             if horizontal_overlap and vertical_overlap:
                 box1_corners = [x_bottom_left_1, y_bottom_left_1, x_top_right_1, y_top_right_1]
                 box2_corners = [x_bottom_left_2, y_bottom_left_2, x_top_right_2, y_top_right_2]
-                (
-                    overlap_percentage_total,
-                    max_area,
-                    min_area,
-                    total_area,
-                ) = calculate_overlap_percentage(box1, box2, intersection_ratio_method="total")
-                print(f"\n{type1}(ix={ix_element1}) and {type2}(ix={ix_element2}) are ", end="")
+                overlap_percentage_total, _, _, _ = calculate_overlap_percentage(
+                    box1,
+                    box2,
+                    intersection_ratio_method="total",
+                )
                 overlap_percentage, max_area, min_area, total_area = calculate_overlap_percentage(
                     box1,
                     box2,
                     intersection_ratio_method="parent",
                 )
+
                 if is_parent_box(box1_corners, box2_corners, add=5):
-                    print(
-                        f"nested! The {type2}(ix={ix_element2}) is inside the {type1}(ix={ix_element1})!",
-                    )
+                    overlapping_elements = [
+                        f"{type1}(ix={ix_element1})",
+                        f"{type2}(ix={ix_element2})",
+                    ]
+                    overlapping_case = f"nested {type2} in {type1}"
+                    overlap_percentage = 100
+
                 elif is_parent_box(box2_corners, box1_corners, add=5):
-                    print(f"nested! {type1}(ix={ix_element1}) is inside {type2}(ix={ix_element2})!")
+                    overlapping_elements = [
+                        f"{type2}(ix={ix_element2})",
+                        f"{type1}(ix={ix_element1})",
+                    ]
+                    overlapping_case = f"nested {type1} in {type2}"
+                    overlap_percentage = 100
+
                 else:
-                    print("overlapping!")
                     (
                         overlap_percentage,
                         max_area,
@@ -427,11 +493,69 @@ def catch_overlapping_bboxes(
                         box2,
                         intersection_ratio_method="partial",
                     )
-                print(
-                    f"intersecting by: {overlap_percentage}% (of the parent__for nested cases__, and of the smallest "
-                    f"region__for partial overlap__)\n\t\t {overlap_percentage_total}% (of the total area of the "
-                    f"disjunctive union of two bounding boxes__equal to the parent area when the children is totally "
-                    f"nested)",
+                    if overlap_percentage < 10.0:
+                        overlapping_elements = [
+                            f"{type1}(ix={ix_element1})",
+                            f"{type2}(ix={ix_element2})",
+                        ]
+                        overlapping_case = "Small partial overlap"
+
+                    else:
+                        text1, text2 = text_pair
+                        if not text1:
+                            overlapping_elements = [
+                                f"{type1}(ix={ix_element1})",
+                                f"{type2}(ix={ix_element2})",
+                            ]
+                            overlapping_case = f"partial overlap with empty content in {type1}"
+
+                        elif not text2:
+                            overlapping_elements = [
+                                f"{type2}(ix={ix_element2})",
+                                f"{type1}(ix={ix_element1})",
+                            ]
+                            overlapping_case = f"partial overlap with empty content in {type2}"
+
+                        elif text1 in text2 or text2 in text1:
+                            overlapping_elements = [
+                                f"{type1}(ix={ix_element1})",
+                                f"{type2}(ix={ix_element2})",
+                            ]
+                            overlapping_case = "partial overlap with duplicate text"
+
+                        else:
+                            (
+                                largest_ngram_percentage,
+                                largest_shared_ngrams_max,
+                                largest_n,
+                            ) = calculate_largest_ngram_percentage(text1, text2)
+                            largest_ngram_percentage = round(largest_ngram_percentage, 2)
+                            if not largest_ngram_percentage:
+                                overlapping_elements = [
+                                    f"{type1}(ix={ix_element1})",
+                                    f"{type2}(ix={ix_element2})",
+                                ]
+                                overlapping_case = "partial overlap without sharing text"
+
+                            else:
+                                overlapping_elements = [
+                                    f"{type1}(ix={ix_element1})",
+                                    f"{type2}(ix={ix_element2})",
+                                ]
+                                overlapping_case = f"partial overlap sharing {largest_ngram_percentage}% of the text from {type1 if len(text1.split()) < len(text2.split()) else type2} ({largest_n}-gram)"
+                overlapping_cases.append(
+                    {
+                        "overlapping_elements": overlapping_elements,
+                        "overlapping_case": overlapping_case,
+                        "overlap_percentage": f"{overlap_percentage}%",
+                        "metadata": {
+                            "largest_ngram_percentage": largest_ngram_percentage,
+                            "overlap_percentage_total": f"{overlap_percentage_total}%",
+                            "max_area": f"{round(max_area, 2)}pxˆ2",
+                            "min_area": f"{round(min_area, 2)}pxˆ2",
+                            "total_area": f"{round(total_area, 2)}pxˆ2",
+                        },
+                    },
                 )
                 overlapping_flag = True
-    return overlapping_flag
+    return overlapping_flag, overlapping_cases
