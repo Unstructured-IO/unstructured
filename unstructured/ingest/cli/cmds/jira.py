@@ -27,7 +27,7 @@ class JiraCliConfig(BaseConfig, CliMixin):
     issues: t.Optional[t.List[str]] = None
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--api-token"],
@@ -73,7 +73,7 @@ class JiraCliConfig(BaseConfig, CliMixin):
                 "find or obtain keys. Alternatively, use API to obtain ids.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="jira", invoke_without_command=True, cls=Group)

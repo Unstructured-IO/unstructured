@@ -23,7 +23,7 @@ class LocalCliConfig(BaseConfig, CliMixin):
     file_glob: t.Optional[str] = None
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--input-path"],
@@ -39,7 +39,7 @@ class LocalCliConfig(BaseConfig, CliMixin):
                 "local files are accepted, e.g. '*.html,*.txt'",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="local", invoke_without_command=True, cls=Group)

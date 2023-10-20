@@ -1,4 +1,4 @@
-from typing import IO, TYPE_CHECKING, Dict, List, Optional
+from typing import IO, TYPE_CHECKING, Any, Dict, List, Optional
 
 import requests
 
@@ -47,7 +47,7 @@ def partition_html(
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     detection_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
 

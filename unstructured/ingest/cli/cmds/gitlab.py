@@ -24,7 +24,7 @@ class GitlabCliConfig(BaseConfig, CliMixin):
     git_file_glob: t.Optional[str] = None
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--url"],
@@ -56,7 +56,7 @@ class GitlabCliConfig(BaseConfig, CliMixin):
                 "files are accepted, e.g. '*.html,*.txt'",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="gitlab", invoke_without_command=True, cls=Group)
