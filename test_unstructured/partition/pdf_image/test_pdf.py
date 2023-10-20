@@ -1020,3 +1020,16 @@ def test_chipper_not_losing_parents(chipper_results, chipper_children):
         [el for el in chipper_results if el.id == child.metadata.parent_id]
         for child in chipper_children
     )
+
+
+def test_partition_model_name_default_to_None():
+    filename = "example-docs/DA-1p.pdf"
+    try:
+        pdf.partition_pdf(
+            filename=filename,
+            strategy="hi_res",
+            ocr_languages="eng",
+            model_name=None,
+        )
+    except AttributeError:
+        pytest.fail("partition_pdf() raised AttributeError unexpectedly!")
