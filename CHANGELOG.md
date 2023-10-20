@@ -1,4 +1,4 @@
-## 0.10.25-dev4
+## 0.10.25-dev6
 
 ### Enhancements
 
