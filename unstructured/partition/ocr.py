@@ -20,7 +20,11 @@ from unstructured_inference.inference.layoutelement import (
 from unstructured_pytesseract import Output
 
 from unstructured.logger import logger
-from unstructured.partition.utils.constants import SUBREGION_THRESHOLD_FOR_OCR, OCRMode
+from unstructured.partition.utils.constants import (
+    SUBREGION_THRESHOLD_FOR_OCR,
+    OCRMode,
+    OCROutputType,
+)
 
 # Force tesseract to be single threaded,
 # otherwise we see major performance problems
@@ -193,10 +197,11 @@ def supplement_page_layout_with_ocr(
 
     elements = page_layout.elements
     if ocr_mode == OCRMode.FULL_PAGE.value:
-        ocr_layout = get_ocr_layout_from_image(
+        ocr_layout = get_ocr_data_from_image(
             image,
             ocr_languages=ocr_languages,
             entire_page_ocr=entire_page_ocr,
+            output_type=OCROutputType.TEXT_REGIONS,
         )
 
         if elements:
@@ -207,10 +212,11 @@ def supplement_page_layout_with_ocr(
             )
         else:
             # NOTE(christine): "ocr_only" strategy path
-            ocr_text = get_ocr_text_from_image(
+            ocr_text = get_ocr_data_from_image(
                 image,
                 ocr_languages=ocr_languages,
                 entire_page_ocr=entire_page_ocr,
+                output_type=OCROutputType.STRING,
             )
             merged_page_layout_elements = get_elements_from_ocr_regions(
                 ocr_regions=ocr_layout,
@@ -232,10 +238,11 @@ def supplement_page_layout_with_ocr(
                         padded_element.bbox.y2,
                     ),
                 )
-                text_from_ocr = get_ocr_text_from_image(
+                text_from_ocr = get_ocr_data_from_image(
                     cropped_image,
                     ocr_languages=ocr_languages,
                     entire_page_ocr=entire_page_ocr,
+                    output_type=OCROutputType.STRING,
                 )
                 element.text = text_from_ocr
         return page_layout
@@ -261,14 +268,12 @@ def pad_element_bboxes(
     return out_element
 
 
-def get_ocr_layout_from_image(
+def get_ocr_data_from_image(
     image: PILImage,
     ocr_languages: str = "eng",
     entire_page_ocr: str = "tesseract",
-) -> List[TextRegion]:
-    """
-    Get the OCR layout from image as a list of text regions with paddle or tesseract.
-    """
+    output_type: OCROutputType = OCROutputType.STRING,
+) -> Union[str, List[TextRegion]]:
     if entire_page_ocr == "paddle":
         logger.info("Processing entrie page OCR with paddle...")
         from unstructured.partition.utils.ocr_models import paddle_ocr
@@ -278,43 +283,31 @@ def get_ocr_layout_from_image(
         # see CORE-2034
         ocr_data = paddle_ocr.load_agent().ocr(np.array(image), cls=True)
         ocr_layout = parse_ocr_data_paddle(ocr_data)
+        if output_type == OCROutputType.STRING:
+            text_from_ocr = ""
+            for text_region in ocr_layout:
+                text_from_ocr += text_region.text
+            output_data = text_from_ocr
+        else:
+            output_data = ocr_layout
     else:
-        ocr_data = unstructured_pytesseract.image_to_data(
-            np.array(image),
-            lang=ocr_languages,
-            output_type=Output.DICT,
-        )
-        ocr_layout = parse_ocr_data_tesseract(ocr_data)
-    return ocr_layout
+        if output_type == OCROutputType.STRING:
+            text_from_ocr = unstructured_pytesseract.image_to_string(
+                np.array(image),
+                lang=ocr_languages,
+                output_type=Output.DICT,
+            )["text"]
+            output_data = text_from_ocr
+        else:
+            ocr_data = unstructured_pytesseract.image_to_data(
+                np.array(image),
+                lang=ocr_languages,
+                output_type=Output.DICT,
+            )
+            ocr_layout = parse_ocr_data_tesseract(ocr_data)
+            output_data = ocr_layout
 
-
-def get_ocr_text_from_image(
-    image: PILImage,
-    ocr_languages: str = "eng",
-    entire_page_ocr: str = "tesseract",
-) -> str:
-    """
-    Get the OCR text from image as a string with paddle or tesseract.
-    """
-    if entire_page_ocr == "paddle":
-        logger.info("Processing entrie page OCR with paddle...")
-        from unstructured.partition.utils.ocr_models import paddle_ocr
-
-        # TODO(yuming): pass in language parameter once we
-        # have the mapping for paddle lang code
-        # see CORE-2034
-        ocr_data = paddle_ocr.load_agent().ocr(np.array(image), cls=True)
-        ocr_layout = parse_ocr_data_paddle(ocr_data)
-        text_from_ocr = ""
-        for text_region in ocr_layout:
-            text_from_ocr += text_region.text
-    else:
-        text_from_ocr = unstructured_pytesseract.image_to_string(
-            np.array(image),
-            lang=ocr_languages,
-            output_type=Output.DICT,
-        )["text"]
-    return text_from_ocr
+    return output_data
 
 
 def parse_ocr_data_tesseract(ocr_data: dict) -> List[TextRegion]:
