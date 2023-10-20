@@ -13,7 +13,7 @@ from pathlib import Path
 
 import requests
 from dataclasses_json import DataClassJsonMixin
-from dataclasses_json.core import Json, _decode_dataclass, _ExtendedEncoder
+from dataclasses_json.core import Json, _asdict, _decode_dataclass
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
@@ -253,37 +253,12 @@ class IngestDocJsonMixin(DataClassJsonMixin):
                 val = val.to_dict(encode_json=False)
             as_dict[prop] = val
 
-    def to_json(
-        self,
-        *,
-        skipkeys: bool = False,
-        ensure_ascii: bool = True,
-        check_circular: bool = True,
-        allow_nan: bool = True,
-        indent: t.Optional[t.Union[int, str]] = None,
-        separators: t.Optional[t.Tuple[str, str]] = None,
-        default: t.Optional[t.Callable] = None,
-        sort_keys: bool = False,
-        **kw,
-    ) -> str:
-        as_dict = self.to_dict(encode_json=False)
+    def to_dict(self, encode_json=False) -> t.Dict[str, Json]:
+        as_dict = _asdict(self, encode_json=encode_json)
         self.add_props(as_dict=as_dict, props=self.properties_to_serialize)
         if getattr(self, "_source_metadata") is not None:
             self.add_props(as_dict=as_dict, props=self.metadata_properties)
-
-        return json.dumps(
-            as_dict,
-            cls=_ExtendedEncoder,
-            skipkeys=skipkeys,
-            ensure_ascii=ensure_ascii,
-            check_circular=check_circular,
-            allow_nan=allow_nan,
-            indent=indent,
-            separators=separators,
-            default=default,
-            sort_keys=sort_keys,
-            **kw,
-        )
+        return as_dict
 
     @classmethod
     def from_dict(cls: t.Type[A], kvs: Json, *, infer_missing=False) -> A:
