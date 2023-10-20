@@ -24,7 +24,7 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-EXPORT_DIR=performance-metrics
+EXPORT_DIR="$SCRIPT_DIR"/metrics
 PYTHONPATH=. ./unstructured/ingest/evaluate.py \
     --output_dir "$OUTPUT_DIR" \
     --source_dir "$CCT_DIR" \
