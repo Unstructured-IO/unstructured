@@ -249,16 +249,20 @@ class FsspecDestinationConnector(BaseDestinationConnector):
 
         logger.info(f"Writing content using filesystem: {type(fs).__name__}")
 
-        s3_folder = self.connector_config.path_without_protocol
-        s3_output_path = str(PurePath(s3_folder, filename)) if filename else s3_folder
-        full_s3_path = f"s3://{s3_output_path}"
-        logger.debug(f"uploading content to {full_s3_path}")
-        fs.write_text(full_s3_path, json.dumps(json_list, indent=indent), encoding=encoding)
+        output_folder = self.connector_config.path_without_protocol
+        output_folder = os.path.join(output_folder)  # Make sure folder ends with file seperator
+        filename = (
+            filename.strip(os.sep) if filename else filename
+        )  # Make sure filename doesn't begin with file seperator
+        output_path = str(PurePath(output_folder, filename)) if filename else output_folder
+        full_output_path = f"s3://{output_path}"
+        logger.debug(f"uploading content to {full_output_path}")
+        fs.write_text(full_output_path, json.dumps(json_list, indent=indent), encoding=encoding)
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         for doc in docs:
-            s3_file_path = doc.base_filename
-            filename = s3_file_path if s3_file_path else None
+            file_path = doc.base_filename
+            filename = file_path if file_path else None
             with open(doc._output_filename) as json_file:
                 logger.debug(f"uploading content from {doc._output_filename}")
                 json_list = json.load(json_file)
