@@ -212,17 +212,23 @@ def supplement_page_layout_with_ocr(
             )
         else:
             # NOTE(christine): "ocr_only" strategy path
-            ocr_text = get_ocr_data_from_image(
-                image,
-                ocr_languages=ocr_languages,
-                entire_page_ocr=entire_page_ocr,
-                output_type=OCROutputType.STRING,
-            )
-            merged_page_layout_elements = get_elements_from_ocr_regions(
-                ocr_regions=ocr_layout,
-                ocr_text=ocr_text,
-                group_by_ocr_text=True,
-            )
+            if entire_page_ocr == "paddle":
+                merged_page_layout_elements = [
+                    LayoutElement(bbox=r.bbox, text=r.text, source=r.source, type="UncategorizedText")
+                    for r in ocr_layout
+                ]
+            else:
+                ocr_text = get_ocr_data_from_image(
+                    image,
+                    ocr_languages=ocr_languages,
+                    entire_page_ocr=entire_page_ocr,
+                    output_type=OCROutputType.STRING,
+                )
+                merged_page_layout_elements = get_elements_from_ocr_regions(
+                    ocr_regions=ocr_layout,
+                    ocr_text=ocr_text,
+                    group_by_ocr_text=True,
+                )
 
         elements[:] = merged_page_layout_elements
         return page_layout
