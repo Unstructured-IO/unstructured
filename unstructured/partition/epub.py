@@ -82,7 +82,7 @@ def partition_epub(
 
     # open issue that might resolve the chapter mapping of text
     # https://github.com/aerkalov/ebooklib/issues/289
-    if not isintance(book.toc, Iterable):
+    if not isinstance(book.toc, Iterable):
         book.toc = [book.toc]
 
     for item in book.toc:
