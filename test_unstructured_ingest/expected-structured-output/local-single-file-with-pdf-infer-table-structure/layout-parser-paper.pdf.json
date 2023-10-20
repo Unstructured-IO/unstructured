@@ -682,23 +682,6 @@
   },
   {
     "type": "Title",
-    "element_id": "e204034a86be67f09ca103677799d7af",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "Base Model1 Large Model Notes"
-  },
-  {
-    "type": "Title",
     "element_id": "4411e525721e7dd801755882fd2361b2",
     "metadata": {
       "data_source": {
@@ -713,23 +696,6 @@
       "page_number": 5
     },
     "text": "Dataset"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "ec22445e13875ab6bbce602dd7f07c99",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "PubLayNet [38] PRImA [3] Newspaper [17] TableBank [18] HJDataset [31]"
   },
   {
     "type": "Title",
@@ -747,23 +713,6 @@
       "page_number": 5
     },
     "text": "F / M M F F F / M"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6afcd1be7e20c7a7fcde7aa7f76923d6",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "M - - F -"
   },
   {
     "type": "NarrativeText",
@@ -1227,23 +1176,6 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "f60c4482bfe6a1b0eb9095bb8cf21e64",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "block.pad(top, bottom, right, left) Enlarge the current block according to the input"
-  },
-  {
-    "type": "NarrativeText",
     "element_id": "494d23eb529015f662df16e6da39f810",
     "metadata": {
       "data_source": {
@@ -1258,23 +1190,6 @@
       "page_number": 8
     },
     "text": "Scale the current block given the ratio in x and y direction"
-  },
-  {
-    "type": "Title",
-    "element_id": "8dcb74f5ee2eabd0d8e966d46bcdf3be",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "block.scale(fx, fy)"
   },
   {
     "type": "UncategorizedText",
@@ -1294,23 +1209,6 @@
     "text": "Move the current block with the shift distances in x and y direction"
   },
   {
-    "type": "Title",
-    "element_id": "1c1464d6a8f85d78202f67293ee7ac42",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "block.shift(dx, dy)"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "6bd7ba22b5bc477ef4c291a10f4745bc",
     "metadata": {
@@ -1326,23 +1224,6 @@
       "page_number": 8
     },
     "text": "Whether block1 is inside of block2"
-  },
-  {
-    "type": "Title",
-    "element_id": "acfa5090fbb8986000a92d84d41d8140",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "block1.is in(block2)"
   },
   {
     "type": "NarrativeText",
@@ -1362,23 +1243,6 @@
     "text": "Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs."
   },
   {
-    "type": "Title",
-    "element_id": "39fca1b21a889218bd84127a4d7f27c5",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "block1.intersect(block2)"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "ec0a5482fa70f4d98212b6b3a748003a",
     "metadata": {
@@ -1394,23 +1258,6 @@
       "page_number": 8
     },
     "text": "Return the union region of block1 and block2. Coordinate type to be determined based on the inputs."
-  },
-  {
-    "type": "Title",
-    "element_id": "505791f52a5741b58f5dd02836da7b31",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "block1.union(block2)"
   },
   {
     "type": "NarrativeText",
@@ -1430,23 +1277,6 @@
     "text": "Convert the absolute coordinates of block1 to relative coordinates to block2"
   },
   {
-    "type": "Title",
-    "element_id": "aac9bbf1c375a005651b5d2929778d3b",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "block1.relative to(block2)"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "bb15ecc186d598c93a1cffa30e9e1b6e",
     "metadata": {
@@ -1462,23 +1292,6 @@
       "page_number": 8
     },
     "text": "Calculate the absolute coordinates of block1 given the canvas block2’s absolute coordinates"
-  },
-  {
-    "type": "Title",
-    "element_id": "2092f29df87c3cfd32244b325faaba33",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "block1.condition on(block2)"
   },
   {
     "type": "Title",
