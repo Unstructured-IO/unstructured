@@ -23,7 +23,8 @@ from unstructured.logger import logger
 from unstructured.partition.utils.constants import (
     SUBREGION_THRESHOLD_FOR_OCR,
     OCRMode,
-    OCROutputType, Source,
+    OCROutputType,
+    Source,
 )
 
 # Force tesseract to be single threaded,
@@ -119,18 +120,8 @@ def process_file_with_ocr(
                 for i, image in enumerate(ImageSequence.Iterator(images)):
                     image = image.convert("RGB")
                     image.format = image_format
-                    if out_layout:
-                        page_layout = out_layout.pages[i]
-                    else:
-                        page_layout = PageLayout(number=i + 1, image=image, layout=None)
-                        page_layout.image_metadata = {
-                            "format": image.format,
-                            "width": image.width,
-                            "height": image.height,
-                        }
-                        page_layout.image = None
                     merged_page_layout = supplement_page_layout_with_ocr(
-                        page_layout,
+                        out_layout.pages[i],
                         image,
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
@@ -148,18 +139,8 @@ def process_file_with_ocr(
                 image_paths = cast(List[str], _image_paths)
                 for i, image_path in enumerate(image_paths):
                     with PILImage.open(image_path) as image:
-                        if out_layout:
-                            page_layout = out_layout.pages[i]
-                        else:
-                            page_layout = PageLayout(number=i + 1, image=image, layout=None)
-                            page_layout.image_metadata = {
-                                "format": image.format,
-                                "width": image.width,
-                                "height": image.height,
-                            }
-                            page_layout.image = None
                         merged_page_layout = supplement_page_layout_with_ocr(
-                            page_layout,
+                            out_layout.pages[i],
                             image,
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
@@ -203,33 +184,10 @@ def supplement_page_layout_with_ocr(
             entire_page_ocr=entire_page_ocr,
             output_type=OCROutputType.TEXT_REGIONS,
         )
-
-        if elements:
-            # NOTE(christine): "hi_res" strategy path
-            merged_page_layout_elements = merge_out_layout_with_ocr_layout(
-                cast(List[LayoutElement], elements),
-                ocr_layout,
-            )
-        else:
-            # NOTE(christine): "ocr_only" strategy path
-            if entire_page_ocr == "paddle":
-                merged_page_layout_elements = [
-                    LayoutElement(bbox=r.bbox, text=r.text, source=r.source, type="UncategorizedText")
-                    for r in ocr_layout
-                ]
-            else:
-                ocr_text = get_ocr_data_from_image(
-                    image,
-                    ocr_languages=ocr_languages,
-                    entire_page_ocr=entire_page_ocr,
-                    output_type=OCROutputType.STRING,
-                )
-                merged_page_layout_elements = get_elements_from_ocr_regions(
-                    ocr_regions=ocr_layout,
-                    ocr_text=ocr_text,
-                    group_by_ocr_text=True,
-                )
-
+        merged_page_layout_elements = merge_out_layout_with_ocr_layout(
+            cast(List[LayoutElement], elements),
+            ocr_layout,
+        )
         elements[:] = merged_page_layout_elements
         return page_layout
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
@@ -257,6 +215,53 @@ def supplement_page_layout_with_ocr(
             "Invalid OCR mode. Parameter `ocr_mode` "
             "must be set to `entire_page` or `individual_blocks`.",
         )
+
+
+def get_page_layout_from_ocr(
+    image: PILImage,
+    page_number: int = 1,
+    ocr_languages: str = "eng",
+    entire_page_ocr: str = "tesseract",
+) -> "PageLayout":
+    """
+    Generate a PageLayout with OCR data from a given image.
+    """
+
+    ocr_layout = get_ocr_data_from_image(
+        image,
+        ocr_languages=ocr_languages,
+        entire_page_ocr=entire_page_ocr,
+        output_type=OCROutputType.TEXT_REGIONS,
+    )
+
+    if entire_page_ocr == "paddle":
+        page_layout_elements = [
+            LayoutElement(bbox=r.bbox, text=r.text, source=r.source, type="UncategorizedText")
+            for r in ocr_layout
+        ]
+    else:
+        ocr_text = get_ocr_data_from_image(
+            image,
+            ocr_languages=ocr_languages,
+            entire_page_ocr=entire_page_ocr,
+            output_type=OCROutputType.STRING,
+        )
+        page_layout_elements = get_elements_from_ocr_regions(
+            ocr_regions=ocr_layout,
+            ocr_text=ocr_text,
+            group_by_ocr_text=True,
+        )
+
+    page_layout = PageLayout(number=page_number, image=image, layout=None)
+    page_layout.image_metadata = {
+        "format": image.format,
+        "width": image.width,
+        "height": image.height,
+    }
+    page_layout.image = None
+    page_layout.elements = page_layout_elements
+
+    return page_layout
 
 
 def pad_element_bboxes(

@@ -8,7 +8,6 @@ from typing import IO, Any, BinaryIO, Iterator, List, Optional, Sequence, Tuple,
 
 import numpy as np
 import pdf2image
-import PIL
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import (
     LAParams,
@@ -22,6 +21,8 @@ from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
+from PIL import Image as PILImage
+from unstructured_inference.inference.layout import DocumentLayout
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -58,7 +59,11 @@ from unstructured.partition.lang import (
     convert_old_ocr_languages_to_languages,
     prepare_languages_for_tesseract,
 )
-from unstructured.partition.ocr import process_data_with_ocr, process_file_with_ocr
+from unstructured.partition.ocr import (
+    get_page_layout_from_ocr,
+    process_data_with_ocr,
+    process_file_with_ocr,
+)
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.constants import (
@@ -679,7 +684,7 @@ def convert_pdf_to_images(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
     chunk_size: int = 10,
-) -> Iterator[PIL.Image.Image]:
+) -> Iterator[PILImage.Image]:
     # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
     exactly_one(filename=filename, file=file)
     if file is not None:
@@ -807,22 +812,36 @@ def _partition_pdf_or_image_with_ocr(
     """Partitions an image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
 
+    entire_page_ocr = os.getenv("ENTIRE_PAGE_OCR", "tesseract").lower()
     ocr_languages = prepare_languages_for_tesseract(languages)
 
-    if file is None:
-        layout = process_file_with_ocr(
-            filename,
-            out_layout=None,
-            is_image=is_image,
-            ocr_languages=ocr_languages,
-        )
+    page_layouts = []
+    if is_image:
+        images = []
+        image = PILImage.open(file) if file is not None else PILImage.open(filename)
+        images.append(image)
+
+        for i, image in enumerate(images):
+            page_layout = get_page_layout_from_ocr(
+                image=image,
+                page_number=i+1,
+                ocr_languages=ocr_languages,
+                entire_page_ocr=entire_page_ocr,
+            )
+            page_layouts.append(page_layout)
     else:
-        layout = process_data_with_ocr(
-            file,
-            out_layout=None,
-            is_image=is_image,
-            ocr_languages=ocr_languages,
-        )
+        page_number = 0
+        for image in convert_pdf_to_images(filename, file):
+            page_number += 1
+            page_layout = get_page_layout_from_ocr(
+                image=image,
+                page_number=page_number,
+                ocr_languages=ocr_languages,
+                entire_page_ocr=entire_page_ocr,
+            )
+            page_layouts.append(page_layout)
+
+    layout = DocumentLayout.from_pages(page_layouts)
 
     elements = document_to_element_list(
         layout,
