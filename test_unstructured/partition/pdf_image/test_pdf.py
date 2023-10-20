@@ -5,6 +5,7 @@ from unittest import mock
 import pytest
 from PIL import Image
 from unstructured_inference.inference import layout
+from unstructured_inference.models.chipper import UnstructuredChipperModel
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
@@ -998,11 +999,18 @@ def test_check_annotations_within_element(threshold, expected):
 
 @pytest.fixture(scope="session")
 def chipper_results():
-    elements = pdf.partition_pdf(
-        "example-docs/layout-parser-paper-fast.pdf",
-        strategy="hi_res",
-        model_name="chipper",
-    )
+    parent = layout.LayoutElement.from_coords(0, 1, 2, 4, text="")
+    chipper_output = [
+        parent,
+        layout.LayoutElement.from_coords(5, 6, 7, 8, text="child", parent=parent),
+    ]
+
+    with mock.patch.object(UnstructuredChipperModel, "predict", return_value=chipper_output):
+        elements = pdf.partition_pdf(
+            "example-docs/layout-parser-paper-fast.pdf",
+            strategy="hi_res",
+            model_name="chipper",
+        )
     return elements
 
 
