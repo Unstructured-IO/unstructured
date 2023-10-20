@@ -391,7 +391,7 @@ jobs:
   changelog:
     runs-on: ubuntu-latest
     steps:
-    # need to checkout otherwise paths-filter will fail on merge-queue trigger 
+    # need to checkout otherwise paths-filter will fail on merge-queue trigger
     - uses: actions/checkout@v3
     - if: github.ref != 'refs/heads/main'
       uses: dorny/paths-filter@v2

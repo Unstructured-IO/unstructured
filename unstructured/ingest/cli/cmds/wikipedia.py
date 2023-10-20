@@ -1,4 +1,5 @@
 import logging
+import typing as t
 from dataclasses import dataclass
 
 import click
@@ -21,7 +22,7 @@ class WikipediaCliConfig(BaseConfig, CliMixin):
     auto_suggest: bool = True
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--page-title"],
@@ -37,7 +38,7 @@ class WikipediaCliConfig(BaseConfig, CliMixin):
                 " Set to False if the wrong Wikipedia page is fetched.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="wikipedia", invoke_without_command=True, cls=Group)

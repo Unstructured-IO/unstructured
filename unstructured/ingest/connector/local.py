@@ -44,11 +44,9 @@ class LocalIngestDoc(BaseIngestDoc):
 
     def cleanup_file(self):
         """Not applicable to local file system"""
-        pass
 
     def get_file(self):
         """Not applicable to local file system"""
-        pass
 
     @property
     def _output_filename(self) -> Path:
@@ -76,11 +74,9 @@ class LocalSourceConnector(BaseSourceConnector):
 
     def cleanup(self, cur_dir=None):
         """Not applicable to local file system"""
-        pass
 
     def initialize(self):
         """Not applicable to local file system"""
-        pass
 
     def _list_files(self):
         if self.connector_config.input_path_is_file:

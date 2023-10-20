@@ -1,8 +1,9 @@
-## 0.10.25-dev3
+## 0.10.25-dev5
 
 ### Enhancements
 
 * **Add CI evaluation workflow** Adds evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
+* **Duplicate CLI param check** Given that many of the options associated with the `Click` based cli ingest commands are added dynamically from a number of configs, a check was incorporated to make sure there were no duplicate entries to prevent new configs from overwriting already added options.
 
 ### Features
 
@@ -12,6 +13,7 @@
 ### Fixes
 
 * **Import PDFResourceManager more directly** We were importing `PDFResourceManager` from `pdfminer.converter` which was causing an error for some users. We changed to import from the actual location of `PDFResourceManager`, which is `pdfminer.pdfinterp`.
+* **Fix language detection of elements with empty strings** This resolves a warning message that was raised by `langdetect` if the language was attempted to be detected on an empty string. Language detection is now skipped for empty strings.
 * **Fix chunks breaking on regex-metadata matches.** Fixes "over-chunking" when `regex_metadata` was used, where every element that contained a regex-match would start a new chunk.
 * **Fix regex-metadata match offsets not adjusted within chunk.** Fixes incorrect regex-metadata match start/stop offset in chunks where multiple elements are combined.
 

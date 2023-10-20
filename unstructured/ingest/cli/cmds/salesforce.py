@@ -26,7 +26,7 @@ class SalesforceCliConfig(BaseConfig, CliMixin):
     categories: t.List[str]
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         possible_categories = ["Account", "Case", "Campaign", "EmailMessage", "Lead"]
         options = [
             click.Option(
@@ -57,7 +57,7 @@ class SalesforceCliConfig(BaseConfig, CliMixin):
                 "Currently only {}.".format(", ".join(possible_categories)),
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="salesforce", invoke_without_command=True, cls=Group)
