@@ -39,7 +39,7 @@ TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]
 LIST_TAGS: Final[List[str]] = ["ul", "ol", "dl"]
 HEADING_TAGS: Final[List[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
-TABLE_TAGS: Final[List[str]] = ["table", "tbody", "td", "tr"]
+TABLE_TAGS: Final[List[str]] = ["table", "tbody", "td", "tr", "thead"]
 TEXTBREAK_TAGS: Final[List[str]] = ["br"]
 PAGEBREAK_TAGS: Final[List[str]] = ["hr"]
 EMPTY_TAGS: Final[List[str]] = PAGEBREAK_TAGS + TEXTBREAK_TAGS
@@ -494,8 +494,8 @@ def _process_leaf_table_item(
         if not nested_table:
             rows = tag_elem.findall("tr")
             if not rows:
-                body = tag_elem.find("tbody")
-                rows = body.findall("tr")
+                body = tag_elem.find("tbody") or tag_elem.find("thead")
+                rows = body.findall("tr") if body else []
             if len(rows) > 0:
                 table_data = [list(row.itertext()) for row in rows]
                 html_table = tabulate(table_data, tablefmt="html")
