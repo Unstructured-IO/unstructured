@@ -235,7 +235,7 @@ def detect_languages(
     # gets overwritten after elements have been returned by _html and _text,
     # so `languages` would be detected twice.
     # Also return None if there is no text.
-    if languages[0] == "" or text.strip == "":
+    if languages[0] == "" or text.strip() == "":
         return None
 
     # If text contains special characters (like ñ, å, or Korean/Mandarin/etc.) it will NOT default
