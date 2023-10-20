@@ -28,19 +28,16 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
 @dataclass
 class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     connector_config: SimpleWikipediaConfig = field(repr=False)
-    revision_id: t.Optional[int] = None
 
     @property
     @requires_dependencies(["wikipedia"], extras="wikipedia")
     def page(self) -> "WikipediaPage":
         import wikipedia
 
-        page = wikipedia.page(
+        return wikipedia.page(
             self.connector_config.title,
             auto_suggest=self.connector_config.auto_suggest,
         )
-        self.revision_id = page.revision_id
-        return page
 
     def get_filename_prefix(self) -> str:
         title: str = str(self.connector_config.title)

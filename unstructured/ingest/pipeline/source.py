@@ -6,8 +6,6 @@ from unstructured.ingest.interfaces import BaseSessionHandle, IngestDocSessionHa
 from unstructured.ingest.logger import logger
 from unstructured.ingest.pipeline.interfaces import SourceNode
 
-pass
-
 # module-level variable to store session handle
 session_handle: t.Optional[BaseSessionHandle] = None
 
