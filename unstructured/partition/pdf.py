@@ -47,6 +47,7 @@ from unstructured.file_utils.filetype import (
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
+    clean_pdfminer_inner_elements,
     convert_to_bytes,
     document_to_element_list,
     exactly_one,
@@ -422,6 +423,7 @@ def _partition_pdf_or_image_local(
     if model_name == "chipper":
         kwargs["sort_mode"] = SORT_MODE_DONT
 
+    final_layout, extra_info = clean_pdfminer_inner_elements(final_layout)
     elements = document_to_element_list(
         final_layout,
         sortable=True,
@@ -431,7 +433,7 @@ def _partition_pdf_or_image_local(
         # block with NLP rules. Otherwise, the assumptions in
         # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
         infer_list_items=False,
-        detection_origin="image" if is_image else "pdf",
+        detection_origin="image" if is_image else "pdf",  # Note(Benjamin): probably a bad origin
         **kwargs,
     )
 
