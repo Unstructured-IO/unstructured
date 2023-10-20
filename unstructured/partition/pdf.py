@@ -47,7 +47,6 @@ from unstructured.file_utils.filetype import (
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
-    clean_pdfminer_inner_elements,
     convert_to_bytes,
     document_to_element_list,
     exactly_one,
@@ -67,6 +66,7 @@ from unstructured.partition.utils.constants import (
     SORT_MODE_XY_CUT,
     OCRMode,
 )
+from unstructured.partition.utils.processing_elements import clean_pdfminer_inner_elements
 from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     sort_page_elements,
