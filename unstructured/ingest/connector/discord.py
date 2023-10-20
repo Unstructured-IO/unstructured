@@ -37,8 +37,6 @@ class SimpleDiscordConfig(BaseConnectorConfig):
             except ValueError:
                 raise ValueError("--discord-period must be an integer")
 
-        pass
-
 
 @dataclass
 class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
