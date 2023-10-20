@@ -5,7 +5,8 @@ from unstructured.ingest.connector.registry import create_ingest_doc_from_dict
 from unstructured.ingest.interfaces import BaseSessionHandle, IngestDocSessionHandleMixin
 from unstructured.ingest.logger import logger
 from unstructured.ingest.pipeline.interfaces import SourceNode
-from unstructured.ingest.pipeline.utils import get_ingest_doc_hash
+
+pass
 
 # module-level variable to store session handle
 session_handle: t.Optional[BaseSessionHandle] = None
@@ -17,6 +18,15 @@ class Reader(SourceNode):
         try:
             global session_handle
             doc = create_ingest_doc_from_dict(ingest_doc_dict)
+            filename = doc.filename
+            print(f"##### Checking if {filename} exists:")
+            if (
+                not self.pipeline_context.reprocess
+                and filename.is_file()
+                and filename.stat().st_size
+            ):
+                logger.info(f"File exists: {filename}, skipping download")
+                return filename
             if isinstance(doc, IngestDocSessionHandleMixin):
                 if session_handle is None:
                     # create via doc.session_handle, which is a property that creates a
@@ -30,7 +40,8 @@ class Reader(SourceNode):
                 self.retry_strategy(doc.get_file)
             else:
                 doc.get_file()
-            ingest_doc_dict.update(doc.to_dict())
+            for k, v in doc.to_dict().items():
+                ingest_doc_dict[k] = v
             return doc.filename
         except Exception as e:
             if self.pipeline_context.raise_on_error:

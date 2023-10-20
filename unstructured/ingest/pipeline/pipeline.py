@@ -49,6 +49,7 @@ class Pipeline(DataClassJsonMixin):
         manager = mp.Manager()
         self.pipeline_context.ingest_docs_map = manager.dict()
         dict_docs = self.doc_factory_node()
+        dict_docs = [manager.dict(d) for d in dict_docs]
         if not dict_docs:
             logger.info("no docs found to process")
             return
@@ -57,9 +58,9 @@ class Pipeline(DataClassJsonMixin):
             f"{self.pipeline_context.num_processes} processes",
         )
         for doc in dict_docs:
-            print(f"******** DOC: {doc}")
             self.pipeline_context.ingest_docs_map[get_ingest_doc_hash(doc)] = doc
         fetched_filenames = self.source_node(iterable=dict_docs)
+        return
         if not fetched_filenames:
             logger.info("No files to run partition over")
             return

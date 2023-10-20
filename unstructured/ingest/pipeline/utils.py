@@ -1,5 +1,4 @@
 import hashlib
-import json
 
 
 def get_ingest_doc_hash(json_as_dict: dict) -> str:
