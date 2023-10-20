@@ -92,6 +92,7 @@ def partition_pdf(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
+    generate_extra_info: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: List[str] = ["eng"],
     max_partition: Optional[int] = 1500,
@@ -161,6 +162,7 @@ def partition_pdf(
         include_page_breaks=include_page_breaks,
         strategy=strategy,
         infer_table_structure=infer_table_structure,
+        generate_extra_info=generate_extra_info,
         languages=languages,
         max_partition=max_partition,
         min_partition=min_partition,
@@ -206,6 +208,7 @@ def partition_pdf_or_image(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
+    generate_extra_info: bool = False,
     ocr_languages: Optional[str] = None,
     languages: Optional[List[str]] = ["eng"],
     max_partition: Optional[int] = 1500,
@@ -291,6 +294,7 @@ def partition_pdf_or_image(
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
+                generate_extra_info=generate_extra_info,
                 languages=languages,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 **kwargs,
@@ -331,6 +335,7 @@ def _partition_pdf_or_image_local(
     is_image: bool = False,
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
+    generate_extra_info: bool = False,
     languages: Optional[List[str]] = ["eng"],
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     model_name: Optional[str] = None,
@@ -461,6 +466,9 @@ def _partition_pdf_or_image_local(
             # filter those out and leave the children orphaned.
             if el.text or isinstance(el, PageBreak) or model_name.startswith("chipper"):
                 out_elements.append(cast(Element, el))
+
+    if generate_extra_info:
+        return out_elements, extra_info
 
     return out_elements
 
