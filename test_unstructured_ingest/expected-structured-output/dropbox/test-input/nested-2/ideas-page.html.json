@@ -4,11 +4,11 @@
     "element_id": "e83a347af95db7ba47b5351f411e00c7",
     "metadata": {
       "data_source": {
-        "url": "dropbox:///nested-1/ideas-page.html",
-        "version": 97868440341969002655313511829421878057,
+        "url": "dropbox:///test-input/nested-2/ideas-page.html",
+        "version": 199529738485760976214264649588985968756,
         "record_locator": {
           "protocol": "dropbox",
-          "remote_file_path": "/nested-1/ideas-page.html"
+          "remote_file_path": "/test-input/nested-2/ideas-page.html"
         }
       },
       "filetype": "text/html",
