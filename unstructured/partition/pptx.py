@@ -56,7 +56,7 @@ def partition_pptx(
     include_metadata: bool = True,
     metadata_last_modified: Optional[str] = None,
     include_slide_notes: bool = False,
-infer_table_structure: bool = True,
+    infer_table_structure: bool = True,
     chunking_strategy: Optional[str] = None,
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
@@ -111,6 +111,7 @@ infer_table_structure: bool = True,
         source_file,
         include_page_breaks,
         include_slide_notes,
+        infer_table_structure,
         metadata_filename,
         metadata_last_modified,
     )
@@ -133,12 +134,14 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         # -- this object in tests and makes them less sensitive to signature changes.
         include_page_breaks: bool = True,
         include_slide_notes: bool = False,
+        infer_table_structure: bool = True,
         metadata_filename: Optional[str] = None,
         metadata_last_modified: Optional[str] = None,
     ) -> None:
         self._file = file
         self._include_page_breaks = include_page_breaks
         self._include_slide_notes = include_slide_notes
+        self._infer_table_structure = infer_table_structure
         self._metadata_filename = metadata_filename
         self._metadata_last_modified = metadata_last_modified
         self._page_counter = 0
@@ -149,6 +152,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         file: Union[str, IO[bytes]],
         include_page_breaks: bool,
         include_slide_notes: bool,
+        infer_table_structure: bool,
         metadata_filename: Optional[str],
         metadata_last_modified: Optional[str],
     ) -> Iterator[Element]:
@@ -157,6 +161,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             file,
             include_page_breaks,
             include_slide_notes,
+            infer_table_structure,
             metadata_filename,
             metadata_last_modified,
         )._iter_presentation_elements()
@@ -326,7 +331,9 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         text_table = convert_ms_office_table_to_text(graphfrm.table, as_html=False).strip()
         if not text_table:
             return
-        html_table = convert_ms_office_table_to_text(graphfrm.table, as_html=True)
+        html_table = None
+        if self._infer_table_structure:
+            html_table = convert_ms_office_table_to_text(graphfrm.table, as_html=True)
         yield Table(
             text=text_table,
             metadata=self._table_metadata(html_table),
@@ -355,7 +362,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
     def _order_shapes(self, slide: Slide) -> Tuple[Optional[Shape], Sequence[BaseShape]]:
         """Orders the shapes on `slide` from top to bottom and left to right.
 
-        Returns the the title shape if it exists and the ordered shapes."""
+        Returns the title shape if it exists and the ordered shapes."""
 
         def iter_shapes(shapes: _BaseGroupShapes) -> Iterator[BaseShape]:
             for shape in shapes:

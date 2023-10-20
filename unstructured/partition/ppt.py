@@ -22,7 +22,7 @@ def partition_ppt(
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,
-infer_table_structure: bool = True,
+    infer_table_structure: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
@@ -89,6 +89,7 @@ infer_table_structure: bool = True,
         pptx_filename = os.path.join(tmpdir, f"{base_filename}.pptx")
         elements = partition_pptx(
             filename=pptx_filename,
+            infer_table_structure=infer_table_structure,
             metadata_filename=metadata_filename,
             metadata_last_modified=metadata_last_modified or last_modification_date,
             languages=languages,

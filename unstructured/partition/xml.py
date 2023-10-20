@@ -90,7 +90,6 @@ def partition_xml(
     xml_path: Optional[str] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
-infer_table_structure: bool = True,
     encoding: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,

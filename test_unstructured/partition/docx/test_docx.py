@@ -265,6 +265,7 @@ def test_get_emphasized_texts_from_paragraph(expected_emphasized_texts: List[Dic
         None,
         None,
         False,
+        True,
         None,
     )
     paragraph = partitioner._document.paragraphs[1]
@@ -289,6 +290,7 @@ def test_iter_table_emphasis(expected_emphasized_texts: List[Dict[str, str]]):
         None,
         None,
         False,
+        True,
         None,
     )
     table = partitioner._document.tables[0]
@@ -305,6 +307,7 @@ def test_table_emphasis(
         None,
         None,
         False,
+        True,
         None,
     )
     table = partitioner._document.tables[0]
@@ -350,7 +353,7 @@ def test_partition_docx_with_json(mock_document, tmpdir):
 
 
 def test_parse_category_depth_by_style():
-    partitioner = _DocxPartitioner("example-docs/category-level.docx", None, None, False, None)
+    partitioner = _DocxPartitioner("example-docs/category-level.docx", None, None, False,True, None)
 
     # Category depths are 0-indexed and relative to the category type
     # Title, list item, bullet, narrative text, etc.
@@ -381,7 +384,7 @@ def test_parse_category_depth_by_style():
 
 
 def test_parse_category_depth_by_style_name():
-    partitioner = _DocxPartitioner(None, None, None, False, None)
+    partitioner = _DocxPartitioner(None, None, None, False, True, None)
 
     test_cases = [
         (0, "Heading 1"),
@@ -406,7 +409,7 @@ def test_parse_category_depth_by_style_name():
 
 
 def test_parse_category_depth_by_style_ilvl():
-    partitioner = _DocxPartitioner(None, None, None, False, None)
+    partitioner = _DocxPartitioner(None, None, None, False, True, None)
     assert partitioner._parse_category_depth_by_style_ilvl() == 0
 
 
