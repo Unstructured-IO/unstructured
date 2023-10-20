@@ -7,7 +7,7 @@ import json
 import os
 import re
 import zipfile
-from typing import IO, Any, Callable, Dict, List, Optional, cast
+from typing import IO, Any, Callable, Dict, List, Optional
 
 from typing_extensions import ParamSpec
 
@@ -562,7 +562,8 @@ def add_metadata_with_filetype(
                 metadata_kwargs = {
                     kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
                 }
-                if not cast(str, kwargs.get("model_name", "")).startswith("chipper"):
+                # NOTE (yao): do not use cast here as cast(None) still is None
+                if not str(kwargs.get("model_name", "")).startswith("chipper"):
                     # NOTE(alan): Skip hierarchy if using chipper, as it should take care of that
                     elements = set_element_hierarchy(elements)
 
