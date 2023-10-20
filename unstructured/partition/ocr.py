@@ -201,7 +201,7 @@ def supplement_page_layout_with_ocr(
 
         if elements:
             # NOTE(christine): "hi_res" strategy path
-            merged_page_layout_elements = merge_page_layout_elements_with_ocr_layout(
+            merged_page_layout_elements = merge_out_layout_with_ocr_layout(
                 cast(List[LayoutElement], elements),
                 ocr_layout,
             )
@@ -400,8 +400,8 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
     return text_regions
 
 
-def merge_page_layout_elements_with_ocr_layout(
-    page_layout_elements: List[LayoutElement],
+def merge_out_layout_with_ocr_layout(
+    out_layout: List[LayoutElement],
     ocr_layout: List[TextRegion],
     supplement_with_ocr_elements: bool = True,
 ) -> List[LayoutElement]:
@@ -414,7 +414,7 @@ def merge_page_layout_elements_with_ocr_layout(
     supplemented with the OCR layout.
     """
 
-    out_regions_without_text = [region for region in page_layout_elements if not region.text]
+    out_regions_without_text = [region for region in out_layout if not region.text]
 
     for out_region in out_regions_without_text:
         out_region.text = aggregate_ocr_text_by_block(
@@ -424,9 +424,9 @@ def merge_page_layout_elements_with_ocr_layout(
         )
 
     final_layout = (
-        supplement_layout_with_ocr_elements(page_layout_elements, ocr_layout)
+        supplement_layout_with_ocr_elements(out_layout, ocr_layout)
         if supplement_with_ocr_elements
-        else page_layout_elements
+        else out_layout
     )
 
     return final_layout
