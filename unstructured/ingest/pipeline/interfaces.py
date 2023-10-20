@@ -18,6 +18,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     PartitionConfig,
     ProcessorConfig,
+    ReadConfig,
     RetryStrategyConfig,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
@@ -129,6 +130,7 @@ class SourceNode(PipelineNode):
     Output of logic expected to be the json outputs of the data itself
     """
 
+    read_config: ReadConfig
     retry_strategy_config: t.Optional[RetryStrategyConfig] = None
 
     @property

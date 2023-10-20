@@ -44,9 +44,8 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     def get_filename_prefix(self) -> str:
         title: str = str(self.connector_config.title)
-        revision_id = self.revision_id
         title = " ".join(title.split()).replace(" ", "-")
-        return f"{title}-{revision_id}"
+        return title
 
     @property
     def filename(self) -> Path:

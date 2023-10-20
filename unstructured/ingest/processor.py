@@ -44,7 +44,11 @@ def process_documents(
         pipeline_context=pipeline_config,
         source_doc_connector=source_doc_connector,
     )
-    reader = Reader(pipeline_context=pipeline_config, retry_strategy_config=retry_strategy_config)
+    reader = Reader(
+        pipeline_context=pipeline_config,
+        retry_strategy_config=retry_strategy_config,
+        read_config=source_doc_connector.read_config,
+    )
     partitioner = Partitioner(pipeline_context=pipeline_config, partition_config=partition_config)
     reformat_nodes: t.List[ReformatNode] = []
     if embedder_config:

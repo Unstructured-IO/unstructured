@@ -24,7 +24,7 @@ class Pipeline(DataClassJsonMixin):
     pipeline_context: PipelineContext
     doc_factory_node: DocFactoryNode
     source_node: SourceNode
-    partition_node: PartitionNode
+    partition_node: t.Optional[PartitionNode] = None
     write_node: t.Optional[WriteNode] = None
     reformat_nodes: t.List[ReformatNode] = field(default_factory=list)
     permissions_node: t.Optional[PermissionsDataCleaner] = None
@@ -59,11 +59,15 @@ class Pipeline(DataClassJsonMixin):
         )
         for doc in dict_docs:
             self.pipeline_context.ingest_docs_map[get_ingest_doc_hash(doc)] = doc
+        if self.source_node.read_config.download_only:
+            logger.info("stopping pipeline after downloading files")
+            return
         fetched_filenames = self.source_node(iterable=dict_docs)
-        return
         if not fetched_filenames:
             logger.info("No files to run partition over")
             return
+        if self.partition_node is None:
+            raise ValueError("partition node not set")
         partitioned_jsons = self.partition_node(iterable=dict_docs)
         if not partitioned_jsons:
             logger.info("No files to process after partitioning")
