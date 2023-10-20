@@ -101,14 +101,14 @@ def measure_edit_distance(
     headers = ["filename", "connector", "cct-accuracy", "cct-%missing"]
     _write_to_file(export_dir, "all-docs-cct.tsv", rows, headers)
 
-    ## Test
+    # Test
     click.echo(os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv")))
     if os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv")):
         with open(os.path.join(export_dir, "all-docs-cct.tsv")) as file:
             tsv_file = csv.reader(file, delimiter="\t")
             for line in tsv_file:
                 print(line)
-    ## Test
+    # Test
 
     headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
     agg_rows = []
@@ -134,14 +134,14 @@ def measure_edit_distance(
     click.echo(os.path.isfile(os.path.join(export_dir, "aggregate-scores-cct.tsv")))
     _display(agg_rows, headers)
 
-    ## Test
+    # Test
     click.echo(os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv")))
     if os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv")):
         with open(os.path.join(export_dir, "all-docs-cct.tsv")) as file:
             tsv_file = csv.reader(file, delimiter="\t")
             for line in tsv_file:
                 print(line)
-    ## Test
+    # Test
 
 
 def _listdir_recursive(dir: str):
