@@ -13,21 +13,20 @@ doc = LocalIngestDoc(
     processor_config=ProcessorConfig(),
     read_config=ReadConfig(),
 )
-source_meta = doc.source_metadata
 serialized_json = doc.to_json()
 
 
 def test_manual_deserialization():
     deserialized_doc = LocalIngestDoc.from_json(serialized_json)
-    assert source_meta == deserialized_doc.source_metadata
+    assert doc == deserialized_doc
 
 
 def test_registry_from_json():
     deserialized_doc = create_ingest_doc_from_json(serialized_json)
-    assert source_meta == deserialized_doc.source_metadata
+    assert doc == deserialized_doc
 
 
 def test_registry_from_dict():
     serialized_dict: dict = json.loads(serialized_json)
     deserialized_doc = create_ingest_doc_from_dict(serialized_dict)
-    assert source_meta == deserialized_doc.source_metadata
+    assert doc == deserialized_doc
