@@ -44,9 +44,9 @@ logger.setLevel(logging.DEBUG)
 @click.option(
     "--export_dir",
     type=click.STRING,
-    default="performance-metrics",
+    default="metrics",
     help="Directory to save the output evaluation metrics to. Default to \
-        [your_working_dir]/evaluation_metrics/",
+        [your_working_dir]/metrics/",
 )
 @click.option(
     "--weights",
