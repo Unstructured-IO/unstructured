@@ -554,11 +554,16 @@ def merge_text_regions(regions: List[TextRegion]) -> TextRegion:
     - TextRegion: A single merged TextRegion object.
     """
 
+    if not regions:
+        raise ValueError("The text regions to be merged must be provided.")
+
     min_x1 = min([tr.bbox.x1 for tr in regions])
     min_y1 = min([tr.bbox.y1 for tr in regions])
     max_x2 = max([tr.bbox.x2 for tr in regions])
     max_y2 = max([tr.bbox.y2 for tr in regions])
 
     merged_text = " ".join([tr.text for tr in regions if tr.text])
+    sources = [tr.source for tr in regions]
+    source = sources[0] if all(s == sources[0] for s in sources) else None
 
-    return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text)
+    return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text, source)
