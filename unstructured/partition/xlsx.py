@@ -44,7 +44,7 @@ def partition_xlsx(
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
-infer_table_structure: bool = True,
+    infer_table_structure: bool = True,
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     metadata_last_modified: Optional[str] = None,

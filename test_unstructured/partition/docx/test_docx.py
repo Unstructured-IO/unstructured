@@ -353,7 +353,9 @@ def test_partition_docx_with_json(mock_document, tmpdir):
 
 
 def test_parse_category_depth_by_style():
-    partitioner = _DocxPartitioner("example-docs/category-level.docx", None, None, False,True, None)
+    partitioner = _DocxPartitioner(
+        "example-docs/category-level.docx", None, None, False, True, None
+    )
 
     # Category depths are 0-indexed and relative to the category type
     # Title, list item, bullet, narrative text, etc.
