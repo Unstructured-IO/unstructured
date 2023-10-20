@@ -65,7 +65,10 @@ def add_options(cmd: click.Command, extras=t.List[t.Type[CliMixin]]) -> click.Co
     ]
     configs.extend(extras)
     for config in configs:
-        config.add_cli_options(cmd)
+        try:
+            config.add_cli_options(cmd=cmd)
+        except ValueError as e:
+            raise ValueError(f"failed to set configs from {config.__name__}: {e}")
     return cmd
 
 

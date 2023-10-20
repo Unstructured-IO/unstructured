@@ -74,43 +74,29 @@ class TagsMixin:
 class HTMLText(TagsMixin, Text):
     """Text with tag information."""
 
-    pass
-
 
 class HTMLAddress(TagsMixin, Address):
     """Address with tag information."""
-
-    pass
 
 
 class HTMLEmailAddress(TagsMixin, EmailAddress):
     """EmailAddress with tag information"""
 
-    pass
-
 
 class HTMLTitle(TagsMixin, Title):
     """Title with tag information."""
-
-    pass
 
 
 class HTMLNarrativeText(TagsMixin, NarrativeText):
     """NarrativeText with tag information."""
 
-    pass
-
 
 class HTMLListItem(TagsMixin, ListItem):
     """NarrativeText with tag information."""
 
-    pass
-
 
 class HTMLTable(TagsMixin, Table):
     """NarrativeText with tag information"""
-
-    pass
 
 
 class HTMLDocument(XMLDocument):

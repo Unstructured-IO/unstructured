@@ -13,6 +13,6 @@ for file in requirements/*.in; do
     continue;
   fi;
   echo "running: pip-compile --upgrade $file"
-  pip-compile --upgrade "$file"
+  pip-compile --upgrade "$file" -c requirements/constraints.in
 done
 cp requirements/build.txt docs/requirements.txt

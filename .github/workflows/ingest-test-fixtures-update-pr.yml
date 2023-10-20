@@ -18,6 +18,10 @@ jobs:
       PYTHON_VERSION: "3.10"
     steps:
       - uses: actions/checkout@v3
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
       - uses: actions/cache@v3
         id: virtualenv-cache
         with:
@@ -25,10 +29,6 @@ jobs:
             .venv
             nltk_data
           key: unstructured-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
       - name: Setup virtual environment (no cache hit)
         run: |
           python${{ env.PYTHON_VERSION }} -m venv .venv
@@ -152,7 +152,9 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GH_CREATE_PR_TOKEN }}
-          add-paths: test_unstructured_ingest/expected-structured-output
+          add-paths: |
+            test_unstructured_ingest/expected-structured-output
+            test_unstructured_ingest/metrics
           commit-message: "Update ingest test fixtures"
           branch: ${{ env.BRANCH_NAME }}
           title: "${{ env.PR_NAME }} <- Ingest test fixtures update"

@@ -21,13 +21,11 @@ class BiomedCliConfig(BaseConfig, CliMixin):
     api_id: t.Optional[str] = None
     api_from: t.Optional[str] = None
     api_until: t.Optional[str] = None
-    decay: float = 0.3
     path: t.Optional[str] = None
     max_request_time: int = 45
-    max_retries: int = 1
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--api-id"],
@@ -45,11 +43,6 @@ class BiomedCliConfig(BaseConfig, CliMixin):
                 help="Until parameter for OA Web Service API.",
             ),
             click.Option(
-                ["--decay"],
-                default=0.3,
-                help="(In float) Factor to multiply the delay between retries.",
-            ),
-            click.Option(
                 ["--path"],
                 default=None,
                 help="PMC Open Access FTP Directory Path.",
@@ -59,13 +52,8 @@ class BiomedCliConfig(BaseConfig, CliMixin):
                 default=45,
                 help="(In seconds) Max request time to OA Web Service API.",
             ),
-            click.Option(
-                ["--max-retries"],
-                default=1,
-                help="Max requests to OA Web Service API.",
-            ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="biomed", invoke_without_command=True, cls=Group)

@@ -202,6 +202,10 @@ install-ingest-salesforce:
 install-ingest-jira:
 	python3 -m pip install -r requirements/ingest-jira.txt
 
+.PHONY: install-embed-huggingface
+install-embed-huggingface:
+	python3 -m pip install -r requirements/embed-huggingface.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
@@ -350,8 +354,8 @@ check-version:
 .PHONY: tidy
 tidy:
 	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --fix-only || true
-	black  .
 	autoflake --in-place .
+	black  .
 
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync
