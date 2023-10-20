@@ -89,7 +89,7 @@ def process_file_with_ocr(
 ) -> "DocumentLayout":
     """
     Process OCR data from a given file and supplement the output DocumentLayout
-    from unsturcutured0inference with ocr.
+    from unstructured inference with ocr.
 
     Parameters:
     - filename (str): The path to the input file, which can be an image or a PDF.
@@ -115,10 +115,10 @@ def process_file_with_ocr(
     try:
         if is_image:
             with PILImage.open(filename) as images:
-                format = images.format
+                image_format = images.format
                 for i, image in enumerate(ImageSequence.Iterator(images)):
                     image = image.convert("RGB")
-                    image.format = format
+                    image.format = image_format
                     if out_layout:
                         page_layout = out_layout.pages[i]
                     else:
