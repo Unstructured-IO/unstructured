@@ -60,12 +60,7 @@ from unstructured.partition.lang import (
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
-from unstructured.partition.utils.constants import (
-    SORT_MODE_BASIC,
-    SORT_MODE_DONT,
-    SORT_MODE_XY_CUT,
-    OCRMode,
-)
+from unstructured.partition.utils.constants import SortMode, OCRMode
 from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     sort_page_elements,
@@ -411,7 +406,7 @@ def _partition_pdf_or_image_local(
 
     # NOTE(alan): starting with v2, chipper sorts the elements itself.
     if model_name == "chipper":
-        kwargs["sort_mode"] = SORT_MODE_DONT
+        kwargs["sort_mode"] = SortMode.SORT_MODE_DONT
 
     elements = document_to_element_list(
         final_layout,
@@ -519,11 +514,11 @@ def _process_pdfminer_pages(
     filename: str = "",
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
+    sort_mode: SortMode = SortMode.SORT_MODE_XY_CUT,
     **kwargs,
 ):
     """Uses PDF miner to split a document into pages and process them."""
     elements: List[Element] = []
-    sort_mode = kwargs.get("sort_mode", SORT_MODE_XY_CUT)
 
     rsrcmgr = PDFResourceManager()
     laparams = LAParams()
@@ -652,8 +647,8 @@ def _process_pdfminer_pages(
 
         # NOTE(crag, christine): always do the basic sort first for determinsitic order across
         # python versions.
-        sorted_page_elements = sort_page_elements(page_elements, SORT_MODE_BASIC)
-        if sort_mode != SORT_MODE_BASIC:
+        sorted_page_elements = sort_page_elements(page_elements, SortMode.SORT_MODE_BASIC)
+        if sort_mode != SortMode.SORT_MODE_BASIC:
             sorted_page_elements = sort_page_elements(sorted_page_elements, sort_mode)
 
         elements += sorted_page_elements

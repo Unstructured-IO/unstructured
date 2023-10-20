@@ -23,7 +23,7 @@ from unstructured.partition.common import (
     contains_emoji,
     document_to_element_list,
 )
-from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_DONT, SORT_MODE_XY_CUT
+from unstructured.partition.utils.constants import SortMode
 
 
 class MockPageLayout(layout.PageLayout):
@@ -460,7 +460,7 @@ def test_document_to_element_list_handles_parent():
 
 @pytest.mark.parametrize(
     ("sort_mode", "call_count"),
-    [(SORT_MODE_DONT, 0), (SORT_MODE_BASIC, 1), (SORT_MODE_XY_CUT, 1)],
+    [(SortMode.SORT_MODE_DONT, 0), (SortMode.SORT_MODE_BASIC, 1), (SortMode.SORT_MODE_XY_CUT, 1)],
 )
 def test_document_to_element_list_doesnt_sort_on_sort_method(sort_mode, call_count):
     block1 = LayoutElement.from_coords(1, 2, 3, 4, text="block 1", type="NarrativeText")
