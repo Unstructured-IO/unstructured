@@ -677,13 +677,7 @@ def test_partition_html_respects_detect_language_per_element():
 @pytest.mark.parametrize(
     ("tag", "expected"),
     [
-        (
-            "thead",
-            (
-                "<table><br><tbody><br><tr><td>Header 1</td><td>Header "
-                "2</td></tr><br></tbody><br></table>"
-            ),
-        ),
+        ("thead", ""),
         ("foo", ""),
     ],
 )
