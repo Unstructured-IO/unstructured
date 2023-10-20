@@ -62,7 +62,10 @@ class Pipeline(DataClassJsonMixin):
         if not fetched_filenames:
             logger.info("No files to run partition over")
             return
-        partitioned_jsons = self.partition_node(iterable=json_docs)
+        # By passing in the values from the map, allows changes to persist from the source node
+        partitioned_jsons = self.partition_node(
+            iterable=self.pipeline_context.ingest_docs_map.values(),
+        )
         if not partitioned_jsons:
             logger.info("No files to process after partitioning")
             return
