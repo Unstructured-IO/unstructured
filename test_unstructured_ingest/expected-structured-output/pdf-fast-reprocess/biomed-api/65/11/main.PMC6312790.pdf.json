@@ -3,7 +3,14 @@
     "type": "UncategorizedText",
     "element_id": "0e58869830c7b4461a4d1879223e4139",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": [
@@ -20,7 +27,14 @@
     "type": "NarrativeText",
     "element_id": "b0658ce9dccc0acba9a472c2bb992cc9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": [
@@ -37,7 +51,14 @@
     "type": "Title",
     "element_id": "f2fe9c33b7e8535efebf7c20ebce297c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -48,7 +69,14 @@
     "type": "Title",
     "element_id": "0ca3f075fdccf9232449ff461b63ceb9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": [
@@ -65,7 +93,14 @@
     "type": "Title",
     "element_id": "0ccb3a9876bbc64a1ca09fa40c4f844d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -76,7 +111,14 @@
     "type": "Title",
     "element_id": "9ad2f78909544aa8ddb755f6fcc7db7d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -87,7 +129,14 @@
     "type": "Title",
     "element_id": "43ba2d697eec5d4b647cf4579c185231",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -98,7 +147,14 @@
     "type": "UncategorizedText",
     "element_id": "893c64b557e9f51e0b4dbdca3e5e4216",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -109,7 +165,14 @@
     "type": "NarrativeText",
     "element_id": "fbd221e3c1f82c8601661213b98b0962",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -120,7 +183,14 @@
     "type": "NarrativeText",
     "element_id": "d6923075e35e5f3296e0d24ceb70a2bb",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -131,7 +201,14 @@
     "type": "UncategorizedText",
     "element_id": "c382dd715a85d683f056834c4af7be85",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -142,7 +219,14 @@
     "type": "Title",
     "element_id": "abe4641521caf8385f30e81099f3a8c6",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -153,7 +237,14 @@
     "type": "NarrativeText",
     "element_id": "5ff19b29d56eb015cac7f80f93c4ae6b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -164,7 +255,14 @@
     "type": "NarrativeText",
     "element_id": "260cf1397ece5718c2d35900917688de",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -175,7 +273,14 @@
     "type": "Title",
     "element_id": "8c625bd30cfb1b77c8ba8d4e863d0bb3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -186,7 +291,14 @@
     "type": "UncategorizedText",
     "element_id": "7379bc18109a0a988413877dd9950c36",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -197,7 +309,14 @@
     "type": "Title",
     "element_id": "b27e559f6c00d2bde61efba5db252e31",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -208,7 +327,14 @@
     "type": "Title",
     "element_id": "1064dcef42380cfdb90c668aa3a670a3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -219,7 +345,14 @@
     "type": "Title",
     "element_id": "e4359c72057b318ddf5a64f9b97539c4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -230,7 +363,14 @@
     "type": "Title",
     "element_id": "e102dc7c1db28c29d5e4bde8062592ed",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": [
@@ -247,7 +387,14 @@
     "type": "NarrativeText",
     "element_id": "511abaee4573f467ba654d2a697efb03",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": [
@@ -274,7 +421,14 @@
     "type": "UncategorizedText",
     "element_id": "549a2fac47d713cc00f2db498ad6b557",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -285,7 +439,14 @@
     "type": "NarrativeText",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -296,7 +457,14 @@
     "type": "NarrativeText",
     "element_id": "6928b78d26af54b6acb804ed319b5c05",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -307,7 +475,14 @@
     "type": "Title",
     "element_id": "41e0fa358cefcadbb2633ec45ff2d129",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -318,7 +493,14 @@
     "type": "Title",
     "element_id": "9769bb23c49762a84b464e817703bc35",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -329,7 +511,14 @@
     "type": "Title",
     "element_id": "aa43321cb45fb76debb7e732249d42a5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -340,7 +529,14 @@
     "type": "NarrativeText",
     "element_id": "7ce6ee1aa50d28b85acf544f1db3e25c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -351,7 +547,14 @@
     "type": "Title",
     "element_id": "596eda178f8c5adefbae7cfe1bec78c3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -362,7 +565,14 @@
     "type": "NarrativeText",
     "element_id": "682e6210329b84f8b00548088196ffc9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -373,7 +583,14 @@
     "type": "NarrativeText",
     "element_id": "1d61e3468bc681ba1a7e647000c6828c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -384,7 +601,14 @@
     "type": "NarrativeText",
     "element_id": "39b6040280a179e1f8e4f4fb5ec4ae05",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -395,7 +619,14 @@
     "type": "Title",
     "element_id": "1ddde62c3188f81dfc835b6f036f1734",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -406,7 +637,14 @@
     "type": "ListItem",
     "element_id": "c2b2b778d53cc9a1cb4dc340476bc5aa",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -417,7 +655,14 @@
     "type": "NarrativeText",
     "element_id": "bc0cfb704c66cc864253e6ccf90a2b86",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -428,7 +673,14 @@
     "type": "Title",
     "element_id": "e28e0dc941accc8694040c63091b580c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -439,7 +691,14 @@
     "type": "UncategorizedText",
     "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -450,7 +709,14 @@
     "type": "Title",
     "element_id": "b780e72bd4f737713ae202feb46b5d55",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -461,7 +727,14 @@
     "type": "Title",
     "element_id": "acac86c0e609ca906f632b0e2dacccb2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -472,7 +745,14 @@
     "type": "Title",
     "element_id": "1bd621f0b71079e0948b0aad011a7f4b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -483,7 +763,14 @@
     "type": "Title",
     "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -494,7 +781,14 @@
     "type": "UncategorizedText",
     "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -505,7 +799,14 @@
     "type": "UncategorizedText",
     "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -516,7 +817,14 @@
     "type": "Title",
     "element_id": "d300d49efc4cd0982dd6bc3377759ae8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -527,7 +835,14 @@
     "type": "UncategorizedText",
     "element_id": "4a44dc15364204a80fe80e9039455cc1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -538,7 +853,14 @@
     "type": "UncategorizedText",
     "element_id": "98010bd9270f9b100b6214a21754fd33",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -549,7 +871,14 @@
     "type": "UncategorizedText",
     "element_id": "7b1a278f5abe8e9da907fc9c29dfd432",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -560,7 +889,14 @@
     "type": "UncategorizedText",
     "element_id": "5ec1a0c99d428601ce42b407ae9c675e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -571,7 +907,14 @@
     "type": "UncategorizedText",
     "element_id": "eb3be230bbd2844b1f5d8f2e4fab9ffb",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -582,7 +925,14 @@
     "type": "Title",
     "element_id": "a955dcf1d740ce40d62415d9f16da436",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -593,7 +943,14 @@
     "type": "UncategorizedText",
     "element_id": "25db7b1d2f5780559e1034d72bcb4050",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -604,7 +961,14 @@
     "type": "NarrativeText",
     "element_id": "cbd563dd2fcd7d0b5a0b2173465fd328",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2,
       "links": []
@@ -615,7 +979,14 @@
     "type": "NarrativeText",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -626,7 +997,14 @@
     "type": "UncategorizedText",
     "element_id": "0faf54c7569cac28ec5462f872384f7c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -637,7 +1015,14 @@
     "type": "NarrativeText",
     "element_id": "4f0139b605dfdd9eb93e920a6115e1b5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -648,7 +1033,14 @@
     "type": "NarrativeText",
     "element_id": "49e7364ce1027887460959b2a757b184",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -659,7 +1051,14 @@
     "type": "Title",
     "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -670,7 +1069,14 @@
     "type": "UncategorizedText",
     "element_id": "a97b042d7bd59d92a46e8ab17f7dff73",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -681,7 +1087,14 @@
     "type": "UncategorizedText",
     "element_id": "8139b33952401b3ee0e2ca84651cb9a1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -692,7 +1105,14 @@
     "type": "Title",
     "element_id": "d300d49efc4cd0982dd6bc3377759ae8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -703,7 +1123,14 @@
     "type": "UncategorizedText",
     "element_id": "c2356069e9d1e79ca924378153cfbbfb",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -714,7 +1141,14 @@
     "type": "UncategorizedText",
     "element_id": "98010bd9270f9b100b6214a21754fd33",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -725,7 +1159,14 @@
     "type": "UncategorizedText",
     "element_id": "8722616204217eddb39e7df969e0698a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -736,7 +1177,14 @@
     "type": "UncategorizedText",
     "element_id": "7b1a278f5abe8e9da907fc9c29dfd432",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -747,7 +1195,14 @@
     "type": "UncategorizedText",
     "element_id": "2abaca4911e68fa9bfbf3482ee797fd5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -758,7 +1213,14 @@
     "type": "UncategorizedText",
     "element_id": "5ec1a0c99d428601ce42b407ae9c675e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -769,7 +1231,14 @@
     "type": "UncategorizedText",
     "element_id": "80c3cd40fa35f9088b8741bd8be6153d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -780,7 +1249,14 @@
     "type": "UncategorizedText",
     "element_id": "eb3be230bbd2844b1f5d8f2e4fab9ffb",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -791,7 +1267,14 @@
     "type": "Title",
     "element_id": "239bb77f5ec344ce5e614979b8c49742",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -802,7 +1285,14 @@
     "type": "NarrativeText",
     "element_id": "117d87715ea957afdc44d5f9f442a7ea",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -813,7 +1303,14 @@
     "type": "UncategorizedText",
     "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -824,7 +1321,14 @@
     "type": "UncategorizedText",
     "element_id": "69f59c273b6e669ac32a6dd5e1b2cb63",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -835,7 +1339,14 @@
     "type": "UncategorizedText",
     "element_id": "ba5ec51d07a4ac0e951608704431d59a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -846,7 +1357,14 @@
     "type": "UncategorizedText",
     "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -857,7 +1375,14 @@
     "type": "UncategorizedText",
     "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -868,7 +1393,14 @@
     "type": "NarrativeText",
     "element_id": "bbe120714b80df07396e808f98b3f354",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -879,7 +1411,14 @@
     "type": "Title",
     "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -890,7 +1429,14 @@
     "type": "NarrativeText",
     "element_id": "74599fca46202613cccb12e97774b306",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -901,7 +1447,14 @@
     "type": "Title",
     "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -912,7 +1465,14 @@
     "type": "UncategorizedText",
     "element_id": "48449a14a4ff7d79bb7a1b6f3d488eba",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -923,7 +1483,14 @@
     "type": "UncategorizedText",
     "element_id": "ff5a1ae012afa5d4c889c50ad427aaf5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -934,7 +1501,14 @@
     "type": "UncategorizedText",
     "element_id": "39fa9ec190eee7b6f4dff1100d6343e1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -945,7 +1519,14 @@
     "type": "UncategorizedText",
     "element_id": "1a6562590ef19d1045d06c4055742d38",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -956,7 +1537,14 @@
     "type": "UncategorizedText",
     "element_id": "d59eced1ded07f84c145592f65bdf854",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -967,7 +1555,14 @@
     "type": "UncategorizedText",
     "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -978,7 +1573,14 @@
     "type": "UncategorizedText",
     "element_id": "85b99d4e3d8e29e46e512f9cca7ba627",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -989,7 +1591,14 @@
     "type": "UncategorizedText",
     "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1000,7 +1609,14 @@
     "type": "UncategorizedText",
     "element_id": "4a44dc15364204a80fe80e9039455cc1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1011,7 +1627,14 @@
     "type": "UncategorizedText",
     "element_id": "5feceb66ffc86f38d952786c6d696c79",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1022,7 +1645,14 @@
     "type": "UncategorizedText",
     "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1033,7 +1663,14 @@
     "type": "UncategorizedText",
     "element_id": "d59eced1ded07f84c145592f65bdf854",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1044,7 +1681,14 @@
     "type": "UncategorizedText",
     "element_id": "39fa9ec190eee7b6f4dff1100d6343e1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1055,7 +1699,14 @@
     "type": "UncategorizedText",
     "element_id": "48449a14a4ff7d79bb7a1b6f3d488eba",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1066,7 +1717,14 @@
     "type": "UncategorizedText",
     "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1077,7 +1735,14 @@
     "type": "UncategorizedText",
     "element_id": "2abaca4911e68fa9bfbf3482ee797fd5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1088,7 +1753,14 @@
     "type": "UncategorizedText",
     "element_id": "dbae772db29058a88f9bd830e957c695",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1099,7 +1771,14 @@
     "type": "UncategorizedText",
     "element_id": "a512db2741cd20693e4b16f19891e72b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1110,7 +1789,14 @@
     "type": "UncategorizedText",
     "element_id": "7b69759630f869f2723875f873935fed",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1121,7 +1807,14 @@
     "type": "Title",
     "element_id": "a955dcf1d740ce40d62415d9f16da436",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1132,7 +1825,14 @@
     "type": "NarrativeText",
     "element_id": "b679a61115e69becb7bae4fdaf139a29",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1143,7 +1843,14 @@
     "type": "NarrativeText",
     "element_id": "2de5af9e251e864412de9ee8c4456f3b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1154,7 +1861,14 @@
     "type": "UncategorizedText",
     "element_id": "d83c7ee736be931d85b78a4a60881ced",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -1165,7 +1879,14 @@
     "type": "UncategorizedText",
     "element_id": "48f89b630677c2cbb70e2ba05bf7a363",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1176,7 +1897,14 @@
     "type": "NarrativeText",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1187,7 +1915,14 @@
     "type": "UncategorizedText",
     "element_id": "f0e5c879f7d220552d8ad5b3503bd038",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1198,7 +1933,14 @@
     "type": "UncategorizedText",
     "element_id": "c1589916b4d51307d5d804bbf911ea17",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1209,7 +1951,14 @@
     "type": "Title",
     "element_id": "362d4a20958df0c88550b9e5d1f2ef5b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1220,7 +1969,14 @@
     "type": "Title",
     "element_id": "bcf00b4904f5661d6baef52e7e09e9b1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1231,7 +1987,14 @@
     "type": "Title",
     "element_id": "12e486f4a9b3a1805bf7e95b5d01847b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1242,7 +2005,14 @@
     "type": "Title",
     "element_id": "7bc31ed7ab5a625735657499f636c1f2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1253,7 +2023,14 @@
     "type": "Title",
     "element_id": "6978574f5e6e70a2883ea5ea51aa34f7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1264,7 +2041,14 @@
     "type": "Title",
     "element_id": "7507a06cf675785949d6312f1776e444",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1275,7 +2059,14 @@
     "type": "Title",
     "element_id": "6d9d421c5383a3abfc3ff6f15c0b16cc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1286,7 +2077,14 @@
     "type": "UncategorizedText",
     "element_id": "9492908fadeab22ca81f18f2ba4f4f35",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1297,7 +2095,14 @@
     "type": "UncategorizedText",
     "element_id": "12751f842ba5664e7ad255016dbe371b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1308,7 +2113,14 @@
     "type": "UncategorizedText",
     "element_id": "727d4758bcfadaaf5156b8682cd39810",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1319,7 +2131,14 @@
     "type": "UncategorizedText",
     "element_id": "2a789110c863b30156d63234c8a51477",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1330,7 +2149,14 @@
     "type": "UncategorizedText",
     "element_id": "d71f426079cb8c2bb3d960ce1e23d290",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1341,7 +2167,14 @@
     "type": "UncategorizedText",
     "element_id": "1695e2ad2c62a337b135afbfc79ef69d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1352,7 +2185,14 @@
     "type": "UncategorizedText",
     "element_id": "48bbf8e8b874e0e1f32be15f6c07c11c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1363,7 +2203,14 @@
     "type": "NarrativeText",
     "element_id": "08a6fcd699c8c32f3d73794d26435061",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1374,7 +2221,14 @@
     "type": "UncategorizedText",
     "element_id": "6b51d431df5d7f141cbececcf79edf3d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1385,7 +2239,14 @@
     "type": "UncategorizedText",
     "element_id": "1797d9b8b07f302836186c20a19ebd0b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1396,7 +2257,14 @@
     "type": "UncategorizedText",
     "element_id": "4a44dc15364204a80fe80e9039455cc1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1407,7 +2275,14 @@
     "type": "UncategorizedText",
     "element_id": "2c624232cdd221771294dfbb310aca00",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1418,7 +2293,14 @@
     "type": "UncategorizedText",
     "element_id": "4a166cad507ccd016e6ad2d8652111e5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1429,7 +2311,14 @@
     "type": "UncategorizedText",
     "element_id": "e7f6c011776e8db7cd330b54174fd76f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1440,7 +2329,14 @@
     "type": "UncategorizedText",
     "element_id": "4b227777d4dd1fc61c6f884f48641d02",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1451,7 +2347,14 @@
     "type": "UncategorizedText",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1462,7 +2365,14 @@
     "type": "UncategorizedText",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1473,7 +2383,14 @@
     "type": "UncategorizedText",
     "element_id": "4b227777d4dd1fc61c6f884f48641d02",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1484,7 +2401,14 @@
     "type": "UncategorizedText",
     "element_id": "e7f6c011776e8db7cd330b54174fd76f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1495,7 +2419,14 @@
     "type": "UncategorizedText",
     "element_id": "2c624232cdd221771294dfbb310aca00",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1506,7 +2437,14 @@
     "type": "UncategorizedText",
     "element_id": "4a44dc15364204a80fe80e9039455cc1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1517,7 +2455,14 @@
     "type": "Title",
     "element_id": "c74caf15453477bf544f86e069d90da7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1528,7 +2473,14 @@
     "type": "Title",
     "element_id": "8a3295d93db27fa58d12326d345eaad5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -1539,7 +2491,14 @@
     "type": "NarrativeText",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5,
       "links": []
@@ -1550,7 +2509,14 @@
     "type": "Title",
     "element_id": "6cad98316bfa45c17e82a1836920ed12",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5,
       "links": []
@@ -1561,7 +2527,14 @@
     "type": "NarrativeText",
     "element_id": "a0519775e2b55b825b45a8de351d74a1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5,
       "links": []
@@ -1572,7 +2545,14 @@
     "type": "NarrativeText",
     "element_id": "407b2e640f1765793469ae92c954bb7f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5,
       "links": []
@@ -1583,7 +2563,14 @@
     "type": "UncategorizedText",
     "element_id": "f626051bc94422f26f4b774a2bca105e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5,
       "links": []
@@ -1594,7 +2581,14 @@
     "type": "UncategorizedText",
     "element_id": "b3a8e0e1f9ab1bfe3a36f231f676f78b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1605,7 +2599,14 @@
     "type": "NarrativeText",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1616,7 +2617,14 @@
     "type": "ListItem",
     "element_id": "a80826543c9e0d0e9f6c2108ae3c3f73",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1627,7 +2635,14 @@
     "type": "Title",
     "element_id": "90b8c00ff7a1b170a14695aa51629f14",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1638,7 +2653,14 @@
     "type": "NarrativeText",
     "element_id": "7c3b7c8c2993a59e71e009d051edd727",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1649,7 +2671,14 @@
     "type": "Title",
     "element_id": "1dc2692eee9b01e9a960f80c4dabe07b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1660,7 +2689,14 @@
     "type": "Title",
     "element_id": "b4a533760fabf85f66294a0441dacd1e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1671,7 +2707,14 @@
     "type": "NarrativeText",
     "element_id": "027d7539bf229e0a5fd99489c6ebd7fd",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1682,7 +2725,14 @@
     "type": "NarrativeText",
     "element_id": "ae938bb6586c4ef6d0a287923ac2a9ae",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1693,7 +2743,14 @@
     "type": "UncategorizedText",
     "element_id": "825c6ae49ec498c873be5355109ca093",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1704,7 +2761,14 @@
     "type": "UncategorizedText",
     "element_id": "33a2b57b388470db1cb13defbe73dc18",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1715,7 +2779,14 @@
     "type": "Title",
     "element_id": "cecb8b44c9af4b76e85155170c509729",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1726,7 +2797,14 @@
     "type": "NarrativeText",
     "element_id": "b05aa2b4b80cb8c20881dbd0c3af8822",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1737,7 +2815,14 @@
     "type": "Title",
     "element_id": "62127212535b62092159e4fe305c868d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1748,7 +2833,14 @@
     "type": "Title",
     "element_id": "5a6824cbd64b72c37057f7d1dbee2798",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1759,7 +2851,14 @@
     "type": "Title",
     "element_id": "c31b73fca4f97bb7e95a3d8634826d32",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1770,7 +2869,14 @@
     "type": "Title",
     "element_id": "5a6824cbd64b72c37057f7d1dbee2798",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1781,7 +2887,14 @@
     "type": "Title",
     "element_id": "2d711642b726b04401627ca9fbac32f5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1792,7 +2905,14 @@
     "type": "UncategorizedText",
     "element_id": "3a81feba075b8ca26d6f86f392ff06df",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1803,7 +2923,14 @@
     "type": "NarrativeText",
     "element_id": "118f0531277e022b44f152b0bf2dee7c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1814,7 +2941,14 @@
     "type": "Title",
     "element_id": "6aa7f759e077aa037614e7f42897f09a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1825,7 +2959,14 @@
     "type": "NarrativeText",
     "element_id": "2fe7511cdc6520c26e9f8e33ac45fe03",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1836,7 +2977,14 @@
     "type": "Title",
     "element_id": "53b531237b040202ad24f2c6e37aa792",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1847,7 +2995,14 @@
     "type": "Title",
     "element_id": "41ceb2965d928f62e5bf4f63da952b22",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1858,7 +3013,14 @@
     "type": "Title",
     "element_id": "8e8a7a21640179b38d95ff4450b84e59",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -1869,7 +3031,14 @@
     "type": "NarrativeText",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -1880,7 +3049,14 @@
     "type": "NarrativeText",
     "element_id": "24dcddab57a1cab7266a3c6b536ad2ff",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -1891,7 +3067,14 @@
     "type": "Title",
     "element_id": "c9015d53b90846454375a2fdf2829c66",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -1902,7 +3085,14 @@
     "type": "NarrativeText",
     "element_id": "63cd602e78daef9ac25a20bbab27ecbc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -1913,7 +3103,14 @@
     "type": "Title",
     "element_id": "287fb148184f12ff62e9b0207567dac7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -1924,7 +3121,14 @@
     "type": "NarrativeText",
     "element_id": "d202816913e482abce90d70d88f202c3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -1935,7 +3139,14 @@
     "type": "NarrativeText",
     "element_id": "d434a0e19d0d34e92936b9566e1ebb45",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": [
@@ -1952,7 +3163,14 @@
     "type": "UncategorizedText",
     "element_id": "2ca250dde10d732278a9fa586a97e40a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": [
@@ -1969,7 +3187,14 @@
     "type": "Title",
     "element_id": "69824d3b0e70ca6aaa0da1613b65fd91",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -1980,7 +3205,14 @@
     "type": "NarrativeText",
     "element_id": "d844a31ead19b2e2fae786d2a5495072",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": [
@@ -1997,7 +3229,14 @@
     "type": "NarrativeText",
     "element_id": "d0be94eaaf9c0f43bc51381f031e1381",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": [
@@ -2019,7 +3258,14 @@
     "type": "NarrativeText",
     "element_id": "7e9cfcc1c32c353e319aae7d9be537bd",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": [
@@ -2036,7 +3282,14 @@
     "type": "NarrativeText",
     "element_id": "c00e8be0806aa2ded72da0ef746a4291",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": [
@@ -2058,7 +3311,14 @@
     "type": "NarrativeText",
     "element_id": "1d76a4bb6ba7984cea4548ab574beb8f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": [
@@ -2075,7 +3335,14 @@
     "type": "NarrativeText",
     "element_id": "ffd9e4babdf76600a881851ebbf35d3f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": [
@@ -2097,7 +3364,14 @@
     "type": "NarrativeText",
     "element_id": "dd7f4838500dd709556225fa3f6b7339",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": [
@@ -2129,7 +3403,14 @@
     "type": "NarrativeText",
     "element_id": "c81a7a9faa84a2eb68641888654caa14",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": [
@@ -2146,7 +3427,14 @@
     "type": "UncategorizedText",
     "element_id": "353767b239099863e13ca954e20a66c9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
