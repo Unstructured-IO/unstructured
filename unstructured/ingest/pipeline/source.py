@@ -17,7 +17,6 @@ class Reader(SourceNode):
             global session_handle
             doc = create_ingest_doc_from_dict(ingest_doc_dict)
             filename = doc.filename
-            print(f"##### Checking if {filename} exists:")
             if not self.read_config.re_download and filename.is_file() and filename.stat().st_size:
                 logger.info(f"File exists: {filename}, skipping download")
                 return filename
