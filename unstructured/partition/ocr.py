@@ -198,17 +198,26 @@ def supplement_page_layout_with_ocr(
             ocr_languages=ocr_languages,
             entire_page_ocr=entire_page_ocr,
         )
-        ocr_text = get_ocr_text_from_image(
-            image,
-            ocr_languages=ocr_languages,
-            entire_page_ocr=entire_page_ocr,
-        )
 
-        merged_page_layout_elements = merge_page_layout_elements_with_ocr_layout(
-            cast(List[LayoutElement], elements),
-            ocr_layout,
-            ocr_text,
-        )
+        if elements:
+            # NOTE(christine): "hi_res" strategy path
+            merged_page_layout_elements = merge_page_layout_elements_with_ocr_layout(
+                cast(List[LayoutElement], elements),
+                ocr_layout,
+            )
+        else:
+            # NOTE(christine): "ocr_only" strategy path
+            ocr_text = get_ocr_text_from_image(
+                image,
+                ocr_languages=ocr_languages,
+                entire_page_ocr=entire_page_ocr,
+            )
+            merged_page_layout_elements = get_elements_from_ocr_regions(
+                ocr_regions=ocr_layout,
+                ocr_text=ocr_text,
+                group_by_ocr_text=True,
+            )
+
         elements[:] = merged_page_layout_elements
         return page_layout
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
@@ -394,7 +403,6 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
 def merge_page_layout_elements_with_ocr_layout(
     page_layout_elements: List[LayoutElement],
     ocr_layout: List[TextRegion],
-    ocr_text: Optional[str] = None,
     supplement_with_ocr_elements: bool = True,
 ) -> List[LayoutElement]:
     """
@@ -406,29 +414,20 @@ def merge_page_layout_elements_with_ocr_layout(
     supplemented with the OCR layout.
     """
 
-    if page_layout_elements:
-        # NOTE(christine): "hi_res" strategy path
-        out_regions_without_text = [region for region in page_layout_elements if not region.text]
+    out_regions_without_text = [region for region in page_layout_elements if not region.text]
 
-        for out_region in out_regions_without_text:
-            out_region.text = aggregate_ocr_text_by_block(
-                ocr_layout,
-                out_region,
-                SUBREGION_THRESHOLD_FOR_OCR,
-            )
+    for out_region in out_regions_without_text:
+        out_region.text = aggregate_ocr_text_by_block(
+            ocr_layout,
+            out_region,
+            SUBREGION_THRESHOLD_FOR_OCR,
+        )
 
-        final_layout = (
-            supplement_layout_with_ocr_elements(page_layout_elements, ocr_layout)
-            if supplement_with_ocr_elements
-            else page_layout_elements
-        )
-    else:
-        # NOTE(christine): "ocr_only" strategy path
-        final_layout = get_elements_from_ocr_regions(
-            ocr_regions=ocr_layout,
-            ocr_text=ocr_text,
-            group_by_ocr_text=True,
-        )
+    final_layout = (
+        supplement_layout_with_ocr_elements(page_layout_elements, ocr_layout)
+        if supplement_with_ocr_elements
+        else page_layout_elements
+    )
 
     return final_layout
 
