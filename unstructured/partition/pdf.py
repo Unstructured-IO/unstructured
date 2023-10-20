@@ -60,7 +60,7 @@ from unstructured.partition.lang import (
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text, partition_text
-from unstructured.partition.utils.constants import SortMode, OCRMode
+from unstructured.partition.utils.constants import OCRMode, SortMode
 from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     sort_page_elements,
