@@ -181,7 +181,6 @@ def test_partition_pdf_with_model_name_env_var(
             filename,
             is_image=False,
             pdf_image_dpi=200,
-            extract_tables=False,
             model_name="checkbox",
         )
 
@@ -201,7 +200,6 @@ def test_partition_pdf_with_model_name(
             filename,
             is_image=False,
             pdf_image_dpi=200,
-            extract_tables=False,
             model_name="checkbox",
         )
 
@@ -394,10 +392,34 @@ def test_partition_pdf_falls_back_to_ocr_only(
 def test_partition_pdf_uses_table_extraction():
     filename = "example-docs/layout-parser-paper-fast.pdf"
     with mock.patch(
-        "unstructured_inference.inference.layout.process_file_with_model",
+        "unstructured.partition.ocr.process_file_with_ocr",
     ) as mock_process_file_with_model:
         pdf.partition_pdf(filename, infer_table_structure=True)
-        assert mock_process_file_with_model.call_args[1]["extract_tables"]
+        assert mock_process_file_with_model.call_args[1]["infer_table_structure"]
+
+
+@pytest.mark.parametrize(
+    ("ocr_mode"),
+    [
+        ("entire_page"),
+        ("individual_blocks"),
+    ],
+)
+def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
+    filename = "example-docs/korean-text-with-tables.pdf"
+    elements = pdf.partition_pdf(
+        filename=filename,
+        ocr_mode=ocr_mode,
+        languages=["kor"],
+        strategy="hi_res",
+        infer_table_structure=True,
+    )
+    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert len(table) == 2
+    assert "<table><thead><th>" in table[0]
+    # FIXME(yuming): didn't test full sentence here since unit test and docker test have
+    # some differences on spaces between characters
+    assert "업" in table[0]
 
 
 def test_partition_pdf_with_copy_protection():
@@ -418,7 +440,6 @@ def test_partition_pdf_with_dpi():
         mock_process.assert_called_once_with(
             filename,
             is_image=False,
-            extract_tables=False,
             model_name=pdf.default_hi_res_model(),
             pdf_image_dpi=100,
         )
@@ -854,15 +875,9 @@ def test_add_chunking_strategy_by_title_on_partition_pdf(
 
 def test_partition_pdf_formats_languages_for_tesseract():
     filename = "example-docs/DA-1p.pdf"
-    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
+    with mock.patch.object(ocr, "process_file_with_ocr", mock.MagicMock()) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res", languages=["en"])
-        mock_process.assert_called_once_with(
-            filename,
-            is_image=False,
-            pdf_image_dpi=200,
-            extract_tables=False,
-            model_name=pdf.default_hi_res_model(),
-        )
+        assert mock_process.call_args[1]["ocr_languages"] == "eng"
 
 
 def test_partition_pdf_warns_with_ocr_languages(caplog):
