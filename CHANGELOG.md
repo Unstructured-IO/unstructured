@@ -6,6 +6,8 @@
 
 ### Fixes
 
+* **Adds `typing-extensions` as an explicit dependency** This package is an implicit dependency, but the module is being imported directly in `unstructured.documents.elements` so the dependency should be explicit in case changes in other dependencies lead to `typing-extensions` being dropped as a dependency.
+
 ## 0.10.25
 
 ### Enhancements
