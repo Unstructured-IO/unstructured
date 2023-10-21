@@ -34,7 +34,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --api-from "2019-01-02" \
     --api-until "2019-01-02+00:03:10" \
-    --decay .3 \
     --max-request-time 30 \
     --max-retries 5 \
     --work-dir "$WORK_DIR"

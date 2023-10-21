@@ -31,7 +31,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess \
     --output-dir "$OUTPUT_DIR" \
     --verbose \
-    --decay .3 \
     --max-request-time 30 \
     --max-retries 5 \
     --path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \

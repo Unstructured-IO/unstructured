@@ -361,7 +361,6 @@ def _partition_pdf_or_image_local(
         out_layout = process_file_with_model(
             filename,
             is_image=is_image,
-            extract_tables=infer_table_structure,
             model_name=model_name,
             pdf_image_dpi=pdf_image_dpi,
             extract_images_in_pdf=extract_images_in_pdf,
@@ -375,6 +374,7 @@ def _partition_pdf_or_image_local(
                 filename,
                 out_layout,
                 is_image=is_image,
+                infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
                 ocr_mode=ocr_mode,
                 pdf_image_dpi=pdf_image_dpi,
@@ -383,7 +383,6 @@ def _partition_pdf_or_image_local(
         out_layout = process_data_with_model(
             file,
             is_image=is_image,
-            extract_tables=infer_table_structure,
             model_name=model_name,
             pdf_image_dpi=pdf_image_dpi,
             extract_images_in_pdf=extract_images_in_pdf,
@@ -399,6 +398,7 @@ def _partition_pdf_or_image_local(
                 file,
                 out_layout,
                 is_image=is_image,
+                infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
                 ocr_mode=ocr_mode,
                 pdf_image_dpi=pdf_image_dpi,

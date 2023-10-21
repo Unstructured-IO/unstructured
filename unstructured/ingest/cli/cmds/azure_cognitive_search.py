@@ -1,4 +1,5 @@
 import logging
+import typing as t
 from dataclasses import dataclass
 
 import click
@@ -9,10 +10,11 @@ from unstructured.ingest.cli.common import (
 from unstructured.ingest.cli.interfaces import (
     CliMixin,
 )
-from unstructured.ingest.cli.utils import conform_click_options, extract_configs
+from unstructured.ingest.cli.utils import conform_click_options, orchestrate_runner
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import runner_map
+
+pass
 
 
 @dataclass
@@ -22,7 +24,7 @@ class AzureCognitiveSearchCliWriteConfig(BaseConfig, CliMixin):
     index: str
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--key"],
@@ -48,7 +50,7 @@ class AzureCognitiveSearchCliWriteConfig(BaseConfig, CliMixin):
                 help="The name of the index to connect to",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.command(name="azure-cognitive-search")
@@ -67,15 +69,12 @@ def azure_cognitive_search_dest(ctx: click.Context, **options):
     log_options(parent_options, verbose=verbose)
     log_options(options, verbose=verbose)
     try:
-        configs = extract_configs(options, validate=[AzureCognitiveSearchCliWriteConfig])
-        runner_cls = runner_map[source_cmd]
-        runner = runner_cls(
-            **configs,  # type: ignore
+        orchestrate_runner(
+            source_cmd=source_cmd,
             writer_type="azure_cognitive_search",
-            writer_kwargs=options,
-        )
-        runner.run(
-            **parent_options,
+            parent_options=parent_options,
+            options=options,
+            validate=[AzureCognitiveSearchCliWriteConfig],
         )
     except Exception as e:
         logger.error(e, exc_info=True)
