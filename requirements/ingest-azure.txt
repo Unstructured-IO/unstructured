@@ -14,7 +14,7 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
-azure-core==1.29.4
+azure-core==1.29.5
     # via
     #   adlfs
     #   azure-identity
