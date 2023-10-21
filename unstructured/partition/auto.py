@@ -366,6 +366,7 @@ def partition(
             include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             strategy=strategy,
+            generate_extra_info=False,
             languages=languages,
             **kwargs,
         )
