@@ -1,10 +1,12 @@
 import hashlib
 from collections import defaultdict
+from typing import Tuple
 
 from unstructured_inference.constants import Source
+from unstructured_inference.inference.layout import DocumentLayout
 
 
-def clean_pdfminer_inner_elements(document):
+def clean_pdfminer_inner_elements(document: DocumentLayout) -> Tuple[DocumentLayout, dict]:
     """Clean pdfminer elements from inside tables and stores them in extra_info dictionary
     with the table id as key"""
     extra_info = defaultdict(list)
