@@ -92,7 +92,9 @@ numpy==1.24.4
 omegaconf==2.3.0
     # via effdet
 onnx==1.14.1
-    # via -r requirements/extra-pdf-image.in
+    # via
+    #   -r requirements/extra-pdf-image.in
+    #   unstructured-inference
 onnxruntime==1.15.1
     # via
     #   -c requirements/constraints.in
@@ -151,7 +153,7 @@ pyparsing==3.0.9
     # via
     #   -c requirements/constraints.in
     #   matplotlib
-pypdfium2==4.21.0
+pypdfium2==4.22.0
     # via pdfplumber
 pytesseract==0.3.10
     # via layoutparser
@@ -234,7 +236,7 @@ typing-extensions==4.8.0
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.7.7
+unstructured-inference==0.7.9
     # via -r requirements/extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via
