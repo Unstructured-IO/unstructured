@@ -10,7 +10,7 @@ def clean_pdfminer_inner_elements(document):
     extra_info = defaultdict(list)
     for page in document.pages:
         tables = [e for e in page.elements if e.type == "Table"]
-        for element in page.elements:
+        for i, element in enumerate(page.elements):
             if element.source == Source.PDFMINER:
                 element_inside_table = [element.bbox.is_in(t.bbox) for t in tables]
                 if sum(element_inside_table) == 1:
@@ -19,6 +19,7 @@ def clean_pdfminer_inner_elements(document):
                     # Note(Benjamin): is this a good way to guess the id?
                     future_id = hashlib.sha256(parent_table.text.encode()).hexdigest()[:32]
                     extra_info[future_id].append(element)
-                    page.elements.remove(element)
+                    page.elements[i] = None
+        page.elements = [e for e in page.elements if e]
 
     return document, extra_info
