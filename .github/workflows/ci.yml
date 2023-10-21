@@ -20,14 +20,6 @@ jobs:
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     steps:
-    - name: 'Authenticate with Google Cloud'
-      uses: 'google-github-actions/auth@v1'
-      with:
-        create_credentials_file: 'true'
-        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-    - name: 'Set up Cloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v1'
     - name: 'Az CLI login'
       uses: azure/login@v1
       with:
