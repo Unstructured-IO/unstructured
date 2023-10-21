@@ -61,7 +61,7 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.317
+langchain==0.0.318
     # via -r requirements/ingest-bedrock.in
 langsmith==0.0.46
     # via langchain
