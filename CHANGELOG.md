@@ -1,4 +1,4 @@
-## 0.10.25-dev8
+## 0.10.25-dev9
 
 ### Enhancements
 
@@ -6,6 +6,8 @@
 
 ### Features
 
+* **Table OCR refactor** support Table OCR with pre-computed OCR data to ensure we only do one OCR for entrie document. User can specify
+ocr agent tesseract/paddle in environment variable `OCR_AGENT` for OCRing the entire document.
 * **Adds accuracy function** The accuracy scoring was originally an option under `calculate_edit_distance`. For easy function call, it is now a wrapper around the original function that calls edit_distance and return as "score".
 * **Adds HuggingFaceEmbeddingEncoder** The HuggingFace Embedding Encoder uses a local embedding model as opposed to using an API.
 * **Add AWS bedrock embedding connector** `unstructured.embed.bedrock` now provides a connector to use AWS bedrock's `titan-embed-text` model to generate embeddings for elements. This features requires valid AWS bedrock setup and an internet connectionto run.
