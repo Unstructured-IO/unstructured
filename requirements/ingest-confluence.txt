@@ -4,7 +4,7 @@
 #
 #    pip-compile --constraint=requirements/constraints.in requirements/ingest-confluence.in
 #
-atlassian-python-api==3.41.2
+atlassian-python-api==3.41.3
     # via -r requirements/ingest-confluence.in
 certifi==2023.7.22
     # via

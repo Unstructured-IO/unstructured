@@ -203,7 +203,7 @@ sympy==1.12
     # via
     #   onnxruntime
     #   torch
-timm==0.9.7
+timm==0.9.8
     # via effdet
 tokenizers==0.14.1
     # via transformers
