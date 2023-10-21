@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Github" href="github.html" /><link rel="prev" title="Dropbox" href="dropbox.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Elasticsearch - Unstructured 0.10.24 documentation</title>
+  <title>Elasticsearch - Unstructured 0.10.25 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -447,18 +447,24 @@
 <span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="n">PartitionConfig</span><span class="p">,</span> <span class="n">ReadConfig</span>
-<span class="kn">from</span> <span class="nn">unstructured.ingest.runner.elasticsearch</span> <span class="kn">import</span> <span class="n">elasticsearch</span>
+</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="n">PartitionConfig</span><span class="p">,</span> <span class="n">ProcessorConfig</span><span class="p">,</span> <span class="n">ReadConfig</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.runner</span> <span class="kn">import</span> <span class="n">ElasticSearchRunner</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">elasticsearch</span><span class="p">(</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">read_config</span><span class="o">=</span><span class="n">ReadConfig</span><span class="p">(),</span>
-        <span class="n">partition_config</span><span class="o">=</span><span class="n">PartitionConfig</span><span class="p">(</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">ElasticSearchRunner</span><span class="p">(</span>
+        <span class="n">processor_config</span><span class="o">=</span><span class="n">ProcessorConfig</span><span class="p">(</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;elasticsearch-ingest-output&quot;</span><span class="p">,</span>
             <span class="n">num_processes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">read_config</span><span class="o">=</span><span class="n">ReadConfig</span><span class="p">(),</span>
+        <span class="n">partition_config</span><span class="o">=</span><span class="n">PartitionConfig</span><span class="p">(</span>
             <span class="n">metadata_exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="s2">&quot;file_directory&quot;</span><span class="p">,</span> <span class="s2">&quot;metadata.data_source.date_processed&quot;</span><span class="p">],</span>
         <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
         <span class="n">url</span><span class="o">=</span><span class="s2">&quot;http://localhost:9200&quot;</span><span class="p">,</span>
         <span class="n">index_name</span><span class="o">=</span><span class="s2">&quot;movies&quot;</span><span class="p">,</span>
         <span class="n">jq_query</span><span class="o">=</span><span class="s2">&quot;{ethnicity, director, plot}&quot;</span><span class="p">,</span>
@@ -485,20 +491,24 @@
 </div>
 </div><div aria-labelledby="tab-1-1-1" class="sphinx-tabs-panel" hidden="true" id="panel-1-1-1" name="1-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="n">PartitionConfig</span><span class="p">,</span> <span class="n">ReadConfig</span>
-<span class="kn">from</span> <span class="nn">unstructured.ingest.runner.elasticsearch</span> <span class="kn">import</span> <span class="n">elasticsearch</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="n">PartitionConfig</span><span class="p">,</span> <span class="n">ProcessorConfig</span><span class="p">,</span> <span class="n">ReadConfig</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.runner</span> <span class="kn">import</span> <span class="n">ElasticSearchRunner</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">elasticsearch</span><span class="p">(</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">read_config</span><span class="o">=</span><span class="n">ReadConfig</span><span class="p">(),</span>
-        <span class="n">partition_config</span><span class="o">=</span><span class="n">PartitionConfig</span><span class="p">(</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">ElasticSearchRunner</span><span class="p">(</span>
+        <span class="n">processor_config</span><span class="o">=</span><span class="n">ProcessorConfig</span><span class="p">(</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;elasticsearch-ingest-output&quot;</span><span class="p">,</span>
             <span class="n">num_processes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-            <span class="n">metadata_exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="s2">&quot;file_directory&quot;</span><span class="p">,</span> <span class="s2">&quot;metadata.data_source.date_processed&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">read_config</span><span class="o">=</span><span class="n">ReadConfig</span><span class="p">(),</span>
+        <span class="n">partition_config</span><span class="o">=</span><span class="n">PartitionConfig</span><span class="p">(</span>
             <span class="n">partition_by_api</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;UNSTRUCTURED_API_KEY&quot;</span><span class="p">),</span>
+            <span class="n">metadata_exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="s2">&quot;file_directory&quot;</span><span class="p">,</span> <span class="s2">&quot;metadata.data_source.date_processed&quot;</span><span class="p">],</span>
         <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
         <span class="n">url</span><span class="o">=</span><span class="s2">&quot;http://localhost:9200&quot;</span><span class="p">,</span>
         <span class="n">index_name</span><span class="o">=</span><span class="s2">&quot;movies&quot;</span><span class="p">,</span>
         <span class="n">jq_query</span><span class="o">=</span><span class="s2">&quot;{ethnicity, director, plot}&quot;</span><span class="p">,</span>
