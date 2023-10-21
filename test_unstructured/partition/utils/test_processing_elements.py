@@ -16,7 +16,8 @@ deletable_elements_inside_table = [
     LayoutElement(bbox=Rectangle(70, 70, 80, 80), text="text2", source=Source.PDFMINER),
 ]
 
-# A set of elements without pdfminer elements inside tables (no elements with source=Source.PDFMINER)
+# A set of elements without pdfminer elements inside
+# tables (no elements with source=Source.PDFMINER)
 no_deletable_elements_inside_table = [
     LayoutElement(
         bbox=Rectangle(0, 0, 100, 100),
@@ -27,7 +28,8 @@ no_deletable_elements_inside_table = [
     LayoutElement(bbox=Rectangle(50, 50, 70, 70), text="text1", source=Source.YOLOX),
     LayoutElement(bbox=Rectangle(70, 70, 80, 80), text="text2", source=Source.YOLOX),
 ]
-# A set of elements with pdfminer elements inside tables and other elements with source=Source.PDFMINER
+# A set of elements with pdfminer elements inside tables and other
+# elements with source=Source.PDFMINER
 # Note: there is some elements with source=Source.PDFMINER are not inside tables
 mix_elements_inside_table = [
     LayoutElement(
@@ -61,11 +63,11 @@ mix_elements_inside_table = [
 
 @pytest.mark.parametrize(
     ("elements", "lenght_extra_info", "expected_document_lenght"),
-    (
-        [deletable_elements_inside_table, 1, 1],
-        [no_deletable_elements_inside_table, 0, 3],
-        [mix_elements_inside_table, 2, 5],
-    ),
+    [
+        (deletable_elements_inside_table, 1, 1),
+        (no_deletable_elements_inside_table, 0, 3),
+        (mix_elements_inside_table, 2, 5),
+    ],
 )
 def test_clean_pdfminer_inner_elements(elements, lenght_extra_info, expected_document_lenght):
     # create a sample document with pdfminer elements inside tables
