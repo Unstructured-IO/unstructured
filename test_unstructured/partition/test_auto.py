@@ -3,7 +3,7 @@ import os
 import pathlib
 import warnings
 from importlib import import_module
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 
 import docx
 import pytest
@@ -347,6 +347,8 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         url=None,
         include_page_breaks=False,
         infer_table_structure=False,
+        extract_images_in_pdf=ANY,
+        image_output_dir_path=ANY,
         strategy="fast",
         languages=None,
     )
