@@ -3,7 +3,7 @@ import os
 import pathlib
 import warnings
 from importlib import import_module
-from unittest.mock import patch, ANY
+from unittest.mock import ANY, patch
 
 import docx
 import pytest
