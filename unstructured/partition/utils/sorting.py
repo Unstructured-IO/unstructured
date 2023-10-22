@@ -5,7 +5,7 @@ import numpy as np
 
 from unstructured.documents.elements import CoordinatesMetadata, Element
 from unstructured.logger import trace_logger
-from unstructured.partition.utils.constants import SortMode
+from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
 from unstructured.partition.utils.xycut import recursive_xy_cut, recursive_xy_cut_swapped
 
 
@@ -75,7 +75,7 @@ def coord_has_valid_points(coordinates: CoordinatesMetadata) -> bool:
 
 def sort_page_elements(
     page_elements: List[Element],
-    sort_mode: SortMode = SortMode.SORT_MODE_XY_CUT,
+    sort_mode: str = SORT_MODE_XY_CUT,
     shrink_factor: float = 0.9,
     xy_cut_primary_direction: str = "x",
 ) -> List[Element]:
@@ -129,7 +129,7 @@ def sort_page_elements(
                     return False
         return True
 
-    if sort_mode == SortMode.SORT_MODE_XY_CUT:
+    if sort_mode == SORT_MODE_XY_CUT:
         if not _coords_ok(strict_points=True):
             return page_elements
         shrunken_bboxes = []
@@ -148,7 +148,7 @@ def sort_page_elements(
             res,
         )
         sorted_page_elements = [page_elements[i] for i in res]
-    elif sort_mode == SortMode.SORT_MODE_BASIC:
+    elif sort_mode == SORT_MODE_BASIC:
         if not _coords_ok(strict_points=False):
             return page_elements
         sorted_page_elements = sorted(

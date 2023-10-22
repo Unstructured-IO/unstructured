@@ -7,10 +7,9 @@ class OCRMode(Enum):
     FULL_PAGE = "entire_page"
 
 
-class SortMode(Enum):
-    SORT_MODE_XY_CUT = "xy-cut"
-    SORT_MODE_BASIC = "basic"
-    SORT_MODE_DONT = "dont"
+SORT_MODE_XY_CUT = "xy-cut"
+SORT_MODE_BASIC = "basic"
+SORT_MODE_DONT = "dont"
 
 
 SUBREGION_THRESHOLD_FOR_OCR = 0.5

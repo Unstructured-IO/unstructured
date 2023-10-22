@@ -35,7 +35,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
-from unstructured.partition.utils.constants import SortMode
+from unstructured.partition.utils.constants import SORT_MODE_DONT, SORT_MODE_XY_CUT
 from unstructured.utils import dependency_exists, first
 
 if dependency_exists("docx") and dependency_exists("docx.table"):
@@ -548,7 +548,7 @@ def document_to_element_list(
     infer_list_items: bool = True,
     source_format: Optional[str] = None,
     detection_origin: Optional[str] = None,
-    sort_mode: SortMode = SortMode.SORT_MODE_XY_CUT,
+    sort_mode: str = SORT_MODE_XY_CUT,
     **kwargs,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
@@ -627,7 +627,7 @@ def document_to_element_list(
                 )
                 element.metadata.parent_id = element_parent.id
         sorted_page_elements = page_elements
-        if sortable and sort_mode != SortMode.SORT_MODE_DONT:
+        if sortable and sort_mode != SORT_MODE_DONT:
             sorted_page_elements = sort_page_elements(page_elements, sort_mode)
 
         if include_page_breaks and i < num_pages - 1:

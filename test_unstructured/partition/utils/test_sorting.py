@@ -2,7 +2,7 @@ import pytest
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import CoordinatesMetadata, Element, Text
-from unstructured.partition.utils.constants import SortMode
+from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
 from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     coordinates_to_bbox,
@@ -60,7 +60,7 @@ def test_sort_xycut_neg_coordinates():
         elements.append(elem)
 
     # NOTE(crag): xycut not attempted, sort_page_elements returns original list
-    assert sort_page_elements(elements, sort_mode=SortMode.SORT_MODE_XY_CUT) is not elements
+    assert sort_page_elements(elements, sort_mode=SORT_MODE_XY_CUT) is not elements
 
 
 def test_sort_xycut_pos_coordinates():
@@ -74,7 +74,7 @@ def test_sort_xycut_pos_coordinates():
         elements.append(elem)
 
     # NOTE(crag): xycut ran, so different list reference returned from input list
-    assert sort_page_elements(elements, sort_mode=SortMode.SORT_MODE_XY_CUT) is not elements
+    assert sort_page_elements(elements, sort_mode=SORT_MODE_XY_CUT) is not elements
 
 
 def test_sort_basic_neg_coordinates():
@@ -87,7 +87,7 @@ def test_sort_basic_neg_coordinates():
         )
         elements.append(elem)
 
-    sorted_page_elements = sort_page_elements(elements, sort_mode=SortMode.SORT_MODE_BASIC)
+    sorted_page_elements = sort_page_elements(elements, sort_mode=SORT_MODE_BASIC)
     sorted_elem_text = " ".join([str(elem.text) for elem in sorted_page_elements])
     assert sorted_elem_text == "2 1 0"
 
@@ -102,7 +102,7 @@ def test_sort_basic_pos_coordinates():
         )
         elements.append(elem)
 
-    sorted_page_elements = sort_page_elements(elements, sort_mode=SortMode.SORT_MODE_BASIC)
+    sorted_page_elements = sort_page_elements(elements, sort_mode=SORT_MODE_BASIC)
     assert sorted_page_elements is not elements
 
     sorted_elem_text = " ".join([str(elem.text) for elem in sorted_page_elements])
