@@ -95,6 +95,8 @@ def partition_pdf(
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
     links: Sequence[Link] = [],
+    extract_images_in_pdf: bool = False,
+    image_output_dir_path: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -130,6 +132,12 @@ def partition_pdf(
         processing text/plain content.
     metadata_last_modified
         The last modified date for the document.
+    extract_images_in_pdf
+        If True and strategy=hi_res, any detected images will be saved in the path specified by
+        image_output_dir_path.
+    image_output_dir_path
+        If extract_images_in_pdf=True and strategy=hi_res, any detected images will be saved in the
+        given path
     """
     exactly_one(filename=filename, file=file)
 
@@ -159,6 +167,8 @@ def partition_pdf(
         max_partition=max_partition,
         min_partition=min_partition,
         metadata_last_modified=metadata_last_modified,
+        extract_images_in_pdf=extract_images_in_pdf,
+        image_output_dir_path=image_output_dir_path,
         **kwargs,
     )
 
@@ -205,6 +215,8 @@ def partition_pdf_or_image(
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
+    extract_images_in_pdf: bool = False,
+    image_output_dir_path: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -287,6 +299,8 @@ def partition_pdf_or_image(
                 include_page_breaks=include_page_breaks,
                 languages=languages,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
+                extract_images_in_pdf=extract_images_in_pdf,
+                image_output_dir_path=image_output_dir_path,
                 **kwargs,
             )
             layout_elements = []
