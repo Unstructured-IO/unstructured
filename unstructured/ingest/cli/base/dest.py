@@ -4,7 +4,6 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.base.cmd import BaseCmd
-from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.cmd_factory import get_src_cmd
 from unstructured.ingest.cli.common import (
     log_options,
@@ -20,7 +19,7 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 class BaseDestCmd(BaseCmd):
     def get_dest_runner(self, source_cmd: str, options: dict, parent_options: dict):
         src_cmd_fn = get_src_cmd(cmd_name=source_cmd)
-        src_cmd: BaseSrcCmd = src_cmd_fn()
+        src_cmd = src_cmd_fn()
         runner = src_cmd.get_source_runner(options=parent_options)
         runner.writer_type = self.cmd_name
         runner.writer_kwargs = options

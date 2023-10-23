@@ -37,7 +37,7 @@ class BaseSrcCmd(BaseCmd):
         ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
         log_options(options, verbose=verbose)
         try:
-            runner = self.get_source_runner(**options)
+            runner = self.get_source_runner(options=options)
             runner.run(**options)
         except Exception as e:
             logger.error(e, exc_info=True)

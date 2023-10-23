@@ -1,4 +1,9 @@
+from __future__ import annotations
+
 import collections
+import typing as t
+
+from unstructured.ingest.cli.base.src import BaseSrcCmd
 
 from .airtable import get_base_src_cmd as airtable_base_src_cmd
 from .azure import get_base_src_cmd as azure_base_src_cmd
@@ -29,7 +34,10 @@ from .sharepoint import get_base_src_cmd as sharepoint_base_src_cmd
 from .slack import get_base_src_cmd as slack_base_src_cmd
 from .wikipedia import get_base_src_cmd as wikipedia_base_src_cmd
 
-base_src_cmd_fns = [
+if t.TYPE_CHECKING:
+    from unstructured.ingest.cli.base.dest import BaseDestCmd
+
+base_src_cmd_fns: t.List[t.Callable[[], BaseSrcCmd]] = [
     airtable_base_src_cmd,
     azure_base_src_cmd,
     biomed_base_src_cmd,
@@ -67,7 +75,7 @@ if src_duplicates:
         ),
     )
 
-base_dest_cmd_fns = [
+base_dest_cmd_fns: t.List[t.Callable[[], "BaseDestCmd"]] = [
     s3_base_dest_cmd,
     azure_cognitive_search_base_dest_cmd,
     delta_table_dest_cmd,
