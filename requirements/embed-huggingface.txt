@@ -76,7 +76,7 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.319
+langchain==0.0.320
     # via -r requirements/embed-huggingface.in
 langsmith==0.0.49
     # via langchain
