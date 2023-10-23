@@ -1,3 +1,5 @@
+import collections
+
 from .airtable import get_base_src_cmd as airtable_base_src_cmd
 from .azure import get_base_src_cmd as azure_base_src_cmd
 from .azure_cognitive_search import get_base_dest_cmd as azure_cognitive_search_base_dest_cmd
@@ -55,11 +57,31 @@ base_src_cmd_fns = [
     wikipedia_base_src_cmd,
 ]
 
+# Make sure there are not overlapping names
+src_cmd_names = [b().cmd_name for b in base_src_cmd_fns]
+src_duplicates = [item for item, count in collections.Counter(src_cmd_names).items() if count > 1]
+if src_duplicates:
+    raise ValueError(
+        "multiple base src commands defined with the same names: {}".format(
+            ", ".join(src_duplicates),
+        ),
+    )
+
 base_dest_cmd_fns = [
     s3_base_dest_cmd,
     azure_cognitive_search_base_dest_cmd,
     delta_table_dest_cmd,
 ]
+
+# Make sure there are not overlapping names
+dest_cmd_names = [b().cmd_name for b in base_dest_cmd_fns]
+dest_duplicates = [item for item, count in collections.Counter(dest_cmd_names).items() if count > 1]
+if dest_duplicates:
+    raise ValueError(
+        "multiple base dest commands defined with the same names: {}".format(
+            ", ".join(dest_duplicates),
+        ),
+    )
 
 __all__ = [
     "base_src_cmd_fns",
