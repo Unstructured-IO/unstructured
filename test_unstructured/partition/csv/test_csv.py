@@ -43,7 +43,7 @@ def test_partition_csv_from_filename(filename, expected_text, expected_table):
     ],
 )
 def test_partition_csv_from_filename_infer_table_structure(infer_table_structure):
-    f_path = f"example-docs/stanley-cups.csv"
+    f_path = "example-docs/stanley-cups.csv"
     elements = partition_csv(filename=f_path, infer_table_structure=infer_table_structure)
 
     table_element_has_text_as_html_field = (
