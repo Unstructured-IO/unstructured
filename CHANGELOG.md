@@ -1,4 +1,4 @@
-## 0.10.26-dev1
+## 0.10.26-dev2
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 * **Add Local connector source metadata** python's os module used to pull stats from local file when processing via the local connector and populates fields such as last modified time, created time.
 
 ### Fixes
+
+* **Fix api test** A test seemed to show that the api was not correctly applying the `strategy` kwarg when called, but it was a mistake with the file type and this verifies that the api is working as expected.
 
 ## 0.10.25
 
