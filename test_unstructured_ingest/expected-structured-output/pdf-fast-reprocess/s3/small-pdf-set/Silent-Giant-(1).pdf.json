@@ -3,7 +3,14 @@
     "type": "Title",
     "element_id": "9f8388cf868cb29d273fdd7328642ff8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -14,7 +21,14 @@
     "type": "Title",
     "element_id": "f439367da08e61523302e29f153007e0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -25,7 +39,14 @@
     "type": "Title",
     "element_id": "53d548aa01fc3eb72da15a5be7f235e2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -36,7 +57,14 @@
     "type": "NarrativeText",
     "element_id": "9bff2faee4fea8dcc4eb42ae57e04770",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -47,7 +75,14 @@
     "type": "NarrativeText",
     "element_id": "6395cb173a26a3cc05ad01c273a797eb",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -58,7 +93,14 @@
     "type": "NarrativeText",
     "element_id": "a5996102613c8e4d5e4b533c8f08e17e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -69,7 +111,14 @@
     "type": "NarrativeText",
     "element_id": "61ae2d39f8933fba474f75a6747369cf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -80,7 +129,14 @@
     "type": "NarrativeText",
     "element_id": "08518809ebbcf8e551710c3d31af575e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -91,7 +147,14 @@
     "type": "NarrativeText",
     "element_id": "7fcca1e8ff6edf9f771e53f8fe5fc5bb",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -102,7 +165,14 @@
     "type": "NarrativeText",
     "element_id": "fafd2592ad2373e42119f989c625aca2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -113,7 +183,14 @@
     "type": "ListItem",
     "element_id": "3cc3e847449fed4fa13bbd94f86e43a9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -124,7 +201,14 @@
     "type": "ListItem",
     "element_id": "9c4387f669c689e9af0a712fd494b2d7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -135,7 +219,14 @@
     "type": "ListItem",
     "element_id": "93e7dedc9d334470067ad2de1f9ee788",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -146,7 +237,14 @@
     "type": "UncategorizedText",
     "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3,
       "links": []
@@ -157,7 +255,14 @@
     "type": "UncategorizedText",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -168,7 +273,14 @@
     "type": "Title",
     "element_id": "2960604e965650bbf4215790bc9db0c1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -179,7 +291,14 @@
     "type": "NarrativeText",
     "element_id": "34e7f45fa2fe58da47f8f001b9ecfe34",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -190,7 +309,14 @@
     "type": "UncategorizedText",
     "element_id": "b4af08fb653ae7dea99f3a48c2ff7f5d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -201,7 +327,14 @@
     "type": "Title",
     "element_id": "e29786b8cc565a047639f24f7171c30f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -212,7 +345,14 @@
     "type": "UncategorizedText",
     "element_id": "9925953f1faef050547e5f7b811c3f7d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -223,7 +363,14 @@
     "type": "Title",
     "element_id": "d04999bf99ea28fc8a6b20318caac58c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -234,7 +381,14 @@
     "type": "UncategorizedText",
     "element_id": "4ebe55cc1aee6dd892d7182d797d105a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -245,7 +399,14 @@
     "type": "Title",
     "element_id": "8af26217282646d0f64d3e3211f47512",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -256,7 +417,14 @@
     "type": "Title",
     "element_id": "6e28663850f2b50ee6af2d4477b410be",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -267,7 +435,14 @@
     "type": "UncategorizedText",
     "element_id": "422f240e43a3226f329ba4a0236f587c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -278,7 +453,14 @@
     "type": "Title",
     "element_id": "7e2f430d44cfb03dca12ffde615c36ec",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -289,7 +471,14 @@
     "type": "Title",
     "element_id": "563a2980d46c81119e1d7d952b375a41",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -300,7 +489,14 @@
     "type": "UncategorizedText",
     "element_id": "c7e6673590d2426f635c9be70bd8f057",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -311,7 +507,14 @@
     "type": "Title",
     "element_id": "bde9df80639b681edb85ace46b4d4600",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -322,7 +525,14 @@
     "type": "UncategorizedText",
     "element_id": "b6b53b7d4224992f9aa86411bbc3f74b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -333,7 +543,14 @@
     "type": "Title",
     "element_id": "b449cd843dc44ab907e1e9ed9c30d92e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -344,7 +561,14 @@
     "type": "Title",
     "element_id": "f35457739b3bd74c61625c986c844726",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -355,7 +579,14 @@
     "type": "UncategorizedText",
     "element_id": "b2ee3509c1fa4f9741f894e592bda9ac",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -366,7 +597,14 @@
     "type": "Title",
     "element_id": "0f3341ae76e0d4d7816d3620bd915110",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -377,7 +615,14 @@
     "type": "UncategorizedText",
     "element_id": "28ec039832f5bc96c2be0eaee016dafe",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -388,7 +633,14 @@
     "type": "Title",
     "element_id": "b001a2374d44e3085e712bb40f66270e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -399,7 +651,14 @@
     "type": "UncategorizedText",
     "element_id": "b2008c37ee3a7cf7ba87f5ad50dd9e11",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -410,7 +669,14 @@
     "type": "Title",
     "element_id": "90ad0c8c14253135efd14645e0156145",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -421,7 +687,14 @@
     "type": "UncategorizedText",
     "element_id": "5feceb66ffc86f38d952786c6d696c79",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -432,7 +705,14 @@
     "type": "UncategorizedText",
     "element_id": "81a83544cf93c245178cbc1620030f11",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -443,7 +723,14 @@
     "type": "UncategorizedText",
     "element_id": "7d12ba56e9f8b3dc64f77c87318c4f37",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -454,7 +741,14 @@
     "type": "UncategorizedText",
     "element_id": "73a2af8864fc500fa49048bf3003776c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -465,7 +759,14 @@
     "type": "UncategorizedText",
     "element_id": "8e1f192fe25ad49be764c3f55c68beb3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -476,7 +777,14 @@
     "type": "UncategorizedText",
     "element_id": "df34d853f2f2f1f14b92359f695426dc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -487,7 +795,14 @@
     "type": "NarrativeText",
     "element_id": "da2a1eade528ab599d4421bd78e7185a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -498,7 +813,14 @@
     "type": "NarrativeText",
     "element_id": "ec3fb4d0094a8d78930e6048214fe8de",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -509,7 +831,14 @@
     "type": "NarrativeText",
     "element_id": "3b196ff3a2a47b88afe5428424833f34",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -520,7 +849,14 @@
     "type": "UncategorizedText",
     "element_id": "ebc18f485dc347b842b3d248d011ce6c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -531,7 +867,14 @@
     "type": "Title",
     "element_id": "e3cf3e34001852adb7a17cf424bda9fc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -542,7 +885,14 @@
     "type": "UncategorizedText",
     "element_id": "dcdc1a65c75197a553fdd90554060414",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -553,7 +903,14 @@
     "type": "UncategorizedText",
     "element_id": "1476fd07ef61145d484f5a2e0b4e8e7d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -564,7 +921,14 @@
     "type": "Title",
     "element_id": "a5d60fc4dbbd484074d8389c35703cf7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -575,7 +939,14 @@
     "type": "UncategorizedText",
     "element_id": "a63634f2c80c7bcc81bc6faad5d53e16",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -586,7 +957,14 @@
     "type": "UncategorizedText",
     "element_id": "8582d26affb6928525e4f027c2cb8c08",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -597,7 +975,14 @@
     "type": "UncategorizedText",
     "element_id": "265e4d619f6b21971816b0e4274faf92",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -608,7 +993,14 @@
     "type": "UncategorizedText",
     "element_id": "5feceb66ffc86f38d952786c6d696c79",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -619,7 +1011,14 @@
     "type": "UncategorizedText",
     "element_id": "a7be8e1fe282a37cd666e0632b17d933",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -630,7 +1029,14 @@
     "type": "UncategorizedText",
     "element_id": "e78f27ab3ef177a9926e6b90e572b985",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -641,7 +1047,14 @@
     "type": "UncategorizedText",
     "element_id": "81a83544cf93c245178cbc1620030f11",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -652,7 +1065,14 @@
     "type": "UncategorizedText",
     "element_id": "a20a2b7bb0842d5cf8a0c06c626421fd",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -663,7 +1083,14 @@
     "type": "UncategorizedText",
     "element_id": "7d12ba56e9f8b3dc64f77c87318c4f37",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -674,7 +1101,14 @@
     "type": "UncategorizedText",
     "element_id": "a85e9db4851f7cd3efb8db7bf69a07cf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -685,7 +1119,14 @@
     "type": "Title",
     "element_id": "bfff0ad483569ddfb7b71ce317e0798a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4,
       "links": []
@@ -696,7 +1137,14 @@
     "type": "NarrativeText",
     "element_id": "a72a816f8588c0dc2d089d7a0a44ecaa",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5,
       "links": []
@@ -707,7 +1155,14 @@
     "type": "NarrativeText",
     "element_id": "7b110a03229e5d918d8773d84e72e11f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5,
       "links": []
@@ -718,7 +1173,14 @@
     "type": "NarrativeText",
     "element_id": "bed52026a3c7b7da234580cda014cc85",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5,
       "links": []
@@ -729,7 +1191,14 @@
     "type": "UncategorizedText",
     "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5,
       "links": []
@@ -740,7 +1209,14 @@
     "type": "UncategorizedText",
     "element_id": "4b227777d4dd1fc61c6f884f48641d02",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -751,7 +1227,14 @@
     "type": "NarrativeText",
     "element_id": "1e5daa43ba0635dfd0531f977293b55d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -762,7 +1245,14 @@
     "type": "NarrativeText",
     "element_id": "3655eec20e80973efc46cc09db7a04ba",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -773,7 +1263,14 @@
     "type": "NarrativeText",
     "element_id": "ebb728948b710b737622fa1b2659a3a0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -784,7 +1281,14 @@
     "type": "NarrativeText",
     "element_id": "5a9fb414eae03258484db4d83419cb1d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -795,7 +1299,14 @@
     "type": "NarrativeText",
     "element_id": "0bac109dbd9ba991aa99fc4c961fa5e6",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -806,7 +1317,14 @@
     "type": "NarrativeText",
     "element_id": "3e66425c70ff43fc4bd7a8542615f845",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6,
       "links": []
@@ -817,7 +1335,14 @@
     "type": "UncategorizedText",
     "element_id": "983bd614bb5afece5ab3b6023f71147c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -828,7 +1353,14 @@
     "type": "UncategorizedText",
     "element_id": "1e472b39b105d349bcd069c4a711b44a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -839,7 +1371,14 @@
     "type": "UncategorizedText",
     "element_id": "27badc983df1780b60c2b3fa9d3a19a0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -850,7 +1389,14 @@
     "type": "Title",
     "element_id": "e8dbac2cdc67e714e99baa9c0f6a54b9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -861,7 +1407,14 @@
     "type": "UncategorizedText",
     "element_id": "9ae2bdd7beedc2e766c6b76585530e16",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -872,7 +1425,14 @@
     "type": "UncategorizedText",
     "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -883,7 +1443,14 @@
     "type": "UncategorizedText",
     "element_id": "1a6562590ef19d1045d06c4055742d38",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -894,7 +1461,14 @@
     "type": "UncategorizedText",
     "element_id": "5feceb66ffc86f38d952786c6d696c79",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -905,7 +1479,14 @@
     "type": "Title",
     "element_id": "8fd5206adbbb7a132889e4161057d4cf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -916,7 +1497,14 @@
     "type": "NarrativeText",
     "element_id": "4b5ebf5890b9c61b43c5daf4c40cbab0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -927,7 +1515,14 @@
     "type": "Title",
     "element_id": "8e2f99a9826b1b316f7690290f32b31f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -938,7 +1533,14 @@
     "type": "Title",
     "element_id": "53209d7cc67427ba22ec6d878fc8d421",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -949,7 +1551,14 @@
     "type": "Title",
     "element_id": "6dc76d1e1c35d4253537250288157d0c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -960,7 +1569,14 @@
     "type": "Title",
     "element_id": "079c085d3cb9f52f2392addf619382be",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -971,7 +1587,14 @@
     "type": "Title",
     "element_id": "6c25ebfc9ffd2510c4c41d4bd5cb7ea9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -982,7 +1605,14 @@
     "type": "NarrativeText",
     "element_id": "8ec0de3652344a83cd2b538ecd3bd8aa",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -993,7 +1623,14 @@
     "type": "NarrativeText",
     "element_id": "2ab586ee62ae5df39457de72cd499acc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -1004,7 +1641,14 @@
     "type": "NarrativeText",
     "element_id": "26391dca0fee0bc1dadffc1f326606a1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -1015,7 +1659,14 @@
     "type": "NarrativeText",
     "element_id": "bd0ec36fafaa71452d3b71c5575b2979",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -1026,7 +1677,14 @@
     "type": "NarrativeText",
     "element_id": "6e904c8c0efd5c9862e4bac22ebf6c6a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -1037,7 +1695,14 @@
     "type": "UncategorizedText",
     "element_id": "ef2d127de37b942baad06145e54b0c61",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7,
       "links": []
@@ -1048,7 +1713,14 @@
     "type": "UncategorizedText",
     "element_id": "e7f6c011776e8db7cd330b54174fd76f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1059,7 +1731,14 @@
     "type": "NarrativeText",
     "element_id": "4acd9d695e499834265cbd3b43734f02",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1070,7 +1749,14 @@
     "type": "UncategorizedText",
     "element_id": "dbae772db29058a88f9bd830e957c695",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1081,7 +1767,14 @@
     "type": "NarrativeText",
     "element_id": "e11247712b3df61756970b45f019ad68",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1092,7 +1785,14 @@
     "type": "Title",
     "element_id": "3f79bb7b435b05321651daefd374cdc6",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1103,7 +1803,14 @@
     "type": "UncategorizedText",
     "element_id": "2abaca4911e68fa9bfbf3482ee797fd5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1114,7 +1821,14 @@
     "type": "UncategorizedText",
     "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1125,7 +1839,14 @@
     "type": "UncategorizedText",
     "element_id": "2abaca4911e68fa9bfbf3482ee797fd5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1136,7 +1857,14 @@
     "type": "UncategorizedText",
     "element_id": "b725d20650649a5221675144bab5946e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1147,7 +1875,14 @@
     "type": "Title",
     "element_id": "f83714d89302473e0e4f5399bd50e7a9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1158,7 +1893,14 @@
     "type": "NarrativeText",
     "element_id": "f9bb49945b60897227abdd75b5f8d39b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1169,7 +1911,14 @@
     "type": "UncategorizedText",
     "element_id": "48449a14a4ff7d79bb7a1b6f3d488eba",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1180,7 +1929,14 @@
     "type": "UncategorizedText",
     "element_id": "39fa9ec190eee7b6f4dff1100d6343e1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1191,7 +1947,14 @@
     "type": "UncategorizedText",
     "element_id": "ce3201efc2e495241a85e4fc84575f50",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1202,7 +1965,14 @@
     "type": "Title",
     "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1213,7 +1983,14 @@
     "type": "UncategorizedText",
     "element_id": "d59eced1ded07f84c145592f65bdf854",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1224,7 +2001,14 @@
     "type": "UncategorizedText",
     "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1235,7 +2019,14 @@
     "type": "UncategorizedText",
     "element_id": "5feceb66ffc86f38d952786c6d696c79",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1246,7 +2037,14 @@
     "type": "Title",
     "element_id": "6c25ebfc9ffd2510c4c41d4bd5cb7ea9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1257,7 +2055,14 @@
     "type": "Title",
     "element_id": "2378bdd2cf4f491cf401e6b215cbb4fd",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1268,7 +2073,14 @@
     "type": "Title",
     "element_id": "4fabb98454d019811a732c4a09f31bf0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1279,7 +2091,14 @@
     "type": "UncategorizedText",
     "element_id": "cc6f2aa507f6a1f7de2db7e09ddef042",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1290,7 +2109,14 @@
     "type": "UncategorizedText",
     "element_id": "5d48c7c6dce082d397fecf99b8f1ac7f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1301,7 +2127,14 @@
     "type": "Title",
     "element_id": "77cf83b127020f3a465005abc747e63f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1312,7 +2145,14 @@
     "type": "NarrativeText",
     "element_id": "50a78acc78a3c5b4acc8c439af743a0a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1323,7 +2163,14 @@
     "type": "UncategorizedText",
     "element_id": "77e43ef38dbfcec0511535d9c7dbee5c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1334,7 +2181,14 @@
     "type": "UncategorizedText",
     "element_id": "f1ced6d8a7d437fd3748f56bb2358f9a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1345,7 +2199,14 @@
     "type": "Title",
     "element_id": "bbf2011ddebee240452a3ab98416afb4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1356,7 +2217,14 @@
     "type": "UncategorizedText",
     "element_id": "efc293f64a092b9bfe153be9357f9580",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1367,7 +2235,14 @@
     "type": "Title",
     "element_id": "f280c2a253ebd5a7389dd0790fcbd56c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1378,7 +2253,14 @@
     "type": "NarrativeText",
     "element_id": "26a7b59940bf704ccad5e0482bbc79c7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1389,7 +2271,14 @@
     "type": "Title",
     "element_id": "cfa2927842d99020365c55b6bd135679",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1400,7 +2289,14 @@
     "type": "NarrativeText",
     "element_id": "b5ee125fcd9081f8d86dbe2a999efdc5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1411,7 +2307,14 @@
     "type": "UncategorizedText",
     "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1422,7 +2325,14 @@
     "type": "UncategorizedText",
     "element_id": "69f59c273b6e669ac32a6dd5e1b2cb63",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1433,7 +2343,14 @@
     "type": "Title",
     "element_id": "90ad0c8c14253135efd14645e0156145",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1444,7 +2361,14 @@
     "type": "Title",
     "element_id": "3fd264839410c464bf2640d6dbf3ed86",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1455,7 +2379,14 @@
     "type": "UncategorizedText",
     "element_id": "48449a14a4ff7d79bb7a1b6f3d488eba",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1466,7 +2397,14 @@
     "type": "Title",
     "element_id": "9a1f49cd39fe9698fc556924b6b889da",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1477,7 +2415,14 @@
     "type": "UncategorizedText",
     "element_id": "ff5a1ae012afa5d4c889c50ad427aaf5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1488,7 +2433,14 @@
     "type": "Title",
     "element_id": "c4fad0ce9772d241be8c8624896ada86",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1499,7 +2451,14 @@
     "type": "UncategorizedText",
     "element_id": "39fa9ec190eee7b6f4dff1100d6343e1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1510,7 +2469,14 @@
     "type": "Title",
     "element_id": "b449cd843dc44ab907e1e9ed9c30d92e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1521,7 +2487,14 @@
     "type": "Title",
     "element_id": "f35457739b3bd74c61625c986c844726",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1532,7 +2505,14 @@
     "type": "UncategorizedText",
     "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1543,7 +2523,14 @@
     "type": "UncategorizedText",
     "element_id": "1a6562590ef19d1045d06c4055742d38",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1554,7 +2541,14 @@
     "type": "UncategorizedText",
     "element_id": "d59eced1ded07f84c145592f65bdf854",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1565,7 +2559,14 @@
     "type": "UncategorizedText",
     "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1576,7 +2577,14 @@
     "type": "UncategorizedText",
     "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1587,7 +2595,14 @@
     "type": "UncategorizedText",
     "element_id": "4a44dc15364204a80fe80e9039455cc1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1598,7 +2613,14 @@
     "type": "UncategorizedText",
     "element_id": "5feceb66ffc86f38d952786c6d696c79",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1609,7 +2631,14 @@
     "type": "Title",
     "element_id": "7a1ca4ef7515f7276bae7230545829c2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1620,7 +2649,14 @@
     "type": "Title",
     "element_id": "853637136575897a73cba3c5fb085e8c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1631,7 +2667,14 @@
     "type": "Title",
     "element_id": "2275583196d791405892aaca0d87743c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1642,7 +2685,14 @@
     "type": "NarrativeText",
     "element_id": "4460e1d29449fbe65bc853f6a80ebb4b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
       "links": []
@@ -1653,7 +2703,14 @@
     "type": "UncategorizedText",
     "element_id": "284b7e6d788f363f910f7beb1910473e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1664,7 +2721,14 @@
     "type": "UncategorizedText",
     "element_id": "0604cd3138feed202ef293e062da2f47",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1675,7 +2739,14 @@
     "type": "Title",
     "element_id": "baa49be4a9f9fab3b991718e0adb565e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1686,7 +2757,14 @@
     "type": "Title",
     "element_id": "293e9366a39d6ed33a894e4dbe0b8700",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1697,7 +2775,14 @@
     "type": "UncategorizedText",
     "element_id": "26d228663f13a88592a12d16cf9587ca",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1708,7 +2793,14 @@
     "type": "Title",
     "element_id": "f35457739b3bd74c61625c986c844726",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1719,7 +2811,14 @@
     "type": "Title",
     "element_id": "f6e172956a9472fa43f9a895f99c2836",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1730,7 +2829,14 @@
     "type": "Title",
     "element_id": "563a2980d46c81119e1d7d952b375a41",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1741,7 +2847,14 @@
     "type": "UncategorizedText",
     "element_id": "983bd614bb5afece5ab3b6023f71147c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1752,7 +2865,14 @@
     "type": "Title",
     "element_id": "b449cd843dc44ab907e1e9ed9c30d92e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1763,7 +2883,14 @@
     "type": "UncategorizedText",
     "element_id": "27badc983df1780b60c2b3fa9d3a19a0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1774,7 +2901,14 @@
     "type": "Title",
     "element_id": "b001a2374d44e3085e712bb40f66270e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1785,7 +2919,14 @@
     "type": "Title",
     "element_id": "90ad0c8c14253135efd14645e0156145",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1796,7 +2937,14 @@
     "type": "UncategorizedText",
     "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1807,7 +2955,14 @@
     "type": "UncategorizedText",
     "element_id": "5feceb66ffc86f38d952786c6d696c79",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1818,7 +2973,14 @@
     "type": "UncategorizedText",
     "element_id": "ec54e99514663edb97adef400fbf34a7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1829,7 +2991,14 @@
     "type": "UncategorizedText",
     "element_id": "a2c54f65d066210267b404e8386a7f4c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1840,7 +3009,14 @@
     "type": "UncategorizedText",
     "element_id": "46e67c525617663b392a53c0e94ba79e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1851,7 +3027,14 @@
     "type": "NarrativeText",
     "element_id": "338d3e15917414641f2b559473f168f8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1862,7 +3045,14 @@
     "type": "NarrativeText",
     "element_id": "5f0e0d529396154bf8bd5453779ad15d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1873,7 +3063,14 @@
     "type": "NarrativeText",
     "element_id": "36ca9b7cdbbcba729a46487cf86c07eb",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1884,7 +3081,14 @@
     "type": "NarrativeText",
     "element_id": "b4dfcb14b87f52414bdd5e2bdba9bd6f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1895,7 +3099,14 @@
     "type": "NarrativeText",
     "element_id": "a72d3895448081d55f7a3d40eed7ea6c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1906,7 +3117,14 @@
     "type": "UncategorizedText",
     "element_id": "7902699be42c8a8e46fbbb4501726517",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9,
       "links": []
@@ -1917,7 +3135,14 @@
     "type": "UncategorizedText",
     "element_id": "2c624232cdd221771294dfbb310aca00",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -1928,7 +3153,14 @@
     "type": "NarrativeText",
     "element_id": "3c6336f12bcbf4d1ca36bef92d77efea",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -1939,7 +3171,14 @@
     "type": "NarrativeText",
     "element_id": "f3e39d107b4601c15dbb3d83ed7a7d9c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -1950,7 +3189,14 @@
     "type": "NarrativeText",
     "element_id": "d263fe9467aa7876c4d5009c3125176b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -1961,7 +3207,14 @@
     "type": "Title",
     "element_id": "69824d3b0e70ca6aaa0da1613b65fd91",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -1972,7 +3225,14 @@
     "type": "Title",
     "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -1983,7 +3243,14 @@
     "type": "Title",
     "element_id": "5d7f49449ab22deac22d767b89549c55",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -1994,7 +3261,14 @@
     "type": "Title",
     "element_id": "f5557d4fcf727a981a3c315aca733eef",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -2005,7 +3279,14 @@
     "type": "Title",
     "element_id": "0ab306823035661bb8dba21cc2535231",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -2016,7 +3297,14 @@
     "type": "Title",
     "element_id": "4c94485e0c21ae6c41ce1dfe7b6bface",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -2027,7 +3315,14 @@
     "type": "Title",
     "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -2038,7 +3333,14 @@
     "type": "Title",
     "element_id": "c1d2906220d1eef1b17422b7132872a8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -2049,7 +3351,14 @@
     "type": "NarrativeText",
     "element_id": "de72de35f0092bdd3107011f3be18dc0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -2060,7 +3369,14 @@
     "type": "NarrativeText",
     "element_id": "b6396ecd6f60e3dcca17c045c00846c1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -2071,7 +3387,14 @@
     "type": "Title",
     "element_id": "ed171375d0bf81eaa5512140c3a29b8f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -2082,7 +3405,14 @@
     "type": "Title",
     "element_id": "2d711642b726b04401627ca9fbac32f5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -2093,7 +3423,14 @@
     "type": "UncategorizedText",
     "element_id": "5897aff759a5cc8d94710101c73af296",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -2104,7 +3441,14 @@
     "type": "UncategorizedText",
     "element_id": "cd7669ea7d8c7961fdbf51c7fec05db7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10,
       "links": []
@@ -2115,7 +3459,14 @@
     "type": "UncategorizedText",
     "element_id": "481e5a54650b0a4ac7bc2568ddad436d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 12,
       "links": []
@@ -2126,7 +3477,14 @@
     "type": "Title",
     "element_id": "2ef1a5c0752085d3a6935132ad9e597c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 12,
       "links": []
@@ -2137,7 +3495,14 @@
     "type": "NarrativeText",
     "element_id": "20ef77d9aa66e60f1443750cdbaa9014",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 12,
       "links": []
@@ -2148,7 +3513,14 @@
     "type": "NarrativeText",
     "element_id": "cff66c7267104eeade830b3dc8675acd",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/Silent-Giant-(1).pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 12,
       "links": []
