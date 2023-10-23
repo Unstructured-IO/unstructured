@@ -56,8 +56,8 @@ def chunk_table_element(element: Table, max_characters: int = 500) -> List[Table
 def chunk_by_title(
     elements: List[Element],
     multipage_sections: bool = True,
-    combine_text_under_n_chars: int = 500,
-    new_after_n_chars: int = 500,
+    combine_text_under_n_chars: int | None = None,
+    new_after_n_chars: int | None = None,
     max_characters: int = 500,
 ) -> List[Element]:
     """Uses title elements to identify sections within the document for chunking.
@@ -73,26 +73,52 @@ def chunk_by_title(
     multipage_sections
         If True, sections can span multiple pages. Defaults to True.
     combine_text_under_n_chars
-        Combines elements (for example a series of titles) until a section reaches
-        a length of n characters.
+        Combines elements (for example a series of titles) until a section reaches a length of
+        n characters. Defaults to `max_characters` which combines chunks whenever space allows.
+        Specifying 0 for this argument suppresses combining of small chunks. Note this value is
+        "capped" at the `new_after_n_chars` value since a value higher than that would not change
+        this parameter's effect.
     new_after_n_chars
-        Cuts off new sections once they reach a length of n characters (soft max)
+        Cuts off new sections once they reach a length of n characters (soft max). Defaults to
+        `max_characters` when not specified, which effectively disables any soft window.
+        Specifying 0 for this argument causes each element to appear in a chunk by itself (although
+        an element with text longer than `max_characters` will be still be split into two or more
+        chunks).
     max_characters
         Chunks elements text and text_as_html (if present) into chunks of length
         n characters (hard max)
     """
 
-    if not (
-        max_characters > 0
-        and combine_text_under_n_chars >= 0
-        and new_after_n_chars >= 0
-        and combine_text_under_n_chars <= new_after_n_chars
-        and combine_text_under_n_chars <= max_characters
-    ):
+    # -- validation and arg pre-processing ---------------------------
+
+    # -- chunking window must have positive length --
+    if max_characters <= 0:
+        raise ValueError(f"'max_characters' argument must be > 0, got {max_characters}")
+
+    # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified and is
+    # -- capped at max-chars
+    if combine_text_under_n_chars is None or combine_text_under_n_chars > max_characters:
+        combine_text_under_n_chars = max_characters
+
+    # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
+    # -- but a negative value is not
+    if combine_text_under_n_chars < 0:
         raise ValueError(
-            "Invalid values for combine_text_under_n_chars, "
-            "new_after_n_chars, and/or max_characters.",
+            f"'combine_text_under_n_chars' argument must be >= 0, got {combine_text_under_n_chars}"
         )
+
+    # -- same with `new_after_n_chars` --
+    if new_after_n_chars is None or new_after_n_chars > max_characters:
+        new_after_n_chars = max_characters
+
+    if new_after_n_chars < 0:
+        raise ValueError(f"'new_after_n_chars' argument must be >= 0, got {new_after_n_chars}")
+
+    # -- `new_after_n_chars` takes precendence on conflict with `combine_text_under_n_chars` --
+    if combine_text_under_n_chars > new_after_n_chars:
+        combine_text_under_n_chars = new_after_n_chars
+
+    # ----------------------------------------------------------------
 
     chunked_elements: List[Element] = []
     sections = _split_elements_by_title_and_table(
