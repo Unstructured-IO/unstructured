@@ -351,7 +351,7 @@ def is_parent_box(
             child_target[2] <= parent_target[2] and child_target[3] <= parent_target[3]
         ):
             return True
-    elif len(child_target) == 2:  # Needed for polygon regions, this might need revision
+    elif len(child_target) == 2:
         if (
             parent_target[0] <= child_target[0] <= parent_target[2]
             and parent_target[1] <= child_target[1] <= parent_target[3]
@@ -362,7 +362,10 @@ def is_parent_box(
 
 
 def calculate_overlap_percentage(box1, box2, intersection_ratio_method="total"):
-    """Box format: [x_bottom_left, y_bottom_left, x_top_right, y_top_right]"""
+    """Box format: [x_bottom_left, y_bottom_left, x_top_right, y_top_right].
+    Calculates the percentage of overlapped region with reference to biggest element-region (intersection_ratio_method="parent"),
+    the smallest element-region (intersection_ratio_method="partial"), or to the disjunctive union region (intersection_ratio_method="total")
+    """
     x1, y1 = box1[0]
     x2, y2 = box1[2]
     x3, y3 = box2[0]
@@ -380,7 +383,6 @@ def calculate_overlap_percentage(box1, box2, intersection_ratio_method="total"):
     max_area = max(area_box1, area_box2)
     min_area = min(area_box1, area_box2)
     total_area = area_box1 + area_box2
-    overlap_percentage = 0
 
     if intersection_ratio_method == "parent":
         if max_area == 0:
@@ -401,7 +403,181 @@ def calculate_overlap_percentage(box1, box2, intersection_ratio_method="total"):
     return round(overlap_percentage, 2), max_area, min_area, total_area
 
 
-def catch_overlapping_bboxes(
+def identify_overlapping_case(box_pair, label_pair, text_pair, ix_pair, sm_overlap_threshold=10.0):
+    """Classifies the overlapping case for an element_pair input. There are 5 caregories of overlapping:
+    'Small partial overlap', 'Partial overlap with empty content', 'Partial overlap with duplicate text (sharing 100% of the text)',
+    'Partial overlap without sharing text', and 'Partial overlap sharing {calculate_largest_ngram_percentage(...)}% of the text'
+    """
+    overlapping_elements, overlapping_case, overlap_percentage, largest_ngram_percentage = (
+        None,
+        None,
+        None,
+        None,
+    )
+    box1, box2 = box_pair
+    type1, type2 = label_pair
+    text1, text2 = text_pair
+    ix_element1, ix_element2 = ix_pair
+    (
+        overlap_percentage,
+        max_area,
+        min_area,
+        total_area,
+    ) = calculate_overlap_percentage(
+        box1,
+        box2,
+        intersection_ratio_method="partial",
+    )
+    if overlap_percentage < sm_overlap_threshold:
+        overlapping_elements = [
+            f"{type1}(ix={ix_element1})",
+            f"{type2}(ix={ix_element2})",
+        ]
+        overlapping_case = "Small partial overlap"
+
+    else:
+        if not text1:
+            overlapping_elements = [
+                f"{type1}(ix={ix_element1})",
+                f"{type2}(ix={ix_element2})",
+            ]
+            overlapping_case = f"partial overlap with empty content in {type1}"
+
+        elif not text2:
+            overlapping_elements = [
+                f"{type2}(ix={ix_element2})",
+                f"{type1}(ix={ix_element1})",
+            ]
+            overlapping_case = f"partial overlap with empty content in {type2}"
+
+        elif text1 in text2 or text2 in text1:
+            overlapping_elements = [
+                f"{type1}(ix={ix_element1})",
+                f"{type2}(ix={ix_element2})",
+            ]
+            overlapping_case = "partial overlap with duplicate text"
+
+        else:
+            (
+                largest_ngram_percentage,
+                largest_shared_ngrams_max,
+                largest_n,
+            ) = calculate_largest_ngram_percentage(text1, text2)
+            largest_ngram_percentage = round(largest_ngram_percentage, 2)
+            if not largest_ngram_percentage:
+                overlapping_elements = [
+                    f"{type1}(ix={ix_element1})",
+                    f"{type2}(ix={ix_element2})",
+                ]
+                overlapping_case = "partial overlap without sharing text"
+
+            else:
+                overlapping_elements = [
+                    f"{type1}(ix={ix_element1})",
+                    f"{type2}(ix={ix_element2})",
+                ]
+                overlapping_case = f"partial overlap sharing {largest_ngram_percentage}% of the text from {type1 if len(text1.split()) < len(text2.split()) else type2} ({largest_n}-gram)"
+    return (
+        overlapping_elements,
+        overlapping_case,
+        overlap_percentage,
+        largest_ngram_percentage,
+        max_area,
+        min_area,
+        total_area,
+    )
+
+
+def identify_overlapping_or_nesting_case(box_pair, label_pair, text_pair):
+    """Identify if there are nested or overlapping elements. If overlapping is present,
+    it identifies the case calling the method identify_overlapping_case"""
+    box1, box2 = box_pair
+    type1, type2 = label_pair
+    ix_element1 = "".join([ch for ch in type1 if ch.isnumeric()])
+    ix_element2 = "".join([ch for ch in type2 if ch.isnumeric()])
+    type1 = type1[3:].strip()
+    type2 = type2[3:].strip()
+    x_bottom_left_1, y_bottom_left_1 = box1[0]
+    x_top_right_1, y_top_right_1 = box1[2]
+    x_bottom_left_2, y_bottom_left_2 = box2[0]
+    x_top_right_2, y_top_right_2 = box2[2]
+    box1_corners = [x_bottom_left_1, y_bottom_left_1, x_top_right_1, y_top_right_1]
+    box2_corners = [x_bottom_left_2, y_bottom_left_2, x_top_right_2, y_top_right_2]
+
+    horizontal_overlap = x_bottom_left_1 < x_top_right_2 and x_top_right_1 > x_bottom_left_2
+    vertical_overlap = y_bottom_left_1 < y_top_right_2 and y_top_right_1 > y_bottom_left_2
+    (
+        overlapping_elements,
+        overlapping_case,
+        overlap_percentage,
+        overlap_percentage_total,
+        largest_ngram_percentage,
+    ) = (
+        None,
+        None,
+        None,
+        None,
+        None,
+    )
+    max_area, min_area, total_area = None, None, None
+
+    if horizontal_overlap and vertical_overlap:
+        overlap_percentage_total, _, _, _ = calculate_overlap_percentage(
+            box1,
+            box2,
+            intersection_ratio_method="total",
+        )
+        overlap_percentage, max_area, min_area, total_area = calculate_overlap_percentage(
+            box1,
+            box2,
+            intersection_ratio_method="parent",
+        )
+
+        if is_parent_box(box1_corners, box2_corners, add=5):
+            overlapping_elements = [
+                f"{type1}(ix={ix_element1})",
+                f"{type2}(ix={ix_element2})",
+            ]
+            overlapping_case = f"nested {type2} in {type1}"
+            overlap_percentage = 100
+
+        elif is_parent_box(box2_corners, box1_corners, add=5):
+            overlapping_elements = [
+                f"{type2}(ix={ix_element2})",
+                f"{type1}(ix={ix_element1})",
+            ]
+            overlapping_case = f"nested {type1} in {type2}"
+            overlap_percentage = 100
+
+        else:
+            (
+                overlapping_elements,
+                overlapping_case,
+                overlap_percentage,
+                largest_ngram_percentage,
+                max_area,
+                min_area,
+                total_area,
+            ) = identify_overlapping_case(
+                box_pair,
+                label_pair,
+                text_pair,
+                (ix_element1, ix_element2),
+                sm_overlap_threshold=10.0,
+            )
+    return (
+        overlapping_elements,
+        overlapping_case,
+        overlap_percentage,
+        overlap_percentage_total,
+        largest_ngram_percentage,
+        max_area,
+        min_area,
+        total_area,
+    )
+
+
+def catch_overlapping_and_nested_bboxes(
     elements,
 ) -> bool:
     """Catch overlapping and nested bounding boxes cases across a list of elements."""
@@ -417,7 +593,7 @@ def catch_overlapping_bboxes(
         text_labels[n_page_to_ix].append(f"{ix}. {element.category}")
         text_content[n_page_to_ix].append(element.text)
 
-    overlapping_flag = False
+    document_with_overlapping_flag = False
     overlapping_cases = []
     for page_number, (page_bboxes, page_labels, page_text) in enumerate(
         zip(bounding_boxes, text_labels, text_content),
@@ -432,116 +608,18 @@ def catch_overlapping_bboxes(
             page_labels_combinations,
             text_content_combinations,
         ):
-            box1, box2 = box_pair
-            type1, type2 = label_pair
-            ix_element1 = "".join([ch for ch in type1 if ch.isnumeric()])
-            ix_element2 = "".join([ch for ch in type2 if ch.isnumeric()])
-            type1 = type1[3:].strip()
-            type2 = type2[3:].strip()
-            x_bottom_left_1, y_bottom_left_1 = box1[0]
-            x_top_right_1, y_top_right_1 = box1[2]
-            x_bottom_left_2, y_bottom_left_2 = box2[0]
-            x_top_right_2, y_top_right_2 = box2[2]
-            horizontal_overlap = x_bottom_left_1 < x_top_right_2 and x_top_right_1 > x_bottom_left_2
-            vertical_overlap = y_bottom_left_1 < y_top_right_2 and y_top_right_1 > y_bottom_left_2
-            overlapping_elements, overlapping_case, overlap_percentage, largest_ngram_percentage = (
-                None,
-                None,
-                None,
-                None,
-            )
+            (
+                overlapping_elements,
+                overlapping_case,
+                overlap_percentage,
+                overlap_percentage_total,
+                largest_ngram_percentage,
+                max_area,
+                min_area,
+                total_area,
+            ) = identify_overlapping_or_nesting_case(box_pair, label_pair, text_pair)
 
-            if horizontal_overlap and vertical_overlap:
-                box1_corners = [x_bottom_left_1, y_bottom_left_1, x_top_right_1, y_top_right_1]
-                box2_corners = [x_bottom_left_2, y_bottom_left_2, x_top_right_2, y_top_right_2]
-                overlap_percentage_total, _, _, _ = calculate_overlap_percentage(
-                    box1,
-                    box2,
-                    intersection_ratio_method="total",
-                )
-                overlap_percentage, max_area, min_area, total_area = calculate_overlap_percentage(
-                    box1,
-                    box2,
-                    intersection_ratio_method="parent",
-                )
-
-                if is_parent_box(box1_corners, box2_corners, add=5):
-                    overlapping_elements = [
-                        f"{type1}(ix={ix_element1})",
-                        f"{type2}(ix={ix_element2})",
-                    ]
-                    overlapping_case = f"nested {type2} in {type1}"
-                    overlap_percentage = 100
-
-                elif is_parent_box(box2_corners, box1_corners, add=5):
-                    overlapping_elements = [
-                        f"{type2}(ix={ix_element2})",
-                        f"{type1}(ix={ix_element1})",
-                    ]
-                    overlapping_case = f"nested {type1} in {type2}"
-                    overlap_percentage = 100
-
-                else:
-                    (
-                        overlap_percentage,
-                        max_area,
-                        min_area,
-                        total_area,
-                    ) = calculate_overlap_percentage(
-                        box1,
-                        box2,
-                        intersection_ratio_method="partial",
-                    )
-                    if overlap_percentage < 10.0:
-                        overlapping_elements = [
-                            f"{type1}(ix={ix_element1})",
-                            f"{type2}(ix={ix_element2})",
-                        ]
-                        overlapping_case = "Small partial overlap"
-
-                    else:
-                        text1, text2 = text_pair
-                        if not text1:
-                            overlapping_elements = [
-                                f"{type1}(ix={ix_element1})",
-                                f"{type2}(ix={ix_element2})",
-                            ]
-                            overlapping_case = f"partial overlap with empty content in {type1}"
-
-                        elif not text2:
-                            overlapping_elements = [
-                                f"{type2}(ix={ix_element2})",
-                                f"{type1}(ix={ix_element1})",
-                            ]
-                            overlapping_case = f"partial overlap with empty content in {type2}"
-
-                        elif text1 in text2 or text2 in text1:
-                            overlapping_elements = [
-                                f"{type1}(ix={ix_element1})",
-                                f"{type2}(ix={ix_element2})",
-                            ]
-                            overlapping_case = "partial overlap with duplicate text"
-
-                        else:
-                            (
-                                largest_ngram_percentage,
-                                largest_shared_ngrams_max,
-                                largest_n,
-                            ) = calculate_largest_ngram_percentage(text1, text2)
-                            largest_ngram_percentage = round(largest_ngram_percentage, 2)
-                            if not largest_ngram_percentage:
-                                overlapping_elements = [
-                                    f"{type1}(ix={ix_element1})",
-                                    f"{type2}(ix={ix_element2})",
-                                ]
-                                overlapping_case = "partial overlap without sharing text"
-
-                            else:
-                                overlapping_elements = [
-                                    f"{type1}(ix={ix_element1})",
-                                    f"{type2}(ix={ix_element2})",
-                                ]
-                                overlapping_case = f"partial overlap sharing {largest_ngram_percentage}% of the text from {type1 if len(text1.split()) < len(text2.split()) else type2} ({largest_n}-gram)"
+            if overlapping_case:
                 overlapping_cases.append(
                     {
                         "overlapping_elements": overlapping_elements,
@@ -556,5 +634,6 @@ def catch_overlapping_bboxes(
                         },
                     },
                 )
-                overlapping_flag = True
-    return overlapping_flag, overlapping_cases
+                document_with_overlapping_flag = True
+
+    return document_with_overlapping_flag, overlapping_cases
