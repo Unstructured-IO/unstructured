@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.base_cmd import BaseCmd
+from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliMixin,
 )
@@ -44,6 +44,6 @@ class ElasticsearchCliConfig(BaseConfig, CliMixin):
         return options
 
 
-def get_base_cmd() -> BaseCmd:
-    cmd_cls = BaseCmd(cmd_name="elasticsearch", cli_config=ElasticsearchCliConfig)
+def get_base_src_cmd() -> BaseSrcCmd:
+    cmd_cls = BaseSrcCmd(cmd_name="elasticsearch", cli_config=ElasticsearchCliConfig)
     return cmd_cls

@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.base_cmd import BaseCmd
 from unstructured.ingest.cli.common import (
     log_options,
 )
@@ -79,6 +78,15 @@ def get_dest_cmd() -> click.Command:
     return cmd
 
 
-def get_base_cmd() -> BaseCmd:
-    cmd_cls = BaseCmd(cmd_name="s3", cli_config=S3CliConfig, is_fsspec=True)
+def get_base_src_cmd():
+    from unstructured.ingest.cli.base.src import BaseSrcCmd
+
+    cmd_cls = BaseSrcCmd(cmd_name="s3", cli_config=S3CliConfig, is_fsspec=True)
+    return cmd_cls
+
+
+def get_base_dest_cmd():
+    from unstructured.ingest.cli.base.dest import BaseDestCmd
+
+    cmd_cls = BaseDestCmd(cmd_name="s3", cli_config=S3CliConfig, is_fsspec=True)
     return cmd_cls

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.base_cmd import BaseCmd
+from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliMixin,
 )
@@ -28,6 +28,6 @@ class GcsCliConfig(BaseConfig, CliMixin):
         return options
 
 
-def get_base_cmd() -> BaseCmd:
-    cmd_cls = BaseCmd(cmd_name="gcs", cli_config=GcsCliConfig, is_fsspec=True)
+def get_base_src_cmd() -> BaseSrcCmd:
+    cmd_cls = BaseSrcCmd(cmd_name="gcs", cli_config=GcsCliConfig, is_fsspec=True)
     return cmd_cls

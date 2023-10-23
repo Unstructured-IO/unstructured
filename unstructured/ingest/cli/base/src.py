@@ -1,28 +1,22 @@
 import logging
-import typing as t
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import click
 
+from unstructured.ingest.cli.base.cmd import BaseCmd
 from unstructured.ingest.cli.common import (
     log_options,
 )
-from unstructured.ingest.cli.interfaces import CliFilesStorageConfig, CliMixin
+from unstructured.ingest.cli.interfaces import CliFilesStorageConfig
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
-from unstructured.ingest.interfaces import BaseConfig, FsspecConfig
+from unstructured.ingest.interfaces import FsspecConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import runner_map
 
 
 @dataclass
-class BaseCmd:
-    cmd_name: str
-    cli_config: t.Optional[t.Type[BaseConfig]] = None
-    additional_cli_options: t.List[t.Type[CliMixin]] = field(default_factory=list)
-    addition_configs: t.Dict[str, t.Type[BaseConfig]] = field(default_factory=dict)
-    is_fsspec: bool = False
-
-    def get_source_runner(self, **options):
+class BaseSrcCmd(BaseCmd):
+    def get_source_runner(self, options: dict):
         addition_configs = self.addition_configs
         if self.is_fsspec and "fsspec_config" not in addition_configs:
             addition_configs["fsspec_config"] = FsspecConfig
@@ -62,6 +56,3 @@ class BaseCmd:
             extra_options.append(CliFilesStorageConfig)
         add_options(cmd, extras=extra_options)
         return cmd
-
-    def get_dest_cmd(self) -> t.Optional[click.Command]:
-        return None

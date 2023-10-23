@@ -79,16 +79,20 @@ def extract_configs(
     return res
 
 
-def add_options(cmd: click.Command, extras=t.List[t.Type[CliMixin]]) -> click.Command:
-    configs: t.List[t.Type[CliMixin]] = [
-        CliPartitionConfig,
-        CliReadConfig,
-        CliEmbeddingConfig,
-        CliChunkingConfig,
-        CliProcessorConfig,
-        CliPermissionsConfig,
-        CliRetryStrategyConfig,
-    ]
+def add_options(cmd: click.Command, extras=t.List[t.Type[CliMixin]], is_src=True) -> click.Command:
+    configs: t.List[t.Type[CliMixin]] = (
+        [
+            CliPartitionConfig,
+            CliReadConfig,
+            CliEmbeddingConfig,
+            CliChunkingConfig,
+            CliProcessorConfig,
+            CliPermissionsConfig,
+            CliRetryStrategyConfig,
+        ]
+        if is_src
+        else []
+    )
     configs.extend(extras)
     for config in configs:
         try:

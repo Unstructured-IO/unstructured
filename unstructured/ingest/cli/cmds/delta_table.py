@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.base_cmd import BaseCmd
+from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.common import (
     log_options,
 )
@@ -119,6 +119,6 @@ def get_dest_cmd() -> click.Command:
     return cmd
 
 
-def get_base_cmd() -> BaseCmd:
-    cmd_cls = BaseCmd(cmd_name="delta-table", cli_config=DeltaTableCliConfig)
+def get_base_src_cmd() -> BaseSrcCmd:
+    cmd_cls = BaseSrcCmd(cmd_name="delta-table", cli_config=DeltaTableCliConfig)
     return cmd_cls

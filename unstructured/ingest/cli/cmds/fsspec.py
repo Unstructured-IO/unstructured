@@ -1,6 +1,6 @@
-from unstructured.ingest.cli.cmds.base_cmd import BaseCmd
+from unstructured.ingest.cli.base.src import BaseSrcCmd
 
 
-def get_base_cmd() -> BaseCmd:
-    cmd_cls = BaseCmd(cmd_name="fsspec", is_fsspec=True)
+def get_base_src_cmd() -> BaseSrcCmd:
+    cmd_cls = BaseSrcCmd(cmd_name="fsspec", is_fsspec=True)
     return cmd_cls
