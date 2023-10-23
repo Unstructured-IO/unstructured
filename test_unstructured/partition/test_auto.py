@@ -755,7 +755,7 @@ def test_auto_partition_respects_skip_infer_table_types(
 
 def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
     with open(filename, "rb") as f:
-        elements = partition(file=f, include_header=False)
+        elements = partition(file=f, include_header=False, skip_infer_table_types=[])
 
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert sum(isinstance(element, Title) for element in elements) == 2
