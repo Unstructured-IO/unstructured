@@ -8,7 +8,6 @@
 
 ### Fixes
 
-* **Fix api test** A test seemed to show that the api was not correctly applying the `strategy` kwarg when called, but it was a mistake with the file type and this verifies that the api is working as expected.
 
 ## 0.10.25
 
