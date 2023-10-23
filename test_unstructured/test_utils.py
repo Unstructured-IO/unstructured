@@ -4,6 +4,8 @@ import os
 import pytest
 
 from unstructured import utils
+from unstructured.documents.coordinates import PixelSpace
+from unstructured.documents.elements import ElementMetadata, NarrativeText, Title
 
 
 @pytest.fixture()
@@ -110,3 +112,64 @@ def test_only_raises_when_len_more_than_1(iterator):
 def test_only_raises_if_empty(iterator):
     with pytest.raises(ValueError):
         utils.only(iterator)
+
+
+@pytest.mark.parametrize(
+    ("elements", "expectation"),
+    [
+        (
+            [
+                Title(
+                    text="Some lovely title",
+                    coordinates=((4, 5), (4, 8), (7, 8), (7, 5)),
+                    coordinate_system=PixelSpace(width=10, height=20),
+                    metadata=ElementMetadata(page_number=1),
+                ),
+                NarrativeText(
+                    text="Some lovely text",
+                    coordinates=((2, 3), (2, 6), (5, 6), (5, 3)),
+                    coordinate_system=PixelSpace(width=10, height=20),
+                    metadata=ElementMetadata(page_number=1),
+                ),
+            ],
+            (
+                True,
+                [
+                    {
+                        "overlapping_elements": ["Title(ix=0)", "NarrativeText(ix=1)"],
+                        "overlapping_case": "nested NarrativeText in Title",
+                        "overlap_percentage": "100%",
+                        "metadata": {
+                            "largest_ngram_percentage": None,
+                            "overlap_percentage_total": "5.88%",
+                            "max_area": "9pxˆ2",
+                            "min_area": "9pxˆ2",
+                            "total_area": "18pxˆ2",
+                        },
+                    }
+                ],
+            ),
+        ),
+        (
+            [
+                Title(
+                    text="Some lovely title",
+                    coordinates=((4, 5), (4, 8), (7, 8), (7, 5)),
+                    coordinate_system=PixelSpace(width=10, height=20),
+                    metadata=ElementMetadata(page_number=1),
+                ),
+                NarrativeText(
+                    text="Some lovely text",
+                    coordinates=((12, 13), (12, 16), (15, 16), (15, 13)),
+                    coordinate_system=PixelSpace(width=10, height=20),
+                    metadata=ElementMetadata(page_number=1),
+                ),
+            ],
+            (False, []),
+        ),
+    ],
+)
+def test_catch_overlapping_and_nested_bboxes(elements, expectation):
+    overlapping_flag, overlapping_cases = utils.catch_overlapping_and_nested_bboxes(elements)
+    assert overlapping_flag == expectation[0]
+    assert overlapping_cases == expectation[1]
