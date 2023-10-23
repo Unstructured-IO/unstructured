@@ -139,7 +139,7 @@ def test_partition_via_api_with_no_strategy():
     # elements_hi_res[3].text =
     #     'LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis'
     # while elements_no_strategy[3].text = ']' (as of this writing)
-    assert elements_no_strategy[4].text != elements_hi_res[4].text
+    assert elements_no_strategy[3].text != elements_hi_res[3].text
 
 
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
