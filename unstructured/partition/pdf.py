@@ -804,7 +804,7 @@ def _add_pytesseract_bboxes_to_elements(
     return elements
 
 
-@requires_dependencies("unstructured_pytesseract")
+@requires_dependencies("unstructured_pytesseract", "unstructured_inference")
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
