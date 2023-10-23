@@ -3,12 +3,14 @@ import glob
 import os
 import typing as t
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSourceConnector,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 
@@ -47,6 +49,19 @@ class LocalIngestDoc(BaseIngestDoc):
 
     def get_file(self):
         """Not applicable to local file system"""
+
+    def update_source_metadata(self, **kwargs) -> None:
+        try:
+            out = os.lstat(self.path)
+            self._source_metadata = SourceMetadata(
+                exists=True,
+                date_created=str(datetime.fromtimestamp(out.st_ctime)),
+                date_modified=str(datetime.fromtimestamp(out.st_mtime)),
+                permissions_data=[{"mode": out.st_mode}],
+                source_url=self.path,
+            )
+        except FileNotFoundError:
+            self._source_metadata = SourceMetadata(exists=False)
 
     @property
     def _output_filename(self) -> Path:
