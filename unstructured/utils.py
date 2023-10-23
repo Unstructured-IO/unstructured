@@ -26,9 +26,9 @@ import requests
 from typing_extensions import ParamSpec
 
 from unstructured.__version__ import __version__
+from unstructured.documents.elements import Text
 
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
-
 
 _T = TypeVar("_T")
 _P = ParamSpec("_P")
@@ -283,8 +283,8 @@ def scarf_analytics():
         pass
 
 
-def ngrams(s, n):
-    """Generate n-grams from a string"""
+def ngrams(s: str, n: int) -> List:
+    """Generate n-grams from a string s"""
 
     ngrams_list = []
     for i in range(len(s) - n + 1):
@@ -292,33 +292,42 @@ def ngrams(s, n):
     return ngrams_list
 
 
-def calculate_shared_ngram_percentage(string_A, string_B, n):
+def calculate_shared_ngram_percentage(
+    first_string: str,
+    second_string: str,
+    n: int,
+) -> (float, List):
     """Calculate the percentage of common_ngrams between string_A and string_B
     with reference to the total number of ngrams in string_A"""
 
-    string_A_ngrams = ngrams(string_A.split(), n)
-    string_B_ngrams = ngrams(string_B.split(), n)
+    first_string_ngrams = ngrams(first_string.split(), n)
+    second_string_ngrams = ngrams(second_string.split(), n)
 
-    if not string_A_ngrams:
+    if not first_string_ngrams:
         return 0
 
-    common_ngrams = set(string_A_ngrams) & set(string_B_ngrams)
-    percentage = (len(common_ngrams) / len(string_A_ngrams)) * 100
+    common_ngrams = set(first_string_ngrams) & set(second_string_ngrams)
+    percentage = (len(common_ngrams) / len(first_string_ngrams)) * 100
     return percentage, common_ngrams
 
 
-def calculate_largest_ngram_percentage(string_A, string_B):
+def calculate_largest_ngram_percentage(first_string: str, second_string: str) -> (float, List, str):
     """Iteratively calculate_shared_ngram_percentage starting from the biggest
     ngram possible until is >0.0%"""
 
-    if len(string_A.split()) < len(string_B.split()):
-        n = len(string_A.split()) - 1
+    shared_ngrams = []
+    if len(first_string.split()) < len(second_string.split()):
+        n = len(first_string.split()) - 1
     else:
-        n = len(string_B.split()) - 1
-        string_A, string_B = string_B, string_A
+        n = len(second_string.split()) - 1
+        first_string, string_B = second_string, first_string
     ngram_percentage = 0
     while not ngram_percentage:
-        ngram_percentage, shared_ngrams = calculate_shared_ngram_percentage(string_A, string_B, n)
+        ngram_percentage, shared_ngrams = calculate_shared_ngram_percentage(
+            first_string,
+            second_string,
+            n,
+        )
         if n == 0:
             break
         else:
@@ -327,9 +336,9 @@ def calculate_largest_ngram_percentage(string_A, string_B):
 
 
 def is_parent_box(
-    parent_target,
-    child_target,
-    add=0,
+    parent_target: Union[List, Tuple],
+    child_target: Union[List, Tuple],
+    add: float = 0.0,
 ) -> bool:
     """True if the child_target bounding box is nested in the parent_target.
     Box format: [x_bottom_left, y_bottom_left, x_top_right, y_top_right].
@@ -360,7 +369,11 @@ def is_parent_box(
     return False
 
 
-def calculate_overlap_percentage(box1, box2, intersection_ratio_method="total"):
+def calculate_overlap_percentage(
+    box1: Union[List, Tuple],
+    box2: Union[List, Tuple],
+    intersection_ratio_method: str = "total",
+):
     """Box format: [x_bottom_left, y_bottom_left, x_top_right, y_top_right].
     Calculates the percentage of overlapped region with reference to biggest element-region (intersection_ratio_method="parent"),
     the smallest element-region (intersection_ratio_method="partial"), or to the disjunctive union region (intersection_ratio_method="total")
@@ -402,10 +415,18 @@ def calculate_overlap_percentage(box1, box2, intersection_ratio_method="total"):
     return round(overlap_percentage, 2), max_area, min_area, total_area
 
 
-def identify_overlapping_case(box_pair, label_pair, text_pair, ix_pair, sm_overlap_threshold=10.0):
+def identify_overlapping_case(
+    box_pair: Union[List[Union[List, Tuple]], Tuple[Union[List, Tuple]]],
+    label_pair: Union[List[str], Tuple[str]],
+    text_pair: Union[List[str], Tuple[str]],
+    ix_pair: Union[List[str], Tuple[str]],
+    sm_overlap_threshold: float = 10.0,
+):
     """Classifies the overlapping case for an element_pair input. There are 5 categories of overlapping:
-    'Small partial overlap', 'Partial overlap with empty content', 'Partial overlap with duplicate text (sharing 100% of the text)',
-    'Partial overlap without sharing text', and 'Partial overlap sharing {calculate_largest_ngram_percentage(...)}% of the text'
+    'Small partial overlap', 'Partial overlap with empty content',
+    'Partial overlap with duplicate text (sharing 100% of the text)',
+    'Partial overlap without sharing text', and
+    'Partial overlap sharing {calculate_largest_ngram_percentage(...)}% of the text'
     """
     overlapping_elements, overlapping_case, overlap_percentage, largest_ngram_percentage = (
         None,
@@ -487,7 +508,12 @@ def identify_overlapping_case(box_pair, label_pair, text_pair, ix_pair, sm_overl
     )
 
 
-def identify_overlapping_or_nesting_case(box_pair, label_pair, text_pair):
+# x1, y1 = box1[0]
+def identify_overlapping_or_nesting_case(
+    box_pair: Union[List[Union[List, Tuple]], Tuple[Union[List, Tuple]]],
+    label_pair: Union[List[str], Tuple[str]],
+    text_pair: Union[List[str], Tuple[str]],
+):
     """Identify if there are nested or overlapping elements. If overlapping is present,
     it identifies the case calling the method identify_overlapping_case"""
     box1, box2 = box_pair
@@ -577,12 +603,13 @@ def identify_overlapping_or_nesting_case(box_pair, label_pair, text_pair):
 
 
 def catch_overlapping_and_nested_bboxes(
-    elements,
-) -> bool:
+    elements: List[Text],
+) -> (bool, List[Dict]):
     """Catch overlapping and nested bounding boxes cases across a list of elements."""
 
     num_pages = elements[-1].metadata.page_number
     bounding_boxes = [[] for _ in range(num_pages)]
+
     text_labels = [[] for _ in range(num_pages)]
     text_content = [[] for _ in range(num_pages)]
 
