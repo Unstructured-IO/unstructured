@@ -89,8 +89,8 @@ def measure_edit_distance(
             output_cct = elements_to_text(elements_from_json(os.path.join(output_dir, doc)))
             with open(f"{os.path.join(source_dir, fn_txt)}") as f:
                 source_cct = f.read()
-            accuracy = calculate_accuracy(output_cct, source_cct, weights)
-            percent_missing = calculate_percent_missing_text(output_cct, source_cct)
+            accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
+            percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
 
             rows.append([fn, connector, accuracy, percent_missing])
             accuracy_scores.append(accuracy)
