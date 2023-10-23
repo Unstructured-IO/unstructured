@@ -6,7 +6,7 @@
 #
 azure-common==1.1.28
     # via azure-search-documents
-azure-core==1.29.4
+azure-core==1.29.5
     # via
     #   azure-search-documents
     #   msrest

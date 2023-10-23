@@ -1,3 +1,8 @@
 strategy	average	sample_sd	population_sd	count
+<<<<<<< HEAD
 cct-accuracy	0.6862705142875056			1
 cct-%missing	0.04			1
+=======
+cct-accuracy	0.7737475020417119	0.1237111424775438	0.08747698775420637	2
+cct-%missing	0.065	0.035355339059327376	0.024999999999999998	2
+>>>>>>> a10a8d9f7b890b0ab79b5349af4dfb1d12ce646f

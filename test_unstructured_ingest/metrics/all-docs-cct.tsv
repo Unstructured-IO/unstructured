@@ -1,2 +1,6 @@
 filename	connector	cct-accuracy	cct-%missing
 example-10k.html	local	0.6862705142875056	0.04
+<<<<<<< HEAD
+=======
+science-exploration-1p.pptx	box	0.8612244897959184	0.09
+>>>>>>> a10a8d9f7b890b0ab79b5349af4dfb1d12ce646f
