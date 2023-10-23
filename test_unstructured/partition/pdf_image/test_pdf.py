@@ -428,6 +428,28 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
     assert "업" in table[0]
 
 
+@pytest.mark.parametrize(
+    ("ocr_mode"),
+    [
+        ("entire_page"),
+        ("individual_blocks"),
+    ],
+)
+def test_partition_pdf_hi_res_ocr_mode_with_table_extraction(ocr_mode):
+    filename = "example-docs/layout-parser-paper.pdf"
+    elements = pdf.partition_pdf(
+        filename=filename,
+        ocr_mode=ocr_mode,
+        strategy="hi_res",
+        infer_table_structure=True,
+    )
+    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert len(table) == 2
+    assert "<table><thead><th>" in table[0]
+    assert "Layouts of history Japanese documents" in table[0]
+    assert "Layouts of scanned modern magazines and scientific reports" in table[0]
+
+
 def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
