@@ -171,6 +171,7 @@ done
 
 # Exit with code determined by whether changes were needed in a check.
 if [ ${FAILED_CHECK} -ne 0 ]; then
+    printf "\nVersions are out of sync! See above for diffs.\n"
     exit 1
 else
     exit 0
