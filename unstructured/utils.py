@@ -288,7 +288,7 @@ def ngrams(s: str, n: int) -> List:
 
     ngrams_list = []
     for i in range(len(s) - n + 1):
-        ngrams_list.append(tuple(s[i : i + n]))
+        ngrams_list.append(tuple(s[i: i + n]))
     return ngrams_list
 
 
@@ -320,7 +320,7 @@ def calculate_largest_ngram_percentage(first_string: str, second_string: str) ->
         n = len(first_string.split()) - 1
     else:
         n = len(second_string.split()) - 1
-        first_string, string_B = second_string, first_string
+        first_string, second_string = second_string, first_string
     ngram_percentage = 0
     while not ngram_percentage:
         ngram_percentage, shared_ngrams = calculate_shared_ngram_percentage(
@@ -374,8 +374,10 @@ def calculate_overlap_percentage(
     intersection_ratio_method: str = "total",
 ):
     """Box format: [x_bottom_left, y_bottom_left, x_top_right, y_top_right].
-    Calculates the percentage of overlapped region with reference to biggest element-region (intersection_ratio_method="parent"),
-    the smallest element-region (intersection_ratio_method="partial"), or to the disjunctive union region (intersection_ratio_method="total")
+    Calculates the percentage of overlapped region with reference to
+    the biggest element-region (intersection_ratio_method="parent"),
+    the smallest element-region (intersection_ratio_method="partial"), or to
+    the disjunctive union region (intersection_ratio_method="total")
     """
     x1, y1 = box1[0]
     x2, y2 = box1[2]
@@ -421,7 +423,8 @@ def identify_overlapping_case(
     ix_pair: Union[List[str], Tuple[str]],
     sm_overlap_threshold: float = 10.0,
 ):
-    """Classifies the overlapping case for an element_pair input. There are 5 categories of overlapping:
+    """Classifies the overlapping case for an element_pair input.
+    There are 5 categories of overlapping:
     'Small partial overlap', 'Partial overlap with empty content',
     'Partial overlap with duplicate text (sharing 100% of the text)',
     'Partial overlap without sharing text', and
@@ -495,7 +498,9 @@ def identify_overlapping_case(
                     f"{type1}(ix={ix_element1})",
                     f"{type2}(ix={ix_element2})",
                 ]
-                overlapping_case = f"partial overlap sharing {largest_ngram_percentage}% of the text from {type1 if len(text1.split()) < len(text2.split()) else type2} ({largest_n}-gram)"
+                ref_type = type1 if len(text1.split()) < len(text2.split()) else type2
+                ref_type = "of the text from" + ref_type + f"({largest_n}-gram)"
+                overlapping_case = f"partial overlap sharing {largest_ngram_percentage}% {ref_type}"
     return (
         overlapping_elements,
         overlapping_case,
