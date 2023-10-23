@@ -17,6 +17,7 @@
 ### Enhancements
 
 * **Duplicate CLI param check** Given that many of the options associated with the `Click` based cli ingest commands are added dynamically from a number of configs, a check was incorporated to make sure there were no duplicate entries to prevent new configs from overwriting already added options.
+* **Ingest CLI refactor for better code reuse** Much of the ingest cli code can be templated and was a copy-paste across files, adding potential risk. Code was refactored to use a base class which had much of the shared code templated.
 
 ### Features
 
