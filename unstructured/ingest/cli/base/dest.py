@@ -40,7 +40,9 @@ class BaseDestCmd(BaseCmd):
         log_options(options, verbose=verbose)
         try:
             runner = self.get_dest_runner(
-                source_cmd=source_cmd, options=options, parent_options=parent_options
+                source_cmd=source_cmd,
+                options=options,
+                parent_options=parent_options,
             )
             runner.run(**options)
         except Exception as e:

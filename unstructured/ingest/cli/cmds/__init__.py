@@ -1,8 +1,10 @@
 from .airtable import get_base_src_cmd as airtable_base_src_cmd
 from .azure import get_base_src_cmd as azure_base_src_cmd
+from .azure_cognitive_search import get_base_dest_cmd as azure_cognitive_search_base_dest_cmd
 from .biomed import get_base_src_cmd as biomed_base_src_cmd
 from .box import get_base_src_cmd as box_base_src_cmd
 from .confluence import get_base_src_cmd as confluence_base_src_cmd
+from .delta_table import get_base_dest_cmd as delta_table_dest_cmd
 from .delta_table import get_base_src_cmd as delta_table_base_src_cmd
 from .discord import get_base_src_cmd as discord_base_src_cmd
 from .dropbox import get_base_src_cmd as dropbox_base_src_cmd
@@ -55,6 +57,8 @@ base_src_cmd_fns = [
 
 base_dest_cmd_fns = [
     s3_base_dest_cmd,
+    azure_cognitive_search_base_dest_cmd,
+    delta_table_dest_cmd,
 ]
 
 __all__ = [
