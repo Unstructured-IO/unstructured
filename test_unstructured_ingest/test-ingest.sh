@@ -72,7 +72,6 @@ python_version=$(python --version 2>&1)
 tests_to_ignore=(
   'test-ingest-notion.sh'
   'test-ingest-dropbox.sh'
-  'test-ingest-embed.sh'
 )
 
 for test in "${all_tests[@]}"; do
