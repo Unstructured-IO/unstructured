@@ -861,7 +861,7 @@ EXPECTED_XLS_TABLE = (
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.xls"):
-    elements = partition(filename=filename, include_header=False)
+    elements = partition(filename=filename, include_header=False, skip_infer_table_types=[])
 
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert len(elements) == 18
