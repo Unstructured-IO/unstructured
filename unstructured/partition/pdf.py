@@ -817,7 +817,7 @@ def _partition_pdf_or_image_with_ocr(
     """Partitions an image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
 
-    entire_page_ocr = os.getenv("ENTIRE_PAGE_OCR", "tesseract").lower()
+    ocr_agent = os.getenv("OCR_AGENT", "tesseract").lower()
     ocr_languages = prepare_languages_for_tesseract(languages)
 
     page_layouts = []
@@ -831,7 +831,7 @@ def _partition_pdf_or_image_with_ocr(
                 image=image,
                 page_number=i + 1,
                 ocr_languages=ocr_languages,
-                entire_page_ocr=entire_page_ocr,
+                ocr_agent=ocr_agent,
             )
             page_layouts.append(page_layout)
     else:
@@ -842,7 +842,7 @@ def _partition_pdf_or_image_with_ocr(
                 image=image,
                 page_number=page_number,
                 ocr_languages=ocr_languages,
-                entire_page_ocr=entire_page_ocr,
+                ocr_agent=ocr_agent,
             )
             page_layouts.append(page_layout)
 
