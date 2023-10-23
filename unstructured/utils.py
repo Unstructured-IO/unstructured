@@ -354,18 +354,17 @@ def is_parent_box(
         parent_target[2] += add
         parent_target[3] += add
 
-    if len(child_target) == 4:
-        if (child_target[0] >= parent_target[0] and child_target[1] >= parent_target[1]) and (
-            child_target[2] <= parent_target[2] and child_target[3] <= parent_target[3]
-        ):
-            return True
-    if len(child_target) == 2:
-        if (
-            parent_target[0] <= child_target[0] <= parent_target[2]
-            and parent_target[1] <= child_target[1] <= parent_target[3]
-        ):
-            return True
-
+    if (
+        len(child_target) == 4
+        and (child_target[0] >= parent_target[0] and child_target[1] >= parent_target[1])
+        and (child_target[2] <= parent_target[2] and child_target[3] <= parent_target[3])
+    ):
+        return True
+    if len(child_target) == 2 and (
+        parent_target[0] <= child_target[0] <= parent_target[2]
+        and parent_target[1] <= child_target[1] <= parent_target[3]
+    ):
+        return True
     return False
 
 
