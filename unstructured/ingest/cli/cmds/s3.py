@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import click
 
+from unstructured.ingest.cli.cmds.base_cmd import BaseCmd
 from unstructured.ingest.cli.common import (
     log_options,
 )
@@ -12,15 +13,11 @@ from unstructured.ingest.cli.interfaces import (
     CliMixin,
 )
 from unstructured.ingest.cli.utils import (
-    Group,
-    add_options,
     conform_click_options,
-    extract_configs,
     orchestrate_runner,
 )
-from unstructured.ingest.interfaces import BaseConfig, FsspecConfig
+from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import S3Runner
 
 
 @dataclass
@@ -46,34 +43,6 @@ class S3CliConfig(BaseConfig, CliMixin):
             ),
         ]
         return options
-
-
-@click.group(name="s3", invoke_without_command=True, cls=Group)
-@click.pass_context
-def s3_source(ctx: click.Context, **options):
-    if ctx.invoked_subcommand:
-        return
-
-    # Click sets all multiple fields as tuple, this needs to be updated to list
-    for k, v in options.items():
-        if isinstance(v, tuple):
-            options[k] = list(v)
-    verbose = options.get("verbose", False)
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(options, verbose=verbose)
-    try:
-        configs = extract_configs(
-            options,
-            validate=[S3CliConfig],
-            extras={"fsspec_config": FsspecConfig},
-        )
-        s3_runner = S3Runner(
-            **configs,  # type: ignore
-        )
-        s3_runner.run(**options)
-    except Exception as e:
-        logger.error(e, exc_info=True)
-        raise click.ClickException(str(e)) from e
 
 
 @click.command(name="s3")
@@ -110,7 +79,6 @@ def get_dest_cmd() -> click.Command:
     return cmd
 
 
-def get_source_cmd() -> click.Group:
-    cmd = s3_source
-    add_options(cmd, extras=[S3CliConfig, CliFilesStorageConfig])
-    return cmd
+def get_base_cmd() -> BaseCmd:
+    cmd_cls = BaseCmd(cmd_name="s3", cli_config=S3CliConfig, is_fsspec=True)
+    return cmd_cls

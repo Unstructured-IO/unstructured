@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import click
 
+from unstructured.ingest.cli.cmds.base_cmd import BaseCmd
 from unstructured.ingest.cli.common import (
     log_options,
 )
@@ -11,15 +12,11 @@ from unstructured.ingest.cli.interfaces import (
     CliMixin,
 )
 from unstructured.ingest.cli.utils import (
-    Group,
-    add_options,
     conform_click_options,
-    extract_configs,
     orchestrate_runner,
 )
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import DeltaTableRunner
 
 
 @dataclass
@@ -58,27 +55,6 @@ class DeltaTableCliConfig(BaseConfig, CliMixin):
             ),
         ]
         return options
-
-
-@click.group(name="delta-table", invoke_without_command=True, cls=Group)
-@click.pass_context
-def delta_table_source(ctx: click.Context, **options):
-    if ctx.invoked_subcommand:
-        return
-
-    conform_click_options(options)
-    verbose = options.get("verbose", False)
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(options, verbose=verbose)
-    try:
-        configs = extract_configs(options, validate=[DeltaTableCliConfig])
-        runner = DeltaTableRunner(
-            **configs,  # type: ignore
-        )
-        runner.run(**options)
-    except Exception as e:
-        logger.error(e, exc_info=True)
-        raise click.ClickException(str(e)) from e
 
 
 @dataclass
@@ -143,7 +119,6 @@ def get_dest_cmd() -> click.Command:
     return cmd
 
 
-def get_source_cmd() -> click.Group:
-    cmd = delta_table_source
-    add_options(cmd, extras=[DeltaTableCliConfig])
-    return cmd
+def get_base_cmd() -> BaseCmd:
+    cmd_cls = BaseCmd(cmd_name="delta-table", cli_config=DeltaTableCliConfig)
+    return cmd_cls

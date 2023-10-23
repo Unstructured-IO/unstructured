@@ -1,20 +1,14 @@
-import logging
 import typing as t
 from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.common import (
-    log_options,
-)
+from unstructured.ingest.cli.cmds.base_cmd import BaseCmd
 from unstructured.ingest.cli.interfaces import (
     CliMixin,
     CliRecursiveConfig,
 )
-from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
 from unstructured.ingest.interfaces import BaseConfig
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import SharePointRunner
 
 
 @dataclass
@@ -69,28 +63,10 @@ class SharepointCliConfig(BaseConfig, CliMixin):
         return options
 
 
-@click.group(name="sharepoint", invoke_without_command=True, cls=Group)
-@click.pass_context
-def sharepoint_source(ctx: click.Context, **options):
-    if ctx.invoked_subcommand:
-        return
-
-    conform_click_options(options)
-    verbose = options.get("verbose", False)
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(options, verbose=verbose)
-    try:
-        configs = extract_configs(data=options, validate=[SharepointCliConfig])
-        sharepoint_runner = SharePointRunner(
-            **configs,  # type: ignore
-        )
-        sharepoint_runner.run(**options)
-    except Exception as e:
-        logger.error(e, exc_info=True)
-        raise click.ClickException(str(e)) from e
-
-
-def get_source_cmd() -> click.Group:
-    cmd = sharepoint_source
-    add_options(cmd, extras=[SharepointCliConfig, CliRecursiveConfig])
-    return cmd
+def get_base_cmd() -> BaseCmd:
+    cmd_cls = BaseCmd(
+        cmd_name="sharepoint",
+        cli_config=SharepointCliConfig,
+        additional_cli_options=[CliRecursiveConfig],
+    )
+    return cmd_cls
