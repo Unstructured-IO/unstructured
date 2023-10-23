@@ -85,5 +85,9 @@ def get_base_src_cmd() -> BaseSrcCmd:
 def get_base_dest_cmd():
     from unstructured.ingest.cli.base.dest import BaseDestCmd
 
-    cmd_cls = BaseDestCmd(cmd_name=CMD_NAME, cli_config=DeltaTableCliConfig)
+    cmd_cls = BaseDestCmd(
+        cmd_name=CMD_NAME,
+        cli_config=DeltaTableCliConfig,
+        additional_cli_options=[DeltaTableCliWriteConfig],
+    )
     return cmd_cls

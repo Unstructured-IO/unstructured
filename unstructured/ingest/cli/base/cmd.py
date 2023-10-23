@@ -13,3 +13,7 @@ class BaseCmd(ABC):
     additional_cli_options: t.List[t.Type[CliMixin]] = field(default_factory=list)
     addition_configs: t.Dict[str, t.Type[BaseConfig]] = field(default_factory=dict)
     is_fsspec: bool = False
+
+    @property
+    def cmd_name_key(self):
+        return self.cmd_name.replace("-", "_")

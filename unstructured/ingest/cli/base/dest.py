@@ -21,7 +21,7 @@ class BaseDestCmd(BaseCmd):
         src_cmd_fn = get_src_cmd(cmd_name=source_cmd)
         src_cmd = src_cmd_fn()
         runner = src_cmd.get_source_runner(options=parent_options)
-        runner.writer_type = self.cmd_name
+        runner.writer_type = self.cmd_name_key
         runner.writer_kwargs = options
         return runner
 
