@@ -104,18 +104,18 @@ def measure_edit_distance(
     agg_rows.append(
         [
             "cct-accuracy",
-            round(_mean(accuracy_scores), 3),
-            round(_stdev(accuracy_scores), 3),
-            round(_pstdev(accuracy_scores), 3),
+            _mean(accuracy_scores),
+            _stdev(accuracy_scores),
+            _pstdev(accuracy_scores),
             len(accuracy_scores),
         ],
     )
     agg_rows.append(
         [
             "cct-%missing",
-            round(_mean(percent_missing_scores), 3),
-            round(_stdev(percent_missing_scores), 3),
-            round(_pstdev(percent_missing_scores), 3),
+            _mean(percent_missing_scores),
+            _stdev(percent_missing_scores),
+            _pstdev(percent_missing_scores),
             len(percent_missing_scores),
         ],
     )
@@ -163,20 +163,26 @@ def _display(rows, headers):
         )
 
 
-def _mean(scores: List[float]):
-    return statistics.mean(scores)
+def _mean(scores: List[float], rounding: Optional[int] = 3):
+    if not rounding:
+        return statistics.mean(scores)
+    return round(statistics.mean(scores), rounding)
 
 
-def _stdev(scores: List[float]):
+def _stdev(scores: List[float], rounding: Optional[int] = 3):
     if len(scores) <= 1:
         return None
-    return statistics.stdev(scores)
+    if not rounding:
+        return statistics.stdev(scores)
+    return round(statistics.stdev(scores), rounding)
 
 
-def _pstdev(scores: List[float]):
+def _pstdev(scores: List[float], rounding: Optional[int] = 3):
     if len(scores) <= 1:
         return None
-    return statistics.pstdev(scores)
+    if not rounding:
+        return statistics.pstdev(scores)
+    return round(statistics.pstdev(scores), rounding)
 
 
 if __name__ == "__main__":
