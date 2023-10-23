@@ -359,7 +359,7 @@ def is_parent_box(
             child_target[2] <= parent_target[2] and child_target[3] <= parent_target[3]
         ):
             return True
-    elif len(child_target) == 2:
+    if len(child_target) == 2:
         if (
             parent_target[0] <= child_target[0] <= parent_target[2]
             and parent_target[1] <= child_target[1] <= parent_target[3]
