@@ -64,10 +64,7 @@ class MockPageLayout(layout.PageLayout):
     def __init__(self, number: int, image: Image):
         self.number = number
         self.image = image
-
-    @property
-    def elements(self):
-        return [
+        self.elements = [
             layout.LayoutElement.from_coords(
                 type="Title",
                 x1=0,
