@@ -14,8 +14,6 @@ from unstructured.ingest.cli.utils import conform_click_options, orchestrate_run
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
-pass
-
 
 @dataclass
 class AzureCognitiveSearchCliWriteConfig(BaseConfig, CliMixin):
