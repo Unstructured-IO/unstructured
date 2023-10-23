@@ -14,7 +14,9 @@ from unstructured.documents.elements import (
     UUID,
     CoordinatesMetadata,
     Element,
+    ElementMetadata,
     NoID,
+    RegexMetadata,
     Text,
 )
 
@@ -186,3 +188,45 @@ def test_element_to_dict():
         "element_id": "awt32t1",
     }
     assert element.to_dict() == expected
+
+
+def test_regex_metadata_round_trips_through_JSON():
+    """metadata.regex_metadata should appear at full depth in JSON."""
+    regex_metadata = {
+        "mail-stop": [RegexMetadata(text="MS-107", start=18, end=24)],
+        "version": [
+            RegexMetadata(text="current=v1.7.2", start=7, end=21),
+            RegexMetadata(text="supersedes=v1.7.2", start=22, end=40),
+        ],
+    }
+    metadata = ElementMetadata(regex_metadata=regex_metadata)
+
+    metadata_json = json.dumps(metadata.to_dict())
+    deserialized_metadata = ElementMetadata.from_dict(json.loads(metadata_json))
+    reserialized_metadata_json = json.dumps(deserialized_metadata.to_dict())
+
+    assert reserialized_metadata_json == metadata_json
+
+
+def test_metadata_from_dict_extra_fields():
+    """
+    Assert that the metadata classes ignore nonexistent fields.
+    This can be an issue when elements_from_json gets a schema
+    from the future.
+    """
+    element_metadata = {
+        "new_field": "hello",
+        "data_source": {
+            "new_field": "world",
+        },
+        "coordinates": {
+            "new_field": "foo",
+        },
+    }
+
+    metadata = ElementMetadata.from_dict(element_metadata)
+    metadata_dict = metadata.to_dict()
+
+    assert "new_field" not in metadata_dict
+    assert "new_field" not in metadata_dict["coordinates"]
+    assert "new_field" not in metadata_dict["data_source"]

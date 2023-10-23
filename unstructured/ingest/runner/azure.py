@@ -1,58 +1,59 @@
 import logging
-from typing import Optional
+import typing as t
 
-from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.processor import process_documents
+from unstructured.ingest.runner.base_runner import FsspecBaseRunner
 from unstructured.ingest.runner.utils import update_download_dir_remote_url
 
 
-def azure(
-    verbose: bool,
-    connector_config: StandardConnectorConfig,
-    processor_config: ProcessorConfigs,
-    account_name: Optional[str],
-    account_key: Optional[str],
-    connection_string: Optional[str],
-    remote_url: str,
-    recursive: bool,
-    **kwargs,
-):
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+class AzureRunner(FsspecBaseRunner):
+    def run(
+        self,
+        remote_url: str,
+        account_name: t.Optional[str] = None,
+        account_key: t.Optional[str] = None,
+        connection_string: t.Optional[str] = None,
+        recursive: bool = False,
+        **kwargs,
+    ):
+        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
-    if not account_name and not connection_string:
-        raise ValueError(
-            "missing either account-name or connection-string",
+        if not account_name and not connection_string:
+            raise ValueError(
+                "missing either account-name or connection-string",
+            )
+
+        self.read_config.download_dir = update_download_dir_remote_url(
+            connector_name="azure",
+            read_config=self.read_config,
+            remote_url=self.fsspec_config.remote_url,  # type: ignore
+            logger=logger,
         )
 
-    connector_config.download_dir = update_download_dir_remote_url(
-        connector_name="azure",
-        connector_config=connector_config,
-        remote_url=remote_url,
-        logger=logger,
-    )
+        from unstructured.ingest.connector.azure import (
+            AzureBlobStorageSourceConnector,
+            SimpleAzureBlobStorageConfig,
+        )
 
-    from unstructured.ingest.connector.azure import (
-        AzureBlobStorageConnector,
-        SimpleAzureBlobStorageConfig,
-    )
+        if account_name:
+            access_kwargs = {
+                "account_name": account_name,
+                "account_key": account_key,
+            }
+        elif connection_string:
+            access_kwargs = {"connection_string": connection_string}
+        else:
+            access_kwargs = {}
+        connector_config = SimpleAzureBlobStorageConfig.from_dict(
+            self.fsspec_config.to_dict(),  # type: ignore
+        )
+        connector_config.access_kwargs = access_kwargs
+        source_doc_connector = AzureBlobStorageSourceConnector(  # type: ignore
+            processor_config=self.processor_config,
+            connector_config=connector_config,
+            read_config=self.read_config,
+        )
 
-    if account_name:
-        access_kwargs = {
-            "account_name": account_name,
-            "account_key": account_key,
-        }
-    elif connection_string:
-        access_kwargs = {"connection_string": connection_string}
-    else:
-        access_kwargs = {}
-    doc_connector = AzureBlobStorageConnector(  # type: ignore
-        standard_config=connector_config,
-        config=SimpleAzureBlobStorageConfig(
-            path=remote_url,
-            recursive=recursive,
-            access_kwargs=access_kwargs,
-        ),
-    )
-
-    process_documents(doc_connector=doc_connector, processor_config=processor_config)
+        self.process_documents(
+            source_doc_connector=source_doc_connector,
+        )

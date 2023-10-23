@@ -1,48 +1,48 @@
 import hashlib
 import logging
-from typing import Optional
+import typing as t
 
-from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.processor import process_documents
+from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
 
-def gdrive(
-    verbose: bool,
-    connector_config: StandardConnectorConfig,
-    processor_config: ProcessorConfigs,
-    service_account_key: str,
-    recursive: bool,
-    drive_id: str,
-    extension: Optional[str],
-    **kwargs,
-):
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+class GoogleDriveRunner(Runner):
+    def run(
+        self,
+        service_account_key: str,
+        drive_id: str,
+        recursive: bool = False,
+        extension: t.Optional[str] = None,
+        **kwargs,
+    ):
+        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
-    hashed_dir_name = hashlib.sha256(
-        drive_id.encode("utf-8"),
-    )
-    connector_config.download_dir = update_download_dir_hash(
-        connector_name="gdrive",
-        connector_config=connector_config,
-        hashed_dir_name=hashed_dir_name,
-        logger=logger,
-    )
+        hashed_dir_name = hashlib.sha256(
+            drive_id.encode("utf-8"),
+        )
 
-    from unstructured.ingest.connector.google_drive import (
-        GoogleDriveConnector,
-        SimpleGoogleDriveConfig,
-    )
+        self.read_config.download_dir = update_download_dir_hash(
+            connector_name="google_drive",
+            read_config=self.read_config,
+            hashed_dir_name=hashed_dir_name,
+            logger=logger,
+        )
 
-    doc_connector = GoogleDriveConnector(  # type: ignore
-        standard_config=connector_config,
-        config=SimpleGoogleDriveConfig(
-            drive_id=drive_id,
-            service_account_key=service_account_key,
-            recursive=recursive,
-            extension=extension,
-        ),
-    )
+        from unstructured.ingest.connector.google_drive import (
+            GoogleDriveSourceConnector,
+            SimpleGoogleDriveConfig,
+        )
 
-    process_documents(doc_connector=doc_connector, processor_config=processor_config)
+        source_doc_connector = GoogleDriveSourceConnector(  # type: ignore
+            connector_config=SimpleGoogleDriveConfig(
+                drive_id=drive_id,
+                service_account_key=service_account_key,
+                recursive=recursive,
+                extension=extension,
+            ),
+            read_config=self.read_config,
+            processor_config=self.processor_config,
+        )
+
+        self.process_documents(source_doc_connector=source_doc_connector)

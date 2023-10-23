@@ -1,11 +1,10 @@
 import os
 import pathlib
 
-from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import Title
-from unstructured.partition.json import partition_json
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
+from unstructured.chunking.title import chunk_by_title
+from unstructured.documents.elements import Table, Title
 from unstructured.partition.rtf import partition_rtf
-from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -15,6 +14,10 @@ def test_partition_rtf_from_filename():
     elements = partition_rtf(filename=filename)
     assert len(elements) > 0
     assert elements[0] == Title("My First Heading")
+    assert elements[-1] == Table(
+        text="Column 1 \n Column 2 \n Row 1, Cell 1 \n Row 1, "
+        "Cell 2 \n Row 2, Cell 1 \n Row 2, Cell 2",
+    )
     for element in elements:
         assert element.metadata.filename == "fake-doc.rtf"
 
@@ -136,14 +139,26 @@ def test_partition_rtf_from_file_with_custom_metadata_date(
 
 
 def test_partition_rtf_with_json():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "fake-doc.rtf")
+    elements = partition_rtf(filename=example_doc_path("fake-doc.rtf"))
+    assert_round_trips_through_JSON(elements)
+
+
+def test_add_chunking_strategy_on_partition_rtf(filename="example-docs/fake-doc.rtf"):
     elements = partition_rtf(filename=filename)
+    chunk_elements = partition_rtf(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
 
-    test_elements = partition_json(text=elements_to_json(elements))
 
-    assert len(elements) == len(test_elements)
-    assert clean_extra_whitespace(elements[0].text) == clean_extra_whitespace(test_elements[0].text)
-    assert elements[0].metadata.filename == test_elements[0].metadata.filename
+def test_partition_rtf_element_metadata_has_languages():
+    filename = "example-docs/fake-doc.rtf"
+    elements = partition_rtf(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
 
-    for i in range(len(elements)):
-        assert elements[i] == test_elements[i]
+
+def test_partition_rtf_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.rtf"
+    elements = partition_rtf(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]

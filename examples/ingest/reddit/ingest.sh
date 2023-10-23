@@ -22,7 +22,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --user-agent "Unstructured Ingest Subreddit fetcher by \u\..." \
     --search-query "Unstructured" \
     --num-posts 10 \
-    --structured-output-dir reddit-ingest-output \
+    --output-dir reddit-ingest-output \
     --num-processes 2 \
     --verbose
 

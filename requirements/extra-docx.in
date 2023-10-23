@@ -1,4 +1,4 @@
 -c constraints.in
 -c base.txt
 
-python-docx
+python-docx>=1.0.1

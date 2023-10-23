@@ -9,15 +9,19 @@ env:
 
 jobs:
   setup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-m
     if: |
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'push' && contains(github.event.head_commit.message, 'ingest-test-fixtures-update'))
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
-      PYTHON_VERSION: "3.8"
+      PYTHON_VERSION: "3.10"
     steps:
       - uses: actions/checkout@v3
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
       - uses: actions/cache@v3
         id: virtualenv-cache
         with:
@@ -25,10 +29,6 @@ jobs:
             .venv
             nltk_data
           key: unstructured-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
       - name: Setup virtual environment (no cache hit)
         run: |
           python${{ env.PYTHON_VERSION }} -m venv .venv
@@ -37,7 +37,7 @@ jobs:
           make install-ci
 
   update-fixtures-and-pr:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup]
@@ -56,6 +56,10 @@ jobs:
           source .venv/bin/activate
           mkdir "$NLTK_DATA"
           make install-ci
+      - name: Setup docker-compose
+        uses: KengoTODA/actions-setup-docker-compose@v1
+        with:
+          version: '2.22.0'
       - name: Update test fixtures
         env:
           AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
@@ -68,20 +72,34 @@ jobs:
           DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
           GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
           GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
+          JIRA_INGEST_API_TOKEN: ${{ secrets.JIRA_INGEST_API_TOKEN }}
+          JIRA_INGEST_USER_EMAIL: ${{ secrets.JIRA_INGEST_USER_EMAIL }}
           MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
           MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
           MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
           MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
           MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
+          SALESFORCE_USERNAME: ${{secrets.SALESFORCE_USERNAME}}
+          SALESFORCE_CONSUMER_KEY: ${{secrets.SALESFORCE_CONSUMER_KEY}}
+          SALESFORCE_PRIVATE_KEY: ${{secrets.SALESFORCE_PRIVATE_KEY}}
           SHAREPOINT_CLIENT_ID: ${{secrets.SHAREPOINT_CLIENT_ID}}
           SHAREPOINT_CRED: ${{secrets.SHAREPOINT_CRED}}
           SHAREPOINT_SITE: ${{secrets.SHAREPOINT_SITE}}
+          SHAREPOINT_PERMISSIONS_APP_ID: ${{secrets.SHAREPOINT_PERMISSIONS_APP_ID}}
+          SHAREPOINT_PERMISSIONS_APP_CRED: ${{secrets.SHAREPOINT_PERMISSIONS_APP_CRED}}
+          SHAREPOINT_PERMISSIONS_TENANT: ${{secrets.SHAREPOINT_PERMISSIONS_TENANT}}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+          AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          TABLE_OCR: "tesseract"
+          OCR_AGENT: "tesseract"
           OVERWRITE_FIXTURES: "true"
+          CI: "true"
         run: |
           source .venv/bin/activate
           sudo apt-get update
@@ -102,12 +120,15 @@ jobs:
           make install-ingest-google-drive
           make install-ingest-github
           make install-ingest-gitlab
+          make install-ingest-jira
           make install-ingest-onedrive
           make install-ingest-outlook
+          make install-ingest-salesforce
           make install-ingest-slack
           make install-ingest-wikipedia
           make install-ingest-notion
           make install-ingest-delta-table
+          pip install "unstructured[openai]"
           ./test_unstructured_ingest/test-ingest.sh
 
       - name: Save branch name to environment file
@@ -131,7 +152,9 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GH_CREATE_PR_TOKEN }}
-          add-paths: test_unstructured_ingest/expected-structured-output
+          add-paths: |
+            test_unstructured_ingest/expected-structured-output
+            test_unstructured_ingest/metrics
           commit-message: "Update ingest test fixtures"
           branch: ${{ env.BRANCH_NAME }}
           title: "${{ env.PR_NAME }} <- Ingest test fixtures update"

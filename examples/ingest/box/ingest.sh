@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Processes several files in a nested folder structure from box://utic-test-ingest-fixtures/ 
+# Processes several files in a nested folder structure from box://utic-test-ingest-fixtures/
 # through Unstructured's library in 2 processes.
 
 # Structured outputs are stored in box-output/
@@ -12,7 +12,7 @@
 # Maybe check 'Make api calls as the as-user header'
 # REAUTHORIZE app after making any of the above changes
 
-# box_app_config is the path to a json file, available in the App Settings section of your Box App
+# box-app-config is the path to a json file, available in the App Settings section of your Box App
 # More info to set up the app:
 # https://developer.box.com/guides/authentication/jwt/jwt-setup/
 # and set up the app config.json file here:
@@ -24,9 +24,9 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
    box \
-   --box_app_config "$BOX_APP_CONFIG_PATH" \
+   --box-app-config "$BOX_APP_CONFIG_PATH" \
    --remote-url box://utic-test-ingest-fixtures \
-   --structured-output-dir box-output \
+   --output-dir box-output \
    --num-processes 2 \
    --recursive \
-   --verbose 
+   --verbose

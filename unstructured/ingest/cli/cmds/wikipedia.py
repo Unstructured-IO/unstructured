@@ -1,49 +1,68 @@
 import logging
+import typing as t
+from dataclasses import dataclass
 
 import click
 
 from unstructured.ingest.cli.common import (
-    add_shared_options,
     log_options,
-    map_to_processor_config,
-    map_to_standard_config,
-    run_init_checks,
 )
+from unstructured.ingest.cli.interfaces import (
+    CliMixin,
+)
+from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
+from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import wikipedia as wikipedia_fn
+from unstructured.ingest.runner import WikipediaRunner
 
 
-@click.command()
-@click.option(
-    "--auto-suggest",
-    default=True,
-    help="Whether to automatically suggest a page if the exact page was not found."
-    " Set to False if the wrong Wikipedia page is fetched.",
-)
-@click.option(
-    "--page-title",
-    required=True,
-    help='Title of a Wikipedia page, e.g. "Open source software".',
-)
-def wikipedia(**options):
+@dataclass
+class WikipediaCliConfig(BaseConfig, CliMixin):
+    page_title: str
+    auto_suggest: bool = True
+
+    @staticmethod
+    def get_cli_options() -> t.List[click.Option]:
+        options = [
+            click.Option(
+                ["--page-title"],
+                required=True,
+                type=str,
+                help='Title of a Wikipedia page, e.g. "Open source software".',
+            ),
+            click.Option(
+                ["--auto-suggest"],
+                default=True,
+                is_flag=True,
+                help="Whether to automatically suggest a page if the exact page was not found."
+                " Set to False if the wrong Wikipedia page is fetched.",
+            ),
+        ]
+        return options
+
+
+@click.group(name="wikipedia", invoke_without_command=True, cls=Group)
+@click.pass_context
+def wikipedia_source(ctx: click.Context, **options):
+    if ctx.invoked_subcommand:
+        return
+
+    conform_click_options(options)
     verbose = options.get("verbose", False)
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(options)
+    log_options(options, verbose=verbose)
     try:
-        run_init_checks(**options)
-        connector_config = map_to_standard_config(options)
-        processor_config = map_to_processor_config(options)
-        wikipedia_fn(
-            connector_config=connector_config,
-            processor_config=processor_config,
-            **options,
+        configs = extract_configs(data=options, validate=[WikipediaCliConfig])
+        runner = WikipediaRunner(
+            **configs,  # type: ignore
         )
+        runner.run(**options)
     except Exception as e:
         logger.error(e, exc_info=True)
         raise click.ClickException(str(e)) from e
 
 
-def get_cmd() -> click.Command:
-    cmd = wikipedia
-    add_shared_options(cmd)
+def get_source_cmd() -> click.Group:
+    cmd = wikipedia_source
+    add_options(cmd, extras=[WikipediaCliConfig])
     return cmd

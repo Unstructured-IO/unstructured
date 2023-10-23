@@ -1,39 +1,35 @@
 import logging
-from typing import Optional
+import typing as t
 
-from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.processor import process_documents
+from unstructured.ingest.runner.base_runner import FsspecBaseRunner
 from unstructured.ingest.runner.utils import update_download_dir_remote_url
 
 
-def gcs(
-    verbose: bool,
-    connector_config: StandardConnectorConfig,
-    processor_config: ProcessorConfigs,
-    remote_url: str,
-    recursive: bool,
-    token: Optional[str],
-    **kwargs,
-):
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+class GCSRunner(FsspecBaseRunner):
+    def run(
+        self,
+        token: t.Optional[str] = None,
+        **kwargs,
+    ):
+        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
-    connector_config.download_dir = update_download_dir_remote_url(
-        connector_name="gcs",
-        connector_config=connector_config,
-        remote_url=remote_url,
-        logger=logger,
-    )
+        self.read_config.download_dir = update_download_dir_remote_url(
+            connector_name="gcs",
+            read_config=self.read_config,
+            remote_url=self.fsspec_config.remote_url,  # type: ignore
+            logger=logger,
+        )
 
-    from unstructured.ingest.connector.gcs import GcsConnector, SimpleGcsConfig
+        from unstructured.ingest.connector.gcs import GcsSourceConnector, SimpleGcsConfig
 
-    doc_connector = GcsConnector(  # type: ignore
-        standard_config=connector_config,
-        config=SimpleGcsConfig(
-            path=remote_url,
-            recursive=recursive,
-            access_kwargs={"token": token},
-        ),
-    )
+        connector_config = SimpleGcsConfig.from_dict(self.fsspec_config.to_dict())  # type: ignore
+        connector_config.access_kwargs = {"token": token}
 
-    process_documents(doc_connector=doc_connector, processor_config=processor_config)
+        source_doc_connector = GcsSourceConnector(  # type: ignore
+            connector_config=connector_config,
+            read_config=self.read_config,
+            processor_config=self.processor_config,
+        )
+
+        self.process_documents(source_doc_connector=source_doc_connector)

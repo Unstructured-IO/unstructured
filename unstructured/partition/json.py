@@ -1,5 +1,5 @@
 import json
-from typing import IO, List, Optional
+from typing import IO, Any, List, Optional
 
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import (
@@ -24,9 +24,9 @@ def partition_json(
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Element]:
-    """Partitions an .json document into its constituent elements.
+    """Partitions serialized Unstructured output into its constituent elements.
 
     Parameters
     ----------
@@ -54,10 +54,7 @@ def partition_json(
         last_modification_date = get_last_modified_date_from_file(file)
 
         file_content = file.read()
-        if isinstance(file_content, str):
-            file_text = file_content
-        else:
-            file_text = file_content.decode()
+        file_text = file_content if isinstance(file_content, str) else file_content.decode()
         file.seek(0)
 
     elif text is not None:
@@ -75,7 +72,8 @@ def partition_json(
         raise ValueError("Not a valid json")
 
     for element in elements:
-        element.metadata.last_modified = metadata_last_modified or last_modification_date
+        if include_metadata:
+            element.metadata.last_modified = metadata_last_modified or last_modification_date
     # NOTE(Nathan): in future PR, try extracting items that look like text
     #               if file_text is a valid json but not an unstructured json
 

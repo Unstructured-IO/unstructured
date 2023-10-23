@@ -113,6 +113,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
+      UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v3
@@ -145,11 +146,9 @@ jobs:
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        # NOTE(robinson) - Installing weaviate-client separately here because the requests
-        # version conflicts with label_studio_sdk
-        pip install weaviate-client
-        pip install argilla
-        make test CI=true
+        # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
+        make install-ci
+        make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
         make check-coverage
 
   test_unit_no_extras:
@@ -218,6 +217,7 @@ jobs:
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+        UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
         source .venv-${{ matrix.extra }}/bin/activate
         # NOTE(newelh) - determine what needs to be installed here
@@ -227,33 +227,32 @@ jobs:
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        # NOTE(robinson) - Installing weaviate-client separately here because the requests
-        # version conflicts with label_studio_sdk
-        pip install weaviate-client
-        pip install argilla
         make test-extra-${{ matrix.extra }} CI=true
 
   test_ingest:
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Get full Python version
+      id: full-python-version
+      run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
     - uses: actions/cache/restore@v3
       id: virtualenv-cache
       with:
         path: |
           .venv
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+        key: unstructured-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
@@ -261,6 +260,10 @@ jobs:
         source .venv/bin/activate
         mkdir "$NLTK_DATA"
         make install-ci
+    - name: Setup docker-compose
+      uses: KengoTODA/actions-setup-docker-compose@v1
+      with:
+        version: '2.22.0'
     - name: Test Ingest (unit)
       run: |
         source .venv/bin/activate
@@ -277,19 +280,33 @@ jobs:
         DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
         GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
         GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
+        JIRA_INGEST_API_TOKEN: ${{ secrets.JIRA_INGEST_API_TOKEN }}
+        JIRA_INGEST_USER_EMAIL: ${{ secrets.JIRA_INGEST_USER_EMAIL }}
         MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
         MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
         MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
         MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
         MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
+        SALESFORCE_USERNAME: ${{secrets.SALESFORCE_USERNAME}}
+        SALESFORCE_CONSUMER_KEY: ${{secrets.SALESFORCE_CONSUMER_KEY}}
+        SALESFORCE_PRIVATE_KEY: ${{secrets.SALESFORCE_PRIVATE_KEY}}
         SHAREPOINT_CLIENT_ID: ${{secrets.SHAREPOINT_CLIENT_ID}}
         SHAREPOINT_CRED: ${{secrets.SHAREPOINT_CRED}}
         SHAREPOINT_SITE: ${{secrets.SHAREPOINT_SITE}}
+        SHAREPOINT_PERMISSIONS_APP_ID: ${{secrets.SHAREPOINT_PERMISSIONS_APP_ID}}
+        SHAREPOINT_PERMISSIONS_APP_CRED: ${{secrets.SHAREPOINT_PERMISSIONS_APP_CRED}}
+        SHAREPOINT_PERMISSIONS_TENANT: ${{secrets.SHAREPOINT_PERMISSIONS_TENANT}}
         SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
         NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+        AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        TABLE_OCR: "tesseract"
+        OCR_AGENT: "tesseract"
+        CI: "true"
       run: |
         source .venv/bin/activate
         sudo apt-get update
@@ -311,12 +328,15 @@ jobs:
         make install-ingest-google-drive
         make install-ingest-github
         make install-ingest-gitlab
+        make install-ingest-jira
         make install-ingest-onedrive
         make install-ingest-outlook
+        make install-ingest-salesforce
         make install-ingest-slack
         make install-ingest-wikipedia
         make install-ingest-notion
         make install-ingest-delta-table
+        pip install "unstructured[openai]"
         ./test_unstructured_ingest/test-ingest.sh
 
   test_unstructured_api_unit:
@@ -358,6 +378,8 @@ jobs:
       if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
       run: |
         source .venv/bin/activate
+        # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
+        make install-ci
         sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
         make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
@@ -369,6 +391,8 @@ jobs:
   changelog:
     runs-on: ubuntu-latest
     steps:
+    # need to checkout otherwise paths-filter will fail on merge-queue trigger
+    - uses: actions/checkout@v3
     - if: github.ref != 'refs/heads/main'
       uses: dorny/paths-filter@v2
       id: changes
@@ -406,5 +430,6 @@ jobs:
         run: |
           source .venv/bin/activate
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
+          echo "UNSTRUCTURED_HF_TOKEN=${{ secrets.HF_TOKEN }}" > uns_test_env_file
           make docker-build
-          make docker-test CI=true
+          make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true

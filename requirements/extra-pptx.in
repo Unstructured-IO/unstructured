@@ -1,3 +1,5 @@
 -c "constraints.in"
 
-python-pptx
+# NOTE(alan): Pinned due to python-pptx 0.6.22 pinning Pillow to <= 0.9.5, and it seems more
+# important to use the new version of Pillow
+python-pptx<=0.6.21

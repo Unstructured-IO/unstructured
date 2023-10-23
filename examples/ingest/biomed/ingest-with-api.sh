@@ -20,7 +20,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     biomed \
     --api-from "2019-01-02" \
     --api-until "2019-01-02+00:03:10" \
-    --structured-output-dir biomed-ingest-output-api \
+    --output-dir biomed-ingest-output-api \
     --num-processes 2 \
     --verbose \
     --preserve-downloads

@@ -6,11 +6,12 @@ import pytest
 import requests
 from requests.models import Response
 
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
+from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import ListItem, NarrativeText, Title
+from unstructured.documents.elements import EmailAddress, ListItem, NarrativeText, Table, Title
+from unstructured.documents.html import HTMLTitle
 from unstructured.partition.html import partition_html
-from unstructured.partition.json import partition_json
-from unstructured.staging.base import elements_to_json
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -27,6 +28,14 @@ def test_partition_html_from_filename():
     assert "PageBreak" not in [elem.category for elem in elements]
     assert elements[0].metadata.filename == "example-10k.html"
     assert elements[0].metadata.file_directory == directory
+
+
+def test_partition_html_from_filename_returns_html_elements():
+    directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
+    filename = os.path.join(directory, "example-10k.html")
+    elements = partition_html(filename=filename)
+    assert len(elements) > 0
+    assert isinstance(elements[0], HTMLTitle)
 
 
 def test_partition_html_from_filename_with_metadata_filename():
@@ -212,9 +221,8 @@ def test_partition_html_from_url_raises_with_bad_status_code():
         status_code=500,
         headers={"Content-Type": "text/html"},
     )
-    with patch.object(requests, "get", return_value=response) as _:
-        with pytest.raises(ValueError):
-            partition_html(url="https://fake.url")
+    with patch.object(requests, "get", return_value=response) as _, pytest.raises(ValueError):
+        partition_html(url="https://fake.url")
 
 
 def test_partition_html_from_url_raises_with_bad_content_type():
@@ -227,9 +235,8 @@ def test_partition_html_from_url_raises_with_bad_content_type():
         status_code=200,
         headers={"Content-Type": "application/json"},
     )
-    with patch.object(requests, "get", return_value=response) as _:
-        with pytest.raises(ValueError):
-            partition_html(url="https://fake.url")
+    with patch.object(requests, "get", return_value=response) as _, pytest.raises(ValueError):
+        partition_html(url="https://fake.url")
 
 
 def test_partition_from_url_uses_headers(mocker):
@@ -265,12 +272,27 @@ def test_partition_html_raises_with_too_many_specified():
         partition_html(filename=filename, text=text)
 
 
-def test_partition_html_on_ideas_page():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "ideas-page.html")
+def test_partition_html_on_ideas_page(filename="example-docs/ideas-page.html"):
     elements = partition_html(filename=filename)
-    document_text = "\n\n".join([str(el) for el in elements])
-    assert document_text.startswith("January 2023(Someone fed my essays into GPT")
-    assert document_text.endswith("whole new fractal buds.")
+    assert len(elements) == 1
+    assert elements[0] == Table(
+        text="January 2023 ( Someone  fed my essays into GPT to make something "
+        "that could answer\nquestions based on them, then asked it where good "
+        "ideas come from.  The\nanswer was ok, but not what I would have said. "
+        "This is what I would have said.) The way to get new ideas is to notice "
+        "anomalies: what seems strange,\nor missing, or broken? You can see anomalies"
+        " in everyday life (much\nof standup comedy is based on this), but the best "
+        "place to look for\nthem is at the frontiers of knowledge. Knowledge grows "
+        "fractally.\nFrom a distance its edges look smooth, but when you learn "
+        "enough\nto get close to one, you'll notice it's full of gaps. These "
+        "gaps\nwill seem obvious; it will seem inexplicable that no one has tried\nx "
+        "or wondered about y. In the best case, exploring such gaps yields\nwhole "
+        "new fractal buds.",
+    )
+
+    assert elements[0].metadata.emphasized_text_contents is None
+    assert elements[0].metadata.link_urls is None
+    assert elements[0].metadata.text_as_html is not None
 
 
 def test_user_without_file_write_permission_can_partition_html(tmp_path, monkeypatch):
@@ -587,15 +609,8 @@ def test_partition_html_grabs_emphasized_texts():
 
 
 def test_partition_html_with_json():
-    directory = os.path.join(DIRECTORY, "..", "..", "example-docs")
-    filename = os.path.join(directory, "example-10k.html")
-    elements = partition_html(filename=filename)
-    test_elements = partition_json(text=elements_to_json(elements))
-
-    assert len(elements) == len(test_elements)
-    assert elements[0].metadata.filename == test_elements[0].metadata.filename
-    for i in range(len(elements)):
-        assert elements[i] == test_elements[i]
+    elements = partition_html(example_doc_path("example-10k.html"))
+    assert_round_trips_through_JSON(elements)
 
 
 def test_pre_tag_parsing_respects_order():
@@ -612,3 +627,67 @@ def test_pre_tag_parsing_respects_order():
         NarrativeText("The big brown bear is sleeping."),
         Title("The Big Blue Bear"),
     ]
+
+
+def test_add_chunking_strategy_on_partition_html(
+    filename="example-docs/example-10k.html",
+):
+    elements = partition_html(filename=filename)
+    chunk_elements = partition_html(filename, chunking_strategy="by_title")
+    chunks = chunk_by_title(elements)
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_html_heading_title_detection():
+    html_text = """
+    <p>This is a section of narrative text, it's long, flows and has meaning</p>
+    <h1>This is a section of narrative text, it's long, flows and has meaning</h1>
+    <h2>A heading that is at the second level</h2>
+    <h3>Finally, the third heading</h3>
+    <h2>December 1-17, 2017</h2>
+    <h3>email@example.com</h3>
+    <h3><li>- bulleted item</li></h3>
+    """
+    elements = partition_html(text=html_text)
+    assert elements == [
+        NarrativeText("This is a section of narrative text, it's long, flows and has meaning"),
+        Title("This is a section of narrative text, it's long, flows and has meaning"),
+        Title("A heading that is at the second level"),
+        Title("Finally, the third heading"),
+        Title("December 1-17, 2017"),
+        EmailAddress("email@example.com"),
+        ListItem("- bulleted item"),
+    ]
+
+
+def test_partition_html_element_metadata_has_languages():
+    filename = "example-docs/example-10k.html"
+    elements = partition_html(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_html_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.html"
+    elements = partition_html(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+@pytest.mark.parametrize(
+    ("tag", "expected"),
+    [
+        ("thead", ""),
+        ("foo", ""),
+    ],
+)
+def test_partition_html_with_table_without_tbody(tag, expected):
+    table_html = f"""
+    <table>
+      <{tag}>
+        <tr><th>Header 1</th><th>Header 2</th></tr>
+        </{tag}>
+    </table>
+    """
+    partitions = partition_html(text=table_html)
+    assert partitions[0].metadata.text_as_html == expected

@@ -44,9 +44,15 @@ install-nltk-models:
 .PHONY: install-test
 install-test:
 	python3 -m pip install -r requirements/test.txt
+	# NOTE(yao) - CI seem to always install tesseract to test so it would make sense to also require
+	# pytesseract installation into the virtual env for testing
+	python3 -m pip install unstructured.pytesseract -c requirements/constraints.in
+	python3 -m pip install argilla -c requirements/constraints.in
 	# NOTE(robinson) - Installing weaviate-client separately here because the requests
 	# version conflicts with label_studio_sdk
-	python3 -m pip install weaviate-client
+	python3 -m pip install weaviate-client -c requirements/constraints.in
+	# TODO (yao): find out if how to constrain argilla properly without causing conflicts
+	python3 -m pip install argilla
 
 .PHONY: install-dev
 install-dev:
@@ -188,6 +194,18 @@ install-ingest-local:
 install-ingest-notion:
 	python3 -m pip install -r requirements/ingest-notion.txt
 
+.PHONY: install-ingest-salesforce
+install-ingest-salesforce:
+	python3 -m pip install -r requirements/ingest-salesforce.txt
+
+.PHONY: install-ingest-jira
+install-ingest-jira:
+	python3 -m pip install -r requirements/ingest-jira.txt
+
+.PHONY: install-embed-huggingface
+install-embed-huggingface:
+	python3 -m pip install -r requirements/embed-huggingface.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
@@ -200,53 +218,16 @@ install-local-inference: install install-all-docs
 install-pandoc:
 	ARCH=${ARCH} ./scripts/install-pandoc.sh
 
+.PHONY: install-paddleocr
+install-paddleocr:
+	ARCH=${ARCH} ./scripts/install-paddleocr.sh
 
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
 pip-compile:
-	pip-compile --upgrade requirements/base.in
+	@scripts/pip-compile.sh
 
-	# Extra requirements that are specific to document types
-	pip-compile --upgrade requirements/extra-csv.in
-	pip-compile --upgrade requirements/extra-docx.in
-	pip-compile --upgrade requirements/extra-epub.in
-	pip-compile --upgrade requirements/extra-pandoc.in
-	pip-compile --upgrade requirements/extra-markdown.in
-	pip-compile --upgrade requirements/extra-msg.in
-	pip-compile --upgrade requirements/extra-odt.in
-	pip-compile --upgrade requirements/extra-pdf-image.in
-	pip-compile --upgrade requirements/extra-pptx.in
-	pip-compile --upgrade requirements/extra-xlsx.in
 
-	# Extra requirements for huggingface staging functions
-	pip-compile --upgrade requirements/huggingface.in
-	pip-compile --upgrade requirements/test.in
-	pip-compile --upgrade requirements/dev.in
-	pip-compile --upgrade requirements/build.in
-	# NOTE(robinson) - docs/requirements.txt is where the GitHub action for building
-	# sphinx docs looks for additional requirements
-	cp requirements/build.txt docs/requirements.txt
-	pip-compile --upgrade requirements/ingest-s3.in
-	pip-compile --upgrade requirements/ingest-biomed.in
-	pip-compile --upgrade requirements/ingest-box.in
-	pip-compile --upgrade requirements/ingest-gcs.in
-	pip-compile --upgrade requirements/ingest-dropbox.in
-	pip-compile --upgrade requirements/ingest-azure.in
-	pip-compile --upgrade requirements/ingest-delta-table.in
-	pip-compile --upgrade requirements/ingest-discord.in
-	pip-compile --upgrade requirements/ingest-reddit.in
-	pip-compile --upgrade requirements/ingest-github.in
-	pip-compile --upgrade requirements/ingest-gitlab.in
-	pip-compile --upgrade requirements/ingest-slack.in
-	pip-compile --upgrade requirements/ingest-wikipedia.in
-	pip-compile --upgrade requirements/ingest-google-drive.in
-	pip-compile --upgrade requirements/ingest-elasticsearch.in
-	pip-compile --upgrade requirements/ingest-onedrive.in
-	pip-compile --upgrade requirements/ingest-outlook.in
-	pip-compile --upgrade requirements/ingest-confluence.in
-	pip-compile --upgrade requirements/ingest-airtable.in
-	pip-compile --upgrade requirements/ingest-sharepoint.in
-	pip-compile --upgrade requirements/ingest-notion.in
 
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
@@ -264,11 +245,13 @@ uninstall-project-local:
 #################
 
 export CI ?= false
+export UNSTRUCTURED_INCLUDE_DEBUG_METADATA ?= false
 
 ## test:                    runs all unittests
 .PHONY: test
 test:
-	PYTHONPATH=. CI=$(CI) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
+	PYTHONPATH=. CI=$(CI) \
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
 
 .PHONY: test-unstructured-api-unit
 test-unstructured-api-unit:
@@ -277,11 +260,12 @@ test-unstructured-api-unit:
 .PHONY: test-no-extras
 # TODO(newelh) Add json test when fixed
 test-no-extras:
-	PYTHONPATH=. CI=$(CI) pytest \
+	PYTHONPATH=. CI=$(CI) \
+		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest \
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
 		test_${PACKAGE_NAME}/partition/test_html_partition.py \
-		test_${PACKAGE_NAME}/partition/test_xml_partition.py 
+		test_${PACKAGE_NAME}/partition/test_xml_partition.py
 
 .PHONY: test-extra-csv
 test-extra-csv:
@@ -311,7 +295,7 @@ test-extra-odt:
 .PHONY: test-extra-pdf-image
 test-extra-pdf-image:
 	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/pdf-image
+		test_${PACKAGE_NAME}/partition/pdf_image
 
 .PHONY: test-extra-pptx
 test-extra-pptx:
@@ -335,20 +319,23 @@ test-extra-xlsx:
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
-check: check-src check-tests check-version
+check: check-ruff check-black check-flake8 check-version
 
-## check-src:               runs linters (source only, no tests)
-.PHONY: check-src
-check-src:
-	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore PT011,PT012,SIM117
-	black --line-length 100 ${PACKAGE_NAME} --check
-	flake8 ${PACKAGE_NAME}
-	mypy ${PACKAGE_NAME} --ignore-missing-imports --check-untyped-defs
+.PHONY: check-black
+check-black:
+	black . --check
 
-.PHONY: check-tests
-check-tests:
-	black --line-length 100 test_${PACKAGE_NAME} --check
-	flake8 test_${PACKAGE_NAME}
+.PHONY: check-flake8
+check-flake8:
+	flake8 .
+
+.PHONY: check-ruff
+check-ruff:
+	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore COM812,PT011,PT012,SIM117
+
+.PHONY: check-autoflake
+check-autoflake:
+	autoflake --check-diff .
 
 ## check-scripts:           run shellcheck
 .PHONY: check-scripts
@@ -367,8 +354,8 @@ check-version:
 .PHONY: tidy
 tidy:
 	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --fix-only || true
-	black --line-length 100 ${PACKAGE_NAME}
-	black --line-length 100 test_${PACKAGE_NAME}
+	autoflake --in-place .
+	black  .
 
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync
@@ -414,7 +401,9 @@ docker-test:
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/notebook-user/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
-	bash -c "CI=$(CI) pytest $(if $(TEST_NAME),-k $(TEST_NAME),) test_unstructured"
+	bash -c "CI=$(CI) \
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
+	pytest $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
 
 .PHONY: docker-smoke-test
 docker-smoke-test:

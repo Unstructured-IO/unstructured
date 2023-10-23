@@ -8,6 +8,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Page with every block"
@@ -21,6 +24,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "💡\n      \n      Notion Tip: Tag pages to let collaborators know what they can expect to use the page for. You can add one or many tags to any page in a wiki."
@@ -34,6 +40,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Heading 2"
@@ -47,6 +56,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "This is some new text"
@@ -60,6 +72,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "/9ba4d6da8a574cfc81ebceac1fde52bd"
@@ -85,6 +100,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "/9ba4d6da8a574cfc81ebceac1fde52bd"
@@ -96,216 +114,21 @@
     "text": "text\n      \n       with other"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "8864784f943d9f832a3dce22ef8bcf01",
+    "type": "Table",
+    "element_id": "8298c3f1d0016deb9cbf44832c33480c",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "content"
+      "languages": [
+        "eng"
       ],
-      "emphasized_text_tags": [
-        "b"
-      ]
-    },
-    "text": "c1r1 \n          \n            content"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6f75c9d2993dbb3981c019741c7962a9",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-17T18:48:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": "c2r1 table \n          2023-08-08T09:00:00.000-04:00\n            cell"
-  },
-  {
-    "type": "Title",
-    "element_id": "5687503bd741f54090d4c0557c0eea1a",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-17T18:48:00.000Z"
-      },
-      "filetype": "text/html",
       "page_number": 1,
-      "link_urls": [
-        "https://www.notion.so/c47a45664c7a488bac2a1292ee507fcb"
-      ],
-      "link_texts": [
-        "\n            Page with every block \n          "
-      ]
+      "text_as_html": "<table><br><tbody><br><tr><td></td><td>column 1               </td><td>       </td><td>column 2      </td><td>  </td><td>pages                                                               </td><td>        </td><td></td><td>                     </td><td></td><td>        </td><td></td><td></td></tr><br><tr><td></td><td>c1r1                   </td><td>content</td><td>              </td><td>  </td><td>c2r1 table <br>          2023-08-08T09:00:00.000-04:00<br>            cell</td><td>        </td><td></td><td>Page with every block</td><td></td><td>        </td><td></td><td></td></tr><br><tr><td></td><td>c1r2 more              </td><td>content</td><td>              </td><td>  </td><td>c2r2 table                                                          </td><td>cell    </td><td></td><td>                     </td><td></td><td>Untitled</td><td></td><td></td></tr><br><tr><td></td><td>this is some green text</td><td>       </td><td>this is       </td><td>an</td><td>                                                                    </td><td>equation</td><td></td><td>                     </td><td></td><td>Untitled</td><td></td><td></td></tr><br><tr><td></td><td>text1                  </td><td>text2  </td><td>Multiline cell</td><td>  </td><td>Another cell                                                        </td><td>        </td><td></td><td>Untitled             </td><td></td><td>        </td><td></td><td></td></tr><br></tbody><br></table>"
     },
-    "text": "Page with every block"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "13686520a51e25584bb06ab189b38552",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-17T18:48:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "link_urls": [
-        "/122b2c22996b435b9de2ee0e9d2b04bc"
-      ],
-      "link_texts": [
-        "\n            content\n          "
-      ]
-    },
-    "text": "c1r2 more \n          \n            content"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "cf236cfe4b4c0ef644c37b4e491a4aa8",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-17T18:48:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "cell"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
-    },
-    "text": "c2r2 table \n          \n            cell"
-  },
-  {
-    "type": "Title",
-    "element_id": "f59ab8d1331b7b16952fbd388258f856",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-17T18:48:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "link_urls": [
-        "https://www.notion.so/9ba4d6da8a574cfc81ebceac1fde52bd"
-      ],
-      "link_texts": [
-        "\n            Untitled\n          "
-      ]
-    },
-    "text": "Untitled"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "7d96ce60a66271ef79da4c492ca7db8a",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-17T18:48:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": "this is some green text"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "2d77a706008eebaf1f7c4e116bbe08b4",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-17T18:48:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "an",
-        "equation"
-      ],
-      "emphasized_text_tags": [
-        "b",
-        "b"
-      ]
-    },
-    "text": "this is \n          \n            an \n          \n          \n            equation"
-  },
-  {
-    "type": "Title",
-    "element_id": "f59ab8d1331b7b16952fbd388258f856",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-17T18:48:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "link_urls": [
-        "https://www.notion.so/a1a5dff426f34b8f9a709d51b2a00c73"
-      ],
-      "link_texts": [
-        "\n            Untitled\n          "
-      ]
-    },
-    "text": "Untitled"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "7e921a403f1840728e2887990cfe640d",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-17T18:48:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "text2"
-      ],
-      "emphasized_text_tags": [
-        "i"
-      ]
-    },
-    "text": "text1\n\n\n          \n            text2\n          \n          \n\nMultiline cell"
-  },
-  {
-    "type": "Title",
-    "element_id": "7013d5bb5a17e0e782e8971e23640bdb",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-17T18:48:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": "Another cell"
-  },
-  {
-    "type": "Title",
-    "element_id": "f59ab8d1331b7b16952fbd388258f856",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-04T18:31:00.000Z",
-        "date_modified": "2023-08-17T18:48:00.000Z"
-      },
-      "filetype": "text/html",
-      "page_number": 1,
-      "link_urls": [
-        "https://www.notion.so/84002066546448d0a030aa79b8d400b0"
-      ],
-      "link_texts": [
-        "\n            Untitled\n          "
-      ]
-    },
-    "text": "Untitled"
+    "text": "column 1\n         \n         \n          column 2\n         \n         \n          pages\n         \n       \n         \n          c1r1 \n           \n            content \n           \n         \n         \n          c2r1 table \n          2023-08-08T09:00:00.000-04:00\n            cell\n         \n         \n           \n            Page with every block \n           \n           \n         \n       \n         \n          c1r2 more \n           \n            content\n           \n         \n         \n          c2r2 table \n           \n            cell\n           \n         \n         \n           \n            Untitled\n           \n           \n         \n       \n         \n          this is some green text\n         \n         \n          this is \n           \n            an \n           \n           \n            equation\n           \n         \n         \n           \n            Untitled\n           \n           \n         \n       \n         \n          text1\n\n\n           \n            text2\n           \n          \n\nMultiline cell\n         \n         \n          Another cell  \n         \n         \n           \n            Untitled"
   },
   {
     "type": "UncategorizedText",
@@ -316,6 +139,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "E = {mc^2}"
@@ -329,6 +155,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Numbered list"
@@ -342,6 +171,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "A number child"
@@ -355,6 +187,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "A number grandchild"
@@ -368,6 +203,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "great"
@@ -381,6 +219,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "super great"
@@ -394,6 +235,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -407,6 +251,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "with test text"
@@ -420,6 +267,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Bullet one"
@@ -433,6 +283,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "A child bullet"
@@ -446,6 +299,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "A grandchild bullet"
@@ -459,6 +315,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "great"
@@ -472,6 +331,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "super great"
@@ -485,6 +347,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Bullet two"
@@ -498,6 +363,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "I quote myself testings Notion"
@@ -511,6 +379,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2,
       "link_urls": [
         "https://www.notion.so/icons/airplane_brown.svg"
@@ -530,6 +401,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2,
       "link_urls": [
         "https://www.wikipedia.org/"
@@ -549,6 +423,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2,
       "link_urls": [
         "https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG2tV4mrh1z3kXi5z_warlk"
@@ -568,6 +445,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "Child Database:"
@@ -581,6 +461,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2,
       "link_urls": [
         "https://www.notion.so/d1fad658f1cf4eedb0b5ee72b9f0b530"
@@ -600,6 +483,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "Child Page:"
@@ -613,6 +499,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2,
       "link_urls": [
         "https://www.notion.so/9ba4d6da8a574cfc81ebceac1fde52bd"
@@ -632,6 +521,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "This is my code caption"
@@ -645,6 +537,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "This is some text"
@@ -658,6 +553,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "This is text in next column"
@@ -671,6 +569,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "Final text in column"
@@ -684,6 +585,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "Heading 1 content"
@@ -697,6 +601,9 @@
         "date_modified": "2023-08-17T18:48:00.000Z"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 2
     },
     "text": "d3d87fc6-61cc-4bb5-89ed-e9dff0df1526"

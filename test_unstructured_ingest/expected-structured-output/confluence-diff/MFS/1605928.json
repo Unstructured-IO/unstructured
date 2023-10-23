@@ -3,8 +3,20 @@
     "type": "Title",
     "element_id": "35054d4d1455c734e83a868656b4ad16",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
+        "version": 1,
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "1605928"
+        },
+        "date_created": "2023-07-09T12:54:45.162000",
+        "date_modified": "2023-07-09T12:54:45.162000"
+      },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83D\\uDDD3 Date"
@@ -13,8 +25,20 @@
     "type": "Title",
     "element_id": "0126c1353ddd7c8dfdb29f252a64a344",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
+        "version": 1,
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "1605928"
+        },
+        "date_created": "2023-07-09T12:54:45.162000",
+        "date_modified": "2023-07-09T12:54:45.162000"
+      },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83D\\uDC65 Participants"
@@ -23,8 +47,20 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
+        "version": 1,
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "1605928"
+        },
+        "date_created": "2023-07-09T12:54:45.162000",
+        "date_modified": "2023-07-09T12:54:45.162000"
+      },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -33,8 +69,20 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
+        "version": 1,
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "1605928"
+        },
+        "date_created": "2023-07-09T12:54:45.162000",
+        "date_modified": "2023-07-09T12:54:45.162000"
+      },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -43,8 +91,20 @@
     "type": "Title",
     "element_id": "fa64ff027cbc0c6929bc75d3c78c94c3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
+        "version": 1,
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "1605928"
+        },
+        "date_created": "2023-07-09T12:54:45.162000",
+        "date_modified": "2023-07-09T12:54:45.162000"
+      },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83E\\uDD45 Goals"
@@ -53,8 +113,20 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
+        "version": 1,
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "1605928"
+        },
+        "date_created": "2023-07-09T12:54:45.162000",
+        "date_modified": "2023-07-09T12:54:45.162000"
+      },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -63,92 +135,65 @@
     "type": "Title",
     "element_id": "537ea1b14dcba1742bdbd4a5fbfb488c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
+        "version": 1,
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "1605928"
+        },
+        "date_created": "2023-07-09T12:54:45.162000",
+        "date_modified": "2023-07-09T12:54:45.162000"
+      },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83D\\uDDE3 Discussion topics"
   },
   {
-    "type": "Title",
-    "element_id": "33b93476cf597a3330653b66a658983d",
+    "type": "Table",
+    "element_id": "37af06e8e75d96a448a00026754b7942",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
+        "version": 1,
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "1605928"
+        },
+        "date_created": "2023-07-09T12:54:45.162000",
+        "date_modified": "2023-07-09T12:54:45.162000"
+      },
       "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Time"
+      "languages": [
+        "eng"
       ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
-    },
-    "text": "Time"
-  },
-  {
-    "type": "Title",
-    "element_id": "652bcc3a478428893cc505ae19f847b4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
       "page_number": 1,
-      "emphasized_text_contents": [
-        "Item"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      "text_as_html": "<table><br><tbody><br><tr><td>Time</td><td>Item</td><td>Presenter</td><td>Notes</td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br></tbody><br></table>"
     },
-    "text": "Item"
-  },
-  {
-    "type": "Title",
-    "element_id": "9ef077a1231ea3b71df182b87db1cb7f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Presenter"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
-    },
-    "text": "Presenter"
-  },
-  {
-    "type": "Title",
-    "element_id": "8a7525b1492fb84833f5c4a69b30f4bf",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Notes"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
-    },
-    "text": "Notes"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "text/html",
-      "page_number": 1
-    },
-    "text": ""
+    "text": "Time Item Presenter Notes"
   },
   {
     "type": "Title",
     "element_id": "f158a8eaf72c7e9511d5e8ee03692652",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
+        "version": 1,
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "1605928"
+        },
+        "date_created": "2023-07-09T12:54:45.162000",
+        "date_modified": "2023-07-09T12:54:45.162000"
+      },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "✅ Action items"
@@ -157,8 +202,20 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
+        "version": 1,
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "1605928"
+        },
+        "date_created": "2023-07-09T12:54:45.162000",
+        "date_modified": "2023-07-09T12:54:45.162000"
+      },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -167,8 +224,20 @@
     "type": "Title",
     "element_id": "addb0aa08f77b69fa754ba55c6600c8a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
+        "version": 1,
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "1605928"
+        },
+        "date_created": "2023-07-09T12:54:45.162000",
+        "date_modified": "2023-07-09T12:54:45.162000"
+      },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "⤴ Decisions"

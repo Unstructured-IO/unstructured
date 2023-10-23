@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+set -eu
+
 function usage {
     echo "Usage: $(basename "$0") [-c] -f FILE_TO_CHANGE REPLACEMENT_FORMAT [-f FILE_TO_CHANGE REPLACEMENT_FORMAT ...]" 2>&1
     echo 'Synchronize files to latest version in source file'
@@ -103,7 +106,8 @@ fi
 # Search files in FILES_TO_CHECK and change (or get diffs)
 declare FAILED_CHECK=0
 
-MAIN_VERSION=$(git show main:unstructured/__version__.py | grep -o -m 1 -E "${RE_SEMVER_FULL}")
+git fetch origin main
+MAIN_VERSION=$(git show origin/main:unstructured/__version__.py | grep -o -m 1 -E "${RE_SEMVER_FULL}")
 MAIN_IS_RELEASE=false
 [[ $MAIN_VERSION != *"-dev"* ]] && MAIN_IS_RELEASE=true
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)

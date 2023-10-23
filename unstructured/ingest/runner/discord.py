@@ -1,47 +1,46 @@
 import hashlib
 import logging
-from typing import Optional
+import typing as t
 
-from unstructured.ingest.interfaces import ProcessorConfigs, StandardConnectorConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.processor import process_documents
+from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
 
-def discord(
-    verbose: bool,
-    connector_config: StandardConnectorConfig,
-    processor_config: ProcessorConfigs,
-    channels: str,
-    token: str,
-    period: Optional[int],
-    **kwargs,
-):
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
+class DiscordRunner(Runner):
+    def run(
+        self,
+        channels: t.List[str],
+        token: str,
+        period: t.Optional[int] = None,
+        **kwargs,
+    ):
+        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
-    hashed_dir_name = hashlib.sha256(
-        channels.encode("utf-8"),
-    )
-    connector_config.download_dir = update_download_dir_hash(
-        connector_name="discord",
-        connector_config=connector_config,
-        hashed_dir_name=hashed_dir_name,
-        logger=logger,
-    )
+        hashed_dir_name = hashlib.sha256(
+            ",".join(channels).encode("utf-8"),
+        )
 
-    from unstructured.ingest.connector.discord import (
-        DiscordConnector,
-        SimpleDiscordConfig,
-    )
+        self.read_config.download_dir = update_download_dir_hash(
+            connector_name="discord",
+            read_config=self.read_config,
+            hashed_dir_name=hashed_dir_name,
+            logger=logger,
+        )
 
-    doc_connector = DiscordConnector(  # type: ignore
-        standard_config=connector_config,
-        config=SimpleDiscordConfig(
-            channels=SimpleDiscordConfig.parse_channels(channels),
-            days=period,
-            token=token,
-            verbose=verbose,
-        ),
-    )
+        from unstructured.ingest.connector.discord import (
+            DiscordSourceConnector,
+            SimpleDiscordConfig,
+        )
 
-    process_documents(doc_connector=doc_connector, processor_config=processor_config)
+        source_doc_connector = DiscordSourceConnector(  # type: ignore
+            connector_config=SimpleDiscordConfig(
+                channels=channels,
+                days=period,
+                token=token,
+            ),
+            read_config=self.read_config,
+            processor_config=self.processor_config,
+        )
+
+        self.process_documents(source_doc_connector=source_doc_connector)

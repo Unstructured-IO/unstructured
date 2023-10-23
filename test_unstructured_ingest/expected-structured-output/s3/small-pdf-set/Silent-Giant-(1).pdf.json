@@ -1,29 +1,89 @@
 [
   {
-    "type": "UncategorizedText",
-    "element_id": "51174df4a3a78fe261885b1818b66876",
+    "type": "Title",
+    "element_id": "80f1cd7f1c8e281093a32842b1e5bbce",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "WORLD NUCLEAR"
+  },
+  {
+    "type": "Title",
+    "element_id": "b0f30096c91b740f061fd09cc6b86f2b",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
     "text": "The Silent Giant"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "e2b1006b190b699d597fdb0f1d73f8f9",
+    "type": "NarrativeText",
+    "element_id": "c56cacd540b7d88bfe08d824c0ced992",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
     "text": "The need for nuclear in a clean energy system"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "2fa985d0a50e61b09ec22c447cc4b2c9",
+    "type": "Title",
+    "element_id": "14547603bad3329c14c74b8c4e2ff8d9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "//s88ciation"
+  },
+  {
+    "type": "Title",
+    "element_id": "d4d5f1410356bb0053eeff6a9d2e84ae",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -31,9 +91,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1f4925fb064910ee923ccc1f6b20715b",
+    "element_id": "968d079b21338bb15f266e70ed001fed",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -41,9 +109,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "46385c950e7da4d8e588686a541335c2",
+    "element_id": "b454d477ce7af47a3cce791045b27fb7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -51,9 +127,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ae77460bce2d3a52d823954ccb9c708f",
+    "element_id": "b00c97f0af489349e26f90166924530c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -61,9 +145,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "8e1e0570b2ba9211cc184c21a3ffbf90",
+    "element_id": "8ab9e34861e39e7de50648b982afd89e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -71,9 +163,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c6d2fa859e6df9845dee4044d05ddbc5",
+    "element_id": "2ee5188001ff61cf0d0e40659ce7bc49",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -81,9 +181,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e055395659c9e1aa4d5c0afb188e4a9e",
+    "element_id": "1d53fd350bd8dd3a38db6787b7ef77cf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -91,59 +199,125 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "33a2aba13d6b228d8d6f792f16caa684",
+    "element_id": "01b622a95350cc48bafc9165732d661a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
     "text": "In order to realise the full potential of nuclear energy we have identified three key areas where actions are required:"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "9209d9a3c8ea19bed487dff9476428ee",
+    "type": "ListItem",
+    "element_id": "494d55b19020277b68f13daf5464a252",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
     "text": "• The need to create a level playing field that values reliability and energy security"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "ae74ee3ddcecd2ffb75672d469c80a0e",
+    "type": "ListItem",
+    "element_id": "d2bff80ca96af626923ef67c2a927f2f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
     "text": "• The need for harmony in the nuclear regulatory environment"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "fc3dce875be553fa0f1e9200bc4c80c8",
+    "type": "ListItem",
+    "element_id": "93e7dedc9d334470067ad2de1f9ee788",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "• The need for a holistic safety paradigm for the whole electricity system."
+    "text": "The need for a holistic safety paradigm for the whole electricity system."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "4355a46b19d348dc2f57c046f8ef63d4",
+    "type": "Footer",
+    "element_id": "0fc5165686190ca845407c03ad4572e8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
     "text": "1"
   },
   {
-    "type": "Title",
-    "element_id": "257fa04b9d79fc46da551d720411595a",
+    "type": "Header",
+    "element_id": "5749fdd6b67e4204b3047ba33540bc87",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 4
+    },
+    "text": "2"
+  },
+  {
+    "type": "Title",
+    "element_id": "3b5a5220792fcbec0b59d2088bc4c9ab",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -151,109 +325,35 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ca18f74506ddc1bca89179259f3ff4cb",
+    "element_id": "542bf86ba9bab1357e3aaa0b4ae0ff70",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
     "text": "Electricity is central to modern life – it powers our daily lives, as well as our dreams and ambitions. Demand has grown steadily for more than 100 years, and will continue to do so as many parts of the world continue to develop, and electrification takes a central role in efforts to decarbonize (Figure 1). With nearly a billion people around the world still living in the dark, without access to electricity, humanity has a responsibility to learn from the past - everyone has the right to enjoy a modern lifestyle in a way that does not cause harm to people or the planet."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "77c961beec46d91dd31212c47dfbaa9d",
+    "type": "Title",
+    "element_id": "563a2980d46c81119e1d7d952b375a41",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "45,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "8c303ab9b3fb12c855d67bc670841299",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Marine"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "3034a0577f73a1b5076e3a6e4e209252",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "40,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "8635a2005fe7dc2491c5d0f888d863ca",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " CSP"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "68cdfe583ab8752b697feb4b762c17eb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "35,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "3c01e983d1c0b6e1f7e5009554c15bfc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Solar PV"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "24fda359cfaadc2b4765e4d96cc580bd",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Geothermal"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ba980165f95d647935bbb000d0a9bf57",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "30,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b4686d8980288cc18e25dd88862018fb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Wind"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "62f86400f0347bdbe07e40c3063fd3bb",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -261,129 +361,53 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "e5a636fefc8e5e0d9483c6ffdfe6fa2d",
+    "element_id": "b4af08fb653ae7dea99f3a48c2ff7f5d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "25,000"
+    "text": "45,000"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "6a5e5dc7ebe4536d6c4a8358ceae6b52",
+    "type": "Image",
+    "element_id": "27a3cde643219ef7662f032684e06bd4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": " Bioenergy"
+    "text": "  Marine    CSP  40,000    Solar PV  35,000    Geothermal  30,000    Wind    Bioenergy  25,000    Hydro  20,000    Nuclear  15,000    Gas  10,000    Oil    Coal  5,000  0 "
   },
   {
     "type": "UncategorizedText",
-    "element_id": "6ea17978f8b5646d74e3640938409b0b",
+    "element_id": "81a83544cf93c245178cbc1620030f11",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "20,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "f3869bfc418f6b38b211f34af7bbbee9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Hydro"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b1dad634c86b14162ce382a54d48adc4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Nuclear"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "f6e7c5652bc0607d83b62e5075496c9a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "15,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "17c583e364eb53f4713ee1b11c10eae5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Gas"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ebf087fd620248057b4b331f6ff855ce",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "10,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "79615d00dc2ebc2416ace53ae6e85050",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Oil"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "47af55050b9d14f32f04c4a2745263ae",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "5,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6ffe26de44efed734882cd46e5aec24e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " Coal"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "9a271f2a916b0b6ee6cecb2426f0b320",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "0"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "1d8fa3c8ab49d50b30fccbbd901735d5",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -391,9 +415,17 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "9aa2c4daec913f415a0d0e1cde7b9c2f",
+    "element_id": "7d12ba56e9f8b3dc64f77c87318c4f37",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -401,9 +433,17 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "6961729a2feb7f501ade1082297c00ff",
+    "element_id": "73a2af8864fc500fa49048bf3003776c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -411,9 +451,17 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "c5aeba7f7b48e1efc2d73205a4e08c18",
+    "element_id": "8e1f192fe25ad49be764c3f55c68beb3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -421,19 +469,35 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "1633715e5907ba95a1e67918b4489b36",
+    "element_id": "df34d853f2f2f1f14b92359f695426dc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
     "text": "2040"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "578e73d091a9463a76ea7502a6a92503",
+    "type": "FigureCaption",
+    "element_id": "befa378e171bb64fdf68091abf3501bd",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -441,9 +505,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "427b54db6e4b434f92954bc67db93473",
+    "element_id": "2ab7465d2e5fa24b6724907f968cd4aa",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -451,109 +523,71 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "92f6fd6a561b87154049d083b93b611d",
+    "element_id": "76b7731e68f6ef2b8958ea4f1ec351af",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
     "text": "Despite the very considerable efforts to decarbonize the economy and the countless billions spent, our world remains heavily addicted to fossil fuels. The trend is clear – instead of reducing our dependence on fossil fuels, we are increasing it (Figure 2). As a direct result, greenhouse gas emissions continue to rise when they need to drastically fall."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "1d4566e4a45f0c4aba925b605c5c29a9",
+    "type": "Title",
+    "element_id": "a5d60fc4dbbd484074d8389c35703cf7",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "30,000,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "57e953601d50f87b811dd3a1176459b8",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": " High-carbon  Low-carbon"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "0c2e76ebc12acb57a99a59afdd10879b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "25,000,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6828f10a9484cfe05e08bf937b86c89c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "20,000,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "f6c1b0e99bd5f8d7ca3c879d69bca871",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
     "text": "h W G"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "565954b7c6b77d26b0456d4ed8086bae",
+    "type": "Image",
+    "element_id": "152a83b89c4b24f7f3db154d0c3ddc1b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "15,000,000"
+    "text": "30,000,000    High-carbon    Low-carbon  25,000,000  20,000,000  15,000,000  10,000,000  5,000,000  0 "
   },
   {
     "type": "UncategorizedText",
-    "element_id": "1a7fe6dffe8b66636f379b39794ba14e",
+    "element_id": "a7be8e1fe282a37cd666e0632b17d933",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "10,000,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d8f4b4bcada620f4828adc345cf1ae29",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "5,000,000"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "9a271f2a916b0b6ee6cecb2426f0b320",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "0"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "2ab513b1608dd3d214980f32cdf095ca",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -561,9 +595,17 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "bb9648cea301887e4a8bc2e6333ffcb0",
+    "element_id": "e78f27ab3ef177a9926e6b90e572b985",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -571,9 +613,17 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "1d8fa3c8ab49d50b30fccbbd901735d5",
+    "element_id": "81a83544cf93c245178cbc1620030f11",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -581,9 +631,17 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "f60bec30ad92f8e51260778359ffd843",
+    "element_id": "a20a2b7bb0842d5cf8a0c06c626421fd",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -591,9 +649,17 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "9aa2c4daec913f415a0d0e1cde7b9c2f",
+    "element_id": "7d12ba56e9f8b3dc64f77c87318c4f37",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -601,39 +667,53 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "48cb883c2faf5ca5980c763e15707347",
+    "element_id": "a85e9db4851f7cd3efb8db7bf69a07cf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
     "text": "2015"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "aa04bda99d06997f39a4b613c2c62be5",
+    "type": "FigureCaption",
+    "element_id": "e8facf920827e7bb6c64b065223f7c1e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
     "text": "Figure 2. Worldwide electricity generation by fuel (1990-2016)ii"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "53c234e5e8472b6ac51c1ae1cab3fe06",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "2"
-  },
-  {
     "type": "NarrativeText",
-    "element_id": "d841776bdfaae69274a3c8b898021653",
+    "element_id": "5f0bfed5240c4c0d50a2b4d2b56d8e6f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -641,9 +721,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "10a72512425bbe7a4cdd6529b0337d90",
+    "element_id": "a58efe5247845dc40b0a648f1761ad5c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -651,39 +739,71 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "030d3154a592248139651c5f8fbef1d5",
+    "element_id": "e81223a218fb419ef983253212ce7e22",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
     "text": "Modern society is dependent on the steady supply of electricity, every day of the year – regardless of weather, season or time of day – and nuclear energy is particularly well-suited to providing this service. Given that the majority of baseload supply is fossil-based, an increase in the use of nuclear energy would result in a rapid decarbonization of the electricity system. The International Energy Agency’s (IEA) recent report III on nuclear energy highlighted the importance of dependable baseload electricity generators and the need to properly value and compensate them for the electricity security and reliability services they provide."
   },
   {
-    "type": "FigureCaption",
-    "element_id": "87289b7325e8d8052da6f0182799e2a3",
+    "type": "Footer",
+    "element_id": "70d25f2c1428def16804c3b346ee8d13",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "ee Nie"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "1121cfccd5913f0a63fec40a6ffd44ea",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
     "text": "3"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "a53cecd93ffb9ec731b7974f1805e924",
+    "type": "Footer",
+    "element_id": "0b0bd7ca2acebad288fe09c9d9595f1f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "4"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "6db8df46f6adb58be10bf8d88e53d42e",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -691,9 +811,17 @@
   },
   {
     "type": "Title",
-    "element_id": "899a2c517ba69726f3808d66f442e439",
+    "element_id": "d2b22b470eb3ab5829c6e3efb55e49a4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -701,9 +829,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a8c17b6aa3cad915f2f7e0126706c2f5",
+    "element_id": "fde5c605b758e800b43c8e5844d0eb39",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -711,9 +847,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7562e707e991f1fb634fff41f2cae0e4",
+    "element_id": "c262b08f408059316ea2bfe106d4996b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -721,9 +865,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1cde21cc10aa769a17ca11aa1e10823e",
+    "element_id": "45a4d31b0300260dec8f3f86ec2ba0ad",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -731,179 +883,71 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "af2424b7ec665072a2ee0bdcd901e244",
+    "element_id": "c550d4a50eaa40717f1d857bce491a81",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
     "text": "In regard to the need for a level playing field, we see that many of the world’s electricity markets operate in an unsustainable fashion, dominated by short-term thinking. Electricity supply which is affordable, reliable and available 24/7 generates broad societal benefits, and as seen in Figure 3, nuclear is one of the most affordable electricity sources."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "7de1555df0c2700329e815b93b32c571",
+    "type": "Title",
+    "element_id": "e8dbac2cdc67e714e99baa9c0f6a54b9",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 6
-    },
-    "text": "4"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "f807fe6dc767be2e7021d41540114b33",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "300"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "e4355a05c3a4b156700c4a1a32867d8f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "250"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c11e3f4837efde2441e23a7b9da02131",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "200"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "a43ed83561fcd3fd0e8ebc26b75c03a2",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
     "text": "h W M / $"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "9a7f91a861f59c0cb27f0af9323d158f",
+    "type": "Image",
+    "element_id": "196f551acb55f0373a9d7fac6c9dbeab",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
-    "text": "150"
+    "text": "300  250  200  150  100  50  0  O nshore Wind  Offshore Wind  N uclear  m ercial Photovoltaic  C oal  C C G T  C o m "
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "eea8254c7500ba3de996aa8ad6af3991",
+    "type": "FigureCaption",
+    "element_id": "c23c8bcefbe3c4d1e5b55df29b717fc1",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "100"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "7ea9844ae84eccbf55e8330640865e36",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "50"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "9a271f2a916b0b6ee6cecb2426f0b320",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "0"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "f0e87c8870a65c1dac86b290c3ad79ad",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "C o m"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "a9ca20a4166082413bf2687661c607ab",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "m ercial Photovoltaic"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "67ce702fad605ee58ad463476f7bcb16",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "O nshore Wind"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "fdd9c7bea4376190ba61f9a9e1eafb1f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Offshore Wind"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6eb2aff0d17ccc5c242423c49cd5b462",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "N uclear"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "1762dfdd3cbb26539145bea0b3bba9e3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "C C G T"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "98ba3127e4028e41ec82ece31d2227ff",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "C oal"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "a5846cd18e790db780cc03f9e5f63278",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -911,9 +955,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "9ad4cf48d0b9d0bbfd257214f3d050dd",
+    "element_id": "2e16c4200e350d951a1911e164cc7a7d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -921,9 +973,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "13ff2375260e277c2dfbc8826aa50a65",
+    "element_id": "5b702c79a0deb88609b6a9b76a8ff4b1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -931,9 +991,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "4b3dad9b769c100e89b2c082e7d9e13e",
+    "element_id": "34e41476b3562e66cc04edd8a2ba4eb7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -941,29 +1009,71 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "0ce74aa5e786157de72d5ae801d86cc4",
+    "element_id": "5e1e7b461ccf41232b3daf5b54d59399",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
     "text": "The International Atomic Energy Agency (IAEA) has highlighted the importance of addressing this issue, concluding that the lack of regulatory harmony ‘…causes many drawbacks for the entire nuclear industry, including developers, vendors, operators and even regulators themselves…This results in increased costs and reduced predictability in project execution’. vii It is therefore crucial that we harmonize the regulatory process to address these weaknesses, and avoid unnecessary duplication and inconsistencies."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "f0b5c2c2211c8d67ed15e75e656c7862",
+    "type": "Footer",
+    "element_id": "aec400e3e65dc09b31513694bc9893b9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
     "text": "5"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "2cf9c478a20b21f5792941a179d926e9",
+    "type": "Footer",
+    "element_id": "29399af043bbf069ecfd1abdcaee4b15",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "6"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "2fb9de7ce072904e3da50fc724ce8b12",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -971,29 +1081,89 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "251afbc1fe2e0118f21efcd99a65edef",
+    "element_id": "dbae772db29058a88f9bd830e957c695",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
     "text": "140"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "e98b5c1980fd411c375277e496c5bf24",
+    "type": "Image",
+    "element_id": "577fd212dac38df299e478d6b7ce5d74",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "120  120  99.5  100  71.9  80  60  40  20  8.5  1.78  0.245  <0.01  0  Offshore wind  O nshore wind (G erm any)  C oal  Oil  N atural gas  N uclear*  S olar P V  (U K) "
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e11247712b3df61756970b45f019ad68",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
     "text": "r a e y"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "497cd82cc3e05a43ac050df1935d3b10",
+    "type": "Title",
+    "element_id": "3f79bb7b435b05321651daefd374cdc6",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "e"
+  },
+  {
+    "type": "Title",
+    "element_id": "f83714d89302473e0e4f5399bd50e7a9",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -1001,259 +1171,71 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "786a068208b19d214a1e80ef16958645",
+    "element_id": "380918b946a526640a40df5dced65167",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "="
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f9bb49945b60897227abdd75b5f8d39b",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
     "text": "r e p s e i t i l"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "fb67f6e44a2659caaa0e28f08280eb3c",
+    "type": "Title",
+    "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
     "text": "a t a F"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "a2bbdb2de53523b8099b37013f251546",
+    "type": "FigureCaption",
+    "element_id": "c12be3875fcb0e34681e80c68ced624f",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "e"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "97b912eb4a61df5f806ca6239dde3e1a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "120"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "eea8254c7500ba3de996aa8ad6af3991",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "100"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "95aebc97bc646c67fdcd923a5965b001",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "80"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "95cf32708a31caa478a0e9141103ac56",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "60"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "673650f936cb3b0a2f93ce09d81be107",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "40"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "5378796307535df3ec8d8b15a2e2dc56",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "20"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "9a271f2a916b0b6ee6cecb2426f0b320",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "0"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "97b912eb4a61df5f806ca6239dde3e1a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "120"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "98ba3127e4028e41ec82ece31d2227ff",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "C oal"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c0971c6577849aec2c2952e231a7df2d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "99.5"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4de0cf52492346845f7e8abfe590f19a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "Oil"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "325eaeb55b0a5f734132cd4762be703b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "71.9"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "e942714ca8bde7c2efa0a45180d3bcb0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "N atural gas"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "fcad23b33ff09a15b2bb9173b83240b6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "8.5"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "593ee7fbbc541c411bbecfec38b4592a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "1.78"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "bccc48f4114eeff10d7a7172184e9e20",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "Offshore wind"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "3f2b409fe77e145f11bb40601dd7fbc6",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "(U K)"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "015245e79f7a8e3c76aaa007096e495e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "O nshore wind (G erm any)"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "87bab34064761c6eac995b7feca9a87c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "0.245"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "3edd8937a7bab25176f1685d7dbd0ee7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "S olar P V"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "93d485bc75a984e0b6600c7735eb7e91",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "<0.01"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "df5a848ad391f40be143b3f9ffe2fea5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "N uclear*"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "445676822969fb5177c0081d07449a70",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -1261,9 +1243,17 @@
   },
   {
     "type": "Title",
-    "element_id": "98d83a387e3ac2261daaf8d936bf3e27",
+    "element_id": "3472694e01617965f38369c536bdc070",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -1271,9 +1261,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1119369ba9a68924c64155762de72d8e",
+    "element_id": "49b5bd9868a164cf35b10cbb343ddba0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -1281,119 +1279,17 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "eea8254c7500ba3de996aa8ad6af3991",
+    "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "100"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4393447bd3c1d55ea7f97417ecb1b36a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "90"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6ffe26de44efed734882cd46e5aec24e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": " Coal"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d5a5a11f0c001fb873af2d6486e2cee8",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": " Gas/Oil"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "95aebc97bc646c67fdcd923a5965b001",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "80"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "786bab3ef1ef6eb1fcdc0fa23550979a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": " Biofuels/Waste"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6442bc26a7c562f5afe6467dab36365c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "70"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "031c321d624bf50687112304934fa5eb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": " Wind/Solar"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "95cf32708a31caa478a0e9141103ac56",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "60"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "f3869bfc418f6b38b211f34af7bbbee9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": " Hydro"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b1dad634c86b14162ce382a54d48adc4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": " Nuclear"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d14506655223461adf0b7bb605d29ca9",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -1401,299 +1297,197 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "7ea9844ae84eccbf55e8330640865e36",
+    "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "50"
+    "text": "100"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "673650f936cb3b0a2f93ce09d81be107",
+    "type": "Image",
+    "element_id": "1459b67becac6e70efecfcbc9312d3f0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
-    "text": "40"
+    "text": "  Coal  90    Gas/Oil  80    Biofuels/Waste    Wind/Solar  70    Hydro  60    Nuclear  50  40  30  20  10 "
   },
   {
     "type": "UncategorizedText",
-    "element_id": "f4ccd05b3271c386ee55d9876c745001",
+    "element_id": "5feceb66ffc86f38d952786c6d696c79",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "30"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "5378796307535df3ec8d8b15a2e2dc56",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "20"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "917df3320d778ddbaa5c5c7742bc4046",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "10"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "9a271f2a916b0b6ee6cecb2426f0b320",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
     "text": "0"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "33da389e078bb8a1bb99d7d9f36dbd7b",
+    "type": "Title",
+    "element_id": "7a1ca4ef7515f7276bae7230545829c2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
     "text": "France"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "1db294c7364fc17dc2ee53fc65525364",
+    "type": "FigureCaption",
+    "element_id": "e720e656050a5b95706b7ffefb3ff505",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
     "text": "Sweden"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "329ce2a3cc4df2642ca6c34007751c48",
+    "type": "FigureCaption",
+    "element_id": "0b7637d5dd3c0e09980fb400ebbdcf72",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
     "text": "Switzerland"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "fd1b6d076800203a708efab109d9393a",
+    "type": "FigureCaption",
+    "element_id": "f18421197d4b12d362e1ededa3f3145f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
     "text": "Figure 5. The importance of nuclear in ensuring clean energy systems in France, Sweden and Switzerland ix"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "06e9d52c1720fca412803e3b07c4b228",
+    "type": "Image",
+    "element_id": "ff963f0df99d82f7c343649121217117",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "6"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ab8e9a58c47abe1aeff8ae620a0ed614",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "600"
+    "text": "600    Non-hydro  500     ren. & waste    Nuclear  400    Natural gas  300    Hydro    Oil  200    Coal  100  0 "
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "792376c209f338959be4cf00c54dbf82",
+    "type": "Title",
+    "element_id": "563a2980d46c81119e1d7d952b375a41",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "500"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ef45d070844e892dd7274e2b58d343ea",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": " Non-hydro"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "cc40c9143c9f0c501888494eb267ebaa",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "ren. & waste"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "e4df891c484d7abb985dadf539fa1883",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "400"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b1dad634c86b14162ce382a54d48adc4",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": " Nuclear"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "62f86400f0347bdbe07e40c3063fd3bb",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
     "text": "h W T"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "f807fe6dc767be2e7021d41540114b33",
+    "type": "FigureCaption",
+    "element_id": "3d193aba53b016527c3f658cdd6d99e2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "300"
+    "text": "1974 1980 1985 1990 1995 2000 2005 2010 2017"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "a9841ec903dc8bcd39950abd149df9dd",
+    "type": "FigureCaption",
+    "element_id": "13d3d626e6be5671aed83c1270851087",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": " Natural gas"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "f3869bfc418f6b38b211f34af7bbbee9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": " Hydro"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c11e3f4837efde2441e23a7b9da02131",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "200"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "79615d00dc2ebc2416ace53ae6e85050",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": " Oil"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6ffe26de44efed734882cd46e5aec24e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": " Coal"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "eea8254c7500ba3de996aa8ad6af3991",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "100"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "9a271f2a916b0b6ee6cecb2426f0b320",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "0"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "8ea1b12682d5b847dcb49dca068d07fb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "1974"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "36d4b9120cc6b50600aa19f4b5d273f2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "1980 1985 1990 1995 2000 2005 2010"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "25f91192af970b5bd535ae379e4294e3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 9
-    },
-    "text": "2017"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "3b5b3755bac62d7f53eb84cadc34c528",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -1701,29 +1495,53 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "4f5cc927b953f3c49c562a22c88f863f",
+    "element_id": "c671a138a73229210d751a2857ff503d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
     "text": "The incredible energy density of uranium means that just a few kilos is all that is required to provide one person with enough power for a lifetime. Uranium is abundant and can be found in many parts of the world, as well as in seawater. Furthermore, spent nuclear fuel is well managed and can in most cases be recycled to produce even more power. By using nuclear energy, countries are able to take charge of their own destinies by decreasing their reliance on imported energy – enhanced independence and security in uncertain times."
   },
   {
-    "type": "NarrativeText",
-    "element_id": "de916089e4fe96d481dbdbb9499694e8",
+    "type": "Image",
+    "element_id": "2f701c7144dd1588cdb70e2a188c1418",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
-    "text": "One fuel pellet contains as much energy as a tonne of coal"
+    "text": "One fuel pellet contains as much energy as a tonne of coal "
   },
   {
     "type": "NarrativeText",
-    "element_id": "0e28734a89e6f2473c6bbd5c1bdaf50e",
+    "element_id": "a0fef2750bd4fbae8e9e28211ceea788",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -1731,29 +1549,71 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "81a65c45b597c6647c9f984f7b2e3554",
+    "element_id": "37eafc6215975a858fa506f14ea98982",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
     "text": "Nuclear energy offers a multitude of services beyond just electricity. With nuclear, we can decarbonize the way we heat our homes, provide process heat for industry, and ensure access to clean water. As freshwater supplies come under increasing pressure worldwide, nuclear reactors can provide desalination, ensuring a reliable flow of fresh drinking water in areas where it is scarce."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "10159baf262b43a92d95db59dae1f72c",
+    "type": "Header",
+    "element_id": "c69b33366ea0bcfb6c30799a4100c6a0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
     "text": "7"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "4c23c5c4e459d5f3f6f62cc6a06a816a",
+    "type": "Footer",
+    "element_id": "671a02117af87c2371462f800d856f15",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "8"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c948e12a05e40ac00f3e5321f6ae7742",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1761,9 +1621,17 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "cd055b546424c5003939bb047a56abf0",
+    "element_id": "0748d61bf0b14f9f30e6cfbfb57034d4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1771,109 +1639,233 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a654080ea22f70c397bca52fee82b82f",
+    "element_id": "395face9e1f924d1f2a0d746f317c5b9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
     "text": "Nuclear power is the silent giant of today’s energy system – it runs quietly in the background, capable of delivering immense amounts of power, regardless of weather or season, allowing us to focus on everything else in life. It is a technology that is available now, and can be expanded quickly across the world to help us solve some of the most defining challenges we face. Nuclear energy holds the potential to herald a new, cleaner and truly sustainable world – enabling us to pass on a cleaner planet to our children."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "e56261e0bd30965b8e68ed2abb15b141",
+    "type": "Title",
+    "element_id": "a0d7deccf89e42d02a9d66b0c1889689",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
     "text": "References"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "b2c0b65d06ddfd791a02b4247b19dae3",
+    "type": "Title",
+    "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
     "text": "i"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "3835a774ed6bc25ea5d9285964eafab5",
+    "type": "Title",
+    "element_id": "5d7f49449ab22deac22d767b89549c55",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
     "text": "ii"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "933bb5199e0009b0cf5982dc70990cd5",
+    "type": "Title",
+    "element_id": "f5557d4fcf727a981a3c315aca733eef",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
     "text": "iii"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "71a05b044a7f7d080086d821e9e62692",
+    "type": "Title",
+    "element_id": "0ab306823035661bb8dba21cc2535231",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
     "text": "iv"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "24264aa519b9e325bd189fe67fa3ff8d",
+    "type": "Title",
+    "element_id": "d3fc2842ddfad4c8d3859f84d4439bfd",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "Vv"
+  },
+  {
+    "type": "Title",
+    "element_id": "4c94485e0c21ae6c41ce1dfe7b6bface",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
     "text": "v"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "c659791e303eb22c5c5d56ecc0b87608",
+    "type": "Title",
+    "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
     "text": "vi"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "3f40bf749b93f60d4fe27695dbcc569e",
+    "type": "Title",
+    "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "vi"
+  },
+  {
+    "type": "Title",
+    "element_id": "c1d2906220d1eef1b17422b7132872a8",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
     "text": "vii"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "228e41abf4891bbc647d29d33bed30dd",
+    "type": "NarrativeText",
+    "element_id": "de72de35f0092bdd3107011f3be18dc0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
     "text": "International Energy Agency (2018), World Energy Outlook 2018. Data accessed from https://www.iea.org/weo/ – Based on the New Policies Scenario, which incorporates existing energy policies as well as an assessment of the results likely to stem from the implementation of announced policy intentions – with visual modification by World Nuclear Association. International Energy Agency (n.d.), Statistics. Accessed from: https://www.iea.org/statistics/?country=WORLD&year=2016&category=Electricity&indicator=ElecGenByFuel&mode =chart&dataTable=ELECTRICITYANDHEAT – with visual modifications by World Nuclear Association. International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ Intergovernmental Panel on Climate Change (2018), Special Report on Global Warming of 1.5 °C. Accessed from: https://www.ipcc.ch/sr15/ International Energy Agency (2019), Nuclear Power in a Clean Energy System. Accessed from: https://www.iea.org/ publications/nuclear/ International Energy Agency & OECD Nuclear Energy Agency (2015), Projected Costs of generating Electricity – 2015 Edition. Accessed from: https://www.oecd-nea.org/ndd/pubs/2015/7057-proj-costs-electricity-2015.pdf International Atomic Energy Agency (2015), Technical challenges in the application and licensing of digital instrumentation and control systems in nuclear power plants. Accessed from: https://www-pub.iaea.org/MTCD/ Publications/PDF/P1695_web.pdf"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "825846e93b6b75f507306036dda41b1f",
+    "type": "ListItem",
+    "element_id": "dcf0fcce0dd00a5335e8e42658aacc75",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1881,89 +1873,143 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "0d95b690d4fdbe263a23c37bd2a5c267",
+    "element_id": "5897aff759a5cc8d94710101c73af296",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "ix"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "0d2d11c63da028b3edee3027aed50c81",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "x"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "2539fec681f2aadd21c4bfceb0763445",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
     "text": "and NRC SOARCA study 2015 International Energy Agency (2018), Electricity Information 2018 https://webstore.iea.org/electricity-information-2018-overview Ibid."
   },
   {
-    "type": "NarrativeText",
-    "element_id": "ab9c4428d3394fd230d7636bea5030d5",
+    "type": "Title",
+    "element_id": "ed171375d0bf81eaa5512140c3a29b8f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "ix"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "0b9ea5c0804f5a369317ffcf363badf3",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "x"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c2fb0a6722612bb6055e56fea799a81b",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
     "text": "Photo credits: Front cover: Mike Baird; page 2: Vattenfall; page 4: Getty Images; page 5: Adobe Stock; page 6: Rosatom; page 8: Dean Calma, IAEA; page 10: Kazatomprom; page 11: EDF."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "aa67a169b0bba217aa0aa88a65346920",
+    "type": "NarrativeText",
+    "element_id": "06d4880e4a23a9520618a50bfbbdf940",
     "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "8"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c48603fd38d3449d3afcd2dc18903083",
-    "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 12
     },
     "text": "World Nuclear Association Tower House 10 Southampton Street London WC2E 7HA United Kingdom"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "821daa4396c0087d9d5ee9240bc5c85c",
+    "type": "NarrativeText",
+    "element_id": "8ff63a0f4af4de37eff90952d575f76d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 12
     },
     "text": "+44 (0)20 7451 1520 www.world-nuclear.org info@world-nuclear.org"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "705da4db5e220010ddfd03d9452855e4",
+    "type": "NarrativeText",
+    "element_id": "4ac69378210b56e0c98be2d41e374769",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 12
     },
     "text": "World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "de49f1c955d7c8a4d1d6d261c1cf21ba",
+    "type": "NarrativeText",
+    "element_id": "3df4f87a759f8e1a2e3ab0a186ac16ef",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": 177372694731575984083482917563244941766,
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
       "filetype": "application/pdf",
       "page_number": 12
     },

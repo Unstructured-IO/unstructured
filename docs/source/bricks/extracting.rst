@@ -21,7 +21,7 @@ object from the input string.
   # Returns datetime.datetime(2021, 3, 26, 11, 4, 9, tzinfo=datetime.timezone(datetime.timedelta(seconds=43200)))
   extract_datetimetz(text)
 
-For more information about the ``extract_datetimetz`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+For more information about the ``extract_datetimetz`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`__.
 
 
 ``extract_email_address``
@@ -40,7 +40,7 @@ addresses in the input string.
   # Returns "['me@email.com', 'you@email.com']"
   extract_email_address(text)
 
-For more information about the ``extract_email_address`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+For more information about the ``extract_email_address`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`__.
 
 
 ``extract_ip_address``
@@ -59,7 +59,7 @@ returns a list of all IP address in input string.
   # Returns "['ba23::58b5:2236:45g2:88h2', '10.0.2.01']"
   extract_ip_address(text)
 
-For more information about the ``extract_ip_address`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+For more information about the ``extract_ip_address`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`__.
 
 
 ``extract_ip_address_name``
@@ -80,7 +80,7 @@ IP addresses in the input string.
   # Returns "['ABC.DEF.local', 'ABC.DEF.local2']"
   extract_ip_address_name(text)
 
-For more information about the ``extract_ip_address_name`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+For more information about the ``extract_ip_address_name`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`__.
 
 
 ``extract_mapi_id``
@@ -101,7 +101,7 @@ containing the ``mapi id`` in the input string.
   # Returns "['32.88.5467.123']"
   extract_mapi_id(text)
 
-For more information about the ``extract_mapi_id`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+For more information about the ``extract_mapi_id`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`__.
 
 
 ``extract_ordered_bullets``
@@ -121,7 +121,7 @@ Examples:
   # Returns ("a", "1", None)
   extract_ordered_bullets("a.1 This is a very important point")
 
-For more information about the ``extract_ordered_bullets`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+For more information about the ``extract_ordered_bullets`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`__.
 
 
 ``extract_text_after``
@@ -146,7 +146,7 @@ Examples:
   # Returns "Look at me, I'm flying!"
   extract_text_after(text, r"SPEAKER \d{1}:")
 
-For more information about the ``extract_text_after`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+For more information about the ``extract_text_after`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`__.
 
 
 ``extract_text_before``
@@ -171,7 +171,7 @@ Examples:
   # Returns "Here I am!"
   extract_text_before(text, r"STOP")
 
-For more information about the ``extract_text_before`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+For more information about the ``extract_text_before`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`__.
 
 
 ``extract_us_phone_number``
@@ -188,7 +188,7 @@ Examples:
   # Returns "215-867-5309"
   extract_us_phone_number("Phone number: 215-867-5309")
 
-For more information about the ``extract_us_phone_number`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`_.
+For more information about the ``extract_us_phone_number`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/extract.py>`__.
 
 
 ``group_broken_paragraphs``
@@ -233,7 +233,7 @@ Examples:
 
   group_broken_paragraphs(text, paragraph_split=para_split_re)
 
-For more information about the ``group_broken_paragraphs`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``group_broken_paragraphs`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`__.
 
 
 ``remove_punctuation``
@@ -250,7 +250,7 @@ Examples:
   # Returns "A lovely quote"
   remove_punctuation("“A lovely quote!”")
 
-For more information about the ``remove_punctuation`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``remove_punctuation`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`__.
 
 
 ``replace_unicode_quotes``
@@ -270,7 +270,7 @@ Examples:
   # Returns ""‘A lovely quote!’"
   replace_unicode_characters("\x91A lovely quote!\x92")
 
-For more information about the ``replace_unicode_quotes`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``replace_unicode_quotes`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`__.
 
 
 ``translate_text``
@@ -303,4 +303,4 @@ Examples:
   # Output is "I can also translate Russian!"
   translate_text("Я тоже можно переводать русский язык!", "ru", "en")
 
-For more information about the ``translate_text`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/translate.py>`_.
+For more information about the ``translate_text`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/translate.py>`__.

@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-FROM quay.io/unstructured-io/base-images:rocky9.2-2 as base
+FROM quay.io/unstructured-io/base-images:rocky9.2-5@sha256:1721c3b0711e4e90587e3b4917f1b616e4603ddf5b4986bfaa68d02d82a13aba as base
 
 # NOTE(crag): NB_USER ARG for mybinder.org compat:
 #             https://mybinder.readthedocs.io/en/latest/tutorials/dockerfile.html
@@ -67,6 +67,6 @@ USER ${NB_USER}
 COPY example-docs example-docs
 COPY unstructured unstructured
 
-RUN python3.10 -c "from unstructured.ingest.doc_processor.generalized import initialize; initialize()"
+RUN python3.10 -c "from unstructured.ingest.pipeline.initialize import initialize; initialize()"
 
 CMD ["/bin/bash"]

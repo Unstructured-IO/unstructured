@@ -1,7 +1,8 @@
 import os
 import tempfile
-from typing import IO, List, Optional
+from typing import IO, Any, List, Optional
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
@@ -15,6 +16,7 @@ from unstructured.partition.docx import partition_docx
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.DOC)
+@add_chunking_strategy()
 def partition_doc(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -23,7 +25,10 @@ def partition_doc(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     libre_office_filter: Optional[str] = "MS Word 2007 XML",
-    **kwargs,
+    chunking_strategy: Optional[str] = None,
+    languages: Optional[List[str]] = ["auto"],
+    detect_language_per_element: bool = False,
+    **kwargs: Any,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
 
@@ -39,6 +44,13 @@ def partition_doc(
         The filter to use when coverting to .doc. The default is the
         filter that is required when using LibreOffice7. Pass in None
         if you do not want to apply any filter.
+    languages
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     # Verify that only one of the arguments was provided
     if filename is None:
@@ -77,6 +89,8 @@ def partition_doc(
             include_page_breaks=include_page_breaks,
             include_metadata=include_metadata,
             metadata_last_modified=metadata_last_modified or last_modification_date,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
         )
         # remove tmp.name from filename if parsing file
         if file:

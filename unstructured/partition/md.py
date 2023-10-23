@@ -3,6 +3,7 @@ from typing import IO, List, Optional, Union
 import markdown
 import requests
 
+from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.documents.xml import VALID_PARSERS
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
@@ -20,8 +21,12 @@ def optional_decode(contents: Union[str, bytes]) -> str:
     return contents
 
 
+DETECTION_ORIGIN: str = "md"
+
+
 @process_metadata()
 @add_metadata_with_filetype(FileType.MD)
+@add_chunking_strategy()
 def partition_md(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -32,6 +37,9 @@ def partition_md(
     parser: VALID_PARSERS = None,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
+    languages: Optional[List[str]] = ["auto"],
+    detect_language_per_element: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions a markdown file into its constituent elements
@@ -54,10 +62,18 @@ def partition_md(
         The parser to use for parsing the markdown document. If None, default parser will be used.
     metadata_last_modified
         The last modified date for the document.
+    languages
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
+        Additional Parameters:
+            detect_language_per_element
+                Detect language per element instead of at the document level.
     """
     # Verify that only one of the arguments was provided
     if text is None:
         text = ""
+
     exactly_one(filename=filename, file=file, text=text, url=url)
 
     last_modification_date = None
@@ -90,6 +106,10 @@ def partition_md(
         include_page_breaks=include_page_breaks,
         include_metadata=include_metadata,
         parser=parser,
+        source_format="md",
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified or last_modification_date,
+        languages=languages,
+        detect_language_per_element=detect_language_per_element,
+        detection_origin=DETECTION_ORIGIN,
     )
