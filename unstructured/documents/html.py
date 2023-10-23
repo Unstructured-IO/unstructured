@@ -74,43 +74,29 @@ class TagsMixin:
 class HTMLText(TagsMixin, Text):
     """Text with tag information."""
 
-    pass
-
 
 class HTMLAddress(TagsMixin, Address):
     """Address with tag information."""
-
-    pass
 
 
 class HTMLEmailAddress(TagsMixin, EmailAddress):
     """EmailAddress with tag information"""
 
-    pass
-
 
 class HTMLTitle(TagsMixin, Title):
     """Title with tag information."""
-
-    pass
 
 
 class HTMLNarrativeText(TagsMixin, NarrativeText):
     """NarrativeText with tag information."""
 
-    pass
-
 
 class HTMLListItem(TagsMixin, ListItem):
     """NarrativeText with tag information."""
 
-    pass
-
 
 class HTMLTable(TagsMixin, Table):
     """NarrativeText with tag information"""
-
-    pass
 
 
 class HTMLDocument(XMLDocument):
@@ -509,7 +495,7 @@ def _process_leaf_table_item(
             rows = tag_elem.findall("tr")
             if not rows:
                 body = tag_elem.find("tbody")
-                rows = body.findall("tr")
+                rows = body.findall("tr") if body else []
             if len(rows) > 0:
                 table_data = [list(row.itertext()) for row in rows]
                 html_table = tabulate(table_data, tablefmt="html")

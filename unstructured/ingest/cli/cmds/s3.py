@@ -11,10 +11,16 @@ from unstructured.ingest.cli.interfaces import (
     CliFilesStorageConfig,
     CliMixin,
 )
-from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
+from unstructured.ingest.cli.utils import (
+    Group,
+    add_options,
+    conform_click_options,
+    extract_configs,
+    orchestrate_runner,
+)
 from unstructured.ingest.interfaces import BaseConfig, FsspecConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import FsspecBaseRunner, S3Runner, runner_map
+from unstructured.ingest.runner import S3Runner
 
 
 @dataclass
@@ -23,7 +29,7 @@ class S3CliConfig(BaseConfig, CliMixin):
     endpoint_url: t.Optional[str] = None
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--anonymous"],
@@ -39,7 +45,7 @@ class S3CliConfig(BaseConfig, CliMixin):
                 "connecting to non-AWS S3 buckets.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="s3", invoke_without_command=True, cls=Group)
@@ -85,22 +91,12 @@ def s3_dest(ctx: click.Context, **options):
     log_options(parent_options, verbose=verbose)
     log_options(options, verbose=verbose)
     try:
-        configs = extract_configs(options, validate=[S3CliConfig])
-        runner_cls = runner_map[source_cmd]
-        configs = extract_configs(
-            options,
-            validate=[S3CliConfig],
-            extras={"fsspec_config": FsspecConfig}
-            if issubclass(runner_cls, FsspecBaseRunner)
-            else None,
-        )
-        runner = runner_cls(
-            **configs,  # type: ignore
+        orchestrate_runner(
+            source_cmd=source_cmd,
             writer_type="s3",
-            writer_kwargs=options,
-        )
-        runner.run(
-            **parent_options,
+            parent_options=parent_options,
+            options=options,
+            validate=[S3CliConfig, CliFilesStorageConfig],
         )
     except Exception as e:
         logger.error(e, exc_info=True)

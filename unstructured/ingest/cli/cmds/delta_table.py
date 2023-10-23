@@ -10,10 +10,16 @@ from unstructured.ingest.cli.common import (
 from unstructured.ingest.cli.interfaces import (
     CliMixin,
 )
-from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
+from unstructured.ingest.cli.utils import (
+    Group,
+    add_options,
+    conform_click_options,
+    extract_configs,
+    orchestrate_runner,
+)
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import DeltaTableRunner, runner_map
+from unstructured.ingest.runner import DeltaTableRunner
 
 
 @dataclass
@@ -24,7 +30,7 @@ class DeltaTableCliConfig(BaseConfig, CliMixin):
     without_files: bool = False
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--table-uri"],
@@ -51,7 +57,7 @@ class DeltaTableCliConfig(BaseConfig, CliMixin):
                 help="If set, will load table without tracking files.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="delta-table", invoke_without_command=True, cls=Group)
@@ -81,7 +87,7 @@ class DeltaTableCliWriteConfig(BaseConfig, CliMixin):
     mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--write-column"],
@@ -99,7 +105,7 @@ class DeltaTableCliWriteConfig(BaseConfig, CliMixin):
                 "If 'ignore', will not write anything if table already exists.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.command(name="delta-table")
@@ -118,17 +124,12 @@ def delta_table_dest(ctx: click.Context, **options):
     log_options(parent_options, verbose=verbose)
     log_options(options, verbose=verbose)
     try:
-        configs = extract_configs(parent_options, validate=[DeltaTableCliConfig])
-        # Validate write configs
-        DeltaTableCliWriteConfig.from_dict(options)
-        runner_cls = runner_map[source_cmd]
-        runner = runner_cls(
-            **configs,  # type: ignore
+        orchestrate_runner(
+            source_cmd=source_cmd,
             writer_type="delta_table",
-            writer_kwargs=options,
-        )
-        runner.run(
-            **parent_options,
+            parent_options=parent_options,
+            options=options,
+            validate=[DeltaTableCliWriteConfig],
         )
     except Exception as e:
         logger.error(e, exc_info=True)

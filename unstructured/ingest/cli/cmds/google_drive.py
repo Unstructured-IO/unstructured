@@ -24,7 +24,7 @@ class GoogleDriveCliConfig(BaseConfig, CliMixin):
     extension: t.Optional[str] = None
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--drive-id"],
@@ -45,7 +45,7 @@ class GoogleDriveCliConfig(BaseConfig, CliMixin):
                 help="Filters the files to be processed based on extension e.g. .jpg, .docx, etc.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="google-drive", invoke_without_command=True, cls=Group)

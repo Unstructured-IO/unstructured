@@ -8,9 +8,8 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
-from urllib3.util import Retry
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -46,9 +45,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     id_: t.Optional[str]
     from_: t.Optional[str]
     until: t.Optional[str]
-    max_retries: int = 5
     request_timeout: int = 45
-    decay: float = 0.3
 
     def validate_api_inputs(self):
         valid = False
@@ -187,14 +184,10 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
         while endpoint_url:
             session = requests.Session()
-            retries = Retry(
-                total=self.connector_config.max_retries,
-                backoff_factor=self.connector_config.decay,
-            )
-            adapter = HTTPAdapter(max_retries=retries)
+            adapter = HTTPAdapter()
             session.mount("http://", adapter)
             session.mount("https://", adapter)
-            response = session.get(endpoint_url, timeout=self.connector_config.request_timeout)
+            response = self._get_request(session=session, endpoint_url=endpoint_url)
             soup = BeautifulSoup(response.content, features="lxml")
             urls = [link["href"] for link in soup.find_all("link")]
 
@@ -208,6 +201,10 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             files.extend(urls_to_metadata(urls))
 
         return files
+
+    @SourceConnectionNetworkError.wrap
+    def _get_request(self, session: requests.Session, endpoint_url: str) -> requests.Response:
+        return session.get(endpoint_url, timeout=self.connector_config.request_timeout)
 
     def _list_objects(self) -> t.List[BiomedFileMeta]:
         files = []

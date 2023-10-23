@@ -24,7 +24,7 @@ class DiscordCliConfig(BaseConfig, CliMixin):
     period: t.Optional[int] = None
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--token"],
@@ -45,7 +45,7 @@ class DiscordCliConfig(BaseConfig, CliMixin):
                 "discord channels, must be a number",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="discord", invoke_without_command=True, cls=Group)

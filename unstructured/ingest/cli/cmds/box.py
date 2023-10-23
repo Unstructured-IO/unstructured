@@ -22,7 +22,7 @@ class BoxCliConfig(BaseConfig, CliMixin):
     box_app_config: t.Optional[str] = None
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--box-app-config"],
@@ -30,7 +30,7 @@ class BoxCliConfig(BaseConfig, CliMixin):
                 help="Path to Box app credentials as json file.",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="box", invoke_without_command=True, cls=Group)

@@ -239,17 +239,20 @@ jobs:
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Get full Python version
+      id: full-python-version
+      run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
     - uses: actions/cache/restore@v3
       id: virtualenv-cache
       with:
         path: |
           .venv
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+        key: unstructured-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
@@ -302,7 +305,7 @@ jobs:
         AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         TABLE_OCR: "tesseract"
-        ENTIRE_PAGE_OCR: "tesseract"
+        OCR_AGENT: "tesseract"
         CI: "true"
       run: |
         source .venv/bin/activate
@@ -388,7 +391,7 @@ jobs:
   changelog:
     runs-on: ubuntu-latest
     steps:
-    # need to checkout otherwise paths-filter will fail on merge-queue trigger 
+    # need to checkout otherwise paths-filter will fail on merge-queue trigger
     - uses: actions/checkout@v3
     - if: github.ref != 'refs/heads/main'
       uses: dorny/paths-filter@v2

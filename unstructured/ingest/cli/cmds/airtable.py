@@ -21,7 +21,7 @@ class AirtableCliConfig(BaseConfig, CliMixin):
     personal_access_token: t.Optional[str] = None
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--personal-access-token"],
@@ -66,7 +66,7 @@ class AirtableCliConfig(BaseConfig, CliMixin):
                 """,
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
 @click.group(name="airtable", invoke_without_command=True, cls=Group)

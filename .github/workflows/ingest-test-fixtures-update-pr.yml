@@ -18,6 +18,10 @@ jobs:
       PYTHON_VERSION: "3.10"
     steps:
       - uses: actions/checkout@v3
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
       - uses: actions/cache@v3
         id: virtualenv-cache
         with:
@@ -25,10 +29,6 @@ jobs:
             .venv
             nltk_data
           key: unstructured-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
       - name: Setup virtual environment (no cache hit)
         run: |
           python${{ env.PYTHON_VERSION }} -m venv .venv
@@ -97,7 +97,7 @@ jobs:
           AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           TABLE_OCR: "tesseract"
-          ENTIRE_PAGE_OCR: "tesseract"
+          OCR_AGENT: "tesseract"
           OVERWRITE_FIXTURES: "true"
           CI: "true"
         run: |
@@ -152,7 +152,7 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GH_CREATE_PR_TOKEN }}
-          add-paths:
+          add-paths: |
             test_unstructured_ingest/expected-structured-output
             test_unstructured_ingest/metrics
           commit-message: "Update ingest test fixtures"
