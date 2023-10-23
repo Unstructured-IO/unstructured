@@ -726,6 +726,24 @@ def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.x
     assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
+@pytest.mark.parametrize(
+    ("skip_infer_table_types", "filename"),
+    [
+        (["xlsx"], "example-docs/stanley-cups.xlsx"),
+        (),
+    ],
+)
+def test_auto_partition_respects_skip_infer_table_types(skip_infer_table_types, filename):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
+    with open(filename, "rb") as f:
+        elements = partition_odt(file=f, infer_table_structure=infer_table_structure)
+    table_element_has_text_as_html_field = (
+        hasattr(elements[1].metadata, "text_as_html")
+        and elements[1].metadata.text_as_html is not None
+    )
+    assert table_element_has_text_as_html_field == infer_table_structure
+
+
 def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
     with open(filename, "rb") as f:
         elements = partition(file=f, include_header=False)

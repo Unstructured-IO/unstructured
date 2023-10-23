@@ -59,7 +59,8 @@ def test_partition_xlsx_from_filename_with_metadata_filename(
     ],
 )
 def test_partition_xlsx_infer_table_structure(
-    infer_table_structure, filename="example-docs/stanley-cups.xlsx",
+    infer_table_structure,
+    filename="example-docs/stanley-cups.xlsx",
 ):
     elements = partition_xlsx(filename=filename, infer_table_structure=infer_table_structure)
     table_elements = [e for e in elements if isinstance(e, Table)]

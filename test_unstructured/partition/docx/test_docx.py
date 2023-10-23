@@ -83,7 +83,8 @@ def test_partition_docx_from_file(mock_document, expected_elements, tmpdir):
 )
 def test_partition_docx_infer_table_structure(infer_table_structure):
     elements = partition_docx(
-        filename="example-docs/fake_table.docx", infer_table_structure=infer_table_structure,
+        filename="example-docs/fake_table.docx",
+        infer_table_structure=infer_table_structure,
     )
     table_element_has_text_as_html_field = (
         hasattr(elements[0].metadata, "text_as_html")

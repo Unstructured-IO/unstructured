@@ -1,4 +1,4 @@
-## 0.10.26-dev1
+## 0.10.26-dev2
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 * **Add Local connector source metadata** python's os module used to pull stats from local file when processing via the local connector and populates fields such as last modified time, created time.
 
 ### Fixes
+
+* **Fix a bug on Table partitioning** Previously the `skip_infer_table_types` variable used in partition was not being passed down to specific file partitioners. Now you can utilize the `skip_infer_table_types` list variable in partition to pass the filetype you want to exclude `text_as_html` metadata field for, or the `infer_table_structure` boolean variable on the file specific partitioning function.
 
 ## 0.10.25
 
