@@ -3,7 +3,7 @@ import os
 import pathlib
 import warnings
 from importlib import import_module
-from unittest.mock import patch
+from unittest.mock import ANY, patch
 
 import docx
 import pytest
@@ -325,10 +325,10 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename, content_type, 
 def test_auto_partition_pdf_uses_table_extraction():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     with patch(
-        "unstructured_inference.inference.layout.process_file_with_model",
+        "unstructured.partition.ocr.process_file_with_ocr",
     ) as mock_process_file_with_model:
         partition(filename, pdf_infer_table_structure=True, strategy="hi_res")
-        assert mock_process_file_with_model.call_args[1]["extract_tables"]
+        assert mock_process_file_with_model.call_args[1]["infer_table_structure"]
 
 
 def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
@@ -347,6 +347,8 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         url=None,
         include_page_breaks=False,
         infer_table_structure=False,
+        extract_images_in_pdf=ANY,
+        image_output_dir_path=ANY,
         strategy="fast",
         languages=None,
     )
@@ -430,7 +432,7 @@ def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, co
 
     # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 2
+    idx = 3
     assert elements[idx].text == title
     assert elements[idx].metadata.coordinates is not None
 
