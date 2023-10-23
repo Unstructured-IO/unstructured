@@ -5,13 +5,9 @@ import pathlib
 
 import pytest
 import requests
-from dotenv import load_dotenv
 
 from unstructured.documents.elements import NarrativeText
 from unstructured.partition.api import partition_multiple_via_api, partition_via_api
-
-load_dotenv()
-
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
