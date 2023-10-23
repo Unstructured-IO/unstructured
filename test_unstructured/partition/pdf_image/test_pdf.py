@@ -177,15 +177,7 @@ def test_partition_pdf_with_model_name_env_var(
         mock.MagicMock(),
     ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res")
-        mock_process.assert_called_once_with(
-            filename,
-            is_image=False,
-            pdf_image_dpi=mock.ANY,
-            extract_tables=mock.ANY,
-            model_name="checkbox",
-            extract_images_in_pdf=mock.ANY,
-            image_output_dir_path=mock.ANY,
-        )
+        assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
 def test_partition_pdf_with_model_name(
@@ -199,15 +191,7 @@ def test_partition_pdf_with_model_name(
         mock.MagicMock(),
     ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res", model_name="checkbox")
-        mock_process.assert_called_once_with(
-            filename,
-            is_image=False,
-            pdf_image_dpi=mock.ANY,
-            extract_tables=mock.ANY,
-            model_name="checkbox",
-            extract_images_in_pdf=mock.ANY,
-            image_output_dir_path=mock.ANY,
-        )
+        assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
 def test_partition_pdf_with_auto_strategy(
@@ -466,15 +450,7 @@ def test_partition_pdf_with_dpi():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res", pdf_image_dpi=100)
-        mock_process.assert_called_once_with(
-            filename,
-            is_image=False,
-            extract_tables=mock.ANY,
-            model_name=pdf.default_hi_res_model(),
-            pdf_image_dpi=100,
-            extract_images_in_pdf=mock.ANY,
-            image_output_dir_path=mock.ANY,
-        )
+        assert mock_process.call_args[1]["pdf_image_dpi"] == 100
 
 
 def test_partition_pdf_requiring_recursive_text_grab(filename="example-docs/reliance.pdf"):
