@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Add CI evaluation workflow** Adds evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
+
 ### Features
 
 * **Update `ocr_only` strategy in `partition_pdf()`** Adds the functionality to get accurate coordinate data when partitioning PDFs and Images.
