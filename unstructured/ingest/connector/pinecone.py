@@ -50,29 +50,52 @@ class PineconeDestinationConnector(BaseDestinationConnector):
 
         print("Connected to index:", pinecone.describe_index(self.connector_config.index_name))
 
-    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+    def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
-            f"Inserting / updating {len(json_list)} documents to destination "
+            f"Inserting / updating {len(dict_list)} documents to destination "
             f"index at {self.connector_config.index_name}",
         )
-        try:
-            response = self.index.upsert(documents=json_list)
-
-        except pinecone.core.client.exceptions.ApiException as api_error:
-            raise WriteError(f"http error: {api_error}") from api_error
-
-        logger.debug(f"results: {response}")
+        for i in range(0, len(dict_list), 100):
+            try:
+                response = self.index.upsert(dict_list[i : i + 100])  # noqa: E203
+            except pinecone.core.client.exceptions.ApiException as api_error:
+                raise WriteError(f"http error: {api_error}") from api_error
+            logger.debug(f"results: {response}")
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
-        json_list: t.List[t.Dict[str, t.Any]] = []
+        dict_list: t.List[t.Dict[str, t.Any]] = []
+
+        import shutil
+        import zipfile
+        from pathlib import Path
+
+        output_dir = Path(str(docs[0]._output_filename).lstrip("/").split("/")[0])
+        old_dir = output_dir / "small-pdf-set"
+        embeddings_zip = output_dir / "small-pdf-set.zip"
+
+        shutil.rmtree(old_dir)
+
+        # make sure you made a .zip file for the embeddings output first
+        with zipfile.ZipFile(embeddings_zip, "r") as zip_ref:
+            zip_ref.extractall(output_dir)
+
         for doc in docs:
             local_path = doc._output_filename
             with open(local_path) as json_file:
-                json_content = json.load(json_file)
-                for content in json_content:
-                    self.conform_dict(data=content)
+                dict_content = json.load(json_file)
+
+                # assign element_id and embeddings to "id" and "values"
+                # assign everything else to "metadata" field
+                dict_content = [
+                    {
+                        "id": element.pop("element_id", None),
+                        "values": element.pop("embeddings", None),
+                        "metadata": {k: json.dumps(v) for k, v in element.items()},
+                    }
+                    for element in dict_content
+                ]
                 logger.info(
-                    f"appending {len(json_content)} json elements from content in {local_path}",
+                    f"appending {len(dict_content)} json elements from content in {local_path}",
                 )
-                json_list.extend(json_content)
-        self.write_dict(json_list=json_list)
+                dict_list.extend(dict_content)
+        self.write_dict(dict_list=dict_list)
