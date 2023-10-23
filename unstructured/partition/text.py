@@ -185,7 +185,7 @@ def partition_text(
     filename
         A string defining the target filename path.
     file
-        A file-like object using "r" mode --> open(filename, "r").
+        A file-like object using "rb" mode --> open(filename, "rb").
     text
         The string representation of the .txt document.
     encoding
