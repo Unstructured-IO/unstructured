@@ -1,10 +1,13 @@
-## 0.10.26-dev0
+## 0.10.26-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* ** Stop passing `extract_tables` to unstructured-inference ** since it is now supported in unstructured instead. Also noted the table
+output regressioin for PDF files.
 
 ## 0.10.25
 
