@@ -316,7 +316,6 @@ def calculate_largest_ngram_percentage(string_A, string_B):
     else:
         n = len(string_B.split()) - 1
         string_A, string_B = string_B, string_A
-    n_str = str(n)
     ngram_percentage = 0
     while not ngram_percentage:
         ngram_percentage, shared_ngrams = calculate_shared_ngram_percentage(string_A, string_B, n)
@@ -324,7 +323,7 @@ def calculate_largest_ngram_percentage(string_A, string_B):
             break
         else:
             n -= 1
-    return round(ngram_percentage, 2), shared_ngrams, n_str
+    return round(ngram_percentage, 2), shared_ngrams, str(n)
 
 
 def is_parent_box(
