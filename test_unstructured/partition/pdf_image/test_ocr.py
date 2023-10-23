@@ -12,6 +12,7 @@ from unstructured_inference.inference.layoutelement import (
 
 from unstructured.partition import ocr
 from unstructured.partition.ocr import pad_element_bboxes
+from unstructured.partition.utils.constants import OCR_AGENT_PADDLE, OCR_AGENT_TESSERACT
 from unstructured.partition.utils.ocr_models import paddle_ocr
 
 
@@ -78,7 +79,7 @@ def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     ocr_layout = ocr.get_ocr_layout_from_image(
         image,
         ocr_languages="eng",
-        ocr_agent="tesseract",
+        ocr_agent=OCR_AGENT_TESSERACT,
     )
 
     expected_layout = [
@@ -136,7 +137,9 @@ def test_get_ocr_layout_from_image_paddle(monkeypatch):
 
     image = Image.new("RGB", (100, 100))
 
-    ocr_layout = ocr.get_ocr_layout_from_image(image, ocr_languages="eng", ocr_agent="paddle")
+    ocr_layout = ocr.get_ocr_layout_from_image(
+        image, ocr_languages="eng", ocr_agent=OCR_AGENT_PADDLE
+    )
 
     expected_layout = [
         TextRegion.from_coords(10, 5, 25, 15, "Hello", source="OCR-paddle"),
@@ -155,7 +158,9 @@ def test_get_ocr_text_from_image_tesseract(monkeypatch):
     )
     image = Image.new("RGB", (100, 100))
 
-    ocr_text = ocr.get_ocr_text_from_image(image, ocr_languages="eng", ocr_agent="tesseract")
+    ocr_text = ocr.get_ocr_text_from_image(
+        image, ocr_languages="eng", ocr_agent=OCR_AGENT_TESSERACT
+    )
 
     assert ocr_text == "Hello World"
 
@@ -169,7 +174,7 @@ def test_get_ocr_text_from_image_paddle(monkeypatch):
 
     image = Image.new("RGB", (100, 100))
 
-    ocr_text = ocr.get_ocr_text_from_image(image, ocr_languages="eng", ocr_agent="paddle")
+    ocr_text = ocr.get_ocr_text_from_image(image, ocr_languages="eng", ocr_agent=OCR_AGENT_PADDLE)
 
     assert ocr_text == "HelloWorld!"
 

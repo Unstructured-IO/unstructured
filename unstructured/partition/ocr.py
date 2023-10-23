@@ -25,6 +25,8 @@ from unstructured_pytesseract import Output
 from unstructured.logger import logger
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
+    OCR_AGENT_PADDLE,
+    OCR_AGENT_TESSERACT,
     SUBREGION_THRESHOLD_FOR_OCR,
     TESSERACT_TEXT_HEIGHT,
     OCRMode,
@@ -185,8 +187,8 @@ def supplement_page_layout_with_ocr(
     If mode is "individual_blocks", we find the elements from PageLayout
     with no text and add text from OCR to each element.
     """
-    ocr_agent = os.getenv("OCR_AGENT", "tesseract").lower()
-    if ocr_agent not in ["paddle", "tesseract"]:
+    ocr_agent = os.getenv("OCR_AGENT", OCR_AGENT_TESSERACT).lower()
+    if ocr_agent not in [OCR_AGENT_PADDLE, OCR_AGENT_TESSERACT]:
         raise ValueError(
             "Environment variable OCR_AGENT",
             " must be set to 'tesseract' or 'paddle'.",
@@ -356,7 +358,7 @@ def get_page_layout_from_ocr(
     image: PILImage,
     page_number: int = 1,
     ocr_languages: str = "eng",
-    ocr_agent: str = "tesseract",
+    ocr_agent: str = OCR_AGENT_TESSERACT,
 ) -> "PageLayout":
     """
     Generate a PageLayout with OCR data from a given image.
@@ -369,7 +371,7 @@ def get_page_layout_from_ocr(
         output_type=OCROutputType.TEXT_REGIONS,
     )
 
-    if ocr_agent == "paddle":
+    if ocr_agent == OCR_AGENT_PADDLE:
         page_layout_elements = [
             LayoutElement(bbox=r.bbox, text=r.text, source=r.source, type="UncategorizedText")
             for r in ocr_layout
@@ -438,10 +440,10 @@ def zoom_image(image: PILImage, zoom: float = 1) -> PILImage:
 def get_ocr_data_from_image(
     image: PILImage,
     ocr_languages: str = "eng",
-    ocr_agent: str = "tesseract",
+    ocr_agent: str = OCR_AGENT_TESSERACT,
     output_type: OCROutputType = OCROutputType.STRING,
 ) -> Union[str, List[TextRegion]]:
-    if ocr_agent == "paddle":
+    if ocr_agent == OCR_AGENT_PADDLE:
         logger.info("Processing entrie page OCR with paddle...")
         from unstructured.partition.utils.ocr_models import paddle_ocr
 
@@ -537,7 +539,12 @@ def parse_ocr_data_tesseract(ocr_data: pd.DataFrame, zoom: float = 1) -> List[Te
             x2 = (idtx.left + idtx.width) / zoom
             y2 = (idtx.top + idtx.height) / zoom
             text_region = TextRegion.from_coords(
-                x1, y1, x2, y2, text=cleaned_text, source="OCR-tesseract"
+                x1,
+                y1,
+                x2,
+                y2,
+                text=cleaned_text,
+                source=Source.OCR_TESSERACT,
             )
             text_regions.append(text_region)
 
@@ -578,7 +585,12 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
             cleaned_text = text.strip()
             if cleaned_text:
                 text_region = TextRegion.from_coords(
-                    x1, y1, x2, y2, cleaned_text, source=Source.OCR_PADDLE
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    cleaned_text,
+                    source=Source.OCR_PADDLE,
                 )
                 text_regions.append(text_region)
 

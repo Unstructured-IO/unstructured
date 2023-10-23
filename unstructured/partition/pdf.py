@@ -65,6 +65,7 @@ from unstructured.partition.ocr import (
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.constants import (
+    OCR_AGENT_TESSERACT,
     SORT_MODE_BASIC,
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
@@ -817,7 +818,7 @@ def _partition_pdf_or_image_with_ocr(
     """Partitions an image or PDF using Tesseract OCR. For PDFs, each page is converted
     to an image prior to processing."""
 
-    ocr_agent = os.getenv("OCR_AGENT", "tesseract").lower()
+    ocr_agent = os.getenv("OCR_AGENT", OCR_AGENT_TESSERACT).lower()
     ocr_languages = prepare_languages_for_tesseract(languages)
 
     page_layouts = []
