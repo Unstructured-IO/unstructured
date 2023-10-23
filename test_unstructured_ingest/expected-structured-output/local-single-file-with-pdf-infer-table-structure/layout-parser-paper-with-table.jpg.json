@@ -54,7 +54,14 @@
     "type": "UncategorizedText",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
@@ -146,91 +153,6 @@
     "text": "import layoutparser as lp"
   },
   {
-    "type": "ListItem",
-    "element_id": "79e0a3c1350f942562679b971915d272",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "image/jpeg",
-      "page_number": 1
-    },
-    "text": "2 image = cv2.imread(\"image_file\") # load images"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "image/jpeg",
-      "page_number": 1
-    },
-    "text": "("
-  },
-  {
-    "type": "ListItem",
-    "element_id": "cd84964c612152f5362ee38fab9cad62",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "image/jpeg",
-      "page_number": 1
-    },
-    "text": "» model = 1p. Detectron2LayoutModel"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "252ce669ee21ceee8521053e783bf50a",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "image/jpeg",
-      "page_number": 1
-    },
-    "text": "\"1p: //PubLayllet /faster_renn_t |-50_FPI_3x/config\")"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "image/jpeg",
-      "page_number": 1
-    },
-    "text": "4"
-  },
-  {
     "type": "Title",
     "element_id": "3aaabff05e0eb86a34fc7d72e421f2e0",
     "metadata": {
@@ -268,7 +190,14 @@
     "type": "ListItem",
     "element_id": "61869c4b92bc306c9fa617681ce746f6",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
@@ -278,7 +207,14 @@
     "type": "Title",
     "element_id": "ec4c180151f7ee4a36de276d970797e3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
@@ -288,7 +224,14 @@
     "type": "ListItem",
     "element_id": "2941b46b1dc3845b1d5dd2856df4bb67",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
@@ -298,7 +241,14 @@
     "type": "ListItem",
     "element_id": "d327c74e28b98f9a40394148e2ed8be7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "image/jpeg",
       "page_number": 1
     },
@@ -317,7 +267,6 @@
         ]
       },
       "filetype": "image/jpeg",
-      "page_number": 1
       "page_number": 1
     },
     "text": "LayoutParser provides a wealth of pre-trained model weights using various datasets covering different languages, time periods, and document types. Due to domain shift [7], the prediction performance can notably drop when models are ap- plied to target samples that are significantly different from the training dataset. As document structures and layouts vary greatly in different domains, it is important to select models trained on a dataset similar to the test samples. A semantic syntax is used for initializing the model weights in Layout Parser, using both the dataset name and model name 1p://<dataset-name>/<model-architecture-name>."
