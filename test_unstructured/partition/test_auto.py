@@ -727,21 +727,30 @@ def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.x
 
 
 @pytest.mark.parametrize(
-    ("skip_infer_table_types", "filename"),
+    ("skip_infer_table_types", "filename", "has_text_as_html_field"),
     [
-        (["xlsx"], "example-docs/stanley-cups.xlsx"),
-        (),
+        (["xlsx"], "stanley-cups.xlsx", False),
+        ([], "stanley-cups.xlsx", True),
+        (["odt"], "fake.odt", False),
+        ([], "fake.odt", True),
     ],
 )
-def test_auto_partition_respects_skip_infer_table_types(skip_infer_table_types, filename):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
+def test_auto_partition_respects_skip_infer_table_types(
+    skip_infer_table_types, filename, has_text_as_html_field
+):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
     with open(filename, "rb") as f:
-        elements = partition_odt(file=f, infer_table_structure=infer_table_structure)
-    table_element_has_text_as_html_field = (
-        hasattr(elements[1].metadata, "text_as_html")
-        and elements[1].metadata.text_as_html is not None
-    )
-    assert table_element_has_text_as_html_field == infer_table_structure
+        table_elements = [
+            e
+            for e in partition(file=f, skip_infer_table_types=skip_infer_table_types)
+            if isinstance(e, Table)
+        ]
+        for table_element in table_elements:
+            table_element_has_text_as_html_field = (
+                hasattr(table_element.metadata, "text_as_html")
+                and table_element.metadata.text_as_html is not None
+            )
+        assert table_element_has_text_as_html_field == has_text_as_html_field
 
 
 def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
