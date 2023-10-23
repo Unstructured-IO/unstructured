@@ -479,8 +479,8 @@ def get_ocr_data_from_image(
                 env_config.TESSERACT_TEXT_HEIGHT_QUANTILE,
             )
             if (
-                    text_height < env_config.TESSERACT_MIN_TEXT_HEIGHT
-                    or text_height > env_config.TESSERACT_MAX_TEXT_HEIGHT
+                text_height < env_config.TESSERACT_MIN_TEXT_HEIGHT
+                or text_height > env_config.TESSERACT_MAX_TEXT_HEIGHT
             ):
                 # rounding avoids unnecessary precision and potential numerical issues assocaited
                 # with numbers very close to 1 inside cv2 image processing
@@ -536,7 +536,9 @@ def parse_ocr_data_tesseract(ocr_data: pd.DataFrame, zoom: float = 1) -> List[Te
             y1 = idtx.top / zoom
             x2 = (idtx.left + idtx.width) / zoom
             y2 = (idtx.top + idtx.height) / zoom
-            text_region = TextRegion.from_coords(x1, y1, x2, y2, text=cleaned_text, source="OCR-tesseract")
+            text_region = TextRegion.from_coords(
+                x1, y1, x2, y2, text=cleaned_text, source="OCR-tesseract"
+            )
             text_regions.append(text_region)
 
     return text_regions
@@ -575,7 +577,9 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
                 continue
             cleaned_text = text.strip()
             if cleaned_text:
-                text_region = TextRegion.from_coords(x1, y1, x2, y2, cleaned_text, source=Source.OCR_PADDLE)
+                text_region = TextRegion.from_coords(
+                    x1, y1, x2, y2, cleaned_text, source=Source.OCR_PADDLE
+                )
                 text_regions.append(text_region)
 
     return text_regions

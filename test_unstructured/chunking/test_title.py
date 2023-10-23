@@ -28,7 +28,7 @@ def test_it_splits_a_large_section_into_multiple_chunks():
         Title("Introduction"),
         Text(
             "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed lectus"
-            " porta volutpat."
+            " porta volutpat.",
         ),
     ]
 

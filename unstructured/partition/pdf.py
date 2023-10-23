@@ -61,8 +61,6 @@ from unstructured.partition.lang import (
 )
 from unstructured.partition.ocr import (
     get_page_layout_from_ocr,
-    process_data_with_ocr,
-    process_file_with_ocr,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text
@@ -831,7 +829,7 @@ def _partition_pdf_or_image_with_ocr(
         for i, image in enumerate(images):
             page_layout = get_page_layout_from_ocr(
                 image=image,
-                page_number=i+1,
+                page_number=i + 1,
                 ocr_languages=ocr_languages,
                 entire_page_ocr=entire_page_ocr,
             )
