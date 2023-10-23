@@ -25,7 +25,8 @@ class BaseSrcCmd(BaseCmd):
             validate=[self.cli_config] if self.cli_config else None,
             extras=addition_configs,
         )
-        runner = runner_map[self.cmd_name]
+        cmd_key = self.cmd_name.replace("-", "_")
+        runner = runner_map[cmd_key]
         return runner(**configs)  # type: ignore
 
     def src(self, ctx: click.Context, **options):
