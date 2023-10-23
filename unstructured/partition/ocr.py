@@ -306,7 +306,7 @@ def get_table_tokens_per_element(
     # where TABLE_TOKEN will be a data class defined in unstructured-inference
     table_tokens = []
     for ocr_region in ocr_layout:
-        if ocr_region.bbox.is_in(table_element.bbox):
+        if ocr_region.bbox.is_in(table_element.bbox, error_margin=1):
             table_tokens.append(
                 {
                     "bbox": [
@@ -330,7 +330,6 @@ def get_table_tokens_per_element(
             token["line_num"] = 0
         if "block_num" not in token:
             token["block_num"] = 0
-
     return table_tokens
 
 
