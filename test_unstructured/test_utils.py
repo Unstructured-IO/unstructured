@@ -146,7 +146,7 @@ def test_only_raises_if_empty(iterator):
                             "min_area": "9pxˆ2",
                             "total_area": "18pxˆ2",
                         },
-                    }
+                    },
                 ],
             ),
         ),
