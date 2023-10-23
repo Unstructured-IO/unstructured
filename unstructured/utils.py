@@ -404,7 +404,7 @@ def calculate_overlap_percentage(box1, box2, intersection_ratio_method="total"):
 
 
 def identify_overlapping_case(box_pair, label_pair, text_pair, ix_pair, sm_overlap_threshold=10.0):
-    """Classifies the overlapping case for an element_pair input. There are 5 caregories of overlapping:
+    """Classifies the overlapping case for an element_pair input. There are 5 categories of overlapping:
     'Small partial overlap', 'Partial overlap with empty content', 'Partial overlap with duplicate text (sharing 100% of the text)',
     'Partial overlap without sharing text', and 'Partial overlap sharing {calculate_largest_ngram_percentage(...)}% of the text'
     """
