@@ -288,7 +288,7 @@ def ngrams(s: str, n: int) -> List:
 
     ngrams_list = []
     for i in range(len(s) - n + 1):
-        ngrams_list.append(tuple(s[i: i + n]))
+        ngrams_list.append(tuple(s[i : i + n]))
     return ngrams_list
 
 
