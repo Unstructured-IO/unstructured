@@ -12,7 +12,7 @@ structured_outputs=("$OUTPUT_DIR"/*)
 CP_DIR=$SCRIPT_DIR/structured-output-eval/$OUTPUT_FOLDER_NAME
 mkdir -p "$CP_DIR"
 
-selected_outputs=$(cat "$SCRIPT_DIR/metrics/master/metrics-json-manifest.txt")
+selected_outputs=$(cat "$SCRIPT_DIR/metrics/metrics-json-manifest.txt")
 
 # If structured output file in this connector's outputs match the 
 # selected outputs in the txt file, copy to the destination
