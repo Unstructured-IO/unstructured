@@ -104,18 +104,18 @@ def measure_edit_distance(
     agg_rows.append(
         [
             "cct-accuracy",
-            _mean(accuracy_scores),
-            _stdev(accuracy_scores),
-            _pstdev(accuracy_scores),
+            round(_mean(accuracy_scores), 3),
+            round(_stdev(accuracy_scores), 3),
+            round(_pstdev(accuracy_scores), 3),
             len(accuracy_scores),
         ],
     )
     agg_rows.append(
         [
             "cct-%missing",
-            _mean(percent_missing_scores),
-            _stdev(percent_missing_scores),
-            _pstdev(percent_missing_scores),
+            round(_mean(percent_missing_scores), 3),
+            round(_stdev(percent_missing_scores), 3),
+            round(_pstdev(percent_missing_scores), 3),
             len(percent_missing_scores),
         ],
     )
