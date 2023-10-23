@@ -101,7 +101,11 @@ def partition_xlsx(
     for sheet_name, sheet in sheets.items():
         page_number += 1
         if not find_subtable:
-            html_text = sheet.to_html(index=False, header=include_header, na_rep="")
+            html_text = (
+                sheet.to_html(index=False, header=include_header, na_rep="")
+                if infer_table_structure
+                else None
+            )
             text = soupparser_fromstring(html_text).text_content()
 
             if include_metadata:
@@ -165,7 +169,7 @@ def partition_xlsx(
                     text = soupparser_fromstring(html_text).text_content()
                     subtable = Table(text=text)
                     subtable.metadata = metadata
-                    subtable.metadata.text_as_html = html_text
+                    subtable.metadata.text_as_html = html_text if infer_table_structure else None
                     elements.append(subtable)
 
                 if front_non_consecutive is not None and last_non_consecutive is not None:

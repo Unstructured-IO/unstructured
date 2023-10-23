@@ -34,12 +34,6 @@ def partition_rtf(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it
-    infer_table_structure
-        If True, any Table elements that are extracted will also have a metadata field
-        named "text_as_html" where the table's text content is rendered into an html string.
-        I.e., rows and cells are preserved.
-        Whether True or False, the "text" field is always present in any Table element
-        and is the text content of the table (no structure).
     metadata_last_modified
         The last modified date for the document.
     languages
