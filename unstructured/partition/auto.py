@@ -135,6 +135,8 @@ def partition(
     languages: Optional[List[str]] = None,
     detect_language_per_element: bool = False,
     pdf_infer_table_structure: bool = False,
+    pdf_extract_images: bool = False,
+    pdf_image_output_dir_path: Optional[str] = None,
     xml_keep_tags: bool = False,
     data_source_metadata: Optional[DataSourceMetadata] = None,
     metadata_filename: Optional[str] = None,
@@ -186,6 +188,12 @@ def partition(
         additional metadata field, "text_as_html," where the value (string) is a just a
         transformation of the data into an HTML <table>.
         The "text" field for a partitioned Table Element is always present, whether True or False.
+    pdf_extract_images
+        If True and strategy=hi_res, any detected images will be saved in the path specified by
+        pdf_image_output_dir_path.
+    pdf_image_output_dir_path
+        If pdf_extract_images=True and strategy=hi_res, any detected images will be saved in the
+        given path
     xml_keep_tags
         If True, will retain the XML tags in the output. Otherwise it will simply extract
         the text from within the tags. Only applies to partition_xml.
@@ -368,6 +376,8 @@ def partition(
             strategy=strategy,
             generate_extra_info=False,
             languages=languages,
+            extract_images_in_pdf=pdf_extract_images,
+            image_output_dir_path=pdf_image_output_dir_path,
             **kwargs,
         )
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG) or (filetype == FileType.TIFF):

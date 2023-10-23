@@ -102,6 +102,8 @@ def partition_pdf(
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
     links: Sequence[Link] = [],
+    extract_images_in_pdf: bool = False,
+    image_output_dir_path: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -137,6 +139,12 @@ def partition_pdf(
         processing text/plain content.
     metadata_last_modified
         The last modified date for the document.
+    extract_images_in_pdf
+        If True and strategy=hi_res, any detected images will be saved in the path specified by
+        image_output_dir_path.
+    image_output_dir_path
+        If extract_images_in_pdf=True and strategy=hi_res, any detected images will be saved in the
+        given path
     """
     exactly_one(filename=filename, file=file)
 
@@ -167,6 +175,8 @@ def partition_pdf(
         max_partition=max_partition,
         min_partition=min_partition,
         metadata_last_modified=metadata_last_modified,
+        extract_images_in_pdf=extract_images_in_pdf,
+        image_output_dir_path=image_output_dir_path,
         **kwargs,
     )
 
@@ -214,6 +224,8 @@ def partition_pdf_or_image(
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
+    extract_images_in_pdf: bool = False,
+    image_output_dir_path: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -297,6 +309,8 @@ def partition_pdf_or_image(
                 generate_extra_info=generate_extra_info,
                 languages=languages,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
+                extract_images_in_pdf=extract_images_in_pdf,
+                image_output_dir_path=image_output_dir_path,
                 **kwargs,
             )
             layout_elements = []
@@ -340,6 +354,9 @@ def _partition_pdf_or_image_local(
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    extract_images_in_pdf: bool = False,
+    image_output_dir_path: Optional[str] = None,
+    pdf_image_dpi: Optional[int] = None,
     **kwargs,
 ) -> List[Element]:
     """Partition using package installed locally."""
@@ -356,7 +373,6 @@ def _partition_pdf_or_image_local(
     ocr_languages = prepare_languages_for_tesseract(languages)
 
     model_name = model_name or default_hi_res_model()
-    pdf_image_dpi = kwargs.pop("pdf_image_dpi", None)
     if pdf_image_dpi is None:
         pdf_image_dpi = 300 if model_name == "chipper" else 200
     if (pdf_image_dpi < 300) and (model_name == "chipper"):
@@ -365,27 +381,16 @@ def _partition_pdf_or_image_local(
             f"(currently {pdf_image_dpi}).",
         )
 
-    # NOTE(christine): Need to extract images from PDF's
-    extract_images_in_pdf = kwargs.get("extract_images_in_pdf", False)
-    image_output_dir_path = kwargs.get("image_output_dir_path", None)
-    process_with_model_extra_kwargs = {
-        "extract_images_in_pdf": extract_images_in_pdf,
-        "image_output_dir_path": image_output_dir_path,
-    }
-
-    process_with_model_kwargs = {}
-    for key, value in process_with_model_extra_kwargs.items():
-        if value:
-            process_with_model_kwargs[key] = value
-
     if file is None:
         # NOTE(christine): out_layout = extracted_layout + inferred_layout
         out_layout = process_file_with_model(
             filename,
             is_image=is_image,
+            extract_tables=infer_table_structure,
             model_name=model_name,
             pdf_image_dpi=pdf_image_dpi,
-            **process_with_model_kwargs,
+            extract_images_in_pdf=extract_images_in_pdf,
+            image_output_dir_path=image_output_dir_path,
         )
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
@@ -404,9 +409,11 @@ def _partition_pdf_or_image_local(
         out_layout = process_data_with_model(
             file,
             is_image=is_image,
+            extract_tables=infer_table_structure,
             model_name=model_name,
             pdf_image_dpi=pdf_image_dpi,
-            **process_with_model_kwargs,
+            extract_images_in_pdf=extract_images_in_pdf,
+            image_output_dir_path=image_output_dir_path,
         )
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
@@ -538,11 +545,11 @@ def _process_pdfminer_pages(
     filename: str = "",
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
+    sort_mode: str = SORT_MODE_XY_CUT,
     **kwargs,
 ):
     """Uses PDF miner to split a document into pages and process them."""
     elements: List[Element] = []
-    sort_mode = kwargs.get("sort_mode", SORT_MODE_XY_CUT)
 
     rsrcmgr = PDFResourceManager()
     laparams = LAParams()
