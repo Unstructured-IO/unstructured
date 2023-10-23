@@ -111,6 +111,7 @@ MAIN_VERSION=$(git show origin/main:unstructured/__version__.py | grep -o -m 1 -
 MAIN_IS_RELEASE=false
 [[ $MAIN_VERSION != *"-dev"* ]] && MAIN_IS_RELEASE=true
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+MAIN_IS_RELEASE=true
 
 for i in "${!FILES_TO_CHECK[@]}"; do
     FILE_TO_CHANGE=${FILES_TO_CHECK[$i]}
@@ -123,12 +124,19 @@ for i in "${!FILES_TO_CHECK[@]}"; do
         # No match to semver regex in VERSIONFILE, so nothing to replace
         printf "Error: No semver version found in file %s.\n" "$FILE_TO_CHANGE"
         exit 1
-    elif [[ "$CHECK" == 1 && "$MAIN_IS_RELEASE" == true && "$FILE_VERSION" == "$MAIN_VERSION" && "$CURRENT_BRANCH" != "main" ]];
-    then 
-        # Only one commit should be associated with a particular non-dev version
-        printf "Error: there is already a commit associated with version %s.\n" "$MAIN_VERSION"
-        exit 1
     else
+        if [[ "$MAIN_IS_RELEASE" == true && "$UPDATED_VERSION" == "$MAIN_VERSION" && "$CURRENT_BRANCH" != "main" ]];
+        then 
+            # Only one commit should be associated with a particular non-dev version
+            if [[ "$CHECK" == 1 ]];
+            then 
+                printf "Error: there is already a commit associated with version %s.\n" "$MAIN_VERSION"
+                exit 1
+            else 
+                printf "Warning: there is already a commit associated with version %s.\n" "$MAIN_VERSION"
+            fi
+        fi
+
         # Replace semver in VERSIONFILE with semver obtained from SOURCE_FILE
         TMPFILE=$(mktemp /tmp/new_version.XXXXXX)
         # Check sed version, exit if version < 4.3
