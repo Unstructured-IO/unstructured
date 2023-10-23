@@ -511,26 +511,6 @@
   },
   {
     "type": "Title",
-    "element_id": "47a68d3aa70030f2e7886e3f1cb07c69",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Average number of"
-  },
-  {
-    "type": "Title",
-    "element_id": "0c0fd31c67d414997f9e4ea6442d2491",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Times"
-  },
-  {
-    "type": "Title",
     "element_id": "68ec9a56bde1cd8ea67340bf9cb829cb",
     "metadata": {
       "data_source": {},
@@ -538,26 +518,6 @@
       "page_number": 3
     },
     "text": "Possible empty travels"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "1cb85e5f94671526c0cf38dc533f87e0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "568.40 672.80 923.40 977.00 566.00 732.60 875.00 1119.60 581.80 778.00 879.00 1087.20"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "0c4fb5c1a2bbb7af3d2deb3d323598f1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "652.20 857.20 1082.40 1272.80 642.00 861.20 1096.00 1286.20 667.80 872.40 1076.40 1284.60"
   },
   {
     "type": "Header",
@@ -588,56 +548,6 @@
       "page_number": 4
     },
     "text": "Number of lines Number of columns in each line Description 1 1 n 3 m 4 The number of depots, the number of trips, and the number of locations. The number of vehicles rd at each depot d. One line for each trip, i ¼ 1; 2; …; n. Each line provides the start location ls time ts i and the end time te i for the corresponding trip. Each element, δij; where i; j A 1; 2; …; l, refers to the travel time between location i and location j. i , the start i , the end location le l l"
-  },
-  {
-    "type": "Title",
-    "element_id": "0d42fdb9458af19413eee0a1227f415c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "Number of columns in each line"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "05f82fa1685502a356c0894aa45b404d",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "1 1 n"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "d2660f6e66916959c5de8a941bfa89c7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "The number of depots, the number of trips, and the number of locations. The number of vehicles rd at each depot d. One line for each trip, i ¼ 1; 2; …; n. Each line provides the start location ls time ts i and the end time te i for the corresponding trip. Each element, δij; where i; j A 1; 2; …; l, refers to the travel time between location i and location j."
-  },
-  {
-    "type": "Title",
-    "element_id": "8ee69286d5f681913dbfdeb60bedc572",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "i , the end location le"
-  },
-  {
-    "type": "Title",
-    "element_id": "acac86c0e609ca906f632b0e2dacccb2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "l"
   },
   {
     "type": "Title",

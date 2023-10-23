@@ -681,57 +681,6 @@
     "text": "Base Model1 Large Model Notes Dataset PubLayNet [38] PRImA [3] Newspaper [17] TableBank [18] HJDataset [31] F / M M F F F / M M - - F - Layouts of modern scientiﬁc documents Layouts of scanned modern magazines and scientiﬁc reports Layouts of scanned US newspapers from the 20th century Table region on modern scientiﬁc and business document Layouts of history Japanese documents"
   },
   {
-    "type": "Title",
-    "element_id": "4411e525721e7dd801755882fd2361b2",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "Dataset"
-  },
-  {
-    "type": "Title",
-    "element_id": "404c477d4f5a5c53e565eadc5fcbfa60",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "F / M M F F F / M"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "932c3d501891c7b8a59782efed10a10e",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 5
-    },
-    "text": "Layouts of modern scientiﬁc documents Layouts of scanned modern magazines and scientiﬁc reports Layouts of scanned US newspapers from the 20th century Table region on modern scientiﬁc and business document Layouts of history Japanese documents"
-  },
-  {
     "type": "Footer",
     "element_id": "f58e29ccb8c8b46f5876aec8c9684294",
     "metadata": {
@@ -1176,57 +1125,6 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "494d23eb529015f662df16e6da39f810",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "Scale the current block given the ratio in x and y direction"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "a270fb0a45b9ed73f992f73dbf0b9a3f",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "Move the current block with the shift distances in x and y direction"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "6bd7ba22b5bc477ef4c291a10f4745bc",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "Whether block1 is inside of block2"
-  },
-  {
-    "type": "NarrativeText",
     "element_id": "401c342fc214105b4a45dba74c62cae0",
     "metadata": {
       "data_source": {
@@ -1258,40 +1156,6 @@
       "page_number": 8
     },
     "text": "Return the union region of block1 and block2. Coordinate type to be determined based on the inputs."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "d3b069f9dcc24bfac92a6de9e26f2501",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "Convert the absolute coordinates of block1 to relative coordinates to block2"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "bb15ecc186d598c93a1cffa30e9e1b6e",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "Calculate the absolute coordinates of block1 given the canvas block2’s absolute coordinates"
   },
   {
     "type": "Title",
