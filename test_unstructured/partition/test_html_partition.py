@@ -672,3 +672,22 @@ def test_partition_html_respects_detect_language_per_element():
     elements = partition_html(filename=filename, detect_language_per_element=True)
     langs = [element.metadata.languages for element in elements]
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+@pytest.mark.parametrize(
+    ("tag", "expected"),
+    [
+        ("thead", ""),
+        ("foo", ""),
+    ],
+)
+def test_partition_html_with_table_without_tbody(tag, expected):
+    table_html = f"""
+    <table>
+      <{tag}>
+        <tr><th>Header 1</th><th>Header 2</th></tr>
+        </{tag}>
+    </table>
+    """
+    partitions = partition_html(text=table_html)
+    assert partitions[0].metadata.text_as_html == expected
