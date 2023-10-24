@@ -547,3 +547,10 @@ def test_partition_image_raises_TypeError_for_invalid_languages():
     filename = "example-docs/layout-parser-paper-fast.jpg"
     with pytest.raises(TypeError):
         image.partition_image(filename=filename, strategy="hi_res", languages="eng")
+
+
+def test_partition_image_has_filetype():
+    filename = "example-docs/layout-parser-paper-fast.jpg"
+    elements = image.partition_image(filename=filename, strategy="hi_res")
+    filenames = [el.metadata.filename for el in elements]
+    assert all(f_name == filename for f_name in filenames)
