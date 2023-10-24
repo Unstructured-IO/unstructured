@@ -10,7 +10,7 @@ import functools
 import inspect
 from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, cast
 
-from typing_extensions import ParamSpec
+from typing_extensions import ParamSpec, TypeAlias
 
 from unstructured.documents.elements import (
     CompositeElement,
@@ -20,6 +20,9 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.utils import lazyproperty
+
+_Section: TypeAlias = "_NonTextSection | _TableSection | _TextSection"
 
 # -- goes between text of each element when element-text is concatenated to form chunk --
 TEXT_SEPARATOR = "\n\n"
@@ -124,13 +127,16 @@ def chunk_by_title(
 
     chunked_elements: List[Element] = []
 
-    sections = _split_elements_by_title_and_table(
-        elements,
-        multipage_sections=multipage_sections,
-        combine_text_under_n_chars=combine_text_under_n_chars,
-        new_after_n_chars=new_after_n_chars,
-        max_characters=max_characters,
-    )
+    sections = _SectionCombiner(
+        _split_elements_by_title_and_table(
+            elements,
+            multipage_sections=multipage_sections,
+            new_after_n_chars=new_after_n_chars,
+            max_characters=max_characters,
+        ),
+        max_characters,
+        combine_text_under_n_chars,
+    ).iter_combined_sections()
 
     for section in sections:
         if isinstance(section, _NonTextSection):
@@ -195,7 +201,6 @@ def chunk_by_title(
 def _split_elements_by_title_and_table(
     elements: List[Element],
     multipage_sections: bool,
-    combine_text_under_n_chars: int,
     new_after_n_chars: int,
     max_characters: int,
 ) -> Iterator[_TextSection | _TableSection | _NonTextSection]:
@@ -233,21 +238,15 @@ def _split_elements_by_title_and_table(
 
         # -- start new section when necessary --
         if (
-            # TODO(scanny): this is where disassociated-titles are coming from (attempting to
-            # combine sections at the element level). This is fixed in the next PR.
-            (
-                isinstance(element, Title)
-                and section_builder.text_length > combine_text_under_n_chars
-            )
+            # -- Title, Table, and non-Text element (CheckBox) all start a new section --
+            isinstance(element, (Title, Table))
+            or not isinstance(element, Text)
             # -- adding this element would exceed hard-maxlen for section --
             or section_builder.remaining_space < len(str(element))
             # -- section already meets or exceeds soft-maxlen --
             or section_builder.text_length >= new_after_n_chars
             # -- a semantic boundary is indicated by metadata change since prior element --
             or metadata_differs
-            # -- table and non-text elements go in a section by themselves --
-            or isinstance(element, Table)
-            or not isinstance(element, Text)
         ):
             # -- complete any work-in-progress section --
             yield from section_builder.flush()
@@ -341,6 +340,9 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
     return decorator
 
 
+# == Sections ====================================================================================
+
+
 class _NonTextSection:
     """A section composed of a single `Element` that does not subclass `Text`.
 
@@ -381,10 +383,27 @@ class _TextSection:
     def __init__(self, elements: Iterable[Element]) -> None:
         self._elements = list(elements)
 
+    def combine(self, other_section: _TextSection) -> _TextSection:
+        """Return new `_TextSection` that combines this and `other_section`."""
+        return _TextSection(self._elements + other_section._elements)
+
     @property
     def elements(self) -> List[Element]:
         """The elements of this text-section."""
         return self._elements
+
+    @lazyproperty
+    def text_length(self) -> int:
+        """Length of concatenated text of this section, including separators."""
+        return len(self._text)
+
+    @lazyproperty
+    def _text(self) -> str:
+        """The concatenated text of all elements in this section.
+
+        Each element-text is separated from the next by a blank line ("\n\n").
+        """
+        return TEXT_SEPARATOR.join(e.text for e in self._elements if isinstance(e, Text) and e.text)
 
 
 class _TextSectionBuilder:
@@ -462,3 +481,106 @@ class _TextSectionBuilder:
         n = len(self._text_segments)
         separator_count = n - 1 if n else 0
         return self._text_len + (separator_count * self._separator_len)
+
+
+# == SectionCombiner =============================================================================
+
+
+class _SectionCombiner:
+    """Filters section stream to combine small sections where possible."""
+
+    def __init__(
+        self,
+        sections: Iterable[_Section],
+        maxlen: int,
+        combine_text_under_n_chars: int,
+    ):
+        self._sections = sections
+        self._maxlen = maxlen
+        self._combine_text_under_n_chars = combine_text_under_n_chars
+
+    def iter_combined_sections(self) -> Iterator[_Section]:
+        """Generate section objects, combining TextSection objects when they will fit in window."""
+        accum = _TextSectionAccumulator(self._maxlen)
+
+        for section in self._sections:
+            # -- start new section under these conditions --
+            if (
+                # -- a table or checkbox section is never combined --
+                isinstance(section, (_TableSection, _NonTextSection))
+                # -- don't add another section once length has reached combination soft-max --
+                or accum.text_length >= self._combine_text_under_n_chars
+                # -- combining would exceed hard-max --
+                or accum.remaining_space < section.text_length
+            ):
+                yield from accum.flush()
+
+            # -- a table or checkbox section is never combined so don't accumulate --
+            if isinstance(section, (_TableSection, _NonTextSection)):
+                yield section
+            else:
+                accum.add_section(section)
+
+        yield from accum.flush()
+
+
+class _TextSectionAccumulator:
+    """Accumulates, measures, and combines section objects.
+
+    Provides monitoring properties `.remaining_space` and `.text_length` suitable for deciding
+    whether to add another section.
+
+    `.flush()` is used to combine the accumulated sections into a single `TextSection` object. This
+    method returns an interator that generates zero-or-one `TextSection` objects and is used like
+    so:
+
+        yield from accum.flush()
+
+    If no sections have been accumulated, no `TextSection` is generated. Flushing the builder clears
+    the sections it contains so it is ready to accept the next text-section.
+    """
+
+    def __init__(self, maxlen: int) -> None:
+        self._maxlen = maxlen
+        self._sections: List[_TextSection] = []
+
+    def add_section(self, section: _TextSection) -> None:
+        """Add a section to the accumulator for possible combination with next section."""
+        self._sections.append(section)
+
+    def flush(self) -> Iterator[_TextSection]:
+        """Generate all accumulated sections as a single combined section."""
+        sections = self._sections
+
+        # -- nothing to do if no sections have been accumulated --
+        if not sections:
+            return
+
+        # -- otherwise combine all accumulated section into one --
+        section = sections[0]
+        for other_section in sections[1:]:
+            section = section.combine(other_section)
+        yield section
+
+        # -- and reset the accumulator (to empty) --
+        sections.clear()
+
+    @property
+    def remaining_space(self) -> int:
+        """Maximum size of section that can be added without exceeding maxlen."""
+        return (
+            self._maxlen
+            if not self._sections
+            # -- an additional section will also incur an additional separator --
+            else self._maxlen - self.text_length - len(TEXT_SEPARATOR)
+        )
+
+    @property
+    def text_length(self) -> int:
+        """Size of concatenated text in all sections in accumulator."""
+        n = len(self._sections)
+        return (
+            0
+            if n == 0
+            else sum(s.text_length for s in self._sections) + len(TEXT_SEPARATOR) * (n - 1)
+        )
