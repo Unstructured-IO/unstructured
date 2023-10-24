@@ -11,6 +11,7 @@ from test_unstructured.unit_utils import assert_round_trips_through_JSON, exampl
 from unstructured.chunking.title import chunk_by_title
 from unstructured.partition import image, ocr, pdf
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
+from unstructured.utils import only
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -549,8 +550,32 @@ def test_partition_image_raises_TypeError_for_invalid_languages():
         image.partition_image(filename=filename, strategy="hi_res", languages="eng")
 
 
-def test_partition_image_has_filetype():
+@pytest.fixture
+def inference_results():
+    page = layout.PageLayout(
+        number=1,
+        image=mock.MagicMock(format="JPEG"),
+        layout=layout.TextRegion.from_coords(0, 0, 600, 800, text="hello"),
+    )
+    page.elements = [layout.LayoutElement.from_coords(0, 0, 600, 800, text="hello")]
+    doc = layout.DocumentLayout(pages=[page])
+    return doc
+
+
+def test_partition_image_has_filetype(inference_results):
     filename = "example-docs/layout-parser-paper-fast.jpg"
-    elements = image.partition_image(filename=filename, strategy="hi_res")
-    filenames = [el.metadata.filename for el in elements]
-    assert all(f_name == filename for f_name in filenames)
+    # Mock inference call with known return results
+    with mock.patch(
+        "unstructured_inference.inference.layout.process_file_with_model",
+        return_value=inference_results,
+    ) as mock_inference_func:
+        elements = image.partition_image(filename=filename, strategy="hi_res")
+    # Make sure we actually went down the path we expect.
+    mock_inference_func.assert_called_once()
+    # Unpack element but also make sure there is only one
+    element = only(elements)
+    # This makes sure we are still getting the filetype metadata (should be translated from the
+    # fixtures)
+    assert element.metadata.filetype == "JPEG"
+    # This should be kept from the filename we originally gave
+    assert element.metadata.filename == filename
