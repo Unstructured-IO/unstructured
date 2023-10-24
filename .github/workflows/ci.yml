@@ -313,6 +313,8 @@ jobs:
       run: |
         source .venv/bin/activate
         PYTHONPATH=. pytest test_unstructured_ingest/unit
+    # actions/checkout MUST come before auth
+    - uses: 'actions/checkout@v4'
     - name: 'Google Cloud Auth'
       uses: 'google-github-actions/auth@v1'
       with:
