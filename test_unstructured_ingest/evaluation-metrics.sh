@@ -26,6 +26,14 @@ trap cleanup EXIT
 
 EXPORT_DIR="$SCRIPT_DIR"/metrics
 PYTHONPATH=. ./unstructured/ingest/evaluate.py \
+    measure-text-edit-distance \
     --output_dir "$OUTPUT_DIR" \
     --source_dir "$CCT_DIR" \
+    --export_dir "$EXPORT_DIR"
+
+ELEMENT_TYPE_DIR="$SCRIPT_DIR"/expected-structured-output
+PYTHONPATH=. ./unstructured/ingest/evaluate.py \
+    measure-element-type-accuracy \
+    --output_dir "$OUTPUT_DIR" \
+    --source_dir "$ELEMENT_TYPE_DIR" \
     --export_dir "$EXPORT_DIR"
