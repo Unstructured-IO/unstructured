@@ -1,6 +1,7 @@
 import typing as t
 from dataclasses import dataclass, field
 from enum import Enum
+from functools import reduce
 from pathlib import Path
 
 from unstructured.ingest.error import SourceConnectionError
@@ -58,8 +59,12 @@ class SimpleHubSpotConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
     connector_config: SimpleHubSpotConfig
     object_id: str
-    content_properties: t.List[str] = field(init=False)
-    registry_name: str
+    object_type: str
+    content_properties: t.List[str]
+    registry_name: str = "hubspot"
+
+    def __post_init__(self):
+        self._add_custom_properties()
 
     @property
     def filename(self):
@@ -89,22 +94,55 @@ class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseI
     def source_url(self) -> t.Optional[str]:
         return None
 
-    def _fetch_obj(self, get_by_id_method, not_found_exception, **kwargs):
+    def _add_custom_properties(self):
+        if (self.connector_config.custom_properties is not None) and (
+            (cprops := self.connector_config.custom_properties.get(self.object_type)) is not None
+        ):
+            self.content_properties += cprops
+
+    def _join_object_properties(self, obj) -> str:
+        return "\n".join(
+            [
+                obj.properties[cprop]
+                for cprop in self.content_properties
+                if (obj.properties.get(cprop) is not None)
+            ],
+        )
+
+    def _resolve_getter(self):
+        method_path = ""
+        if self.object_type in [
+            HubSpotObjectTypes.CALLS.value,
+            HubSpotObjectTypes.COMMUNICATIONS.value,
+            HubSpotObjectTypes.EMAILS.value,
+            HubSpotObjectTypes.NOTES.value,
+        ]:
+            method_path = f"crm.objects.{self.object_type}.basic_api.get_by_id"
+        if self.object_type in [
+            HubSpotObjectTypes.PRODUCTS.value,
+            HubSpotObjectTypes.TICKETS.value,
+        ]:
+            method_path = f"crm.{self.object_type}.basic_api.get_by_id"
+
+        method = reduce(getattr, method_path.split("."), self.session_handle.service)
+        return method
+
+    @requires_dependencies(["hubspot"], extras="hubspot")
+    def _fetch_obj(self, check_only=False):
+        from hubspot.crm.objects.exceptions import NotFoundException
+
+        get_by_id_method = self._resolve_getter()
         try:
-            response = get_by_id_method(self.object_id, **kwargs)
-        except not_found_exception as e:
+            response = get_by_id_method(
+                self.object_id, properties=([] if check_only else self.content_properties)
+            )
+        except NotFoundException as e:
             logger.error(e)
             return None
         return response
 
-    def _add_custom_properties(self, obj_type):
-        if (self.connector_config.custom_properties is not None) and (
-            (cprops := self.connector_config.custom_properties.get(obj_type)) is not None
-        ):
-            self.content_properties += cprops
-
     def update_source_metadata(self, **kwargs) -> None:
-        obj = kwargs.get("object", self.get_object())  # type: ignore
+        obj = kwargs.get("object", self._fetch_obj(check_only=True))  # type: ignore
         if obj is None:
             self.source_metadata = SourceMetadata(
                 exists=False,
@@ -116,19 +154,10 @@ class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseI
             exists=True,
         )
 
-    def _join_object_properties(self, obj) -> str:
-        return "\n".join(
-            [
-                obj.properties[cprop]
-                for cprop in self.content_properties
-                if (obj.properties.get(cprop) is not None)
-            ],
-        )
-
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        obj = self.get_object()
+        obj = self._fetch_obj()
         if obj is None:
             raise ValueError(
                 f"Failed to retrieve object {self.registry_name}",
@@ -143,116 +172,6 @@ class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseI
 
 
 @dataclass
-class HubSpotCallIngestDoc(HubSpotIngestDoc):
-    connector_config: SimpleHubSpotConfig
-    registry_name: str = "hubspot_call"
-
-    def __post_init__(self):
-        self.content_properties = ["hs_call_title", "hs_call_body"]
-        self._add_custom_properties(HubSpotObjectTypes.CALLS.value)
-
-    @requires_dependencies(["hubspot"], extras="hubspot")
-    def get_object(self):
-        from hubspot.crm.objects.calls.exceptions import NotFoundException
-
-        method = self.session_handle.service.crm.objects.calls.basic_api.get_by_id
-        return self._fetch_obj(
-            method,
-            NotFoundException,
-            properties=self.content_properties,
-        )
-
-
-@dataclass
-class HubSpotCommunicationIngestDoc(HubSpotIngestDoc):
-    connector_config: SimpleHubSpotConfig
-    registry_name: str = "hubspot_communication"
-
-    def __post_init__(self):
-        self.content_properties = ["hs_communication_body"]
-        self._add_custom_properties(HubSpotObjectTypes.COMMUNICATIONS.value)
-
-    @requires_dependencies(["hubspot"], extras="hubspot")
-    def get_object(self):
-        from hubspot.crm.objects.communications.exceptions import NotFoundException
-
-        method = self.session_handle.service.crm.objects.communications.basic_api.get_by_id
-        return self._fetch_obj(method, NotFoundException, properties=["hs_communication_body"])
-
-
-@dataclass
-class HubSpotEmailIngestDoc(HubSpotIngestDoc):
-    connector_config: SimpleHubSpotConfig
-    registry_name: str = "hubspot_email"
-
-    def __post_init__(self):
-        self.content_properties = ["hs_email_subject", "hs_email_text"]
-        self._add_custom_properties(HubSpotObjectTypes.EMAILS.value)
-
-    @requires_dependencies(["hubspot"], extras="hubspot")
-    def get_object(self):
-        from hubspot.crm.objects.emails.exceptions import NotFoundException
-
-        method = self.session_handle.service.crm.objects.emails.basic_api.get_by_id
-        return self._fetch_obj(
-            method,
-            NotFoundException,
-            properties=["hs_email_subject", "hs_email_text"],
-        )
-
-
-@dataclass
-class HubSpotNotesIngestDoc(HubSpotIngestDoc):
-    connector_config: SimpleHubSpotConfig
-    registry_name: str = "hubspot_note"
-
-    def __post_init__(self):
-        self.content_properties = ["hs_note_body"]
-        self._add_custom_properties(HubSpotObjectTypes.NOTES.value)
-
-    @requires_dependencies(["hubspot"], extras="hubspot")
-    def get_object(self):
-        from hubspot.crm.objects.notes.exceptions import NotFoundException
-
-        method = self.session_handle.service.crm.objects.notes.basic_api.get_by_id
-        return self._fetch_obj(method, NotFoundException, properties=["hs_note_body"])
-
-
-@dataclass
-class HubSpotProductIngestDoc(HubSpotIngestDoc):
-    connector_config: SimpleHubSpotConfig
-    registry_name: str = "hubspot_product"
-
-    def __post_init__(self):
-        self.content_properties = ["description"]
-        self._add_custom_properties(HubSpotObjectTypes.PRODUCTS.value)
-
-    @requires_dependencies(["hubspot"], extras="hubspot")
-    def get_object(self):
-        from hubspot.crm.products.exceptions import NotFoundException
-
-        method = self.session_handle.service.crm.products.basic_api.get_by_id
-        return self._fetch_obj(method, NotFoundException, properties=["description"])
-
-
-@dataclass
-class HubSpotTicketIngestDoc(HubSpotIngestDoc):
-    connector_config: SimpleHubSpotConfig
-    registry_name: str = "hubspot_ticket"
-
-    def __post_init__(self):
-        self.content_properties = ["subject", "content"]
-        self._add_custom_properties(HubSpotObjectTypes.PRODUCTS.value)
-
-    @requires_dependencies(["hubspot"], extras="hubspot")
-    def get_object(self):
-        from hubspot.crm.tickets.exceptions import NotFoundException
-
-        method = self.session_handle.service.crm.tickets.basic_api.get_by_id
-        return self._fetch_obj(method, NotFoundException)
-
-
-@dataclass
 class HubSpotSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleHubSpotConfig
 
@@ -260,59 +179,67 @@ class HubSpotSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         self.hubspot = self.connector_config.create_session_handle().service
 
     @requires_dependencies(["hubspot"], extras="hubspot")
-    def _list_objects(self, get_page_method, ingest_doc_class):
+    def _list_objects(self, get_page_method, object_type: str, content_properties: t.List[str]):
         try:
             objects = get_page_method()
         except Exception as e:
             logger.error(e)
             logger.error(
-                f"Failed to retrieve {type(ingest_doc_class).__name__}, omitting processing...",
+                f"Failed to retrieve {object_type}, omitting processing...",
             )
             return []
         return [
-            ingest_doc_class(
+            HubSpotIngestDoc(
                 connector_config=self.connector_config,
                 processor_config=self.processor_config,
                 read_config=self.read_config,
                 object_id=obj.id,
+                object_type=object_type,
+                content_properties=content_properties,
             )
             for obj in objects.results
         ]
 
-    def _get_calls(self) -> t.List[HubSpotCallIngestDoc]:
+    def _get_calls(self) -> t.List[HubSpotIngestDoc]:
         return self._list_objects(
             self.hubspot.crm.objects.calls.basic_api.get_page,
-            HubSpotCallIngestDoc,
+            HubSpotObjectTypes.CALLS.value,
+            ["hs_call_title", "hs_call_body"],
         )
 
-    def _get_communications(self) -> t.List[HubSpotCommunicationIngestDoc]:
+    def _get_communications(self) -> t.List[HubSpotIngestDoc]:
         return self._list_objects(
             self.hubspot.crm.objects.communications.basic_api.get_page,
-            HubSpotCommunicationIngestDoc,
+            HubSpotObjectTypes.COMMUNICATIONS.value,
+            ["hs_communication_body"],
         )
 
-    def _get_emails(self) -> t.List[HubSpotEmailIngestDoc]:
+    def _get_emails(self) -> t.List[HubSpotIngestDoc]:
         return self._list_objects(
             self.hubspot.crm.objects.emails.basic_api.get_page,
-            HubSpotEmailIngestDoc,
+            HubSpotObjectTypes.EMAILS.value,
+            ["hs_email_subject", "hs_email_text"],
         )
 
-    def _get_notes(self) -> t.List[HubSpotNotesIngestDoc]:
+    def _get_notes(self) -> t.List[HubSpotIngestDoc]:
         return self._list_objects(
             self.hubspot.crm.objects.notes.basic_api.get_page,
-            HubSpotNotesIngestDoc,
+            HubSpotObjectTypes.NOTES.value,
+            ["hs_note_body"],
         )
 
-    def _get_products(self) -> t.List[HubSpotProductIngestDoc]:
+    def _get_products(self) -> t.List[HubSpotIngestDoc]:
         return self._list_objects(
             self.hubspot.crm.products.basic_api.get_page,
-            HubSpotProductIngestDoc,
+            HubSpotObjectTypes.PRODUCTS.value,
+            ["description"],
         )
 
-    def _get_tickets(self) -> t.List[HubSpotTicketIngestDoc]:
+    def _get_tickets(self) -> t.List[HubSpotIngestDoc]:
         return self._list_objects(
             self.hubspot.crm.tickets.basic_api.get_page,
-            HubSpotTicketIngestDoc,
+            HubSpotObjectTypes.TICKETS.value,
+            ["subject", "content"],
         )
 
     def get_ingest_docs(self):
