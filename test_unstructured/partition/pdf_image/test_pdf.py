@@ -1072,7 +1072,7 @@ def test_partition_model_name_default_to_None():
         ),
     ],
 )
-def test_ocr_language_passes_through_ocr_only(strategy, ocr_func):
+def test_ocr_language_passes_through(strategy, ocr_func):
     # Create an exception that will be raised directly after OCR is called to stop execution
     class CallException(Exception):
         pass
