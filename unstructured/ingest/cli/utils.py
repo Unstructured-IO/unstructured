@@ -13,35 +13,7 @@ from unstructured.ingest.cli.interfaces import (
     CliReadConfig,
     CliRetryStrategyConfig,
 )
-from unstructured.ingest.interfaces import BaseConfig, FsspecConfig
-from unstructured.ingest.runner import FsspecBaseRunner, runner_map
-
-
-def orchestrate_runner(
-    source_cmd: str,
-    writer_type: str,
-    parent_options: dict,
-    options: dict,
-    validate: t.Optional[t.List[t.Type[BaseConfig]]] = None,
-):
-    runner_cls = runner_map[source_cmd]
-    configs = extract_configs(
-        parent_options,
-        extras={"fsspec_config": FsspecConfig}
-        if issubclass(runner_cls, FsspecBaseRunner)
-        else None,
-    )
-    for val in validate:
-        val.from_dict(options)
-    runner_cls = runner_map[source_cmd]
-    runner = runner_cls(
-        **configs,  # type: ignore
-        writer_type=writer_type,
-        writer_kwargs=options,
-    )
-    runner.run(
-        **parent_options,
-    )
+from unstructured.ingest.interfaces import BaseConfig
 
 
 def conform_click_options(options: dict):
@@ -79,16 +51,20 @@ def extract_configs(
     return res
 
 
-def add_options(cmd: click.Command, extras=t.List[t.Type[CliMixin]]) -> click.Command:
-    configs: t.List[t.Type[CliMixin]] = [
-        CliPartitionConfig,
-        CliReadConfig,
-        CliEmbeddingConfig,
-        CliChunkingConfig,
-        CliProcessorConfig,
-        CliPermissionsConfig,
-        CliRetryStrategyConfig,
-    ]
+def add_options(cmd: click.Command, extras=t.List[t.Type[CliMixin]], is_src=True) -> click.Command:
+    configs: t.List[t.Type[CliMixin]] = (
+        [
+            CliPartitionConfig,
+            CliReadConfig,
+            CliEmbeddingConfig,
+            CliChunkingConfig,
+            CliProcessorConfig,
+            CliPermissionsConfig,
+            CliRetryStrategyConfig,
+        ]
+        if is_src
+        else []
+    )
     configs.extend(extras)
     for config in configs:
         try:
