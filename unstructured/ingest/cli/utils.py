@@ -13,9 +13,7 @@ from unstructured.ingest.cli.interfaces import (
     CliReadConfig,
     CliRetryStrategyConfig,
 )
-from unstructured.ingest.interfaces import (
-    BaseConfig,
-)
+from unstructured.ingest.interfaces import BaseConfig
 
 
 def conform_click_options(options: dict):
@@ -53,19 +51,26 @@ def extract_configs(
     return res
 
 
-def add_options(cmd: click.Command, extras=t.List[t.Type[CliMixin]]) -> click.Command:
-    configs: t.List[t.Type[CliMixin]] = [
-        CliPartitionConfig,
-        CliReadConfig,
-        CliEmbeddingConfig,
-        CliChunkingConfig,
-        CliProcessorConfig,
-        CliPermissionsConfig,
-        CliRetryStrategyConfig,
-    ]
+def add_options(cmd: click.Command, extras=t.List[t.Type[CliMixin]], is_src=True) -> click.Command:
+    configs: t.List[t.Type[CliMixin]] = (
+        [
+            CliPartitionConfig,
+            CliReadConfig,
+            CliEmbeddingConfig,
+            CliChunkingConfig,
+            CliProcessorConfig,
+            CliPermissionsConfig,
+            CliRetryStrategyConfig,
+        ]
+        if is_src
+        else []
+    )
     configs.extend(extras)
     for config in configs:
-        config.add_cli_options(cmd)
+        try:
+            config.add_cli_options(cmd=cmd)
+        except ValueError as e:
+            raise ValueError(f"failed to set configs from {config.__name__}: {e}")
     return cmd
 
 

@@ -1,18 +1,12 @@
-import logging
+import typing as t
 from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.common import (
-    log_options,
-)
 from unstructured.ingest.cli.interfaces import (
     CliMixin,
 )
-from unstructured.ingest.cli.utils import conform_click_options, extract_configs
 from unstructured.ingest.interfaces import BaseConfig
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import runner_map
 
 
 @dataclass
@@ -22,7 +16,7 @@ class AzureCognitiveSearchCliWriteConfig(BaseConfig, CliMixin):
     index: str
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--key"],
@@ -48,41 +42,14 @@ class AzureCognitiveSearchCliWriteConfig(BaseConfig, CliMixin):
                 help="The name of the index to connect to",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
-@click.command(name="azure-cognitive-search")
-@click.pass_context
-def azure_cognitive_search_dest(ctx: click.Context, **options):
-    if not ctx.parent:
-        raise click.ClickException("destination command called without a parent")
-    if not ctx.parent.info_name:
-        raise click.ClickException("parent command missing info name")
-    source_cmd = ctx.parent.info_name.replace("-", "_")
-    parent_options: dict = ctx.parent.params if ctx.parent else {}
-    conform_click_options(options)
-    conform_click_options(parent_options)
-    verbose = parent_options.get("verbose", False)
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(parent_options, verbose=verbose)
-    log_options(options, verbose=verbose)
-    try:
-        configs = extract_configs(options, validate=[AzureCognitiveSearchCliWriteConfig])
-        runner_cls = runner_map[source_cmd]
-        runner = runner_cls(
-            **configs,  # type: ignore
-            writer_type="azure_cognitive_search",
-            writer_kwargs=options,
-        )
-        runner.run(
-            **parent_options,
-        )
-    except Exception as e:
-        logger.error(e, exc_info=True)
-        raise click.ClickException(str(e)) from e
+def get_base_dest_cmd():
+    from unstructured.ingest.cli.base.dest import BaseDestCmd
 
-
-def get_dest_cmd() -> click.Command:
-    cmd = azure_cognitive_search_dest
-    AzureCognitiveSearchCliWriteConfig.add_cli_options(cmd)
-    return cmd
+    cmd_cls = BaseDestCmd(
+        cmd_name="azure-cognitive-search",
+        cli_config=AzureCognitiveSearchCliWriteConfig,
+    )
+    return cmd_cls

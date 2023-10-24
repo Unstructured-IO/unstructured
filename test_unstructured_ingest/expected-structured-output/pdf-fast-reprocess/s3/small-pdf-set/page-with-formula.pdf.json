@@ -3,7 +3,14 @@
     "type": "NarrativeText",
     "element_id": "259298f61f4d6456eb95121be01c03dc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": [
@@ -20,7 +27,14 @@
     "type": "NarrativeText",
     "element_id": "be50bef9d05264591898ec2a7afeabdf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -31,7 +45,14 @@
     "type": "Title",
     "element_id": "cffeb4133cb6ed7b9998087ff6eeedb5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -42,7 +63,14 @@
     "type": "Title",
     "element_id": "63f06d447c3b500d3724a17730b6a340",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -53,7 +81,14 @@
     "type": "Title",
     "element_id": "9fab14a755f04854dc4b4329737c315a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -64,7 +99,14 @@
     "type": "Title",
     "element_id": "5da738390f100e4d2eefc5e286f2cc96",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -75,7 +117,14 @@
     "type": "Title",
     "element_id": "254bce889c65e7d964e2106a5b2640f9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -86,7 +135,14 @@
     "type": "NarrativeText",
     "element_id": "a11edfa4b89f9c2d63ef8cac98240e45",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -97,7 +153,14 @@
     "type": "Title",
     "element_id": "c3a800cafce18223e5e90c2ec57bb27f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -108,7 +171,14 @@
     "type": "Title",
     "element_id": "4d14397c6db433cb643ecf17bba23bf2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -119,7 +189,14 @@
     "type": "NarrativeText",
     "element_id": "accfd5998875a89c8cdf2bd9c74bff26",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -130,7 +207,14 @@
     "type": "NarrativeText",
     "element_id": "10d4ac36f66e0318cd97f5921638dc37",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -141,7 +225,14 @@
     "type": "Title",
     "element_id": "d31b9469d49a1d806388e85c09c96669",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -152,7 +243,14 @@
     "type": "NarrativeText",
     "element_id": "3a881c92f819fd398474f23105de039f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -163,7 +261,14 @@
     "type": "ListItem",
     "element_id": "831aa8a0f86419eb62b4b4d5afb18f23",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": [
@@ -190,7 +295,14 @@
     "type": "ListItem",
     "element_id": "62fb78b6c60c3144d075a419a5460bf2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -201,7 +313,14 @@
     "type": "ListItem",
     "element_id": "6abb9e18ac585710c60c06901be658dd",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": [
@@ -218,7 +337,14 @@
     "type": "Title",
     "element_id": "5abe45658c9277b6f0ffa3080a007d73",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -229,7 +355,14 @@
     "type": "NarrativeText",
     "element_id": "d25fe7951542a7487ea748861d01d8e8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -240,7 +373,14 @@
     "type": "UncategorizedText",
     "element_id": "158730a18e567cd5d48b02e42a288838",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -251,7 +391,14 @@
     "type": "UncategorizedText",
     "element_id": "0e77e68ba5473d98840c3212f4a8cb80",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -262,7 +409,14 @@
     "type": "NarrativeText",
     "element_id": "f0894df186d469df50a36f0d7022b0d7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -273,7 +427,14 @@
     "type": "Title",
     "element_id": "ee3bb63cce2f927a9195c1cf7ac06417",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -284,7 +445,14 @@
     "type": "NarrativeText",
     "element_id": "e0fea088e5ff762de65f5bed79ec58a3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": [
@@ -301,7 +469,14 @@
     "type": "UncategorizedText",
     "element_id": "4ba002bdd74ed597330cab2461ee5a85",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []
@@ -312,7 +487,14 @@
     "type": "UncategorizedText",
     "element_id": "ef2d127de37b942baad06145e54b0c61",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/page-with-formula.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1,
       "links": []

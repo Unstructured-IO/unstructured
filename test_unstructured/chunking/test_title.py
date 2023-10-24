@@ -1,3 +1,7 @@
+# pyright: reportPrivateUsage=false
+
+from typing import List
+
 import pytest
 
 from unstructured.chunking.title import (
@@ -9,7 +13,9 @@ from unstructured.documents.elements import (
     CheckBox,
     CompositeElement,
     CoordinatesMetadata,
+    Element,
     ElementMetadata,
+    RegexMetadata,
     Table,
     Text,
     Title,
@@ -17,8 +23,26 @@ from unstructured.documents.elements import (
 from unstructured.partition.html import partition_html
 
 
+def test_it_splits_a_large_section_into_multiple_chunks():
+    elements: List[Element] = [
+        Title("Introduction"),
+        Text(
+            "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed lectus"
+            " porta volutpat.",
+        ),
+    ]
+
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=50, max_characters=50)
+
+    assert chunks == [
+        CompositeElement("Introduction"),
+        CompositeElement("Lorem ipsum dolor sit amet consectetur adipiscing "),
+        CompositeElement("elit. In rhoncus ipsum sed lectus porta volutpat."),
+    ]
+
+
 def test_split_elements_by_title_and_table():
-    elements = [
+    elements: List[Element] = [
         Title("A Great Day"),
         Text("Today is a great day."),
         Text("It is sunny outside."),
@@ -59,7 +83,7 @@ def test_split_elements_by_title_and_table():
 
 
 def test_chunk_by_title():
-    elements = [
+    elements: List[Element] = [
         Title("A Great Day", metadata=ElementMetadata(emphasized_text_contents=["Day"])),
         Text("Today is a great day.", metadata=ElementMetadata(emphasized_text_contents=["day"])),
         Text("It is sunny outside."),
@@ -70,7 +94,9 @@ def test_chunk_by_title():
         Title("A Bad Day"),
         Text(
             "Today is a bad day.",
-            metadata=ElementMetadata(regex_metadata=[{"text": "A", "start": 0, "end": 1}]),
+            metadata=ElementMetadata(
+                regex_metadata={"a": [RegexMetadata(text="A", start=0, end=1)]},
+            ),
         ),
         Text("It is storming outside."),
         CheckBox(),
@@ -91,12 +117,12 @@ def test_chunk_by_title():
 
     assert chunks[0].metadata == ElementMetadata(emphasized_text_contents=["Day", "day"])
     assert chunks[3].metadata == ElementMetadata(
-        regex_metadata=[{"text": "A", "start": 11, "end": 12}],
+        regex_metadata={"a": [RegexMetadata(text="A", start=11, end=12)]},
     )
 
 
 def test_chunk_by_title_respects_section_change():
-    elements = [
+    elements: List[Element] = [
         Title("A Great Day", metadata=ElementMetadata(section="first")),
         Text("Today is a great day.", metadata=ElementMetadata(section="second")),
         Text("It is sunny outside.", metadata=ElementMetadata(section="second")),
@@ -107,7 +133,9 @@ def test_chunk_by_title_respects_section_change():
         Title("A Bad Day"),
         Text(
             "Today is a bad day.",
-            metadata=ElementMetadata(regex_metadata=[{"text": "A", "start": 0, "end": 1}]),
+            metadata=ElementMetadata(
+                regex_metadata={"a": [RegexMetadata(text="A", start=0, end=1)]},
+            ),
         ),
         Text("It is storming outside."),
         CheckBox(),
@@ -131,7 +159,7 @@ def test_chunk_by_title_respects_section_change():
 
 
 def test_chunk_by_title_separates_by_page_number():
-    elements = [
+    elements: List[Element] = [
         Title("A Great Day", metadata=ElementMetadata(page_number=1)),
         Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
         Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
@@ -142,7 +170,9 @@ def test_chunk_by_title_separates_by_page_number():
         Title("A Bad Day"),
         Text(
             "Today is a bad day.",
-            metadata=ElementMetadata(regex_metadata=[{"text": "A", "start": 0, "end": 1}]),
+            metadata=ElementMetadata(
+                regex_metadata={"a": [RegexMetadata(text="A", start=0, end=1)]},
+            ),
         ),
         Text("It is storming outside."),
         CheckBox(),
@@ -165,8 +195,92 @@ def test_chunk_by_title_separates_by_page_number():
     ]
 
 
+def test_chunk_by_title_does_not_break_on_regex_metadata_change():
+    """Sectioner is insensitive to regex-metadata changes.
+
+    A regex-metadata match in an element does not signify a semantic boundary and a section should
+    not be split based on such a difference.
+    """
+    elements: List[Element] = [
+        Title(
+            "Lorem Ipsum",
+            metadata=ElementMetadata(
+                regex_metadata={"ipsum": [RegexMetadata(text="Ipsum", start=6, end=11)]},
+            ),
+        ),
+        Text(
+            "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
+            metadata=ElementMetadata(
+                regex_metadata={"dolor": [RegexMetadata(text="dolor", start=12, end=17)]},
+            ),
+        ),
+        Text(
+            "In rhoncus ipsum sed lectus porta volutpat.",
+            metadata=ElementMetadata(
+                regex_metadata={"ipsum": [RegexMetadata(text="ipsum", start=11, end=16)]},
+            ),
+        ),
+    ]
+
+    chunks = chunk_by_title(elements)
+
+    assert chunks == [
+        CompositeElement(
+            "Lorem Ipsum\n\nLorem ipsum dolor sit amet consectetur adipiscing elit.\n\nIn rhoncus"
+            " ipsum sed lectus porta volutpat.",
+        ),
+    ]
+
+
+def test_chunk_by_title_consolidates_and_adjusts_offsets_of_regex_metadata():
+    """ElementMetadata.regex_metadata of chunk is union of regex_metadatas of its elements.
+
+    The `start` and `end` offsets of each regex-match are adjusted to reflect their new position in
+    the chunk after element text has been concatenated.
+    """
+    elements: List[Element] = [
+        Title(
+            "Lorem Ipsum",
+            metadata=ElementMetadata(
+                regex_metadata={"ipsum": [RegexMetadata(text="Ipsum", start=6, end=11)]},
+            ),
+        ),
+        Text(
+            "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
+            metadata=ElementMetadata(
+                regex_metadata={
+                    "dolor": [RegexMetadata(text="dolor", start=12, end=17)],
+                    "ipsum": [RegexMetadata(text="ipsum", start=6, end=11)],
+                },
+            ),
+        ),
+        Text(
+            "In rhoncus ipsum sed lectus porta volutpat.",
+            metadata=ElementMetadata(
+                regex_metadata={"ipsum": [RegexMetadata(text="ipsum", start=11, end=16)]},
+            ),
+        ),
+    ]
+    chunks = chunk_by_title(elements)
+
+    assert len(chunks) == 1
+    chunk = chunks[0]
+    assert chunk == CompositeElement(
+        "Lorem Ipsum\n\nLorem ipsum dolor sit amet consectetur adipiscing elit.\n\nIn rhoncus"
+        " ipsum sed lectus porta volutpat.",
+    )
+    assert chunk.metadata.regex_metadata == {
+        "dolor": [RegexMetadata(text="dolor", start=25, end=30)],
+        "ipsum": [
+            RegexMetadata(text="Ipsum", start=6, end=11),
+            RegexMetadata(text="ipsum", start=19, end=24),
+            RegexMetadata(text="ipsum", start=81, end=86),
+        ],
+    }
+
+
 def test_chunk_by_title_groups_across_pages():
-    elements = [
+    elements: List[Element] = [
         Title("A Great Day", metadata=ElementMetadata(page_number=1)),
         Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
         Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
@@ -177,7 +291,9 @@ def test_chunk_by_title_groups_across_pages():
         Title("A Bad Day"),
         Text(
             "Today is a bad day.",
-            metadata=ElementMetadata(regex_metadata=[{"text": "A", "start": 0, "end": 1}]),
+            metadata=ElementMetadata(
+                regex_metadata={"a": [RegexMetadata(text="A", start=0, end=1)]},
+            ),
         ),
         Text("It is storming outside."),
         CheckBox(),
@@ -224,8 +340,10 @@ def test_add_chunking_strategy_respects_max_characters():
     )
 
     for chunk in chunks:
+        assert isinstance(chunk, Text)
         assert len(chunk.text) <= 100
     for chunk_element in chunk_elements:
+        assert isinstance(chunk_element, Text)
         assert len(chunk_element.text) <= 100
     assert chunk_elements != elements
     assert chunk_elements == chunks
@@ -289,11 +407,11 @@ def test_add_chunking_strategy_on_partition_html_respects_multipage():
     ],
 )
 def test_add_chunking_strategy_raises_error_for_invalid_n_chars(
-    combine_text_under_n_chars,
-    new_after_n_chars,
-    max_characters,
+    combine_text_under_n_chars: int,
+    new_after_n_chars: int,
+    max_characters: int,
 ):
-    elements = [
+    elements: List[Element] = [
         Title("A Great Day"),
         Text("Today is a great day."),
         Text("It is sunny outside."),
@@ -315,7 +433,7 @@ def test_add_chunking_strategy_raises_error_for_invalid_n_chars(
 
 
 def test_chunk_by_title_drops_detection_class_prob():
-    elements = [
+    elements: List[Element] = [
         Title(
             "A Great Day",
             metadata=ElementMetadata(
@@ -355,7 +473,7 @@ def test_chunk_by_title_drops_detection_class_prob():
 
 
 def test_chunk_by_title_drops_extra_metadata():
-    elements = [
+    elements: List[Element] = [
         Title(
             "A Great Day",
             metadata=ElementMetadata(
