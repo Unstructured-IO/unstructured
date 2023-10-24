@@ -9,6 +9,7 @@ def box_writer(
     remote_url: str,
     box_app_config: t.Optional[str],
     verbose: bool = False,
+    **kwargs,
 ) -> BaseDestinationConnector:
     import boxsdk
 
