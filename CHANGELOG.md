@@ -6,6 +6,7 @@
 
 ### Features
 
+* **Add `utils` method `draw_bboxes_on_pdf_or_image` to plot returned element coordinates in each page image.** Using a PDF or image file and the returned element list from a detection model, this method superimposes the bounding boxes in page images with numeration and different colours per element type.
 * **Add Local connector source metadata** python's os module used to pull stats from local file when processing via the local connector and populates fields such as last modified time, created time.
 
 ### Fixes
