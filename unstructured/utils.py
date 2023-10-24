@@ -303,6 +303,8 @@ def calculate_shared_ngram_percentage(
     """Calculate the percentage of common_ngrams between string_A and string_B
     with reference to the total number of ngrams in string_A"""
 
+    if not n:
+        return 0, {}
     first_string_ngrams = ngrams(first_string.split(), n)
     second_string_ngrams = ngrams(second_string.split(), n)
 
@@ -335,7 +337,7 @@ def calculate_largest_ngram_percentage(first_string: str, second_string: str) ->
             break
         else:
             n -= 1
-    return round(ngram_percentage, 2), shared_ngrams, str(n)
+    return round(ngram_percentage, 2), shared_ngrams, str(n + 1)
 
 
 def is_parent_box(
@@ -520,6 +522,8 @@ def identify_overlapping_or_nesting_case(
     box_pair: Union[List[Union[List, Tuple]], Tuple[Union[List, Tuple]]],
     label_pair: Union[List[str], Tuple[str]],
     text_pair: Union[List[str], Tuple[str]],
+    nested_error_tolerance_px: int = 5,
+    sm_overlap_threshold: float = 10.0,
 ):
     """Identify if there are nested or overlapping elements. If overlapping is present,
     it identifies the case calling the method identify_overlapping_case"""
@@ -565,7 +569,7 @@ def identify_overlapping_or_nesting_case(
             intersection_ratio_method="parent",
         )
 
-        if is_parent_box(box1_corners, box2_corners, add=5):
+        if is_parent_box(box1_corners, box2_corners, add=nested_error_tolerance_px):
             overlapping_elements = [
                 f"{type1}(ix={ix_element1})",
                 f"{type2}(ix={ix_element2})",
@@ -573,7 +577,7 @@ def identify_overlapping_or_nesting_case(
             overlapping_case = f"nested {type2} in {type1}"
             overlap_percentage = 100
 
-        elif is_parent_box(box2_corners, box1_corners, add=5):
+        elif is_parent_box(box2_corners, box1_corners, add=nested_error_tolerance_px):
             overlapping_elements = [
                 f"{type2}(ix={ix_element2})",
                 f"{type1}(ix={ix_element1})",
@@ -595,7 +599,7 @@ def identify_overlapping_or_nesting_case(
                 label_pair,
                 text_pair,
                 (ix_element1, ix_element2),
-                sm_overlap_threshold=10.0,
+                sm_overlap_threshold=sm_overlap_threshold,
             )
     return (
         overlapping_elements,
@@ -611,6 +615,8 @@ def identify_overlapping_or_nesting_case(
 
 def catch_overlapping_and_nested_bboxes(
     elements: List[Text],
+    nested_error_tolerance_px: int = 5,
+    sm_overlap_threshold: float = 10.0,
 ) -> (bool, List[Dict]):
     """Catch overlapping and nested bounding boxes cases across a list of elements."""
 
@@ -650,7 +656,13 @@ def catch_overlapping_and_nested_bboxes(
                 max_area,
                 min_area,
                 total_area,
-            ) = identify_overlapping_or_nesting_case(box_pair, label_pair, text_pair)
+            ) = identify_overlapping_or_nesting_case(
+                box_pair,
+                label_pair,
+                text_pair,
+                nested_error_tolerance_px,
+                sm_overlap_threshold,
+            )
 
             if overlapping_case:
                 overlapping_cases.append(
