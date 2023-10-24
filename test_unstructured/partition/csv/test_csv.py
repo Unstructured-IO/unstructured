@@ -35,6 +35,24 @@ def test_partition_csv_from_filename(filename, expected_text, expected_table):
     assert elements[0].metadata.filename == filename
 
 
+@pytest.mark.parametrize(
+    "infer_table_structure",
+    [
+        True,
+        False,
+    ],
+)
+def test_partition_csv_from_filename_infer_table_structure(infer_table_structure):
+    f_path = "example-docs/stanley-cups.csv"
+    elements = partition_csv(filename=f_path, infer_table_structure=infer_table_structure)
+
+    table_element_has_text_as_html_field = (
+        hasattr(elements[0].metadata, "text_as_html")
+        and elements[0].metadata.text_as_html is not None
+    )
+    assert table_element_has_text_as_html_field == infer_table_structure
+
+
 def test_partition_csv_from_filename_with_metadata_filename(
     filename="example-docs/stanley-cups.csv",
 ):
