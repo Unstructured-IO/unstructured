@@ -43,7 +43,7 @@ TYPE_TO_COLOUR_MAP = {
     "Image": "pink",
     "PageBreak": "gray",
     "Table": "olive",
-    "Header": "cyan",
+    "Header": "indigo",
     "Footer": "coral",
     "Formula": "gold",
     "ListItem": "skyblue",
