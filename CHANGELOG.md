@@ -1,4 +1,4 @@
-## 0.10.26-dev3
+## 0.10.26-dev5
 
 ### Enhancements
 
@@ -10,6 +10,9 @@
 
 ### Fixes
 
+* **Adds `typing-extensions` as an explicit dependency** This package is an implicit dependency, but the module is being imported directly in `unstructured.documents.elements` so the dependency should be explicit in case changes in other dependencies lead to `typing-extensions` being dropped as a dependency.
+* ** Stop passing `extract_tables` to unstructured-inference ** since it is now supported in unstructured instead. Also noted the table
+output regressioin for PDF files.
 * **Fix a bug on Table partitioning** Previously the `skip_infer_table_types` variable used in partition was not being passed down to specific file partitioners. Now you can utilize the `skip_infer_table_types` list variable in partition to pass the filetype you want to exclude `text_as_html` metadata field for, or the `infer_table_structure` boolean variable on the file specific partitioning function.
 * **Fix partition docx without sections** Some docx files, like those from teams output, do not contain sections and it would produce no results because the code assumes all components are in sections. Now if no sections is detected from a document we iterate through the paragraphs and return contents found in the paragraphs.
 
