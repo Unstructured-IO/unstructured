@@ -51,18 +51,18 @@ def process_documents(
     )
     partitioner = Partitioner(pipeline_context=pipeline_config, partition_config=partition_config)
     reformat_nodes: t.List[ReformatNode] = []
-    if embedder_config:
-        reformat_nodes.append(
-            Embedder(
-                pipeline_context=pipeline_config,
-                embedder_config=embedder_config,
-            ),
-        )
     if chunking_config:
         reformat_nodes.append(
             Chunker(
                 pipeline_context=pipeline_config,
                 chunking_config=chunking_config,
+            ),
+        )
+    if embedder_config:
+        reformat_nodes.append(
+            Embedder(
+                pipeline_context=pipeline_config,
+                embedder_config=embedder_config,
             ),
         )
     writer = (
