@@ -736,7 +736,9 @@ def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.x
     ],
 )
 def test_auto_partition_respects_skip_infer_table_types(
-    skip_infer_table_types, filename, has_text_as_html_field
+    skip_infer_table_types,
+    filename,
+    has_text_as_html_field,
 ):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
     with open(filename, "rb") as f:
