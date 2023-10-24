@@ -8,7 +8,7 @@ from __future__ import annotations
 import copy
 import functools
 import inspect
-from typing import Any, Callable, Dict, List, cast
+from typing import Any, Callable, Dict, List, Optional, cast
 
 from typing_extensions import ParamSpec
 
@@ -56,8 +56,8 @@ def chunk_table_element(element: Table, max_characters: int = 500) -> List[Table
 def chunk_by_title(
     elements: List[Element],
     multipage_sections: bool = True,
-    combine_text_under_n_chars: int | None = None,
-    new_after_n_chars: int | None = None,
+    combine_text_under_n_chars: Optional[int] = None,
+    new_after_n_chars: Optional[int] = None,
     max_characters: int = 500,
 ) -> List[Element]:
     """Uses title elements to identify sections within the document for chunking.
