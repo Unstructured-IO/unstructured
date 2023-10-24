@@ -130,7 +130,7 @@ def partition_pdf(
         and is the text content of the table (no structure).
     generate_inner_elements_info
         Only applicable if `strategy=hi_res`.
-        If True, any elements that are extracted from pdfminer and inside tables will be stored in  
+        If True, any elements that are extracted from pdfminer and inside tables will be stored in
         the second return value of this function. The key is the table id and the value is a list of
         elements.
     languages

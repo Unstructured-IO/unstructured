@@ -7,6 +7,7 @@ from unstructured.ingest.cli.interfaces import (
     CliMixin,
 )
 from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 
 @dataclass
