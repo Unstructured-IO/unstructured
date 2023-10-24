@@ -374,11 +374,22 @@ def get_page_layout_from_ocr(
     )
 
     if ocr_agent == OCR_AGENT_PADDLE:
+        # NOTE(christine): For paddle, there is no difference in `ocr_layout` and `ocr_text` in
+        # terms of grouping because we get ocr_text from `ocr_layout, so the first two grouping
+        # and merging steps are not necessary.
+
         page_layout_elements = [
             LayoutElement(bbox=r.bbox, text=r.text, source=r.source, type="UncategorizedText")
             for r in ocr_layout
         ]
     else:
+        # NOTE(christine): For tesseract, the ocr_text returned by
+        # `unstructured_pytesseract.image_to_string()` doesn't contain bounding box data but is
+        # well grouped. Conversely, the ocr_layout returned by parsing
+        # `unstructured_pytesseract.image_to_data()` contains bounding box data but is not well
+        # grouped. Therefore, we need to first group the `ocr_layout` by `ocr_text` and then merge
+        # the text regions in each group to create a list of layout elements.
+
         ocr_text = get_ocr_data_from_image(
             image,
             ocr_languages=ocr_languages,
