@@ -79,6 +79,20 @@ def test_it_does_not_complain_when_specifying_combine_text_under_n_chars_by_itse
         pytest.fail("did not accept `combine_text_under_n_chars` as option by itself")
 
 
+def test_it_silently_accepts_combine_text_under_n_chars_greater_than_maxchars():
+    """`combine_text_under_n_chars` > `max_characters` doesn't affect chunking behavior.
+
+    So rather than raising an exception or warning, we just cap that value at `max_characters` which
+    is the behavioral equivalent.
+    """
+    elements: List[Element] = [Text("Lorem ipsum dolor.")]
+
+    try:
+        chunk_by_title(elements, max_characters=500, combine_text_under_n_chars=600)
+    except ValueError:
+        pytest.fail("did not accept `new_after_n_chars` greater than `max_characters`")
+
+
 @pytest.mark.parametrize("n_chars", [-1, -42])
 def test_it_rejects_new_after_n_chars_for_n_less_than_zero(n_chars: int):
     elements: List[Element] = [Text("Lorem ipsum dolor.")]
@@ -122,6 +136,20 @@ def test_it_accepts_0_for_new_after_n_chars_to_put_each_element_into_its_own_chu
         CompositeElement("ipsum"),
         CompositeElement("dolor"),
     ]
+
+
+def test_it_silently_accepts_new_after_n_chars_greater_than_maxchars():
+    """`new_after_n_chars` > `max_characters` doesn't affect chunking behavior.
+
+    So rather than raising an exception or warning, we just cap that value at `max_characters` which
+    is the behavioral equivalent.
+    """
+    elements: List[Element] = [Text("Lorem ipsum dolor.")]
+
+    try:
+        chunk_by_title(elements, max_characters=500, new_after_n_chars=600)
+    except ValueError:
+        pytest.fail("did not accept `new_after_n_chars` greater than `max_characters`")
 
 
 # ================================================================================================
