@@ -453,10 +453,12 @@ def get_ocr_data_from_image(
     Parameters
     ----------
         image (PILImage): The image from which OCR data will be extracted.
-        ocr_languages (str, optional): The languages for OCR processing (default is "eng" for English).
-        ocr_agent (str, optional): The OCR agent to use, e.g., "tesseract" or "paddle" (default is "tesseract").
-        output_type (OCROutputType, optional): The format of the OCR output, e.g., "STRING" or "TEXT_REGIONS"
-            (default is "STRING").
+        ocr_languages (str, optional): The languages for OCR processing
+            (default is "eng" for English).
+        ocr_agent (str, optional): The OCR agent to use, e.g., "tesseract" or "paddle"
+            (default is "tesseract").
+        output_type (OCROutputType, optional): The format of the OCR output, e.g.,
+            "STRING" or "TEXT_REGIONS" (default is "STRING").
 
     Returns
     -------
