@@ -445,6 +445,24 @@ def get_ocr_data_from_image(
     ocr_agent: str = OCR_AGENT_TESSERACT,
     output_type: OCROutputType = OCROutputType.STRING,
 ) -> Union[str, List[TextRegion]]:
+    """
+    Extract OCR data from an image using the specified OCR agent. If the output_type is STRING,
+    it doesn't parse the OCR result and returns just the OCR text. If the output_type is
+    TEXT_REGIONS, it parses the OCR result and returns a list of text regions.
+
+    Parameters
+    ----------
+        image (PILImage): The image from which OCR data will be extracted.
+        ocr_languages (str, optional): The languages for OCR processing (default is "eng" for English).
+        ocr_agent (str, optional): The OCR agent to use, e.g., "tesseract" or "paddle" (default is "tesseract").
+        output_type (OCROutputType, optional): The format of the OCR output, e.g., "STRING" or "TEXT_REGIONS"
+            (default is "STRING").
+
+    Returns
+    -------
+        Union[str, List[TextRegion]]: The extracted OCR data in the specified format.
+    """
+
     if ocr_agent == OCR_AGENT_PADDLE:
         logger.info("Processing entrie page OCR with paddle...")
         from unstructured.partition.utils.ocr_models import paddle_ocr
