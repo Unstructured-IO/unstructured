@@ -262,6 +262,26 @@ def test_partition_pptx_grabs_tables():
     assert elements[1].metadata.filename == "fake-power-point-table.pptx"
 
 
+@pytest.mark.parametrize(
+    "infer_table_structure",
+    [
+        True,
+        False,
+    ],
+)
+def test_partition_pptx_infer_table_structure(infer_table_structure):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-table.pptx")
+    elements = cast(
+        Sequence[Text],
+        partition_pptx(filename=filename, infer_table_structure=infer_table_structure),
+    )
+    table_element_has_text_as_html_field = (
+        hasattr(elements[1].metadata, "text_as_html")
+        and elements[1].metadata.text_as_html is not None
+    )
+    assert table_element_has_text_as_html_field == infer_table_structure
+
+
 def test_partition_pptx_malformed():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-malformed.pptx")
     elements = cast(Sequence[Text], partition_pptx(filename=filename))
