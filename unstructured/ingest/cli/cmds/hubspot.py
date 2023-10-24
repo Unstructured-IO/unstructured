@@ -1,10 +1,10 @@
-import logging
 import typing as t
 from dataclasses import dataclass
 
 import click
-from unstructured.ingest.cli.interfaces import CliMixin, DelimitedString
+
 from unstructured.ingest.cli.base.src import BaseSrcCmd
+from unstructured.ingest.cli.interfaces import CliMixin, DelimitedString
 from unstructured.ingest.connector.hubspot import HubSpotObjectTypes
 from unstructured.ingest.interfaces import BaseConfig
 from unstructured.ingest.logger import logger
@@ -68,6 +68,7 @@ class HubSpotCliConfig(BaseConfig, CliMixin):
             ),
         ]
         return options
+
 
 def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(

@@ -134,7 +134,8 @@ class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseI
         get_by_id_method = self._resolve_getter()
         try:
             response = get_by_id_method(
-                self.object_id, properties=([] if check_only else self.content_properties)
+                self.object_id,
+                properties=([] if check_only else self.content_properties),
             )
         except NotFoundException as e:
             logger.error(e)
