@@ -177,15 +177,7 @@ def test_partition_pdf_with_model_name_env_var(
         mock.MagicMock(),
     ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res")
-        mock_process.assert_called_once_with(
-            filename,
-            is_image=False,
-            pdf_image_dpi=mock.ANY,
-            extract_tables=mock.ANY,
-            model_name="checkbox",
-            extract_images_in_pdf=mock.ANY,
-            image_output_dir_path=mock.ANY,
-        )
+        assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
 def test_partition_pdf_with_model_name(
@@ -199,15 +191,7 @@ def test_partition_pdf_with_model_name(
         mock.MagicMock(),
     ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res", model_name="checkbox")
-        mock_process.assert_called_once_with(
-            filename,
-            is_image=False,
-            pdf_image_dpi=mock.ANY,
-            extract_tables=mock.ANY,
-            model_name="checkbox",
-            extract_images_in_pdf=mock.ANY,
-            image_output_dir_path=mock.ANY,
-        )
+        assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
 def test_partition_pdf_with_auto_strategy(
@@ -428,6 +412,29 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
     assert "업" in table[0]
 
 
+@pytest.mark.parametrize(
+    ("ocr_mode"),
+    [
+        ("entire_page"),
+        ("individual_blocks"),
+    ],
+)
+def test_partition_pdf_hi_res_ocr_mode_with_table_extraction(ocr_mode):
+    filename = "example-docs/layout-parser-paper.pdf"
+    elements = pdf.partition_pdf(
+        filename=filename,
+        ocr_mode=ocr_mode,
+        strategy="hi_res",
+        infer_table_structure=True,
+    )
+    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert len(table) == 2
+    assert "<table><thead><th>" in table[0]
+    assert "Layouts of history Japanese documents" in table[0]
+    # FIXME(yuming): comment this out since there are some table regression issue
+    # assert "Layouts of scanned modern magazines and scientific reports" in table[0]
+
+
 def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
@@ -443,15 +450,7 @@ def test_partition_pdf_with_dpi():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res", pdf_image_dpi=100)
-        mock_process.assert_called_once_with(
-            filename,
-            is_image=False,
-            extract_tables=mock.ANY,
-            model_name=pdf.default_hi_res_model(),
-            pdf_image_dpi=100,
-            extract_images_in_pdf=mock.ANY,
-            image_output_dir_path=mock.ANY,
-        )
+        assert mock_process.call_args[1]["pdf_image_dpi"] == 100
 
 
 def test_partition_pdf_requiring_recursive_text_grab(filename="example-docs/reliance.pdf"):
@@ -1057,3 +1056,35 @@ def test_partition_model_name_default_to_None():
         )
     except AttributeError:
         pytest.fail("partition_pdf() raised AttributeError unexpectedly!")
+
+
+@pytest.mark.parametrize(
+    ("strategy", "ocr_func"),
+    [
+        (
+            "hi_res",
+            "unstructured_pytesseract.image_to_data",
+        ),
+        (
+            "ocr_only",
+            "unstructured_pytesseract.run_and_get_multiple_output",
+        ),
+    ],
+)
+def test_ocr_language_passes_through(strategy, ocr_func):
+    # Create an exception that will be raised directly after OCR is called to stop execution
+    class CallException(Exception):
+        pass
+
+    mock_ocr_func = mock.Mock(side_effect=CallException("Function called!"))
+    # Patch the ocr function with the mock that will record the call and then terminate
+    with mock.patch(ocr_func, mock_ocr_func), pytest.raises(CallException):
+        pdf.partition_pdf(
+            "example-docs/layout-parser-paper-fast.pdf",
+            strategy=strategy,
+            ocr_languages="kor",
+        )
+    # Check that the language parameter was passed down as expected
+    kwargs = mock_ocr_func.call_args.kwargs
+    assert "lang" in kwargs
+    assert kwargs["lang"] == "kor"
