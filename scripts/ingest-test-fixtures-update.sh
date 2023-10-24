@@ -54,4 +54,5 @@ docker run --rm -v "$SCRIPT_DIR"/../unstructured:/root/unstructured \
                ./test_unstructured_ingest/test-ingest-biomed-path.sh &&
                ./test_unstructured_ingest/test-ingest-s3.sh &&
                ./test_unstructured_ingest/test-ingest-slack.sh &&
-               ./test_unstructured_ingest/test-ingest-pdf-fast-reprocess.sh"
+               ./test_unstructured_ingest/test-ingest-pdf-fast-reprocess.sh &&
+               ./test_unstructured_ingest/test-ingest-local-single-file-with-pdf-infer-table-structure.sh"

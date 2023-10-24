@@ -27,6 +27,15 @@ from unstructured.partition.docx import _DocxPartitioner, partition_docx
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
+def test_parition_docx_from_team_chat():
+    elements = partition_docx(filename="example-docs/teams_chat.docx")
+    assert [element.text for element in elements] == [
+        "0:0:0.0 --> 0:0:1.510\nSome Body\nOK. Yeah.",
+        "0:0:3.270 --> 0:0:4.250\nJames Bond\nUmm.",
+    ]
+    assert all(element.category == "UncategorizedText" for element in elements)
+
+
 def test_partition_docx_from_filename(
     mock_document_filename: str,
     expected_elements: List[Element],
@@ -72,6 +81,25 @@ def test_partition_docx_from_file(mock_document, expected_elements, tmpdir):
     assert elements == expected_elements
     for element in elements:
         assert element.metadata.filename is None
+
+
+@pytest.mark.parametrize(
+    "infer_table_structure",
+    [
+        True,
+        False,
+    ],
+)
+def test_partition_docx_infer_table_structure(infer_table_structure):
+    elements = partition_docx(
+        filename="example-docs/fake_table.docx",
+        infer_table_structure=infer_table_structure,
+    )
+    table_element_has_text_as_html_field = (
+        hasattr(elements[0].metadata, "text_as_html")
+        and elements[0].metadata.text_as_html is not None
+    )
+    assert table_element_has_text_as_html_field == infer_table_structure
 
 
 def test_partition_docx_from_file_with_metadata_filename(mock_document, expected_elements, tmpdir):
@@ -265,6 +293,7 @@ def test_get_emphasized_texts_from_paragraph(expected_emphasized_texts: List[Dic
         None,
         None,
         False,
+        True,
         None,
     )
     paragraph = partitioner._document.paragraphs[1]
@@ -289,6 +318,7 @@ def test_iter_table_emphasis(expected_emphasized_texts: List[Dict[str, str]]):
         None,
         None,
         False,
+        True,
         None,
     )
     table = partitioner._document.tables[0]
@@ -305,6 +335,7 @@ def test_table_emphasis(
         None,
         None,
         False,
+        True,
         None,
     )
     table = partitioner._document.tables[0]
@@ -350,7 +381,14 @@ def test_partition_docx_with_json(mock_document, tmpdir):
 
 
 def test_parse_category_depth_by_style():
-    partitioner = _DocxPartitioner("example-docs/category-level.docx", None, None, False, None)
+    partitioner = _DocxPartitioner(
+        "example-docs/category-level.docx",
+        None,
+        None,
+        False,
+        True,
+        None,
+    )
 
     # Category depths are 0-indexed and relative to the category type
     # Title, list item, bullet, narrative text, etc.
@@ -381,7 +419,7 @@ def test_parse_category_depth_by_style():
 
 
 def test_parse_category_depth_by_style_name():
-    partitioner = _DocxPartitioner(None, None, None, False, None)
+    partitioner = _DocxPartitioner(None, None, None, False, True, None)
 
     test_cases = [
         (0, "Heading 1"),
@@ -406,7 +444,7 @@ def test_parse_category_depth_by_style_name():
 
 
 def test_parse_category_depth_by_style_ilvl():
-    partitioner = _DocxPartitioner(None, None, None, False, None)
+    partitioner = _DocxPartitioner(None, None, None, False, True, None)
     assert partitioner._parse_category_depth_by_style_ilvl() == 0
 
 
