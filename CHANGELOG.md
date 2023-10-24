@@ -1,6 +1,8 @@
-## 0.10.26-dev2
+## 0.10.26-dev3
 
 ### Enhancements
+
+* **Add CI evaluation workflow** Adds evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
 
 ### Features
 
@@ -9,6 +11,7 @@
 ### Fixes
 
 * **Adds `typing-extensions` as an explicit dependency** This package is an implicit dependency, but the module is being imported directly in `unstructured.documents.elements` so the dependency should be explicit in case changes in other dependencies lead to `typing-extensions` being dropped as a dependency.
+* **Fix a bug on Table partitioning** Previously the `skip_infer_table_types` variable used in partition was not being passed down to specific file partitioners. Now you can utilize the `skip_infer_table_types` list variable in partition to pass the filetype you want to exclude `text_as_html` metadata field for, or the `infer_table_structure` boolean variable on the file specific partitioning function.
 
 ## 0.10.25
 
