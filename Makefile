@@ -105,6 +105,11 @@ install-xlsx:
 .PHONY: install-all-docs
 install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx
 
+.PHONY: install-all-ingest
+install-all-ingest:
+	find requirements/ingest -type f -name "*.txt" -exec python3 -m pip install -r '{}' ';'
+
+
 .PHONY: install-ingest-google-drive
 install-ingest-google-drive:
 	python3 -m pip install -r requirements/ingest-google-drive.txt
