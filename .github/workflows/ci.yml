@@ -283,7 +283,22 @@ jobs:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup_ingest, lint]
     steps:
-    - uses: actions/checkout@v3
+    # actions/checkout MUST come before auth
+    - uses: 'actions/checkout@v4'
+    - name: 'Google Cloud Auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        create_credentials_file: 'true'
+        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+    - name: 'Az CLI login'
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -313,22 +328,6 @@ jobs:
       run: |
         source .venv/bin/activate
         PYTHONPATH=. pytest test_unstructured_ingest/unit
-    # actions/checkout MUST come before auth
-    - uses: 'actions/checkout@v4'
-    - name: 'Google Cloud Auth'
-      uses: 'google-github-actions/auth@v1'
-      with:
-        create_credentials_file: 'true'
-        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-    - name: 'Set up Cloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v1'
-    - name: 'Az CLI login'
-      uses: azure/login@v1
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     - name: Test (end-to-end)
       env:
         AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
