@@ -8,8 +8,11 @@ from typing import Any, List, Optional, Tuple
 
 import click
 
+from unstructured.metrics.element_type import (
+    calculate_element_type_percent_match,
+    get_element_type_frequency,
+)
 from unstructured.metrics.text_extraction import calculate_accuracy, calculate_percent_missing_text
-from unstructured.metrics.element_type import calculate_element_type_percent_match, get_element_type_frequency
 from unstructured.staging.base import elements_from_json, elements_to_text
 
 logger = logging.getLogger("unstructured.ingest")
@@ -23,6 +26,7 @@ if "ingest_log_handler" not in [h.name for h in logger.handlers]:
     logger.addHandler(handler)
 
 logger.setLevel(logging.DEBUG)
+
 
 @click.group()
 def main():
@@ -157,7 +161,7 @@ def measure_element_type_accuracy(
     output_list: Optional[List[str]],
     source_dir: str,
     source_list: Optional[List[str]],
-    export_dir: str
+    export_dir: str,
 ):
     if not output_list:
         output_list = _listdir_recursive(output_dir)
@@ -166,7 +170,7 @@ def measure_element_type_accuracy(
 
     rows = []
     accuracy_scores: List[float] = []
-    
+
     for doc in output_list:  # type: ignore
         fn = (doc.split("/")[-1]).split(".json")[0]
         connector = doc.split("/")[0]
