@@ -9,21 +9,57 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
     BaseIngestDoc,
+    BaseSessionHandle,
+    ConfigSessionHandleMixin,
     WriteConfig,
+    WriteConfigSessionHandleMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
+# flake8: noqa E203
+
+
+@requires_dependencies(["pinecone"], extras="pinecone")
+def create_pinecone_object(api_key, index_name, environment):
+    import pinecone
+
+    pinecone.init(api_key=api_key, environment=environment)
+    index = pinecone.Index(index_name)
+    print("Connected to index:", pinecone.describe_index(index_name))
+    return index
+
 
 @dataclass
-class SimplePineconeConfig(BaseConnectorConfig):
+class PineconeSessionHandle(BaseSessionHandle):
+    service: "Pinecone"
+
+
+@dataclass
+class PineconeWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixin, WriteConfig):
     api_key: str
     index_name: str
     environment: str
+    # todo: fix buggy session handle implementation
+    # with the bug, session handle gets created for each batch,
+    # rather than with each process
+
+    def create_session_handle(self) -> PineconeSessionHandle:
+        service = create_pinecone_object(self.api_key, self.index_name, self.environment)
+        return PineconeSessionHandle(service=service)
+
+    def upsert_batch(self, batch):
+        index = self.create_session_handle().service
+        try:
+            response = index.upsert(batch)
+        except pinecone.core.client.exceptions.ApiException as api_error:
+            raise WriteError(f"http error: {api_error}") from api_error
+        logger.debug(f"results: {response}")
+        print(f"results: {response}")
 
 
 @dataclass
-class PineconeWriteConfig(WriteConfig):
+class SimplePineconeConfig(BaseConnectorConfig):
     api_key: str
     index_name: str
     environment: str
@@ -39,28 +75,31 @@ class PineconeDestinationConnector(BaseDestinationConnector):
     @DestinationConnectionError.wrap
     @requires_dependencies(["pinecone"], extras="pinecone")
     def initialize(self):
-        import pinecone
-
-        pinecone.init(
-            api_key=self.connector_config.api_key,
-            environment=self.connector_config.environment,
-        )
-
-        self.index = pinecone.Index(self.connector_config.index_name)
-
-        print("Connected to index:", pinecone.describe_index(self.connector_config.index_name))
+        pass
 
     def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
             f"Inserting / updating {len(dict_list)} documents to destination "
             f"index at {self.connector_config.index_name}",
         )
-        for i in range(0, len(dict_list), 100):
-            try:
-                response = self.index.upsert(dict_list[i : i + 100])  # noqa: E203
-            except pinecone.core.client.exceptions.ApiException as api_error:
-                raise WriteError(f"http error: {api_error}") from api_error
-            logger.debug(f"results: {response}")
+        import multiprocessing as mp
+
+        num_processes = 1
+        if num_processes == 1:
+            for i in range(0, len(dict_list), 100):
+                import pdb
+
+                pdb.set_trace()
+                self.write_config.upsert_batch(dict_list[i : i + 100])
+
+        else:
+            with mp.Pool(
+                processes=num_processes,
+            ) as pool:
+                pool.map(
+                    self.write_config.upsert_batch,
+                    [dict_list[i : i + 100] for i in range(0, len(dict_list), 100)],
+                )
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         dict_list: t.List[t.Dict[str, t.Any]] = []
@@ -76,6 +115,8 @@ class PineconeDestinationConnector(BaseDestinationConnector):
         shutil.rmtree(old_dir)
 
         # make sure you made a .zip file for the embeddings output first
+        # this is a workaround for the copier issue where embeddings outputs are not provided to
+        # the writer
         with zipfile.ZipFile(embeddings_zip, "r") as zip_ref:
             zip_ref.extractall(output_dir)
 
