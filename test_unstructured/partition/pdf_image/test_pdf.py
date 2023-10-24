@@ -823,10 +823,10 @@ def test_partition_pdf_with_ocr_has_coordinates_from_filename(
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="ocr_only")
     assert elements[0].metadata.coordinates.points == (
-        (657.0, 2144.0),
-        (657.0, 2106.0),
-        (1043.0, 2106.0),
-        (1043.0, 2144.0),
+        (538.0, 197.0),
+        (538.0, 239.0),
+        (1159.0, 239.0),
+        (1159.0, 197.0),
     )
 
 
@@ -839,10 +839,10 @@ def test_partition_pdf_with_ocr_has_coordinates_from_file(
             strategy="ocr_only",
         )
     assert elements[0].metadata.coordinates.points == (
-        (657.0, 2144.0),
-        (657.0, 2106.0),
-        (1043.0, 2106.0),
-        (1043.0, 2144.0),
+        (538.0, 197.0),
+        (538.0, 239.0),
+        (1159.0, 239.0),
+        (1159.0, 197.0),
     )
 
 

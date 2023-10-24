@@ -163,7 +163,7 @@ def test_get_ocr_text_from_image_tesseract(monkeypatch):
     monkeypatch.setattr(
         unstructured_pytesseract,
         "image_to_string",
-        lambda *args, **kwargs: {"text": "Hello World"},
+        lambda *args, **kwargs: "Hello World",
     )
     image = Image.new("RGB", (100, 100))
 
@@ -193,7 +193,7 @@ def test_get_ocr_text_from_image_paddle(monkeypatch):
         output_type=OCROutputType.STRING,
     )
 
-    assert ocr_text == "HelloWorld!"
+    assert ocr_text == "Hello\n\nWorld\n\n!"
 
 
 @pytest.fixture()

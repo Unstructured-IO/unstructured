@@ -710,9 +710,6 @@ def get_elements_from_ocr_regions(
     Get layout elements from OCR regions
     """
 
-    if group_by_ocr_text and not ocr_text:
-        raise ValueError("If `group_by_ocr_text` is set to `True`, `ocr_text` must be provided.")
-
     if group_by_ocr_text:
         text_sections = ocr_text.split("\n\n")
         grouped_regions = []

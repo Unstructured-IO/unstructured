@@ -416,7 +416,7 @@ def test_partition_image_with_ocr_has_coordinates_from_filename(
 ):
     elements = image.partition_image(filename=filename, strategy="ocr_only")
     int_coordinates = [(int(x), int(y)) for x, y in elements[0].metadata.coordinates.points]
-    assert int_coordinates == [(14, 36), (14, 16), (381, 16), (381, 36)]
+    assert int_coordinates == [(14, 16), (14, 37), (381, 37), (381, 16)]
 
 
 @pytest.mark.parametrize(
