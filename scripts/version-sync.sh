@@ -111,7 +111,6 @@ MAIN_VERSION=$(git show origin/main:unstructured/__version__.py | grep -o -m 1 -
 MAIN_IS_RELEASE=false
 [[ $MAIN_VERSION != *"-dev"* ]] && MAIN_IS_RELEASE=true
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-MAIN_IS_RELEASE=true
 
 for i in "${!FILES_TO_CHECK[@]}"; do
     FILE_TO_CHANGE=${FILES_TO_CHECK[$i]}
