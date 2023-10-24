@@ -1,6 +1,8 @@
 import os
 import pathlib
 
+import pytest
+
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Table, TableChunk, Title
@@ -52,6 +54,24 @@ def test_partition_odt_from_file():
             "Sarah  Mark  Ryan",
         ),
     ]
+
+
+@pytest.mark.parametrize(
+    "infer_table_structure",
+    [
+        True,
+        False,
+    ],
+)
+def test_partition_odt_infer_table_structure(infer_table_structure):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
+    with open(filename, "rb") as f:
+        elements = partition_odt(file=f, infer_table_structure=infer_table_structure)
+    table_element_has_text_as_html_field = (
+        hasattr(elements[1].metadata, "text_as_html")
+        and elements[1].metadata.text_as_html is not None
+    )
+    assert table_element_has_text_as_html_field == infer_table_structure
 
 
 def test_partition_odt_from_file_with_metadata_filename():

@@ -88,6 +88,7 @@ def convert_and_partition_docx(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     include_metadata: bool = True,
+    infer_table_structure: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     languages: Optional[List[str]] = ["auto"],
@@ -108,6 +109,12 @@ def convert_and_partition_docx(
     include_metadata
         Determines whether or not metadata is included in the metadata attribute on the elements in
         the output.
+    infer_table_structure
+        If True, any Table elements that are extracted will also have a metadata field
+        named "text_as_html" where the table's text content is rendered into an html string.
+        I.e., rows and cells are preserved.
+        Whether True or False, the "text" field is always present in any Table element
+        and is the text content of the table (no structure).
     languages
         User defined value for `metadata.languages` if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
@@ -153,6 +160,7 @@ def convert_and_partition_docx(
             filename=docx_path,
             metadata_filename=metadata_filename,
             include_metadata=include_metadata,
+            infer_table_structure=infer_table_structure,
             metadata_last_modified=metadata_last_modified,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
@@ -170,6 +178,7 @@ def partition_docx(
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
     include_metadata: bool = True,  # used by decorator
+    infer_table_structure: bool = True,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,  # used by decorator
     languages: Optional[List[str]] = ["auto"],
@@ -184,6 +193,12 @@ def partition_docx(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    infer_table_structure
+        If True, any Table elements that are extracted will also have a metadata field
+        named "text_as_html" where the table's text content is rendered into an html string.
+        I.e., rows and cells are preserved.
+        Whether True or False, the "text" field is always present in any Table element
+        and is the text content of the table (no structure).
     metadata_filename
         The filename to use for the metadata. Relevant because partition_doc converts the document
         to .docx before partition. We want the original source filename in the metadata.
@@ -205,6 +220,7 @@ def partition_docx(
         file,
         metadata_filename,
         include_page_breaks,
+        infer_table_structure,
         metadata_last_modified,
     )
     elements = apply_lang_metadata(
@@ -246,12 +262,14 @@ class _DocxPartitioner:
         file: Optional[IO[bytes]],
         metadata_filename: Optional[str],
         include_page_breaks: bool,
+        infer_table_structure: bool,
         metadata_last_modified: Optional[str],
     ) -> None:
         self._filename = filename
         self._file = file
         self._metadata_filename = metadata_filename
         self._include_page_breaks = include_page_breaks
+        self._infer_table_structure = infer_table_structure
         self._metadata_last_modified = metadata_last_modified
         self._page_counter: int = 1
 
@@ -262,6 +280,7 @@ class _DocxPartitioner:
         file: Optional[IO[bytes]] = None,
         metadata_filename: Optional[str] = None,
         include_page_breaks: bool = True,
+        infer_table_structure: bool = True,
         metadata_last_modified: Optional[str] = None,
     ) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
@@ -270,6 +289,7 @@ class _DocxPartitioner:
             file,
             metadata_filename,
             include_page_breaks,
+            infer_table_structure,
             metadata_last_modified,
         )._iter_document_elements()
 
@@ -536,8 +556,9 @@ class _DocxPartitioner:
         """Generate zero-or-one Table element for a DOCX `w:tbl` XML element."""
         # -- at present, we always generate exactly one Table element, but we might want
         # -- to skip, for example, an empty table, or accommodate nested tables.
-
-        html_table = convert_ms_office_table_to_text(table, as_html=True)
+        html_table = None
+        if self._infer_table_structure:
+            html_table = convert_ms_office_table_to_text(table, as_html=True)
         text_table = convert_ms_office_table_to_text(table, as_html=False)
         emphasized_text_contents, emphasized_text_tags = self._table_emphasis(table)
 

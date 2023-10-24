@@ -71,7 +71,7 @@ python_version=$(python --version 2>&1)
 
 tests_to_ignore=(
   'test-ingest-notion.sh'
-  "test-ingest-dropbox.sh"
+  'test-ingest-dropbox.sh'
 )
 
 for test in "${all_tests[@]}"; do
@@ -96,3 +96,7 @@ for test in "${all_tests[@]}"; do
     echo "--------- FINISHED SCRIPT $test ---------"
   fi
 done
+
+echo "--------- RUNNING SCRIPT evaluation-metrics.sh ---------"
+./test_unstructured_ingest/evaluation-metrics.sh
+echo "--------- FINISHED SCRIPT evaluation-metrics.sh ---------"

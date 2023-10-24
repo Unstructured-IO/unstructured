@@ -22,6 +22,7 @@ def partition_ppt(
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,
+    infer_table_structure: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
@@ -39,6 +40,12 @@ def partition_ppt(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, includes a PageBreak element between slides
+    infer_table_structure
+        If True, any Table elements that are extracted will also have a metadata field
+        named "text_as_html" where the table's text content is rendered into an html string.
+        I.e., rows and cells are preserved.
+        Whether True or False, the "text" field is always present in any Table element
+        and is the text content of the table (no structure).
     metadata_last_modified
         The last modified date for the document.
     languages
@@ -82,6 +89,7 @@ def partition_ppt(
         pptx_filename = os.path.join(tmpdir, f"{base_filename}.pptx")
         elements = partition_pptx(
             filename=pptx_filename,
+            infer_table_structure=infer_table_structure,
             metadata_filename=metadata_filename,
             metadata_last_modified=metadata_last_modified or last_modification_date,
             languages=languages,
