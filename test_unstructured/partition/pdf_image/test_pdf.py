@@ -1059,11 +1059,33 @@ def test_partition_model_name_default_to_None():
         pytest.fail("partition_pdf() raised AttributeError unexpectedly!")
 
 
-def test_ocr_language_passes_through():
-    with mock.patch(
-        "unstructured_pytesseract.run_and_get_multiple_output", return_value="ab"
-    ) as mock_thing:
+@pytest.mark.parametrize(
+    ("strategy", "ocr_func"),
+    [
+        (
+            "hi_res",
+            "unstructured_pytesseract.image_to_data",
+        ),
+        (
+            "ocr_only",
+            "unstructured_pytesseract.run_and_get_multiple_output",
+        ),
+    ],
+)
+def test_ocr_language_passes_through_ocr_only(strategy, ocr_func):
+    # Create an exception that will be raised directly after OCR is called to stop execution
+    class CallException(Exception):
+        pass
+
+    mock_ocr_func = mock.Mock(side_effect=CallException("Function called!"))
+    # Patch the ocr function with the mock that will record the call and then terminate
+    with mock.patch(ocr_func, mock_ocr_func), pytest.raises(CallException):
         pdf.partition_pdf(
-            "example-docs/layout-parser-paper-fast.pdf", strategy="ocr_only", ocr_languages="kor"
+            "example-docs/layout-parser-paper-fast.pdf",
+            strategy=strategy,
+            ocr_languages="kor",
         )
-        mock_thing.assert_called_with(mock.ANY, extensions=mock.ANY, lang="kor")
+    # Check that the language parameter was passed down as expected
+    kwargs = mock_ocr_func.call_args.kwargs
+    assert "lang" in kwargs
+    assert kwargs["lang"] == "kor"
