@@ -1057,3 +1057,13 @@ def test_partition_model_name_default_to_None():
         )
     except AttributeError:
         pytest.fail("partition_pdf() raised AttributeError unexpectedly!")
+
+
+def test_ocr_language_passes_through():
+    with mock.patch(
+        "unstructured_pytesseract.run_and_get_multiple_output", return_value="ab"
+    ) as mock_thing:
+        pdf.partition_pdf(
+            "example-docs/layout-parser-paper-fast.pdf", strategy="ocr_only", ocr_languages="kor"
+        )
+        mock_thing.assert_called_with(mock.ANY, extensions=mock.ANY, lang="kor")
