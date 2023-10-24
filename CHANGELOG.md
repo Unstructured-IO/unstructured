@@ -1,6 +1,8 @@
-## 0.10.26-dev1
+## 0.10.26-dev4
 
 ### Enhancements
+
+* **Add CI evaluation workflow** Adds evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
 
 ### Features
 
@@ -8,12 +10,18 @@
 
 ### Fixes
 
+* ** Stop passing `extract_tables` to unstructured-inference ** since it is now supported in unstructured instead. Also noted the table
+output regressioin for PDF files.
+* **Fix a bug on Table partitioning** Previously the `skip_infer_table_types` variable used in partition was not being passed down to specific file partitioners. Now you can utilize the `skip_infer_table_types` list variable in partition to pass the filetype you want to exclude `text_as_html` metadata field for, or the `infer_table_structure` boolean variable on the file specific partitioning function.
+* **Fix partition docx without sections** Some docx files, like those from teams output, do not contain sections and it would produce no results because the code assumes all components are in sections. Now if no sections is detected from a document we iterate through the paragraphs and return contents found in the paragraphs.
+
 ## 0.10.25
 
 ### Enhancements
 
 * **Duplicate CLI param check** Given that many of the options associated with the `Click` based cli ingest commands are added dynamically from a number of configs, a check was incorporated to make sure there were no duplicate entries to prevent new configs from overwriting already added options.
 * **Remove pdfminer elements from inside tables** Previously, when using `hi_res` some elements where extracted using pdfminer too, so we removed pdfminer from the tables pipeline to avoid duplicated elements. 
+* **Ingest CLI refactor for better code reuse** Much of the ingest cli code can be templated and was a copy-paste across files, adding potential risk. Code was refactored to use a base class which had much of the shared code templated.
 
 ### Features
 
