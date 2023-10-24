@@ -25,6 +25,9 @@ class BaseDestCmd(BaseCmd):
         runner.writer_kwargs = options
         return runner
 
+    def check_dest_options(self, options: dict):
+        self.cli_config.from_dict(options)
+
     def dest(self, ctx: click.Context, **options):
         if not ctx.parent:
             raise click.ClickException("destination command called without a parent")
@@ -38,12 +41,13 @@ class BaseDestCmd(BaseCmd):
         log_options(parent_options, verbose=verbose)
         log_options(options, verbose=verbose)
         try:
+            self.check_dest_options(options=options)
             runner = self.get_dest_runner(
                 source_cmd=source_cmd,
                 options=options,
                 parent_options=parent_options,
             )
-            runner.run(**options)
+            runner.run(**parent_options)
         except Exception as e:
             logger.error(e, exc_info=True)
             raise click.ClickException(str(e)) from e
