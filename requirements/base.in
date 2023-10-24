@@ -14,3 +14,4 @@ langdetect
 numpy
 rapidfuzz
 backoff
+typing-extensions
