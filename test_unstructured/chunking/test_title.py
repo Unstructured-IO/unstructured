@@ -159,7 +159,13 @@ def test_split_elements_by_title_and_table():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    sections = _split_elements_by_title_and_table(elements, combine_text_under_n_chars=0)
+    sections = _split_elements_by_title_and_table(
+        elements,
+        multipage_sections=True,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=500,
+        max_characters=500,
+    )
 
     assert sections == [
         [

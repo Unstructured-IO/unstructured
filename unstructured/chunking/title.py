@@ -194,10 +194,10 @@ def chunk_by_title(
 
 def _split_elements_by_title_and_table(
     elements: List[Element],
-    multipage_sections: bool = True,
-    combine_text_under_n_chars: int = 500,
-    new_after_n_chars: int = 500,
-    max_characters: int = 500,
+    multipage_sections: bool,
+    combine_text_under_n_chars: int,
+    new_after_n_chars: int,
+    max_characters: int,
 ) -> List[List[Element]]:
     sections: List[List[Element]] = []
     section: List[Element] = []
