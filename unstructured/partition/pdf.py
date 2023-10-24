@@ -429,7 +429,6 @@ def _partition_pdf_or_image_local(
         # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
         infer_list_items=False,
         detection_origin="image" if is_image else "pdf",
-        languages=languages,
         **kwargs,
     )
 
