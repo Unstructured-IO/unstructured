@@ -713,7 +713,7 @@ EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsh
 
 
 def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx"):
-    elements = partition(filename=filename, include_header=False)
+    elements = partition(filename=filename, include_header=False, skip_infer_table_types=[])
 
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert sum(isinstance(element, Title) for element in elements) == 2
@@ -726,9 +726,36 @@ def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.x
     assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
+@pytest.mark.parametrize(
+    ("skip_infer_table_types", "filename", "has_text_as_html_field"),
+    [
+        (["xlsx"], "stanley-cups.xlsx", False),
+        ([], "stanley-cups.xlsx", True),
+        (["odt"], "fake.odt", False),
+        ([], "fake.odt", True),
+    ],
+)
+def test_auto_partition_respects_skip_infer_table_types(
+    skip_infer_table_types, filename, has_text_as_html_field
+):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
+    with open(filename, "rb") as f:
+        table_elements = [
+            e
+            for e in partition(file=f, skip_infer_table_types=skip_infer_table_types)
+            if isinstance(e, Table)
+        ]
+        for table_element in table_elements:
+            table_element_has_text_as_html_field = (
+                hasattr(table_element.metadata, "text_as_html")
+                and table_element.metadata.text_as_html is not None
+            )
+        assert table_element_has_text_as_html_field == has_text_as_html_field
+
+
 def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
     with open(filename, "rb") as f:
-        elements = partition(file=f, include_header=False)
+        elements = partition(file=f, include_header=False, skip_infer_table_types=[])
 
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert sum(isinstance(element, Title) for element in elements) == 2
@@ -834,7 +861,7 @@ EXPECTED_XLS_TABLE = (
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.xls"):
-    elements = partition(filename=filename, include_header=False)
+    elements = partition(filename=filename, include_header=False, skip_infer_table_types=[])
 
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert len(elements) == 18
