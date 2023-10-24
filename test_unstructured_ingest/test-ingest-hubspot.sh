@@ -33,6 +33,7 @@ fi
 # Optional arguments:
 # --object HubSpot object (i.e ticket) to process. 
 #   Can be used multiple times to specify multiple objects.
+# --custom-properties Custom property to process information from. Comma separated list.
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     hubspot \
