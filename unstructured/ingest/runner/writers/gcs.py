@@ -7,6 +7,7 @@ def gcs_writer(
     remote_url: str,
     token: t.Optional[str],
     verbose: bool = False,
+    **kwargs,
 ) -> BaseDestinationConnector:
     from unstructured.ingest.connector.fsspec import FsspecWriteConfig
     from unstructured.ingest.connector.gcs import (
