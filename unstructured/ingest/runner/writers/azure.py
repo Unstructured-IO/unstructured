@@ -10,6 +10,7 @@ def azure_writer(
     connection_string: t.Optional[str] = None,
     overwrite: bool = False,
     verbose: bool = False,
+    **kwargs,
 ) -> BaseDestinationConnector:
     from unstructured.ingest.connector.azure import (
         AzureBlobStorageDestinationConnector,
