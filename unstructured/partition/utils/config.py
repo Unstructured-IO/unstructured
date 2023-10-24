@@ -61,5 +61,12 @@ class ENVConfig:
         """optimum text height for tesseract OCR"""
         return self._get_int("TESSERACT_OPTIMUM_TEXT_HEIGHT", 20)
 
+    @property
+    def TABLE_TOKEN_ERROR_MARGIN(self) -> float:
+        """error margin when comparing if a ocr region is within the table element when perparing
+        table tokens
+        """
+        return self._get_float("TABLE_TOKEN_ERROR_MARGIN", 0.0)
+
 
 env_config = ENVConfig()
