@@ -285,6 +285,7 @@ def _add_element_metadata(
     section: Optional[str] = None,
     image_path: Optional[str] = None,
     detection_origin: Optional[str] = None,
+    languages: Optional[List[str]] = None,
     **kwargs,
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
@@ -332,6 +333,7 @@ def _add_element_metadata(
         section=section,
         category_depth=depth,
         image_path=image_path,
+        languages=languages,
     )
     metadata.detection_origin = detection_origin
     # NOTE(newel) - Element metadata is being merged into
@@ -549,6 +551,7 @@ def document_to_element_list(
     source_format: Optional[str] = None,
     detection_origin: Optional[str] = None,
     sort_mode: str = SORT_MODE_XY_CUT,
+    languages: Optional[List[str]] = None,
     **kwargs,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
@@ -617,6 +620,7 @@ def document_to_element_list(
                 category_depth=element.metadata.category_depth,
                 image_path=el_image_path,
                 detection_origin=detection_origin,
+                languages=languages,
                 **kwargs,
             )
 

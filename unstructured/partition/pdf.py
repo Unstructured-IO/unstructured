@@ -98,8 +98,6 @@ def partition_pdf(
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: List[str] = ["eng"],
-    max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
@@ -134,12 +132,6 @@ def partition_pdf(
     languages
         The languages present in the document, for use in partitioning and/or OCR. To use a language
         with Tesseract, you'll first need to install the appropriate Tesseract language pack.
-    max_partition
-        The maximum number of characters to include in a partition. If None is passed,
-        no maximum is applied. Only applies to the "ocr_only" strategy.
-    min_partition
-        The minimum number of characters to include in a partition. Only applies if
-        processing text/plain content.
     metadata_last_modified
         The last modified date for the document.
     extract_images_in_pdf
@@ -174,8 +166,6 @@ def partition_pdf(
         strategy=strategy,
         infer_table_structure=infer_table_structure,
         languages=languages,
-        max_partition=max_partition,
-        min_partition=min_partition,
         metadata_last_modified=metadata_last_modified,
         extract_images_in_pdf=extract_images_in_pdf,
         image_output_dir_path=image_output_dir_path,
@@ -222,8 +212,6 @@ def partition_pdf_or_image(
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
     languages: Optional[List[str]] = ["eng"],
-    max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
     extract_images_in_pdf: bool = False,
     image_output_dir_path: Optional[str] = None,
@@ -334,8 +322,6 @@ def partition_pdf_or_image(
                 include_page_breaks=include_page_breaks,
                 languages=languages,
                 is_image=is_image,
-                max_partition=max_partition,
-                min_partition=min_partition,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 **kwargs,
             )
@@ -445,6 +431,7 @@ def _partition_pdf_or_image_local(
         # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
         infer_list_items=False,
         detection_origin="image" if is_image else "pdf",
+        languages=languages,
         **kwargs,
     )
 
@@ -859,6 +846,7 @@ def _partition_pdf_or_image_with_ocr(
         # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
         infer_list_items=False,
         detection_origin="image" if is_image else "pdf",
+        languages=languages,
         **kwargs,
     )
 
