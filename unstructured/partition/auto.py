@@ -374,7 +374,7 @@ def partition(
             include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             strategy=strategy,
-            generate_extra_info=False,
+            generate_inner_elements_info=False,
             languages=languages,
             extract_images_in_pdf=pdf_extract_images,
             image_output_dir_path=pdf_image_output_dir_path,
