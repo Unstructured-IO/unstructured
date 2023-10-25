@@ -563,13 +563,16 @@ def inference_results():
 
 
 def test_partition_image_has_filetype(inference_results):
-    filename = "example-docs/layout-parser-paper-fast.jpg"
+    doc_path = "example-docs"
+    filename = "layout-parser-paper-fast.jpg"
     # Mock inference call with known return results
     with mock.patch(
         "unstructured_inference.inference.layout.process_file_with_model",
         return_value=inference_results,
     ) as mock_inference_func:
-        elements = image.partition_image(filename=filename, strategy="hi_res")
+        elements = image.partition_image(
+            filename=os.path.join(doc_path, filename), strategy="hi_res"
+        )
     # Make sure we actually went down the path we expect.
     mock_inference_func.assert_called_once()
     # Unpack element but also make sure there is only one
