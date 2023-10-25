@@ -270,7 +270,8 @@ test-no-extras:
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
 		test_${PACKAGE_NAME}/partition/test_html_partition.py \
-		test_${PACKAGE_NAME}/partition/test_xml_partition.py
+		test_${PACKAGE_NAME}/partition/test_xml_partition.py \
+		test_${PACKAGE_NAME}/partition/test_epub.py
 
 .PHONY: test-extra-csv
 test-extra-csv:
@@ -306,11 +307,6 @@ test-extra-pdf-image:
 test-extra-pptx:
 	PYTHONPATH=. CI=$(CI) pytest \
 		test_${PACKAGE_NAME}/partition/pptx
-
-.PHONY: test-extra-epub
-test-extra-epub:
-	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/epub
 
 .PHONY: test-extra-pypandoc
 test-extra-pypandoc:
