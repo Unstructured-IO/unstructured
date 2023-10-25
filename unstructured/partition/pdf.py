@@ -4,7 +4,19 @@ import os
 import re
 import warnings
 from tempfile import SpooledTemporaryFile
-from typing import IO, Any, BinaryIO, Iterator, List, Optional, Sequence, Tuple, Union, cast
+from typing import (
+    IO,
+    TYPE_CHECKING,
+    Any,
+    BinaryIO,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+    cast,
+)
 
 import numpy as np
 import pdf2image
@@ -22,7 +34,6 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
-from unstructured_inference.inference.layout import DocumentLayout
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -53,6 +64,7 @@ from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
+    normalize_layout_element,
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.lang import (
@@ -60,7 +72,7 @@ from unstructured.partition.lang import (
     prepare_languages_for_tesseract,
 )
 from unstructured.partition.ocr import (
-    get_page_layout_from_ocr,
+    get_layout_elements_from_ocr,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text
@@ -76,6 +88,9 @@ from unstructured.partition.utils.sorting import (
     sort_page_elements,
 )
 from unstructured.utils import requires_dependencies
+
+if TYPE_CHECKING:
+    from unstructured_inference.inference.layoutelement import LayoutElement
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
@@ -799,57 +814,121 @@ def _partition_pdf_or_image_with_ocr(
     metadata_last_modified: Optional[str] = None,
     **kwargs,
 ):
-    """Partitions an image or PDF using Tesseract OCR. For PDFs, each page is converted
+    """Partitions an image or PDF using OCR. For PDFs, each page is converted
     to an image prior to processing."""
 
-    ocr_agent = os.getenv("OCR_AGENT", OCR_AGENT_TESSERACT).lower()
-    ocr_languages = prepare_languages_for_tesseract(languages)
-
-    page_layouts = []
+    elements = []
     if is_image:
         images = []
         image = PILImage.open(file) if file is not None else PILImage.open(filename)
         images.append(image)
 
         for i, image in enumerate(images):
-            page_layout = get_page_layout_from_ocr(
+            page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,
+                languages=languages,
                 page_number=i + 1,
-                ocr_languages=ocr_languages,
-                ocr_agent=ocr_agent,
+                include_page_breaks=include_page_breaks,
+                metadata_last_modified=metadata_last_modified,
+                detection_origin="image" if is_image else "pdf",
+                **kwargs,
             )
-            page_layouts.append(page_layout)
+            elements.extend(page_elements)
     else:
         page_number = 0
         for image in convert_pdf_to_images(filename, file):
             page_number += 1
-            page_layout = get_page_layout_from_ocr(
+            page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,
+                languages=languages,
                 page_number=page_number,
-                ocr_languages=ocr_languages,
-                ocr_agent=ocr_agent,
+                include_page_breaks=include_page_breaks,
+                metadata_last_modified=metadata_last_modified,
+                detection_origin="image" if is_image else "pdf",
+                **kwargs,
             )
-            page_layouts.append(page_layout)
+            elements.extend(page_elements)
 
-    layout = DocumentLayout.from_pages(page_layouts)
+    return elements
+
+
+def _partition_pdf_or_image_with_ocr_from_image(
+    image: PILImage,
+    languages: Optional[List[str]] = ["eng"],
+    page_number: int = 1,
+    include_page_breaks: bool = False,
+    metadata_last_modified: Optional[str] = None,
+    detection_origin: Optional[str] = None,
+    infer_element_category: bool = True,
+    sort_mode: str = SORT_MODE_XY_CUT,
+) -> List[Element]:
+    """Extract `unstructured` elements from an image using OCR and perform partitioning."""
+
+    ocr_agent = os.getenv("OCR_AGENT", OCR_AGENT_TESSERACT).lower()
+    ocr_languages = prepare_languages_for_tesseract(languages)
 
     # NOTE(christine): `unstructured_pytesseract.image_to_string()` returns sorted text
     if ocr_agent == OCR_AGENT_TESSERACT:
-        kwargs["sort_mode"] = SORT_MODE_DONT
+        sort_mode = SORT_MODE_DONT
 
-    elements = document_to_element_list(
-        layout,
-        sortable=True,
-        include_page_breaks=include_page_breaks,
-        last_modification_date=metadata_last_modified,
-        # NOTE(crag): do not attempt to derive ListItem's from a layout-recognized "List"
-        # block with NLP rules. Otherwise, the assumptions in
-        # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
-        infer_list_items=False,
-        detection_origin="image" if is_image else "pdf",
-        languages=languages,
-        **kwargs,
+    ocr_data = get_layout_elements_from_ocr(
+        image=image,
+        ocr_languages=ocr_languages,
+        ocr_agent=ocr_agent,
     )
+
+    metadata = ElementMetadata(
+        last_modified=metadata_last_modified,
+        filetype=image.format,
+        page_number=page_number,
+        languages=languages,
+    )
+    metadata.detection_origin = detection_origin
+
+    page_elements = _ocr_data_to_elements(
+        ocr_data,
+        image,
+        common_metadata=metadata,
+        infer_element_category=infer_element_category,
+    )
+
+    sorted_page_elements = page_elements
+    if sort_mode != SORT_MODE_DONT:
+        sorted_page_elements = sort_page_elements(page_elements, sort_mode)
+
+    if include_page_breaks:
+        sorted_page_elements.append(PageBreak(text=""))
+
+    return page_elements
+
+
+def _ocr_data_to_elements(
+    ocr_data: List["LayoutElement"],
+    image: PILImage,
+    common_metadata: ElementMetadata,
+    infer_list_items: bool = True,
+    source_format: Optional[str] = None,
+    infer_element_category: bool = False,
+) -> List[Element]:
+    """Convert OCR layout data into `unstructured` elements with associated metadata."""
+
+    image_width, image_height = image.size
+    coordinate_system = PixelSpace(width=image_width, height=image_height)
+    elements = []
+    for layout_element in ocr_data:
+        element = normalize_layout_element(
+            layout_element,
+            coordinate_system=coordinate_system,
+            infer_list_items=infer_list_items,
+            source_format=source_format if source_format else "html",
+        )
+        element.metadata = element.metadata.merge(common_metadata)
+
+        if infer_element_category:
+            _el = element_from_text(element.text)
+            element.category = _el.category
+
+        elements.append(element)
 
     return elements
 

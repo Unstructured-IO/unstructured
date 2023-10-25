@@ -23,7 +23,6 @@ from unstructured_inference.models.tables import UnstructuredTableTransformerMod
 from unstructured_pytesseract import Output
 
 from unstructured.logger import logger
-from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     OCR_AGENT_PADDLE,
@@ -357,12 +356,11 @@ def init_table_agent():
     return table_agent
 
 
-def get_page_layout_from_ocr(
+def get_layout_elements_from_ocr(
     image: PILImage,
-    page_number: int = 1,
     ocr_languages: str = "eng",
     ocr_agent: str = OCR_AGENT_TESSERACT,
-) -> "PageLayout":
+) -> List[LayoutElement]:
     """
     Generate a PageLayout with OCR data from a given image.
     """
@@ -379,7 +377,7 @@ def get_page_layout_from_ocr(
         # terms of grouping because we get ocr_text from `ocr_layout, so the first two grouping
         # and merging steps are not necessary.
 
-        page_layout_elements = [
+        layout_elements = [
             LayoutElement(bbox=r.bbox, text=r.text, source=r.source, type="UncategorizedText")
             for r in ocr_layout
         ]
@@ -397,27 +395,13 @@ def get_page_layout_from_ocr(
             ocr_agent=ocr_agent,
             output_type=OCROutputType.STRING,
         )
-        page_layout_elements = get_elements_from_ocr_regions(
+        layout_elements = get_elements_from_ocr_regions(
             ocr_regions=ocr_layout,
             ocr_text=ocr_text,
             group_by_ocr_text=True,
         )
 
-    page_layout = PageLayout(number=page_number, image=image, layout=None)
-    page_layout.image_metadata = {
-        "format": image.format,
-        "width": image.width,
-        "height": image.height,
-    }
-    page_layout.image = None
-
-    for el in page_layout_elements:
-        _element = element_from_text(el.text)
-        el.type = _element.category
-
-    page_layout.elements = page_layout_elements
-
-    return page_layout
+    return layout_elements
 
 
 def pad_element_bboxes(
