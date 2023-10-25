@@ -174,7 +174,7 @@ def group_broken_paragraphs(
 
 def new_line_grouper(
     text: str,
-    paragraph_split: re.Pattern = LINE_BREAK_RE,
+    paragraph_split: re.Pattern[str] = LINE_BREAK_RE,
 ) -> str:
     """
     Concatenates text document that has one-line paragraph break pattern
