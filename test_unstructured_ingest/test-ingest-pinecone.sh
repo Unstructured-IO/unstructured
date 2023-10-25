@@ -8,7 +8,6 @@ OUTPUT_FOLDER_NAME=s3-pinecone-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
-PINECONE_INDEX="utic-test-ingest-fixtures-output-$(date +%s)"
 # The vector configs on the schema currently only exist on versions:
 # 2023-07-01-Preview, 2021-04-30-Preview, 2020-06-30-Preview
 API_VERSION=2023-07-01-Preview
@@ -19,20 +18,31 @@ if [ -z "$OPENAI_API_KEY" ] && [ -z "$PINECONE_API_KEY" ]; then
 fi
 # shellcheck disable=SC1091
 
-# --- in progress (to be tested)---
+PINECONE_ENVIRONMENT="gcp-starter"
+PINECONE_INDEX="ingest-test"
+PINECONE_PROJECT_ID="bfa06d5"
+
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup {
-  # Index cleanup
-  response_code=$(curl -s -o /dev/null -w "%{http_code}" \
-  "https://controller.$PINECONE_ENVIRONMENT.pinecone.io/databases/$PINECONE_INDEX" \
-  --header "Api-Key: $PINECONE_API_KEY" \
-  --header 'content-type: application/json')
+
+  # Get response code to check if index exists
+  response_code=$(curl \
+    -s -o /dev/null \
+    -w "%{http_code}" \
+    --request GET \
+    --url https://controller.$PINECONE_ENVIRONMENT.pinecone.io/databases/$PINECONE_INDEX \
+    --header 'accept: application/json' \
+    --header "Api-Key: $PINECONE_API_KEY")
+
+  # Cleanup (delete) index if it exists
   if [ "$response_code" == "200" ]; then
-    echo "deleting index $DESTINATION_INDEX"
-    curl -X DELETE \
+    echo ""
+    echo "deleting index $PINECONE_INDEX"
+    curl --request DELETE \
     "https://controller.$PINECONE_ENVIRONMENT.pinecone.io/databases/$PINECONE_INDEX" \
     --header "Api-Key: $PINECONE_API_KEY" \
     --header 'content-type: application/json'
+
   else
     echo "Index $PINECONE_INDEX does not exist, nothing to delete"
   fi
@@ -48,19 +58,35 @@ function cleanup {
 trap cleanup EXIT
 
 
-# --- in progress ---
 # Create index
 echo "Creating index $PINECONE_INDEX"
-# might do it with a curl command as well
-python ../scripts/pinecone-test-helpers/create_index.py --index-name "$PINECONE_INDEX"
+
+response_code=$(curl \
+     -s -o /dev/null \
+     -w "%{http_code}" \
+     --request POST \
+     --url "https://controller.$PINECONE_ENVIRONMENT.pinecone.io/databases" \
+     --header "accept: text/plain" \
+     --header "content-type: application/json" \
+     --header "Api-Key: $PINECONE_API_KEY" \
+     --data '
+{
+  "name": "'"$PINECONE_INDEX"'",
+  "dimension": 1536,
+  "metric": "cosine",
+  "pods": 1,
+  "replicas": 1,
+  "pod_type": "p1.x1"
+}
+')
 
 
-# if [ "$response_code" -lt 400 ]; then
-#   echo "Index creation success: $response_code"
-# else
-#   echo "Index creation failure: $response_code"
-#   exit 1
-# fi
+if [ "$response_code" -lt 400 ]; then
+  echo "Index creation success: $response_code"
+else
+  echo "Index creation failure: $response_code"
+  exit 1
+fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   s3 \
@@ -78,32 +104,24 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   pinecone \
   --api-key "$PINECONE_API_KEY" \
   --index-name "$PINECONE_INDEX" \
-  --environment "gcp-starter"
+  --environment "$PINECONE_ENVIRONMENT"
 
-# --- in progress ---
-# docs_count_remote=0
-# attempt=1
-# while [ "$docs_count_remote" -eq 0 ] && [ "$attempt" -lt 6 ]; do
-  # echo "attempt $attempt: sleeping 10 seconds to let index finish catching up after writes"
-  # sleep 10
+# curl \
+#   --request GET \
+#   --url https://controller.gcp-starter.pinecone.io/databases/ingest-test \
+#   --header 'accept: application/json' \
+#   --header "Api-Key: $PINECONE_API_KEY"
 
-  # Check the contents of the index
-  # docs_count_remote=$(curl "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX/docs/\$count?api-version=$API_VERSION" \
-  #   --header "api-key: $PINECONE_API_KEY" \
-  #   --header 'content-type: application/json' | jq)
+sleep 10
 
-  # echo "docs count pulled from Pinecone: $docs_count_remote"
+num_of_vectors_remote=$(curl --request POST \
+     -s \
+     --url "https://$PINECONE_INDEX-$PINECONE_PROJECT_ID.svc.$PINECONE_ENVIRONMENT.pinecone.io/describe_index_stats" \
+     --header "accept: application/json" \
+     --header "content-type: application/json" \
+     --header "Api-Key: $PINECONE_API_KEY" | jq -r '.totalVectorCount')
 
-  # attempt=$((attempt+1))
-done
-
-docs_count_local=0
-for i in $(jq length "$OUTPUT_DIR"/**/*.json); do
-  docs_count_local=$((docs_count_local+i));
-done
-
-
-if [ "$docs_count_remote" -ne "$docs_count_local" ];then
-  echo "Number of docs in Pinecone $docs_count_remote doesn't match the expected docs: $docs_count_local"
+if [ "$num_of_vectors_remote" -ne 484 ];then
+  echo "Number of vectors in Pinecone are $num_of_vectors_remote when the expected number is 484. Test failed."
   exit 1
 fi
