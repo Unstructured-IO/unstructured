@@ -166,7 +166,7 @@ def test_partition_epub_with_json():
 
 
 def test_add_chunking_strategy_on_partition_epub(
-    filename=os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub")
+    filename=os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub"),
 ):
     elements = partition_epub(filename=filename)
     chunk_elements = partition_epub(filename, chunking_strategy="by_title")
@@ -176,7 +176,7 @@ def test_add_chunking_strategy_on_partition_epub(
 
 
 def test_add_chunking_strategy_on_partition_epub_non_default(
-    filename=os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub")
+    filename=os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub"),
 ):
     elements = partition_epub(filename=filename)
     chunk_elements = partition_epub(
