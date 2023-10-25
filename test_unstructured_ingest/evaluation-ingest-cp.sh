@@ -17,7 +17,7 @@ selected_outputs=$(cat "$SCRIPT_DIR/metrics/metrics-json-manifest.txt")
 # If structured output file in this connector's outputs match the 
 # selected outputs in the txt file, copy to the destination
 for file in "${structured_outputs[@]}"; do
-  if [[ "${selected_outputs[*]}" =~ $(basename "$file") ]] ; then
+  if [[ -f "$file" && "${selected_outputs[*]}" =~ $(basename "$file") ]] ; then
     echo "--- Copying $file to $CP_DIR ---"
     cp -r "$file" "$CP_DIR"
   fi
