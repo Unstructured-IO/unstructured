@@ -1,3 +1,13 @@
+## 0.10.27
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Removed `ebooklib` as a dependency** `ebooklib` is licensed under AGPL3, which is incompatible with the Apache 2.0 license. Thus it is being removed.
+
 ## 0.10.26
 
 ### Enhancements
