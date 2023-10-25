@@ -33,12 +33,18 @@ jobs:
       name: 'gcloud'
       run: |-
         gcloud auth login --brief --cred-file="${{ steps.gauth.outputs.credentials_file_path }}"
+    - name: 'run gcloud command'
+      run: |-
+        gcloud projects list
     - name: 'Az CLI login'
       uses: azure/login@v1
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - name: 'azure test command'
+      run: |-
+        az account show
   setup:
     strategy:
       matrix:
