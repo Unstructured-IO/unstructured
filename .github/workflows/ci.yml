@@ -22,6 +22,7 @@ jobs:
     - uses: 'actions/checkout@v4'
     - name: 'Google Cloud Auth'
       uses: 'google-github-actions/auth@v1'
+      id: gauth
       with:
         workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
         service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
@@ -31,7 +32,7 @@ jobs:
     - id: 'gcloud'
       name: 'gcloud'
       run: |-
-        gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+        gcloud auth login --brief --cred-file="${{ steps.gauth.outputs.credentials_file_path }}"
     - name: 'Az CLI login'
       uses: azure/login@v1
       with:
