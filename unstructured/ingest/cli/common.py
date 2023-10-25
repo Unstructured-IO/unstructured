@@ -64,6 +64,7 @@ def log_options(options: dict, verbose=False):
         "account_name",
         "account_key",
         "api_key",
+        "embedding_api_key",
         "token",
         "client_id",
         "client_cred",
