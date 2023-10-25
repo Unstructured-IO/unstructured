@@ -40,9 +40,6 @@ from unstructured.partition.text_type import (
 )
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.TXT)
-@add_chunking_strategy()
 def partition_text(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -93,6 +90,46 @@ def partition_text(
     metadata_last_modified
         The day of the last modification
     """
+    return _partition_text(
+        filename=filename,
+        file=file,
+        text=text,
+        encoding=encoding,
+        paragraph_grouper=paragraph_grouper,
+        metadata_filename=metadata_filename,
+        include_metadata=include_metadata,
+        languages=languages,
+        max_partition=max_partition,
+        min_partition=min_partition,
+        metadata_last_modified=metadata_last_modified,
+        chunking_strategy=chunking_strategy,
+        detect_language_per_element=detect_language_per_element,
+        detection_origin=detection_origin,
+        **kwargs,
+    )
+
+
+@process_metadata()
+@add_metadata_with_filetype(FileType.TXT)
+@add_chunking_strategy()
+def _partition_text(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    text: Optional[str] = None,
+    encoding: Optional[str] = None,
+    paragraph_grouper: Optional[Callable[[str], str]] = None,
+    metadata_filename: Optional[str] = None,
+    include_metadata: bool = True,
+    languages: Optional[List[str]] = ["auto"],
+    max_partition: Optional[int] = 1500,
+    min_partition: Optional[int] = 0,
+    metadata_last_modified: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,
+    detect_language_per_element: bool = False,
+    detection_origin: Optional[str] = "text",
+    **kwargs: Any,
+) -> List[Element]:
+    """internal API for `partition_text`"""
     if text is not None and text.strip() == "" and not file and not filename:
         return []
 
