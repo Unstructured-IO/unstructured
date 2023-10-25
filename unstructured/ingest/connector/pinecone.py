@@ -26,7 +26,7 @@ def create_pinecone_object(api_key, index_name, environment):
 
     pinecone.init(api_key=api_key, environment=environment)
     index = pinecone.Index(index_name)
-    print("Connected to index:", pinecone.describe_index(index_name))
+    logger.debug("Connected to index:", pinecone.describe_index(index_name))
     return index
 
 
@@ -55,7 +55,6 @@ class PineconeWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixi
         except pinecone.core.client.exceptions.ApiException as api_error:
             raise WriteError(f"http error: {api_error}") from api_error
         logger.debug(f"results: {response}")
-        print(f"results: {response}")
 
 
 @dataclass
@@ -65,8 +64,6 @@ class SimplePineconeConfig(BaseConnectorConfig):
     environment: str
 
 
-# When upserting larger amounts of data, upsert data in batches of 100 vectors
-# or fewer over multiple upsert requests.
 @dataclass
 class PineconeDestinationConnector(BaseDestinationConnector):
     write_config: WriteConfig
@@ -87,9 +84,6 @@ class PineconeDestinationConnector(BaseDestinationConnector):
         num_processes = 1
         if num_processes == 1:
             for i in range(0, len(dict_list), 100):
-                import pdb
-
-                pdb.set_trace()
                 self.write_config.upsert_batch(dict_list[i : i + 100])
 
         else:
@@ -103,23 +97,6 @@ class PineconeDestinationConnector(BaseDestinationConnector):
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         dict_list: t.List[t.Dict[str, t.Any]] = []
-
-        import shutil
-        import zipfile
-        from pathlib import Path
-
-        output_dir = Path(str(docs[0]._output_filename).lstrip("/").split("/")[0])
-        old_dir = output_dir / "small-pdf-set"
-        embeddings_zip = output_dir / "small-pdf-set.zip"
-
-        shutil.rmtree(old_dir)
-
-        # make sure you made a .zip file for the embeddings output first
-        # this is a workaround for the copier issue where embeddings outputs are not provided to
-        # the writer
-        with zipfile.ZipFile(embeddings_zip, "r") as zip_ref:
-            zip_ref.extractall(output_dir)
-
         for doc in docs:
             local_path = doc._output_filename
             with open(local_path) as json_file:

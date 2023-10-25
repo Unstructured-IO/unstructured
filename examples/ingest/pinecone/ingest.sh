@@ -8,6 +8,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
+# We remove chunking params until the chunk/embed ordering fix is merged
 PYTHONPATH=. ./unstructured/ingest/main.py \
         s3 \
          --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
@@ -17,8 +18,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
          --verbose \
          --strategy fast \
          --embedding-api-key "$OPENAI_API_KEY" \
-         --chunk-elements \
-         --chunk-multipage-sections \
         pinecone \
         --api-key "$PINECONE_API_KEY" \
         --index-name ingest-test \
