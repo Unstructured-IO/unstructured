@@ -48,6 +48,12 @@ if dependency_exists("docx") and dependency_exists("pypandoc"):
 
 
 if dependency_exists("pypandoc"):
+    from unstructured.partition.epub import partition_epub
+
+    PARTITION_WITH_EXTRAS_MAP["epub"] = partition_epub
+
+
+if dependency_exists("pypandoc"):
     from unstructured.partition.org import partition_org
     from unstructured.partition.rst import partition_rst
     from unstructured.partition.rtf import partition_rtf
