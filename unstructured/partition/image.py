@@ -8,9 +8,11 @@ from unstructured.partition.lang import (
     convert_old_ocr_languages_to_languages,
 )
 from unstructured.partition.pdf import partition_pdf_or_image
+from unstructured.file_utils.filetype import add_metadata
 
 
 @process_metadata()
+@add_metadata
 @add_chunking_strategy()
 def partition_image(
     filename: str = "",
