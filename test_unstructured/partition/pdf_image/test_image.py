@@ -562,7 +562,7 @@ def inference_results():
     return doc
 
 
-def test_partition_image_has_filetype(inference_results):
+def test_partition_image_has_filename(inference_results):
     doc_path = "example-docs"
     filename = "layout-parser-paper-fast.jpg"
     # Mock inference call with known return results
