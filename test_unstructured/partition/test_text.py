@@ -13,9 +13,9 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import group_broken_paragraphs
 from unstructured.documents.elements import Address, ListItem, NarrativeText, Text, Title
 from unstructured.partition.text import (
-    combine_paragraphs_less_than_min,
+    _combine_paragraphs_less_than_min,
+    _split_content_to_fit_max,
     partition_text,
-    split_content_to_fit_max,
 )
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
@@ -342,7 +342,7 @@ def test_partition_text_min_max():
 
 
 def test_split_content_to_fit_max():
-    segments = split_content_to_fit_max(
+    segments = _split_content_to_fit_max(
         content=MIN_MAX_TEXT,
         max_partition=75,
     )
@@ -356,7 +356,7 @@ def test_split_content_to_fit_max():
 
 
 def test_combine_paragraphs_less_than_min():
-    segments = combine_paragraphs_less_than_min(
+    segments = _combine_paragraphs_less_than_min(
         SHORT_PARAGRAPHS.split("\n\n"),
         max_partition=1500,
         min_partition=7,
