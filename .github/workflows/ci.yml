@@ -11,6 +11,10 @@ on:
 env:
   GHA_CACHE_KEY_VERSION: "v1"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   setup:
     strategy:
@@ -272,9 +276,6 @@ jobs:
 
 
   test_ingest:
-    permissions:
-      contents: 'read'
-      id-token: 'write'
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
