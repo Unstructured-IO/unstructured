@@ -22,6 +22,138 @@ from unstructured.documents.elements import (
 )
 from unstructured.partition.html import partition_html
 
+# == chunk_by_title() validation behaviors =======================================================
+
+
+@pytest.mark.parametrize("max_characters", [0, -1, -42])
+def test_it_rejects_max_characters_not_greater_than_zero(max_characters: int):
+    elements: List[Element] = [Text("Lorem ipsum dolor.")]
+
+    with pytest.raises(
+        ValueError, match=f"'max_characters' argument must be > 0, got {max_characters}"
+    ):
+        chunk_by_title(elements, max_characters=max_characters)
+
+
+def test_it_does_not_complain_when_specifying_max_characters_by_itself():
+    """Caller can specify `max_characters` arg without specifying any others.
+
+    In particular, When `combine_text_under_n_chars` is not specified it defaults to the value of
+    `max_characters`; it has no fixed default value that can be greater than `max_characters` and
+    trigger an exception.
+    """
+    elements: List[Element] = [Text("Lorem ipsum dolor.")]
+
+    try:
+        chunk_by_title(elements, max_characters=50)
+    except ValueError:
+        pytest.fail("did not accept `max_characters` as option by itself")
+
+
+@pytest.mark.parametrize("n_chars", [-1, -42])
+def test_it_rejects_combine_text_under_n_chars_for_n_less_than_zero(n_chars: int):
+    elements: List[Element] = [Text("Lorem ipsum dolor.")]
+
+    with pytest.raises(
+        ValueError, match=f"'combine_text_under_n_chars' argument must be >= 0, got {n_chars}"
+    ):
+        chunk_by_title(elements, combine_text_under_n_chars=n_chars)
+
+
+def test_it_accepts_0_for_combine_text_under_n_chars_to_disable_chunk_combining():
+    """Specifying `combine_text_under_n_chars=0` is how a caller disables chunk-combining."""
+    elements: List[Element] = [Text("Lorem ipsum dolor.")]
+
+    chunks = chunk_by_title(elements, max_characters=50, combine_text_under_n_chars=0)
+
+    assert chunks == [CompositeElement("Lorem ipsum dolor.")]
+
+
+def test_it_does_not_complain_when_specifying_combine_text_under_n_chars_by_itself():
+    """Caller can specify `combine_text_under_n_chars` arg without specifying any other options."""
+    elements: List[Element] = [Text("Lorem ipsum dolor.")]
+
+    try:
+        chunk_by_title(elements, combine_text_under_n_chars=50)
+    except ValueError:
+        pytest.fail("did not accept `combine_text_under_n_chars` as option by itself")
+
+
+def test_it_silently_accepts_combine_text_under_n_chars_greater_than_maxchars():
+    """`combine_text_under_n_chars` > `max_characters` doesn't affect chunking behavior.
+
+    So rather than raising an exception or warning, we just cap that value at `max_characters` which
+    is the behavioral equivalent.
+    """
+    elements: List[Element] = [Text("Lorem ipsum dolor.")]
+
+    try:
+        chunk_by_title(elements, max_characters=500, combine_text_under_n_chars=600)
+    except ValueError:
+        pytest.fail("did not accept `new_after_n_chars` greater than `max_characters`")
+
+
+@pytest.mark.parametrize("n_chars", [-1, -42])
+def test_it_rejects_new_after_n_chars_for_n_less_than_zero(n_chars: int):
+    elements: List[Element] = [Text("Lorem ipsum dolor.")]
+
+    with pytest.raises(
+        ValueError, match=f"'new_after_n_chars' argument must be >= 0, got {n_chars}"
+    ):
+        chunk_by_title(elements, new_after_n_chars=n_chars)
+
+
+def test_it_does_not_complain_when_specifying_new_after_n_chars_by_itself():
+    """Caller can specify `new_after_n_chars` arg without specifying any other options.
+
+    In particular, `combine_text_under_n_chars` value is adjusted down to the `new_after_n_chars`
+    value when the default for `combine_text_under_n_chars` exceeds the value of
+    `new_after_n_chars`.
+    """
+    elements: List[Element] = [Text("Lorem ipsum dolor.")]
+
+    try:
+        chunk_by_title(elements, new_after_n_chars=50)
+    except ValueError:
+        pytest.fail("did not accept `new_after_n_chars` as option by itself")
+
+
+def test_it_accepts_0_for_new_after_n_chars_to_put_each_element_into_its_own_chunk():
+    """Specifying `new_after_n_chars=0` places each element into its own section.
+
+    This puts each element into its own chunk, although long chunks are still split.
+    """
+    elements: List[Element] = [
+        Text("Lorem"),
+        Text("ipsum"),
+        Text("dolor"),
+    ]
+
+    chunks = chunk_by_title(elements, max_characters=50, new_after_n_chars=0)
+
+    assert chunks == [
+        CompositeElement("Lorem"),
+        CompositeElement("ipsum"),
+        CompositeElement("dolor"),
+    ]
+
+
+def test_it_silently_accepts_new_after_n_chars_greater_than_maxchars():
+    """`new_after_n_chars` > `max_characters` doesn't affect chunking behavior.
+
+    So rather than raising an exception or warning, we just cap that value at `max_characters` which
+    is the behavioral equivalent.
+    """
+    elements: List[Element] = [Text("Lorem ipsum dolor.")]
+
+    try:
+        chunk_by_title(elements, max_characters=500, new_after_n_chars=600)
+    except ValueError:
+        pytest.fail("did not accept `new_after_n_chars` greater than `max_characters`")
+
+
+# ================================================================================================
+
 
 def test_it_splits_a_large_section_into_multiple_chunks():
     elements: List[Element] = [
@@ -32,7 +164,7 @@ def test_it_splits_a_large_section_into_multiple_chunks():
         ),
     ]
 
-    chunks = chunk_by_title(elements, combine_text_under_n_chars=50, max_characters=50)
+    chunks = chunk_by_title(elements, max_characters=50)
 
     assert chunks == [
         CompositeElement("Introduction"),
@@ -55,7 +187,13 @@ def test_split_elements_by_title_and_table():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    sections = _split_elements_by_title_and_table(elements, combine_text_under_n_chars=0)
+    sections = _split_elements_by_title_and_table(
+        elements,
+        multipage_sections=True,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=500,
+        max_characters=500,
+    )
 
     assert sections == [
         [
@@ -393,43 +531,6 @@ def test_add_chunking_strategy_on_partition_html_respects_multipage():
     assert len(partitioned_elements_multipage_true_combine_chars_0) != len(
         partitioned_elements_multipage_false_combine_chars_0,
     )
-
-
-@pytest.mark.parametrize(
-    ("combine_text_under_n_chars", "new_after_n_chars", "max_characters"),
-    [
-        (-1, -1, -1),  # invalid chunk size
-        (0, 0, 0),  # invalid max_characters
-        (-5666, -6777, -8999),  # invalid chunk size
-        (-5, 40, 50),  # invalid chunk size
-        (50, 70, 20),  # max_characters needs to be greater than new_after_n_chars
-        (70, 50, 50),  # combine_text_under_n_chars needs to be les than new_after_n_chars
-    ],
-)
-def test_add_chunking_strategy_raises_error_for_invalid_n_chars(
-    combine_text_under_n_chars: int,
-    new_after_n_chars: int,
-    max_characters: int,
-):
-    elements: List[Element] = [
-        Title("A Great Day"),
-        Text("Today is a great day."),
-        Text("It is sunny outside."),
-        Table("<table></table>"),
-        Title("An Okay Day"),
-        Text("Today is an okay day."),
-        Text("It is rainy outside."),
-        Title("A Bad Day"),
-        Text("It is storming outside."),
-        CheckBox(),
-    ]
-    with pytest.raises(ValueError):
-        chunk_by_title(
-            elements,
-            combine_text_under_n_chars=combine_text_under_n_chars,
-            new_after_n_chars=new_after_n_chars,
-            max_characters=max_characters,
-        )
 
 
 def test_chunk_by_title_drops_detection_class_prob():

@@ -1,4 +1,4 @@
-## 0.10.26-dev5
+## 0.10.26-dev7
 
 ### Enhancements
 
@@ -7,7 +7,7 @@
 ### Features
 
 * **Update `ocr_only` strategy in `partition_pdf()`** Adds the functionality to get accurate coordinate data when partitioning PDFs and Images with the `ocr_only` strategy.
-* **Add Local connector source metadata** python's os module used to pull stats from local file when processing via the local connector and populates fields such as last modified time, created time.
+* **Add Local connector source metadata.** python's os module used to pull stats from local file when processing via the local connector and populates fields such as last modified time, created time.
 
 ### Fixes
 
