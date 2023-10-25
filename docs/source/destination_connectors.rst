@@ -8,5 +8,7 @@ in our community `Slack. <https://join.slack.com/t/unstructuredw-kbe4326/shared_
 .. toctree::
    :maxdepth: 1
 
-   destination_connectors/delta_table
    destination_connectors/azure_cognitive_search
+   destination_connectors/delta_table
+   destination_connectors/pinecone
+   destination_connectors/s3
