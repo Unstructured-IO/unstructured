@@ -8,7 +8,7 @@ from unstructured.partition.epub import partition_epub
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
-EXAMPLE_DOCS_PATH = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
+EXAMPLE_DOCS_PATH = os.path.join(DIRECTORY, "..", "..", "example-docs")
 expected_sections = {
     "CHAPTER I THE SUN-SEEKER",
     "CHAPTER II RINKS AND SKATERS",
@@ -107,7 +107,7 @@ def test_partition_epub_metadata_date(
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.epub.get_last_modified_date",
+        "unstructured.partition.html.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
     elements = partition_epub(filename=filename)
