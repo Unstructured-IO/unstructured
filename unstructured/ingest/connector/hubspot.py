@@ -70,7 +70,7 @@ class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseI
     def filename(self):
         return (
             Path(self.read_config.download_dir)
-            / f"{self.registry_name}/{self.object_id}.txt"  # type: ignore
+            / f"{self.object_type}/{self.object_id}.txt"  # type: ignore
         ).resolve()
 
     @property
