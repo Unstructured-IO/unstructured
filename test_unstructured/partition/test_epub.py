@@ -9,18 +9,6 @@ from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_ME
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_PATH = os.path.join(DIRECTORY, "..", "..", "example-docs")
-expected_sections = {
-    "CHAPTER I THE SUN-SEEKER",
-    "CHAPTER II RINKS AND SKATERS",
-    "CHAPTER III TEES AND CRAMPITS",
-    "CHAPTER IV TOBOGGANING",
-    # not included in expected sections because TOC doesn't perfectly match with EpubHtml items
-    # 'CHAPTER V ICE-HOCKEY',
-    "CHAPTER VI SKI-ING",
-    "CHAPTER VII NOTES ON WINTER RESORTS",
-    "CHAPTER VIII FOR PARENTS AND GUARDIANS",
-    "THE FULL PROJECT GUTENBERG LICENSE",
-}
 
 
 def test_partition_epub_from_filename():
