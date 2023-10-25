@@ -8,7 +8,7 @@ from unstructured.partition.epub import partition_epub
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
-EXAMPLE_DOCS_PATH = os.path.join(DIRECTORY, "..", "..", "example-docs")
+EXAMPLE_DOCS_PATH = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
 
 
 def test_partition_epub_from_filename():
