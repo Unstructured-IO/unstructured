@@ -1,4 +1,4 @@
-## 0.10.26-dev6
+## 0.10.26-dev7
 
 ### Enhancements
 

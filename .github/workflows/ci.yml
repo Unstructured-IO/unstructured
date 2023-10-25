@@ -252,7 +252,7 @@ jobs:
         uses: actions/github-script@v3
         with:
           script: |
-            core.setFailed('base cached environment couldn't be found')
+            core.setFailed("base cached environment couldn't be found")
       - uses: actions/cache@v3
         id: virtualenv-cache
         with:
@@ -301,7 +301,7 @@ jobs:
       uses: actions/github-script@v3
       with:
         script: |
-          core.setFailed('cached environment couldn't be found')
+          core.setFailed("cached environment couldn't be found")
     - name: Setup docker-compose
       uses: KengoTODA/actions-setup-docker-compose@v1
       with:
