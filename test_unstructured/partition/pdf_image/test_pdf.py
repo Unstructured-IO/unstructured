@@ -18,6 +18,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition import ocr, pdf, strategies
+from unstructured.partition.ocr import get_ocr_agent
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
@@ -131,7 +132,7 @@ def test_partition_pdf_local_raises_with_no_filename():
     ("strategy", "expected", "origin"),
     # fast: can't capture the "intentionally left blank page" page
     # others: will ignore the actual blank page
-    [("fast", {1, 4}, "pdfminer"), ("hi_res", {1, 3, 4}, "pdf"), ("ocr_only", {1, 3, 4}, "pdf")],
+    [("fast", {1, 4}, "pdfminer"), ("hi_res", {1, 3, 4}, "pdf"), ("ocr_only", {1, 3, 4}, "ocr")],
 )
 def test_partition_pdf(
     file_mode,
@@ -147,7 +148,12 @@ def test_partition_pdf(
         # check that the pdf has multiple different page numbers
         assert {element.metadata.page_number for element in result} == expected
         if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            assert {element.metadata.detection_origin for element in result} == {origin}
+            if strategy == "ocr_only":
+                ocr_agent = get_ocr_agent()
+                expected_origin = f"{origin}_{ocr_agent}"
+            else:
+                expected_origin = origin
+            assert {element.metadata.detection_origin for element in result} == {expected_origin}
 
     if file_mode == "filename":
         result = pdf.partition_pdf(filename=filename, strategy=strategy)
