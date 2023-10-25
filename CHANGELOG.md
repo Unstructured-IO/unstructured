@@ -1,8 +1,13 @@
-## 0.10.27-dev0
+## 0.10.27-dev1
 
 ### Enhancements
 
 * **Leverage dict to share content across ingest pipeline** To share the ingest doc content across steps in the ingest pipeline, this was updated to use a multiprocessing-safe dictionary so changes get persisted and each step has the option to modify the ingest docs in place.
+* **Fsspec downstream connectors** New destination connector added to ingest CLI, users may now use `unstructured-ingest` to write to any of the following:
+  * Azure
+  * Box
+  * Dropbox
+  * Google Cloud Service
 
 ### Features
 
@@ -15,11 +20,6 @@
 ### Enhancements
 
 * **Add CI evaluation workflow** Adds evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
-* **Fsspec downstream connectors** New destination connector added to ingest CLI, users may now use `unstructured-ingest` to write to any of the following:
-  * Azure
-  * Box
-  * Dropbox
-  * Google Cloud Service
 
 ### Features
 
