@@ -412,6 +412,7 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
     assert "업" in table[0]
 
 
+@pytest.mark.integration()
 @pytest.mark.parametrize(
     ("ocr_mode"),
     [
@@ -1034,10 +1035,12 @@ def chipper_children(chipper_results):
     return [el for el in chipper_results if el.metadata.parent_id is not None]
 
 
+@pytest.mark.integration()
 def test_chipper_has_hierarchy(chipper_children):
     assert chipper_children
 
 
+@pytest.mark.integration()
 def test_chipper_not_losing_parents(chipper_results, chipper_children):
     assert all(
         [el for el in chipper_results if el.id == child.metadata.parent_id]
