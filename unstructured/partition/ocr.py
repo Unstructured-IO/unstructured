@@ -187,13 +187,8 @@ def supplement_page_layout_with_ocr(
     If mode is "individual_blocks", we find the elements from PageLayout
     with no text and add text from OCR to each element.
     """
-    ocr_agent = os.getenv("OCR_AGENT", OCR_AGENT_TESSERACT).lower()
-    if ocr_agent not in [OCR_AGENT_PADDLE, OCR_AGENT_TESSERACT]:
-        raise ValueError(
-            "Environment variable OCR_AGENT",
-            " must be set to 'tesseract' or 'paddle'.",
-        )
 
+    ocr_agent = get_ocr_agent()
     ocr_layout = None
     if ocr_mode == OCRMode.FULL_PAGE.value:
         ocr_layout = get_ocr_data_from_image(
@@ -790,3 +785,13 @@ def merge_text_regions(regions: List[TextRegion]) -> TextRegion:
     source = sources[0] if all(s == sources[0] for s in sources) else None
 
     return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text, source)
+
+
+def get_ocr_agent() -> str:
+    ocr_agent = env_config.OCR_AGENT.lower()
+    if ocr_agent not in [OCR_AGENT_PADDLE, OCR_AGENT_TESSERACT]:
+        raise ValueError(
+            "Environment variable OCR_AGENT",
+            " must be set to 'tesseract' or 'paddle'.",
+        )
+    return ocr_agent

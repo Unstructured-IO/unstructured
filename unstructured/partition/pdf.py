@@ -73,6 +73,7 @@ from unstructured.partition.lang import (
 )
 from unstructured.partition.ocr import (
     get_layout_elements_from_ocr,
+    get_ocr_agent,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
 from unstructured.partition.text import element_from_text
@@ -861,10 +862,11 @@ def _partition_pdf_or_image_with_ocr_from_image(
     detection_origin: Optional[str] = None,
     infer_element_category: bool = True,
     sort_mode: str = SORT_MODE_XY_CUT,
+    **kwargs,
 ) -> List[Element]:
     """Extract `unstructured` elements from an image using OCR and perform partitioning."""
 
-    ocr_agent = os.getenv("OCR_AGENT", OCR_AGENT_TESSERACT).lower()
+    ocr_agent = get_ocr_agent()
     ocr_languages = prepare_languages_for_tesseract(languages)
 
     # NOTE(christine): `unstructured_pytesseract.image_to_string()` returns sorted text
