@@ -19,10 +19,9 @@ def test_image_or_pdf_to_dataframe(filename):
 
 
 def test_eval_table_transformer_for_file():
-    scores = eval_table_transformer_for_file(
+    score = eval_table_transformer_for_file(
         "example-docs/table-multi-row-column-cells.png",
         "example-docs/table-multi-row-column-cells-actual.csv",
     )
     # avoid severe degradation of performance
-    assert 100 > scores["by_col_token_ratio"] > 80
-    assert 100 > scores["by_row_token_ratio"] > 80
+    assert 0.8 < score < 1
