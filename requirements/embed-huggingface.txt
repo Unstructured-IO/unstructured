@@ -23,7 +23,7 @@ certifi==2023.7.22
     #   -c requirements/base.txt
     #   -c requirements/constraints.in
     #   requests
-charset-normalizer==3.3.0
+charset-normalizer==3.3.1
     # via
     #   -c requirements/base.txt
     #   aiohttp
@@ -76,9 +76,9 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.320
+langchain==0.0.323
     # via -r requirements/embed-huggingface.in
-langsmith==0.0.49
+langsmith==0.0.52
     # via langchain
 markupsafe==2.1.3
     # via jinja2
@@ -147,7 +147,7 @@ safetensors==0.3.2
     # via
     #   -c requirements/constraints.in
     #   transformers
-scikit-learn==1.3.1
+scikit-learn==1.3.2
     # via sentence-transformers
 scipy==1.10.1
     # via
