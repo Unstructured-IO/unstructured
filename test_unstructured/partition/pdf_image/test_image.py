@@ -11,6 +11,7 @@ from test_unstructured.unit_utils import assert_round_trips_through_JSON, exampl
 from unstructured.chunking.title import chunk_by_title
 from unstructured.partition import image, ocr, pdf
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
+from unstructured.utils import only
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -130,7 +131,7 @@ def test_partition_image_with_auto_strategy(
     elements = image.partition_image(filename=filename, strategy="auto")
     titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 2
+    idx = 3
     assert titles[0].text == title
     assert elements[idx].metadata.detection_class_prob is not None
     assert isinstance(elements[idx].metadata.detection_class_prob, float)
@@ -255,7 +256,7 @@ def test_partition_image_default_strategy_hi_res():
         elements = image.partition_image(file=f)
 
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 2
+    idx = 3
     assert elements[idx].text == title
     assert elements[idx].metadata.coordinates is not None
     assert elements[idx].metadata.detection_class_prob is not None
@@ -503,7 +504,7 @@ def test_partition_image_uses_model_name():
 @pytest.mark.parametrize(
     ("ocr_mode", "idx_title_element"),
     [
-        ("entire_page", 2),
+        ("entire_page", 3),
         ("individual_blocks", 1),
     ],
 )
@@ -521,7 +522,64 @@ def test_partition_image_hi_res_invalid_ocr_mode():
         _ = image.partition_image(filename=filename, ocr_mode="invalid_ocr_mode", strategy="hi_res")
 
 
+@pytest.mark.parametrize(
+    ("ocr_mode"),
+    [
+        ("entire_page"),
+        ("individual_blocks"),
+    ],
+)
+def test_partition_image_hi_res_ocr_mode_with_table_extraction(ocr_mode):
+    filename = "example-docs/layout-parser-paper-with-table.jpg"
+    elements = image.partition_image(
+        filename=filename,
+        ocr_mode=ocr_mode,
+        strategy="hi_res",
+        infer_table_structure=True,
+    )
+    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert len(table) == 1
+    assert "<table><thead><th>" in table[0]
+    assert "Layouts of history Japanese documents" in table[0]
+    assert "Layouts of scanned modern magazines and scientific reports" in table[0]
+
+
 def test_partition_image_raises_TypeError_for_invalid_languages():
     filename = "example-docs/layout-parser-paper-fast.jpg"
     with pytest.raises(TypeError):
         image.partition_image(filename=filename, strategy="hi_res", languages="eng")
+
+
+@pytest.fixture()
+def inference_results():
+    page = layout.PageLayout(
+        number=1,
+        image=mock.MagicMock(format="JPEG"),
+        layout=layout.TextRegion.from_coords(0, 0, 600, 800, text="hello"),
+    )
+    page.elements = [layout.LayoutElement.from_coords(0, 0, 600, 800, text="hello")]
+    doc = layout.DocumentLayout(pages=[page])
+    return doc
+
+
+def test_partition_image_has_filename(inference_results):
+    doc_path = "example-docs"
+    filename = "layout-parser-paper-fast.jpg"
+    # Mock inference call with known return results
+    with mock.patch(
+        "unstructured_inference.inference.layout.process_file_with_model",
+        return_value=inference_results,
+    ) as mock_inference_func:
+        elements = image.partition_image(
+            filename=os.path.join(doc_path, filename),
+            strategy="hi_res",
+        )
+    # Make sure we actually went down the path we expect.
+    mock_inference_func.assert_called_once()
+    # Unpack element but also make sure there is only one
+    element = only(elements)
+    # This makes sure we are still getting the filetype metadata (should be translated from the
+    # fixtures)
+    assert element.metadata.filetype == "JPEG"
+    # This should be kept from the filename we originally gave
+    assert element.metadata.filename == filename

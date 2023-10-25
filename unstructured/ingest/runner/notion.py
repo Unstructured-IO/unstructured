@@ -11,7 +11,7 @@ from unstructured.ingest.runner.utils import update_download_dir_hash
 class NotionRunner(Runner):
     def run(
         self,
-        api_key: str,
+        notion_api_key: str,
         recursive: bool = False,
         max_retries: t.Optional[int] = None,
         max_time: t.Optional[float] = None,
@@ -57,7 +57,7 @@ class NotionRunner(Runner):
             connector_config=SimpleNotionConfig(
                 page_ids=page_ids,
                 database_ids=database_ids,
-                api_key=api_key,
+                notion_api_key=notion_api_key,
                 recursive=recursive,
             ),
             read_config=self.read_config,

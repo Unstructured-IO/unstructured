@@ -33,6 +33,7 @@ def partition_csv(
     metadata_last_modified: Optional[str] = None,
     include_header: bool = False,
     include_metadata: bool = True,
+    infer_table_structure: bool = True,
     languages: Optional[List[str]] = ["auto"],
     # NOTE (jennings) partition_csv generates a single TableElement
     # so detect_language_per_element is not included as a param
@@ -54,6 +55,12 @@ def partition_csv(
         Determines whether or not header info info is included in text and medatada.text_as_html.
     include_metadata
         Determines whether or not metadata is included in the output.
+    infer_table_structure
+        If True, any Table elements that are extracted will also have a metadata field
+        named "text_as_html" where the table's text content is rendered into an html string.
+        I.e., rows and cells are preserved.
+        Whether True or False, the "text" field is always present in any Table element
+        and is the text content of the table (no structure).
     languages
         User defined value for `metadata.languages` if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
@@ -79,11 +86,12 @@ def partition_csv(
 
     if include_metadata:
         metadata = ElementMetadata(
-            text_as_html=html_text,
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
             languages=languages,
         )
+        if infer_table_structure:
+            metadata.text_as_html = html_text
     else:
         metadata = ElementMetadata()
 

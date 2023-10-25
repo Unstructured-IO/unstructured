@@ -1,4 +1,0 @@
--c constraints.in
--c base.txt
-boxfs
-fsspec==2023.9.1

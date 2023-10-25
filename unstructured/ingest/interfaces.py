@@ -13,16 +13,18 @@ from pathlib import Path
 
 import requests
 from dataclasses_json import DataClassJsonMixin
+from dataclasses_json.core import Json, _asdict, _decode_dataclass
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
-from unstructured.ingest.ingest_doc_json_mixin import IngestDocJsonMixin
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict, elements_from_json
+
+A = t.TypeVar("A", bound="DataClassJsonMixin")
 
 SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "s3",
@@ -197,7 +199,6 @@ class PermissionsConfig(BaseConfig):
     application_id: t.Optional[str]
     client_cred: t.Optional[str]
     tenant: t.Optional[str]
-    pass
 
 
 @dataclass
@@ -217,6 +218,56 @@ class SourceMetadata(DataClassJsonMixin, ABC):
     source_url: t.Optional[str] = None
     exists: t.Optional[bool] = None
     permissions_data: t.Optional[t.List[t.Dict[str, t.Any]]] = None
+
+
+class IngestDocJsonMixin(DataClassJsonMixin):
+    """
+    Inherently, DataClassJsonMixin does not add in any @property fields to the json/dict
+    created from the dataclass. This explicitly sets properties to look for on the IngestDoc
+    class when creating the json/dict for serialization purposes.
+    """
+
+    metadata_properties = [
+        "date_created",
+        "date_modified",
+        "date_processed",
+        "exists",
+        "permissions_data",
+        "version",
+        "source_url",
+    ]
+    properties_to_serialize = [
+        "base_filename",
+        "filename",
+        "_output_filename",
+        "record_locator",
+        "_source_metadata",
+    ]
+
+    def add_props(self, as_dict: dict, props: t.List[str]):
+        for prop in props:
+            val = getattr(self, prop)
+            if isinstance(val, Path):
+                val = str(val)
+            if isinstance(val, DataClassJsonMixin):
+                val = val.to_dict(encode_json=False)
+            as_dict[prop] = val
+
+    def to_dict(self, encode_json=False) -> t.Dict[str, Json]:
+        as_dict = _asdict(self, encode_json=encode_json)
+        self.add_props(as_dict=as_dict, props=self.properties_to_serialize)
+        if getattr(self, "_source_metadata") is not None:
+            self.add_props(as_dict=as_dict, props=self.metadata_properties)
+        return as_dict
+
+    @classmethod
+    def from_dict(cls: t.Type[A], kvs: Json, *, infer_missing=False) -> A:
+        doc = _decode_dataclass(cls, kvs, infer_missing)
+        if meta := kvs.get("_source_metadata"):
+            setattr(doc, "_source_metadata", SourceMetadata.from_dict(meta))
+        if date_processed := kvs.get("_date_processed"):
+            setattr(doc, "_date_processed", date_processed)
+        return doc
 
 
 @dataclass
@@ -316,7 +367,6 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     @abstractmethod
     def cleanup_file(self):
         """Removes the local copy the file (or anything else) after successful processing."""
-        pass
 
     @staticmethod
     def skip_if_file_exists(func):
@@ -353,7 +403,6 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     @SourceConnectionError.wrap
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
-        pass
 
     def has_output(self) -> bool:
         """Determine if structured output for this doc already exists."""
@@ -469,13 +518,11 @@ class BaseSourceConnector(DataClassJsonMixin, ABC):
         temporary download dirs that are empty.
 
         By convention, documents that failed to process are typically not cleaned up."""
-        pass
 
     @abstractmethod
     def initialize(self):
         """Initializes the connector. Should also validate the connector is properly
         configured: e.g., list a single a document from the source."""
-        pass
 
     @abstractmethod
     def get_ingest_docs(self):
@@ -483,7 +530,6 @@ class BaseSourceConnector(DataClassJsonMixin, ABC):
         This does not imply downloading all the raw documents themselves,
         rather each IngestDoc is capable of fetching its content (in another process)
         with IngestDoc.get_file()."""
-        pass
 
 
 @dataclass
@@ -499,7 +545,6 @@ class BaseDestinationConnector(DataClassJsonMixin, ABC):
     def initialize(self):
         """Initializes the connector. Should also validate the connector is properly
         configured."""
-        pass
 
     @abstractmethod
     def write(self, docs: t.List[BaseIngestDoc]) -> None:

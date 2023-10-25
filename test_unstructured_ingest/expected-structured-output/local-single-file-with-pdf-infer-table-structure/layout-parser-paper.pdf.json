@@ -3,7 +3,14 @@
     "type": "UncategorizedText",
     "element_id": "5d05cfc3c8e4a52fd1b3b8bd26648010",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -13,7 +20,14 @@
     "type": "Header",
     "element_id": "2b55904c2fe851254b0221734a72deb4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -23,7 +37,14 @@
     "type": "UncategorizedText",
     "element_id": "2bc84f0cc92df12c750ef7cc180fa144",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -33,7 +54,14 @@
     "type": "Title",
     "element_id": "72c8dc05682ffa4a143f4e59501ecd84",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -43,7 +71,14 @@
     "type": "NarrativeText",
     "element_id": "4da978e09ded2156643e427e0f71cf88",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -53,7 +88,14 @@
     "type": "NarrativeText",
     "element_id": "f54e4537371345c448859842761ec65e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -63,7 +105,14 @@
     "type": "NarrativeText",
     "element_id": "c8cfb1cf0c9e6709f7ece87e26094434",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -73,7 +122,14 @@
     "type": "NarrativeText",
     "element_id": "98f930d9b2f5bbc33cafb4bbe439dc63",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -83,7 +139,14 @@
     "type": "Title",
     "element_id": "8de2a6e07c3e4df67625a60f079764a4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -93,7 +156,14 @@
     "type": "NarrativeText",
     "element_id": "2a92239d820b34481bc23e44e7767b05",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -103,7 +173,14 @@
     "type": "Title",
     "element_id": "0778dedc6a5e78f11b66915003e6afde",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -113,7 +190,14 @@
     "type": "NarrativeText",
     "element_id": "c749ec9752e4f4b69435de6279e1d2d5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -123,7 +207,14 @@
     "type": "NarrativeText",
     "element_id": "147e0762bc4da382a2b673af087c7c10",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -133,7 +224,14 @@
     "type": "NarrativeText",
     "element_id": "641105bcd721926cf18a80c1a138f998",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -143,7 +241,14 @@
     "type": "ListItem",
     "element_id": "b63bb581fef5728c1d27774ceb25b22f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -153,7 +258,14 @@
     "type": "ListItem",
     "element_id": "569ce8891b02bc38f50a0cde0039e951",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -163,7 +275,14 @@
     "type": "ListItem",
     "element_id": "f053840b2f6b2786b33533441b034e08",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -173,7 +292,14 @@
     "type": "ListItem",
     "element_id": "18dcbc2839f9783d2c91cbce75d3e685",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -183,7 +309,14 @@
     "type": "ListItem",
     "element_id": "ec6b1abc1c5e033ef92ab38cfee3b80b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -193,7 +326,14 @@
     "type": "ListItem",
     "element_id": "f98e90f859af76d260aa96b86cc57e27",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -203,7 +343,14 @@
     "type": "NarrativeText",
     "element_id": "16e14d7bf31f029a5813c557a245af20",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -213,7 +360,14 @@
     "type": "NarrativeText",
     "element_id": "8a585b845f71ae5edf85991e661227f2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -223,7 +377,14 @@
     "type": "Header",
     "element_id": "72c43f1a56f77795dacfdfe034f47354",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -233,7 +394,14 @@
     "type": "NarrativeText",
     "element_id": "31cbd7fa4b6e5d40d4f5de572cd7bd86",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -243,7 +411,14 @@
     "type": "NarrativeText",
     "element_id": "d58c4eaa08e6195595233bbeb87ae331",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -253,7 +428,14 @@
     "type": "Title",
     "element_id": "d2e1a97795476cc4aba05a95edc57860",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -263,7 +445,14 @@
     "type": "NarrativeText",
     "element_id": "13105a0ebbeccd12a8785d2b83752720",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -273,7 +462,14 @@
     "type": "NarrativeText",
     "element_id": "1d6246af89ad959f51c99ebf74ba8819",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -283,7 +479,14 @@
     "type": "NarrativeText",
     "element_id": "5051f4837b5344032779c265056506c8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -293,7 +496,14 @@
     "type": "NarrativeText",
     "element_id": "77ddbbd89513c49479cd4dad3261d07d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -303,7 +513,14 @@
     "type": "ListItem",
     "element_id": "c38b21939804a379980291ee06dc0387",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -313,7 +530,14 @@
     "type": "Image",
     "element_id": "2326155e29fbcc80862533eba5d9c75c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -323,7 +547,14 @@
     "type": "NarrativeText",
     "element_id": "5aca548166e8ec0e670e39fbe0520256",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -333,7 +564,14 @@
     "type": "NarrativeText",
     "element_id": "787c5cea13c47adb33fa8ea482b1180c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -343,7 +581,14 @@
     "type": "NarrativeText",
     "element_id": "ebcf4a16b5baa55fe81e8b98f1443006",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -353,7 +598,14 @@
     "type": "Title",
     "element_id": "32e60b294a649b54069f8fdce6d3658e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -363,7 +615,14 @@
     "type": "NarrativeText",
     "element_id": "995c62dc17faaf10b13aa42abefe3ec6",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -373,7 +632,14 @@
     "type": "Header",
     "element_id": "72c43f1a56f77795dacfdfe034f47354",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -383,7 +649,14 @@
     "type": "FigureCaption",
     "element_id": "77f06cc5e2c90400a79f0109988476c5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -393,10 +666,17 @@
     "type": "Table",
     "element_id": "c57f2166778009c6ccc9032ee8883253",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5,
-      "text_as_html": "<table><thead><th>Dataset</th><th>| Base Mod</th><th>el'| Large Model</th><th>| Notes</th></thead><tr><td>PubLayNet B8]|</td><td>F/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA</td><td>M</td><td>-</td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper</td><td>F</td><td>-</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset</td><td>F/M</td><td>-</td><td>Layouts of history Japanese documents</td></tr></table>"
+      "text_as_html": "<table><thead><th>Dataset</th><th>| Base Model'|</th><th>Notes</th></thead><tr><td>PubLayNet B8]|</td><td>F/M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA</td><td>M</td><td>nned modern magazines and scientific reports</td></tr><tr><td>Newspapei</td><td>F</td><td>canned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset</td><td>F/M</td><td>Layouts of history Japanese documents</td></tr></table>"
     },
     "text": "Base Model1 Large Model Notes Dataset PubLayNet [38] PRImA [3] Newspaper [17] TableBank [18] HJDataset [31] F / M M F F F / M M - - F - Layouts of modern scientiﬁc documents Layouts of scanned modern magazines and scientiﬁc reports Layouts of scanned US newspapers from the 20th century Table region on modern scientiﬁc and business document Layouts of history Japanese documents"
   },
@@ -404,7 +684,14 @@
     "type": "Title",
     "element_id": "e204034a86be67f09ca103677799d7af",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -414,7 +701,14 @@
     "type": "Title",
     "element_id": "4411e525721e7dd801755882fd2361b2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -424,7 +718,14 @@
     "type": "NarrativeText",
     "element_id": "ec22445e13875ab6bbce602dd7f07c99",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -434,7 +735,14 @@
     "type": "Title",
     "element_id": "404c477d4f5a5c53e565eadc5fcbfa60",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -444,7 +752,14 @@
     "type": "UncategorizedText",
     "element_id": "6afcd1be7e20c7a7fcde7aa7f76923d6",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -454,7 +769,14 @@
     "type": "NarrativeText",
     "element_id": "932c3d501891c7b8a59782efed10a10e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -464,7 +786,14 @@
     "type": "Footer",
     "element_id": "f58e29ccb8c8b46f5876aec8c9684294",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -474,7 +803,14 @@
     "type": "NarrativeText",
     "element_id": "e937103da807b2445f302bd678119123",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -484,7 +820,14 @@
     "type": "Title",
     "element_id": "05df12485855b8bfb3552abbf90cfad4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -494,7 +837,14 @@
     "type": "NarrativeText",
     "element_id": "2e74c8e7455e99acd9d85a11db6b5f6e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -504,7 +854,14 @@
     "type": "NarrativeText",
     "element_id": "41140d5c71e1ee278c01309bf0cb354a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -514,7 +871,14 @@
     "type": "NarrativeText",
     "element_id": "812cacf0b2c9dd62a37d4361ab3e6eec",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -524,7 +888,14 @@
     "type": "NarrativeText",
     "element_id": "2e73b03555667b9209d10b34a5f3a411",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -534,7 +905,14 @@
     "type": "Image",
     "element_id": "3b30176246b01e00c3051a7e2a11669c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -544,7 +922,14 @@
     "type": "FigureCaption",
     "element_id": "8625c5524829e0a8a6bc7e96d68b20f2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -554,7 +939,14 @@
     "type": "NarrativeText",
     "element_id": "dbae85429e87bb2c7eb4c9c942854fae",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -564,7 +956,14 @@
     "type": "Title",
     "element_id": "090531a7f1a39471d158a00394cb6568",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -574,7 +973,14 @@
     "type": "NarrativeText",
     "element_id": "f0a4ff01ca0d75d7cc17c8449b5390bd",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -584,7 +990,14 @@
     "type": "Title",
     "element_id": "72c43f1a56f77795dacfdfe034f47354",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -594,7 +1007,14 @@
     "type": "NarrativeText",
     "element_id": "e9b37f0afee4d75cdf9aa1ca1ac2c16a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -604,7 +1024,14 @@
     "type": "NarrativeText",
     "element_id": "92d5fb14680a0049488ec358e18011d7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -614,7 +1041,14 @@
     "type": "Title",
     "element_id": "84150b7fe95fda995dc59970e71d3b6b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -624,7 +1058,14 @@
     "type": "NarrativeText",
     "element_id": "2c44a3b1b50fe609dd4e599aaa9a2a42",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -634,7 +1075,14 @@
     "type": "NarrativeText",
     "element_id": "82d51f922a472021605996e1090eb1ff",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -644,7 +1092,14 @@
     "type": "NarrativeText",
     "element_id": "a5aaa103ed722fa6bfd700ec8edd554f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -654,7 +1109,14 @@
     "type": "NarrativeText",
     "element_id": "c7020e982bb4fc78992a74d74b2db961",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -664,7 +1126,14 @@
     "type": "NarrativeText",
     "element_id": "9a44827ec5ebbf51ad441ff9927c6e83",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -674,7 +1143,14 @@
     "type": "ListItem",
     "element_id": "b2f82a8b9096623d70752bdee08e3703",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -684,7 +1160,14 @@
     "type": "NarrativeText",
     "element_id": "128743def9375aa9fbfc67ceeb31ec04",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -694,7 +1177,14 @@
     "type": "Title",
     "element_id": "abf4059c5c98ff5bbd0dde9f8c2b7c75",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -704,7 +1194,14 @@
     "type": "Title",
     "element_id": "526e0087cc3f254d9f86f6c7d8e23d95",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -714,10 +1211,17 @@
     "type": "Table",
     "element_id": "8f963c226c45bef6fa7f2644bc20b149",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8,
-      "text_as_html": "<table><thead><th>block.pad(top, bottom,</th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></thead><tr><td>block.scale(fx, fy)</td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift(dx, dy)</td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1. intersect (block2)</td><td></td><td></td><td>Return the intersection region of blockl and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td>Return the union region of blockl and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td>Convert the absolute coordinates of block to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2) block. crop_image (image)</td><td></td><td></td><td>Calculate the absolute coordinates of blockl given the canvas block2’s absolute coordinates     Obtain the image segments in the block region</td></tr></table>"
+      "text_as_html": "<table><thead><th>block.pad(top,</th><th>bottom,</th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></thead><tr><td>block.scale(fx, fy)</td><td></td><td></td><td></td><td>Scale the current block given the ratio ion in x and y di</td></tr><tr><td>block.shift(dx, dy)</td><td></td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>; block1. intersect</td><td>(block2)</td><td></td><td></td><td>Return the intersection region of block and block2. . . . Coordinate type to be determined based on the</td></tr><tr><td>; block1.union(block2)</td><td></td><td></td><td></td><td>Return the union region of block1 and block2. . . . Coordinate type to be determined based on the</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td></td><td>Convert the absolute coordinates of block to ' ' relative coordinates to block2</td></tr><tr><td>. block1.condition_on(block2)</td><td></td><td></td><td></td><td>Calculate the absolute coordinates of block1 given . the canvas block2’s absolute coordinates</td></tr></table>"
     },
     "text": "block.pad(top, bottom, right, left) Enlarge the current block according to the input Scale the current block given the ratio in x and y direction block.scale(fx, fy) Move the current block with the shift distances in x and y direction block.shift(dx, dy) Whether block1 is inside of block2 block1.is in(block2) block1.intersect(block2) block1.union(block2) Convert the absolute coordinates of block1 to relative coordinates to block2 block1.relative to(block2) Calculate the absolute coordinates of block1 given the canvas block2’s absolute coordinates block1.condition on(block2)"
   },
@@ -725,7 +1229,14 @@
     "type": "NarrativeText",
     "element_id": "f60c4482bfe6a1b0eb9095bb8cf21e64",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -735,7 +1246,14 @@
     "type": "NarrativeText",
     "element_id": "494d23eb529015f662df16e6da39f810",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -745,7 +1263,14 @@
     "type": "Title",
     "element_id": "8dcb74f5ee2eabd0d8e966d46bcdf3be",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -755,7 +1280,14 @@
     "type": "UncategorizedText",
     "element_id": "a270fb0a45b9ed73f992f73dbf0b9a3f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -765,7 +1297,14 @@
     "type": "Title",
     "element_id": "1c1464d6a8f85d78202f67293ee7ac42",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -775,7 +1314,14 @@
     "type": "NarrativeText",
     "element_id": "6bd7ba22b5bc477ef4c291a10f4745bc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -785,7 +1331,14 @@
     "type": "Title",
     "element_id": "acfa5090fbb8986000a92d84d41d8140",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -795,7 +1348,14 @@
     "type": "NarrativeText",
     "element_id": "401c342fc214105b4a45dba74c62cae0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -805,7 +1365,14 @@
     "type": "Title",
     "element_id": "39fca1b21a889218bd84127a4d7f27c5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -815,7 +1382,14 @@
     "type": "NarrativeText",
     "element_id": "ec0a5482fa70f4d98212b6b3a748003a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -825,7 +1399,14 @@
     "type": "Title",
     "element_id": "505791f52a5741b58f5dd02836da7b31",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -835,7 +1416,14 @@
     "type": "NarrativeText",
     "element_id": "d3b069f9dcc24bfac92a6de9e26f2501",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -845,7 +1433,14 @@
     "type": "Title",
     "element_id": "aac9bbf1c375a005651b5d2929778d3b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -855,7 +1450,14 @@
     "type": "NarrativeText",
     "element_id": "bb15ecc186d598c93a1cffa30e9e1b6e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -865,7 +1467,14 @@
     "type": "Title",
     "element_id": "2092f29df87c3cfd32244b325faaba33",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -875,7 +1484,14 @@
     "type": "Title",
     "element_id": "7d52bf6c2abc8aebeda26c2400f00ddd",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -885,7 +1501,14 @@
     "type": "Title",
     "element_id": "fdf3d6c91387c02a0cdaa1ff6b3c67c5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -895,7 +1518,14 @@
     "type": "Title",
     "element_id": "0c8b5878c9434b010582e935dc19da9b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -905,7 +1535,14 @@
     "type": "NarrativeText",
     "element_id": "e7addddc6ac19b761866c9749cfa8404",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -915,7 +1552,14 @@
     "type": "Title",
     "element_id": "0778f018e259bb4c53ad7e04a5aaa9af",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -925,7 +1569,14 @@
     "type": "NarrativeText",
     "element_id": "27a0e8b4541ec34bfdf6c52b7e06237d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -935,7 +1586,14 @@
     "type": "NarrativeText",
     "element_id": "337a2fd3485821eeaf5d9ada5c7ab74a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -945,7 +1603,14 @@
     "type": "ListItem",
     "element_id": "72c43f1a56f77795dacfdfe034f47354",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -955,7 +1620,14 @@
     "type": "Image",
     "element_id": "294441b6458d8a005ea7588ecb6efc10",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -965,7 +1637,14 @@
     "type": "NarrativeText",
     "element_id": "0770888d2e26bc88f295478d836d13bc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -975,7 +1654,14 @@
     "type": "NarrativeText",
     "element_id": "2e944a19489d47a5c007d491534ab343",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -985,7 +1671,14 @@
     "type": "NarrativeText",
     "element_id": "4da48f397c533740d510fc9004f29a1f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -995,7 +1688,14 @@
     "type": "NarrativeText",
     "element_id": "8b762e8d2e1bbc81253ae6eb13e486ad",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -1005,7 +1705,14 @@
     "type": "ListItem",
     "element_id": "28df6f16ea44b96ebf6c8b686715f5ea",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1015,7 +1722,14 @@
     "type": "Image",
     "element_id": "6e6e9ba62b25fdfb8734842354a7ce64",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1025,7 +1739,14 @@
     "type": "NarrativeText",
     "element_id": "81c96876fd12f0bd68cfe4cebc910036",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1035,7 +1756,14 @@
     "type": "Title",
     "element_id": "abf674029db2adb9d1944b45561de416",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1045,7 +1773,14 @@
     "type": "NarrativeText",
     "element_id": "ea958ca4de2431c62a01a51ace78c921",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1055,7 +1790,14 @@
     "type": "NarrativeText",
     "element_id": "c37820b206a0ea27d42b4db4da758759",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1065,7 +1807,14 @@
     "type": "Title",
     "element_id": "1f9963e29820a25df2f26ba5f22fd733",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1075,7 +1824,14 @@
     "type": "NarrativeText",
     "element_id": "ca963177810f8c3b64522859751655e7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1085,7 +1841,14 @@
     "type": "Title",
     "element_id": "72c43f1a56f77795dacfdfe034f47354",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1095,7 +1858,14 @@
     "type": "NarrativeText",
     "element_id": "c5652cdf729305eb4b474db73d9732a4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1105,7 +1875,14 @@
     "type": "Title",
     "element_id": "c2db3c9ed08076430c7524b7e3c1076f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1115,7 +1892,14 @@
     "type": "NarrativeText",
     "element_id": "049e8b4df63657b4376b02d0e493a960",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1125,7 +1909,14 @@
     "type": "Image",
     "element_id": "e55a2d8ec9ea5f1d6c11788f33f2b97d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1135,7 +1926,14 @@
     "type": "NarrativeText",
     "element_id": "7f729881ca5ef5ee556e96246fa78528",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1145,7 +1943,14 @@
     "type": "NarrativeText",
     "element_id": "4a938b67ce50050a388cb3a1d19e5599",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1155,7 +1960,14 @@
     "type": "NarrativeText",
     "element_id": "dd094fd6dc74291ed1c6612d65a060e0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1165,7 +1977,14 @@
     "type": "Title",
     "element_id": "e3221fd8edd58a8c026465fab665d928",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 12
     },
@@ -1175,7 +1994,14 @@
     "type": "NarrativeText",
     "element_id": "fd8fa97590b686b54db41b84e0add377",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 12
     },
@@ -1185,7 +2011,14 @@
     "type": "NarrativeText",
     "element_id": "e129c45423c8e88740a1237481a22cd2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 12
     },
@@ -1195,7 +2028,14 @@
     "type": "NarrativeText",
     "element_id": "54dc8c33b479ec74e88874cd2c0a616c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 12
     },
@@ -1205,7 +2045,14 @@
     "type": "NarrativeText",
     "element_id": "acfcaae53850b43f814bf04643363718",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 12
     },
@@ -1215,7 +2062,14 @@
     "type": "NarrativeText",
     "element_id": "776ff927c4926b5a61aaa7ec9ef2e869",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 12
     },
@@ -1225,7 +2079,14 @@
     "type": "NarrativeText",
     "element_id": "d11adbfd88959ce24fbfdc7f8155e777",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 12
     },
@@ -1235,7 +2096,14 @@
     "type": "ListItem",
     "element_id": "e6aa0629950d567b0c8c8b6d1b39cd9f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 12
     },
@@ -1245,7 +2113,14 @@
     "type": "ListItem",
     "element_id": "8a9ed739daba419123f271dce4be295a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 12
     },
@@ -1255,7 +2130,14 @@
     "type": "ListItem",
     "element_id": "72c43f1a56f77795dacfdfe034f47354",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 13
     },
@@ -1265,7 +2147,14 @@
     "type": "Image",
     "element_id": "7f494d0f1a8170f2ed0da01c039fcbd2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 13
     },
@@ -1275,7 +2164,14 @@
     "type": "FigureCaption",
     "element_id": "fed869ba2e01c3daf0816b48809a9790",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 13
     },
@@ -1285,7 +2181,14 @@
     "type": "Title",
     "element_id": "cd43c1ef71b09de2a5c46062419dd4b4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 13
     },
@@ -1295,7 +2198,14 @@
     "type": "NarrativeText",
     "element_id": "06979af9f7bf72e15b5a4f378d5651c4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 13
     },
@@ -1305,7 +2215,14 @@
     "type": "NarrativeText",
     "element_id": "1c5af18d708d6b5143f58351b5a3f059",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 13
     },
@@ -1315,7 +2232,14 @@
     "type": "NarrativeText",
     "element_id": "af4a07cd0c723749e00e1238a013e9b3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 13
     },
@@ -1325,7 +2249,14 @@
     "type": "ListItem",
     "element_id": "34146aaef7807c3d570b0fd1d1d95a9f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 14
     },
@@ -1335,7 +2266,14 @@
     "type": "Title",
     "element_id": "444b7d3480001e2e422559c09fc04e41",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 14
     },
@@ -1345,7 +2283,14 @@
     "type": "NarrativeText",
     "element_id": "992e926b29c1f50bd6a710a37364da57",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 14
     },
@@ -1355,7 +2300,14 @@
     "type": "NarrativeText",
     "element_id": "4e85c94ea9d4564cdfc847d0312e1776",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 14
     },
@@ -1365,7 +2317,14 @@
     "type": "Title",
     "element_id": "a0d7deccf89e42d02a9d66b0c1889689",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 14
     },
@@ -1375,7 +2334,14 @@
     "type": "ListItem",
     "element_id": "5c38ef04891d707aa9ef58c34413ee54",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 14
     },
@@ -1385,7 +2351,14 @@
     "type": "ListItem",
     "element_id": "fdd4f75f271a06fd05f220334c267202",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 14
     },
@@ -1395,7 +2368,14 @@
     "type": "ListItem",
     "element_id": "ca3a95da41baaa8e801acfb997025998",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 14
     },
@@ -1405,7 +2385,14 @@
     "type": "ListItem",
     "element_id": "a16bebdda43cc5159e1b7eaa648570aa",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 14
     },
@@ -1415,7 +2402,14 @@
     "type": "ListItem",
     "element_id": "44c08956586fa53e0d5e2c88d3eba785",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 14
     },
@@ -1425,7 +2419,14 @@
     "type": "ListItem",
     "element_id": "cd068f1335b5e98ce7a668c734c3ffca",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 14
     },
@@ -1435,7 +2436,14 @@
     "type": "ListItem",
     "element_id": "ed21b4eaf981727504a77bc51444751c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 14
     },
@@ -1445,7 +2453,14 @@
     "type": "ListItem",
     "element_id": "72c43f1a56f77795dacfdfe034f47354",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1455,7 +2470,14 @@
     "type": "NarrativeText",
     "element_id": "2f103adde52e35a8853cbb476720a6ef",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1465,7 +2487,14 @@
     "type": "ListItem",
     "element_id": "ade6873735c6be9677804c9634ed9dec",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1475,7 +2504,14 @@
     "type": "NarrativeText",
     "element_id": "068bf90a7743f50c4a00d4827035e42f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1485,7 +2521,14 @@
     "type": "ListItem",
     "element_id": "77589f390ec51c072e05d82c60dcfeab",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1495,7 +2538,14 @@
     "type": "ListItem",
     "element_id": "8f1508523763d343728246a315e7ce89",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1505,7 +2555,14 @@
     "type": "ListItem",
     "element_id": "e3c8484f21642805e61903a9aa4adba8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1515,7 +2572,14 @@
     "type": "ListItem",
     "element_id": "fbb53a1b98120c451da95a4666c78594",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1525,7 +2589,14 @@
     "type": "ListItem",
     "element_id": "490e08d6f295c2172516ec04be8a530a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1535,7 +2606,14 @@
     "type": "ListItem",
     "element_id": "2ce4e05a66c2f0f335cb795e064dfe26",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1545,7 +2623,14 @@
     "type": "ListItem",
     "element_id": "ed3fbd8b8776e164e7d02dfa57e7f8fe",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1555,7 +2640,14 @@
     "type": "ListItem",
     "element_id": "8f319c83ff95c5f927749171e57d44fb",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1565,7 +2657,14 @@
     "type": "ListItem",
     "element_id": "3f1e59a4c91bb3b88df6c357b1d834dc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1575,7 +2674,14 @@
     "type": "ListItem",
     "element_id": "d9de765c3196caee0fb4a1d730eed52c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1585,7 +2691,14 @@
     "type": "ListItem",
     "element_id": "7b9980045cdd3d64209cbc2d35575252",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 15
     },
@@ -1595,7 +2708,14 @@
     "type": "ListItem",
     "element_id": "bb9e1ef93096188e34c6be00a58ead5c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1605,7 +2725,14 @@
     "type": "NarrativeText",
     "element_id": "219033258f3fff3de33bed379610c8f3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1615,7 +2742,14 @@
     "type": "ListItem",
     "element_id": "0f799e1e66cc92cf9d0d88aa327e46a1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1625,7 +2759,14 @@
     "type": "ListItem",
     "element_id": "73731045a017a4af5d28a0d329a5b3ae",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1635,7 +2776,14 @@
     "type": "ListItem",
     "element_id": "80e6b0ce1a9da436be112ea81ae6f742",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1645,7 +2793,14 @@
     "type": "NarrativeText",
     "element_id": "a18dcb504d62cb9f8ed4641014b6eeb2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1655,7 +2810,14 @@
     "type": "ListItem",
     "element_id": "5cce0aff59eb4a6c10cacd3a5b1dca3c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1665,7 +2827,14 @@
     "type": "UncategorizedText",
     "element_id": "b66713d3f2d1689f9174e1cb87429eed",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1675,7 +2844,14 @@
     "type": "ListItem",
     "element_id": "090d32c2a94f4e868cafd598692d005a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1685,7 +2861,14 @@
     "type": "ListItem",
     "element_id": "916d069c08c9d5bc3408ef856cb496e0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1695,7 +2878,14 @@
     "type": "NarrativeText",
     "element_id": "385c241b43ef196663b8d30a6b8768ed",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1705,7 +2895,14 @@
     "type": "ListItem",
     "element_id": "1cad6b363bfdd2605da0d40f6007060a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1715,7 +2912,14 @@
     "type": "ListItem",
     "element_id": "b4233941aba94560bfacb596c7b3bb52",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1725,7 +2929,14 @@
     "type": "UncategorizedText",
     "element_id": "10a3ff59f6157f21733e659a41031f83",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1735,7 +2946,14 @@
     "type": "ListItem",
     "element_id": "6a2460e2677fe2a88aad7c65764e06e9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1745,7 +2963,14 @@
     "type": "Title",
     "element_id": "21d399ba787aabbf69a8ca861cbcc4a3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
@@ -1755,7 +2980,14 @@
     "type": "ListItem",
     "element_id": "e5b16f1d7676cb17c5c2177ec90987f2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 16
     },
