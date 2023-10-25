@@ -242,9 +242,14 @@ def _display(rows, headers):
 def _mean(scores: List[float], rounding: Optional[int] = 3):
     if len(scores) < 1:
         return None
+    if len(scores) == 1:
+        mean = scores[0]
+    else:
+        mean = statistics.mean(scores)
     if not rounding:
-        return statistics.mean(scores)
-    return round(statistics.mean(scores), rounding)
+        return mean
+    else: 
+        return round(mean, rounding)
 
 
 def _stdev(scores: List[float], rounding: Optional[int] = 3):
