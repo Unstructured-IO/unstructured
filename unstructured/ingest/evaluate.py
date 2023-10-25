@@ -213,8 +213,6 @@ def _listdir_recursive(dir: str):
 
 
 def _write_to_file(dir: str, filename: str, rows: List[Any], headers: List[Any]):
-    click.echo(dir)
-    click.echo(filename)
     if dir and not os.path.exists(dir):
         os.makedirs(dir)
     with open(os.path.join(os.path.join(dir, filename)), "w", newline="") as tsv:
