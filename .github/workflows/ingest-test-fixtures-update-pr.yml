@@ -8,6 +8,10 @@ env:
   GHA_CACHE_KEY_VERSION: "v1"
   PYTHON_VERSION: "3.10"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   setup:
     runs-on: ubuntu-latest-m
