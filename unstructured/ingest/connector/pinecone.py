@@ -26,7 +26,7 @@ def create_pinecone_object(api_key, index_name, environment):
 
     pinecone.init(api_key=api_key, environment=environment)
     index = pinecone.Index(index_name)
-    logger.debug("Connected to index:", pinecone.describe_index(index_name))
+    logger.debug(f"Connected to index: {pinecone.describe_index(index_name)}")
     return index
 
 
