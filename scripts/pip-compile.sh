@@ -8,7 +8,7 @@ if ! python -c "import sys; assert sys.version_info.major == $major and sys.vers
   exit 1
 fi
 
-for file in requirements/**/*.in; do
+for file in requirements/**.in; do
   if [[ "$file" =~ "constraints" ]]; then
     continue;
   fi;
