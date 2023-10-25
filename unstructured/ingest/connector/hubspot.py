@@ -77,7 +77,7 @@ class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseI
     def _output_filename(self):
         return (
             Path(self.processor_config.output_dir)
-            / f"{self.registry_name}/{self.object_id}.json"  # type: ignore
+            / f"{self.object_type}/{self.object_id}.json"  # type: ignore
         ).resolve()
 
     @property
