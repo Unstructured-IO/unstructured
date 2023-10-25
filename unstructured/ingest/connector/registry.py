@@ -78,6 +78,7 @@ def create_ingest_doc_from_json(ingest_doc_json: str) -> BaseIngestDoc:
 
 
 def create_ingest_doc_from_dict(ingest_doc_dict: dict) -> BaseIngestDoc:
+    ingest_doc_dict = ingest_doc_dict.copy()
     if "registry_name" not in ingest_doc_dict:
         raise ValueError(f"registry_name not present in ingest doc: {ingest_doc_dict}")
     registry_name = ingest_doc_dict.pop("registry_name")
