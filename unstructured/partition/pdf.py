@@ -833,6 +833,10 @@ def _partition_pdf_or_image_with_ocr(
 
     layout = DocumentLayout.from_pages(page_layouts)
 
+    # NOTE(christine): `unstructured_pytesseract.image_to_string()` returns sorted text
+    if ocr_agent == OCR_AGENT_TESSERACT:
+        kwargs["sort_mode"] = SORT_MODE_DONT
+
     elements = document_to_element_list(
         layout,
         sortable=True,
