@@ -98,10 +98,6 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: Azure CLI script
-        uses: azure/CLI@v1
-        with:
-          azcliversion: latest
       - uses: actions/cache/restore@v3
         id: virtualenv-cache
         with:
@@ -160,15 +156,18 @@ jobs:
           OCR_AGENT: "tesseract"
           OVERWRITE_FIXTURES: "true"
           CI: "true"
-        run: |
-          source .venv/bin/activate
-          sudo apt-get update
-          sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
-          sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-          sudo apt-get install -y tesseract-ocr
-          sudo apt-get install -y tesseract-ocr-kor
-          tesseract --version
-          ./test_unstructured_ingest/test-ingest.sh
+        uses: azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+            source .venv/bin/activate
+            sudo apt-get update
+            sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+            sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+            sudo apt-get install -y tesseract-ocr
+            sudo apt-get install -y tesseract-ocr-kor
+            tesseract --version
+            ./test_unstructured_ingest/test-ingest.sh
 
       - name: Save branch name to environment file
         id: branch
