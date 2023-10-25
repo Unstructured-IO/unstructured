@@ -44,6 +44,7 @@ all_tests=(
 'test-ingest-jira.sh'
 'test-ingest-sharepoint.sh'
 'test-ingest-embed.sh'
+'test-ingest-pinecone.sh'
 )
 
 full_python_matrix_tests=(
