@@ -1,20 +1,12 @@
-import logging
+import typing as t
 from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.common import (
-    log_options,
-)
 from unstructured.ingest.cli.interfaces import (
     CliMixin,
 )
-from unstructured.ingest.cli.utils import (
-    conform_click_options,
-    orchestrate_runner,
-)
 from unstructured.ingest.interfaces import BaseConfig
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
 
 @dataclass
@@ -24,7 +16,7 @@ class PineconeCliWriteConfig(BaseConfig, CliMixin):
     environment: str
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--api-key"],
@@ -47,38 +39,14 @@ class PineconeCliWriteConfig(BaseConfig, CliMixin):
                 help="The environment where the index lives. Eg. 'gcp-starter' or 'us-east1-gcp'",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
-@click.command(name="pinecone")
-@click.pass_context
-def pinecone_dest(ctx: click.Context, **options):
-    if not ctx.parent:
-        raise click.ClickException("destination command called without a parent")
-    if not ctx.parent.info_name:
-        raise click.ClickException("parent command missing info name")
-    source_cmd = ctx.parent.info_name.replace("-", "_")
-    parent_options: dict = ctx.parent.params if ctx.parent else {}
-    conform_click_options(options)
-    conform_click_options(parent_options)
-    verbose = parent_options.get("verbose", False)
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(parent_options, verbose=verbose)
-    log_options(options, verbose=verbose)
-    try:
-        orchestrate_runner(
-            source_cmd=source_cmd,
-            writer_type="pinecone",
-            parent_options=parent_options,
-            options=options,
-            validate=[PineconeCliWriteConfig],
-        )
-    except Exception as e:
-        logger.error(e, exc_info=True)
-        raise click.ClickException(str(e)) from e
+def get_base_dest_cmd():
+    from unstructured.ingest.cli.base.dest import BaseDestCmd
 
-
-def get_dest_cmd() -> click.Command:
-    cmd = pinecone_dest
-    PineconeCliWriteConfig.add_cli_options(cmd)
-    return cmd
+    cmd_cls = BaseDestCmd(
+        cmd_name="pinecone",
+        cli_config=PineconeCliWriteConfig,
+    )
+    return cmd_cls
