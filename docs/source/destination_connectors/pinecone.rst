@@ -31,8 +31,8 @@ upstream s3 connector. This will create new files on your local.
             --embedding-api-key <your openai api key here> \
             pinecone \
             --api-key <your pinecone api key here> \
-            --index-name ingest-test \
-            --environment gcp-starter
+            --index-name <your index name here, ie. ingest-test> \
+            --environment <your environment name here, ie. gcp-starter>
 
    .. tab:: Python
 
@@ -52,8 +52,8 @@ upstream s3 connector. This will create new files on your local.
           "--embedding-api-key", "<your openai api key here>",
           "pinecone"
           "--api-key", "<your pinecone api key here>"
-          "--index-name", "ingest-test"
-          "--environment", "gcp-starter"
+          "--index-name", "<your index name here, ie. ingest-test>"
+          "--environment", "your environment name here, ie. gcp-starter"
         ]
 
         # Run the command
