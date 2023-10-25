@@ -147,6 +147,7 @@ setup(
         "notion": load_requirements("requirements/ingest-notion.in"),
         "onedrive": load_requirements("requirements/ingest-onedrive.in"),
         "outlook": load_requirements("requirements/ingest-outlook.in"),
+        "pinecone": load_requirements("requirements/ingest-pinecone.in"),
         "reddit": load_requirements("requirements/ingest-reddit.in"),
         "s3": load_requirements("requirements/ingest-s3.in"),
         "sharepoint": load_requirements("requirements/ingest-sharepoint.in"),
