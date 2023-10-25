@@ -42,7 +42,6 @@ def load_requirements(file_list: Optional[Union[str, List[str]]] = None) -> List
 csv_reqs = load_requirements("requirements/extra-csv.in")
 doc_reqs = load_requirements("requirements/extra-docx.in")
 docx_reqs = load_requirements("requirements/extra-docx.in")
-epub_reqs = load_requirements("requirements/extra-epub.in")
 image_reqs = load_requirements("requirements/extra-pdf-image.in")
 markdown_reqs = load_requirements("requirements/extra-markdown.in")
 msg_reqs = load_requirements("requirements/extra-msg.in")
@@ -60,7 +59,6 @@ all_doc_reqs = list(
     set(
         csv_reqs
         + docx_reqs
-        + epub_reqs
         + image_reqs
         + markdown_reqs
         + msg_reqs
@@ -113,7 +111,6 @@ setup(
         "csv": csv_reqs,
         "doc": doc_reqs,
         "docx": docx_reqs,
-        "epub": epub_reqs,
         "image": image_reqs,
         "md": markdown_reqs,
         "msg": msg_reqs,
