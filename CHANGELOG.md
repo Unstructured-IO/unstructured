@@ -1,4 +1,4 @@
-## 0.10.26-dev5
+## 0.10.26-dev6
 
 ### Enhancements
 
@@ -6,7 +6,7 @@
 
 ### Features
 
-* **Add Local connector source metadata** python's os module used to pull stats from local file when processing via the local connector and populates fields such as last modified time, created time.
+* **Add Local connector source metadata.** python's os module used to pull stats from local file when processing via the local connector and populates fields such as last modified time, created time.
 
 ### Fixes
 
