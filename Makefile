@@ -70,6 +70,10 @@ install-csv:
 install-docx:
 	python3 -m pip install -r requirements/extra-docx.txt
 
+.PHONY: install-epub
+install-epub:
+	python3 -m pip install -r requirements/extra-epub.txt
+
 .PHONY: install-odt
 install-odt:
 	python3 -m pip install -r requirements/extra-odt.txt
@@ -99,7 +103,7 @@ install-xlsx:
 	python3 -m pip install -r requirements/extra-xlsx.txt
 
 .PHONY: install-all-docs
-install-all-docs: install-base install-csv install-docx install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx
+install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx
 
 .PHONY: install-all-ingest
 install-all-ingest:
@@ -266,8 +270,7 @@ test-no-extras:
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
 		test_${PACKAGE_NAME}/partition/test_html_partition.py \
-		test_${PACKAGE_NAME}/partition/test_xml_partition.py \
-		test_${PACKAGE_NAME}/partition/test_epub.py
+		test_${PACKAGE_NAME}/partition/test_xml_partition.py
 
 .PHONY: test-extra-csv
 test-extra-csv:
@@ -303,6 +306,11 @@ test-extra-pdf-image:
 test-extra-pptx:
 	PYTHONPATH=. CI=$(CI) pytest \
 		test_${PACKAGE_NAME}/partition/pptx
+
+.PHONY: test-extra-epub
+test-extra-epub:
+	PYTHONPATH=. CI=$(CI) pytest \
+		test_${PACKAGE_NAME}/partition/epub
 
 .PHONY: test-extra-pypandoc
 test-extra-pypandoc:
