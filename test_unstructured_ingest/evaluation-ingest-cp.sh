@@ -19,6 +19,6 @@ selected_outputs=$(cat "$SCRIPT_DIR/metrics/metrics-json-manifest.txt")
 for file in "${structured_outputs[@]}"; do
   if [[ "${selected_outputs[*]}" =~ $(basename "$file") ]] ; then
     echo "--- Copying $file to $CP_DIR ---"
-    cp "$file" "$CP_DIR"
+    cp -r "$file" "$CP_DIR"
   fi
 done 
