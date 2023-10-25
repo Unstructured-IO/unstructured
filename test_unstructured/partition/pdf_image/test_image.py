@@ -550,7 +550,7 @@ def test_partition_image_raises_TypeError_for_invalid_languages():
         image.partition_image(filename=filename, strategy="hi_res", languages="eng")
 
 
-@pytest.fixture
+@pytest.fixture()
 def inference_results():
     page = layout.PageLayout(
         number=1,
@@ -571,7 +571,8 @@ def test_partition_image_has_filetype(inference_results):
         return_value=inference_results,
     ) as mock_inference_func:
         elements = image.partition_image(
-            filename=os.path.join(doc_path, filename), strategy="hi_res"
+            filename=os.path.join(doc_path, filename),
+            strategy="hi_res",
         )
     # Make sure we actually went down the path we expect.
     mock_inference_func.assert_called_once()

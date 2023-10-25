@@ -2,13 +2,13 @@ from typing import List, Optional
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
+from unstructured.file_utils.filetype import add_metadata
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.lang import (
     convert_old_ocr_languages_to_languages,
 )
 from unstructured.partition.pdf import partition_pdf_or_image
-from unstructured.file_utils.filetype import add_metadata
 
 
 @process_metadata()
