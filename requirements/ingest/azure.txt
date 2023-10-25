@@ -40,7 +40,7 @@ charset-normalizer==3.3.0
     #   -c requirements/ingest/../base.txt
     #   aiohttp
     #   requests
-cryptography==41.0.4
+cryptography==41.0.5
     # via
     #   azure-identity
     #   azure-storage-blob
