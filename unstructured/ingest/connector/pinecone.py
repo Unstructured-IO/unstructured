@@ -1,8 +1,7 @@
 import json
 import typing as t
 from dataclasses import dataclass
-
-import pinecone.core.client.exceptions
+import multiprocessing as mp
 
 from unstructured.ingest.error import DestinationConnectionError, WriteError
 from unstructured.ingest.interfaces import (
@@ -48,7 +47,10 @@ class PineconeWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixi
         service = create_pinecone_object(self.api_key, self.index_name, self.environment)
         return PineconeSessionHandle(service=service)
 
+    @requires_dependencies(["pinecone"], extras="pinecone")
     def upsert_batch(self, batch):
+        import pinecone.core.client.exceptions
+
         index = self.create_session_handle().service
         try:
             response = index.upsert(batch)
@@ -79,7 +81,6 @@ class PineconeDestinationConnector(BaseDestinationConnector):
             f"Inserting / updating {len(dict_list)} documents to destination "
             f"index at {self.connector_config.index_name}",
         )
-        import multiprocessing as mp
 
         num_processes = 1
         if num_processes == 1:
