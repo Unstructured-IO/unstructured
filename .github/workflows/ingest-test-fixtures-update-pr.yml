@@ -75,6 +75,9 @@ jobs:
           make install-all-ingest
 
   update-fixtures-and-pr:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
