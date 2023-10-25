@@ -23,6 +23,7 @@ from unstructured_inference.models.tables import UnstructuredTableTransformerMod
 from unstructured_pytesseract import Output
 
 from unstructured.logger import logger
+from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     OCR_AGENT_PADDLE,
@@ -409,6 +410,11 @@ def get_page_layout_from_ocr(
         "height": image.height,
     }
     page_layout.image = None
+
+    for el in page_layout_elements:
+        _element = element_from_text(el.text)
+        el.type = _element.category
+
     page_layout.elements = page_layout_elements
 
     return page_layout
