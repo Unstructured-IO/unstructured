@@ -1,4 +1,4 @@
-## 0.10.27-dev0
+## 0.10.27
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 
 ### Fixes
 
+* **Removed `ebooklib` as a dependency** `ebooklib` is licensed under AGPL3, which is incompatible with the Apache 2.0 license. Thus it is being removed.
 * **Caching fixes in ingest pipeline** Previously, steps like the source node were not leveraging parameters such as `re_download` to dictate if files should be forced to redownload rather than use what might already exist locally.
 
 ## 0.10.26
