@@ -13,7 +13,6 @@ if [ -z "$OPENAI_API_KEY" ] && [ -z "$PINECONE_API_KEY" ]; then
    echo "Skipping Pinecone ingest test because neither OPENAI_API_KEY nor PINECONE_API_KEY env vars are set."
    exit 0
 fi
-# shellcheck disable=SC1091
 
 PINECONE_ENVIRONMENT="gcp-starter"
 PINECONE_INDEX="ingest-test"
@@ -104,14 +103,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --index-name "$PINECONE_INDEX" \
   --environment "$PINECONE_ENVIRONMENT"
 
-# curl \
-#   --request GET \
-#   --url https://controller.gcp-starter.pinecone.io/databases/ingest-test \
-#   --header 'accept: application/json' \
-#   --header "Api-Key: $PINECONE_API_KEY"
-
 sleep 10
-
 num_of_vectors_remote=$(curl --request POST \
      -s \
      --url "https://$PINECONE_INDEX-$PINECONE_PROJECT_ID.svc.$PINECONE_ENVIRONMENT.pinecone.io/describe_index_stats" \
