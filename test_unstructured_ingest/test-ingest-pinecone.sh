@@ -8,9 +8,6 @@ OUTPUT_FOLDER_NAME=s3-pinecone-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
-# The vector configs on the schema currently only exist on versions:
-# 2023-07-01-Preview, 2021-04-30-Preview, 2020-06-30-Preview
-API_VERSION=2023-07-01-Preview
 
 if [ -z "$OPENAI_API_KEY" ] && [ -z "$PINECONE_API_KEY" ]; then
    echo "Skipping Pinecone ingest test because neither OPENAI_API_KEY nor PINECONE_API_KEY env vars are set."
@@ -22,6 +19,7 @@ PINECONE_ENVIRONMENT="gcp-starter"
 PINECONE_INDEX="ingest-test"
 PINECONE_PROJECT_ID="bfa06d5"
 
+# shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup {
 
