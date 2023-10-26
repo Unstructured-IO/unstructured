@@ -831,7 +831,6 @@ def _partition_pdf_or_image_with_ocr(
                 page_number=i + 1,
                 include_page_breaks=include_page_breaks,
                 metadata_last_modified=metadata_last_modified,
-                detection_origin="image" if is_image else "pdf",
                 **kwargs,
             )
             elements.extend(page_elements)
@@ -845,7 +844,6 @@ def _partition_pdf_or_image_with_ocr(
                 page_number=page_number,
                 include_page_breaks=include_page_breaks,
                 metadata_last_modified=metadata_last_modified,
-                detection_origin="image" if is_image else "pdf",
                 **kwargs,
             )
             elements.extend(page_elements)
@@ -859,7 +857,6 @@ def _partition_pdf_or_image_with_ocr_from_image(
     page_number: int = 1,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
-    detection_origin: Optional[str] = None,
     infer_element_category: bool = True,
     sort_mode: str = SORT_MODE_XY_CUT,
     **kwargs,
@@ -885,7 +882,6 @@ def _partition_pdf_or_image_with_ocr_from_image(
         page_number=page_number,
         languages=languages,
     )
-    metadata.detection_origin = detection_origin
 
     page_elements = _ocr_data_to_elements(
         ocr_data,
@@ -907,7 +903,7 @@ def _partition_pdf_or_image_with_ocr_from_image(
 def _ocr_data_to_elements(
     ocr_data: List["LayoutElement"],
     image: PILImage,
-    common_metadata: ElementMetadata,
+    common_metadata: Optional[ElementMetadata] = None,
     infer_list_items: bool = True,
     source_format: Optional[str] = None,
     infer_element_category: bool = False,
@@ -924,7 +920,9 @@ def _ocr_data_to_elements(
             infer_list_items=infer_list_items,
             source_format=source_format if source_format else "html",
         )
-        element.metadata = element.metadata.merge(common_metadata)
+
+        if common_metadata:
+            element.metadata = element.metadata.merge(common_metadata)
 
         if infer_element_category:
             _el = element_from_text(element.text)
