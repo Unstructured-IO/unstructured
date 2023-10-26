@@ -478,16 +478,16 @@ class CliPermissionsConfig(PermissionsConfig, CliMixin):
             isinstance(kvs, dict)
             and any(
                 [
-                    kvs["permissions_application_id"]
-                    or kvs["permissions_client_cred"]
-                    or kvs["permissions_tenant"],
+                    kvs.get("permissions_application_id"),
+                    kvs.get("permissions_client_cred"),
+                    kvs.get("permissions_tenant"),
                 ],
             )
             and not all(
                 [
-                    kvs["permissions_application_id"]
-                    and kvs["permissions_client_cred"]
-                    and kvs["permissions_tenant"],
+                    kvs.get("permissions_application_id"),
+                    kvs.get("permissions_client_cred"),
+                    kvs.get("permissions_tenant"),
                 ],
             )
         ):
