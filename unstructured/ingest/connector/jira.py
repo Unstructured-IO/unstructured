@@ -7,7 +7,7 @@ from datetime import datetime
 from functools import cached_property
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -262,6 +262,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
             "issue_key": self.file_meta.issue_key,
         }
 
+    @SourceConnectionNetworkError.wrap
     @cached_property
     def issue(self):
         """Gets issue data"""

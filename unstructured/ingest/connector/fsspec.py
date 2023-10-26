@@ -10,7 +10,7 @@ from unstructured.ingest.compression_support import (
     ZIP_FILE_EXT,
     CompressionSourceConnectorMixin,
 )
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
@@ -85,8 +85,13 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             **self.connector_config.get_access_kwargs(),
         )
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
+        self._get_file(fs=fs)
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
         self.update_source_metadata()
+
+    @SourceConnectionNetworkError.wrap
+    def _get_file(self, fs):
+        fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
 
     @requires_dependencies(["fsspec"])
     def update_source_metadata(self):

@@ -3,7 +3,7 @@ import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -113,6 +113,7 @@ class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
             Path(self.read_config.download_dir) / f"{self.get_filename_prefix()}.html"
         ).resolve()
 
+    @SourceConnectionNetworkError.wrap
     @property
     def text(self):
         return self.page.html()
@@ -130,6 +131,7 @@ class WikipediaIngestTextDoc(WikipediaIngestDoc):
     def filename(self) -> Path:
         return (Path(self.read_config.download_dir) / f"{self.get_filename_prefix()}.txt").resolve()
 
+    @SourceConnectionNetworkError.wrap
     @property
     def text(self):
         return self.page.content
@@ -149,6 +151,7 @@ class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
             Path(self.read_config.download_dir) / f"{self.get_filename_prefix()}-summary.txt"
         ).resolve()
 
+    @SourceConnectionNetworkError.wrap
     @property
     def text(self):
         return self.page.summary
