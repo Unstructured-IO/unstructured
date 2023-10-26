@@ -40,7 +40,6 @@ def main():
 @click.option("--output_dir", type=click.STRING, help="Directory to a structured output.")
 @click.option(
     "--output_list",
-    type=click.STRING,
     multiple=True,
     help="Optional: list of selected structured output file names under the \
         directory to be evaluate. If none, all files under directory will be use.",
@@ -48,7 +47,6 @@ def main():
 @click.option("--source_dir", type=click.STRING, help="Directory to a cct source.")
 @click.option(
     "--source_list",
-    type=click.STRING,
     multiple=True,
     help="Optional: list of selected cct source file names under the directory \
         to be evaluate. If none, all files under directory will be use.",
@@ -84,6 +82,11 @@ def measure_text_edit_distance(
     Calculates text accuracy and percent missing. After looped through the whole list, write to tsv.
     Also calculates the aggregated accuracy and percent missing.
     """
+    click.echo(output_dir)
+    click.echo(output_list)
+    click.echo(source_dir)
+    click.echo(source_list)
+    click.echo(export_dir)
     if not output_list:
         output_list = _listdir_recursive(output_dir)
     if not source_list:
