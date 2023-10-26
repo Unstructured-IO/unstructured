@@ -14,11 +14,11 @@ cffi==1.16.0
     # via
     #   cryptography
     #   pynacl
-charset-normalizer==3.3.0
+charset-normalizer==3.3.1
     # via
     #   -c requirements/ingest/../base.txt
     #   requests
-cryptography==41.0.4
+cryptography==41.0.5
     # via pyjwt
 deprecated==1.2.14
     # via pygithub
