@@ -28,7 +28,7 @@ repos:
           [
             "--fix",
             "--select=I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402",
-            "--ignore=PT011,PT012,SIM117",
+            "--ignore=PT011,PT012,SIM117,COM812",
           ]
 
   - repo: https://github.com/pycqa/flake8
