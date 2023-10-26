@@ -29,9 +29,11 @@ jobs:
         cache-dependency-path: |
           requirements/*.txt
           requirements/ingest/*.txt
-        run: |
-          [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
-          make install-ci
+
+    - name: Install packages
+      run: |
+        [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
+        make install-ci
 
   check-deps:
     strategy:
@@ -41,6 +43,7 @@ jobs:
     needs: setup
     steps:
     - uses: actions/checkout@v3
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -49,9 +52,7 @@ jobs:
         cache-dependency-path: |
           requirements/*.txt
           requirements/ingest/*.txt
-        run: |
-          [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
-          make install-ci
+
     - name: Check for dependency conflicts
       run: |
         source .venv/bin/activate
@@ -65,6 +66,7 @@ jobs:
     needs: setup
     steps:
     - uses: actions/checkout@v3
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -73,9 +75,7 @@ jobs:
         cache-dependency-path: |
           requirements/*.txt
           requirements/ingest/*.txt
-        run: |
-          [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
-          make install-ci
+
     - name: Lint
       run: |
         source .venv/bin/activate
