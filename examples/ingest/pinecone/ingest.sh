@@ -8,7 +8,6 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
-# We remove chunking params until the chunk/embed ordering fix is merged
 
 # As an example we're using the s3 source connector,
 # however ingesting from any supported source connector is possible.
@@ -20,6 +19,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
          --num-processes 2 \
          --verbose \
          --strategy fast \
+         --chunk-elements \
+         --chunk-multipage-sections \
          --embedding-api-key "<OpenAI API Key to embed ingested elements>" \
         pinecone \
         --api-key "<Pinecone API Key to write into a Pinecone index>" \
