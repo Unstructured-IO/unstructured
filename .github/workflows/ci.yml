@@ -55,7 +55,6 @@ jobs:
 
     - name: Check for dependency conflicts
       run: |
-        source .venv/bin/activate
         make check-deps
 
   lint:
@@ -78,7 +77,6 @@ jobs:
 
     - name: Lint
       run: |
-        source .venv/bin/activate
         make check
 
   # shellcheck:
