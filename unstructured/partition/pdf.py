@@ -426,7 +426,7 @@ def _partition_pdf_or_image_local(
     # NOTE(alan): starting with v2, chipper sorts the elements itself.
     if model_name == "chipper":
         kwargs["sort_mode"] = SORT_MODE_DONT
-
+    final_layout.clean_pdfminer_inner_elements()
     elements = document_to_element_list(
         final_layout,
         sortable=True,
