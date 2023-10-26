@@ -53,12 +53,21 @@ def create_service_account_object(key_path, id=None):
         Service account object
     """
     from google.auth import default, exceptions
+    from google.oauth2 import service_account
     from googleapiclient.discovery import build
     from googleapiclient.errors import HttpError
 
     try:
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
-        creds, _ = default()
+        if isinstance(key_path, dict):
+            creds = service_account.Credentials.from_service_account_info(key_path)
+        elif os.path.isfile(key_path):
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
+            creds, _ = default()
+        else:
+            raise ValueError(
+                f"key path not recognized as a dictionary or a file path: "
+                f"[{type(key_path)}] {key_path}",
+            )
         service = build("drive", "v3", credentials=creds)
 
         if id:
