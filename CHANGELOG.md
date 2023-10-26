@@ -1,4 +1,14 @@
-## 0.10.27-dev0
+## 0.10.28-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix unnecessary mid-text chunk-splitting.** The "pre-chunker" did not consider separator blank-line ("\n\n") length when grouping elements for a single chunk. As a result, sections were frequently over-populated producing a over-sized chunk that required mid-text splitting.
+
+## 0.10.27
 
 ### Enhancements
 
