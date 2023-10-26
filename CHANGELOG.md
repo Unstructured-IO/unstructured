@@ -1,3 +1,15 @@
+## 0.10.28-dev0
+
+### Enhancements
+
+* **Update unstructured-inference to 0.7.11**
+* **Use clean_pdfminer_inner_elements in pdf processing**  With this update tables doesn't contain nested elements, allowing for better table extraction without duplicate information
+
+### Features
+
+### Fixes
+
+
 ## 0.10.27
 
 ### Enhancements
