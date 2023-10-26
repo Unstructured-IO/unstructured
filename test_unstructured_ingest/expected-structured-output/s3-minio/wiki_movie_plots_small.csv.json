@@ -5,7 +5,7 @@
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/wiki_movie_plots_small.csv",
-        "version": 103589111396252091980300895568390462924,
+        "version": "103589111396252091980300895568390462924",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/wiki_movie_plots_small.csv"

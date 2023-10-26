@@ -6,7 +6,7 @@ from unstructured.ingest.pipeline.interfaces import DocFactoryNode
 
 @dataclass
 class DocFactory(DocFactoryNode):
-    def run(self, *args, **kwargs) -> t.Iterable[str]:
+    def run(self, *args, **kwargs) -> t.Iterable[dict]:
         docs = self.source_doc_connector.get_ingest_docs()
-        json_docs = [doc.to_json() for doc in docs]
+        json_docs = [doc.to_dict() for doc in docs]
         return json_docs

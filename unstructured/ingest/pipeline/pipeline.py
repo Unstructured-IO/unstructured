@@ -24,7 +24,7 @@ class Pipeline(DataClassJsonMixin):
     pipeline_context: PipelineContext
     doc_factory_node: DocFactoryNode
     source_node: SourceNode
-    partition_node: PartitionNode
+    partition_node: t.Optional[PartitionNode] = None
     write_node: t.Optional[WriteNode] = None
     reformat_nodes: t.List[ReformatNode] = field(default_factory=list)
     permissions_node: t.Optional[PermissionsDataCleaner] = None
@@ -48,21 +48,27 @@ class Pipeline(DataClassJsonMixin):
         self.initialize()
         manager = mp.Manager()
         self.pipeline_context.ingest_docs_map = manager.dict()
-        json_docs = self.doc_factory_node()
-        if not json_docs:
+        dict_docs = self.doc_factory_node()
+        dict_docs = [manager.dict(d) for d in dict_docs]
+        if not dict_docs:
             logger.info("no docs found to process")
             return
         logger.info(
-            f"processing {len(json_docs)} docs via "
+            f"processing {len(dict_docs)} docs via "
             f"{self.pipeline_context.num_processes} processes",
         )
-        for doc in json_docs:
+        for doc in dict_docs:
             self.pipeline_context.ingest_docs_map[get_ingest_doc_hash(doc)] = doc
-        fetched_filenames = self.source_node(iterable=json_docs)
+        if self.source_node.read_config.download_only:
+            logger.info("stopping pipeline after downloading files")
+            return
+        fetched_filenames = self.source_node(iterable=dict_docs)
         if not fetched_filenames:
             logger.info("No files to run partition over")
             return
-        partitioned_jsons = self.partition_node(iterable=json_docs)
+        if self.partition_node is None:
+            raise ValueError("partition node not set")
+        partitioned_jsons = self.partition_node(iterable=dict_docs)
         if not partitioned_jsons:
             logger.info("No files to process after partitioning")
             return
