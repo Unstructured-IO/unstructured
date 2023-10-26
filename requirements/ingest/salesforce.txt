@@ -14,11 +14,11 @@ certifi==2023.7.22
     #   requests
 cffi==1.16.0
     # via cryptography
-charset-normalizer==3.3.0
+charset-normalizer==3.3.1
     # via
     #   -c requirements/ingest/../base.txt
     #   requests
-cryptography==41.0.4
+cryptography==41.0.5
     # via simple-salesforce
 idna==3.4
     # via

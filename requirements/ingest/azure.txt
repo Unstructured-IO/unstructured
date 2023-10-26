@@ -35,12 +35,12 @@ cffi==1.16.0
     # via
     #   azure-datalake-store
     #   cryptography
-charset-normalizer==3.3.0
+charset-normalizer==3.3.1
     # via
     #   -c requirements/ingest/../base.txt
     #   aiohttp
     #   requests
-cryptography==41.0.4
+cryptography==41.0.5
     # via
     #   azure-identity
     #   azure-storage-blob

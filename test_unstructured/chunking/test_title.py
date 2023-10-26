@@ -30,7 +30,8 @@ def test_it_rejects_max_characters_not_greater_than_zero(max_characters: int):
     elements: List[Element] = [Text("Lorem ipsum dolor.")]
 
     with pytest.raises(
-        ValueError, match=f"'max_characters' argument must be > 0, got {max_characters}"
+        ValueError,
+        match=f"'max_characters' argument must be > 0, got {max_characters}",
     ):
         chunk_by_title(elements, max_characters=max_characters)
 
@@ -55,7 +56,8 @@ def test_it_rejects_combine_text_under_n_chars_for_n_less_than_zero(n_chars: int
     elements: List[Element] = [Text("Lorem ipsum dolor.")]
 
     with pytest.raises(
-        ValueError, match=f"'combine_text_under_n_chars' argument must be >= 0, got {n_chars}"
+        ValueError,
+        match=f"'combine_text_under_n_chars' argument must be >= 0, got {n_chars}",
     ):
         chunk_by_title(elements, combine_text_under_n_chars=n_chars)
 
@@ -98,7 +100,8 @@ def test_it_rejects_new_after_n_chars_for_n_less_than_zero(n_chars: int):
     elements: List[Element] = [Text("Lorem ipsum dolor.")]
 
     with pytest.raises(
-        ValueError, match=f"'new_after_n_chars' argument must be >= 0, got {n_chars}"
+        ValueError,
+        match=f"'new_after_n_chars' argument must be >= 0, got {n_chars}",
     ):
         chunk_by_title(elements, new_after_n_chars=n_chars)
 
