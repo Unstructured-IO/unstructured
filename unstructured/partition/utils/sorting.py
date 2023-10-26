@@ -5,10 +5,7 @@ import numpy as np
 
 from unstructured.documents.elements import CoordinatesMetadata, Element
 from unstructured.logger import trace_logger
-from unstructured.partition.utils.constants import (
-    SORT_MODE_BASIC,
-    SORT_MODE_XY_CUT,
-)
+from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
 from unstructured.partition.utils.xycut import recursive_xy_cut, recursive_xy_cut_swapped
 
 

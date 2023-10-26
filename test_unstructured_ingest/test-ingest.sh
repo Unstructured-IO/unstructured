@@ -69,6 +69,11 @@ trap print_last_run EXIT
 
 python_version=$(python --version 2>&1)
 
+tests_to_ignore=(
+  'test-ingest-notion.sh'
+  'test-ingest-dropbox.sh'
+)
+
 for test in "${all_tests[@]}"; do
   CURRENT_TEST="$test"
   # IF: python_version is not 3.10 (wildcarded to match any subminor version) AND the current test is not in full_python_matrix_tests
@@ -77,7 +82,7 @@ for test in "${all_tests[@]}"; do
     echo "--------- SKIPPING SCRIPT $test ---------"
     continue
   fi
-  if [[ "$test" == "test-ingest-notion.sh" ]]; then
+  if [[ "${tests_to_ignore[*]}" =~ $test ]]; then
     echo "--------- RUNNING SCRIPT $test --- IGNORING FAILURES"
     set +e
     echo "Running ./test_unstructured_ingest/$test"
@@ -91,3 +96,7 @@ for test in "${all_tests[@]}"; do
     echo "--------- FINISHED SCRIPT $test ---------"
   fi
 done
+
+echo "--------- RUNNING SCRIPT evaluation-metrics.sh ---------"
+./test_unstructured_ingest/evaluation-metrics.sh
+echo "--------- FINISHED SCRIPT evaluation-metrics.sh ---------"

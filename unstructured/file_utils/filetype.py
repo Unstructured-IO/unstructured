@@ -7,7 +7,7 @@ import json
 import os
 import re
 import zipfile
-from typing import IO, Any, Callable, Dict, List, Optional, cast
+from typing import IO, Any, Callable, Dict, List, Optional
 
 from typing_extensions import ParamSpec
 
@@ -540,7 +540,47 @@ def _is_code_mime_type(mime_type: str) -> bool:
 _P = ParamSpec("_P")
 
 
-def add_metadata_with_filetype(
+def add_metadata(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
+    @functools.wraps(func)
+    def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
+        elements = func(*args, **kwargs)
+        sig = inspect.signature(func)
+        params: Dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
+        for param in sig.parameters.values():
+            if param.name not in params and param.default is not param.empty:
+                params[param.name] = param.default
+        include_metadata = params.get("include_metadata", True)
+        if include_metadata:
+            if params.get("metadata_filename"):
+                params["filename"] = params.get("metadata_filename")
+
+            metadata_kwargs = {
+                kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
+            }
+            # NOTE (yao): do not use cast here as cast(None) still is None
+            if not str(kwargs.get("model_name", "")).startswith("chipper"):
+                # NOTE(alan): Skip hierarchy if using chipper, as it should take care of that
+                elements = set_element_hierarchy(elements)
+
+            for element in elements:
+                # NOTE(robinson) - Attached files have already run through this logic
+                # in their own partitioning function
+                if element.metadata.attached_to_filename is None:
+                    _add_element_metadata(
+                        element,
+                        **metadata_kwargs,  # type: ignore
+                    )
+
+            return elements
+        else:
+            return _remove_element_metadata(
+                elements,
+            )
+
+    return wrapper
+
+
+def add_filetype(
     filetype: FileType,
 ) -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
     """..."""
@@ -559,13 +599,6 @@ def add_metadata_with_filetype(
                 if params.get("metadata_filename"):
                     params["filename"] = params.get("metadata_filename")
 
-                metadata_kwargs = {
-                    kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
-                }
-                if not cast(str, kwargs.get("model_name", "")).startswith("chipper"):
-                    # NOTE(alan): Skip hierarchy if using chipper, as it should take care of that
-                    elements = set_element_hierarchy(elements)
-
                 for element in elements:
                     # NOTE(robinson) - Attached files have already run through this logic
                     # in their own partitioning function
@@ -573,7 +606,6 @@ def add_metadata_with_filetype(
                         _add_element_metadata(
                             element,
                             filetype=FILETYPE_TO_MIMETYPE[filetype],
-                            **metadata_kwargs,  # type: ignore
                         )
 
                 return elements
@@ -583,5 +615,16 @@ def add_metadata_with_filetype(
                 )
 
         return wrapper
+
+    return decorator
+
+
+def add_metadata_with_filetype(
+    filetype: FileType,
+) -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
+    """..."""
+
+    def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
+        return add_filetype(filetype=filetype)(add_metadata(func))
 
     return decorator

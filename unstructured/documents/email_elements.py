@@ -10,13 +10,9 @@ from unstructured.documents.elements import UUID, Element, NoID, Text
 class NoDatestamp(ABC):
     """Class to indicate that an element do not have a datetime stamp."""
 
-    pass
-
 
 class EmailElement(Element):
     """An email element is a section of the email."""
-
-    pass
 
 
 class Name(EmailElement):
@@ -84,15 +80,11 @@ class BodyText(List[Text]):
 
     category = "BodyText"
 
-    pass
-
 
 class Recipient(Name):
     """A text element for capturing the recipient information of an email"""
 
     category = "Recipient"
-
-    pass
 
 
 class Sender(Name):
@@ -100,15 +92,11 @@ class Sender(Name):
 
     category = "Sender"
 
-    pass
-
 
 class Subject(Text, EmailElement):
     """A text element for capturing the subject information of an email"""
 
     category = "Subject"
-
-    pass
 
 
 class MetaData(Name):
@@ -117,15 +105,11 @@ class MetaData(Name):
 
     category = "MetaData"
 
-    pass
-
 
 class ReceivedInfo(Name):
     """A text element for capturing header information of an email (e.g. IP addresses, etc)."""
 
     category = "ReceivedInfo"
-
-    pass
 
 
 class Attachment(Name):
@@ -133,5 +117,3 @@ class Attachment(Name):
     images, etc)."""
 
     category = "Attachment"
-
-    pass

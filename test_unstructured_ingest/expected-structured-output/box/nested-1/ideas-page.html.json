@@ -5,7 +5,7 @@
     "metadata": {
       "data_source": {
         "url": "box://utic-test-ingest-fixtures/nested-1/ideas-page.html",
-        "version": 102685823936240142970839376607768292114,
+        "version": "102685823936240142970839376607768292114",
         "record_locator": {
           "protocol": "box",
           "remote_file_path": "utic-test-ingest-fixtures/nested-1/ideas-page.html"
