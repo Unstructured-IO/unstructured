@@ -1,6 +1,8 @@
-## 0.11.1-dev1
+## 0.11.1-dev2
 
 ### Enhancements
+
+* **Leverage concurrent futures pool over multiprocessing pool** The ProcessPoolExecutor from concurrent.futures as been shown to have some improvements over the multiprocessing pool for thread safe workflows. Multiprocessing pool was swapped out for the concurrent.futures executor pool.
 
 ### Features
 
