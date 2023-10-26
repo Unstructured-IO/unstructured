@@ -80,10 +80,15 @@ class PineconeDestinationConnector(BaseDestinationConnector):
             f"index at {self.connector_config.index_name}",
         )
 
+        # this is advised to be 100 at maximum in pinecone docs, however when we
+        # chunk content, we hit to the object size limits, so we decrease the batch
+        # size even more here
+        pinecone_batch_size = 10
+
         num_processes = 1
         if num_processes == 1:
-            for i in range(0, len(dict_list), 100):
-                self.write_config.upsert_batch(dict_list[i : i + 100])  # noqa: E203
+            for i in range(0, len(dict_list), pinecone_batch_size):
+                self.write_config.upsert_batch(dict_list[i : i + pinecone_batch_size])  # noqa: E203
 
         else:
             with mp.Pool(
@@ -91,7 +96,10 @@ class PineconeDestinationConnector(BaseDestinationConnector):
             ) as pool:
                 pool.map(
                     self.write_config.upsert_batch,
-                    [dict_list[i : i + 100] for i in range(0, len(dict_list), 100)],  # noqa: E203
+                    [
+                        dict_list[i : i + pinecone_batch_size]  # noqa: E203
+                        for i in range(0, len(dict_list), pinecone_batch_size)
+                    ],  # noqa: E203
                 )
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
