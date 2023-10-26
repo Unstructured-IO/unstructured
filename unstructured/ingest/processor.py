@@ -1,6 +1,4 @@
-import multiprocessing as mp
 import typing as t
-from contextlib import suppress
 
 from unstructured.ingest.interfaces import (
     BaseDestinationConnector,
@@ -24,9 +22,6 @@ from unstructured.ingest.pipeline import (
     ReformatNode,
     Writer,
 )
-
-with suppress(RuntimeError):
-    mp.set_start_method("spawn")
 
 
 def process_documents(

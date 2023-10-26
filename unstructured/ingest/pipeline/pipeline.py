@@ -1,7 +1,7 @@
 import logging
-import multiprocessing as mp
 import typing as t
 from dataclasses import dataclass, field
+from multiprocessing import Manager
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -46,7 +46,7 @@ class Pipeline(DataClassJsonMixin):
             f"with config: {self.pipeline_context.to_json()}",
         )
         self.initialize()
-        manager = mp.Manager()
+        manager = Manager()
         self.pipeline_context.ingest_docs_map = manager.dict()
         dict_docs = self.doc_factory_node()
         dict_docs = [manager.dict(d) for d in dict_docs]

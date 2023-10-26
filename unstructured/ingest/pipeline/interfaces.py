@@ -1,9 +1,9 @@
 import hashlib
 import json
 import logging
-import multiprocessing as mp
 import typing as t
 from abc import ABC, abstractmethod
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
 from multiprocessing.managers import DictProxy
 from pathlib import Path
@@ -71,8 +71,8 @@ class PipelineNode(DataClassJsonMixin, ABC):
             else:
                 self.result = self.run()
         else:
-            with mp.Pool(
-                processes=self.pipeline_context.num_processes,
+            with ProcessPoolExecutor(
+                max_workers=self.pipeline_context.num_processes,
                 initializer=ingest_log_streaming_init,
                 initargs=(logging.DEBUG if self.pipeline_context.verbose else logging.INFO,),
             ) as pool:
