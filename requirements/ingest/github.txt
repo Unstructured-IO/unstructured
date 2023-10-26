@@ -14,7 +14,7 @@ cffi==1.16.0
     # via
     #   cryptography
     #   pynacl
-charset-normalizer==3.3.0
+charset-normalizer==3.3.1
     # via
     #   -c requirements/ingest/../base.txt
     #   requests

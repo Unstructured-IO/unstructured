@@ -136,7 +136,6 @@ pdf2image==1.16.3
     # via unstructured-paddleocr
 pillow==10.0.1
     # via
-    #   -c requirements/constraints.in
     #   imageio
     #   imgaug
     #   matplotlib

@@ -125,11 +125,10 @@ pdfminer-six==20221105
     # via
     #   -r requirements/extra-pdf-image.in
     #   pdfplumber
-pdfplumber==0.10.2
+pdfplumber==0.10.3
     # via layoutparser
-pillow==10.0.1
+pillow==10.1.0
     # via
-    #   -c requirements/constraints.in
     #   layoutparser
     #   matplotlib
     #   pdf2image

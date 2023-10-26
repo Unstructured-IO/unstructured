@@ -35,7 +35,7 @@ cffi==1.16.0
     # via
     #   azure-datalake-store
     #   cryptography
-charset-normalizer==3.3.0
+charset-normalizer==3.3.1
     # via
     #   -c requirements/ingest/../base.txt
     #   aiohttp
