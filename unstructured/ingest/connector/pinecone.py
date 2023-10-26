@@ -1,7 +1,7 @@
 import json
+import multiprocessing as mp
 import typing as t
 from dataclasses import dataclass
-import multiprocessing as mp
 
 from unstructured.ingest.error import DestinationConnectionError, WriteError
 from unstructured.ingest.interfaces import (
