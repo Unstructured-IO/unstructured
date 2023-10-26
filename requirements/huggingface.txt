@@ -51,7 +51,7 @@ mpmath==1.3.0
     # via sympy
 networkx==3.1
     # via torch
-numpy==1.24.4
+numpy==1.26.1
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

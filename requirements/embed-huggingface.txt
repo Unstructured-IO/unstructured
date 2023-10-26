@@ -102,7 +102,7 @@ nltk==3.8.1
     # via
     #   -c requirements/base.txt
     #   sentence-transformers
-numpy==1.24.4
+numpy==1.26.1
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

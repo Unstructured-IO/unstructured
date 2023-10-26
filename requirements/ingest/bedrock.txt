@@ -81,7 +81,7 @@ mypy-extensions==1.0.0
     # via
     #   -c requirements/ingest/../base.txt
     #   typing-inspect
-numpy==1.24.4
+numpy==1.26.1
     # via
     #   -c requirements/constraints.in
     #   -c requirements/ingest/../base.txt

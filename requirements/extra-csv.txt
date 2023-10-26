@@ -4,7 +4,7 @@
 #
 #    pip-compile --constraint=requirements/constraints.in requirements/extra-csv.in
 #
-numpy==1.24.4
+numpy==1.26.1
     # via
     #   -c requirements/base.txt
     #   -c requirements/constraints.in

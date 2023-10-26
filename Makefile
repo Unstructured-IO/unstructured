@@ -1,5 +1,5 @@
 PACKAGE_NAME := unstructured
-PIP_VERSION := 23.2.1
+PIP_VERSION := 23.3.1
 CURRENT_DIR := $(shell pwd)
 ARCH := $(shell uname -m)
 

@@ -11,7 +11,7 @@ fsspec==2023.9.1
     #   -c requirements/constraints.in
     #   -c requirements/ingest/../constraints.in
     #   -r requirements/ingest/delta-table.in
-numpy==1.24.4
+numpy==1.26.1
     # via
     #   -c requirements/constraints.in
     #   -c requirements/ingest/../base.txt
