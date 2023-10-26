@@ -1,10 +1,12 @@
-## 0.10.28-dev1
+## 0.10.28-dev2
 
 ### Enhancements
 
 * **Add element type CI evaluation workflow** Adds element type frequency evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
 
 ### Features
+
+* **Adds Pinecone destination connector.** Problem: After ingesting data from a source, users might want to produce embeddings for their data and write these into a vector DB. Pinecone is an option among these vector databases. Feature: Added Pinecone destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into Pinecone.
 
 ### Fixes
 
