@@ -5,7 +5,7 @@
     "metadata": {
       "data_source": {
         "url": "",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
@@ -115,7 +115,7 @@
     "metadata": {
       "data_source": {
         "url": "",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
@@ -225,7 +225,7 @@
     "metadata": {
       "data_source": {
         "url": "",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
@@ -335,7 +335,7 @@
     "metadata": {
       "data_source": {
         "url": "",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
@@ -445,7 +445,7 @@
     "metadata": {
       "data_source": {
         "url": "",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
@@ -555,7 +555,7 @@
     "metadata": {
       "data_source": {
         "url": "",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"

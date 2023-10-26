@@ -1,5 +1,3 @@
-import json
-
 from unstructured.ingest.connector.local import LocalIngestDoc, SimpleLocalConfig
 from unstructured.ingest.connector.registry import (
     create_ingest_doc_from_dict,
@@ -15,6 +13,7 @@ doc = LocalIngestDoc(
 )
 doc.update_source_metadata()
 serialized_json = doc.to_json()
+serialized_dict = doc.to_dict()
 
 
 def test_manual_deserialization():
@@ -28,7 +27,6 @@ def test_registry_from_json():
 
 
 def test_registry_from_dict():
-    serialized_dict: dict = json.loads(serialized_json)
     deserialized_doc = create_ingest_doc_from_dict(serialized_dict)
     assert doc == deserialized_doc
 
