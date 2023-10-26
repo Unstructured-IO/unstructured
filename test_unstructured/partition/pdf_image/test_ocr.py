@@ -80,7 +80,7 @@ def test_get_ocr_layout_from_image_tesseract(monkeypatch):
 
     image = Image.new("RGB", (100, 100))
 
-    ocr_layout = ocr.get_ocr_regions_from_image(
+    ocr_layout = ocr.get_ocr_layout_from_image(
         image,
         ocr_languages="eng",
         ocr_agent=OCR_AGENT_TESSERACT,
@@ -141,7 +141,7 @@ def test_get_ocr_layout_from_image_paddle(monkeypatch):
 
     image = Image.new("RGB", (100, 100))
 
-    ocr_layout = ocr.get_ocr_regions_from_image(
+    ocr_layout = ocr.get_ocr_layout_from_image(
         image,
         ocr_languages="eng",
         ocr_agent=OCR_AGENT_PADDLE,

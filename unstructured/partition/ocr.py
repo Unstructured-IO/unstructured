@@ -190,7 +190,7 @@ def supplement_page_layout_with_ocr(
     ocr_agent = get_ocr_agent()
     ocr_layout = None
     if ocr_mode == OCRMode.FULL_PAGE.value:
-        ocr_layout = get_ocr_regions_from_image(
+        ocr_layout = get_ocr_layout_from_image(
             image,
             ocr_languages=ocr_languages,
             ocr_agent=ocr_agent,
@@ -230,7 +230,7 @@ def supplement_page_layout_with_ocr(
         table_agent = init_table_agent()
         if ocr_layout is None:
             # Note(yuming): ocr_layout is None for individual_blocks ocr_mode
-            ocr_layout = get_ocr_regions_from_image(
+            ocr_layout = get_ocr_layout_from_image(
                 image,
                 ocr_languages=ocr_languages,
                 ocr_agent=ocr_agent,
@@ -356,7 +356,7 @@ def get_layout_elements_from_ocr(
     Generate a PageLayout with OCR data from a given image.
     """
 
-    ocr_regions = get_ocr_regions_from_image(
+    ocr_regions = get_ocr_layout_from_image(
         image,
         ocr_languages=ocr_languages,
         ocr_agent=ocr_agent,
@@ -449,7 +449,7 @@ def get_ocr_text_from_image(
     return ocr_text
 
 
-def get_ocr_regions_from_image(
+def get_ocr_layout_from_image(
     image: PILImage,
     ocr_languages: str = "eng",
     ocr_agent: str = "tesseract",
