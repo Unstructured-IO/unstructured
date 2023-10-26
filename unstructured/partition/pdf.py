@@ -92,7 +92,6 @@ def partition_pdf(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    generate_inner_elements_info: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: List[str] = ["eng"],
     max_partition: Optional[int] = 1500,
@@ -128,11 +127,6 @@ def partition_pdf(
         I.e., rows and cells are preserved.
         Whether True or False, the "text" field is always present in any Table element
         and is the text content of the table (no structure).
-    generate_inner_elements_info
-        Only applicable if `strategy=hi_res`.
-        If True, any elements that are extracted from pdfminer and inside tables will be stored in
-        the second return value of this function. The key is the table id and the value is a list of
-        elements.
     languages
         The languages present in the document, for use in partitioning and/or OCR. To use a language
         with Tesseract, you'll first need to install the appropriate Tesseract language pack.
@@ -175,7 +169,6 @@ def partition_pdf(
         include_page_breaks=include_page_breaks,
         strategy=strategy,
         infer_table_structure=infer_table_structure,
-        generate_inner_elements_info=generate_inner_elements_info,
         languages=languages,
         max_partition=max_partition,
         min_partition=min_partition,
@@ -223,7 +216,6 @@ def partition_pdf_or_image(
     include_page_breaks: bool = False,
     strategy: str = "auto",
     infer_table_structure: bool = False,
-    generate_inner_elements_info: bool = False,
     ocr_languages: Optional[str] = None,
     languages: Optional[List[str]] = ["eng"],
     max_partition: Optional[int] = 1500,
@@ -311,7 +303,6 @@ def partition_pdf_or_image(
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
-                generate_inner_elements_info=generate_inner_elements_info,
                 languages=languages,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 extract_images_in_pdf=extract_images_in_pdf,
@@ -354,7 +345,6 @@ def _partition_pdf_or_image_local(
     is_image: bool = False,
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
-    generate_inner_elements_info: bool = False,
     languages: Optional[List[str]] = ["eng"],
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     model_name: Optional[str] = None,
@@ -438,7 +428,7 @@ def _partition_pdf_or_image_local(
     if model_name == "chipper":
         kwargs["sort_mode"] = SORT_MODE_DONT
 
-    final_layout, extra_info = clean_pdfminer_inner_elements(final_layout)
+    final_layout = clean_pdfminer_inner_elements(final_layout)
     elements = document_to_element_list(
         final_layout,
         sortable=True,
@@ -476,9 +466,6 @@ def _partition_pdf_or_image_local(
             # filter those out and leave the children orphaned.
             if el.text or isinstance(el, PageBreak) or model_name.startswith("chipper"):
                 out_elements.append(cast(Element, el))
-
-    if generate_inner_elements_info:
-        return out_elements, extra_info
 
     return out_elements
 

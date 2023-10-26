@@ -111,7 +111,6 @@ def test_partition_image_local(monkeypatch, filename, file):
         filename,
         file,
         is_image=True,
-        generate_inner_elements_info=False,
     )
     assert partition_image_response[0].text == "Charlie Brown and the Great Pumpkin"
 

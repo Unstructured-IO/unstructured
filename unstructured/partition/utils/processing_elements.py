@@ -1,5 +1,3 @@
-import hashlib
-from collections import defaultdict
 from typing import Tuple
 
 from unstructured_inference.constants import Source
@@ -9,7 +7,6 @@ from unstructured_inference.inference.layout import DocumentLayout
 def clean_pdfminer_inner_elements(document: DocumentLayout) -> Tuple[DocumentLayout, dict]:
     """Clean pdfminer elements from inside tables and stores them in extra_info dictionary
     with the table id as key"""
-    extra_info = defaultdict(list)
     for page in document.pages:
         tables = [e for e in page.elements if e.type == "Table"]
         for i, element in enumerate(page.elements):
@@ -18,10 +15,8 @@ def clean_pdfminer_inner_elements(document: DocumentLayout) -> Tuple[DocumentLay
                 if sum(element_inside_table) == 1:
                     parent_table_index = element_inside_table.index(True)
                     parent_table = tables[parent_table_index]
-                    # Note(Benjamin): is this a good way to guess the id?
-                    future_id = hashlib.sha256(parent_table.text.encode()).hexdigest()[:32]
-                    extra_info[future_id].append(element)
+                    parent_table.pdfminer_inner_text.append(element)
                     page.elements[i] = None
         page.elements = [e for e in page.elements if e]
 
-    return document, extra_info
+    return document
