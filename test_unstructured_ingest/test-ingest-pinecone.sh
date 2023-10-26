@@ -97,13 +97,15 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
   --anonymous \
   --work-dir "$WORK_DIR" \
+  --chunk-elements \
+  --chunk-multipage-sections \
   --embedding-api-key "$OPENAI_API_KEY" \
   pinecone \
   --api-key "$PINECONE_API_KEY" \
   --index-name "$PINECONE_INDEX" \
   --environment "$PINECONE_ENVIRONMENT"
 
-sleep 10
+sleep 15
 num_of_vectors_remote=$(curl --request POST \
      -s \
      --url "https://$PINECONE_INDEX-$PINECONE_PROJECT_ID.svc.$PINECONE_ENVIRONMENT.pinecone.io/describe_index_stats" \
@@ -111,7 +113,8 @@ num_of_vectors_remote=$(curl --request POST \
      --header "content-type: application/json" \
      --header "Api-Key: $PINECONE_API_KEY" | jq -r '.totalVectorCount')
 
-if [ "$num_of_vectors_remote" -ne 484 ];then
-  echo "Number of vectors in Pinecone are $num_of_vectors_remote when the expected number is 484. Test failed."
+EXPECTED=81
+if [ "$num_of_vectors_remote" -ne $EXPECTED ];then
+  echo "Number of vectors in Pinecone are $num_of_vectors_remote when the expected number is $EXPECTED. Test failed."
   exit 1
 fi
