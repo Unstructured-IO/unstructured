@@ -1,3 +1,6 @@
 filename	connector	element-type-accuracy
-IRS-form-1987.pdf	azure	1.0
-science-exploration-1p.pptx	box	1.0
+Silent-Giant-(1).pdf	s3	0.982
+2023-Jan-economic-outlook.pdf	s3	1.0
+page-with-formula.pdf	s3	1.0
+recalibrating-risk-report.pdf	s3	1.0
+handbook-1p.docx	box	1.0

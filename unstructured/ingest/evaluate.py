@@ -28,6 +28,9 @@ if "ingest_log_handler" not in [h.name for h in logger.handlers]:
 logger.setLevel(logging.DEBUG)
 
 
+agg_headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
+
+
 @click.group()
 def main():
     pass
@@ -96,8 +99,7 @@ def measure_text_edit_distance(
         connector = doc.split("/")[0]
         if fn_txt in source_list:  # type: ignore
             output_cct = elements_to_text(elements_from_json(os.path.join(output_dir, doc)))
-            with open(f"{os.path.join(source_dir, fn_txt)}") as f:
-                source_cct = f.read()
+            source_cct = _read_text(os.path.join(source_dir, fn_txt))
             accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
 
@@ -108,7 +110,7 @@ def measure_text_edit_distance(
     headers = ["filename", "connector", "cct-accuracy", "cct-%missing"]
     _write_to_file(export_dir, "all-docs-cct.tsv", rows, headers)
 
-    headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
+    # headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
     agg_rows = []
     agg_rows.append(
         [
@@ -128,8 +130,9 @@ def measure_text_edit_distance(
             len(percent_missing_scores),
         ],
     )
-    _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_rows, headers)
-    _display(agg_rows, headers)
+    _write_to_file(export_dir, "aggregate-scores.tsv", agg_rows, agg_headers, "w")
+    # _write_aggregated_to_file(export_dir, agg_rows)
+    _display(agg_rows, agg_headers)
 
 
 @main.command()
@@ -175,8 +178,8 @@ def measure_element_type_accuracy(
         fn = (doc.split("/")[-1]).split(".json")[0]
         connector = doc.split("/")[0]
         if doc in source_list:  # type: ignore
-            output = get_element_type_frequency(_read_json(os.path.join(output_dir, doc)))
-            source = get_element_type_frequency(_read_json(os.path.join(source_dir, doc)))
+            output = get_element_type_frequency(_read_text(os.path.join(output_dir, doc)))
+            source = get_element_type_frequency(_read_text(os.path.join(source_dir, doc)))
             accuracy = round(calculate_element_type_percent_match(output, source), 3)
             rows.append([fn, connector, accuracy])
             accuracy_scores.append(accuracy)
@@ -184,7 +187,7 @@ def measure_element_type_accuracy(
     headers = ["filename", "connector", "element-type-accuracy"]
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", rows, headers)
 
-    headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
+    # headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
     agg_rows = []
     agg_rows.append(
         [
@@ -195,8 +198,9 @@ def measure_element_type_accuracy(
             len(accuracy_scores),
         ],
     )
-    _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_rows, headers)
-    _display(agg_rows, headers)
+    _write_to_file(export_dir, "aggregate-scores.tsv", agg_rows, agg_headers, "a")
+    # _write_aggregated_to_file(export_dir, agg_rows, "a")
+    _display(agg_rows, agg_headers)
 
 
 def _listdir_recursive(dir: str):
@@ -212,13 +216,19 @@ def _listdir_recursive(dir: str):
     return listdir
 
 
-def _write_to_file(dir: str, filename: str, rows: List[Any], headers: List[Any]):
+def _write_to_file(dir: str, filename: str, rows: List[Any], headers: List[Any], mode: str = "w"):
     if dir and not os.path.exists(dir):
         os.makedirs(dir)
-    with open(os.path.join(os.path.join(dir, filename)), "w", newline="") as tsv:
+    with open(os.path.join(os.path.join(dir, filename)), mode, newline="") as tsv:
         writer = csv.writer(tsv, delimiter="\t")
-        writer.writerow(headers)
+        if mode == "w":
+            writer.writerow(headers)
         writer.writerows(rows)
+
+
+def _write_aggregated_to_file(dir: str, rows: List[Any], mode: str = "w"):
+    headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
+    _write_to_file(dir, "aggregate-scores.tsv", rows, headers, mode)
 
 
 def _display(rows, headers):
@@ -268,10 +278,10 @@ def _pstdev(scores: List[float], rounding: Optional[int] = 3):
     return round(statistics.pstdev(scores), rounding)
 
 
-def _read_json(path):
+def _read_text(path):
     with open(path) as f:
-        jsontext = f.read()
-    return jsontext
+        text = f.read()
+    return text
 
 
 if __name__ == "__main__":
