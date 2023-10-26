@@ -287,10 +287,13 @@ _P = ParamSpec("_P")
 
 
 def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
-    """Decorator for chuncking text. Uses title elements to identify sections within the document
-    for chunking. Splits off a new section when a title is detected or if metadata changes,
-    which happens when page numbers or sections change. Cuts off sections once they have exceeded
-    a character length of max_characters."""
+    """Decorator for chunking text.
+
+    Uses title elements to identify sections within the document for chunking. Splits off a new
+    section when a title is detected or if metadata changes, which happens when page numbers or
+    sections change. Cuts off sections once they have exceeded a character length of
+    max_characters.
+    """
 
     def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
         if func.__doc__ and (
@@ -300,7 +303,7 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
             func.__doc__ += (
                 "\nchunking_strategy"
                 + "\n\tStrategy used for chunking text into larger or smaller elements."
-                + "\n\tDefaluts to `None` withoptional arg of 'by_title'."
+                + "\n\tDefaults to `None` with optional arg of 'by_title'."
                 + "\n\tAdditional Parameters:"
                 + "\n\t\tmultipage_sections"
                 + "\n\t\t\tIf True, sections can span multiple pages. Defaults to True."
@@ -308,8 +311,8 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
                 + "\n\t\t\tCombines elements (for example a series of titles) until a section"
                 + "\n\t\t\treaches a length of n characters."
                 + "\n\t\tnew_after_n_chars"
-                + "\n\t\t\t Cuts off new sections once they reach a length of n characters"
-                + "\n\t\t\t a soft max."
+                + "\n\t\t\tCuts off new sections once they reach a length of n characters"
+                + "\n\t\t\ta soft max."
                 + "\n\t\tmax_characters"
                 + "\n\t\t\tChunks elements text and text_as_html (if present) into chunks"
                 + "\n\t\t\tof length n characters, a hard max."
