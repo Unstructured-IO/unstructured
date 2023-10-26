@@ -22,7 +22,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.nlp.patterns import PARAGRAPH_PATTERN
+from unstructured.nlp.patterns import PARAGRAPH_PATTERN, UNICODE_BULLETS_RE
 from unstructured.nlp.tokenize import sent_tokenize
 from unstructured.partition.common import (
     exactly_one,
@@ -157,6 +157,10 @@ def combine_paragraphs_less_than_min(
     return combined_paras
 
 
+def has_text(text: str):
+    return not (UNICODE_BULLETS_RE.match(text) and len(text) == 1)
+
+
 @process_metadata()
 @add_metadata_with_filetype(FileType.TXT)
 @add_chunking_strategy()
@@ -265,7 +269,7 @@ def partition_text(
     for ctext in file_content:
         ctext = ctext.strip()
 
-        if ctext:
+        if ctext and has_text(ctext):
             element = element_from_text(ctext)
             element.metadata = copy.deepcopy(metadata)
             elements.append(element)
@@ -287,12 +291,11 @@ def element_from_text(
 ) -> Element:
     if is_bulleted_text(text):
         clean_text = clean_bullets(text)
-        if clean_text:
-            return ListItem(
-                text=clean_bullets(clean_text),
-                coordinates=coordinates,
-                coordinate_system=coordinate_system,
-            )
+        return ListItem(
+            text=clean_text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
     elif is_email_address(text):
         return EmailAddress(text=text)
     elif is_us_city_state_zip(text):
