@@ -44,8 +44,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 
 # Simply check the number of files uploaded
 expected_num_files=1
-num_files_in_s3=$(aws s3 ls "$DESTINATION_S3/example-docs/" --region us-east-2 | wc -l)
+num_files_in_s3=$(aws s3 ls "${DESTINATION_S3}example-docs/" --region us-east-2 | grep "\.json$" | wc -l)
 if [ "$num_files_in_s3" -ne "$expected_num_files" ]; then
     echo "Expected $expected_num_files files to be uploaded to s3, but found $num_files_in_s3 files."
     exit 1
+else
+  echo "Expected number of files found: $num_files_in_s3/$expected_num_files"
 fi
