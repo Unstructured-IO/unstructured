@@ -1,3 +1,13 @@
+## 0.10.27-dev0
+
+### Enhancements
+
+* **Separated integration tests to reduce test time** Used `pytest` markers to mark long-running integration tests, to facilitate speedier local testing and to run separately in CI.
+
+### Features
+
+### Fixes
+
 ## 0.10.26
 
 ### Enhancements
