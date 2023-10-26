@@ -224,9 +224,9 @@ def scroll_wrapper(func, results_key="results"):
 
         for _ in range(num_iterations):
             response = func(*args, **kwargs)
-            if type(response) is list:
+            if isinstance(response, list):
                 all_results += func(*args, **kwargs)
-            elif type(response) is dict:
+            elif isinstance(response, dict):
                 if results_key not in response:
                     raise KeyError(
                         "Response object has no known keys to \

@@ -16,8 +16,6 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-# flake8: noqa E203
-
 
 @requires_dependencies(["pinecone"], extras="pinecone")
 def create_pinecone_object(api_key, index_name, environment):
@@ -31,7 +29,7 @@ def create_pinecone_object(api_key, index_name, environment):
 
 @dataclass
 class PineconeSessionHandle(BaseSessionHandle):
-    service: "Pinecone"
+    service: "pinecone.Index"  # noqa: F821
 
 
 @dataclass
@@ -85,7 +83,7 @@ class PineconeDestinationConnector(BaseDestinationConnector):
         num_processes = 1
         if num_processes == 1:
             for i in range(0, len(dict_list), 100):
-                self.write_config.upsert_batch(dict_list[i : i + 100])
+                self.write_config.upsert_batch(dict_list[i : i + 100])  # noqa: E203
 
         else:
             with mp.Pool(
@@ -93,7 +91,7 @@ class PineconeDestinationConnector(BaseDestinationConnector):
             ) as pool:
                 pool.map(
                     self.write_config.upsert_batch,
-                    [dict_list[i : i + 100] for i in range(0, len(dict_list), 100)],
+                    [dict_list[i : i + 100] for i in range(0, len(dict_list), 100)],  # noqa: E203
                 )
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
