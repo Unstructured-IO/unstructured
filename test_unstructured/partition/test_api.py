@@ -123,14 +123,10 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
         partition_via_api(filename=filename)
 
 
-@pytest.mark.skip(
-    reason="API is returning fast for auto, see "
-    "https://github.com/Unstructured-IO/unstructured-api/issues/188",
-)
-# @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
-# @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
+@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_with_no_strategy():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg")
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
 
     elements_no_strategy = partition_via_api(
         filename=filename,
@@ -140,9 +136,10 @@ def test_partition_via_api_with_no_strategy():
     elements_hi_res = partition_via_api(filename=filename, strategy="hi_res", api_key=get_api_key())
 
     # confirm that hi_res strategy was not passed as default to partition by comparing outputs
-    # FIXME(crag): elements_hi_res[4].text is 'sacon oot barvard o', the fast output.
-    # should be 'Harvard University {melissadell,jacob carlson}@fas.harvard.edu' (as of writing)
-    assert elements_no_strategy[4].text != elements_hi_res[4].text
+    # elements_hi_res[3].text =
+    #     'LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis'
+    # while elements_no_strategy[3].text = ']' (as of this writing)
+    assert elements_no_strategy[3].text != elements_hi_res[3].text
 
 
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")

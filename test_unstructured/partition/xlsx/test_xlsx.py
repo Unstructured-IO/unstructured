@@ -51,6 +51,27 @@ def test_partition_xlsx_from_filename_with_metadata_filename(
     assert elements[0].metadata.filename == "test"
 
 
+@pytest.mark.parametrize(
+    "infer_table_structure",
+    [
+        True,
+        False,
+    ],
+)
+def test_partition_xlsx_infer_table_structure(
+    infer_table_structure,
+    filename="example-docs/stanley-cups.xlsx",
+):
+    elements = partition_xlsx(filename=filename, infer_table_structure=infer_table_structure)
+    table_elements = [e for e in elements if isinstance(e, Table)]
+    for table_element in table_elements:
+        table_element_has_text_as_html_field = (
+            hasattr(table_element.metadata, "text_as_html")
+            and table_element.metadata.text_as_html is not None
+        )
+        assert table_element_has_text_as_html_field == infer_table_structure
+
+
 def test_partition_xlsx_from_filename_with_header(filename="example-docs/stanley-cups.xlsx"):
     elements = partition_xlsx(filename=filename, include_header=True)
     assert sum(isinstance(element, Table) for element in elements) == 2
