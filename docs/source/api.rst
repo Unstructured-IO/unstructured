@@ -460,7 +460,7 @@ To extract the table structure from PDF files using the ``hi_res`` strategy, ens
 Table Extraction for other filetypes
 ------------------------------------
 
-We also provide support for enabling and disabling table extraction for file types other than PDF files. Set parameter ``skip_infer_table_types`` to specify the document types that you want to skip table extraction with. By default, we skip table extraction for PDFs Images, and Excel files which are ``pdf``, ``jpg``, ``png``, ``xlsx``, and ``xls``. Note that table extraction only works with ``hi_res`` strategy. For example, if you don't want to skip table extraction for images, you can pass an empty value to ``skip_infer_table_types`` with:
+We also provide support for enabling and disabling table extraction for file types other than PDF files. Set parameter ``skip_infer_table_types`` to specify the document types that you want to skip table extraction with. By default, we skip table extraction for PDFs, Images, and Excel files which are ``pdf``, ``jpg``, ``png``, ``xlsx``, and ``xls``. Note that table extraction for Images and PDFs only works with ``hi_res`` strategy. For example, if you don't want to skip table extraction for images, you can pass an empty value to ``skip_infer_table_types`` with:
 
 .. tabs::
 
