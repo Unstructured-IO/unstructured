@@ -46,6 +46,9 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --client-cred "$SHAREPOINT_CRED" \
     --client-id "$SHAREPOINT_CLIENT_ID" \
     --site "$SHAREPOINT_SITE" \
+    --permissions-application-id "$SHAREPOINT_PERMISSIONS_APP_ID" \
+    --permissions-client-cred "$SHAREPOINT_PERMISSIONS_APP_CRED" \
+    --permissions-tenant "$SHAREPOINT_PERMISSIONS_TENANT" \
     --path "Shared Documents" \
     --recursive \
     --work-dir "$WORK_DIR"
