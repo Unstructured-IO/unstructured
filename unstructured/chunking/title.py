@@ -104,7 +104,7 @@ def chunk_by_title(
     # -- but a negative value is not
     if combine_text_under_n_chars < 0:
         raise ValueError(
-            f"'combine_text_under_n_chars' argument must be >= 0, got {combine_text_under_n_chars}",
+            f"'combine_text_under_n_chars' argument must be >= 0, got {combine_text_under_n_chars}"
         )
 
     # -- same with `new_after_n_chars` --
