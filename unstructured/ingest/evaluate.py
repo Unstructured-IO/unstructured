@@ -248,8 +248,7 @@ def _mean(scores: List[float], rounding: Optional[int] = 3):
         mean = statistics.mean(scores)
     if not rounding:
         return mean
-    else:
-        return round(mean, rounding)
+    return round(mean, rounding)
 
 
 def _stdev(scores: List[float], rounding: Optional[int] = 3):
