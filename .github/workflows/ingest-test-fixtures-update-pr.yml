@@ -13,8 +13,32 @@ permissions:
   contents: read
 
 jobs:
+  test_logins:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: 'actions/checkout@v4'
+      - name: 'Google Cloud Auth'
+        uses: 'google-github-actions/auth@v1'
+        id: gauth
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v1'
+      - name: 'run gcloud command'
+        run: |-
+          gcloud projects list
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: 'azure test command'
+        run: |-
+          az account show
   setup:
-    runs-on: ubuntu-latest-m
+    runs-on: ubuntu-latest
     if: |
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'push' && contains(github.event.head_commit.message, 'ingest-test-fixtures-update'))
@@ -84,28 +108,30 @@ jobs:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup_ingest]
     steps:
-      - name: Install Azure cli
-        run: |
-          sudo apt-get install ca-certificates curl apt-transport-https lsb-release gnupg
-          curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
-          AZ_REPO=$(lsb_release -cs)
-          echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
-          sudo apt-get update
-          sudo apt-get install azure-cli
-      - name: 'Az CLI login'
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      # actions/checkout MUST come before auth
       - uses: 'actions/checkout@v4'
       - name: 'Google Cloud Auth'
         uses: 'google-github-actions/auth@v1'
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+          activate_credentials_file: true
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v1'
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Get full Python version
+        id: full-python-version
+        run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
       - uses: actions/cache/restore@v3
         id: virtualenv-cache
         with:
@@ -164,18 +190,15 @@ jobs:
           OCR_AGENT: "tesseract"
           OVERWRITE_FIXTURES: "true"
           CI: "true"
-        uses: azure/CLI@v1
-        with:
-          azcliversion: latest
-          inlineScript: |
-            source .venv/bin/activate
-            sudo apt-get update
-            sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
-            sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-            sudo apt-get install -y tesseract-ocr
-            sudo apt-get install -y tesseract-ocr-kor
-            tesseract --version
-            ./test_unstructured_ingest/test-ingest.sh
+        run: |
+          source .venv/bin/activate
+          sudo apt-get update
+          sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+          sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+          sudo apt-get install -y tesseract-ocr
+          sudo apt-get install -y tesseract-ocr-kor
+          tesseract --version
+          ./test_unstructured_ingest/test-ingest.sh
 
       - name: Save branch name to environment file
         id: branch
