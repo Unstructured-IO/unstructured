@@ -3,10 +3,13 @@
 ### Enhancements
 
 * **Add element type CI evaluation workflow** Adds element type frequency evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
+* **Leverage dict to share content across ingest pipeline** To share the ingest doc content across steps in the ingest pipeline, this was updated to use a multiprocessing-safe dictionary so changes get persisted and each step has the option to modify the ingest docs in place.
 
 ### Features
 
 ### Fixes
+
+* **Caching fixes in ingest pipeline** Previously, steps like the source node were not leveraging parameters such as `re_download` to dictate if files should be forced to redownload rather than use what might already exist locally.
 
 ## 0.10.26
 
