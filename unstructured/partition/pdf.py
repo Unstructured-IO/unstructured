@@ -64,7 +64,7 @@ from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
-    normalize_layout_element,
+    ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.lang import (
@@ -91,7 +91,7 @@ from unstructured.partition.utils.sorting import (
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.layoutelement import LayoutElement
+    pass
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
@@ -332,7 +332,7 @@ def partition_pdf_or_image(
     elif strategy == "ocr_only":
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
         with warnings.catch_warnings():
-            return _partition_pdf_or_image_with_ocr(
+            _layout_elements = _partition_pdf_or_image_with_ocr(
                 filename=filename,
                 file=file,
                 include_page_breaks=include_page_breaks,
@@ -341,6 +341,15 @@ def partition_pdf_or_image(
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 **kwargs,
             )
+
+            layout_elements = []
+            for el in _layout_elements:
+                if hasattr(el, "category") and el.category == "UncategorizedText":
+                    new_el = element_from_text(cast(Text, el).text)
+                    new_el.metadata = el.metadata
+                else:
+                    new_el = el
+                layout_elements.append(new_el)
 
     return layout_elements
 
@@ -857,7 +866,6 @@ def _partition_pdf_or_image_with_ocr_from_image(
     page_number: int = 1,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
-    infer_element_category: bool = True,
     sort_mode: str = SORT_MODE_XY_CUT,
     **kwargs,
 ) -> List[Element]:
@@ -883,11 +891,10 @@ def _partition_pdf_or_image_with_ocr_from_image(
         languages=languages,
     )
 
-    page_elements = _ocr_data_to_elements(
+    page_elements = ocr_data_to_elements(
         ocr_data,
-        image,
+        image_size=image.size,
         common_metadata=metadata,
-        infer_element_category=infer_element_category,
     )
 
     sorted_page_elements = page_elements
@@ -898,39 +905,6 @@ def _partition_pdf_or_image_with_ocr_from_image(
         sorted_page_elements.append(PageBreak(text=""))
 
     return page_elements
-
-
-def _ocr_data_to_elements(
-    ocr_data: List["LayoutElement"],
-    image: PILImage,
-    common_metadata: Optional[ElementMetadata] = None,
-    infer_list_items: bool = True,
-    source_format: Optional[str] = None,
-    infer_element_category: bool = False,
-) -> List[Element]:
-    """Convert OCR layout data into `unstructured` elements with associated metadata."""
-
-    image_width, image_height = image.size
-    coordinate_system = PixelSpace(width=image_width, height=image_height)
-    elements = []
-    for layout_element in ocr_data:
-        element = normalize_layout_element(
-            layout_element,
-            coordinate_system=coordinate_system,
-            infer_list_items=infer_list_items,
-            source_format=source_format if source_format else "html",
-        )
-
-        if common_metadata:
-            element.metadata = element.metadata.merge(common_metadata)
-
-        if infer_element_category:
-            _el = element_from_text(element.text)
-            element.category = _el.category
-
-        elements.append(element)
-
-    return elements
 
 
 def check_coords_within_boundary(

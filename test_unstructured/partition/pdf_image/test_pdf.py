@@ -5,8 +5,6 @@ from unittest import mock
 import pytest
 from PIL import Image
 from unstructured_inference.inference import layout
-from unstructured_inference.inference.elements import TextRegion
-from unstructured_inference.inference.layoutelement import LayoutElement
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
@@ -21,11 +19,6 @@ from unstructured.documents.elements import (
 )
 from unstructured.partition import ocr, pdf, strategies
 from unstructured.partition.ocr import get_ocr_agent
-from unstructured.partition.pdf import (
-    _ocr_data_to_elements,
-    _partition_pdf_or_image_with_ocr,
-    _partition_pdf_or_image_with_ocr_from_image,
-)
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
@@ -1115,7 +1108,7 @@ def test_ocr_language_passes_through(strategy, ocr_func):
     ],
 )
 def test_partition_pdf_or_image_with_ocr(filename, is_image):
-    elements = _partition_pdf_or_image_with_ocr(
+    elements = pdf._partition_pdf_or_image_with_ocr(
         filename=filename,
         is_image=is_image,
     )
@@ -1131,7 +1124,7 @@ def test_partition_pdf_or_image_with_ocr_from_image(
     filename="example-docs/layout-parser-paper-fast.jpg",
 ):
     image = Image.open(filename)
-    elements = _partition_pdf_or_image_with_ocr_from_image(
+    elements = pdf._partition_pdf_or_image_with_ocr_from_image(
         image=image,
         languages=["eng"],
         metadata_last_modified="2023-10-25",
@@ -1145,61 +1138,3 @@ def test_partition_pdf_or_image_with_ocr_from_image(
         ocr_agent = get_ocr_agent()
         expected_origin = f"ocr_{ocr_agent}"
         assert {element.metadata.detection_origin for element in elements} == {expected_origin}
-
-
-@pytest.mark.parametrize(
-    ("infer_element_category", "element_category"),
-    [
-        (False, "UncategorizedText"),
-        (True, "Title"),
-    ],
-)
-def test_ocr_data_to_elements(
-    infer_element_category,
-    element_category,
-    filename="example-docs/layout-parser-paper-fast.jpg",
-):
-    text_regions = [
-        TextRegion.from_coords(
-            163.0,
-            115.0,
-            452.0,
-            129.0,
-            text="LayoutParser: A Unified Toolkit for Deep",
-        ),
-        TextRegion.from_coords(
-            156.0,
-            132.0,
-            457.0,
-            147.0,
-            text="Learning Based Document Image Analysis",
-        ),
-    ]
-    ocr_data = [
-        LayoutElement(
-            bbox=r.bbox,
-            text=r.text,
-            source=r.source,
-            type="UncategorizedText",
-        )
-        for r in text_regions
-    ]
-    image = Image.open(filename)
-
-    elements = _ocr_data_to_elements(
-        ocr_data=ocr_data,
-        image=image,
-        infer_element_category=infer_element_category,
-    )
-
-    assert len(ocr_data) == len(elements)
-    assert {el.category for el in elements} == {element_category}
-
-    # check coordinates metadata
-    image_width, image_height = image.size
-    coordinate_system = PixelSpace(width=image_width, height=image_height)
-    for el, layout_el in zip(elements, ocr_data):
-        assert el.metadata.coordinates == CoordinatesMetadata(
-            points=layout_el.bbox.coordinates,
-            system=coordinate_system,
-        )

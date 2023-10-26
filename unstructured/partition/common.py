@@ -639,3 +639,31 @@ def document_to_element_list(
         elements.extend(sorted_page_elements)
 
     return elements
+
+
+def ocr_data_to_elements(
+    ocr_data: List["LayoutElement"],
+    image_size: Tuple[Union[int, float], Union[int, float]],
+    common_metadata: Optional[ElementMetadata] = None,
+    infer_list_items: bool = True,
+    source_format: Optional[str] = None,
+) -> List[Element]:
+    """Convert OCR layout data into `unstructured` elements with associated metadata."""
+
+    image_width, image_height = image_size
+    coordinate_system = PixelSpace(width=image_width, height=image_height)
+    elements = []
+    for layout_element in ocr_data:
+        element = normalize_layout_element(
+            layout_element,
+            coordinate_system=coordinate_system,
+            infer_list_items=infer_list_items,
+            source_format=source_format if source_format else "html",
+        )
+
+        if common_metadata:
+            element.metadata = element.metadata.merge(common_metadata)
+
+        elements.append(element)
+
+    return elements
