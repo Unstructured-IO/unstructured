@@ -1,3 +1,14 @@
+## 0.10.28-dev0
+
+### Enhancements
+
+* **Update `ocr_only` strategy in `partition_pdf()`** Adds the functionality to get accurate coordinate data when partitioning PDFs and Images with the `ocr_only` strategy.
+
+### Features
+
+### Fixes
+
+
 ## 0.10.27
 
 ### Enhancements
