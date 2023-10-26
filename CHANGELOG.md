@@ -1,4 +1,4 @@
-## 0.10.27-dev0
+## 0.10.27-dev1
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 ### Features
 
 ### Fixes
+* **Fix ingest pipeline to be able to use chunking and embedding together** Problem: When ingest pipeline was using chunking and embedding together, embedding outputs were empty and the outputs of chunking couldn't be re-read into memory and be forwarded to embeddings. Fix: Added CompositeElement type to TYPE_TO_TEXT_ELEMENT_MAP to be able to process CompositeElements with unstructured.staging.base.isd_to_elements
 
 * **Caching fixes in ingest pipeline** Previously, steps like the source node were not leveraging parameters such as `re_download` to dictate if files should be forced to redownload rather than use what might already exist locally.
 
@@ -18,7 +19,7 @@
 
 ### Features
 
-* **Functionality to catch and classify overlapping/nested elements** Method to identify overlapping-bboxes cases within detected elements in a document. It returns two values: a boolean defining if there are overlapping elements present, and a list reporting them with relevant metadata. The output includes information about the `overlapping_elements`, `overlapping_case`, `overlapping_percentage`, `largest_ngram_percentage`, `overlap_percentage_total`, `max_area`, `min_area`, and `total_area`. 
+* **Functionality to catch and classify overlapping/nested elements** Method to identify overlapping-bboxes cases within detected elements in a document. It returns two values: a boolean defining if there are overlapping elements present, and a list reporting them with relevant metadata. The output includes information about the `overlapping_elements`, `overlapping_case`, `overlapping_percentage`, `largest_ngram_percentage`, `overlap_percentage_total`, `max_area`, `min_area`, and `total_area`.
 * **Add Local connector source metadata** python's os module used to pull stats from local file when processing via the local connector and populates fields such as last modified time, created time.
 * **Add Local connector source metadata.** python's os module used to pull stats from local file when processing via the local connector and populates fields such as last modified time, created time.
 
