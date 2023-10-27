@@ -257,6 +257,10 @@ def supplement_element_with_table_extraction(
     that are extracted will have a metadata field "text_as_html" where
     the table's text content is rendered into an html string.
     """
+    from unstructured_inference.constants import Source
+
+    potential_token_elements = ocr_layout + [el for el in elements if el.source == Source.PDFMINER]
+    # Sort potential_token_elements into reading order
     for element in elements:
         if element.type == "Table":
             padding = env_config.IMAGE_CROP_PAD
@@ -271,7 +275,7 @@ def supplement_element_with_table_extraction(
             )
             table_tokens = get_table_tokens_per_element(
                 padded_element,
-                ocr_layout,
+                potential_token_elements,
             )
             element.text_as_html = table_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
