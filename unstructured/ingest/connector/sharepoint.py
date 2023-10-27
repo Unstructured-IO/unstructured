@@ -381,8 +381,8 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
             ],
         ):
             logger.info(
-                "Permissions config is not fully fed with 'application_id', 'client_cred', and 'tenant'.\
-                        Skipping permissions ingestion.",
+                "Permissions config is not fed with 'application_id', 'client_cred' and 'tenant'."
+                "Skipping permissions ingestion.",
             )
         else:
             permissions_client = self.connector_config.get_permissions_client()
