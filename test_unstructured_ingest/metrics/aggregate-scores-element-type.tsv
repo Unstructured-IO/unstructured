@@ -1,2 +1,2 @@
 strategy	average	sample_sd	population_sd	count
-element-type-accuracy	1.0	0.0	0.0	2
+element-type-accuracy	0.5			1

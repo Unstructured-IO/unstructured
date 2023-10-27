@@ -173,16 +173,17 @@ def measure_element_type_accuracy(
 
     for doc in output_list:  # type: ignore
         fn = (doc.split("/")[-1]).split(".json")[0]
+        fn_json = fn + ".json"
         connector = doc.split("/")[0]
-        if doc in source_list:  # type: ignore
-            output = get_element_type_frequency(_read_json(os.path.join(output_dir, doc)))
-            source = get_element_type_frequency(_read_json(os.path.join(source_dir, doc)))
+        if fn_json in source_list:  # type: ignore
+            output = get_element_type_frequency(_read_text(os.path.join(output_dir, doc)))
+            source = get_element_type_frequency(_read_text(os.path.join(source_dir, fn_json)))
             accuracy = round(calculate_element_type_percent_match(output, source), 3)
             rows.append([fn, connector, accuracy])
             accuracy_scores.append(accuracy)
 
     headers = ["filename", "connector", "element-type-accuracy"]
-    _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", rows, headers)
+    _write_to_file(export_dir, "all-docs-element-type.tsv", rows, headers)
 
     headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
     agg_rows = []
@@ -267,10 +268,10 @@ def _pstdev(scores: List[float], rounding: Optional[int] = 3):
     return round(statistics.pstdev(scores), rounding)
 
 
-def _read_json(path):
+def _read_text(path):
     with open(path) as f:
-        jsontext = f.read()
-    return jsontext
+        text = f.read()
+    return text
 
 
 if __name__ == "__main__":
