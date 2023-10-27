@@ -1,14 +1,28 @@
-## 0.10.27-dev1
+## 0.10.28-dev2
 
 ### Enhancements
 
-* **Leverage dict to share content across ingest pipeline** To share the ingest doc content across steps in the ingest pipeline, this was updated to use a multiprocessing-safe dictionary so changes get persisted and each step has the option to modify the ingest docs in place.
+* **Add element type CI evaluation workflow** Adds element type frequency evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
 * **Add table structure evaluation helpers** Adds functions to evaluate the similarity between predicted table structure and actual table structure.
 
 ### Features
 
 ### Fixes
 
+* **Fix ingest pipeline to be able to use chunking and embedding together** Problem: When ingest pipeline was using chunking and embedding together, embedding outputs were empty and the outputs of chunking couldn't be re-read into memory and be forwarded to embeddings. Fix: Added CompositeElement type to TYPE_TO_TEXT_ELEMENT_MAP to be able to process CompositeElements with unstructured.staging.base.isd_to_elements
+* **Fix unnecessary mid-text chunk-splitting.** The "pre-chunker" did not consider separator blank-line ("\n\n") length when grouping elements for a single chunk. As a result, sections were frequently over-populated producing a over-sized chunk that required mid-text splitting.
+
+## 0.10.27
+
+### Enhancements
+
+* **Leverage dict to share content across ingest pipeline** To share the ingest doc content across steps in the ingest pipeline, this was updated to use a multiprocessing-safe dictionary so changes get persisted and each step has the option to modify the ingest docs in place.
+
+### Features
+
+### Fixes
+
+* **Removed `ebooklib` as a dependency** `ebooklib` is licensed under AGPL3, which is incompatible with the Apache 2.0 license. Thus it is being removed.
 * **Caching fixes in ingest pipeline** Previously, steps like the source node were not leveraging parameters such as `re_download` to dictate if files should be forced to redownload rather than use what might already exist locally.
 
 ## 0.10.26

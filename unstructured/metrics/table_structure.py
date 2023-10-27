@@ -33,8 +33,8 @@ def eval_table_transformer_for_file(
     number between 0 and 1"""
     from unstructured_inference.models.eval import compare_contents_as_df
 
-    pred_table = image_or_pdf_to_dataframe(filename).fillna("")
-    actual_table = pd.read_csv(true_table_filename).replace(np.nan, "")
+    pred_table = image_or_pdf_to_dataframe(filename).fillna("").replace(np.nan, "")
+    actual_table = pd.read_csv(true_table_filename).astype(str).fillna("").replace(np.nan, "")
 
     results = np.array(
         list(compare_contents_as_df(actual_table, pred_table, eval_func=eval_func).values()),
