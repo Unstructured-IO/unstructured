@@ -161,6 +161,8 @@ def process_file_with_ocr(
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
                         )
+                        # *********** Deduplication/removal of extracted elements can go after here
+
                         merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
     except Exception as e:
