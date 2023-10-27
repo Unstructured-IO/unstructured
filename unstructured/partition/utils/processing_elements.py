@@ -12,7 +12,7 @@ def clean_pdfminer_inner_elements(document: DocumentLayout) -> Tuple[DocumentLay
     for page in document.pages:
         tables = [e for e in page.elements if e.type == "Table"]
         for i, element in enumerate(page.elements):
-            if not element.source == Source.PDFMINER:
+            if element.source != Source.PDFMINER:
                 continue
             element_inside_table = [element.bbox.is_in(t.bbox, error_margin=15) for t in tables]
             if sum(element_inside_table) == 1:
