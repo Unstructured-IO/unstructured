@@ -12,7 +12,7 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
-charset-normalizer==3.3.0
+charset-normalizer==3.3.1
     # via
     #   -c requirements/ingest/../base.txt
     #   aiohttp
