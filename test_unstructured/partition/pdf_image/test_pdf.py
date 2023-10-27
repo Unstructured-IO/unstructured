@@ -1111,21 +1111,6 @@ def test_partition_pdf_or_image_with_ocr(filename, is_image):
     elements = pdf._partition_pdf_or_image_with_ocr(
         filename=filename,
         is_image=is_image,
-    )
-
-    assert len(elements) > 0
-    if is_image:
-        assert {el.metadata.page_number for el in elements} == {1}
-    else:
-        assert {el.metadata.page_number for el in elements} == {1, 2}
-
-
-def test_partition_pdf_or_image_with_ocr_from_image(
-    filename="example-docs/layout-parser-paper-fast.jpg",
-):
-    image = Image.open(filename)
-    elements = pdf._partition_pdf_or_image_with_ocr_from_image(
-        image=image,
         languages=["eng"],
         metadata_last_modified="2023-10-25",
     )
@@ -1138,3 +1123,8 @@ def test_partition_pdf_or_image_with_ocr_from_image(
         ocr_agent = get_ocr_agent()
         expected_origin = f"ocr_{ocr_agent}"
         assert {element.metadata.detection_origin for element in elements} == {expected_origin}
+
+    if is_image:
+        assert {el.metadata.page_number for el in elements} == {1}
+    else:
+        assert {el.metadata.page_number for el in elements} == {1, 2}
