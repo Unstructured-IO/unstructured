@@ -23,7 +23,7 @@ botocore==1.31.17
     #   -c requirements/constraints.in
     #   -c requirements/ingest/../constraints.in
     #   aiobotocore
-charset-normalizer==3.3.0
+charset-normalizer==3.3.1
     # via
     #   -c requirements/ingest/../base.txt
     #   aiohttp
