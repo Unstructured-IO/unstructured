@@ -247,6 +247,7 @@ jobs:
           # Due to the dependency on setup, the cache should exist before this is ran. Set failed if it wasn't found.
           fail-on-cache-miss: true
       - uses: actions/cache@v3
+        if: steps.ingest-cache-exists.outputs.cache-hit != 'true'
         id: virtualenv-cache
         with:
           path: |
@@ -254,10 +255,12 @@ jobs:
             nltk_data
           key: unstructured-ingest-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
       - name: Set up Python ${{ matrix.python-version }}
+        if: steps.ingest-cache-exists.outputs.cache-hit != 'true'
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Setup virtual environment (no cache hit)
+        if: steps.ingest-cache-exists.outputs.cache-hit != 'true'
         run: |
           python${{ matrix.python-version }} -m venv .venv
           source .venv/bin/activate
