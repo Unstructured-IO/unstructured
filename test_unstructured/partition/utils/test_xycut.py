@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
-import numpy as np
 import cv2
+import numpy as np
 import pytest
 
 from unstructured.partition.utils import xycut
@@ -96,7 +96,8 @@ def test_bbox2points():
     result = xycut.bbox2points(bbox)
     assert result == [10, 20, 10, 20, 10, 80, 10, 80]
 
-    # Test a case where the bbox is a point (left and right are the same, top and bottom are the same)
+    # Test a case where the bbox is a point (left and right are the same,
+    # top and bottom are the same)
     bbox = [10, 20, 10, 20]
     result = xycut.bbox2points(bbox)
     assert result == [10, 20, 10, 20, 10, 20, 10, 20]
@@ -122,10 +123,7 @@ def test_vis_polygon():
 
 def test_vis_points():
     img = np.ones((200, 200, 3), dtype=np.uint8) * 255
-    points = [
-        [10, 20, 30, 20, 30, 40, 10, 40],
-        [50, 60, 70, 60, 70, 80, 50, 80]
-    ]
+    points = [[10, 20, 30, 20, 30, 40, 10, 40], [50, 60, 70, 60, 70, 80, 50, 80]]
     texts = ["Label1", "Label2"]
     color = (0, 200, 0)
 
@@ -170,12 +168,11 @@ def test_vis_points():
 
 def test_vis_polygons_with_index():
     img = np.ones((200, 200, 3), dtype=np.uint8) * 255
-    points = [
-        [10, 20, 30, 20, 30, 40, 10, 40],
-        [50, 60, 70, 60, 70, 80, 50, 80]
-    ]
+    points = [[10, 20, 30, 20, 30, 40, 10, 40], [50, 60, 70, 60, 70, 80, 50, 80]]
 
-    with patch('unstructured.partition.utils.xycut.vis_points', return_value=img) as mock_vis_points:
+    with patch(
+        "unstructured.partition.utils.xycut.vis_points", return_value=img
+    ) as mock_vis_points:
         result_img = xycut.vis_polygons_with_index(img, points)
 
         # Check if vis_points was called with the correct arguments
