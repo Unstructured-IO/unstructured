@@ -13,13 +13,13 @@ CMD_NAME = "gcs"
 
 @dataclass
 class GcsCliConfig(BaseConfig, CliMixin):
-    token: t.Optional[t.Union[dict, Path]] = None
+    service_account_key: t.Optional[t.Union[dict, Path]] = None
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--token"],
+                ["--service-account-key"],
                 default=None,
                 type=FileOrJson(),
                 help="Either the file path of the credentials file to use or a json string of "

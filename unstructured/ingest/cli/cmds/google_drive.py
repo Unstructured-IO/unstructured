@@ -12,7 +12,7 @@ from unstructured.ingest.interfaces import BaseConfig
 @dataclass
 class GoogleDriveCliConfig(BaseConfig, CliMixin):
     drive_id: str
-    token: t.Union[dict, Path]
+    service_account_key: t.Union[dict, Path]
     extension: t.Optional[str] = None
 
     @staticmethod
@@ -25,7 +25,7 @@ class GoogleDriveCliConfig(BaseConfig, CliMixin):
                 help="Google Drive File or Folder ID.",
             ),
             click.Option(
-                ["--token"],
+                ["--service-account-key"],
                 required=True,
                 type=FileOrJson(),
                 help="Either the file path of the credentials file to use or a json string of "

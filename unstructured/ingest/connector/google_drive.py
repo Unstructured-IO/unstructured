@@ -38,7 +38,7 @@ class GoogleDriveSessionHandle(BaseSessionHandle):
 
 
 @requires_dependencies(["googleapiclient"], extras="google-drive")
-def create_service_account_object(key_path, id=None):
+def create_service_account_object(key_path: t.Union[str, dict], id=None):
     """
     Creates a service object for interacting with Google Drive.
 
@@ -60,7 +60,7 @@ def create_service_account_object(key_path, id=None):
     try:
         if isinstance(key_path, dict):
             creds = service_account.Credentials.from_service_account_info(key_path)
-        elif os.path.isfile(key_path):
+        elif isinstance(key_path, str):
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
             creds, _ = default()
         else:
@@ -94,7 +94,7 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 
     # Google Drive Specific Options
     drive_id: str
-    service_account_key: str
+    service_account_key: t.Union[str, dict]
     extension: t.Optional[str] = None
     recursive: bool = False
 

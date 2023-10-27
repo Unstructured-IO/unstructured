@@ -1,6 +1,7 @@
 import hashlib
 import logging
 import typing as t
+from pathlib import Path
 
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.base_runner import Runner
@@ -10,7 +11,7 @@ from unstructured.ingest.runner.utils import update_download_dir_hash
 class GoogleDriveRunner(Runner):
     def run(
         self,
-        service_account_key: str,
+        service_account_key: t.Union[Path, dict],
         drive_id: str,
         recursive: bool = False,
         extension: t.Optional[str] = None,
@@ -34,6 +35,8 @@ class GoogleDriveRunner(Runner):
             SimpleGoogleDriveConfig,
         )
 
+        if isinstance(service_account_key, Path):
+            service_account_key = str(service_account_key.resolve())
         source_doc_connector = GoogleDriveSourceConnector(  # type: ignore
             connector_config=SimpleGoogleDriveConfig(
                 drive_id=drive_id,
