@@ -380,7 +380,6 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
                 if key in ["application_id", "client_cred", "tenant"]
             ],
         ):
-
             logger.info(
                 "Permissions config is not fully fed with 'application_id', 'client_cred', and 'tenant'.\
                         Skipping permissions ingestion.",
