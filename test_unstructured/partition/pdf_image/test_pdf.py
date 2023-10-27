@@ -1,3 +1,4 @@
+import math
 import os
 from tempfile import SpooledTemporaryFile
 from unittest import mock
@@ -1100,6 +1101,7 @@ def test_ocr_language_passes_through(strategy, ocr_func):
     assert kwargs["lang"] == "kor"
 
 
+@pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
 @pytest.mark.parametrize(
     ("filename", "is_image"),
     [
@@ -1107,24 +1109,73 @@ def test_ocr_language_passes_through(strategy, ocr_func):
         ("example-docs/layout-parser-paper-fast.jpg", True),
     ],
 )
-def test_partition_pdf_or_image_with_ocr(filename, is_image):
-    elements = pdf._partition_pdf_or_image_with_ocr(
-        filename=filename,
-        is_image=is_image,
-        languages=["eng"],
-        metadata_last_modified="2023-10-25",
+@pytest.mark.parametrize("last_modification_date", [None, "2020-07-05T09:24:28"])
+def test_partition_pdf_with_ocr_only_strategy(
+    mocker,
+    file_mode,
+    filename,
+    is_image,
+    last_modification_date,
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = (
+        last_modification_date if last_modification_date else mocked_last_modification_date
     )
 
-    assert len(elements) > 0
+    mocker.patch(
+        "unstructured.partition.pdf.get_the_last_modification_date_pdf_or_img",
+        return_value=mocked_last_modification_date,
+    )
+
+    if file_mode == "filename":
+        elements = pdf.partition_pdf(
+            filename=filename,
+            strategy="ocr_only",
+            languages=["eng"],
+            metadata_last_modified=last_modification_date,
+            is_image=is_image,
+        )
+    elif file_mode == "rb":
+        with open(filename, "rb") as f:
+            elements = pdf.partition_pdf(
+                file=f,
+                strategy="ocr_only",
+                languages=["eng"],
+                metadata_last_modified=last_modification_date,
+                is_image=is_image,
+            )
+    else:
+        with open(filename, "rb") as test_file:
+            spooled_temp_file = SpooledTemporaryFile()
+            spooled_temp_file.write(test_file.read())
+            spooled_temp_file.seek(0)
+            elements = pdf.partition_pdf(
+                file=spooled_temp_file,
+                strategy="ocr_only",
+                languages=["eng"],
+                metadata_last_modified=last_modification_date,
+                is_image=is_image,
+            )
+
     assert elements[0].metadata.languages == ["eng"]
-    assert elements[0].metadata.last_modified == "2023-10-25"
+    assert {el.metadata.last_modified for el in elements} == {expected_last_modification_date}
 
-    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-        ocr_agent = get_ocr_agent()
-        expected_origin = f"ocr_{ocr_agent}"
-        assert {element.metadata.detection_origin for element in elements} == {expected_origin}
-
+    # check pages
     if is_image:
         assert {el.metadata.page_number for el in elements} == {1}
     else:
         assert {el.metadata.page_number for el in elements} == {1, 2}
+
+    # check coordinates
+    for element in elements:
+        if element.metadata.coordinates:
+            for point in element.metadata.coordinates.points:
+                if point[0] and point[1]:
+                    assert point[0] is not math.nan
+                    assert point[1] is not math.nan
+
+    # check detection origin
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        ocr_agent = get_ocr_agent()
+        expected_origin = f"ocr_{ocr_agent}"
+        assert {element.metadata.detection_origin for element in elements} == {expected_origin}
