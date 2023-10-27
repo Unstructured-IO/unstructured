@@ -1,9 +1,10 @@
-## 0.10.28-dev3
+## 0.10.28-dev5
 
 ### Enhancements
 
 * **Add element type CI evaluation workflow** Adds element type frequency evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
 * **Add table structure evaluation helpers** Adds functions to evaluate the similarity between predicted table structure and actual table structure.
+* **Use `yolox` by default for table extraction when partitioning pdf/image** `yolox` model provides higher recall of the table regions than the quantized version and it is now the default element detection model when `infer_table_structure=True` for partitioning pdf/image files
 
 ### Features
 
