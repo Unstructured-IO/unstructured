@@ -81,7 +81,7 @@ def measure_edit_distance(
     if not output_list:
         print("No output files to calculate to edit distances for, exiting")
         sys.exit(0)
-        
+
     rows = []
     accuracy_scores: List[float] = []
     percent_missing_scores: List[float] = []
