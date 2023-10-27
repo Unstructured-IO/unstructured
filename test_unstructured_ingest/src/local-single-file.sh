@@ -23,8 +23,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --num-processes "$max_processes" \
     --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --output-dir "$OUTPUT_DIR" \
-    --ocr-languages ind+est \
-    --strategy ocr_only \
+    --partition-args '{"strategy":"ocr_only", "languages":["ind", "est"]}' \
     --verbose \
     --reprocess \
     --input-path example-docs/language-docs/UDHR_first_article_all.txt \

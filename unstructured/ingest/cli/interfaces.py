@@ -22,6 +22,27 @@ from unstructured.ingest.interfaces import (
 )
 
 
+class Dict(click.ParamType):
+    name = "dict"
+
+    def convert(
+        self,
+        value: t.Any,
+        param: t.Optional[click.Parameter],
+        ctx: t.Optional[click.Context],
+    ) -> t.Any:
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            self.fail(
+                gettext(
+                    "{value} is not a valid json value.",
+                ).format(value=value),
+                param,
+                ctx,
+            )
+
+
 class FileOrJson(click.ParamType):
     name = "file-or-json"
 
@@ -242,31 +263,9 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 help="Optional list of document types to skip table extraction on",
             ),
             click.Option(
-                ["--pdf-infer-table-structure"],
-                default=False,
-                help="If set to True, partition will include the table's text "
-                "content in the response.",
-            ),
-            click.Option(
-                ["--strategy"],
-                default="auto",
-                help="The method that will be used to process the documents. "
-                "Default: auto. Other strategies include `fast` and `hi_res`.",
-            ),
-            click.Option(
-                ["--ocr-languages"],
-                default=None,
-                type=DelimitedString(delimiter="+"),
-                help="A list of language packs to specify which languages to use for OCR, "
-                "separated by '+' e.g. 'eng+deu' to use the English and German language packs. "
-                "The appropriate Tesseract "
-                "language pack needs to be installed.",
-            ),
-            click.Option(
-                ["--encoding"],
-                default=None,
-                help="Text encoding to use when reading documents. By default the encoding is "
-                "detected automatically.",
+                ["--partition-args"],
+                type=Dict(),
+                help="A json string representation of values to pass through to partition()",
             ),
             click.Option(
                 ["--fields-include"],

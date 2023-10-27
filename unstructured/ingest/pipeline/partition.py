@@ -1,6 +1,5 @@
 import hashlib
 import json
-import typing as t
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
@@ -32,19 +31,9 @@ class Partitioner(PartitionNode):
             ):
                 logger.info(f"File exists: {json_path}, skipping partition")
                 return str(json_path)
-            partition_kwargs: t.Dict[str, t.Any] = {
-                "strategy": self.partition_config.strategy,
-                "encoding": self.partition_config.encoding,
-                "pdf_infer_table_structure": self.partition_config.pdf_infer_table_structure,
-                "languages": self.partition_config.ocr_languages,
-            }
-            if self.partition_config.skip_infer_table_types:
-                partition_kwargs[
-                    "skip_infer_table_types"
-                ] = self.partition_config.skip_infer_table_types
             elements = doc.process_file(
                 partition_config=self.partition_config,
-                **partition_kwargs,
+                **self.partition_config.partition_args,
             )
             with open(json_path, "w", encoding="utf8") as output_f:
                 logger.info(f"writing partitioned content to {json_path}")
