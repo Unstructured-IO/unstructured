@@ -472,7 +472,7 @@ def get_ocr_regions_tesseract(
 ) -> List[TextRegion]:
     """Get the OCR regions from image as a list of text regions with tesseract."""
 
-    logger.info("Processing OCR with tesseract...")
+    logger.info("Processing entire page OCR with tesseract...")
     zoom = 1
     ocr_df: pd.DataFrame = unstructured_pytesseract.image_to_data(
         np.array(image),
@@ -511,7 +511,7 @@ def get_ocr_regions_tesseract(
 def get_ocr_regions_paddle(image: PILImage) -> List[TextRegion]:
     """Get the OCR regions from image as a list of text regions with paddle."""
 
-    logger.info("Processing entrie page OCR with paddle...")
+    logger.info("Processing entire page OCR with paddle...")
     from unstructured.partition.utils.ocr_models import paddle_ocr
 
     # TODO(yuming): pass in language parameter once we
