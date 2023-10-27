@@ -5,7 +5,6 @@ from unstructured.embed.huggingface import HuggingFaceEmbeddingEncoder
 
 
 def test_embed_documents_does_not_break_element_to_dict(mocker):
-
     encoder = HuggingFaceEmbeddingEncoder()
 
     doc_embed_result = encoder.embed_documents(
