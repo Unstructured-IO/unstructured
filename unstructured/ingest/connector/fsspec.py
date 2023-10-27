@@ -247,7 +247,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
     def write_dict(
         self,
         *args,
-        json_list: t.List[t.Dict[str, t.Any]],
+        elements_dict: t.List[t.Dict[str, t.Any]],
         filename: t.Optional[str] = None,
         indent: int = 4,
         encoding: str = "utf-8",
@@ -267,11 +267,11 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             filename.strip(os.sep) if filename else filename
         )  # Make sure filename doesn't begin with file seperator
         output_path = str(PurePath(output_folder, filename)) if filename else output_folder
-        full_dest_path = f"{self.connector_config.protocol}://{output_path}"
-        logger.debug(f"uploading content to {full_dest_path}")
+        full_output_path = f"{self.connector_config.protocol}://{output_path}"
+        logger.debug(f"uploading content to {full_output_path}")
         fs.write_text(
-            full_dest_path,
-            json.dumps(json_list, indent=indent),
+            full_output_path,
+            json.dumps(elements_dict, indent=indent),
             encoding=encoding,
             **self.write_config.write_text_kwargs,
         )
@@ -283,4 +283,4 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             with open(doc._output_filename) as json_file:
                 logger.debug(f"uploading content from {doc._output_filename}")
                 json_list = json.load(json_file)
-                self.write_dict(json_list=json_list, filename=filename)
+                self.write_dict(elements_dict=json_list, filename=filename)

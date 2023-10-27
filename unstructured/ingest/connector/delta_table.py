@@ -20,6 +20,7 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
+from unstructured.staging.base import flatten_dict, get_default_dtypes
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -157,7 +158,8 @@ class DeltaTableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 
 @dataclass
 class DeltaTableWriteConfig(WriteConfig):
-    write_column: str
+    drop_empty_cols: bool = False
+    overwrite_schema: bool = False
     mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
 
 
@@ -170,14 +172,24 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
     def initialize(self):
         pass
 
-    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
-        # Need json list as strings
-        json_list_s = [json.dumps(e) for e in json_list]
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         from deltalake.writer import write_deltalake
 
+        # Flatten metadata if it hasn't already been flattened
+        for d in elements_dict:
+            if metadata := d.pop("metadata", None):
+                d.update(flatten_dict(metadata, keys_to_omit=["record_locator"]))
+
+        df = pd.DataFrame.from_dict(
+            elements_dict,
+        )
+        dt = {k: v for k, v in get_default_dtypes().items() if k in df.columns}
+        df = df.astype(dt)
+        if self.write_config.drop_empty_cols:
+            df.dropna(axis=1, how="all", inplace=True)
         logger.info(
-            f"writing {len(json_list_s)} rows to destination "
-            f"table at {self.connector_config.table_uri}",
+            f"writing {len(df)} rows to destination table "
+            f"at {self.connector_config.table_uri}\ndtypes: {df.dtypes}",
         )
         # NOTE: deltalake writer on Linux sometimes can finish but still trigger a SIGABRT and cause
         # ingest to fail, even though all tasks are completed normally. Putting the writer into a
@@ -187,8 +199,9 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
             target=write_deltalake,
             kwargs={
                 "table_or_uri": self.connector_config.table_uri,
-                "data": pd.DataFrame(data={self.write_config.write_column: json_list_s}),
+                "data": df,
                 "mode": self.write_config.mode,
+                "overwrite_schema": self.write_config.overwrite_schema,
             },
         )
         writer.start()
@@ -196,11 +209,11 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
 
     @requires_dependencies(["deltalake"], extras="delta-table")
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
-        json_list: t.List[t.Dict[str, t.Any]] = []
+        elements_dict: t.List[t.Dict[str, t.Any]] = []
         for doc in docs:
             local_path = doc._output_filename
             with open(local_path) as json_file:
-                json_content = json.load(json_file)
-                logger.info(f"converting {len(json_content)} rows from content in {local_path}")
-                json_list.extend(json_content)
-        self.write_dict(json_list=json_list)
+                element_dict = json.load(json_file)
+                logger.info(f"converting {len(element_dict)} rows from content in {local_path}")
+                elements_dict.extend(element_dict)
+        self.write_dict(elements_dict=elements_dict)

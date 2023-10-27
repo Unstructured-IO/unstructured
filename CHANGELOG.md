@@ -1,10 +1,11 @@
-## 0.10.29-dev3
+## 0.10.29-dev4
 
 ### Enhancements
 
 * **Add include_header argument for partition_csv and partition_tsv** Now supports retaining header rows in CSV and TSV documents element partitioning.
 * **Add retry logic for all source connectors** All http calls being made by the ingest source connectors have been isolated and wrapped by the `SourceConnectionNetworkError` custom error, which triggers the retry logic, if enabled, in the ingest pipeline.
 * **Google Drive source connector supports credentials from memory** Originally, the connector expected a filepath to pull the credentials from when creating the client. This was expanded to support passing that information from memory as a dict if access to the file system might not be available.
+* **Map full output schema for table-based destination connectors** A full schema was introduced to map the type of all output content from the json partition output and mapped to a flattened table structure to leverage table-based destination connectors. The delta table destination connector was updated at the moment to take advantage of this.
 
 ### Features
 

@@ -10,7 +10,13 @@ def run_check(table_uri):
         table_uri=table_uri,
     )
 
-    assert len(delta_table.to_pandas()) == 10
+    df = delta_table.to_pandas()
+    expected_rows = 5
+    expected_columns = 18
+    print(f"Number of rows in table vs expected: {len(df)}/{expected_rows}")
+    print(f"Number of columns in table vs expected: {len(df.columns)}/{expected_columns}")
+    assert len(df) == 5
+    assert len(df.columns) == 18
     print("table check complete")
 
 
