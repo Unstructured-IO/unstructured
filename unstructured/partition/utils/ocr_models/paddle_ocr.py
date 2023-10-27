@@ -1,6 +1,6 @@
 import functools
 
-from unstructured_inference.logger import logger
+from unstructured.logger import logger
 
 
 @functools.lru_cache(maxsize=None)
