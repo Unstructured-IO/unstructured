@@ -4,7 +4,7 @@
     "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
     "metadata": {
       "data_source": {
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "http://localhost:9200",
           "index_name": "movies",
@@ -23,7 +23,7 @@
     "element_id": "576608bb13aa67420e79d575e0e26071",
     "metadata": {
       "data_source": {
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "http://localhost:9200",
           "index_name": "movies",
@@ -42,7 +42,7 @@
     "element_id": "d30707943c5b8e45088e21b0a9ba6f1a",
     "metadata": {
       "data_source": {
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "http://localhost:9200",
           "index_name": "movies",

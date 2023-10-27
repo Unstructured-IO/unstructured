@@ -18,6 +18,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     PartitionConfig,
     ProcessorConfig,
+    ReadConfig,
     RetryStrategyConfig,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
@@ -115,7 +116,7 @@ class DocFactoryNode(PipelineNode):
         self.source_doc_connector.initialize()
 
     @abstractmethod
-    def run(self, *args, **kwargs) -> t.Iterable[str]:
+    def run(self, *args, **kwargs) -> t.Iterable[dict]:
         pass
 
     def supported_multiprocessing(self) -> bool:
@@ -129,6 +130,7 @@ class SourceNode(PipelineNode):
     Output of logic expected to be the json outputs of the data itself
     """
 
+    read_config: ReadConfig
     retry_strategy_config: t.Optional[RetryStrategyConfig] = None
 
     @property
