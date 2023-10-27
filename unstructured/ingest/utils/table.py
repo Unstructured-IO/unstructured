@@ -12,7 +12,7 @@ def convert_to_df(
     # Flatten metadata if it hasn't already been flattened
     for d in elements_dict:
         if metadata := d.pop("metadata", None):
-            d.update(flatten_dict(metadata, keys_to_omit=["record_locator"]))
+            d.update(flatten_dict(metadata, keys_to_omit=["data_source_record_locator"]))
 
     df = pd.DataFrame.from_dict(
         elements_dict,
