@@ -1,6 +1,7 @@
 [tool.black]
 line-length = 100
 
+# changes made here should also be made in `.pre-commit-config.yaml` and `Makefile`
 [tool.ruff]
 line-length = 100
 select = [
