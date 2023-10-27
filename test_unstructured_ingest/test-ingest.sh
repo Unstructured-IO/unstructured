@@ -97,6 +97,13 @@ for test in "${all_tests[@]}"; do
   fi
 done
 
-echo "--------- RUNNING SCRIPT evaluation-metrics.sh ---------"
-./test_unstructured_ingest/evaluation-metrics.sh
-echo "--------- FINISHED SCRIPT evaluation-metrics.sh ---------"
+all_eval=(
+  'text-extraction'
+  'element-type'
+)
+for eval in "${all_eval[@]}"; do
+  CURRENT_TEST="$eval"
+  echo "--------- RUNNING SCRIPT $eval ---------"
+  ./test_unstructured_ingest/evaluation-metrics.sh "$eval"
+  echo "--------- FINISHED SCRIPT $eval ---------"
+done
