@@ -6,7 +6,7 @@
 #
 alabaster==0.7.13
     # via sphinx
-babel==2.13.0
+babel==2.13.1
     # via sphinx
 beautifulsoup4==4.12.2
     # via
@@ -18,7 +18,7 @@ certifi==2023.7.22
     #   -c requirements/constraints.in
     #   -r requirements/build.in
     #   requests
-charset-normalizer==3.3.0
+charset-normalizer==3.3.1
     # via
     #   -c requirements/base.txt
     #   requests
@@ -90,7 +90,7 @@ sphinx-basic-ng==1.0.0b2
     # via furo
 sphinx-rtd-theme==1.2.2
     # via -r requirements/build.in
-sphinx-tabs==3.4.1
+sphinx-tabs==3.4.4
     # via -r requirements/build.in
 sphinxcontrib-applehelp==1.0.4
     # via
