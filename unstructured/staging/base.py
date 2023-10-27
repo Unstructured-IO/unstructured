@@ -180,7 +180,7 @@ def flatten_dict(dictionary, parent_key="", separator="_", keys_to_omit: List[st
     flattened_dict = {}
     for key, value in dictionary.items():
         new_key = f"{parent_key}{separator}{key}" if parent_key else key
-        if key in keys_to_omit:
+        if new_key in keys_to_omit:
             flattened_dict[new_key] = value
         elif isinstance(value, dict):
             flattened_dict.update(
@@ -298,7 +298,7 @@ def convert_to_dataframe(
     elements_as_dict = convert_to_dict(elements)
     for d in elements_as_dict:
         if metadata := d.pop("metadata", None):
-            d.update(flatten_dict(metadata, keys_to_omit=["record_locator"]))
+            d.update(flatten_dict(metadata, keys_to_omit=["data_source_record_locator"]))
     df = pd.DataFrame.from_dict(
         elements_as_dict,
     )
