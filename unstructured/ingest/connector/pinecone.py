@@ -49,7 +49,7 @@ class PineconeWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixi
     def upsert_batch(self, batch):
         import pinecone.core.client.exceptions
 
-        index = self.create_session_handle().service
+        index = self.session_handle.service
         try:
             response = index.upsert(batch)
         except pinecone.core.client.exceptions.ApiException as api_error:
