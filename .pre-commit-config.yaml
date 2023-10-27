@@ -27,7 +27,7 @@ repos:
         args:
           [
             "--fix",
-            "--select=I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402",
+            "--select=C4,COM,E,F,I,PLR0402,PT,SIM,UP015,UP018,UP032,UP034",
             "--ignore=PT011,PT012,SIM117,COM812",
           ]
 
