@@ -157,8 +157,9 @@ def combine_paragraphs_less_than_min(
     return combined_paras
 
 
-def has_text(text: str):
-    return not (UNICODE_BULLETS_RE.match(text) and len(text) == 1)
+def is_empty_bullet(text: str) -> bool:
+    """Checks if input text is an empty bullet."""
+    return UNICODE_BULLETS_RE.match(text) and len(text) == 1
 
 
 @process_metadata()
@@ -269,7 +270,7 @@ def partition_text(
     for ctext in file_content:
         ctext = ctext.strip()
 
-        if ctext and has_text(ctext):
+        if ctext and not is_empty_bullet(ctext):
             element = element_from_text(ctext)
             element.metadata = copy.deepcopy(metadata)
             elements.append(element)
