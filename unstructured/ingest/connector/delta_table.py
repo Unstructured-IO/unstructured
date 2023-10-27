@@ -20,7 +20,7 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.staging.base import flatten_dict, get_default_dtypes
+from unstructured.ingest.utils.table import convert_to_df
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -175,18 +175,10 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         from deltalake.writer import write_deltalake
 
-        # Flatten metadata if it hasn't already been flattened
-        for d in elements_dict:
-            if metadata := d.pop("metadata", None):
-                d.update(flatten_dict(metadata, keys_to_omit=["record_locator"]))
-
-        df = pd.DataFrame.from_dict(
-            elements_dict,
+        df = convert_to_df(
+            elements_dict=elements_dict,
+            drop_empty_cols=self.write_config.drop_empty_cols,
         )
-        dt = {k: v for k, v in get_default_dtypes().items() if k in df.columns}
-        df = df.astype(dt)
-        if self.write_config.drop_empty_cols:
-            df.dropna(axis=1, how="all", inplace=True)
         logger.info(
             f"writing {len(df)} rows to destination table "
             f"at {self.connector_config.table_uri}\ndtypes: {df.dtypes}",
