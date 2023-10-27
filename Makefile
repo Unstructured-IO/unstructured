@@ -358,9 +358,9 @@ check-version:
 ## tidy:                    run black
 .PHONY: tidy
 tidy:
-	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --fix-only || true
-	autoflake --in-place .
-	black  .
+	ruff unstructured --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --fix-only || true
+	autoflake --in-place unstructured
+	black unstructured
 
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync

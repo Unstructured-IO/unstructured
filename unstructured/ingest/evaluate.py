@@ -83,7 +83,7 @@ def measure_edit_distance(
 
     print(f"output_list is {output_list}")
     print(f"source_list is {source_list}")
-        
+
     if not output_list:
         print("No output files to calculate to edit distances for, exiting")
         sys.exit(0)
