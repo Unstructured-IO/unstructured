@@ -439,7 +439,7 @@ def get_ocr_text_from_image(
     Get the OCR text from image as a string with paddle or tesseract.
     """
     if ocr_agent == OCR_AGENT_PADDLE:
-        ocr_regions = get_ocr_regions_paddle(image)
+        ocr_regions = get_ocr_layout_paddle(image)
         ocr_text = "\n\n".join([r.text for r in ocr_regions])
     else:
         ocr_text = unstructured_pytesseract.image_to_string(
@@ -459,14 +459,14 @@ def get_ocr_layout_from_image(
     """
 
     if ocr_agent == OCR_AGENT_PADDLE:
-        ocr_regions = get_ocr_regions_paddle(image)
+        ocr_regions = get_ocr_layout_paddle(image)
     else:
-        ocr_regions = get_ocr_regions_tesseract(image, ocr_languages)
+        ocr_regions = get_ocr_layout_tesseract(image, ocr_languages)
 
     return ocr_regions
 
 
-def get_ocr_regions_tesseract(
+def get_ocr_layout_tesseract(
     image: PILImage,
     ocr_languages: str = "eng",
 ) -> List[TextRegion]:
@@ -508,7 +508,7 @@ def get_ocr_regions_tesseract(
     return ocr_regions
 
 
-def get_ocr_regions_paddle(image: PILImage) -> List[TextRegion]:
+def get_ocr_layout_paddle(image: PILImage) -> List[TextRegion]:
     """Get the OCR regions from image as a list of text regions with paddle."""
 
     logger.info("Processing entire page OCR with paddle...")
