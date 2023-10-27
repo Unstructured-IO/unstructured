@@ -291,13 +291,8 @@ jobs:
           .venv
           nltk_data
         key: unstructured-ingest-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
-    # Due to the dependency on setup_ingest, the cache should exist before this is ran. Set failed if it wasn't found.
-    - name: Setup base virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      uses: actions/github-script@v3
-      with:
-        script: |
-          core.setFailed("cached environment couldn't be found")
+        # Due to the dependency on setup_ingest, the cache should exist before this is ran. Set failed if it wasn't found.
+        fail-on-cache-miss: true
     - name: Setup docker-compose
       uses: KengoTODA/actions-setup-docker-compose@v1
       with:
