@@ -160,7 +160,10 @@ def test_dataframe_dtypes():
     )
     element_as_dict = full_element.to_dict()
     element_as_dict.update(
-        base.flatten_dict(element_as_dict.pop("metadata"), keys_to_omit=["record_locator"]),
+        base.flatten_dict(
+            element_as_dict.pop("metadata"),
+            keys_to_omit=["data_source_record_locator"],
+        ),
     )
     flattened_element_keys = element_as_dict.keys()
     default_dtypes = base.get_default_dtypes()

@@ -513,7 +513,7 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
 
             if partition_config.flatten_metadata and "metadata" in elem:
                 metadata = elem.pop("metadata")
-                elem.update(flatten_dict(metadata, keys_to_omit=["record_locator"]))
+                elem.update(flatten_dict(metadata, keys_to_omit=["data_source_record_locator"]))
 
             self.isd_elems_no_filename.append(elem)
 
