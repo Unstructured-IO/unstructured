@@ -77,8 +77,7 @@ def test_clean_pdfminer_inner_elements(elements, lenght_extra_info, expected_doc
     document = document_with_table
 
     # call the function to clean the pdfminer inner elements
-    cleaned_doc, extra_info = clean_pdfminer_inner_elements(document)
+    cleaned_doc = clean_pdfminer_inner_elements(document)
 
     # check that the pdfminer elements were stored in the extra_info dictionary
-    assert len(extra_info) == lenght_extra_info
     assert len(cleaned_doc.pages[0].elements) == expected_document_lenght
