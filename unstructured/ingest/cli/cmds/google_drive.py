@@ -1,20 +1,18 @@
 import typing as t
 from dataclasses import dataclass
+from pathlib import Path
 
 import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
-from unstructured.ingest.cli.interfaces import (
-    CliMixin,
-    CliRecursiveConfig,
-)
+from unstructured.ingest.cli.interfaces import CliMixin, CliRecursiveConfig, FileOrJson
 from unstructured.ingest.interfaces import BaseConfig
 
 
 @dataclass
 class GoogleDriveCliConfig(BaseConfig, CliMixin):
     drive_id: str
-    service_account_key: str
+    token: t.Union[dict, Path]
     extension: t.Optional[str] = None
 
     @staticmethod
@@ -27,10 +25,11 @@ class GoogleDriveCliConfig(BaseConfig, CliMixin):
                 help="Google Drive File or Folder ID.",
             ),
             click.Option(
-                ["--service-account-key"],
+                ["--token"],
                 required=True,
-                type=str,
-                help="Path to the Google Drive service account json file.",
+                type=FileOrJson(),
+                help="Either the file path of the credentials file to use or a json string of "
+                "those values to use for authentication",
             ),
             click.Option(
                 ["--extension"],
