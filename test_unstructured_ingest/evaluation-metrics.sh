@@ -28,14 +28,12 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-echo $EVAL_NAME
-
 if [ "$EVAL_NAME" == "text-extraction" ]; then
   STRATEGY="measure-text-edit-distance"
 elif [ "$EVAL_NAME" == "element-type" ]; then
   STRATEGY="measure-element-type-accuracy"
 else
-  echo "Wrong evaluation strategy given. Got [ $EVAL_NAME ]"
+  echo "Wrong evaluation strategy given. Got [ $EVAL_NAME ]."
   exit 1
 fi
 
