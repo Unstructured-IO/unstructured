@@ -76,7 +76,12 @@ class PipelineNode(DataClassJsonMixin, ABC):
                 initializer=ingest_log_streaming_init,
                 initargs=(logging.DEBUG if self.pipeline_context.verbose else logging.INFO,),
             ) as pool:
-                self.result = pool.map(self.run, iterable)
+                result = []
+                for r in pool.map(self.run, iterable):
+                    result.append(r)
+
+                self.result = result
+
         # Remove None which may be caused by failed docs that didn't raise an error
         if isinstance(self.result, t.Iterable):
             self.result = [r for r in self.result if r is not None]
