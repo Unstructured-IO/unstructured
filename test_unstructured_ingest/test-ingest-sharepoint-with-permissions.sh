@@ -4,7 +4,7 @@ set -e
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
-OUTPUT_FOLDER_NAME=Sharepoint
+OUTPUT_FOLDER_NAME=Sharepoint-with-permissions
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME

@@ -27,11 +27,6 @@ if [ -z "$SHAREPOINT_CLIENT_ID" ] || [ -z "$SHAREPOINT_CRED" ]; then
    exit 0
 fi
 
-if [ -z "$SHAREPOINT_PERMISSIONS_APP_ID" ] || [ -z "$SHAREPOINT_PERMISSIONS_APP_CRED" ] || [ -z "$SHAREPOINT_PERMISSIONS_TENANT" ] ; then
-   echo "Skipping Sharepoint ingest test because the SHAREPOINT_PERMISSIONS_APP_ID, SHAREPOINT_PERMISSIONS_APP_CRED, or SHAREPOINT_PERMISSIONS_TENANT env var is not set."
-   exit 0
-fi
-
 # excluding metadata.last_modified since this will always update as date processed because the Sharepoint connector creates documents on the fly
 PYTHONPATH=. ./unstructured/ingest/main.py \
     sharepoint \
