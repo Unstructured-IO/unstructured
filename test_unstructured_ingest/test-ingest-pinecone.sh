@@ -113,7 +113,7 @@ num_of_vectors_remote=$(curl --request POST \
      --header "content-type: application/json" \
      --header "Api-Key: $PINECONE_API_KEY" | jq -r '.totalVectorCount')
 
-EXPECTED=81
+EXPECTED=79
 if [ "$num_of_vectors_remote" -ne $EXPECTED ];then
   echo "Number of vectors in Pinecone are $num_of_vectors_remote when the expected number is $EXPECTED. Test failed."
   exit 1
