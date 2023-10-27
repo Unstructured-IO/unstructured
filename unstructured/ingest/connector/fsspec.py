@@ -5,11 +5,6 @@ from contextlib import suppress
 from dataclasses import dataclass, field
 from pathlib import Path, PurePath
 
-from unstructured.ingest.compression_support import (
-    TAR_FILE_EXT,
-    ZIP_FILE_EXT,
-    CompressionSourceConnectorMixin,
-)
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
@@ -23,6 +18,11 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
+from unstructured.ingest.utils.compression import (
+    TAR_FILE_EXT,
+    ZIP_FILE_EXT,
+    CompressionSourceConnectorMixin,
+)
 from unstructured.utils import (
     requires_dependencies,
 )
