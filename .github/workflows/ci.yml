@@ -271,9 +271,10 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
-    runs-on: ubuntu-latest-m
+    runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
+      MAX_PROCESSES: 2
     needs: [setup_ingest, lint]
     steps:
     - uses: actions/checkout@v3
