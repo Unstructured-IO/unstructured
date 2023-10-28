@@ -75,9 +75,10 @@ jobs:
           make install-all-ingest
 
   update-fixtures-and-pr:
-    runs-on: ubuntu-latest-m
+    runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
+      MAX_PROCESSES: 2
     needs: [setup_ingest]
     steps:
       - uses: actions/checkout@v3
