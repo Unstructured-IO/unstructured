@@ -4,6 +4,7 @@
 
 * **Add element type CI evaluation workflow** Adds element type frequency evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
 * **Add table structure evaluation helpers** Adds functions to evaluate the similarity between predicted table structure and actual table structure.
+* **Use `yolox` by default for table extraction when partitioning pdf/image** `yolox` model provides higher recall of the table regions than the quantized version and it is now the default element detection model when `infer_table_structure=True` for partitioning pdf/image files
 
 ### Features
 
@@ -37,7 +38,6 @@
 
 * **Functionality to catch and classify overlapping/nested elements** Method to identify overlapping-bboxes cases within detected elements in a document. It returns two values: a boolean defining if there are overlapping elements present, and a list reporting them with relevant metadata. The output includes information about the `overlapping_elements`, `overlapping_case`, `overlapping_percentage`, `largest_ngram_percentage`, `overlap_percentage_total`, `max_area`, `min_area`, and `total_area`.
 * **Add Local connector source metadata** python's os module used to pull stats from local file when processing via the local connector and populates fields such as last modified time, created time.
-* **Add Local connector source metadata.** python's os module used to pull stats from local file when processing via the local connector and populates fields such as last modified time, created time.
 
 ### Fixes
 
@@ -46,6 +46,9 @@
 * **Stop passing `extract_tables` to `unstructured-inference` since it is now supported in `unstructured` instead** Table extraction previously occurred in `unstructured-inference`, but that logic, except for the table model itself, is now a part of the `unstructured` library. Thus the parameter triggering table extraction is no longer passed to the `unstructured-inference` package. Also noted the table output regression for PDF files.
 * **Fix a bug in Table partitioning** Previously the `skip_infer_table_types` variable used in `partition` was not being passed down to specific file partitioners. Now you can utilize the `skip_infer_table_types` list variable when calling `partition` to specify the filetypes for which you want to skip table extraction, or the `infer_table_structure` boolean variable on the file specific partitioning function.
 * **Fix partition docx without sections** Some docx files, like those from teams output, do not contain sections and it would produce no results because the code assumes all components are in sections. Now if no sections is detected from a document we iterate through the paragraphs and return contents found in the paragraphs.
+* **Fix out-of-order sequencing of split chunks.** Fixes behavior where "split" chunks were inserted at the beginning of the chunk sequence. This would produce a chunk sequence like [5a, 5b, 3a, 3b, 1, 2, 4] when sections 3 and 5 exceeded `max_characters`.
+* **Deserialization of ingest docs fixed** When ingest docs are being deserialized as part of the ingest pipeline process (cli), there were certain fields that weren't getting persisted (metadata and date processed). The from_dict method was updated to take these into account and a unit test added to check.
+* **Map source cli command configs when destination set** Due to how the source connector is dynamically called when the destination connector is set via the CLI, the configs were being set incorrectoy, causing the source connector to break. The configs were fixed and updated to take into account Fsspec-specific connectors.
 
 ## 0.10.25
 
@@ -72,10 +75,6 @@ ocr agent tesseract/paddle in environment variable `OCR_AGENT` for OCRing the en
 * **Fix metrics folder not discoverable** Fixes issue where unstructured/metrics folder is not discoverable on PyPI by adding an `__init__.py` file under the folder.
 * **Fix a bug when `parition_pdf` get `model_name=None`** In API usage the `model_name` value is `None` and the `cast` function in `partition_pdf` would return `None` and lead to attribution error. Now we use `str` function to explicit convert the content to string so it is garanteed to have `starts_with` and other string functions as attributes
 * **Fix html partition fail on tables without `tbody` tag** HTML tables may sometimes just contain headers without body (`tbody` tag)
-* **Fix out-of-order sequencing of split chunks.** Fixes behavior where "split" chunks were inserted at the beginning of the chunk sequence. This would produce a chunk sequence like [5a, 5b, 3a, 3b, 1, 2, 4] when sections 3 and 5 exceeded `max_characters`.
-* **Deserialization of ingest docs fixed** When ingest docs are being deserialized as part of the ingest pipeline process (cli), there were certain fields that weren't getting persisted (metadata and date processed). The from_dict method was updated to take these into account and a unit test added to check.
-* **Map source cli command configs when destination set** Due to how the source connector is dynamically called when the destination connector is set via the CLI, the configs were being set incorrectoy, causing the source connector to break. The configs were fixed and updated to take into account Fsspec-specific connectors.
-* **Deserialization of ingest docs fixed** When ingest docs are being deserialized as part of the ingest pipeline process (cli), there were certain fields that weren't getting persisted (metadata and date processed). The from_dict method was updated to take these into account and a unit test added to check.
 
 ## 0.10.24
 
