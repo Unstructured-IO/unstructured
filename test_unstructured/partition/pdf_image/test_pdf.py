@@ -129,9 +129,9 @@ def test_partition_pdf_local_raises_with_no_filename():
     # fast: can't capture the "intentionally left blank page" page
     # others: will ignore the actual blank page
     [
-        ("fast", {1, 4}, "pdfminer"),
-        ("hi_res", {1, 3, 4}, '"yolox","pdfminer"'),
-        ("ocr_only", {1, 3, 4}, "OCR"),
+        ("fast", {1, 4}, {"pdfminer"}),
+        ("hi_res", {1, 3, 4}, {"yolox","pdfminer"}),
+        ("ocr_only", {1, 3, 4}, {"OCR"}),
     ],
 )
 def test_partition_pdf(
@@ -148,7 +148,7 @@ def test_partition_pdf(
         # check that the pdf has multiple different page numbers
         assert {element.metadata.page_number for element in result} == expected
         if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            assert {element.metadata.detection_origin for element in result} == {origin}
+            assert {element.metadata.detection_origin for element in result} == origin
 
     if file_mode == "filename":
         result = pdf.partition_pdf(filename=filename, strategy=strategy)
