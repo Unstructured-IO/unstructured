@@ -3,12 +3,18 @@ import os
 import pathlib
 import warnings
 from importlib import import_module
-from unittest.mock import patch
+from unittest.mock import ANY, patch
 
 import docx
 import pytest
 
-from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT, EXPECTED_TITLE
+from test_unstructured.partition.test_constants import (
+    EXPECTED_TABLE,
+    EXPECTED_TABLE_XLSX,
+    EXPECTED_TEXT,
+    EXPECTED_TEXT_XLSX,
+    EXPECTED_TITLE,
+)
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
@@ -319,10 +325,10 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename, content_type, 
 def test_auto_partition_pdf_uses_table_extraction():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     with patch(
-        "unstructured_inference.inference.layout.process_file_with_model",
+        "unstructured.partition.ocr.process_file_with_ocr",
     ) as mock_process_file_with_model:
         partition(filename, pdf_infer_table_structure=True, strategy="hi_res")
-        assert mock_process_file_with_model.call_args[1]["extract_tables"]
+        assert mock_process_file_with_model.call_args[1]["infer_table_structure"]
 
 
 def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
@@ -341,6 +347,8 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         url=None,
         include_page_breaks=False,
         infer_table_structure=False,
+        extract_images_in_pdf=ANY,
+        image_output_dir_path=ANY,
         strategy="fast",
         languages=None,
     )
@@ -424,7 +432,7 @@ def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, co
 
     # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 2
+    idx = 3
     assert elements[idx].text == title
     assert elements[idx].metadata.coordinates is not None
 
@@ -705,30 +713,59 @@ EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsh
 
 
 def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx"):
-    elements = partition(filename=filename, include_header=False)
+    elements = partition(filename=filename, include_header=False, skip_infer_table_types=[])
 
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert sum(isinstance(element, Title) for element in elements) == 2
     assert len(elements) == 4
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
-    assert elements[1].metadata.text_as_html == EXPECTED_TABLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
     assert elements[1].metadata.page_number == 1
     assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
+@pytest.mark.parametrize(
+    ("skip_infer_table_types", "filename", "has_text_as_html_field"),
+    [
+        (["xlsx"], "stanley-cups.xlsx", False),
+        ([], "stanley-cups.xlsx", True),
+        (["odt"], "fake.odt", False),
+        ([], "fake.odt", True),
+    ],
+)
+def test_auto_partition_respects_skip_infer_table_types(
+    skip_infer_table_types,
+    filename,
+    has_text_as_html_field,
+):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
+    with open(filename, "rb") as f:
+        table_elements = [
+            e
+            for e in partition(file=f, skip_infer_table_types=skip_infer_table_types)
+            if isinstance(e, Table)
+        ]
+        for table_element in table_elements:
+            table_element_has_text_as_html_field = (
+                hasattr(table_element.metadata, "text_as_html")
+                and table_element.metadata.text_as_html is not None
+            )
+        assert table_element_has_text_as_html_field == has_text_as_html_field
+
+
 def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
     with open(filename, "rb") as f:
-        elements = partition(file=f, include_header=False)
+        elements = partition(file=f, include_header=False, skip_infer_table_types=[])
 
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert sum(isinstance(element, Title) for element in elements) == 2
     assert len(elements) == 4
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT
-    assert elements[1].metadata.text_as_html == EXPECTED_TABLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
     assert elements[1].metadata.page_number == 1
     assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
@@ -826,7 +863,7 @@ EXPECTED_XLS_TABLE = (
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.xls"):
-    elements = partition(filename=filename, include_header=False)
+    elements = partition(filename=filename, include_header=False, skip_infer_table_types=[])
 
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert len(elements) == 18
@@ -1123,3 +1160,22 @@ def test_partition_default_does_not_overwrite_other_defaults():
     auto_elements = partition(filename)
     assert auto_elements[0].metadata.languages != ["eng"]
     assert auto_elements[0].metadata.languages == text_elements[0].metadata.languages
+
+
+def test_partition_languages_default_to_None():
+    filename = "example-docs/handbook-1p.docx"
+    elements = partition(filename=filename, detect_language_per_element=True)
+    # PageBreak and other elements with no text will have `None` for `languages`
+    none_langs = [element for element in elements if element.metadata.languages is None]
+    assert none_langs[0].text == ""
+
+
+def test_partition_languages_incorrectly_defaults_to_English(tmpdir):
+    # We don't totally rely on langdetect for short text, so text like the following that is
+    # in German will be labeled as English.
+    german = "Ein kurzer Satz."
+    filepath = os.path.join(tmpdir, "short-german.txt")
+    with open(filepath, "w") as f:
+        f.write(german)
+    elements = partition(filepath)
+    assert elements[0].metadata.languages == ["eng"]

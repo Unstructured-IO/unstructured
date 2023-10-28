@@ -204,7 +204,6 @@ class SlackSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""
-        pass
 
     def get_ingest_docs(self):
         return [

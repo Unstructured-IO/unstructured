@@ -1,25 +1,31 @@
+"""Implementation of chunking by title.
+
+Main entry point is the `@add_chunking_strategy()` decorator.
+"""
+
+from __future__ import annotations
+
 import copy
 import functools
 import inspect
-from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, cast
 
 from typing_extensions import ParamSpec
 
 from unstructured.documents.elements import (
     CompositeElement,
     Element,
-    ElementMetadata,
     Table,
     TableChunk,
     Text,
     Title,
 )
 
+# -- goes between text of each element when element-text is concatenated to form chunk --
+TEXT_SEPARATOR = "\n\n"
 
-def chunk_table_element(
-    element: Table,
-    max_characters: Optional[int] = 500,
-) -> List[Union[Table, TableChunk]]:
+
+def chunk_table_element(element: Table, max_characters: int = 500) -> List[Table | TableChunk]:
     text = element.text
     html = getattr(element, "text_as_html", None)
 
@@ -28,7 +34,7 @@ def chunk_table_element(
     ):
         return [element]
 
-    chunks: List[Union[Table, TableChunk]] = []
+    chunks: List[Table | TableChunk] = []
     metadata = copy.copy(element.metadata)
     is_continuation = False
 
@@ -52,14 +58,15 @@ def chunk_table_element(
 def chunk_by_title(
     elements: List[Element],
     multipage_sections: bool = True,
-    combine_text_under_n_chars: int = 500,
-    new_after_n_chars: int = 500,
+    combine_text_under_n_chars: Optional[int] = None,
+    new_after_n_chars: Optional[int] = None,
     max_characters: int = 500,
 ) -> List[Element]:
-    """Uses title elements to identify sections within the document for chunking. Splits
-    off into a new section when a title is detected or if metadata changes, which happens
-    when page numbers or sections change. Cuts off sections once they have exceeded
-    a character length of max_characters.
+    """Uses title elements to identify sections within the document for chunking.
+
+    Splits off into a new CompositeElement when a title is detected or if metadata changes, which
+    happens when page numbers or sections change. Cuts off sections once they have exceeded a
+    character length of max_characters.
 
     Parameters
     ----------
@@ -68,28 +75,55 @@ def chunk_by_title(
     multipage_sections
         If True, sections can span multiple pages. Defaults to True.
     combine_text_under_n_chars
-        Combines elements (for example a series of titles) until a section reaches
-        a length of n characters.
+        Combines elements (for example a series of titles) until a section reaches a length of
+        n characters. Defaults to `max_characters` which combines chunks whenever space allows.
+        Specifying 0 for this argument suppresses combining of small chunks. Note this value is
+        "capped" at the `new_after_n_chars` value since a value higher than that would not change
+        this parameter's effect.
     new_after_n_chars
-        Cuts off new sections once they reach a length of n characters (soft max)
+        Cuts off new sections once they reach a length of n characters (soft max). Defaults to
+        `max_characters` when not specified, which effectively disables any soft window.
+        Specifying 0 for this argument causes each element to appear in a chunk by itself (although
+        an element with text longer than `max_characters` will be still be split into two or more
+        chunks).
     max_characters
         Chunks elements text and text_as_html (if present) into chunks of length
         n characters (hard max)
     """
 
-    if not (
-        max_characters > 0
-        and combine_text_under_n_chars >= 0
-        and new_after_n_chars >= 0
-        and combine_text_under_n_chars <= new_after_n_chars
-        and combine_text_under_n_chars <= max_characters
-    ):
+    # -- validation and arg pre-processing ---------------------------
+
+    # -- chunking window must have positive length --
+    if max_characters <= 0:
+        raise ValueError(f"'max_characters' argument must be > 0, got {max_characters}")
+
+    # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified and is
+    # -- capped at max-chars
+    if combine_text_under_n_chars is None or combine_text_under_n_chars > max_characters:
+        combine_text_under_n_chars = max_characters
+
+    # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
+    # -- but a negative value is not
+    if combine_text_under_n_chars < 0:
         raise ValueError(
-            "Invalid values for combine_text_under_n_chars, "
-            "new_after_n_chars, and/or max_characters.",
+            f"'combine_text_under_n_chars' argument must be >= 0, got {combine_text_under_n_chars}",
         )
 
+    # -- same with `new_after_n_chars` --
+    if new_after_n_chars is None or new_after_n_chars > max_characters:
+        new_after_n_chars = max_characters
+
+    if new_after_n_chars < 0:
+        raise ValueError(f"'new_after_n_chars' argument must be >= 0, got {new_after_n_chars}")
+
+    # -- `new_after_n_chars` takes precendence on conflict with `combine_text_under_n_chars` --
+    if combine_text_under_n_chars > new_after_n_chars:
+        combine_text_under_n_chars = new_after_n_chars
+
+    # ----------------------------------------------------------------
+
     chunked_elements: List[Element] = []
+
     sections = _split_elements_by_title_and_table(
         elements,
         multipage_sections=multipage_sections,
@@ -97,157 +131,169 @@ def chunk_by_title(
         new_after_n_chars=new_after_n_chars,
         max_characters=max_characters,
     )
+
     for section in sections:
-        if not section:
+        if isinstance(section, _NonTextSection):
+            chunked_elements.append(section.element)
             continue
 
-        first_element = section[0]
-
-        if not isinstance(first_element, Text):
-            chunked_elements.extend(section)
-            continue
-
-        elif isinstance(first_element, Table):
-            chunked_elements.extend(chunk_table_element(first_element, max_characters))
+        elif isinstance(section, _TableSection):
+            chunked_elements.extend(chunk_table_element(section.table, max_characters))
             continue
 
         text = ""
-        metadata = first_element.metadata
+        metadata = section.elements[0].metadata
         start_char = 0
-        for element in section:
+
+        for element_idx, element in enumerate(section.elements):
+            # -- concatenate all element text in section into `text` --
             if isinstance(element, Text):
+                # -- add a blank line between "squashed" elements --
                 text += "\n\n" if text else ""
                 start_char = len(text)
                 text += element.text
+
+            # -- "chunk" metadata should include union of list-items in all its elements --
             for attr, value in vars(element.metadata).items():
                 if isinstance(value, list):
+                    value = cast(List[Any], value)
+                    # -- get existing (list) value from chunk_metadata --
                     _value = getattr(metadata, attr, []) or []
-
-                    if attr == "regex_metadata":
-                        for item in value:
-                            item["start"] += start_char
-                            item["end"] += start_char
-
                     _value.extend(item for item in value if item not in _value)
                     setattr(metadata, attr, _value)
 
-        # Check if text exceeds max_characters
-        if len(text) > max_characters:
-            # Chunk the text from the end to the beginning
-            while len(text) > 0:
-                if len(text) <= max_characters:
-                    # If the remaining text is shorter than max_characters
-                    # create a chunk from the beginning
-                    chunk_text = text
-                    text = ""
-                else:
-                    # Otherwise, create a chunk from the end
-                    chunk_text = text[-max_characters:]
-                    text = text[:-max_characters]
+            # -- consolidate any `regex_metadata` matches, adjusting the match start/end offsets --
+            element_regex_metadata = element.metadata.regex_metadata
+            # -- skip the first element because it is "alredy consolidated" and otherwise this would
+            # -- duplicate it.
+            if element_regex_metadata and element_idx > 0:
+                if metadata.regex_metadata is None:
+                    metadata.regex_metadata = {}
+                chunk_regex_metadata = metadata.regex_metadata
+                for regex_name, matches in element_regex_metadata.items():
+                    for m in matches:
+                        m["start"] += start_char
+                        m["end"] += start_char
+                    chunk_matches = chunk_regex_metadata.get(regex_name, [])
+                    chunk_matches.extend(matches)
+                    chunk_regex_metadata[regex_name] = chunk_matches
 
-                # Prepend the chunk to the beginning of the list
-                chunked_elements.insert(0, CompositeElement(text=chunk_text, metadata=metadata))
-        else:
-            # If it doesn't exceed, create a single CompositeElement
-            chunked_elements.append(CompositeElement(text=text, metadata=metadata))
+        # -- split chunk into CompositeElements objects maxlen or smaller --
+        text_len = len(text)
+        start = 0
+        remaining = text_len
+
+        while remaining > 0:
+            end = min(start + max_characters, text_len)
+            chunked_elements.append(CompositeElement(text=text[start:end], metadata=metadata))
+            start = end
+            remaining = text_len - end
 
     return chunked_elements
 
 
 def _split_elements_by_title_and_table(
     elements: List[Element],
-    multipage_sections: bool = True,
-    combine_text_under_n_chars: int = 500,
-    new_after_n_chars: int = 500,
-    max_characters: int = 500,
-) -> List[List[Element]]:
-    sections: List[List[Element]] = []
-    section: List[Element] = []
+    multipage_sections: bool,
+    combine_text_under_n_chars: int,
+    new_after_n_chars: int,
+    max_characters: int,
+) -> Iterator[_TextSection | _TableSection | _NonTextSection]:
+    """Implements "sectioner" responsibilities.
 
-    for i, element in enumerate(elements):
-        metadata_matches = True
-        if i > 0:
-            last_element = elements[i - 1]
-            metadata_matches = _metadata_matches(
-                element.metadata,
-                last_element.metadata,
-                include_pages=not multipage_sections,
-            )
+    A _section_ can be thought of as a "pre-chunk", generally determining the size and contents of a
+    chunk formed by the subsequent "chunker" process. The only exception occurs when a single
+    element is too big to fit in the chunk window and the chunker splits it into two or more chunks
+    divided mid-text. The sectioner never divides an element mid-text.
 
-        section_length = sum([len(str(element)) for element in section])
+    The sectioner's responsibilities are:
 
-        new_section = (
-            (section_length + len(str(element)) > max_characters)
-            or (isinstance(element, Title) and section_length > combine_text_under_n_chars)
-            or (not metadata_matches or section_length > new_after_n_chars)
+        * **Segregate semantic units.** Identify semantic unit boundaries and segregate elements on
+          either side of those boundaries into different sections. In this case, the primary
+          indicator of a semantic boundary is a `Title` element. A page-break (change in
+          page-number) is also a semantic boundary when `multipage_sections` is `False`.
+
+        * **Minimize chunk count for each semantic unit.** Group the elements within a semantic unit
+          into sections as big as possible without exceeding the chunk window size.
+
+        * **Minimize chunks that must be split mid-text.** Precompute the text length of each
+          section and only produce a section that exceeds the chunk window size when there is a
+          single element with text longer than that window.
+    """
+    section_builder = _TextSectionBuilder(max_characters)
+
+    prior_element = None
+
+    for element in elements:
+        metadata_differs = (
+            _metadata_differs(element, prior_element, ignore_page_numbers=multipage_sections)
+            if prior_element
+            else False
         )
-        if not isinstance(element, Text) or isinstance(element, Table):
-            sections.append(section)
-            sections.append([element])
-            section = []
-        elif new_section:
-            if len(section) > 0:
-                sections.append(section)
-            section = [element]
+
+        # -- start new section when necessary --
+        if (
+            # TODO(scanny): this is where disassociated-titles are coming from (attempting to
+            # combine sections at the element level). This is fixed in the next PR.
+            (
+                isinstance(element, Title)
+                and section_builder.text_length > combine_text_under_n_chars
+            )
+            # -- adding this element would exceed hard-maxlen for section --
+            or section_builder.remaining_space < len(str(element))
+            # -- section already meets or exceeds soft-maxlen --
+            or section_builder.text_length >= new_after_n_chars
+            # -- a semantic boundary is indicated by metadata change since prior element --
+            or metadata_differs
+            # -- table and non-text elements go in a section by themselves --
+            or isinstance(element, Table)
+            or not isinstance(element, Text)
+        ):
+            # -- complete any work-in-progress section --
+            yield from section_builder.flush()
+
+        # -- emit table and checkbox immediately since they are always isolated --
+        if isinstance(element, Table):
+            yield _TableSection(table=element)
+        elif not isinstance(element, Text):
+            yield _NonTextSection(element)
+        # -- but accumulate text elements for consolidation into a composite chunk --
         else:
-            # if existing section plus new section will go above max, start new section
-            section.append(element)
+            section_builder.add_element(element)
 
-    if len(section) > 0:
-        sections.append(section)
+        prior_element = element
 
-    return sections
+    # -- flush "tail" section, any partially-filled section after last element is processed --
+    yield from section_builder.flush()
 
 
-def _metadata_matches(
-    metadata1: ElementMetadata,
-    metadata2: ElementMetadata,
-    include_pages: bool = True,
+def _metadata_differs(
+    element: Element, preceding_element: Element, ignore_page_numbers: bool
 ) -> bool:
-    metadata_dict1 = metadata1.to_dict()
-    metadata_dict1 = _drop_extra_metadata(metadata_dict1, include_pages=include_pages)
+    """True when metadata differences between two elements indicate a semantic boundary.
 
-    metadata_dict2 = metadata2.to_dict()
-    metadata_dict2 = _drop_extra_metadata(metadata_dict2, include_pages=include_pages)
-
-    return metadata_dict1 == metadata_dict2
-
-
-def _drop_extra_metadata(
-    metadata_dict: Dict[str, Any],
-    include_pages: bool = True,
-) -> Dict[str, Any]:
-    keys_to_drop = [
-        "element_id",
-        "type",
-        "coordinates",
-        "parent_id",
-        "category_depth",
-        "detection_class_prob",
-    ]
-    if not include_pages and "page_number" in metadata_dict:
-        keys_to_drop.append("page_number")
-
-    for key, value in metadata_dict.items():
-        if isinstance(value, list):
-            keys_to_drop.append(key)
-
-    for key in keys_to_drop:
-        if key in metadata_dict:
-            del metadata_dict[key]
-
-    return metadata_dict
+    Currently this is only a section change and optionally a page-number change.
+    """
+    metadata1 = preceding_element.metadata
+    metadata2 = element.metadata
+    if metadata1.section != metadata2.section:
+        return True
+    if ignore_page_numbers:
+        return False
+    return metadata1.page_number != metadata2.page_number
 
 
-_T = TypeVar("_T")
 _P = ParamSpec("_P")
 
 
 def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
-    """Decorator for chuncking text. Uses title elements to identify sections within the document
-    for chunking. Splits off a new section when a title is detected or if metadata changes,
-    which happens when page numbers or sections change. Cuts off sections once they have exceeded
-    a character length of max_characters."""
+    """Decorator for chunking text.
+
+    Uses title elements to identify sections within the document for chunking. Splits off a new
+    section when a title is detected or if metadata changes, which happens when page numbers or
+    sections change. Cuts off sections once they have exceeded a character length of
+    max_characters.
+    """
 
     def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
         if func.__doc__ and (
@@ -257,7 +303,7 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
             func.__doc__ += (
                 "\nchunking_strategy"
                 + "\n\tStrategy used for chunking text into larger or smaller elements."
-                + "\n\tDefaluts to `None` withoptional arg of 'by_title'."
+                + "\n\tDefaults to `None` with optional arg of 'by_title'."
                 + "\n\tAdditional Parameters:"
                 + "\n\t\tmultipage_sections"
                 + "\n\t\t\tIf True, sections can span multiple pages. Defaults to True."
@@ -265,8 +311,8 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
                 + "\n\t\t\tCombines elements (for example a series of titles) until a section"
                 + "\n\t\t\treaches a length of n characters."
                 + "\n\t\tnew_after_n_chars"
-                + "\n\t\t\t Cuts off new sections once they reach a length of n characters"
-                + "\n\t\t\t a soft max."
+                + "\n\t\t\tCuts off new sections once they reach a length of n characters"
+                + "\n\t\t\ta soft max."
                 + "\n\t\tmax_characters"
                 + "\n\t\t\tChunks elements text and text_as_html (if present) into chunks"
                 + "\n\t\t\tof length n characters, a hard max."
@@ -293,3 +339,126 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
         return wrapper
 
     return decorator
+
+
+class _NonTextSection:
+    """A section composed of a single `Element` that does not subclass `Text`.
+
+    Currently, only `CheckBox` fits that description
+    """
+
+    def __init__(self, element: Element) -> None:
+        self._element = element
+
+    @property
+    def element(self) -> Element:
+        """The non-text element of this section (currently only CheckBox is non-text)."""
+        return self._element
+
+
+class _TableSection:
+    """A section composed of a single Table element."""
+
+    def __init__(self, table: Table) -> None:
+        self._table = table
+
+    @property
+    def table(self) -> Table:
+        """The `Table` element of this section."""
+        return self._table
+
+
+class _TextSection:
+    """A sequence of elements that belong to the same semantic unit within a document.
+
+    The name "section" derives from the idea of a document-section, a heading followed by the
+    paragraphs "under" that heading. That structure is not found in all documents and actual section
+    content can vary, but that's the concept.
+
+    This object is purposely immutable.
+    """
+
+    def __init__(self, elements: Iterable[Element]) -> None:
+        self._elements = list(elements)
+
+    @property
+    def elements(self) -> List[Element]:
+        """The elements of this text-section."""
+        return self._elements
+
+
+class _TextSectionBuilder:
+    """An element accumulator suitable for incrementally forming a section.
+
+    Provides monitoring properties like `.remaining_space` and `.text_length` a sectioner can use
+    to determine whether it should add the next element in the element stream.
+
+    `.flush()` is used to build a `TextSection` object from the accumulated elements. This method
+    returns an interator that generates zero-or-one `TextSection` object and is used like so:
+
+        yield from builder.flush()
+
+    If no elements have been accumulated, no `TextSection` is generated. Flushing the builder clears
+    the elements it contains so it is ready to build the next text-section.
+    """
+
+    def __init__(self, maxlen: int) -> None:
+        self._maxlen = maxlen
+        self._separator_len = len(TEXT_SEPARATOR)
+        self._elements: List[Element] = []
+
+        # == these working values probably represent premature optimization but improve performance
+        # -- and I expect will be welcome when processing a million elements
+
+        # -- only includes non-empty element text, e.g. PageBreak.text=="" is not included --
+        self._text_segments: List[str] = []
+        # -- combined length of text-segments, not including separators --
+        self._text_len: int = 0
+
+    def add_element(self, element: Element) -> None:
+        """Add `element` to this section."""
+        self._elements.append(element)
+        if isinstance(element, Text) and element.text:
+            self._text_segments.append(element.text)
+            self._text_len += len(element.text)
+
+    def flush(self) -> Iterator[_TextSection]:
+        """Generate zero-or-one `Section` object and clear the accumulator.
+
+        Suitable for use to emit a Section when the maximum size has been reached or a semantic
+        boundary has been reached. Also to clear out a terminal section at the end of an element
+        stream.
+        """
+        if not self._elements:
+            return
+        # -- clear builder before yield so we're not sensitive to the timing of how/when this
+        # -- iterator is exhausted and can add eleemnts for the next section immediately.
+        elements = self._elements[:]
+        self._elements.clear()
+        self._text_segments.clear()
+        self._text_len = 0
+        yield _TextSection(elements)
+
+    @property
+    def remaining_space(self) -> int:
+        """Maximum text-length of an element that can be added without exceeding maxlen."""
+        # -- include length of trailing separator that will go before next element text --
+        separators_len = self._separator_len * len(self._text_segments)
+        return self._maxlen - self._text_len - separators_len
+
+    @property
+    def text_length(self) -> int:
+        """Length of the text in this section.
+
+        This value represents the chunk-size that would result if this section was flushed in its
+        current state. In particular, it does not include the length of a trailing separator (since
+        that would only appear if an additional element was added).
+
+        Not suitable for judging remaining space, use `.remaining_space` for that value.
+        """
+        # -- number of text separators present in joined text of elements. This includes only
+        # -- separators *between* text segments, not one at the end. Note there are zero separators
+        # -- for both 0 and 1 text-segments.
+        n = len(self._text_segments)
+        separator_count = n - 1 if n else 0
+        return self._text_len + (separator_count * self._separator_len)

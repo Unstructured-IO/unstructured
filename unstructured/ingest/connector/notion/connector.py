@@ -3,12 +3,12 @@ import typing as t
 from dataclasses import dataclass
 from pathlib import Path
 
-from unstructured.ingest.ingest_backoff import RetryStrategy
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
+    RetryStrategyConfig,
     SourceConnectorCleanupMixin,
 )
 from unstructured.ingest.logger import logger
@@ -26,14 +26,7 @@ class SimpleNotionConfig(BaseConnectorConfig):
     page_ids: t.List[str]
     database_ids: t.List[str]
     recursive: bool
-    api_key: str
-    max_retries: t.Optional[int] = None
-    max_time: t.Optional[float] = None
-
-    def get_retry_strategy(self):
-        if self.max_time or self.max_retries:
-            return RetryStrategy(max_time=self.max_time, max_tries=self.max_retries)
-        return None
+    notion_api_key: str
 
 
 @dataclass
@@ -49,6 +42,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     api_key: str
     connector_config: SimpleNotionConfig
     registry_name: str = "notion_page"
+    retry_strategy_config: t.Optional[RetryStrategyConfig] = None
 
     def _tmp_download_file(self):
         page_file = self.page_id + ".html"
@@ -66,14 +60,13 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def get_client(self):
         from unstructured.ingest.connector.notion.client import Client as NotionClient
 
-        retry_strategy = self.connector_config.get_retry_strategy()
-
         # Pin the version of the api to avoid schema changes
         return NotionClient(
             notion_version=NOTION_API_VERSION,
             auth=self.api_key,
             logger=logger,
-            retry_strategy=retry_strategy,
+            log_level=logger.level,
+            retry_strategy_config=self.retry_strategy_config,
         )
 
     @BaseIngestDoc.skip_if_file_exists
@@ -171,6 +164,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     database_id: str
     api_key: str
     connector_config: SimpleNotionConfig
+    retry_strategy_config: t.Optional[RetryStrategyConfig] = None
     registry_name: str = "notion_database"
 
     def _tmp_download_file(self):
@@ -189,14 +183,13 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def get_client(self):
         from unstructured.ingest.connector.notion.client import Client as NotionClient
 
-        retry_strategy = self.connector_config.get_retry_strategy()
-
         # Pin the version of the api to avoid schema changes
         return NotionClient(
             notion_version=NOTION_API_VERSION,
             auth=self.api_key,
             logger=logger,
-            retry_strategy=retry_strategy,
+            log_level=logger.level,
+            retry_strategy_config=self.retry_strategy_config,
         )
 
     @BaseIngestDoc.skip_if_file_exists
@@ -290,20 +283,20 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching document(s) from"""
 
     connector_config: SimpleNotionConfig
+    retry_strategy_config: t.Optional[RetryStrategyConfig] = None
 
     @requires_dependencies(dependencies=["notion_client"], extras="notion")
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""
         from unstructured.ingest.connector.notion.client import Client as NotionClient
 
-        retry_strategy = self.connector_config.get_retry_strategy()
-
         # Pin the version of the api to avoid schema changes
         self.client = NotionClient(
             notion_version=NOTION_API_VERSION,
-            auth=self.connector_config.api_key,
+            auth=self.connector_config.notion_api_key,
             logger=logger,
-            retry_strategy=retry_strategy,
+            log_level=logger.level,
+            retry_strategy_config=self.retry_strategy_config,
         )
 
     @requires_dependencies(dependencies=["notion_client"], extras="notion")
@@ -365,9 +358,10 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 NotionPageIngestDoc(
                     connector_config=self.connector_config,
                     processor_config=self.processor_config,
+                    retry_strategy_config=self.retry_strategy_config,
                     read_config=self.read_config,
                     page_id=page_id,
-                    api_key=self.connector_config.api_key,
+                    api_key=self.connector_config.notion_api_key,
                 )
                 for page_id in self.connector_config.page_ids
             ]
@@ -376,9 +370,10 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 NotionDatabaseIngestDoc(
                     connector_config=self.connector_config,
                     processor_config=self.processor_config,
+                    retry_strategy_config=self.retry_strategy_config,
                     read_config=self.read_config,
                     database_id=database_id,
-                    api_key=self.connector_config.api_key,
+                    api_key=self.connector_config.notion_api_key,
                 )
                 for database_id in self.connector_config.database_ids
             ]
@@ -413,9 +408,10 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                     NotionPageIngestDoc(
                         connector_config=self.connector_config,
                         processor_config=self.processor_config,
+                        retry_strategy_config=self.retry_strategy_config,
                         read_config=self.read_config,
                         page_id=page_id,
-                        api_key=self.connector_config.api_key,
+                        api_key=self.connector_config.notion_api_key,
                     )
                     for page_id in child_pages
                 ]
@@ -430,9 +426,10 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                     NotionDatabaseIngestDoc(
                         connector_config=self.connector_config,
                         processor_config=self.processor_config,
+                        retry_strategy_config=self.retry_strategy_config,
                         read_config=self.read_config,
                         database_id=database_id,
-                        api_key=self.connector_config.api_key,
+                        api_key=self.connector_config.notion_api_key,
                     )
                     for database_id in child_databases
                 ]

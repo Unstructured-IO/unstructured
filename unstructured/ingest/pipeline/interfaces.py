@@ -8,13 +8,18 @@ from dataclasses import dataclass, field
 from multiprocessing.managers import DictProxy
 from pathlib import Path
 
+import backoff
 from dataclasses_json import DataClassJsonMixin
 
+from unstructured.ingest.error import SourceConnectionNetworkError
+from unstructured.ingest.ingest_backoff import RetryHandler
 from unstructured.ingest.interfaces import (
     BaseDestinationConnector,
     BaseSourceConnector,
     PartitionConfig,
     ProcessorConfig,
+    ReadConfig,
+    RetryStrategyConfig,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 
@@ -88,6 +93,7 @@ class PipelineNode(DataClassJsonMixin, ABC):
         if path := self.get_path():
             logger.info(f"Creating {path}")
             path.mkdir(parents=True, exist_ok=True)
+        ingest_log_streaming_init(logging.DEBUG if self.pipeline_context.verbose else logging.INFO)
 
     def get_path(self) -> t.Optional[Path]:
         return None
@@ -110,7 +116,7 @@ class DocFactoryNode(PipelineNode):
         self.source_doc_connector.initialize()
 
     @abstractmethod
-    def run(self, *args, **kwargs) -> t.Iterable[str]:
+    def run(self, *args, **kwargs) -> t.Iterable[dict]:
         pass
 
     def supported_multiprocessing(self) -> bool:
@@ -123,6 +129,23 @@ class SourceNode(PipelineNode):
     Encapsulated logic to pull from a data source via base ingest docs
     Output of logic expected to be the json outputs of the data itself
     """
+
+    read_config: ReadConfig
+    retry_strategy_config: t.Optional[RetryStrategyConfig] = None
+
+    @property
+    def retry_strategy(self) -> t.Optional[RetryHandler]:
+        if retry_strategy_config := self.retry_strategy_config:
+            return RetryHandler(
+                backoff.expo,
+                SourceConnectionNetworkError,
+                max_time=retry_strategy_config.max_retry_time,
+                max_tries=retry_strategy_config.max_retries,
+                logger=logger,
+                start_log_level=logger.level,
+                backoff_log_level=logger.level,
+            )
+        return None
 
     def initialize(self):
         logger.info("Running source node to download data associated with ingest docs")

@@ -105,6 +105,11 @@ install-xlsx:
 .PHONY: install-all-docs
 install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx
 
+.PHONY: install-all-ingest
+install-all-ingest:
+	find requirements/ingest -type f -name "*.txt" -exec python3 -m pip install -r '{}' ';'
+
+
 .PHONY: install-ingest-google-drive
 install-ingest-google-drive:
 	python3 -m pip install -r requirements/ingest-google-drive.txt
@@ -202,6 +207,10 @@ install-ingest-salesforce:
 install-ingest-jira:
 	python3 -m pip install -r requirements/ingest-jira.txt
 
+.PHONY: install-embed-huggingface
+install-embed-huggingface:
+	python3 -m pip install -r requirements/embed-huggingface.txt
+
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
 	python3 -m pip install -r requirements/local-inference.txt
@@ -247,7 +256,7 @@ export UNSTRUCTURED_INCLUDE_DEBUG_METADATA ?= false
 .PHONY: test
 test:
 	PYTHONPATH=. CI=$(CI) \
-	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
 
 .PHONY: test-unstructured-api-unit
 test-unstructured-api-unit:
@@ -315,22 +324,23 @@ test-extra-xlsx:
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
-check: check-src check-tests check-version
+check: check-ruff check-black check-flake8 check-version
 
-## check-src:               runs linters (source only, no tests)
-.PHONY: check-src
-check-src:
-	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore COM812,PT011,PT012,SIM117
-	black --line-length 100 ${PACKAGE_NAME} --check
-	flake8 ${PACKAGE_NAME}
-	mypy ${PACKAGE_NAME} --ignore-missing-imports --check-untyped-defs
+.PHONY: check-black
+check-black:
+	black . --check
 
-.PHONY: check-tests
-check-tests:
-	black --line-length 100 test_${PACKAGE_NAME} --check
-	black --line-length 100 test_${PACKAGE_NAME}_ingest --check
-	flake8 test_${PACKAGE_NAME}
-	flake8 test_${PACKAGE_NAME}_ingest
+.PHONY: check-flake8
+check-flake8:
+	flake8 .
+
+.PHONY: check-ruff
+check-ruff:
+	ruff . --select C4,COM,E,F,I,PLR0402,PT,SIM,UP015,UP018,UP032,UP034 --ignore COM812,PT011,PT012,SIM117
+
+.PHONY: check-autoflake
+check-autoflake:
+	autoflake --check-diff .
 
 ## check-scripts:           run shellcheck
 .PHONY: check-scripts
@@ -348,10 +358,9 @@ check-version:
 ## tidy:                    run black
 .PHONY: tidy
 tidy:
-	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --fix-only || true
-	black --line-length 100 ${PACKAGE_NAME}
-	black --line-length 100 test_${PACKAGE_NAME}
-	black --line-length 100 test_${PACKAGE_NAME}_ingest
+	ruff . --select C4,COM,E,F,I,PLR0402,PT,SIM,UP015,UP018,UP032,UP034 --fix-only --ignore COM812,PT011,PT012,SIM117 || true
+	autoflake --in-place .
+	black  .
 
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync

@@ -24,36 +24,7 @@ COPY requirements requirements
 
 RUN python3.10 -m pip install pip==${PIP_VERSION} && \
   dnf -y groupinstall "Development Tools" && \
-  pip install --no-cache -r requirements/base.txt && \
-  pip install --no-cache -r requirements/test.txt && \
-  pip install --no-cache -r requirements/huggingface.txt && \
-  pip install --no-cache -r requirements/dev.txt && \
-  pip install --no-cache -r requirements/ingest-box.txt && \
-  pip install --no-cache -r requirements/ingest-confluence.txt && \
-  pip install --no-cache -r requirements/ingest-discord.txt && \
-  pip install --no-cache -r requirements/ingest-dropbox.txt && \
-  pip install --no-cache -r requirements/ingest-elasticsearch.txt && \
-  pip install --no-cache -r requirements/ingest-gcs.txt && \
-  pip install --no-cache -r requirements/ingest-github.txt && \
-  pip install --no-cache -r requirements/ingest-gitlab.txt && \
-  pip install --no-cache -r requirements/ingest-google-drive.txt && \
-  pip install --no-cache -r requirements/ingest-notion.txt && \
-  pip install --no-cache -r requirements/ingest-onedrive.txt && \
-  pip install --no-cache -r requirements/ingest-outlook.txt && \
-  pip install --no-cache -r requirements/ingest-reddit.txt && \
-  pip install --no-cache -r requirements/ingest-s3.txt && \
-  pip install --no-cache -r requirements/ingest-slack.txt && \
-  pip install --no-cache -r requirements/ingest-wikipedia.txt && \
-  pip install --no-cache -r requirements/extra-csv.txt && \
-  pip install --no-cache -r requirements/extra-docx.txt && \
-  pip install --no-cache -r requirements/extra-epub.txt && \
-  pip install --no-cache -r requirements/extra-markdown.txt && \
-  pip install --no-cache -r requirements/extra-msg.txt && \
-  pip install --no-cache -r requirements/extra-odt.txt && \
-  pip install --no-cache -r requirements/extra-pandoc.txt && \
-  pip install --no-cache -r requirements/extra-pdf-image.txt && \
-  pip install --no-cache -r requirements/extra-pptx.txt && \
-  pip install --no-cache -r requirements/extra-xlsx.txt && \
+  find requirements/ -type f -name "*.txt" -exec python3 -m pip install --no-cache -r '{}' ';' && \
   dnf -y groupremove "Development Tools" && \
   dnf clean all
 

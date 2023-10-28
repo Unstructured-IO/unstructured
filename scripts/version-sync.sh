@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eu
+set -u
 
 function usage {
     echo "Usage: $(basename "$0") [-c] -f FILE_TO_CHANGE REPLACEMENT_FORMAT [-f FILE_TO_CHANGE REPLACEMENT_FORMAT ...]" 2>&1
@@ -123,12 +123,19 @@ for i in "${!FILES_TO_CHECK[@]}"; do
         # No match to semver regex in VERSIONFILE, so nothing to replace
         printf "Error: No semver version found in file %s.\n" "$FILE_TO_CHANGE"
         exit 1
-    elif [[ "$MAIN_IS_RELEASE" == true && "$FILE_VERSION" == "$MAIN_VERSION" && "$CURRENT_BRANCH" != "main" ]];
-    then 
-        # Only one commit should be associated with a particular non-dev version
-        printf "Error: there is already a commit associated with version %s.\n" "$MAIN_VERSION"
-        exit 1
     else
+        if [[ "$MAIN_IS_RELEASE" == true && "$UPDATED_VERSION" == "$MAIN_VERSION" && "$CURRENT_BRANCH" != "main" ]];
+        then 
+            # Only one commit should be associated with a particular non-dev version
+            if [[ "$CHECK" == 1 ]];
+            then 
+                printf "Error: there is already a commit associated with version %s.\n" "$MAIN_VERSION"
+                exit 1
+            else 
+                printf "Warning: there is already a commit associated with version %s.\n" "$MAIN_VERSION"
+            fi
+        fi
+
         # Replace semver in VERSIONFILE with semver obtained from SOURCE_FILE
         TMPFILE=$(mktemp /tmp/new_version.XXXXXX)
         # Check sed version, exit if version < 4.3
@@ -163,6 +170,7 @@ done
 
 # Exit with code determined by whether changes were needed in a check.
 if [ ${FAILED_CHECK} -ne 0 ]; then
+    printf "\nVersions are out of sync! See above for diffs.\n"
     exit 1
 else
     exit 0

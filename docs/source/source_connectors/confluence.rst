@@ -30,18 +30,24 @@ Run Locally
 
       .. code:: python
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.confluence import confluence
+        import os
+
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import ConfluenceRunner
 
         if __name__ == "__main__":
-            confluence(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = ConfluenceRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="confluence-ingest-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     metadata_exclude=["filename", "file_directory", "metadata.data_source.date_processed"],
                 ),
+            )
+            runner.run(
                 url="https://unstructured-ingest-test.atlassian.net",
                 user_email="12345678@unstructured.io",
                 api_token="ABCDE1234ABDE1234ABCDE1234",
@@ -75,20 +81,24 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ReadConfig
-        from unstructured.ingest.runner.confluence import confluence
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import ConfluenceRunner
 
         if __name__ == "__main__":
-            confluence(
-                verbose=True,
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
+            runner = ConfluenceRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
                     output_dir="confluence-ingest-output",
                     num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(
                     metadata_exclude=["filename", "file_directory", "metadata.data_source.date_processed"],
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+            )
+            runner.run(
                 url="https://unstructured-ingest-test.atlassian.net",
                 user_email="12345678@unstructured.io",
                 api_token="ABCDE1234ABDE1234ABCDE1234",

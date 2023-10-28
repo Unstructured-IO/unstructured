@@ -10,9 +10,7 @@ from unstructured.ingest.runner.utils import update_download_dir_hash
 class BiomedRunner(Runner):
     def run(
         self,
-        max_retries: int,
-        max_request_time: int,
-        decay: float,
+        max_request_time: int = 45,
         path: t.Optional[str] = None,
         api_id: t.Optional[str] = None,
         api_from: t.Optional[str] = None,
@@ -53,9 +51,7 @@ class BiomedRunner(Runner):
                 id_=api_id,
                 from_=api_from,
                 until=api_until,
-                max_retries=max_retries,
                 request_timeout=max_request_time,
-                decay=decay,
             ),
             read_config=self.read_config,
         )

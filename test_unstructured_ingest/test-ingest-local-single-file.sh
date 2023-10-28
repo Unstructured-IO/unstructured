@@ -20,7 +20,7 @@ trap cleanup EXIT
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
     --num-processes "$max_processes" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --output-dir "$OUTPUT_DIR" \
     --ocr-languages ind+est \
     --strategy ocr_only \
@@ -32,3 +32,5 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 set +e
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+
+"$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"

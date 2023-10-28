@@ -2,17 +2,17 @@ import logging
 import typing as t
 
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner.base_runner import Runner
+from unstructured.ingest.runner.base_runner import FsspecBaseRunner
 from unstructured.ingest.runner.utils import update_download_dir_remote_url
 
 
-class AzureRunner(Runner):
+class AzureRunner(FsspecBaseRunner):
     def run(
         self,
-        account_name: t.Optional[str],
-        account_key: t.Optional[str],
-        connection_string: t.Optional[str],
         remote_url: str,
+        account_name: t.Optional[str] = None,
+        account_key: t.Optional[str] = None,
+        connection_string: t.Optional[str] = None,
         recursive: bool = False,
         **kwargs,
     ):
@@ -26,7 +26,7 @@ class AzureRunner(Runner):
         self.read_config.download_dir = update_download_dir_remote_url(
             connector_name="azure",
             read_config=self.read_config,
-            remote_url=remote_url,
+            remote_url=self.fsspec_config.remote_url,  # type: ignore
             logger=logger,
         )
 
@@ -44,13 +44,13 @@ class AzureRunner(Runner):
             access_kwargs = {"connection_string": connection_string}
         else:
             access_kwargs = {}
+        connector_config = SimpleAzureBlobStorageConfig.from_dict(
+            self.fsspec_config.to_dict(),  # type: ignore
+        )
+        connector_config.access_kwargs = access_kwargs
         source_doc_connector = AzureBlobStorageSourceConnector(  # type: ignore
             processor_config=self.processor_config,
-            connector_config=SimpleAzureBlobStorageConfig(
-                path=remote_url,
-                recursive=recursive,
-                access_kwargs=access_kwargs,
-            ),
+            connector_config=connector_config,
             read_config=self.read_config,
         )
 

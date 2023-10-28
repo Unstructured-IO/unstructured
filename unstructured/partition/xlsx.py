@@ -44,6 +44,7 @@ def partition_xlsx(
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
+    infer_table_structure: bool = True,
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     metadata_last_modified: Optional[str] = None,
@@ -61,6 +62,12 @@ def partition_xlsx(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_metadata
         Determines whether or not metadata is included in the output.
+    infer_table_structure
+        If True, any Table elements that are extracted will also have a metadata field
+        named "text_as_html" where the table's text content is rendered into an html string.
+        I.e., rows and cells are preserved.
+        Whether True or False, the "text" field is always present in any Table element
+        and is the text content of the table (no structure).
     languages
         User defined value for metadata.languages if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
@@ -71,7 +78,7 @@ def partition_xlsx(
     metadata_last_modified
         The day of the last modification
     include_header
-        Determines whether or not header info info is included in text and medatada.text_as_html
+        Determines whether or not header info is included in text and medatada.text_as_html
     """
     exactly_one(filename=filename, file=file)
 
@@ -94,7 +101,11 @@ def partition_xlsx(
     for sheet_name, sheet in sheets.items():
         page_number += 1
         if not find_subtable:
-            html_text = sheet.to_html(index=False, header=include_header, na_rep="")
+            html_text = (
+                sheet.to_html(index=False, header=include_header, na_rep="")
+                if infer_table_structure
+                else None
+            )
             text = soupparser_fromstring(html_text).text_content()
 
             if include_metadata:
@@ -158,7 +169,7 @@ def partition_xlsx(
                     text = soupparser_fromstring(html_text).text_content()
                     subtable = Table(text=text)
                     subtable.metadata = metadata
-                    subtable.metadata.text_as_html = html_text
+                    subtable.metadata.text_as_html = html_text if infer_table_structure else None
                     elements.append(subtable)
 
                 if front_non_consecutive is not None and last_non_consecutive is not None:

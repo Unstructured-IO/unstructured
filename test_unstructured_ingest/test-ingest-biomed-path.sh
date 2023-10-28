@@ -31,10 +31,11 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess \
     --output-dir "$OUTPUT_DIR" \
     --verbose \
-    --decay .3 \
     --max-request-time 30 \
     --max-retries 5 \
     --path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
     --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+
+"$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"

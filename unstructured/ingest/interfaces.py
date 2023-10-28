@@ -4,6 +4,7 @@ through Unstructured."""
 import functools
 import json
 import os
+import re
 import typing as t
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -12,16 +13,29 @@ from pathlib import Path
 
 import requests
 from dataclasses_json import DataClassJsonMixin
+from dataclasses_json.core import Json, _asdict, _decode_dataclass
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
-from unstructured.ingest.ingest_doc_json_mixin import IngestDocJsonMixin
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict, elements_from_json
+
+A = t.TypeVar("A", bound="DataClassJsonMixin")
+
+SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
+    "s3",
+    "s3a",
+    "abfs",
+    "az",
+    "gs",
+    "gcs",
+    "box",
+    "dropbox",
+]
 
 
 @dataclass
@@ -32,6 +46,28 @@ class BaseSessionHandle(ABC):
 
 class BaseConfig(DataClassJsonMixin, ABC):
     pass
+
+
+@dataclass
+class RetryStrategyConfig(BaseConfig):
+    """
+    Contains all info needed for decorator to pull from `self` for backoff
+    and retry triggered by exception.
+
+    Args:
+        max_retries: The maximum number of attempts to make before giving
+            up. Once exhausted, the exception will be allowed to escape.
+            The default value of None means there is no limit to the
+            number of tries. If a callable is passed, it will be
+            evaluated at runtime and its return value used.
+        max_retry_time: The maximum total amount of time to try for before
+            giving up. Once expired, the exception will be allowed to
+            escape. If a callable is passed, it will be
+            evaluated at runtime and its return value used.
+    """
+
+    max_retries: t.Optional[int] = None
+    max_retry_time: t.Optional[float] = None
 
 
 @dataclass
@@ -61,6 +97,57 @@ class ProcessorConfig(BaseConfig):
     output_dir: str = "structured-output"
     num_processes: int = 2
     raise_on_error: bool = False
+
+
+@dataclass
+class FileStorageConfig(BaseConfig):
+    remote_url: str
+    uncompress: bool = False
+    recursive: bool = False
+
+
+@dataclass
+class FsspecConfig(FileStorageConfig):
+    access_kwargs: dict = field(default_factory=dict)
+    protocol: str = field(init=False)
+    path_without_protocol: str = field(init=False)
+    dir_path: str = field(init=False)
+    file_path: str = field(init=False)
+
+    def get_access_kwargs(self) -> dict:
+        return self.access_kwargs
+
+    def __post_init__(self):
+        self.protocol, self.path_without_protocol = self.remote_url.split("://")
+        if self.protocol not in SUPPORTED_REMOTE_FSSPEC_PROTOCOLS:
+            raise ValueError(
+                f"Protocol {self.protocol} not supported yet, only "
+                f"{SUPPORTED_REMOTE_FSSPEC_PROTOCOLS} are supported.",
+            )
+
+        # dropbox root is an empty string
+        match = re.match(rf"{self.protocol}://([\s])/", self.remote_url)
+        if match and self.protocol == "dropbox":
+            self.dir_path = " "
+            self.file_path = ""
+            return
+
+        # just a path with no trailing prefix
+        match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.remote_url)
+        if match:
+            self.dir_path = match.group(1)
+            self.file_path = ""
+            return
+
+        # valid path with a dir and/or file
+        match = re.match(rf"{self.protocol}://([^/\s]+?)/([^\s]*)", self.remote_url)
+        if not match:
+            raise ValueError(
+                f"Invalid path {self.remote_url}. "
+                f"Expected <protocol>://<dir-path>/<file-or-dir-path>.",
+            )
+        self.dir_path = match.group(1)
+        self.file_path = match.group(2) or ""
 
 
 @dataclass
@@ -112,7 +199,6 @@ class PermissionsConfig(BaseConfig):
     application_id: t.Optional[str]
     client_cred: t.Optional[str]
     tenant: t.Optional[str]
-    pass
 
 
 @dataclass
@@ -132,6 +218,56 @@ class SourceMetadata(DataClassJsonMixin, ABC):
     source_url: t.Optional[str] = None
     exists: t.Optional[bool] = None
     permissions_data: t.Optional[t.List[t.Dict[str, t.Any]]] = None
+
+
+class IngestDocJsonMixin(DataClassJsonMixin):
+    """
+    Inherently, DataClassJsonMixin does not add in any @property fields to the json/dict
+    created from the dataclass. This explicitly sets properties to look for on the IngestDoc
+    class when creating the json/dict for serialization purposes.
+    """
+
+    metadata_properties = [
+        "date_created",
+        "date_modified",
+        "date_processed",
+        "exists",
+        "permissions_data",
+        "version",
+        "source_url",
+    ]
+    properties_to_serialize = [
+        "base_filename",
+        "filename",
+        "_output_filename",
+        "record_locator",
+        "_source_metadata",
+    ]
+
+    def add_props(self, as_dict: dict, props: t.List[str]):
+        for prop in props:
+            val = getattr(self, prop)
+            if isinstance(val, Path):
+                val = str(val)
+            if isinstance(val, DataClassJsonMixin):
+                val = val.to_dict(encode_json=False)
+            as_dict[prop] = val
+
+    def to_dict(self, encode_json=False) -> t.Dict[str, Json]:
+        as_dict = _asdict(self, encode_json=encode_json)
+        self.add_props(as_dict=as_dict, props=self.properties_to_serialize)
+        if getattr(self, "_source_metadata") is not None:
+            self.add_props(as_dict=as_dict, props=self.metadata_properties)
+        return as_dict
+
+    @classmethod
+    def from_dict(cls: t.Type[A], kvs: Json, *, infer_missing=False) -> A:
+        doc = _decode_dataclass(cls, kvs, infer_missing)
+        if meta := kvs.get("_source_metadata"):
+            setattr(doc, "_source_metadata", SourceMetadata.from_dict(meta))
+        if date_processed := kvs.get("_date_processed"):
+            setattr(doc, "_date_processed", date_processed)
+        return doc
 
 
 @dataclass
@@ -231,7 +367,6 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     @abstractmethod
     def cleanup_file(self):
         """Removes the local copy the file (or anything else) after successful processing."""
-        pass
 
     @staticmethod
     def skip_if_file_exists(func):
@@ -268,7 +403,6 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     @SourceConnectionError.wrap
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
-        pass
 
     def has_output(self) -> bool:
         """Determine if structured output for this doc already exists."""
@@ -384,13 +518,11 @@ class BaseSourceConnector(DataClassJsonMixin, ABC):
         temporary download dirs that are empty.
 
         By convention, documents that failed to process are typically not cleaned up."""
-        pass
 
     @abstractmethod
     def initialize(self):
         """Initializes the connector. Should also validate the connector is properly
         configured: e.g., list a single a document from the source."""
-        pass
 
     @abstractmethod
     def get_ingest_docs(self):
@@ -398,7 +530,6 @@ class BaseSourceConnector(DataClassJsonMixin, ABC):
         This does not imply downloading all the raw documents themselves,
         rather each IngestDoc is capable of fetching its content (in another process)
         with IngestDoc.get_file()."""
-        pass
 
 
 @dataclass
@@ -414,11 +545,18 @@ class BaseDestinationConnector(DataClassJsonMixin, ABC):
     def initialize(self):
         """Initializes the connector. Should also validate the connector is properly
         configured."""
-        pass
 
     @abstractmethod
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         pass
+
+    @abstractmethod
+    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+        pass
+
+    def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
+        elements_json = [e.to_dict() for e in elements]
+        self.write_dict(*args, json_list=elements_json, **kwargs)
 
 
 class SourceConnectorCleanupMixin:

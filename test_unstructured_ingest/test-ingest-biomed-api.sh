@@ -34,9 +34,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --api-from "2019-01-02" \
     --api-until "2019-01-02+00:03:10" \
-    --decay .3 \
     --max-request-time 30 \
     --max-retries 5 \
     --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+
+"$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"

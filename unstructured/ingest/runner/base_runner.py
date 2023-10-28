@@ -7,10 +7,12 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     ChunkingConfig,
     EmbeddingConfig,
+    FsspecConfig,
     PartitionConfig,
     PermissionsConfig,
     ProcessorConfig,
     ReadConfig,
+    RetryStrategyConfig,
 )
 from unstructured.ingest.processor import process_documents
 from unstructured.ingest.runner.writers import writer_map
@@ -26,6 +28,7 @@ class Runner(ABC):
     embedding_config: t.Optional[EmbeddingConfig] = None
     chunking_config: t.Optional[ChunkingConfig] = None
     permissions_config: t.Optional[PermissionsConfig] = None
+    retry_strategy_config: t.Optional[RetryStrategyConfig] = None
 
     @abstractmethod
     def run(self, *args, **kwargs):
@@ -59,4 +62,17 @@ class Runner(ABC):
             embedder_config=self.embedding_config,
             chunking_config=self.chunking_config,
             permissions_config=self.get_permissions_config(),
+            retry_strategy_config=self.retry_strategy_config,
         )
+
+
+@dataclass
+class FsspecBaseRunner(Runner):
+    # TODO make this field required when python3.8 no longer supported
+    # python3.8 dataclass doesn't support default values in child classes, but this
+    # fsspec_config should be required in this class.
+    fsspec_config: t.Optional[FsspecConfig] = None
+
+    def __post_init__(self):
+        if self.fsspec_config is None:
+            raise ValueError("fsspec_config must exist")
