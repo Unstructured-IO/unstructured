@@ -130,7 +130,7 @@ def test_partition_pdf_local_raises_with_no_filename():
     # others: will ignore the actual blank page
     [
         ("fast", {1, 4}, {"pdfminer"}),
-        ("hi_res", {1, 3, 4}, {"yolox","pdfminer"}),
+        ("hi_res", {1, 3, 4}, {"yolox", "pdfminer"}),
         ("ocr_only", {1, 3, 4}, {"OCR"}),
     ],
 )
