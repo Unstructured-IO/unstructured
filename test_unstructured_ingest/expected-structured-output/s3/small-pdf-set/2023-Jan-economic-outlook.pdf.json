@@ -1026,42 +1026,6 @@
     "text": "Year over Year"
   },
   {
-    "type": "Title",
-    "element_id": "aa22eb2e58c7cf45c528550d68e15c51",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "date_modified": "2023-02-14T07:31:28"
-      },
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Difference from October 2022"
-  },
-  {
-    "type": "Title",
-    "element_id": "8c327a62ae0e925498f5c68b819b32b4",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "date_modified": "2023-02-14T07:31:28"
-      },
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Q4 over Q4 2/"
-  },
-  {
     "type": "Table",
     "element_id": "429d7ccdab398bfb2107fa00f9054272",
     "metadata": {
