@@ -64,10 +64,7 @@ class MockPageLayout(layout.PageLayout):
     def __init__(self, number: int, image: Image):
         self.number = number
         self.image = image
-
-    @property
-    def elements(self):
-        return [
+        self.elements = [
             layout.LayoutElement.from_coords(
                 type="Title",
                 x1=0,
@@ -131,7 +128,11 @@ def test_partition_pdf_local_raises_with_no_filename():
     ("strategy", "expected", "origin"),
     # fast: can't capture the "intentionally left blank page" page
     # others: will ignore the actual blank page
-    [("fast", {1, 4}, "pdfminer"), ("hi_res", {1, 3, 4}, "pdf"), ("ocr_only", {1, 3, 4}, "OCR")],
+    [
+        ("fast", {1, 4}, {"pdfminer"}),
+        ("hi_res", {1, 3, 4}, {"yolox", "pdfminer"}),
+        ("ocr_only", {1, 3, 4}, {"OCR"}),
+    ],
 )
 def test_partition_pdf(
     file_mode,
@@ -147,7 +148,7 @@ def test_partition_pdf(
         # check that the pdf has multiple different page numbers
         assert {element.metadata.page_number for element in result} == expected
         if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            assert {element.metadata.detection_origin for element in result} == {origin}
+            assert {element.metadata.detection_origin for element in result} == origin
 
     if file_mode == "filename":
         result = pdf.partition_pdf(filename=filename, strategy=strategy)
@@ -1043,6 +1044,21 @@ def test_chipper_not_losing_parents(chipper_results, chipper_children):
         [el for el in chipper_results if el.id == child.metadata.parent_id]
         for child in chipper_children
     )
+
+
+@pytest.mark.parametrize(
+    ("infer_table_structure", "env", "expected"),
+    [
+        (False, None, "yolox_quantized"),
+        (True, None, "yolox"),
+        (False, "test", "test"),
+        (True, "test", "test"),
+    ],
+)
+def test_default_hi_res_model(infer_table_structure, env, expected, monkeypatch):
+    if env is not None:
+        monkeypatch.setenv("UNSTRUCTURED_HI_RES_MODEL_NAME", env)
+    assert pdf.default_hi_res_model(infer_table_structure) == expected
 
 
 def test_partition_model_name_default_to_None():
