@@ -52,7 +52,6 @@ Run Locally
                 ),
             )
             runner.run(
-                remote_url="abfs://container1/",
                 account_name="azureunstructured1",
             )
 
@@ -95,7 +94,6 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
                 ),
             )
             runner.run(
-                remote_url="abfs://container1/",
                 account_name="azureunstructured1",
             )
 

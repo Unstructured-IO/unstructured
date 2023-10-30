@@ -49,9 +49,7 @@ Run Locally
                 partition_config=PartitionConfig(),
                 fsspec_config=FsspecConfig(remote_url="dropbox:// /", recursive=True),
             )
-            runner.run(
-                remote_url="dropbox:// /",
-            )
+            runner.run()
 
 Run via the API
 ---------------
@@ -103,9 +101,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
                 ),
                 fsspec_config=FsspecConfig(remote_url="dropbox:// /", recursive=True),
             )
-            runner.run(
-                remote_url="dropbox:// /",
-            )
+            runner.run()
 
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
