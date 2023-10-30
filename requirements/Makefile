@@ -1,7 +1,7 @@
 PIP = pip-compile --upgrade -o $@ $<
 SHELL := /bin/bash
-REQUIREMENTS := $(filter-out constraints.in base.in,$(shell find . -type f -name '*.in'))
-# -not -name 'base.in' -not -name 'constraints.in' -not -name 'extra-pptx.txt')
+# we don't need to make constraints.txt from constraints.in
+REQUIREMENTS := $(filter-out constraints.in,$(shell find . -type f -name '*.in'))
 REQUIREMENTSTXT := $(patsubst %.in,%.txt,$(REQUIREMENTS))
 
 # those dependencies only needs constraint.in to and %.in to compile
@@ -11,6 +11,7 @@ constraint_dependent = base.txt extra-pptx.txt
 
 all: $(REQUIREMENTSTXT)
 
+# a special case where the .txt depends on other .txt; here dev.txt depends on test.txt
 dev.txt: dev.in test.txt base.txt constraints.in
 	$(PIP)
 
@@ -18,5 +19,7 @@ dev.txt: dev.in test.txt base.txt constraints.in
 $(REQUIREMENTSTXT): %.txt: %.in base.txt constraints.in
 	$(PIP)
 
+# special case where its only extra dependency is constraints.in; here base.txt and extra-ppt.txt
+# only depends on their own .in and constraits.in
 $(constraint_dependent): %.txt: %.in constraints.in
 	$(PIP)
