@@ -474,31 +474,23 @@ class CliPermissionsConfig(PermissionsConfig, CliMixin):
         CLI params are provided as intended.
         """
 
-        if (
-            isinstance(kvs, dict)
-            and any(
-                [
-                    kvs.get("permissions_application_id"),
-                    kvs.get("permissions_client_cred"),
-                    kvs.get("permissions_tenant"),
-                ],
-            )
-            and not all(
-                [
-                    kvs.get("permissions_application_id"),
-                    kvs.get("permissions_client_cred"),
-                    kvs.get("permissions_tenant"),
-                ],
-            )
-        ):
-            raise ValueError(
-                "Please provide either none or all of the following optional values:\n"
-                "--permissions-application-id\n"
-                "--permissions-client-cred\n"
-                "--permissions-tenant",
-            )
-
         if isinstance(kvs, dict):
+            permissions_application_id = kvs.get("permissions_application_id")
+            permissions_client_cred = kvs.get("permissions_client_cred")
+            permissions_tenant = kvs.get("permissions_tenant")
+            permission_values = [
+                permissions_application_id,
+                permissions_client_cred,
+                permissions_tenant,
+            ]
+            if any(permission_values) and not all(permission_values):
+                raise ValueError(
+                    "Please provide either none or all of the following optional values:\n"
+                    "--permissions-application-id\n"
+                    "--permissions-client-cred\n"
+                    "--permissions-tenant",
+                )
+
             new_kvs = {
                 k[len("permissions_") :]: v  # noqa: E203
                 for k, v in kvs.items()
