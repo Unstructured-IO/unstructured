@@ -34,3 +34,5 @@ set +e
 # once we have an alternative encoder that is deterministic, we test the diff here
 # until then just validating the file was created
 "$SCRIPT_DIR"/check-num-files-output.sh 1 "$OUTPUT_FOLDER_NAME"
+
+"$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"
