@@ -16,6 +16,7 @@
 * **Fix ingest pipeline to be able to use chunking and embedding together** Problem: When ingest pipeline was using chunking and embedding together, embedding outputs were empty and the outputs of chunking couldn't be re-read into memory and be forwarded to embeddings. Fix: Added CompositeElement type to TYPE_TO_TEXT_ELEMENT_MAP to be able to process CompositeElements with unstructured.staging.base.isd_to_elements
 * **Fix unnecessary mid-text chunk-splitting.** The "pre-chunker" did not consider separator blank-line ("\n\n") length when grouping elements for a single chunk. As a result, sections were frequently over-populated producing a over-sized chunk that required mid-text splitting.
 * **Fix frequent dissociation of title from chunk.** The sectioning algorithm included the title of the next section with the prior section whenever it would fit, frequently producing association of a section title with the prior section and dissociating it from its actual section. Fix this by performing combination of whole sections only.
+* **Fix PDF attempt to get dict value from string.** The PDF annotation as a string got overwrite as `None`, then skip an attempt to extract URI from the `None` value.
 
 ## 0.10.27
 
