@@ -228,7 +228,7 @@ jobs:
       - uses: actions/checkout@v3
       # The following checks to see whether the ingest cache exists.
       # If so we don't want to download the base cache.
-      - uses: actions/cache@v3
+      - uses: actions/cache/restore@v3
         id: ingest-cache-exists
         with:
           lookup-only: true
