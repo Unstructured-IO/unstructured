@@ -30,6 +30,8 @@ Run Locally
 
       .. code:: python
 
+        import os
+
         from unstructured.ingest.interfaces import (
             FsspecConfig,
             PartitionConfig,
@@ -49,7 +51,7 @@ Run Locally
                 partition_config=PartitionConfig(),
                 fsspec_config=FsspecConfig(remote_url="dropbox:// /", recursive=True),
             )
-            runner.run()
+            runner.run(token=os.getenv("DROPBOX_ACCESS_TOKEN"))
 
 Run via the API
 ---------------
@@ -101,7 +103,7 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
                 ),
                 fsspec_config=FsspecConfig(remote_url="dropbox:// /", recursive=True),
             )
-            runner.run()
+            runner.run(token=os.getenv("DROPBOX_ACCESS_TOKEN"))
 
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
