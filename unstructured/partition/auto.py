@@ -525,6 +525,6 @@ def decide_table_extraction(
                 f"and pdf_infer_table_structure: {pdf_infer_table_structure}, "
                 "please reset skip_infer_table_types to turn on table extraction for PDFs.",
             )
-        return not (doc_type in skip_infer_table_types) or pdf_infer_table_structure
+        return doc_type not in skip_infer_table_types or pdf_infer_table_structure
 
-    return not (doc_type in skip_infer_table_types)
+    return doc_type not in skip_infer_table_types
