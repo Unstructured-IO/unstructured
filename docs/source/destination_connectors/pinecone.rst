@@ -1,4 +1,4 @@
-S3
+Pinecone
 ===========
 
 Batch process all your records using ``unstructured-ingest`` to store structured outputs and embeddings locally on your filesystem and upload those to a Pinecone index.

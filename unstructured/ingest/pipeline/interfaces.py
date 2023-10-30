@@ -71,8 +71,6 @@ class PipelineNode(DataClassJsonMixin, ABC):
             else:
                 self.result = self.run()
         else:
-            # Debugging tip: You can comment out the "with mp.Pool" block, and use the line below:
-            # self.result = [self.run(item) for item in iterable]
             with mp.Pool(
                 processes=self.pipeline_context.num_processes,
                 initializer=ingest_log_streaming_init,

@@ -663,8 +663,6 @@ class WriteConfigSessionHandleMixin(ConfigSessionHandleMixin):
         """If a session handle is not assigned, creates a new one and assigns it."""
         if self._session_handle is None:
             self._session_handle = self.create_session_handle()
-            print("CREATE123: SESSION HANDLE")
-        print("REUSE123: SESSION HANDLE")
         return self._session_handle
 
     @session_handle.setter
