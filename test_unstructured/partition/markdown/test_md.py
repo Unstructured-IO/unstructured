@@ -289,3 +289,10 @@ def test_partition_md_respects_detect_language_per_element():
     elements = partition_md(filename=filename, detect_language_per_element=True)
     langs = [element.metadata.languages for element in elements]
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+def test_partition_md_parse_table():
+    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "simple-table.md")
+    elements = partition_md(filename=filename)
+    assert len(elements) > 0
+    assert elements[0].category == "Table"
