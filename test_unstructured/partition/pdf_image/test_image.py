@@ -260,7 +260,10 @@ def test_partition_image_default_strategy_hi_res():
     assert isinstance(elements[idx].metadata.detection_class_prob, float)
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
         # A bug in partition_groups_from_regions in unstructured-inference losses some sources
-        assert {element.metadata.detection_origin for element in elements} == {"yolox", "ocr_tesseract"}
+        assert {element.metadata.detection_origin for element in elements} == {
+            "yolox",
+            "ocr_tesseract",
+        }
 
 
 def test_partition_image_metadata_date(
