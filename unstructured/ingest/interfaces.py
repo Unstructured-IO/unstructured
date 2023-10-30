@@ -132,6 +132,13 @@ class FsspecConfig(FileStorageConfig):
             self.file_path = ""
             return
 
+        # dropbox paths can start with slash
+        match = re.match(rf"{self.protocol}:///([^/\s]+?)/([^\s]*)", self.remote_url)
+        if match and self.protocol == "dropbox":
+            self.dir_path = match.group(1)
+            self.file_path = match.group(2) or ""
+            return
+
         # just a path with no trailing prefix
         match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.remote_url)
         if match:
@@ -331,6 +338,15 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
             download_path = str(Path(self.read_config.download_dir).resolve())
             full_path = str(self.filename)
             base_path = full_path.replace(download_path, "")
+            return base_path
+        return None
+
+    @property
+    def base_output_filename(self) -> t.Optional[str]:
+        if self.processor_config.output_dir and self._output_filename:
+            output_path = str(Path(self.processor_config.output_dir).resolve())
+            full_path = str(self._output_filename)
+            base_path = full_path.replace(output_path, "")
             return base_path
         return None
 

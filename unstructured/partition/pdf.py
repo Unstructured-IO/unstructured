@@ -4,11 +4,22 @@ import os
 import re
 import warnings
 from tempfile import SpooledTemporaryFile
-from typing import IO, Any, BinaryIO, Iterator, List, Optional, Sequence, Tuple, Union, cast
+from typing import (
+    IO,
+    TYPE_CHECKING,
+    Any,
+    BinaryIO,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+    cast,
+)
 
 import numpy as np
 import pdf2image
-import PIL
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import (
     LAParams,
@@ -22,6 +33,7 @@ from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
+from PIL import Image as PILImage
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -52,34 +64,47 @@ from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
+    ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.lang import (
     convert_old_ocr_languages_to_languages,
     prepare_languages_for_tesseract,
 )
+from unstructured.partition.ocr import (
+    get_layout_elements_from_ocr,
+    get_ocr_agent,
+)
 from unstructured.partition.strategies import determine_pdf_or_image_strategy
-from unstructured.partition.text import element_from_text, partition_text
+from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.constants import (
+    OCR_AGENT_TESSERACT,
     SORT_MODE_BASIC,
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
     OCRMode,
 )
+from unstructured.partition.utils.processing_elements import clean_pdfminer_inner_elements
 from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     sort_page_elements,
 )
 from unstructured.utils import requires_dependencies
 
+if TYPE_CHECKING:
+    pass
+
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
 
-def default_hi_res_model() -> str:
+def default_hi_res_model(infer_table_structure: bool) -> str:
     # a light config for the hi res model; this is not defined as a constant so that no setting of
     # the default hi res model name is done on importing of this submodule; this allows (if user
     # prefers) for setting env after importing the sub module and changing the default model name
-    return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", "yolox_quantized")
+
+    # if tabler structure is needed we defaul to use yolox for better table detection
+    default = "yolox" if infer_table_structure else "yolox_quantized"
+    return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", default)
 
 
 @process_metadata()
@@ -93,8 +118,6 @@ def partition_pdf(
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: List[str] = ["eng"],
-    max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
@@ -129,12 +152,6 @@ def partition_pdf(
     languages
         The languages present in the document, for use in partitioning and/or OCR. To use a language
         with Tesseract, you'll first need to install the appropriate Tesseract language pack.
-    max_partition
-        The maximum number of characters to include in a partition. If None is passed,
-        no maximum is applied. Only applies to the "ocr_only" strategy.
-    min_partition
-        The minimum number of characters to include in a partition. Only applies if
-        processing text/plain content.
     metadata_last_modified
         The last modified date for the document.
     extract_images_in_pdf
@@ -169,8 +186,6 @@ def partition_pdf(
         strategy=strategy,
         infer_table_structure=infer_table_structure,
         languages=languages,
-        max_partition=max_partition,
-        min_partition=min_partition,
         metadata_last_modified=metadata_last_modified,
         extract_images_in_pdf=extract_images_in_pdf,
         image_output_dir_path=image_output_dir_path,
@@ -217,8 +232,6 @@ def partition_pdf_or_image(
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
     languages: Optional[List[str]] = ["eng"],
-    max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
     extract_images_in_pdf: bool = False,
     image_output_dir_path: Optional[str] = None,
@@ -323,16 +336,24 @@ def partition_pdf_or_image(
     elif strategy == "ocr_only":
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
         with warnings.catch_warnings():
-            return _partition_pdf_or_image_with_ocr(
+            _layout_elements = _partition_pdf_or_image_with_ocr(
                 filename=filename,
                 file=file,
                 include_page_breaks=include_page_breaks,
                 languages=languages,
                 is_image=is_image,
-                max_partition=max_partition,
-                min_partition=min_partition,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
+                **kwargs,
             )
+
+            layout_elements = []
+            for el in _layout_elements:
+                if hasattr(el, "category") and el.category == "UncategorizedText":
+                    new_el = element_from_text(cast(Text, el).text)
+                    new_el.metadata = el.metadata
+                else:
+                    new_el = el
+                layout_elements.append(new_el)
 
     return layout_elements
 
@@ -366,7 +387,7 @@ def _partition_pdf_or_image_local(
 
     ocr_languages = prepare_languages_for_tesseract(languages)
 
-    model_name = model_name or default_hi_res_model()
+    model_name = model_name or default_hi_res_model(infer_table_structure)
     if pdf_image_dpi is None:
         pdf_image_dpi = 300 if model_name == "chipper" else 200
     if (pdf_image_dpi < 300) and (model_name == "chipper"):
@@ -427,6 +448,7 @@ def _partition_pdf_or_image_local(
     if model_name == "chipper":
         kwargs["sort_mode"] = SORT_MODE_DONT
 
+    final_layout = clean_pdfminer_inner_elements(final_layout)
     elements = document_to_element_list(
         final_layout,
         sortable=True,
@@ -436,7 +458,6 @@ def _partition_pdf_or_image_local(
         # block with NLP rules. Otherwise, the assumptions in
         # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
         infer_list_items=False,
-        detection_origin="image" if is_image else "pdf",
         **kwargs,
     )
 
@@ -682,7 +703,7 @@ def convert_pdf_to_images(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
     chunk_size: int = 10,
-) -> Iterator[PIL.Image.Image]:
+) -> Iterator[PILImage.Image]:
     # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
     exactly_one(filename=filename, file=file)
     if file is not None:
@@ -712,177 +733,97 @@ def convert_pdf_to_images(
             yield image
 
 
-def _get_element_box(
-    boxes: List[str],
-    char_count: int,
-) -> Tuple[Tuple[Tuple[float, float], Tuple[float, int], Tuple[int, int], Tuple[int, float]], int]:
-    """Helper function to get the bounding box of an element.
-
-    Args:
-        boxes (List[str])
-        char_count (int)
-    """
-    min_x = float("inf")
-    min_y = float("inf")
-    max_x = 0
-    max_y = 0
-    for box in boxes:
-        _, _x1, _y1, _x2, _y2, _ = box.split()
-
-        x1, y1, x2, y2 = map(int, [_x1, _y1, _x2, _y2])
-        min_x = min(min_x, x1)
-        min_y = min(min_y, y1)
-        max_x = max(max_x, x2)
-        max_y = max(max_y, y2)
-
-    return ((min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y)), char_count
-
-
-def _add_pytesseract_bboxes_to_elements(
-    elements: List[Text],
-    bboxes_string: str,
-    width: int,
-    height: int,
-) -> List[Text]:
-    """
-    Get the bounding box of each element and add it to element.metadata.coordinates
-
-    Args:
-        elements: elements containing text detected by pytesseract.image_to_string.
-        bboxes_string (str): The return value of pytesseract.image_to_boxes.
-        width: width of image
-        height: height of image
-    """
-    # (NOTE) jennings: This function was written with pytesseract in mind, but
-    # paddle returns similar values via `ocr.ocr(img)`.
-    # See more at issue #1176: https://github.com/Unstructured-IO/unstructured/issues/1176
-    point_space = PointSpace(
-        width=width,
-        height=height,
-    )
-    pixel_space = PixelSpace(
-        width=width,
-        height=height,
-    )
-
-    boxes = bboxes_string.strip().split("\n")
-    box_idx = 0
-    for element in elements:
-        if not element.text:
-            box_idx += 1
-            continue
-        try:
-            while boxes[box_idx][0] != element.text[0]:
-                box_idx += 1
-        except IndexError:
-            break
-        char_count = len(element.text.replace(" ", ""))
-        if box_idx + char_count > len(boxes):
-            break
-        _points, char_count = _get_element_box(
-            boxes=boxes[box_idx : box_idx + char_count],  # noqa
-            char_count=char_count,
-        )
-        box_idx += char_count
-
-        converted_points = point_space.convert_multiple_coordinates_to_new_system(
-            pixel_space,
-            _points,
-        )
-
-        element.metadata.coordinates = CoordinatesMetadata(
-            points=converted_points,
-            system=pixel_space,
-        )
-    return elements
-
-
-@requires_dependencies("unstructured_pytesseract")
+@requires_dependencies("unstructured_pytesseract", "unstructured_inference")
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
     include_page_breaks: bool = False,
     languages: Optional[List[str]] = ["eng"],
     is_image: bool = False,
-    max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
+    **kwargs,
 ):
-    """Partitions an image or PDF using Tesseract OCR. For PDFs, each page is converted
+    """Partitions an image or PDF using OCR. For PDFs, each page is converted
     to an image prior to processing."""
-    import unstructured_pytesseract
 
-    ocr_languages = prepare_languages_for_tesseract(languages)
-
+    elements = []
     if is_image:
-        if file is not None:
-            image = PIL.Image.open(file)
-            text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
-                np.array(image),
-                extensions=["txt", "box"],
-                lang=ocr_languages,
-            )
-        else:
-            image = PIL.Image.open(filename)
-            text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
-                np.array(image),
-                extensions=["txt", "box"],
-                lang=ocr_languages,
-            )
-        elements = partition_text(
-            text=text,
-            max_partition=max_partition,
-            min_partition=min_partition,
-            metadata_last_modified=metadata_last_modified,
-            detection_origin="OCR",
-        )
-        width, height = image.size
-        _add_pytesseract_bboxes_to_elements(
-            elements=cast(List[Text], elements),
-            bboxes_string=_bboxes,
-            width=width,
-            height=height,
-        )
+        images = []
+        image = PILImage.open(file) if file is not None else PILImage.open(filename)
+        images.append(image)
 
+        for i, image in enumerate(images):
+            page_elements = _partition_pdf_or_image_with_ocr_from_image(
+                image=image,
+                languages=languages,
+                page_number=i + 1,
+                include_page_breaks=include_page_breaks,
+                metadata_last_modified=metadata_last_modified,
+                **kwargs,
+            )
+            elements.extend(page_elements)
     else:
-        elements = []
         page_number = 0
         for image in convert_pdf_to_images(filename, file):
             page_number += 1
-            metadata = ElementMetadata(
-                filename=filename,
-                page_number=page_number,
-                last_modified=metadata_last_modified,
+            page_elements = _partition_pdf_or_image_with_ocr_from_image(
+                image=image,
                 languages=languages,
+                page_number=page_number,
+                include_page_breaks=include_page_breaks,
+                metadata_last_modified=metadata_last_modified,
+                **kwargs,
             )
-            metadata.detection_origin = "OCR"
-            _text, _bboxes = unstructured_pytesseract.run_and_get_multiple_output(
-                image,
-                extensions=["txt", "box"],
-                lang=ocr_languages,
-            )
-            width, height = image.size
+            elements.extend(page_elements)
 
-            _elements = partition_text(
-                text=_text,
-                max_partition=max_partition,
-                min_partition=min_partition,
-            )
-
-            for element in _elements:
-                element.metadata = metadata
-
-            _add_pytesseract_bboxes_to_elements(
-                elements=cast(List[Text], _elements),
-                bboxes_string=_bboxes,
-                width=width,
-                height=height,
-            )
-
-            elements.extend(_elements)
-            if include_page_breaks:
-                elements.append(PageBreak(text=""))
     return elements
+
+
+def _partition_pdf_or_image_with_ocr_from_image(
+    image: PILImage,
+    languages: Optional[List[str]] = ["eng"],
+    page_number: int = 1,
+    include_page_breaks: bool = False,
+    metadata_last_modified: Optional[str] = None,
+    sort_mode: str = SORT_MODE_XY_CUT,
+    **kwargs,
+) -> List[Element]:
+    """Extract `unstructured` elements from an image using OCR and perform partitioning."""
+
+    ocr_agent = get_ocr_agent()
+    ocr_languages = prepare_languages_for_tesseract(languages)
+
+    # NOTE(christine): `unstructured_pytesseract.image_to_string()` returns sorted text
+    if ocr_agent == OCR_AGENT_TESSERACT:
+        sort_mode = SORT_MODE_DONT
+
+    ocr_data = get_layout_elements_from_ocr(
+        image=image,
+        ocr_languages=ocr_languages,
+        ocr_agent=ocr_agent,
+    )
+
+    metadata = ElementMetadata(
+        last_modified=metadata_last_modified,
+        filetype=image.format,
+        page_number=page_number,
+        languages=languages,
+    )
+
+    page_elements = ocr_data_to_elements(
+        ocr_data,
+        image_size=image.size,
+        common_metadata=metadata,
+    )
+
+    sorted_page_elements = page_elements
+    if sort_mode != SORT_MODE_DONT:
+        sorted_page_elements = sort_page_elements(page_elements, sort_mode)
+
+    if include_page_breaks:
+        sorted_page_elements.append(PageBreak(text=""))
+
+    return page_elements
 
 
 def check_coords_within_boundary(
