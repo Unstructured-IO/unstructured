@@ -9,6 +9,8 @@ from unstructured.ingest.cli.interfaces import (
 )
 from unstructured.ingest.interfaces import BaseConfig
 
+CMD_NAME = "gcs"
+
 
 @dataclass
 class GcsCliConfig(BaseConfig, CliMixin):
@@ -29,5 +31,12 @@ class GcsCliConfig(BaseConfig, CliMixin):
 
 
 def get_base_src_cmd() -> BaseSrcCmd:
-    cmd_cls = BaseSrcCmd(cmd_name="gcs", cli_config=GcsCliConfig, is_fsspec=True)
+    cmd_cls = BaseSrcCmd(cmd_name=CMD_NAME, cli_config=GcsCliConfig, is_fsspec=True)
+    return cmd_cls
+
+
+def get_base_dest_cmd():
+    from unstructured.ingest.cli.base.dest import BaseDestCmd
+
+    cmd_cls = BaseDestCmd(cmd_name=CMD_NAME, cli_config=GcsCliConfig, is_fsspec=True)
     return cmd_cls

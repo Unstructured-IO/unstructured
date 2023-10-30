@@ -25,9 +25,12 @@ from unstructured_pytesseract import Output
 from unstructured.logger import logger
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
+    OCR_AGENT_PADDLE,
+    OCR_AGENT_TESSERACT,
     SUBREGION_THRESHOLD_FOR_OCR,
     TESSERACT_TEXT_HEIGHT,
     OCRMode,
+    Source,
 )
 
 # Force tesseract to be single threaded,
@@ -129,10 +132,10 @@ def process_file_with_ocr(
     try:
         if is_image:
             with PILImage.open(filename) as images:
-                format = images.format
+                image_format = images.format
                 for i, image in enumerate(ImageSequence.Iterator(images)):
                     image = image.convert("RGB")
-                    image.format = format
+                    image.format = image_format
                     merged_page_layout = supplement_page_layout_with_ocr(
                         out_layout.pages[i],
                         image,
@@ -183,13 +186,8 @@ def supplement_page_layout_with_ocr(
     If mode is "individual_blocks", we find the elements from PageLayout
     with no text and add text from OCR to each element.
     """
-    ocr_agent = os.getenv("OCR_AGENT", "tesseract").lower()
-    if ocr_agent not in ["paddle", "tesseract"]:
-        raise ValueError(
-            "Environment variable OCR_AGENT",
-            " must be set to 'tesseract' or 'paddle'.",
-        )
 
+    ocr_agent = get_ocr_agent()
     ocr_layout = None
     if ocr_mode == OCRMode.FULL_PAGE.value:
         ocr_layout = get_ocr_layout_from_image(
@@ -198,7 +196,7 @@ def supplement_page_layout_with_ocr(
             ocr_agent=ocr_agent,
         )
         page_layout.elements[:] = merge_out_layout_with_ocr_layout(
-            out_layout=page_layout.elements,
+            out_layout=cast(List[LayoutElement], page_layout.elements),
             ocr_layout=ocr_layout,
         )
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
@@ -238,7 +236,7 @@ def supplement_page_layout_with_ocr(
                 ocr_agent=ocr_agent,
             )
         page_layout.elements[:] = supplement_element_with_table_extraction(
-            elements=page_layout.elements,
+            elements=cast(List[LayoutElement], page_layout.elements),
             ocr_layout=ocr_layout,
             image=image,
             table_agent=table_agent,
@@ -349,6 +347,53 @@ def init_table_agent():
     return table_agent
 
 
+def get_layout_elements_from_ocr(
+    image: PILImage,
+    ocr_languages: str = "eng",
+    ocr_agent: str = OCR_AGENT_TESSERACT,
+) -> List[LayoutElement]:
+    """
+    Generate a PageLayout with OCR data from a given image.
+    """
+
+    ocr_regions = get_ocr_layout_from_image(
+        image,
+        ocr_languages=ocr_languages,
+        ocr_agent=ocr_agent,
+    )
+
+    if ocr_agent == OCR_AGENT_PADDLE:
+        # NOTE(christine): For paddle, there is no difference in `ocr_layout` and `ocr_text` in
+        # terms of grouping because we get ocr_text from `ocr_layout, so the first two grouping
+        # and merging steps are not necessary.
+
+        layout_elements = [
+            LayoutElement(bbox=r.bbox, text=r.text, source=r.source, type="UncategorizedText")
+            for r in ocr_regions
+        ]
+    else:
+        # NOTE(christine): For tesseract, the ocr_text returned by
+        # `unstructured_pytesseract.image_to_string()` doesn't contain bounding box data but is
+        # well grouped. Conversely, the ocr_layout returned by parsing
+        # `unstructured_pytesseract.image_to_data()` contains bounding box data but is not well
+        # grouped. Therefore, we need to first group the `ocr_layout` by `ocr_text` and then merge
+        # the text regions in each group to create a list of layout elements.
+
+        ocr_text = get_ocr_text_from_image(
+            image,
+            ocr_languages=ocr_languages,
+            ocr_agent=ocr_agent,
+        )
+
+        layout_elements = get_elements_from_ocr_regions(
+            ocr_regions=ocr_regions,
+            ocr_text=ocr_text,
+            group_by_ocr_text=True,
+        )
+
+    return layout_elements
+
+
 def pad_element_bboxes(
     element: "LayoutElement",
     padding: Union[int, float],
@@ -385,58 +430,6 @@ def zoom_image(image: PILImage, zoom: float = 1) -> PILImage:
     return PILImage.fromarray(new_image)
 
 
-def get_ocr_layout_from_image(
-    image: PILImage,
-    ocr_languages: str = "eng",
-    ocr_agent: str = "tesseract",
-) -> List[TextRegion]:
-    """
-    Get the OCR layout from image as a list of text regions with paddle or tesseract.
-    """
-    if ocr_agent == "paddle":
-        logger.info("Processing OCR with paddle...")
-        from unstructured.partition.utils.ocr_models import paddle_ocr
-
-        # TODO(yuming): pass in language parameter once we
-        # have the mapping for paddle lang code
-        ocr_data = paddle_ocr.load_agent().ocr(np.array(image), cls=True)
-        ocr_layout = parse_ocr_data_paddle(ocr_data)
-    else:
-        logger.info("Processing OCR with tesseract...")
-        zoom = 1
-        ocr_df: pd.DataFrame = unstructured_pytesseract.image_to_data(
-            np.array(image),
-            lang=ocr_languages,
-            output_type=Output.DATAFRAME,
-        )
-        ocr_df = ocr_df.dropna()
-
-        # tesseract performance degrades when the text height is out of the preferred zone so we
-        # zoom the image (in or out depending on estimated text height) for optimum OCR results
-        # but this needs to be evaluated based on actual use case as the optimum scaling also
-        # depend on type of characters (font, language, etc); be careful about this
-        # functionality
-        text_height = ocr_df[TESSERACT_TEXT_HEIGHT].quantile(
-            env_config.TESSERACT_TEXT_HEIGHT_QUANTILE,
-        )
-        if (
-            text_height < env_config.TESSERACT_MIN_TEXT_HEIGHT
-            or text_height > env_config.TESSERACT_MAX_TEXT_HEIGHT
-        ):
-            # rounding avoids unnecessary precision and potential numerical issues assocaited
-            # with numbers very close to 1 inside cv2 image processing
-            zoom = np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1)
-            ocr_df = unstructured_pytesseract.image_to_data(
-                np.array(zoom_image(image, zoom)),
-                lang=ocr_languages,
-                output_type=Output.DATAFRAME,
-            )
-            ocr_df = ocr_df.dropna()
-
-        ocr_layout = parse_ocr_data_tesseract(ocr_df, zoom=zoom)
-    return ocr_layout
-
-
 def get_ocr_text_from_image(
     image: PILImage,
     ocr_languages: str = "eng",
@@ -445,24 +438,89 @@ def get_ocr_text_from_image(
     """
     Get the OCR text from image as a string with paddle or tesseract.
     """
-    if ocr_agent == "paddle":
-        logger.info("Processing entrie page OCR with paddle...")
-        from unstructured.partition.utils.ocr_models import paddle_ocr
-
-        # TODO(yuming): pass in language parameter once we
-        # have the mapping for paddle lang code
-        ocr_data = paddle_ocr.load_agent().ocr(np.array(image), cls=True)
-        ocr_layout = parse_ocr_data_paddle(ocr_data)
-        text_from_ocr = ""
-        for text_region in ocr_layout:
-            text_from_ocr += text_region.text
+    if ocr_agent == OCR_AGENT_PADDLE:
+        ocr_regions = get_ocr_layout_paddle(image)
+        ocr_text = "\n\n".join([r.text for r in ocr_regions])
     else:
-        text_from_ocr = unstructured_pytesseract.image_to_string(
+        ocr_text = unstructured_pytesseract.image_to_string(
             np.array(image),
             lang=ocr_languages,
-            output_type=Output.DICT,
-        )["text"]
-    return text_from_ocr
+        )
+    return ocr_text
+
+
+def get_ocr_layout_from_image(
+    image: PILImage,
+    ocr_languages: str = "eng",
+    ocr_agent: str = "tesseract",
+) -> List[TextRegion]:
+    """
+    Get the OCR regions from image as a list of text regions with paddle or tesseract.
+    """
+
+    if ocr_agent == OCR_AGENT_PADDLE:
+        ocr_regions = get_ocr_layout_paddle(image)
+    else:
+        ocr_regions = get_ocr_layout_tesseract(image, ocr_languages)
+
+    return ocr_regions
+
+
+def get_ocr_layout_tesseract(
+    image: PILImage,
+    ocr_languages: str = "eng",
+) -> List[TextRegion]:
+    """Get the OCR regions from image as a list of text regions with tesseract."""
+
+    logger.info("Processing entire page OCR with tesseract...")
+    zoom = 1
+    ocr_df: pd.DataFrame = unstructured_pytesseract.image_to_data(
+        np.array(image),
+        lang=ocr_languages,
+        output_type=Output.DATAFRAME,
+    )
+    ocr_df = ocr_df.dropna()
+
+    # tesseract performance degrades when the text height is out of the preferred zone so we
+    # zoom the image (in or out depending on estimated text height) for optimum OCR results
+    # but this needs to be evaluated based on actual use case as the optimum scaling also
+    # depend on type of characters (font, language, etc); be careful about this
+    # functionality
+    text_height = ocr_df[TESSERACT_TEXT_HEIGHT].quantile(
+        env_config.TESSERACT_TEXT_HEIGHT_QUANTILE,
+    )
+    if (
+        text_height < env_config.TESSERACT_MIN_TEXT_HEIGHT
+        or text_height > env_config.TESSERACT_MAX_TEXT_HEIGHT
+    ):
+        # rounding avoids unnecessary precision and potential numerical issues assocaited
+        # with numbers very close to 1 inside cv2 image processing
+        zoom = np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1)
+        ocr_df = unstructured_pytesseract.image_to_data(
+            np.array(zoom_image(image, zoom)),
+            lang=ocr_languages,
+            output_type=Output.DATAFRAME,
+        )
+        ocr_df = ocr_df.dropna()
+
+    ocr_regions = parse_ocr_data_tesseract(ocr_df, zoom=zoom)
+
+    return ocr_regions
+
+
+def get_ocr_layout_paddle(image: PILImage) -> List[TextRegion]:
+    """Get the OCR regions from image as a list of text regions with paddle."""
+
+    logger.info("Processing entire page OCR with paddle...")
+    from unstructured.partition.utils.ocr_models import paddle_ocr
+
+    # TODO(yuming): pass in language parameter once we
+    # have the mapping for paddle lang code
+    # see CORE-2034
+    ocr_data = paddle_ocr.load_agent().ocr(np.array(image), cls=True)
+    ocr_regions = parse_ocr_data_paddle(ocr_data)
+
+    return ocr_regions
 
 
 def parse_ocr_data_tesseract(ocr_data: pd.DataFrame, zoom: float = 1) -> List[TextRegion]:
@@ -504,7 +562,14 @@ def parse_ocr_data_tesseract(ocr_data: pd.DataFrame, zoom: float = 1) -> List[Te
             y1 = idtx.top / zoom
             x2 = (idtx.left + idtx.width) / zoom
             y2 = (idtx.top + idtx.height) / zoom
-            text_region = TextRegion.from_coords(x1, y1, x2, y2, text=text, source="OCR-tesseract")
+            text_region = TextRegion.from_coords(
+                x1,
+                y1,
+                x2,
+                y2,
+                text=cleaned_text,
+                source=Source.OCR_TESSERACT,
+            )
             text_regions.append(text_region)
 
     return text_regions
@@ -543,7 +608,14 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
                 continue
             cleaned_text = text.strip()
             if cleaned_text:
-                text_region = TextRegion.from_coords(x1, y1, x2, y2, text, source="OCR-paddle")
+                text_region = TextRegion.from_coords(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    cleaned_text,
+                    source=Source.OCR_PADDLE,
+                )
                 text_regions.append(text_region)
 
     return text_regions
@@ -653,15 +725,41 @@ def supplement_layout_with_ocr_elements(
     return final_layout
 
 
-def get_elements_from_ocr_regions(ocr_regions: List[TextRegion]) -> List[LayoutElement]:
+def get_elements_from_ocr_regions(
+    ocr_regions: List[TextRegion],
+    ocr_text: Optional[str] = None,
+    group_by_ocr_text: bool = False,
+) -> List[LayoutElement]:
     """
     Get layout elements from OCR regions
     """
 
-    grouped_regions = cast(
-        List[List[TextRegion]],
-        partition_groups_from_regions(ocr_regions),
-    )
+    if group_by_ocr_text:
+        text_sections = ocr_text.split("\n\n")
+        grouped_regions = []
+        for text_section in text_sections:
+            regions = []
+            words = text_section.replace("\n", " ").split()
+            for ocr_region in ocr_regions:
+                if not words:
+                    break
+                if ocr_region.text in words:
+                    regions.append(ocr_region)
+                    words.remove(ocr_region.text)
+
+            if not regions:
+                continue
+
+            for r in regions:
+                ocr_regions.remove(r)
+
+            grouped_regions.append(regions)
+    else:
+        grouped_regions = cast(
+            List[List[TextRegion]],
+            partition_groups_from_regions(ocr_regions),
+        )
+
     merged_regions = [merge_text_regions(group) for group in grouped_regions]
     return [
         LayoutElement(text=r.text, source=r.source, type="UncategorizedText", bbox=r.bbox)
@@ -680,11 +778,26 @@ def merge_text_regions(regions: List[TextRegion]) -> TextRegion:
     - TextRegion: A single merged TextRegion object.
     """
 
+    if not regions:
+        raise ValueError("The text regions to be merged must be provided.")
+
     min_x1 = min([tr.bbox.x1 for tr in regions])
     min_y1 = min([tr.bbox.y1 for tr in regions])
     max_x2 = max([tr.bbox.x2 for tr in regions])
     max_y2 = max([tr.bbox.y2 for tr in regions])
 
     merged_text = " ".join([tr.text for tr in regions if tr.text])
+    sources = [tr.source for tr in regions]
+    source = sources[0] if all(s == sources[0] for s in sources) else None
 
-    return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text)
+    return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text, source)
+
+
+def get_ocr_agent() -> str:
+    ocr_agent = env_config.OCR_AGENT.lower()
+    if ocr_agent not in [OCR_AGENT_PADDLE, OCR_AGENT_TESSERACT]:
+        raise ValueError(
+            "Environment variable OCR_AGENT",
+            " must be set to 'tesseract' or 'paddle'.",
+        )
+    return ocr_agent
