@@ -48,7 +48,6 @@
 * **Fix a bug in Table partitioning** Previously the `skip_infer_table_types` variable used in `partition` was not being passed down to specific file partitioners. Now you can utilize the `skip_infer_table_types` list variable when calling `partition` to specify the filetypes for which you want to skip table extraction, or the `infer_table_structure` boolean variable on the file specific partitioning function.
 * **Fix partition docx without sections** Some docx files, like those from teams output, do not contain sections and it would produce no results because the code assumes all components are in sections. Now if no sections is detected from a document we iterate through the paragraphs and return contents found in the paragraphs.
 
->>>>>>> 135aa65906109c06540cffc5c8e0815f5e9f2a1c
 ## 0.10.25
 
 ### Enhancements
@@ -373,7 +372,6 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 ### Fixes
 
 * Fix a bug where `xy-cut` sorting attemps to sort elements without valid coordinates; now xy cut sorting only works when **all** elements have valid coordinates
->>>>>>> a2af72bb79d94941f867d93dfeaed9c4a5d510f7
 
 ## 0.10.10
 
