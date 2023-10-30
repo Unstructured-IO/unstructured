@@ -23,3 +23,8 @@ $(REQUIREMENTSTXT): %.txt: %.in base.txt constraints.in
 # only depends on their own .in and constraits.in
 $(constraint_dependent): %.txt: %.in constraints.in
 	$(PIP)
+
+.PHONY: clean
+
+clean:
+	rm $(REQUIREMENTSTXT)
