@@ -17,6 +17,7 @@ permissions:
 
 jobs:
   test_azure:
+    environment: ci
     runs-on: ubuntu-latest
     steps:
     - name: 'Az CLI login'
