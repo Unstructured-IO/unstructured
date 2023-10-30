@@ -18,6 +18,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition import ocr, pdf, strategies
+from unstructured.partition.pdf import get_uris_from_annots
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
@@ -1104,3 +1105,48 @@ def test_ocr_language_passes_through(strategy, ocr_func):
     kwargs = mock_ocr_func.call_args.kwargs
     assert "lang" in kwargs
     assert kwargs["lang"] == "kor"
+
+
+@pytest.mark.parametrize(
+    ("annots", "height", "coordinate_system", "page_number", "expected"),
+    [
+        (["BS", "BE"], 300, PixelSpace(300, 300), 1, 0),
+        (
+            [
+                {
+                    "Type": "/'Annot'",
+                    "Subtype": "/'Link'",
+                    "A": {
+                        "Type": "/'Action'",
+                        "S": "/'URI'",
+                        "URI": "b'https://layout-parser.github.io'",
+                    },
+                    "BS": {"S": "/'S'", "W": 1},
+                    "Border": [0, 0, 1],
+                    "C": [0, 1, 1],
+                    "H": "/'I'",
+                    "Rect": [304.055, 224.156, 452.472, 234.368],
+                },
+                {
+                    "Type": "/'Annot'",
+                    "Subtype": "/'Link'",
+                    "A": {"S": "/'GoTo'", "D": "b'cite.harley2015evaluation'"},
+                    "BS": {"S": "/'S'", "W": 1},
+                    "Border": [0, 0, 1],
+                    "C": [0, 1, 0],
+                    "H": "/'I'",
+                    "Rect": [468.305, 128.081, 480.26, 136.494],
+                },
+            ],
+            792,
+            PixelSpace(612, 792),
+            1,
+            2,
+        ),
+    ],
+)
+def test_get_uris_from_annots_string_annotation(
+    annots, height, coordinate_system, page_number, expected
+):
+    annotation_list = get_uris_from_annots(annots, height, coordinate_system, page_number)
+    assert len(annotation_list) == expected
