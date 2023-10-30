@@ -113,9 +113,12 @@ class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
             Path(self.read_config.download_dir) / f"{self.get_filename_prefix()}.html"
         ).resolve()
 
-    @SourceConnectionNetworkError.wrap
     @property
     def text(self):
+        return self._get_html()
+
+    @SourceConnectionNetworkError.wrap
+    def _get_html(self):
         return self.page.html()
 
     @property
@@ -131,9 +134,12 @@ class WikipediaIngestTextDoc(WikipediaIngestDoc):
     def filename(self) -> Path:
         return (Path(self.read_config.download_dir) / f"{self.get_filename_prefix()}.txt").resolve()
 
-    @SourceConnectionNetworkError.wrap
     @property
     def text(self):
+        return self._get_content()
+
+    @SourceConnectionNetworkError.wrap
+    def _get_content(self):
         return self.page.content
 
     @property
@@ -151,9 +157,12 @@ class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
             Path(self.read_config.download_dir) / f"{self.get_filename_prefix()}-summary.txt"
         ).resolve()
 
-    @SourceConnectionNetworkError.wrap
     @property
     def text(self):
+        return self._get_summary()
+
+    @SourceConnectionNetworkError.wrap
+    def _get_summary(self):
         return self.page.summary
 
     @property
