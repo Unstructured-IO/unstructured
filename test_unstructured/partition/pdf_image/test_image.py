@@ -260,7 +260,10 @@ def test_partition_image_default_strategy_hi_res():
     assert isinstance(elements[idx].metadata.detection_class_prob, float)
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
         # A bug in partition_groups_from_regions in unstructured-inference losses some sources
-        assert {element.metadata.detection_origin for element in elements} == {"yolox", None}
+        assert {element.metadata.detection_origin for element in elements} == {
+            "yolox",
+            "ocr_tesseract",
+        }
 
 
 def test_partition_image_metadata_date(
@@ -415,7 +418,7 @@ def test_partition_image_with_ocr_has_coordinates_from_filename(
 ):
     elements = image.partition_image(filename=filename, strategy="ocr_only")
     int_coordinates = [(int(x), int(y)) for x, y in elements[0].metadata.coordinates.points]
-    assert int_coordinates == [(14, 36), (14, 16), (381, 16), (381, 36)]
+    assert int_coordinates == [(14, 16), (14, 37), (381, 37), (381, 16)]
 
 
 @pytest.mark.parametrize(

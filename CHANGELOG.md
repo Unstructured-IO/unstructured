@@ -6,8 +6,15 @@
 * **Add table structure evaluation helpers** Adds functions to evaluate the similarity between predicted table structure and actual table structure.
 * **Use `yolox` by default for table extraction when partitioning pdf/image** `yolox` model provides higher recall of the table regions than the quantized version and it is now the default element detection model when `infer_table_structure=True` for partitioning pdf/image files
 * **Remove pdfminer elements from inside tables** Previously, when using `hi_res` some elements where extracted using pdfminer too, so we removed pdfminer from the tables pipeline to avoid duplicated elements.
+* **Fsspec downstream connectors** New destination connector added to ingest CLI, users may now use `unstructured-ingest` to write to any of the following:
+  * Azure
+  * Box
+  * Dropbox
+  * Google Cloud Service
 
 ### Features
+
+* **Update `ocr_only` strategy in `partition_pdf()`** Adds the functionality to get accurate coordinate data when partitioning PDFs and Images with the `ocr_only` strategy.
 
 ### Fixes
 
