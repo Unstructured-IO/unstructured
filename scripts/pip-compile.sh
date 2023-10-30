@@ -11,3 +11,5 @@ fi
 pushd ./requirements || exit
 make ./*.txt
 popd || exit
+
+cp requirements/build.txt docs/requirements.txt
