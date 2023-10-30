@@ -66,10 +66,7 @@ class MockPageLayout(layout.PageLayout):
     def __init__(self, number: int, image: Image):
         self.number = number
         self.image = image
-
-    @property
-    def elements(self):
-        return [
+        self.elements = [
             layout.LayoutElement.from_coords(
                 type="Title",
                 x1=0,
@@ -133,7 +130,11 @@ def test_partition_pdf_local_raises_with_no_filename():
     ("strategy", "expected", "origin"),
     # fast: can't capture the "intentionally left blank page" page
     # others: will ignore the actual blank page
-    [("fast", {1, 4}, "pdfminer"), ("hi_res", {1, 3, 4}, "pdf"), ("ocr_only", {1, 3, 4}, "ocr")],
+    [
+        ("fast", {1, 4}, {"pdfminer"}),
+        ("hi_res", {1, 3, 4}, {"yolox", "pdfminer"}),
+        ("ocr_only", {1, 3, 4}, {"ocr"}),
+    ],
 )
 def test_partition_pdf(
     file_mode,
@@ -154,7 +155,7 @@ def test_partition_pdf(
                 expected_origin = f"{origin}_{ocr_agent}"
             else:
                 expected_origin = origin
-            assert {element.metadata.detection_origin for element in result} == {expected_origin}
+            assert {element.metadata.detection_origin for element in result} == expected_origin
 
     if file_mode == "filename":
         result = pdf.partition_pdf(filename=filename, strategy=strategy)
