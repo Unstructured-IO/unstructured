@@ -267,7 +267,9 @@ def _split_elements_by_title_and_table(
 
 
 def _metadata_differs(
-    element: Element, preceding_element: Element, ignore_page_numbers: bool
+    element: Element,
+    preceding_element: Element,
+    ignore_page_numbers: bool,
 ) -> bool:
     """True when metadata differences between two elements indicate a semantic boundary.
 

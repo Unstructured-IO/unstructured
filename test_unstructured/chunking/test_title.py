@@ -692,7 +692,7 @@ def test_it_considers_separator_length_when_sectioning():
         CompositeElement(
             "Chunking Priorities"
             "\n\nDivide text into manageable chunks"
-            "\n\nPreserve semantic boundaries"
+            "\n\nPreserve semantic boundaries",
         ),
         CompositeElement("Minimize mid-text chunk-splitting"),
     ]
@@ -753,8 +753,8 @@ class Describe_TextSectionBuilder:
         builder.add_element(
             Text(
                 "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
-                "lectus porta volutpat."
-            )
+                "lectus porta volutpat.",
+            ),
         )
         assert builder.text_length == 112
         assert builder.remaining_space == 36
@@ -765,8 +765,8 @@ class Describe_TextSectionBuilder:
         builder.add_element(
             Text(
                 "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
-                "lectus porta volutpat."
-            )
+                "lectus porta volutpat.",
+            ),
         )
 
         section = next(builder.flush())
