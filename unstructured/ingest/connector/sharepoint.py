@@ -374,11 +374,8 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         base_site_client = self.connector_config.get_site_client()
 
         if not all(
-            [  # noqa: C419
-                value
-                for key, value in self.connector_config.permissions_config.to_dict().items()
-                if key in ["application_id", "client_cred", "tenant"]
-            ],
+            getattr(self.connector_config.permissions_config, attr, False)
+            for attr in ["application_id", "client_cred", "tenant"]
         ):
             logger.info(
                 "Permissions config is not fed with 'application_id', 'client_cred' and 'tenant'."
