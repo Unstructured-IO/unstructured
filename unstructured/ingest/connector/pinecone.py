@@ -17,16 +17,6 @@ from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 
-@requires_dependencies(["pinecone"], extras="pinecone")
-def create_pinecone_object(api_key, index_name, environment):
-    import pinecone
-
-    pinecone.init(api_key=api_key, environment=environment)
-    index = pinecone.Index(index_name)
-    logger.debug(f"Connected to index: {pinecone.describe_index(index_name)}")
-    return index
-
-
 @dataclass
 class PineconeSessionHandle(BaseSessionHandle):
     service: "pinecone.Index"  # noqa: F821
@@ -41,8 +31,17 @@ class PineconeWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixi
     # with the bug, session handle gets created for each batch,
     # rather than with each process
 
+    @requires_dependencies(["pinecone"], extras="pinecone")
+    def create_pinecone_object(self, api_key, index_name, environment):
+        import pinecone
+
+        pinecone.init(api_key=api_key, environment=environment)
+        index = pinecone.Index(index_name)
+        logger.debug(f"Connected to index: {pinecone.describe_index(index_name)}")
+        return index
+
     def create_session_handle(self) -> PineconeSessionHandle:
-        service = create_pinecone_object(self.api_key, self.index_name, self.environment)
+        service = self.create_pinecone_object(self.api_key, self.index_name, self.environment)
         return PineconeSessionHandle(service=service)
 
     @requires_dependencies(["pinecone"], extras="pinecone")

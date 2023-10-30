@@ -8,6 +8,7 @@ OUTPUT_FOLDER_NAME=s3-pinecone-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
+max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 if [ -z "$OPENAI_API_KEY" ] && [ -z "$PINECONE_API_KEY" ]; then
    echo "Skipping Pinecone ingest test because neither OPENAI_API_KEY nor PINECONE_API_KEY env vars are set."
@@ -86,16 +87,14 @@ else
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-  s3 \
-  --download-dir "$DOWNLOAD_DIR" \
+  local \
+  --num-processes "$max_processes" \
   --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-  --strategy fast \
-  --preserve-downloads \
-  --reprocess \
   --output-dir "$OUTPUT_DIR" \
+  --strategy fast \
   --verbose \
-  --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
-  --anonymous \
+  --reprocess \
+  --input-path example-docs/book-war-and-peace-1p.txt \
   --work-dir "$WORK_DIR" \
   --chunk-elements \
   --chunk-multipage-sections \
@@ -113,7 +112,7 @@ num_of_vectors_remote=$(curl --request POST \
      --header "content-type: application/json" \
      --header "Api-Key: $PINECONE_API_KEY" | jq -r '.totalVectorCount')
 
-EXPECTED=79
+EXPECTED=3
 if [ "$num_of_vectors_remote" -ne $EXPECTED ];then
   echo "Number of vectors in Pinecone are $num_of_vectors_remote when the expected number is $EXPECTED. Test failed."
   exit 1
