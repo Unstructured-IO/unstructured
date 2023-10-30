@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import os
 import pathlib
 from unittest.mock import patch
