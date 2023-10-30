@@ -1,3 +1,4 @@
+import dataclasses as dc
 import json
 from functools import partial
 
@@ -12,6 +13,7 @@ from unstructured.documents.coordinates import (
 )
 from unstructured.documents.elements import (
     UUID,
+    ConsolidationStrategy,
     CoordinatesMetadata,
     Element,
     ElementMetadata,
@@ -230,3 +232,14 @@ def test_metadata_from_dict_extra_fields():
     assert "new_field" not in metadata_dict
     assert "new_field" not in metadata_dict["coordinates"]
     assert "new_field" not in metadata_dict["data_source"]
+
+
+def test_there_is_a_consolidation_strategy_for_every_ElementMetadata_field():
+    metadata_field_names = sorted(f.name for f in dc.fields(ElementMetadata))
+    consolidation_strategies = ConsolidationStrategy.field_consolidation_strategies()
+
+    for field_name in metadata_field_names:
+        assert field_name in consolidation_strategies, (
+            f"ElementMetadata field `.{field_name}` does not have a consolidation strategy."
+            f" Add one in `ConsolidationStrategy.field_consolidation_strategies()."
+        )
