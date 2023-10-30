@@ -9,12 +9,16 @@ cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_DIR=$SCRIPT_DIR/structured-output-eval
 mkdir -p "$OUTPUT_DIR"
 
+EVAL_NAME="$1"
+
 # Download cct test from s3
 BUCKET_NAME=utic-dev-tech-fixtures
-FOLDER_NAME=small-cct
+FOLDER_NAME=small-eval-"$EVAL_NAME"
 SOURCE_DIR=$SCRIPT_DIR/gold-standard/$FOLDER_NAME
 mkdir -p "$SOURCE_DIR"
-# aws s3 cp "s3://$BUCKET_NAME/$FOLDER_NAME" "$SOURCE_DIR" --recursive --no-sign-request --region us-east-2
+aws s3 cp "s3://$BUCKET_NAME/$FOLDER_NAME" "$SOURCE_DIR" --recursive --no-sign-request --region us-east-2
+
+EXPORT_DIR="$SCRIPT_DIR"/metrics
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -44,24 +48,20 @@ OUTPUT_LIST=(
 )
 # List selected source as a subset of SOURCE_DIR, if any
 SOURCE_LIST=(
-'IRS-form-1987.pdf.txt'
-'handbook-1p.docx.txt'
 )
 
-EXPORT_DIR="$SCRIPT_DIR"/metrics
+if [ "$EVAL_NAME" == "text-extraction" ]; then
+  STRATEGY="measure-text-edit-distance"
+elif [ "$EVAL_NAME" == "element-type" ]; then
+  STRATEGY="measure-element-type-accuracy"
+else
+  echo "Wrong evaluation strategy given. Expected one of [ text-extraction, element-type ]. Got [ $EVAL_NAME ]."
+  exit 1
+fi
 
 output_args=($(generate_args "output" "$OUTPUT_DIR" "${OUTPUT_LIST[@]}"))
 source_args=($(generate_args "source" "$SOURCE_DIR" "${SOURCE_LIST[@]}"))
 
 PYTHONPATH=. ./unstructured/ingest/evaluate.py \
-    measure-text-edit-distance \
-    "${output_args[@]}" \
-    "${source_args[@]}" \
+    $STRATEGY "${output_args[@]}" "${source_args[@]}" \
     --export_dir "$EXPORT_DIR"
-
-# ELEMENT_TYPE_DIR="$SCRIPT_DIR"/expected-structured-output
-# PYTHONPATH=. ./unstructured/ingest/evaluate.py \
-#     measure-element-type-accuracy \
-#     --output_dir "$OUTPUT_DIR" \
-#     --source_dir "$ELEMENT_TYPE_DIR" \
-#     --export_dir "$EXPORT_DIR"

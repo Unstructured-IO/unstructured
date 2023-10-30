@@ -640,4 +640,5 @@ TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "Field-Name": Title,
     "Value": NarrativeText,
     "Link": NarrativeText,
+    "CompositeElement": Text,
 }

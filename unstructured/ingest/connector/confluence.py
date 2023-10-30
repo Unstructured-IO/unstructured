@@ -62,9 +62,9 @@ def scroll_wrapper(func):
 
         for _ in range(num_iterations):
             response = func(*args, **kwargs)
-            if type(response) is list:
+            if isinstance(response, list):
                 all_results += func(*args, **kwargs)
-            elif type(response) is dict:
+            elif isinstance(response, dict):
                 all_results += func(*args, **kwargs)["results"]
 
             kwargs["start"] += kwargs["limit"]

@@ -5,7 +5,13 @@ from typing import List
 import pytest
 
 from unstructured.chunking.title import (
+    _NonTextSection,
+    _SectionCombiner,
     _split_elements_by_title_and_table,
+    _TableSection,
+    _TextSection,
+    _TextSectionAccumulator,
+    _TextSectionBuilder,
     chunk_by_title,
 )
 from unstructured.documents.coordinates import CoordinateSystem
@@ -15,6 +21,7 @@ from unstructured.documents.elements import (
     CoordinatesMetadata,
     Element,
     ElementMetadata,
+    ListItem,
     RegexMetadata,
     Table,
     Text,
@@ -30,7 +37,8 @@ def test_it_rejects_max_characters_not_greater_than_zero(max_characters: int):
     elements: List[Element] = [Text("Lorem ipsum dolor.")]
 
     with pytest.raises(
-        ValueError, match=f"'max_characters' argument must be > 0, got {max_characters}"
+        ValueError,
+        match=f"'max_characters' argument must be > 0, got {max_characters}",
     ):
         chunk_by_title(elements, max_characters=max_characters)
 
@@ -55,7 +63,8 @@ def test_it_rejects_combine_text_under_n_chars_for_n_less_than_zero(n_chars: int
     elements: List[Element] = [Text("Lorem ipsum dolor.")]
 
     with pytest.raises(
-        ValueError, match=f"'combine_text_under_n_chars' argument must be >= 0, got {n_chars}"
+        ValueError,
+        match=f"'combine_text_under_n_chars' argument must be >= 0, got {n_chars}",
     ):
         chunk_by_title(elements, combine_text_under_n_chars=n_chars)
 
@@ -98,7 +107,8 @@ def test_it_rejects_new_after_n_chars_for_n_less_than_zero(n_chars: int):
     elements: List[Element] = [Text("Lorem ipsum dolor.")]
 
     with pytest.raises(
-        ValueError, match=f"'new_after_n_chars' argument must be >= 0, got {n_chars}"
+        ValueError,
+        match=f"'new_after_n_chars' argument must be >= 0, got {n_chars}",
     ):
         chunk_by_title(elements, new_after_n_chars=n_chars)
 
@@ -187,37 +197,48 @@ def test_split_elements_by_title_and_table():
         Text("It is storming outside."),
         CheckBox(),
     ]
+
     sections = _split_elements_by_title_and_table(
         elements,
         multipage_sections=True,
-        combine_text_under_n_chars=0,
         new_after_n_chars=500,
         max_characters=500,
     )
 
-    assert sections == [
-        [
-            Title("A Great Day"),
-            Text("Today is a great day."),
-            Text("It is sunny outside."),
-        ],
-        [
-            Table("<table></table>"),
-        ],
-        [
-            Title("An Okay Day"),
-            Text("Today is an okay day."),
-            Text("It is rainy outside."),
-        ],
-        [
-            Title("A Bad Day"),
-            Text("Today is a bad day."),
-            Text("It is storming outside."),
-        ],
-        [
-            CheckBox(),
-        ],
+    section = next(sections)
+    assert isinstance(section, _TextSection)
+    assert section.elements == [
+        Title("A Great Day"),
+        Text("Today is a great day."),
+        Text("It is sunny outside."),
     ]
+    # --
+    section = next(sections)
+    assert isinstance(section, _TableSection)
+    assert section.table == Table("<table></table>")
+    # ==
+    section = next(sections)
+    assert isinstance(section, _TextSection)
+    assert section.elements == [
+        Title("An Okay Day"),
+        Text("Today is an okay day."),
+        Text("It is rainy outside."),
+    ]
+    # --
+    section = next(sections)
+    assert isinstance(section, _TextSection)
+    assert section.elements == [
+        Title("A Bad Day"),
+        Text("Today is a bad day."),
+        Text("It is storming outside."),
+    ]
+    # --
+    section = next(sections)
+    assert isinstance(section, _NonTextSection)
+    assert section.element == CheckBox()
+    # --
+    with pytest.raises(StopIteration):
+        next(sections)
 
 
 def test_chunk_by_title():
@@ -654,3 +675,475 @@ def test_chunk_by_title_drops_extra_metadata():
     )
 
     assert str(chunks[1]) == str(CompositeElement("An Okay Day\n\nToday is an okay day."))
+
+
+def test_it_considers_separator_length_when_sectioning():
+    """Sectioner includes length of separators when computing remaining space."""
+    elements: List[Element] = [
+        Title("Chunking Priorities"),  # 19 chars
+        ListItem("Divide text into manageable chunks"),  # 34 chars
+        ListItem("Preserve semantic boundaries"),  # 28 chars
+        ListItem("Minimize mid-text chunk-splitting"),  # 33 chars
+    ]  # 114 chars total but 120 chars with separators
+
+    chunks = chunk_by_title(elements, max_characters=115)
+
+    assert chunks == [
+        CompositeElement(
+            "Chunking Priorities"
+            "\n\nDivide text into manageable chunks"
+            "\n\nPreserve semantic boundaries",
+        ),
+        CompositeElement("Minimize mid-text chunk-splitting"),
+    ]
+
+
+# == Sections ====================================================================================
+
+
+class Describe_NonTextSection:
+    """Unit-test suite for `unstructured.chunking.title._NonTextSection objects."""
+
+    def it_provides_access_to_its_element(self):
+        checkbox = CheckBox()
+        section = _NonTextSection(checkbox)
+        assert section.element is checkbox
+
+
+class Describe_TableSection:
+    """Unit-test suite for `unstructured.chunking.title._TableSection objects."""
+
+    def it_provides_access_to_its_table(self):
+        table = Table("<table></table>")
+        section = _TableSection(table)
+        assert section.table is table
+
+
+class Describe_TextSection:
+    """Unit-test suite for `unstructured.chunking.title._TextSection objects."""
+
+    def it_provides_access_to_its_elements(self):
+        elements: List[Element] = [
+            Title("Introduction"),
+            Text(
+                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
+                "lectus porta volutpat.",
+            ),
+        ]
+        section = _TextSection(elements)
+        assert section.elements == elements
+
+
+class Describe_TextSectionBuilder:
+    """Unit-test suite for `unstructured.chunking.title._TextSectionBuilder`."""
+
+    def it_is_empty_on_construction(self):
+        builder = _TextSectionBuilder(maxlen=50)
+
+        assert builder.text_length == 0
+        assert builder.remaining_space == 50
+
+    def it_accumulates_elements_added_to_it(self):
+        builder = _TextSectionBuilder(maxlen=150)
+
+        builder.add_element(Title("Introduction"))
+        assert builder.text_length == 12
+        assert builder.remaining_space == 136
+
+        builder.add_element(
+            Text(
+                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
+                "lectus porta volutpat.",
+            ),
+        )
+        assert builder.text_length == 112
+        assert builder.remaining_space == 36
+
+    def it_generates_a_TextSection_when_flushed_and_resets_itself_to_empty(self):
+        builder = _TextSectionBuilder(maxlen=150)
+        builder.add_element(Title("Introduction"))
+        builder.add_element(
+            Text(
+                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
+                "lectus porta volutpat.",
+            ),
+        )
+
+        section = next(builder.flush())
+
+        assert isinstance(section, _TextSection)
+        assert section.elements == [
+            Title("Introduction"),
+            Text(
+                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
+                "lectus porta volutpat.",
+            ),
+        ]
+        assert builder.text_length == 0
+        assert builder.remaining_space == 150
+
+    def but_it_does_not_generate_a_TextSection_on_flush_when_empty(self):
+        builder = _TextSectionBuilder(maxlen=150)
+
+        sections = list(builder.flush())
+
+        assert sections == []
+        assert builder.text_length == 0
+        assert builder.remaining_space == 150
+
+    def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
+        builder = _TextSectionBuilder(maxlen=50)
+        builder.add_element(Text("abcde"))
+        builder.add_element(Text("fghij"))
+
+        # -- .text_length includes a separator ("\n\n", len==2) between each text-segment,
+        # -- so 5 + 2 + 5 = 12 here, not 5 + 5 = 10
+        assert builder.text_length == 12
+        # -- .remaining_space is reduced by the length (2) of the trailing separator which would go
+        # -- between the current text and that of the next element if one was added.
+        # -- So 50 - 12 - 2 = 36 here, not 50 - 12 = 38
+        assert builder.remaining_space == 36
+
+
+# == SectionCombiner =============================================================================
+
+
+class Describe_SectionCombiner:
+    """Unit-test suite for `unstructured.chunking.title._SectionCombiner`."""
+
+    def it_combines_sequential_small_text_sections(self):
+        sections = [
+            _TextSection(
+                [
+                    Title("Lorem Ipsum"),  # 11
+                    Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
+                ]
+            ),
+            _TextSection(
+                [
+                    Title("Mauris Nec"),  # 10
+                    Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
+                ]
+            ),
+            _TextSection(
+                [
+                    Title("Sed Orci"),  # 8
+                    Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
+                ]
+            ),
+        ]
+
+        section_iter = _SectionCombiner(
+            sections, maxlen=250, combine_text_under_n_chars=250
+        ).iter_combined_sections()
+
+        section = next(section_iter)
+        assert isinstance(section, _TextSection)
+        assert section._elements == [
+            Title("Lorem Ipsum"),
+            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+            Title("Mauris Nec"),
+            Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
+            Title("Sed Orci"),
+            Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),
+        ]
+        with pytest.raises(StopIteration):
+            next(section_iter)
+
+    def but_it_does_not_combine_table_or_non_text_sections(self):
+        sections = [
+            _TextSection(
+                [
+                    Title("Lorem Ipsum"),
+                    Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+                ]
+            ),
+            _TableSection(Table("<table></table>")),
+            _TextSection(
+                [
+                    Title("Mauris Nec"),
+                    Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
+                ]
+            ),
+            _NonTextSection(CheckBox()),
+            _TextSection(
+                [
+                    Title("Sed Orci"),
+                    Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),
+                ]
+            ),
+        ]
+
+        section_iter = _SectionCombiner(
+            sections, maxlen=250, combine_text_under_n_chars=250
+        ).iter_combined_sections()
+
+        section = next(section_iter)
+        assert isinstance(section, _TextSection)
+        assert section._elements == [
+            Title("Lorem Ipsum"),
+            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+        ]
+        # --
+        section = next(section_iter)
+        assert isinstance(section, _TableSection)
+        assert section.table == Table("<table></table>")
+        # --
+        section = next(section_iter)
+        assert isinstance(section, _TextSection)
+        assert section._elements == [
+            Title("Mauris Nec"),
+            Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
+        ]
+        # --
+        section = next(section_iter)
+        assert isinstance(section, _NonTextSection)
+        assert section.element == CheckBox()
+        # --
+        section = next(section_iter)
+        assert isinstance(section, _TextSection)
+        assert section._elements == [
+            Title("Sed Orci"),
+            Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),
+        ]
+        # --
+        with pytest.raises(StopIteration):
+            next(section_iter)
+
+    def it_respects_the_specified_combination_threshold(self):
+        sections = [
+            _TextSection(  # 68
+                [
+                    Title("Lorem Ipsum"),  # 11
+                    Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
+                ]
+            ),
+            _TextSection(  # 71
+                [
+                    Title("Mauris Nec"),  # 10
+                    Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
+                ]
+            ),
+            # -- len == 139
+            _TextSection(
+                [
+                    Title("Sed Orci"),  # 8
+                    Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
+                ]
+            ),
+        ]
+
+        section_iter = _SectionCombiner(
+            sections, maxlen=250, combine_text_under_n_chars=80
+        ).iter_combined_sections()
+
+        section = next(section_iter)
+        assert isinstance(section, _TextSection)
+        assert section._elements == [
+            Title("Lorem Ipsum"),
+            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+            Title("Mauris Nec"),
+            Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
+        ]
+        # --
+        section = next(section_iter)
+        assert isinstance(section, _TextSection)
+        assert section._elements == [
+            Title("Sed Orci"),
+            Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),
+        ]
+        # --
+        with pytest.raises(StopIteration):
+            next(section_iter)
+
+    def it_respects_the_hard_maximum_window_length(self):
+        sections = [
+            _TextSection(  # 68
+                [
+                    Title("Lorem Ipsum"),  # 11
+                    Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
+                ]
+            ),
+            _TextSection(  # 71
+                [
+                    Title("Mauris Nec"),  # 10
+                    Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
+                ]
+            ),
+            # -- len == 139
+            _TextSection(
+                [
+                    Title("Sed Orci"),  # 8
+                    Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
+                ]
+            ),
+            # -- len == 214
+        ]
+
+        section_iter = _SectionCombiner(
+            sections, maxlen=200, combine_text_under_n_chars=200
+        ).iter_combined_sections()
+
+        section = next(section_iter)
+        assert isinstance(section, _TextSection)
+        assert section._elements == [
+            Title("Lorem Ipsum"),
+            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+            Title("Mauris Nec"),
+            Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
+        ]
+        # --
+        section = next(section_iter)
+        assert isinstance(section, _TextSection)
+        assert section._elements == [
+            Title("Sed Orci"),
+            Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),
+        ]
+        # --
+        with pytest.raises(StopIteration):
+            next(section_iter)
+
+    def it_accommodates_and_isolates_an_oversized_section(self):
+        """Such as occurs when a single element exceeds the window size."""
+
+        sections = [
+            _TextSection([Title("Lorem Ipsum")]),
+            _TextSection(  # 179
+                [
+                    Text(
+                        "Lorem ipsum dolor sit amet consectetur adipiscing elit."  # 55
+                        " Mauris nec urna non augue vulputate consequat eget et nisi."  # 60
+                        " Sed orci quam, eleifend sit amet vehicula, elementum ultricies."  # 64
+                    )
+                ]
+            ),
+            _TextSection([Title("Vulputate Consequat")]),
+        ]
+
+        section_iter = _SectionCombiner(
+            sections, maxlen=150, combine_text_under_n_chars=150
+        ).iter_combined_sections()
+
+        section = next(section_iter)
+        assert isinstance(section, _TextSection)
+        assert section._elements == [Title("Lorem Ipsum")]
+        # --
+        section = next(section_iter)
+        assert isinstance(section, _TextSection)
+        assert section._elements == [
+            Text(
+                "Lorem ipsum dolor sit amet consectetur adipiscing elit."
+                " Mauris nec urna non augue vulputate consequat eget et nisi."
+                " Sed orci quam, eleifend sit amet vehicula, elementum ultricies."
+            )
+        ]
+        # --
+        section = next(section_iter)
+        assert isinstance(section, _TextSection)
+        assert section._elements == [Title("Vulputate Consequat")]
+        # --
+        with pytest.raises(StopIteration):
+            next(section_iter)
+
+
+class Describe_TextSectionAccumulator:
+    """Unit-test suite for `unstructured.chunking.title._TextSectionAccumulator`."""
+
+    def it_is_empty_on_construction(self):
+        accum = _TextSectionAccumulator(maxlen=100)
+
+        assert accum.text_length == 0
+        assert accum.remaining_space == 100
+
+    def it_accumulates_sections_added_to_it(self):
+        accum = _TextSectionAccumulator(maxlen=500)
+
+        accum.add_section(
+            _TextSection(
+                [
+                    Title("Lorem Ipsum"),
+                    Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+                ]
+            )
+        )
+        assert accum.text_length == 68
+        assert accum.remaining_space == 430
+
+        accum.add_section(
+            _TextSection(
+                [
+                    Title("Mauris Nec"),
+                    Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
+                ]
+            )
+        )
+        assert accum.text_length == 141
+        assert accum.remaining_space == 357
+
+    def it_generates_a_TextSection_when_flushed_and_resets_itself_to_empty(self):
+        accum = _TextSectionAccumulator(maxlen=150)
+        accum.add_section(
+            _TextSection(
+                [
+                    Title("Lorem Ipsum"),
+                    Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+                ]
+            )
+        )
+        accum.add_section(
+            _TextSection(
+                [
+                    Title("Mauris Nec"),
+                    Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
+                ]
+            )
+        )
+        accum.add_section(
+            _TextSection(
+                [
+                    Title("Sed Orci"),
+                    Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies quam."),
+                ]
+            )
+        )
+
+        section_iter = accum.flush()
+
+        # -- iterator generates exactly one section --
+        section = next(section_iter)
+        with pytest.raises(StopIteration):
+            next(section_iter)
+        # -- and it is a _TextSection containing all the elements --
+        assert isinstance(section, _TextSection)
+        assert section._elements == [
+            Title("Lorem Ipsum"),
+            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+            Title("Mauris Nec"),
+            Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
+            Title("Sed Orci"),
+            Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies quam."),
+        ]
+        assert accum.text_length == 0
+        assert accum.remaining_space == 150
+
+    def but_it_does_not_generate_a_TextSection_on_flush_when_empty(self):
+        accum = _TextSectionAccumulator(maxlen=150)
+
+        sections = list(accum.flush())
+
+        assert sections == []
+        assert accum.text_length == 0
+        assert accum.remaining_space == 150
+
+    def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
+        accum = _TextSectionAccumulator(maxlen=100)
+        accum.add_section(_TextSection([Text("abcde")]))
+        accum.add_section(_TextSection([Text("fghij")]))
+
+        # -- .text_length includes a separator ("\n\n", len==2) between each text-segment,
+        # -- so 5 + 2 + 5 = 12 here, not 5 + 5 = 10
+        assert accum.text_length == 12
+        # -- .remaining_space is reduced by the length (2) of the trailing separator which would
+        # -- go between the current text and that of the next section if one was added.
+        # -- So 100 - 12 - 2 = 86 here, not 100 - 12 = 88
+        assert accum.remaining_space == 86

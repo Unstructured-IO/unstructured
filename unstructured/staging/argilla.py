@@ -35,7 +35,7 @@ def stage_for_argilla(
         )
 
     for record_kwarg_key, record_kwarg_value in record_kwargs.items():
-        if type(record_kwarg_value) is not list or len(record_kwarg_value) != len(elements):
+        if not isinstance(record_kwarg_value, list) or len(record_kwarg_value) != len(elements):
             raise ValueError(
                 f'Invalid value specified for "{record_kwarg_key}" keyword argument.'
                 " Must be of type list and same length as elements list.",
