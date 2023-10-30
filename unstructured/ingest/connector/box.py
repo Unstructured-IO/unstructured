@@ -61,6 +61,7 @@ class BoxSourceConnector(FsspecSourceConnector):
         self.ingest_doc_cls: t.Type[BoxIngestDoc] = BoxIngestDoc
 
 
+@requires_dependencies(["boxfs", "fsspec"], extras="box")
 @dataclass
 class BoxDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleBoxConfig
