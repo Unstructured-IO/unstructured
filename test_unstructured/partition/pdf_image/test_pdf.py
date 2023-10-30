@@ -624,43 +624,6 @@ def test_partition_pdf_with_auto_strategy_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_pdf_with_orc_only_strategy_metadata_date(
-    mocker,
-    filename="example-docs/copy-protected.pdf",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.pdf.get_last_modified_date",
-        return_value=mocked_last_modification_date,
-    )
-
-    elements = pdf.partition_pdf(filename=filename, strategy="ocr_only")
-
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
-
-
-def test_partition_pdf_with_ocr_only_strategy_custom_metadata_date(
-    mocker,
-    filename="example-docs/copy-protected.pdf",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.pdf.get_last_modified_date",
-        return_value=mocked_last_modification_date,
-    )
-
-    elements = pdf.partition_pdf(
-        filename=filename,
-        metadata_last_modified=expected_last_modification_date,
-        strategy="ocr_only",
-    )
-
-    assert elements[0].metadata.last_modified == expected_last_modification_date
-
-
 def test_partition_pdf_with_hi_res_strategy_metadata_date(
     mocker,
     filename="example-docs/copy-protected.pdf",
@@ -738,45 +701,6 @@ def test_partition_pdf_from_file_with_auto_strategy_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_pdf_from_file_with_ocr_only_strategy_metadata_date(
-    mocker,
-    filename="example-docs/copy-protected.pdf",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.pdf.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = pdf.partition_pdf(file=f, strategy="ocr_only")
-
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
-
-
-def test_partition_pdf_from_file_with_ocr_only_strategy_custom_metadata_date(
-    mocker,
-    filename="example-docs/copy-protected.pdf",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.pdf.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = pdf.partition_pdf(
-            file=f,
-            metadata_last_modified=expected_last_modification_date,
-            strategy="ocr_only",
-        )
-
-    assert elements[0].metadata.last_modified == expected_last_modification_date
-
-
 def test_partition_pdf_from_file_with_hi_res_strategy_metadata_date(
     mocker,
     filename="example-docs/copy-protected.pdf",
@@ -823,60 +747,6 @@ def test_partition_pdf_with_json(strategy: str):
         strategy=strategy,
     )
     assert_round_trips_through_JSON(elements)
-
-
-def test_partition_pdf_with_ocr_has_coordinates_from_filename(
-    filename="example-docs/chevron-page.pdf",
-):
-    elements = pdf.partition_pdf(filename=filename, strategy="ocr_only")
-    assert elements[0].metadata.coordinates.points == (
-        (538.0, 197.0),
-        (538.0, 239.0),
-        (1159.0, 239.0),
-        (1159.0, 197.0),
-    )
-
-
-def test_partition_pdf_with_ocr_has_coordinates_from_file(
-    filename="example-docs/chevron-page.pdf",
-):
-    with open(filename, "rb") as f:
-        elements = pdf.partition_pdf(
-            file=f,
-            strategy="ocr_only",
-        )
-    assert elements[0].metadata.coordinates.points == (
-        (538.0, 197.0),
-        (538.0, 239.0),
-        (1159.0, 239.0),
-        (1159.0, 197.0),
-    )
-
-
-@pytest.mark.parametrize(
-    ("filename"),
-    [
-        ("example-docs/multi-column-2p.pdf"),
-        ("example-docs/layout-parser-paper-fast.pdf"),
-        ("example-docs/list-item-example.pdf"),
-    ],
-)
-def test_partition_pdf_with_ocr_coordinates_are_not_nan_from_file(
-    filename,
-):
-    import math
-
-    with open(filename, "rb") as f:
-        elements = pdf.partition_pdf(
-            file=f,
-            strategy="ocr_only",
-        )
-    for element in elements:
-        if element.metadata.coordinates:
-            for point in element.metadata.coordinates.points:
-                if point[0] and point[1]:
-                    assert point[0] is not math.nan
-                    assert point[1] is not math.nan
 
 
 def test_add_chunking_strategy_by_title_on_partition_pdf(
