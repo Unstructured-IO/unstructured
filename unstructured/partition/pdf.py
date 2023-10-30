@@ -984,12 +984,8 @@ def get_uris_from_annots(
     """
     annotation_list = []
     for annotation in annots:
-        annotation_dict = try_resolve(annotation)
-        if (
-            not isinstance(annotation_dict, dict)
-            or str(annotation_dict["Subtype"]) != "/'Link'"
-            or "A" not in annotation_dict
-        ):
+        annotation_dict = try_resolve(annotation) if isinstance(try_resolve(annotation), dict) else None
+        if not annotation_dict or str(annotation_dict["Subtype"]) != "/'Link'" or "A" not in annotation_dict:
             continue
         x1, y1, x2, y2 = rect_to_bbox(annotation_dict["Rect"], height)
         uri_dict = try_resolve(annotation_dict["A"])
