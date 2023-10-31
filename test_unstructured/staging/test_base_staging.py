@@ -107,7 +107,11 @@ def test_convert_to_dataframe_maintains_fields(
     assert "regex_metadata_punc" in df.columns
 
 
-def test_dataframe_dtypes():
+def test_default_pandas_dtypes():
+    """
+    Make sure that all the values that can exist on an element have a corresponding dtype
+    mapped in the dict returned by get_default_pandas_dtypes()
+    """
     full_element = Text(
         text="some text",
         element_id="123",
@@ -166,7 +170,7 @@ def test_dataframe_dtypes():
         ),
     )
     flattened_element_keys = element_as_dict.keys()
-    default_dtypes = base.get_default_dtypes()
+    default_dtypes = base.get_default_pandas_dtypes()
     dtype_keys = default_dtypes.keys()
     for key in flattened_element_keys:
         assert key in dtype_keys

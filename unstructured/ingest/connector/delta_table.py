@@ -20,7 +20,7 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.ingest.utils.table import convert_to_df
+from unstructured.ingest.utils.table import convert_to_pandas_dataframe
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -175,7 +175,7 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         from deltalake.writer import write_deltalake
 
-        df = convert_to_df(
+        df = convert_to_pandas_dataframe(
             elements_dict=elements_dict,
             drop_empty_cols=self.write_config.drop_empty_cols,
         )
