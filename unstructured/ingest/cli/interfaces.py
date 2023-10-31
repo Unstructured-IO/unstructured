@@ -257,13 +257,40 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
+                ["--pdf-infer-table-structure"],
+                default=False,
+                help="If set to True, partition will include the table's text "
+                "content in the response.",
+            ),
+            click.Option(
+                ["--strategy"],
+                default="auto",
+                help="The method that will be used to process the documents. "
+                "Default: auto. Other strategies include `fast` and `hi_res`.",
+            ),
+            click.Option(
+                ["--ocr-languages"],
+                default=None,
+                type=DelimitedString(delimiter="+"),
+                help="A list of language packs to specify which languages to use for OCR, "
+                "separated by '+' e.g. 'eng+deu' to use the English and German language packs. "
+                "The appropriate Tesseract "
+                "language pack needs to be installed.",
+            ),
+            click.Option(
+                ["--encoding"],
+                default=None,
+                help="Text encoding to use when reading documents. By default the encoding is "
+                "detected automatically.",
+            ),
+            click.Option(
                 ["--skip-infer-table-types"],
                 type=DelimitedString(),
                 default=None,
                 help="Optional list of document types to skip table extraction on",
             ),
             click.Option(
-                ["--partition-args"],
+                ["--additional-partition-args"],
                 type=Dict(),
                 help="A json string representation of values to pass through to partition()",
             ),
