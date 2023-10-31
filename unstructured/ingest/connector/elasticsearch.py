@@ -5,7 +5,7 @@ import typing as t
 from dataclasses import dataclass
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -105,6 +105,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         concatenated_values = seperator.join(values)
         return concatenated_values
 
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def _get_document(self):
         from elasticsearch import Elasticsearch, NotFoundError
