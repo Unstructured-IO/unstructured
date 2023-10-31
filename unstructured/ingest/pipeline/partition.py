@@ -42,7 +42,8 @@ class Partitioner(PartitionNode):
                 partition_kwargs[
                     "skip_infer_table_types"
                 ] = self.partition_config.skip_infer_table_types
-            partition_kwargs.update(self.partition_config.additional_partition_args)
+            if self.partition_config.additional_partition_args:
+                partition_kwargs.update(self.partition_config.additional_partition_args)
             elements = doc.process_file(
                 partition_config=self.partition_config,
                 **partition_kwargs,
