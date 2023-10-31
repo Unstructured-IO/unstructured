@@ -284,7 +284,7 @@ def _pstdev(scores: List[float], rounding: Optional[int] = 3):
 
 
 def _read_text(path):
-    with open(path, errors='ignore') as f:
+    with open(path, errors="ignore") as f:
         text = f.read()
     return text
 
