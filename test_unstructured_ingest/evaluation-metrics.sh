@@ -59,8 +59,8 @@ else
   exit 1
 fi
 
-output_args=($(generate_args "output" "$OUTPUT_DIR" "${OUTPUT_LIST[@]}"))
-source_args=($(generate_args "source" "$SOURCE_DIR" "${SOURCE_LIST[@]}"))
+read -ra output_args <<< "$(generate_args "output" "$OUTPUT_DIR" "${OUTPUT_LIST[@]}")"
+read -ra source_args <<< "$(generate_args "source" "$SOURCE_DIR" "${SOURCE_LIST[@]}")"
 
 PYTHONPATH=. ./unstructured/ingest/evaluate.py \
     $STRATEGY "${output_args[@]}" "${source_args[@]}" \
