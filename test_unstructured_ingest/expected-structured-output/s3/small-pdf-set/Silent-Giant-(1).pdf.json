@@ -1,7 +1,7 @@
 [
   {
     "type": "Title",
-    "element_id": "80f1cd7f1c8e281093a32842b1e5bbce",
+    "element_id": "aa4363293f53f7ddce768de3cffad5fd",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -15,7 +15,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "WORLD NUCLEAR"
+    "text": "WORLD NUCLEAR ASSOCIATION"
   },
   {
     "type": "Title",
@@ -52,24 +52,6 @@
       "page_number": 1
     },
     "text": "The need for nuclear in a clean energy system"
-  },
-  {
-    "type": "Title",
-    "element_id": "14547603bad3329c14c74b8c4e2ff8d9",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": "177372694731575984083482917563244941766",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "//s88ciation"
   },
   {
     "type": "Title",
@@ -1780,24 +1762,6 @@
       "page_number": 10
     },
     "text": "v"
-  },
-  {
-    "type": "Title",
-    "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": "177372694731575984083482917563244941766",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "vi"
   },
   {
     "type": "Title",

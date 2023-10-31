@@ -61,13 +61,13 @@
   },
   {
     "type": "Title",
-    "element_id": "c21a7f75a507e8d1d940e30b66575616",
+    "element_id": "77b037daa0a8a3f7349bd57dda36499f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "(Jee"
+    "text": "(eee"
   },
   {
     "type": "Title",
@@ -521,13 +521,13 @@
   },
   {
     "type": "Image",
-    "element_id": "aa4f0eca72d0603d384878e68fe5be57",
+    "element_id": "49a00a0a6ec09851e8dc48e1f6ae9c9a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "5 1 os = — 10; =o ° © —\" 205 i —~é é —ip a5 — Control -2 — & 2.5 T T T 0.0000001 + —-0.00001 0.001 O14 Current Density (A/cm2)"
+    "text": "15 1 os = =—= 10; =o = ag 2-05 H ; == 63 é i co — Control 2 — es 25 T T 0.0000001 0.00001 0.001 01 Current Density (A/cm2)"
   },
   {
     "type": "FigureCaption",
@@ -601,13 +601,13 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "e2b6d7e2ab125149fa820500cedfffbb",
+    "element_id": "703d48bc1a51d2fba6944bed5387dbd9",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "—=—Cc/0"
+    "text": "—=—c/0"
   },
   {
     "type": "FigureCaption",
@@ -631,13 +631,13 @@
   },
   {
     "type": "Image",
-    "element_id": "273fb301b173075f79b2cbdab962e2ff",
+    "element_id": "b4a5a7123f1ab91cbc96abf70b6ceaee",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEM HV: Q0KY WD: 14.89 rmrm ‘9EM MAO: 209 x Det: DOE Pectomsence In nanospact"
+    "text": "SEM HY) 20.0 KY ‘BEM MAO: 209 x i Pectomnence In nanos pact"
   },
   {
     "type": "FigureCaption",
@@ -648,6 +648,16 @@
       "page_number": 5
     },
     "text": "Fig. 6. SEM/EDX image of as-received stainless steel."
+  },
+  {
+    "type": "Image",
+    "element_id": "35331178949af7a8542278750d627c9f",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "Semny. z00mv | wD. 1924 enn"
   },
   {
     "type": "FigureCaption",
@@ -661,13 +671,13 @@
   },
   {
     "type": "Image",
-    "element_id": "520d1da08c86ce165cd2843e2dc27f98",
+    "element_id": "56bc6fa6a121a9316384be03142ab28b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEMHV: 20.0KV WD: 15.54 mm EM ING: ACO x Dei: OSE"
+    "text": "SEM HY: 20.0KU BEM IMAG: 400 x 106 om"
   },
   {
     "type": "FigureCaption",
@@ -738,6 +748,16 @@
       "page_number": 6
     },
     "text": "Austenitic stainless steel Type 316 was used in this study with chemical composition reported in [1,2]. The chemicals used were of annular grade. The inhibitor concentrations are in the range of 2, 4, 6, 8 and 10 g [3–5]. The structural formula of egg shell powder is shown in Fig. 9."
+  },
+  {
+    "type": "Image",
+    "element_id": "d609d2c5b6a4076ab7f088fdc43c99a1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "HO Oo Mo Oo 5 On, NHCOCH, 6a ee ot HO : a z oH H,;COCHNY OH"
   },
   {
     "type": "FigureCaption",

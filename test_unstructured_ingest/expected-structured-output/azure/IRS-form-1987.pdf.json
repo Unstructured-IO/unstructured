@@ -210,7 +210,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7e3ae97a65f12ef0bb8b4d6b5f721f54",
+    "element_id": "d3c76e8e037d3aec863db1d768b81f6d",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -225,7 +225,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "filing taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115),"
+    "text": "filing taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115)."
   },
   {
     "type": "Title",
@@ -286,7 +286,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "6272a6df76820c927d081a1041e3c079",
+    "element_id": "09b6ca64a47ec648eebb7eada93fa9b8",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -301,7 +301,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes !n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of income attributable to the sale or furnishing of utility services no later than the year In which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these"
+    "text": "Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes !n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of income attributable to the sale or furnishing of utility services no later than the year in which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these"
   },
   {
     "type": "Title",
@@ -324,7 +324,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "faf2673a7d6b6f7c5bf7cae6770a4130",
+    "element_id": "2558b74f05465749e2cc1b0de11ee0c5",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -339,7 +339,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Generally, applicants must complete Section In addition, complete the appropriate sections (B-1 through H) for which a change Is desired."
+    "text": "Generally, applicants must complete Section \\n addition, complete the appropriate sections (B-1 through H) for which a change Is desired."
   },
   {
     "type": "UncategorizedText",
@@ -381,7 +381,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "10626f80b0f7b25e661f8f82f5d7c454",
+    "element_id": "e20bc44cd2b2835c2a309c456be82dc9",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -396,7 +396,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "State whether you desire a conference in National Office if the Service proposes to disapprove your application."
+    "text": "State whether you desire a conference In National Office if the Service proposes to disapprove your application."
   },
   {
     "type": "Title",
@@ -438,7 +438,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "582deac2def308ecc5250773e1683052",
+    "element_id": "75931e4615ac2cd0d33588f5975aa7a0",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -453,11 +453,11 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Uniform capitalization rules and limitation on cash method.—If you are required to change your method of accounting under section,263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change 1s treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustrnents into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required."
+    "text": "Uniform capitalization rules and limitation on cash method.—If you are required to change your method of accounting under section,263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change is treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustrnents into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required."
   },
   {
     "type": "NarrativeText",
-    "element_id": "550f9e99054c657264fb9bb26d3023de",
+    "element_id": "5109bb5c3ab0b7dc4b0c9bb275247942",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -472,7 +472,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Disregard the instructions under Time and Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method—Section 448\"). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information."
+    "text": "Disregard the instructions under Time and Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method—Section 448”). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information."
   },
   {
     "type": "Title",
@@ -628,7 +628,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "02dd043b5686a46b2f03cfe8cf56aae9",
+    "element_id": "1428cc32bdf8d7392786ef9630d5daf9",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -643,7 +643,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "If your application is filed after the 180-day period, it is late. The application will be considered for processing only upon a showing of “good cause” and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev, Proc. 79-63."
+    "text": "If your application is filed after the 180-day period, it 1s late. The application will be considered for processing only upon a showing of “good cause” and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev, Proc. 79-63."
   },
   {
     "type": "Title",
@@ -970,7 +970,7 @@
   },
   {
     "type": "Title",
-    "element_id": "bc272940e494acf9441070d3eb4b79f6",
+    "element_id": "a0737d07378e89036492defafc860548",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -985,11 +985,11 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Section A"
+    "text": "SectionA"
   },
   {
     "type": "NarrativeText",
-    "element_id": "b57b7502430c59194bb865cfa1bcfab5",
+    "element_id": "e4531883faa7e004becf12eea88e2e93",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1004,7 +1004,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Item 5a, page 1.—“Taxable income or (loss) from operations” is to be entered before application of any net operating loss deduction under section 172(a)."
+    "text": "Item 5a, page 1.—“Taxable income or (loss) from operations\" is to be entered before application of any net operating loss deduction under section 172(a)."
   },
   {
     "type": "NarrativeText",
@@ -1255,7 +1255,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e4a695ea83818204438fe08add6d1554",
+    "element_id": "22f1f56cebad656f2e080d96ab1da5e9",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1270,7 +1270,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Item 1b, page 2.—Include any amounts reported as income ina prior year although the income had not been accrued (earned) or received in the prior year; for example, discount on installment loans reported as income for the year in which the loans were made instead of for the year or years in which the income was received or earned. Advance payments under Rev. Proc. 71-21 or Regulations section 1.451-5 must be fully explained and all pertinent information must be submitted with this application."
+    "text": "Item 1b, page 2.—Include any amounts reported as income in a prior year although the income had not been accrued (earned) or received in the prior year; for example, discount on installment loans reported as income for the year in which the loans were made instead of for the year or years in which the income was received or earned. Advance payments under Rev. Proc. 71-21 or Regulations section 1.451-5 must be fully explained and all pertinent information must be submitted with this application."
   },
   {
     "type": "Title",
@@ -1331,7 +1331,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "69bd87b2ad5873c030748e62adf61b89",
+    "element_id": "533c003f8c3c91f55bc6e92b8449dc08",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1346,7 +1346,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "(1) Farming businesses.—F or this purpose, the term “farming business” 1s defined in section 263A(e)(4), but it also includes the raising, harvesting, or growing of trees to which section 263A(c)(5) applies. Notwithstanding this exception, section 447 requires certain C corporations and partnerships with a C corporation as a partner to use the accrual method."
+    "text": "(1) Farming businesses.—For this purpose, the term “farming business” 1s defined in section 263A(e)(4), but it also includes the raising, harvesting, or growing of trees to which section 263A(c)(5) applies. Notwithstanding this exception, section 447 requires certain C corporations and partnerships with a C corporation as a partner to use the accrual method."
   },
   {
     "type": "NarrativeText",
@@ -1445,7 +1445,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "b68a5b5b0d59122e0df42a96d68d2b5e",
+    "element_id": "70534ac4ff130ce79a513a8fdd0586f1",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1460,7 +1460,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "(3) Entities with gross receipts of $5,000,000 or less. —To qualify for this exception, the C corporation's or partnership’s annual average gross receipts for the three years ending with the prior tax year may not exceed $5,000,000. If the corporation or partnership was not in existence for the entire 3-year period, the period of existence is used to determine whether the corporation or partnership qualifies. If any tax year in the 3-year period is a short tax year, the corporation or partnership must annualize the gross receipts by multiplying the gross receipts by 12 and dividing the result by the number of months in the short period."
+    "text": "(3) Entities with gross receipts of $5,000,000 or less.—To qualify for this exception, the C corporation's or partnership’s annual average gross receipts for the three years ending with the prior tax year may not exceed $5,000,000. If the corporation or partnership was not in existence for the entire 3-year period, the period of existence Is used to determine whether the corporation or partnership qualifies. If any tax year in the 3-year period is a short tax year, the corporation or partnership must annualize the gross receipts by multiplying the gross receipts by 12 and dividing the result by the number of months in the short period."
   },
   {
     "type": "NarrativeText",
@@ -1521,7 +1521,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7e90b155b5cdb2481b1dfbb1118142c5",
+    "element_id": "a7e2248cba71efc769b4e1a5d38129d2",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1536,7 +1536,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Inventories of retail merchants.—The retail method of pricing inventories does not contemplate valuation of goods at the retail selling price. The retail selling price of goods on hand must be reduced to approximate cost or cost or market, whichever Is lower, by the adjustments required in Regulations section 1.471-8."
+    "text": "Inventories of retail merchants.—The retail method of pricing inventories does not contemplate valuation of goods at the retail selling price. The retail selling price of goods on hand must be reduced to approximate cost or cost or market, whichever is lower, by the adjustments required in Regulations section 1.471-8."
   },
   {
     "type": "NarrativeText",
@@ -1920,7 +1920,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "b8355dc568ea042f9da586188b404bca",
+    "element_id": "d1ac7a5e8fcfc8f68043fcf3b47a84a9",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1935,7 +1935,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Rev. Proc. 74-11 provides a procedure whereby applicants are considered to have obtained the consent of the Commissioner to change their method of accounting for depreciation. You must file Form 3115 with the Service Center where your return will be filed within the first 180 days of the tax year in which it is desired to make the change. Attach a copy of the form to the income tax return for the tax year of the change."
+    "text": "Rev. Proc. 74-11 provides a procedure whereby applicants are considered to have obtained the consent of the Commissioner to change their method of accounting for depreciation. You must file Form 3115 with the Service Center where your return will be filed within the first 180 days of the tax year In which it is desired to make the change. Attach a copy of the form to the income tax return for the tax year of the change."
   },
   {
     "type": "NarrativeText",
@@ -1996,7 +1996,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "86d11953bb813a770ecd242ff97d4e43",
+    "element_id": "16be8056dead49d2cdf618d7effe64b7",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -2011,6 +2011,6 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "If you are making an election under section 458, show the applicable information under Regulations section 1.458-10."
+    "text": "lf you are making an election under section 458, show the applicable information under Regulations section 1.458-10."
   }
 ]
