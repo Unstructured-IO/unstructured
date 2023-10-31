@@ -250,7 +250,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     """
 
     connector_config: SimpleJiraConfig
-    file_meta: JiraFileMeta
+    file_meta: t.Optional[JiraFileMeta] = None
     registry_name: str = "jira"
 
     @cached_property

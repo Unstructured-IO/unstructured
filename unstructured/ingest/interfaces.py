@@ -655,6 +655,7 @@ class ConfigSessionHandleMixin:
         session related resources across all document handling for a given subprocess."""
 
 
+@dataclass
 class IngestDocSessionHandleMixin:
     connector_config: ConfigSessionHandleMixin
     _session_handle: t.Optional[BaseSessionHandle] = None
