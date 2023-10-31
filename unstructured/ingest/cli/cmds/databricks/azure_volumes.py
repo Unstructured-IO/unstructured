@@ -13,11 +13,11 @@ from unstructured.ingest.interfaces import BaseConfig
 
 @dataclass
 class DatabricksAzureVolumesAuthCliConfig(BaseConfig, CliMixin):
-    azure_resource_id: t.Optional[str]
-    azure_client_secret: t.Optional[str]
-    azure_client_id: t.Optional[str]
-    azure_tenant_id: t.Optional[str]
-    azure_environment: t.Optional[str]
+    azure_resource_id: t.Optional[str] = None
+    azure_client_secret: t.Optional[str] = None
+    azure_client_id: t.Optional[str] = None
+    azure_tenant_id: t.Optional[str] = None
+    azure_environment: t.Optional[str] = None
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
@@ -25,27 +25,32 @@ class DatabricksAzureVolumesAuthCliConfig(BaseConfig, CliMixin):
             click.Option(
                 ["--azure-resource-id"],
                 type=str,
+                default=None,
                 help="The Azure Resource Manager ID for the Azure Databricks workspace, "
                 "which is exchanged for a Databricks host URL.",
             ),
             click.Option(
                 ["--azure-client-secret"],
                 type=str,
+                default=None,
                 help="The Azure AD service principal’s client secret.",
             ),
             click.Option(
                 ["--azure-client-id"],
                 type=str,
+                default=None,
                 help="The Azure AD service principal’s application ID.",
             ),
             click.Option(
                 ["--azure-tenant-id"],
                 type=str,
+                default=None,
                 help="The Azure AD service principal’s tenant ID.",
             ),
             click.Option(
                 ["--azure-environment"],
                 type=str,
+                default=None,
                 help="The Azure environment type (such as Public, UsGov, China, and Germany) "
                 "for a specific set of API endpoints. Defaults to PUBLIC.",
             ),

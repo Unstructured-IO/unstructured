@@ -13,11 +13,11 @@ from unstructured.ingest.interfaces import BaseConfig
 
 @dataclass
 class DatabricksVolumesCliConfig(BaseConfig, CliMixin):
-    host: t.Optional[str]
-    account_id: t.Optional[str]
-    token: t.Optional[str]
-    username: t.Optional[str]
-    password: t.Optional[str]
+    host: t.Optional[str] = None
+    account_id: t.Optional[str] = None
+    token: t.Optional[str] = None
+    username: t.Optional[str] = None
+    password: t.Optional[str] = None
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
@@ -25,12 +25,14 @@ class DatabricksVolumesCliConfig(BaseConfig, CliMixin):
             click.Option(
                 ["--host"],
                 type=str,
+                default=None,
                 help="The Databricks host URL for either the Databricks workspace "
                 "endpoint or the Databricks accounts endpoint.",
             ),
             click.Option(
                 ["--account-id"],
                 type=str,
+                default=None,
                 help="The Databricks account ID for the Databricks accounts endpoint. "
                 "Only has effect when Host is either "
                 "https://accounts.cloud.databricks.com/ (AWS), "
@@ -40,19 +42,21 @@ class DatabricksVolumesCliConfig(BaseConfig, CliMixin):
             click.Option(
                 ["--token"],
                 type=str,
+                default=None,
                 help="The Databricks personal access token (PAT) (AWS, Azure, and GCP) "
                 "or Azure Active Directory (Azure AD) token (Azure).",
             ),
             click.Option(
                 ["--username"],
-                default=None,
                 type=str,
+                default=None,
                 help="The Databricks username part of basic authentication. "
                 "Only possible when Host is *.cloud.databricks.com (AWS).",
             ),
             click.Option(
                 ["--password"],
                 type=str,
+                default=None,
                 help="The Databricks password part of basic authentication. "
                 "Only possible when Host is *.cloud.databricks.com (AWS).",
             ),
