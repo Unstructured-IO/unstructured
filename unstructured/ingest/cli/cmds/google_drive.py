@@ -1,6 +1,5 @@
 import typing as t
 from dataclasses import dataclass
-from pathlib import Path
 
 import click
 
@@ -12,7 +11,7 @@ from unstructured.ingest.interfaces import BaseConfig
 @dataclass
 class GoogleDriveCliConfig(BaseConfig, CliMixin):
     drive_id: str
-    service_account_key: t.Union[dict, Path]
+    service_account_key: t.Union[dict, str]
     extension: t.Optional[str] = None
 
     @staticmethod

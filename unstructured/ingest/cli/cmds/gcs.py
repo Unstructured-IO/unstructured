@@ -1,6 +1,5 @@
 import typing as t
 from dataclasses import dataclass
-from pathlib import Path
 
 import click
 
@@ -13,7 +12,7 @@ CMD_NAME = "gcs"
 
 @dataclass
 class GcsCliConfig(BaseConfig, CliMixin):
-    service_account_key: t.Optional[t.Union[dict, Path]] = None
+    service_account_key: t.Optional[t.Union[dict, str]] = None
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:

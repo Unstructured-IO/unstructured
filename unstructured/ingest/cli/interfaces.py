@@ -34,7 +34,7 @@ class FileOrJson(click.ParamType):
         # check if valid file
         full_path = os.path.abspath(os.path.expanduser(value))
         if os.path.isfile(full_path):
-            return Path(full_path)
+            return str(Path(full_path).resolve())
         if isinstance(value, str):
             try:
                 return json.loads(value)
