@@ -84,7 +84,7 @@ class PartitionConfig(BaseConfig):
     flatten_metadata: bool = False
     metadata_exclude: t.List[str] = field(default_factory=list)
     metadata_include: t.List[str] = field(default_factory=list)
-    partition_endpoint: t.Optional[str] = None
+    partition_endpoint: t.Optional[str] = "https://api.unstructured.io/general/v0/general"
     partition_by_api: bool = False
     api_key: t.Optional[str] = None
 
@@ -655,6 +655,7 @@ class ConfigSessionHandleMixin:
         session related resources across all document handling for a given subprocess."""
 
 
+@dataclass
 class IngestDocSessionHandleMixin:
     connector_config: ConfigSessionHandleMixin
     _session_handle: t.Optional[BaseSessionHandle] = None

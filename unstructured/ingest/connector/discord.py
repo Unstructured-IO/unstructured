@@ -4,7 +4,7 @@ import typing as t
 from dataclasses import dataclass
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -67,6 +67,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(dependencies=["discord"], extras="discord")
     def _get_messages(self):
         """Actually fetches the data from discord."""

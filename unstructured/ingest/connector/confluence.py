@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -111,6 +111,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             "page_id": self.document_meta.document_id,
         }
 
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(["atlassian"], extras="Confluence")
     def _get_page(self):
         from atlassian import Confluence

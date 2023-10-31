@@ -40,7 +40,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess \
     --output-dir "$OUTPUT_DIR" \
     --verbose \
-    --token "$GCP_INGEST_SERVICE_KEY_FILE" \
+    --service-account-key "$GCP_INGEST_SERVICE_KEY_FILE" \
     --recursive \
     --remote-url gs://utic-test-ingest-fixtures/ \
     --work-dir "$WORK_DIR"
