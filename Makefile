@@ -260,7 +260,7 @@ export UNSTRUCTURED_INCLUDE_DEBUG_METADATA ?= false
 .PHONY: test
 test:
 	PYTHONPATH=. CI=$(CI) \
-	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
 
 .PHONY: test-unstructured-api-unit
 test-unstructured-api-unit:
@@ -340,7 +340,7 @@ check-flake8:
 
 .PHONY: check-ruff
 check-ruff:
-	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --ignore COM812,PT011,PT012,SIM117
+	ruff . --select C4,COM,E,F,I,PLR0402,PT,SIM,UP015,UP018,UP032,UP034 --ignore COM812,PT011,PT012,SIM117
 
 .PHONY: check-autoflake
 check-autoflake:
@@ -362,7 +362,7 @@ check-version:
 ## tidy:                    run black
 .PHONY: tidy
 tidy:
-	ruff . --select I,UP015,UP032,UP034,UP018,COM,C4,PT,SIM,PLR0402 --fix-only || true
+	ruff . --select C4,COM,E,F,I,PLR0402,PT,SIM,UP015,UP018,UP032,UP034 --fix-only --ignore COM812,PT011,PT012,SIM117 || true
 	autoflake --in-place .
 	black  .
 

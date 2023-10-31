@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -62,9 +62,9 @@ def scroll_wrapper(func):
 
         for _ in range(num_iterations):
             response = func(*args, **kwargs)
-            if type(response) is list:
+            if isinstance(response, list):
                 all_results += func(*args, **kwargs)
-            elif type(response) is dict:
+            elif isinstance(response, dict):
                 all_results += func(*args, **kwargs)["results"]
 
             kwargs["start"] += kwargs["limit"]
@@ -111,6 +111,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             "page_id": self.document_meta.document_id,
         }
 
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(["atlassian"], extras="Confluence")
     def _get_page(self):
         from atlassian import Confluence

@@ -155,7 +155,7 @@
   },
   {
     "type": "Title",
-    "element_id": "3aaabff05e0eb86a34fc7d72e421f2e0",
+    "element_id": "c3f2c80e9cd96953dc1abb477c61dfbc",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
@@ -168,7 +168,7 @@
       "filetype": "image/jpeg",
       "page_number": 1
     },
-    "text": "ea wwe"
+    "text": "wwe"
   },
   {
     "type": "ListItem",
@@ -205,25 +205,8 @@
     "text": "model = lp. Detectron2LayoutModel ("
   },
   {
-    "type": "Title",
-    "element_id": "ec4c180151f7ee4a36de276d970797e3",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "image/jpeg",
-      "page_number": 1
-    },
-    "text": "//PubLayNet/faster_rcnn_R_50_FPN_3x/config\")"
-  },
-  {
     "type": "ListItem",
-    "element_id": "2941b46b1dc3845b1d5dd2856df4bb67",
+    "element_id": "a647b916460ee5c705d0d2bb911e5804",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
@@ -236,7 +219,7 @@
       "filetype": "image/jpeg",
       "page_number": 1
     },
-    "text": "\"lp:"
+    "text": "ea \"lp: //PubLayNet/faster_rcnn_R_50_FPN_3x/config\")"
   },
   {
     "type": "ListItem",

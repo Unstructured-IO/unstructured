@@ -9,6 +9,11 @@ cd "$SCRIPT_DIR"/.. || exit 1
 export OMP_THREAD_LIMIT=1
 
 all_tests=(
+'test-ingest-azure-dest.sh'
+'test-ingest-box-dest.sh'
+'test-ingest-dropbox-dest.sh'
+'test-ingest-gcs-dest.sh'
+'test-ingest-s3-dest.sh'
 'test-ingest-s3.sh'
 'test-ingest-s3-minio.sh'
 'test-ingest-azure.sh'
@@ -44,6 +49,7 @@ all_tests=(
 'test-ingest-jira.sh'
 'test-ingest-sharepoint.sh'
 'test-ingest-weaviate.sh'
+'test-ingest-sharepoint-with-permissions.sh'
 'test-ingest-embed.sh'
 )
 
@@ -98,6 +104,13 @@ for test in "${all_tests[@]}"; do
   fi
 done
 
-echo "--------- RUNNING SCRIPT evaluation-metrics.sh ---------"
-./test_unstructured_ingest/evaluation-metrics.sh
-echo "--------- FINISHED SCRIPT evaluation-metrics.sh ---------"
+all_eval=(
+  'text-extraction'
+  'element-type'
+)
+for eval in "${all_eval[@]}"; do
+  CURRENT_TEST="$eval"
+  echo "--------- RUNNING SCRIPT $eval ---------"
+  ./test_unstructured_ingest/evaluation-metrics.sh "$eval"
+  echo "--------- FINISHED SCRIPT $eval ---------"
+done
