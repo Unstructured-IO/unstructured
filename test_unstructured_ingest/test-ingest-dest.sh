@@ -9,11 +9,17 @@ cd "$SCRIPT_DIR"/.. || exit 1
 export OMP_THREAD_LIMIT=1
 
 all_tests=(
-'azure.sh'
-'box.sh'
-'dropbox.sh'
-'gcs.sh'
-'s3.sh'
+  'azure'
+  'box'
+  'dropbox'
+  'gcs'
+  's3'
+)
+
+full_python_matrix_tests=(
+  'azure'
+  'gcs'
+  's3'
 )
 
 CURRENT_TEST="none"
@@ -26,10 +32,22 @@ function print_last_run() {
 
 trap print_last_run EXIT
 
-tests_to_ignore=()
+python_version=$(python --version 2>&1)
+
+tests_to_ignore=(
+  'notion.sh'
+  'dropbox.sh'
+  'sharepoint.sh'
+)
 
 for test in "${all_tests[@]}"; do
   CURRENT_TEST="$test"
+  # IF: python_version is not 3.10 (wildcarded to match any subminor version) AND the current test is not in full_python_matrix_tests
+  # Note: to test we expand the full_python_matrix_tests array to a string and then regex match the current test
+  if [[ "$python_version" != "Python 3.10"* ]] && [[ ! "${full_python_matrix_tests[*]}" =~ $test ]] ; then
+    echo "--------- SKIPPING SCRIPT $test ---------"
+    continue
+  fi
   if [[ "${tests_to_ignore[*]}" =~ $test ]]; then
     echo "--------- RUNNING SCRIPT $test --- IGNORING FAILURES"
     set +e
