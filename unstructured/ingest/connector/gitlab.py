@@ -7,7 +7,7 @@ from unstructured.ingest.connector.git import (
     GitSourceConnector,
     SimpleGitConfig,
 )
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import SourceMetadata
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -55,6 +55,7 @@ class GitLabIngestDoc(GitIngestDoc):
     def source_url(self) -> t.Optional[str]:
         return None
 
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(["gitlab"], extras="gitlab")
     def _fetch_content(self):
         from gitlab.exceptions import GitlabHttpError

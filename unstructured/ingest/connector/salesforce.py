@@ -19,7 +19,7 @@ from textwrap import dedent
 
 from dateutil import parser  # type: ignore
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -149,13 +149,16 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
         return dedent(eml)
 
-    def get_record(self) -> OrderedDict:
+    @SourceConnectionNetworkError.wrap
+    def _get_response(self):
         client = self.connector_config.get_client()
-
-        # Get record from Salesforce based on id
-        response = client.query_all(
+        return client.query_all(
             f"select FIELDS(STANDARD) from {self.record_type} where Id='{self.record_id}'",
         )
+
+    def get_record(self) -> OrderedDict:
+        # Get record from Salesforce based on id
+        response = self._get_response()
         logger.debug(f"response from salesforce record request: {response}")
         records = response["records"]
         if not records:

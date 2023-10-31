@@ -2,14 +2,14 @@ import io
 import json
 import os
 import typing as t
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from mimetypes import guess_extension
 from pathlib import Path
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -26,6 +26,7 @@ from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
     from googleapiclient.discovery import Resource as GoogleAPIResource
+    from googleapiclient.http import MediaIoBaseDownload
 
 FILE_FORMAT = "{id}-{name}{ext}"
 DIRECTORY_FORMAT = "{id}-{name}"
@@ -85,7 +86,7 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     # Google Drive Specific Options
     drive_id: str
     service_account_key: str
-    extension: t.Optional[str]
+    extension: t.Optional[str] = None
     recursive: bool = False
 
     def __post_init__(self):
@@ -105,7 +106,7 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 @dataclass
 class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
     connector_config: SimpleGoogleDriveConfig
-    meta: t.Dict[str, str]
+    meta: t.Dict[str, str] = field(default_factory=dict)
     registry_name: str = "google_drive"
 
     @property
@@ -167,11 +168,17 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
             exists=True,
         )
 
+    @SourceConnectionNetworkError.wrap
+    def _run_downloader(self, downloader: "MediaIoBaseDownload") -> bool:
+        downloaded = False
+        while downloaded is False:
+            _, downloaded = downloader.next_chunk()
+        return downloaded
+
     @requires_dependencies(["googleapiclient"], extras="google-drive")
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        from googleapiclient.errors import HttpError
         from googleapiclient.http import MediaIoBaseDownload
 
         if self.meta.get("mimeType", "").startswith("application/vnd.google-apps"):
@@ -195,12 +202,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
         file = io.BytesIO()
         downloader = MediaIoBaseDownload(file, request)
         self.update_source_metadata()
-        downloaded = False
-        try:
-            while downloaded is False:
-                _, downloaded = downloader.next_chunk()
-        except HttpError:
-            pass
+        downloaded = self._run_downloader(downloader=downloader)
 
         saved = False
         if downloaded and file:
