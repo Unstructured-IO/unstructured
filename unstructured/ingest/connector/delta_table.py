@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
@@ -95,18 +95,22 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        import pyarrow.parquet as pq
-
         fs = self._get_fs_from_uri()
         self.update_source_metadata(fs=fs)
         logger.info(f"using a {fs} filesystem to collect table data")
         self._create_full_tmp_dir_path()
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
-        df: pd.DataFrame = pq.ParquetDataset(self.uri, filesystem=fs).read_pandas().to_pandas()
+        df = self._get_df(filesystem=fs)
 
         logger.info(f"writing {len(df)} rows to {self.filename}")
         df.to_csv(self.filename)
+
+    @SourceConnectionNetworkError.wrap
+    def _get_df(self, filesystem) -> pd.DataFrame:
+        import pyarrow.parquet as pq
+
+        return pq.ParquetDataset(self.uri, filesystem=filesystem).read_pandas().to_pandas()
 
 
 @dataclass

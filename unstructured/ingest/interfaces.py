@@ -84,7 +84,7 @@ class PartitionConfig(BaseConfig):
     flatten_metadata: bool = False
     metadata_exclude: t.List[str] = field(default_factory=list)
     metadata_include: t.List[str] = field(default_factory=list)
-    partition_endpoint: t.Optional[str] = None
+    partition_endpoint: t.Optional[str] = "https://api.unstructured.io/general/v0/general"
     partition_by_api: bool = False
     api_key: t.Optional[str] = None
 
@@ -130,6 +130,13 @@ class FsspecConfig(FileStorageConfig):
         if match and self.protocol == "dropbox":
             self.dir_path = " "
             self.file_path = ""
+            return
+
+        # dropbox paths can start with slash
+        match = re.match(rf"{self.protocol}:///([^/\s]+?)/([^\s]*)", self.remote_url)
+        if match and self.protocol == "dropbox":
+            self.dir_path = match.group(1)
+            self.file_path = match.group(2) or ""
             return
 
         # just a path with no trailing prefix
@@ -331,6 +338,15 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
             download_path = str(Path(self.read_config.download_dir).resolve())
             full_path = str(self.filename)
             base_path = full_path.replace(download_path, "")
+            return base_path
+        return None
+
+    @property
+    def base_output_filename(self) -> t.Optional[str]:
+        if self.processor_config.output_dir and self._output_filename:
+            output_path = str(Path(self.processor_config.output_dir).resolve())
+            full_path = str(self._output_filename)
+            base_path = full_path.replace(output_path, "")
             return base_path
         return None
 
@@ -639,6 +655,7 @@ class ConfigSessionHandleMixin:
         session related resources across all document handling for a given subprocess."""
 
 
+@dataclass
 class IngestDocSessionHandleMixin:
     connector_config: ConfigSessionHandleMixin
     _session_handle: t.Optional[BaseSessionHandle] = None
