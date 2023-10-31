@@ -324,21 +324,6 @@ jobs:
     steps:
     # actions/checkout MUST come before auth
     - uses: 'actions/checkout@v4'
-    - name: 'Google Cloud Auth'
-      uses: 'google-github-actions/auth@v1'
-      with:
-        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-        create_credentials_file: true
-        activate_credentials_file: true
-    - name: 'Set up Cloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v1'
-    - name: 'Az CLI login'
-      uses: azure/login@v1
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -467,39 +452,15 @@ jobs:
         PYTHONPATH=. pytest test_unstructured_ingest/unit
     - name: Test (end-to-end)
       env:
-        AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
-        BOX_APP_CONFIG: ${{ secrets.BOX_APP_CONFIG }}
-        CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
-        CONFLUENCE_USER_EMAIL: ${{ secrets.CONFLUENCE_USER_EMAIL }}
-        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-        DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
-        DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
-        DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
-        GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
-        GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
-        JIRA_INGEST_API_TOKEN: ${{ secrets.JIRA_INGEST_API_TOKEN }}
-        JIRA_INGEST_USER_EMAIL: ${{ secrets.JIRA_INGEST_USER_EMAIL }}
-        MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
-        MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
-        MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
-        MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
-        MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
-        SALESFORCE_USERNAME: ${{secrets.SALESFORCE_USERNAME}}
-        SALESFORCE_CONSUMER_KEY: ${{secrets.SALESFORCE_CONSUMER_KEY}}
-        SALESFORCE_PRIVATE_KEY: ${{secrets.SALESFORCE_PRIVATE_KEY}}
-        SHAREPOINT_CLIENT_ID: ${{secrets.SHAREPOINT_CLIENT_ID}}
-        SHAREPOINT_CRED: ${{secrets.SHAREPOINT_CRED}}
-        SHAREPOINT_SITE: ${{secrets.SHAREPOINT_SITE}}
-        SHAREPOINT_PERMISSIONS_APP_ID: ${{secrets.SHAREPOINT_PERMISSIONS_APP_ID}}
-        SHAREPOINT_PERMISSIONS_APP_CRED: ${{secrets.SHAREPOINT_PERMISSIONS_APP_CRED}}
-        SHAREPOINT_PERMISSIONS_TENANT: ${{secrets.SHAREPOINT_PERMISSIONS_TENANT}}
-        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
-        NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
         AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
+        BOX_APP_CONFIG: ${{ secrets.BOX_APP_CONFIG }}
+        DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
+        DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
+        DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
+        GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "tesseract"
