@@ -343,7 +343,7 @@ class CliFilesStorageConfig(FileStorageConfig, CliMixin):
             click.Option(
                 ["--remote-url"],
                 required=True,
-                help="Remote fsspec URL formatted as `protocol://dir/path`",
+                help="Remote path of file`",
             ),
             click.Option(
                 ["--uncompress"],

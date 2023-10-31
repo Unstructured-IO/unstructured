@@ -7,6 +7,7 @@ from .base_runner import FsspecBaseRunner, Runner
 from .biomed import BiomedRunner
 from .box import BoxRunner
 from .confluence import ConfluenceRunner
+from .databricks_volumes import DatabricksVolumesRunner
 from .delta_table import DeltaTableRunner
 from .discord import DiscordRunner
 from .dropbox import DropboxRunner
@@ -34,6 +35,7 @@ runner_map: t.Dict[str, Type[Runner]] = {
     "biomed": BiomedRunner,
     "box": BoxRunner,
     "confluence": ConfluenceRunner,
+    "databricks_volumes": DatabricksVolumesRunner,
     "delta_table": DeltaTableRunner,
     "discord": DiscordRunner,
     "dropbox": DropboxRunner,
