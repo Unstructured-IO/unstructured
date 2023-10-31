@@ -152,6 +152,7 @@ def process_file_with_ocr(
                     dpi=pdf_image_dpi,
                     output_folder=temp_dir,
                     paths_only=True,
+                    fmt="jpg",
                 )
                 image_paths = cast(List[str], _image_paths)
                 for i, image_path in enumerate(image_paths):
