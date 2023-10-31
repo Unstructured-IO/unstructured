@@ -42,7 +42,7 @@ class ENVConfig:
         The padding adds image data around an identified table bounding box for downstream table
         structure detection model use as input
         """
-        return self._get_int("TABLE_IMAGE_CROP_PAD", 12)
+        return self._get_int("TABLE_IMAGE_CROP_PAD", 0)
 
     @property
     def TESSERACT_TEXT_HEIGHT_QUANTILE(self) -> float:

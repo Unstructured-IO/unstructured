@@ -10,7 +10,7 @@
 
 ### Fixes
 
-* **Fix missing columns on table ingest output after table OCR refactor** Table OCR refactoring changed the default padding value for table image cropping from 12 to 0, causing some columns in the table to be missing.
+* **Fix missing columns on table ingest output after table OCR refactor** Table OCR refactoring changed the default padding for table image cropping, causing some columns in the table to be missing. Using a better default for cropping table images can improve inferring table structure.
 * **Ingest session handler not being shared correctly** All ingest docs that leverage the session handler should only need to set it once per process. It was recreating it each time because the right values weren't being set nor available given how dataclasses work in python.
 * **Ingest download-only fix** Previously the download only flag was being checked after the doc factory pipeline step, which occurs before the files are actually downloaded by the source node. This check was moved after the source node to allow for the files to be downloaded first before exiting the pipeline.
 
