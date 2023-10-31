@@ -504,6 +504,5 @@ jobs:
         run: |
           source .venv/bin/activate
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
-          echo "UNSTRUCTURED_HF_TOKEN=${{ secrets.HF_TOKEN }}" > uns_test_env_file
           make docker-build
           make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
