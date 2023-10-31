@@ -2,7 +2,7 @@ import json
 import os
 import typing as t
 from contextlib import suppress
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path, PurePath
 
 from unstructured.ingest.compression_support import (
@@ -20,6 +20,7 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
     SourceMetadata,
+    WriteConfig,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import (
@@ -222,8 +223,14 @@ class FsspecSourceConnector(
 
 
 @dataclass
+class FsspecWriteConfig(WriteConfig):
+    write_text_kwargs: t.Dict[str, t.Any] = field(default_factory=dict)
+
+
+@dataclass
 class FsspecDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleFsspecConfig
+    write_config: FsspecWriteConfig
 
     def initialize(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
@@ -255,13 +262,18 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             filename.strip(os.sep) if filename else filename
         )  # Make sure filename doesn't begin with file seperator
         output_path = str(PurePath(output_folder, filename)) if filename else output_folder
-        full_output_path = f"s3://{output_path}"
-        logger.debug(f"uploading content to {full_output_path}")
-        fs.write_text(full_output_path, json.dumps(json_list, indent=indent), encoding=encoding)
+        full_dest_path = f"{self.connector_config.protocol}://{output_path}"
+        logger.debug(f"uploading content to {full_dest_path}")
+        fs.write_text(
+            full_dest_path,
+            json.dumps(json_list, indent=indent),
+            encoding=encoding,
+            **self.write_config.write_text_kwargs,
+        )
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         for doc in docs:
-            file_path = doc.base_filename
+            file_path = doc.base_output_filename
             filename = file_path if file_path else None
             with open(doc._output_filename) as json_file:
                 logger.debug(f"uploading content from {doc._output_filename}")
