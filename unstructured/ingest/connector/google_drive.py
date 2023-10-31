@@ -38,7 +38,7 @@ class GoogleDriveSessionHandle(BaseSessionHandle):
 
 
 @requires_dependencies(["googleapiclient"], extras="google-drive")
-def create_service_account_object(key_path, id=None):
+def create_service_account_object(key_path: t.Union[str, dict], id=None):
     """
     Creates a service object for interacting with Google Drive.
 
@@ -53,12 +53,21 @@ def create_service_account_object(key_path, id=None):
         Service account object
     """
     from google.auth import default, exceptions
+    from google.oauth2 import service_account
     from googleapiclient.discovery import build
     from googleapiclient.errors import HttpError
 
     try:
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
-        creds, _ = default()
+        if isinstance(key_path, dict):
+            creds = service_account.Credentials.from_service_account_info(key_path)
+        elif isinstance(key_path, str):
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
+            creds, _ = default()
+        else:
+            raise ValueError(
+                f"key path not recognized as a dictionary or a file path: "
+                f"[{type(key_path)}] {key_path}",
+            )
         service = build("drive", "v3", credentials=creds)
 
         if id:
@@ -85,7 +94,7 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 
     # Google Drive Specific Options
     drive_id: str
-    service_account_key: str
+    service_account_key: t.Union[str, dict]
     extension: t.Optional[str] = None
     recursive: bool = False
 
