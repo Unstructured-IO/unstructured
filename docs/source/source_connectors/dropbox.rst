@@ -32,7 +32,12 @@ Run Locally
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.interfaces import (
+            FsspecConfig,
+            PartitionConfig,
+            ProcessorConfig,
+            ReadConfig,
+        )
         from unstructured.ingest.runner import DropboxRunner
 
         if __name__ == "__main__":
@@ -44,12 +49,9 @@ Run Locally
                 ),
                 read_config=ReadConfig(),
                 partition_config=PartitionConfig(),
+                fsspec_config=FsspecConfig(remote_url="dropbox:// /", recursive=True),
             )
-            runner.run(
-                remote_url="dropbox:// /",
-                token=os.getenv("DROPBOX_TOKEN"),
-                recursive=True,
-            )
+            runner.run(token=os.getenv("DROPBOX_ACCESS_TOKEN"))
 
 Run via the API
 ---------------
@@ -79,7 +81,12 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.interfaces import (
+            FsspecConfig,
+            PartitionConfig,
+            ProcessorConfig,
+            ReadConfig,
+        )
         from unstructured.ingest.runner import DropboxRunner
 
         if __name__ == "__main__":
@@ -94,12 +101,10 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+                fsspec_config=FsspecConfig(remote_url="dropbox:// /", recursive=True),
             )
-            runner.run(
-                remote_url="dropbox:// /",
-                token=os.getenv("DROPBOX_TOKEN"),
-                recursive=True,
-            )
+            runner.run(token=os.getenv("DROPBOX_ACCESS_TOKEN"))
+
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 

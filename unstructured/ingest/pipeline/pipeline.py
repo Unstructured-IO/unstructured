@@ -59,10 +59,10 @@ class Pipeline(DataClassJsonMixin):
         )
         for doc in dict_docs:
             self.pipeline_context.ingest_docs_map[get_ingest_doc_hash(doc)] = doc
+        fetched_filenames = self.source_node(iterable=dict_docs)
         if self.source_node.read_config.download_only:
             logger.info("stopping pipeline after downloading files")
             return
-        fetched_filenames = self.source_node(iterable=dict_docs)
         if not fetched_filenames:
             logger.info("No files to run partition over")
             return

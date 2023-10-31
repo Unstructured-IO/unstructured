@@ -8,6 +8,8 @@ in bytes). Constants should go into `./constants.py`
 import os
 from dataclasses import dataclass
 
+from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT
+
 
 @dataclass
 class ENVConfig:
@@ -67,6 +69,13 @@ class ENVConfig:
         table tokens
         """
         return self._get_float("TABLE_TOKEN_ERROR_MARGIN", 0.0)
+
+    @property
+    def OCR_AGENT(self) -> str:
+        """error margin when comparing if a ocr region is within the table element when perparing
+        table tokens
+        """
+        return self._get_string("OCR_AGENT", OCR_AGENT_TESSERACT)
 
 
 env_config = ENVConfig()

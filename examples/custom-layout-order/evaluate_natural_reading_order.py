@@ -55,6 +55,9 @@ def convert_coordinates_to_boxes(coordinates, image):
     boxes = []
 
     for coordinate in coordinates:
+        if not coordinate:
+            continue
+
         points = coordinate.points
         _left, _top = points[0]
         _right, _bottom = points[2]
@@ -97,6 +100,9 @@ def draw_elements(elements, images, output_type, output_dir, base_name, label):
     for idx, (img, coords_per_page) in enumerate(zip(images, elements_coordinates)):
         image = np.array(img)
         boxes = convert_coordinates_to_boxes(coords_per_page, image)
+        if len(boxes) < len(coords_per_page):
+            delta = len(coords_per_page) - len(boxes)
+            print(f"{delta} elements in page {idx+1} do not have coordinate data")
         draw_boxes(image, boxes, output_dir, base_name, idx + 1, output_type, label)
 
 
