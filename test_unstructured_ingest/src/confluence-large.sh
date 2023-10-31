@@ -5,7 +5,8 @@ set -e
 # Each space shows up as a directory in the output folder, hence check-num-dirs-output.sh
 # Each document shows up as a file in a space directory, hence check-num-files-output.sh
 
-SCRIPT_DIR=$(dirname "$(realpath "$0")")
+SRC_PATH=$(dirname "$(realpath "$0")")
+SCRIPT_DIR=$(dirname "$SRC_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
 
 OUTPUT_FOLDER_NAME=confluence-large
