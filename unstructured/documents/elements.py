@@ -231,7 +231,7 @@ class ElementMetadata:
             _dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
         if self.coordinates:
             _dict["coordinates"] = cast(CoordinatesMetadata, self.coordinates).to_dict()
-        if not self.links:
+        if self.links is not None and not self.links:
             _dict["links"] = None
         return _dict
 
