@@ -76,8 +76,33 @@ def delta_table_writer(
     )
 
 
+@requires_dependencies(["weaviate"], extras="weaviate")
+def weaviate_writer(
+    host_url: str,
+    class_name: str,
+    auth_key: t.Optional[t.List[str]] = None,
+    additional_keys: t.Optional[t.List[str]] = None,
+    **kwargs,
+):
+    from unstructured.ingest.connector.weaviate import (
+        SimpleWeaviateConfig,
+        WeaviateDestinationConnector,
+        WeaviateWriteConfig,
+    )
+
+    return WeaviateDestinationConnector(
+        write_config=WeaviateWriteConfig(class_name=class_name),
+        connector_config=SimpleWeaviateConfig(
+            host_url=host_url,
+            auth_key=auth_key,
+            additional_keys=additional_keys,
+        ),
+    )
+
+
 writer_map: t.Dict[str, t.Callable] = {
     "s3": s3_writer,
     "delta_table": delta_table_writer,
     "azure_cognitive_search": azure_cognitive_search_writer,
+    "weaviate": weaviate_writer,
 }
