@@ -10,7 +10,7 @@ from unstructured.ingest.connector.git import (
     GitSourceConnector,
     SimpleGitConfig,
 )
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import SourceMetadata
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -70,6 +70,7 @@ class GitHubIngestDoc(GitIngestDoc):
 
         return content_file
 
+    @SourceConnectionNetworkError.wrap
     def _fetch_content(self, content_file):
         contents = b""
         if (
