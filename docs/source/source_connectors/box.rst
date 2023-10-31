@@ -32,7 +32,12 @@ Run Locally
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.interfaces import (
+            FsspecConfig,
+            PartitionConfig,
+            ProcessorConfig,
+            ReadConfig,
+        )
         from unstructured.ingest.runner import BoxRunner
 
         if __name__ == "__main__":
@@ -44,12 +49,15 @@ Run Locally
                 ),
                 read_config=ReadConfig(),
                 partition_config=PartitionConfig(),
+                fsspec_config=FsspecConfig(
+                    remote_url="box://utic-test-ingest-fixtures",
+                    recursive=True,
+                ),
             )
             runner.run(
                 box_app_config=os.getenv("BOX_APP_CONFIG_PATH"),
-                recursive=True,
-                remote_url="box://utic-test-ingest-fixtures",
             )
+
 
 Run via the API
 ---------------
@@ -79,7 +87,12 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.interfaces import (
+            FsspecConfig,
+            PartitionConfig,
+            ProcessorConfig,
+            ReadConfig,
+        )
         from unstructured.ingest.runner import BoxRunner
 
         if __name__ == "__main__":
@@ -94,12 +107,15 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+                fsspec_config=FsspecConfig(
+                    remote_url="box://utic-test-ingest-fixtures",
+                    recursive=True,
+                ),
             )
             runner.run(
                 box_app_config=os.getenv("BOX_APP_CONFIG_PATH"),
-                recursive=True,
-                remote_url="box://utic-test-ingest-fixtures",
             )
+
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 

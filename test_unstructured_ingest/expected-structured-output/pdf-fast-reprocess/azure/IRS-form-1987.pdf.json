@@ -21,7 +21,7 @@
   },
   {
     "type": "Title",
-    "element_id": "267c428645eecef932f829fec714f4d0",
+    "element_id": "57c80547a4fb7190d2719c112b3ccd74",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -37,27 +37,7 @@
       ],
       "page_number": 1
     },
-    "text": "Department of the Treasury"
-  },
-  {
-    "type": "Title",
-    "element_id": "49c90fe4677fea5574445dc2c7fac6d7",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "Internal Revenue Service"
+    "text": "Department of the Treasury Internal Revenue Service"
   },
   {
     "type": "Title",
@@ -801,7 +781,7 @@
   },
   {
     "type": "Title",
-    "element_id": "8b838d95f7d4f66b5453307de1353ff4",
+    "element_id": "58703de56debc34a1d68e6ed6f8fd067",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -817,27 +797,7 @@
       ],
       "page_number": 1
     },
-    "text": "Specific Instructions"
-  },
-  {
-    "type": "Title",
-    "element_id": "bc272940e494acf9441070d3eb4b79f6",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "Section A"
+    "text": "Specific Instructions Section A"
   },
   {
     "type": "NarrativeText",
@@ -901,7 +861,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ca16cd535be87188193561454dc67485",
+    "element_id": "3db206c935841c3dcd5b3a1d41e56b84",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -917,7 +877,7 @@
       ],
       "page_number": 2
     },
-    "text": "(manufacturing, retailer, wholesaler, etc. ), employer identification number, overall method of accounting, and whether, in the last 6 years, that business has changed its accounting method, or is also changing its accounting method as part of this request or as a separate request."
+    "text": "(manufacturing, retailer, wholesaler, etc.), employer identification number, overall method of accounting, and whether, in the last 6 years, that business has changed its accounting method, or is also changing its accounting method as part of this request or as a separate request."
   },
   {
     "type": "NarrativeText",
@@ -1041,7 +1001,7 @@
   },
   {
     "type": "Title",
-    "element_id": "04e392556b94bc61c3b428cc5045f626",
+    "element_id": "136a59b0c53731bc299206fda46e0888",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1057,47 +1017,7 @@
       ],
       "page_number": 2
     },
-    "text": "Section B"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "1"
+    "text": "Section B-1"
   },
   {
     "type": "NarrativeText",
@@ -1121,7 +1041,7 @@
   },
   {
     "type": "Title",
-    "element_id": "5e763f5f8b6811a087ee1e5504862114",
+    "element_id": "f63f53aab435b8c9789ab7d6b982db3f",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1137,87 +1057,7 @@
       ],
       "page_number": 2
     },
-    "text": "Sections B"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": ""
-  },
-  {
-    "type": "Title",
-    "element_id": "772e8a1bc31b9aba85e4b15068e8a836",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "2 and B"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": ""
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "3"
+    "text": "Sections B-2 and B-3"
   },
   {
     "type": "NarrativeText",

@@ -1,7 +1,9 @@
+import json
+import os.path
 import typing as t
 from abc import abstractmethod
 from dataclasses import fields
-from gettext import ngettext
+from gettext import gettext, ngettext
 from pathlib import Path
 
 import click
@@ -18,6 +20,33 @@ from unstructured.ingest.interfaces import (
     ReadConfig,
     RetryStrategyConfig,
 )
+
+
+class FileOrJson(click.ParamType):
+    name = "file-or-json"
+
+    def convert(
+        self,
+        value: t.Any,
+        param: t.Optional[click.Parameter],
+        ctx: t.Optional[click.Context],
+    ) -> t.Any:
+        # check if valid file
+        full_path = os.path.abspath(os.path.expanduser(value))
+        if os.path.isfile(full_path):
+            return str(Path(full_path).resolve())
+        if isinstance(value, str):
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError:
+                pass
+        self.fail(
+            gettext(
+                "{value} is not a valid json string nor an existing filepath.",
+            ).format(value=value),
+            param,
+            ctx,
+        )
 
 
 class DelimitedString(click.ParamType):
@@ -474,31 +503,23 @@ class CliPermissionsConfig(PermissionsConfig, CliMixin):
         CLI params are provided as intended.
         """
 
-        if (
-            isinstance(kvs, dict)
-            and any(
-                [
-                    kvs["permissions_application_id"]
-                    or kvs["permissions_client_cred"]
-                    or kvs["permissions_tenant"],
-                ],
-            )
-            and not all(
-                [
-                    kvs["permissions_application_id"]
-                    and kvs["permissions_client_cred"]
-                    and kvs["permissions_tenant"],
-                ],
-            )
-        ):
-            raise ValueError(
-                "Please provide either none or all of the following optional values:\n"
-                "--permissions-application-id\n"
-                "--permissions-client-cred\n"
-                "--permissions-tenant",
-            )
-
         if isinstance(kvs, dict):
+            permissions_application_id = kvs.get("permissions_application_id")
+            permissions_client_cred = kvs.get("permissions_client_cred")
+            permissions_tenant = kvs.get("permissions_tenant")
+            permission_values = [
+                permissions_application_id,
+                permissions_client_cred,
+                permissions_tenant,
+            ]
+            if any(permission_values) and not all(permission_values):
+                raise ValueError(
+                    "Please provide either none or all of the following optional values:\n"
+                    "--permissions-application-id\n"
+                    "--permissions-client-cred\n"
+                    "--permissions-tenant",
+                )
+
             new_kvs = {
                 k[len("permissions_") :]: v  # noqa: E203
                 for k, v in kvs.items()

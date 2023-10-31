@@ -135,6 +135,7 @@ class DropboxSourceConnector(FsspecSourceConnector):
             ]
 
 
+@requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
 @dataclass
 class DropboxDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleFsspecConfig
