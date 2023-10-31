@@ -473,6 +473,7 @@ class CliPermissionsConfig(PermissionsConfig, CliMixin):
         doesn't require that as part of the field names in this class. It also checks if the
         CLI params are provided as intended.
         """
+
         if isinstance(kvs, dict):
             permissions_application_id = kvs.get("permissions_application_id")
             permissions_client_cred = kvs.get("permissions_client_cred")
