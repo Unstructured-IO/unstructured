@@ -3,7 +3,8 @@ set -e
 
 # Description: This test checks if all the processed content is the same as the expected outputs
 
-SCRIPT_DIR=$(dirname "$(realpath "$0")")
+SRC_PATH=$(dirname "$(realpath "$0")")
+SCRIPT_DIR=$(dirname "$SRC_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
 
 OUTPUT_FOLDER_NAME=confluence-diff

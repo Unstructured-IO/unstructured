@@ -6,7 +6,8 @@ if [ -z "$UNS_API_KEY" ]; then
    echo "Skipping ingest test against api because the UNS_API_KEY env var is not set."
    exit 0
 fi
-SCRIPT_DIR=$(dirname "$(realpath "$0")")
+SRC_PATH=$(dirname "$(realpath "$0")")
+SCRIPT_DIR=$(dirname "$SRC_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=api-ingest-output
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME

@@ -2,7 +2,8 @@
 
 set -e
 
-SCRIPT_DIR=$(dirname "$(realpath "$0")")
+SRC_PATH=$(dirname "$(realpath "$0")")
+SCRIPT_DIR=$(dirname "$SRC_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
 echo "SCRIPT_DIR: $SCRIPT_DIR"
 OUTPUT_FOLDER_NAME=elasticsearch
