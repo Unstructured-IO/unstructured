@@ -1,3 +1,4 @@
+import math
 import os
 from tempfile import SpooledTemporaryFile
 from unittest import mock
@@ -18,6 +19,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition import ocr, pdf, strategies
+from unstructured.partition.pdf import get_uris_from_annots
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
@@ -131,7 +133,7 @@ def test_partition_pdf_local_raises_with_no_filename():
     [
         ("fast", {1, 4}, {"pdfminer"}),
         ("hi_res", {1, 3, 4}, {"yolox", "pdfminer"}),
-        ("ocr_only", {1, 3, 4}, {"OCR"}),
+        ("ocr_only", {1, 3, 4}, {"ocr_tesseract"}),
     ],
 )
 def test_partition_pdf(
@@ -617,43 +619,6 @@ def test_partition_pdf_with_auto_strategy_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_pdf_with_orc_only_strategy_metadata_date(
-    mocker,
-    filename="example-docs/copy-protected.pdf",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.pdf.get_last_modified_date",
-        return_value=mocked_last_modification_date,
-    )
-
-    elements = pdf.partition_pdf(filename=filename, strategy="ocr_only")
-
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
-
-
-def test_partition_pdf_with_ocr_only_strategy_custom_metadata_date(
-    mocker,
-    filename="example-docs/copy-protected.pdf",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.pdf.get_last_modified_date",
-        return_value=mocked_last_modification_date,
-    )
-
-    elements = pdf.partition_pdf(
-        filename=filename,
-        metadata_last_modified=expected_last_modification_date,
-        strategy="ocr_only",
-    )
-
-    assert elements[0].metadata.last_modified == expected_last_modification_date
-
-
 def test_partition_pdf_with_hi_res_strategy_metadata_date(
     mocker,
     filename="example-docs/copy-protected.pdf",
@@ -731,45 +696,6 @@ def test_partition_pdf_from_file_with_auto_strategy_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_pdf_from_file_with_ocr_only_strategy_metadata_date(
-    mocker,
-    filename="example-docs/copy-protected.pdf",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.pdf.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = pdf.partition_pdf(file=f, strategy="ocr_only")
-
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
-
-
-def test_partition_pdf_from_file_with_ocr_only_strategy_custom_metadata_date(
-    mocker,
-    filename="example-docs/copy-protected.pdf",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.pdf.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = pdf.partition_pdf(
-            file=f,
-            metadata_last_modified=expected_last_modification_date,
-            strategy="ocr_only",
-        )
-
-    assert elements[0].metadata.last_modified == expected_last_modification_date
-
-
 def test_partition_pdf_from_file_with_hi_res_strategy_metadata_date(
     mocker,
     filename="example-docs/copy-protected.pdf",
@@ -816,60 +742,6 @@ def test_partition_pdf_with_json(strategy: str):
         strategy=strategy,
     )
     assert_round_trips_through_JSON(elements)
-
-
-def test_partition_pdf_with_ocr_has_coordinates_from_filename(
-    filename="example-docs/chevron-page.pdf",
-):
-    elements = pdf.partition_pdf(filename=filename, strategy="ocr_only")
-    assert elements[0].metadata.coordinates.points == (
-        (657.0, 2144.0),
-        (657.0, 2106.0),
-        (1043.0, 2106.0),
-        (1043.0, 2144.0),
-    )
-
-
-def test_partition_pdf_with_ocr_has_coordinates_from_file(
-    filename="example-docs/chevron-page.pdf",
-):
-    with open(filename, "rb") as f:
-        elements = pdf.partition_pdf(
-            file=f,
-            strategy="ocr_only",
-        )
-    assert elements[0].metadata.coordinates.points == (
-        (657.0, 2144.0),
-        (657.0, 2106.0),
-        (1043.0, 2106.0),
-        (1043.0, 2144.0),
-    )
-
-
-@pytest.mark.parametrize(
-    ("filename"),
-    [
-        ("example-docs/multi-column-2p.pdf"),
-        ("example-docs/layout-parser-paper-fast.pdf"),
-        ("example-docs/list-item-example.pdf"),
-    ],
-)
-def test_partition_pdf_with_ocr_coordinates_are_not_nan_from_file(
-    filename,
-):
-    import math
-
-    with open(filename, "rb") as f:
-        elements = pdf.partition_pdf(
-            file=f,
-            strategy="ocr_only",
-        )
-    for element in elements:
-        if element.metadata.coordinates:
-            for point in element.metadata.coordinates.points:
-                if point[0] and point[1]:
-                    assert point[0] is not math.nan
-                    assert point[1] is not math.nan
 
 
 def test_add_chunking_strategy_by_title_on_partition_pdf(
@@ -1057,7 +929,11 @@ def test_partition_model_name_default_to_None():
         ),
         (
             "ocr_only",
-            "unstructured_pytesseract.run_and_get_multiple_output",
+            "unstructured_pytesseract.image_to_data",
+        ),
+        (
+            "ocr_only",
+            "unstructured_pytesseract.image_to_string",
         ),
     ],
 )
@@ -1078,3 +954,126 @@ def test_ocr_language_passes_through(strategy, ocr_func):
     kwargs = mock_ocr_func.call_args.kwargs
     assert "lang" in kwargs
     assert kwargs["lang"] == "kor"
+
+
+@pytest.mark.parametrize(
+    ("annots", "height", "coordinate_system", "page_number", "expected"),
+    [
+        (["BS", "BE"], 300, PixelSpace(300, 300), 1, 0),
+        (
+            [
+                {
+                    "Type": "/'Annot'",
+                    "Subtype": "/'Link'",
+                    "A": {
+                        "Type": "/'Action'",
+                        "S": "/'URI'",
+                        "URI": "b'https://layout-parser.github.io'",
+                    },
+                    "BS": {"S": "/'S'", "W": 1},
+                    "Border": [0, 0, 1],
+                    "C": [0, 1, 1],
+                    "H": "/'I'",
+                    "Rect": [304.055, 224.156, 452.472, 234.368],
+                },
+                {
+                    "Type": "/'Annot'",
+                    "Subtype": "/'Link'",
+                    "A": {"S": "/'GoTo'", "D": "b'cite.harley2015evaluation'"},
+                    "BS": {"S": "/'S'", "W": 1},
+                    "Border": [0, 0, 1],
+                    "C": [0, 1, 0],
+                    "H": "/'I'",
+                    "Rect": [468.305, 128.081, 480.26, 136.494],
+                },
+            ],
+            792,
+            PixelSpace(612, 792),
+            1,
+            2,
+        ),
+    ],
+)
+def test_get_uris_from_annots_string_annotation(
+    annots, height, coordinate_system, page_number, expected
+):
+    annotation_list = get_uris_from_annots(annots, height, coordinate_system, page_number)
+    assert len(annotation_list) == expected
+
+
+@pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
+@pytest.mark.parametrize(
+    ("filename", "is_image"),
+    [
+        ("example-docs/layout-parser-paper-fast.pdf", False),
+        ("example-docs/layout-parser-paper-fast.jpg", True),
+    ],
+)
+@pytest.mark.parametrize("last_modification_date", [None, "2020-07-05T09:24:28"])
+def test_partition_pdf_with_ocr_only_strategy(
+    mocker,
+    file_mode,
+    filename,
+    is_image,
+    last_modification_date,
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    expected_last_modification_date = (
+        last_modification_date if last_modification_date else mocked_last_modification_date
+    )
+
+    mocker.patch(
+        "unstructured.partition.pdf.get_the_last_modification_date_pdf_or_img",
+        return_value=mocked_last_modification_date,
+    )
+
+    if file_mode == "filename":
+        elements = pdf.partition_pdf(
+            filename=filename,
+            strategy="ocr_only",
+            languages=["eng"],
+            metadata_last_modified=last_modification_date,
+            is_image=is_image,
+        )
+    elif file_mode == "rb":
+        with open(filename, "rb") as f:
+            elements = pdf.partition_pdf(
+                file=f,
+                strategy="ocr_only",
+                languages=["eng"],
+                metadata_last_modified=last_modification_date,
+                is_image=is_image,
+            )
+    else:
+        with open(filename, "rb") as test_file:
+            spooled_temp_file = SpooledTemporaryFile()
+            spooled_temp_file.write(test_file.read())
+            spooled_temp_file.seek(0)
+            elements = pdf.partition_pdf(
+                file=spooled_temp_file,
+                strategy="ocr_only",
+                languages=["eng"],
+                metadata_last_modified=last_modification_date,
+                is_image=is_image,
+            )
+
+    assert elements[0].metadata.languages == ["eng"]
+    assert {el.metadata.last_modified for el in elements} == {expected_last_modification_date}
+
+    # check pages
+    if is_image:
+        assert {el.metadata.page_number for el in elements} == {1}
+    else:
+        assert {el.metadata.page_number for el in elements} == {1, 2}
+
+    # check coordinates
+    for element in elements:
+        if element.metadata.coordinates:
+            for point in element.metadata.coordinates.points:
+                if point[0] and point[1]:
+                    assert point[0] is not math.nan
+                    assert point[1] is not math.nan
+
+    # check detection origin
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {"ocr_tesseract"}
