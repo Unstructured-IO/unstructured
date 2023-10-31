@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Add include_header argument for partition_csv and partition_tsv** Now supports retaining header rows in CSV and TSV documents element partitioning.
+
 ### Features
 
 ### Fixes
