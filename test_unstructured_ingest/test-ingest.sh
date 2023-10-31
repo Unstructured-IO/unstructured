@@ -9,6 +9,11 @@ cd "$SCRIPT_DIR"/.. || exit 1
 export OMP_THREAD_LIMIT=1
 
 all_tests=(
+'test-ingest-azure-dest.sh'
+'test-ingest-box-dest.sh'
+'test-ingest-dropbox-dest.sh'
+'test-ingest-gcs-dest.sh'
+'test-ingest-s3-dest.sh'
 'test-ingest-s3.sh'
 'test-ingest-s3-minio.sh'
 'test-ingest-azure.sh'
