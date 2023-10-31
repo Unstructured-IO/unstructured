@@ -34,13 +34,13 @@ for test in "${all_tests[@]}"; do
     echo "--------- RUNNING SCRIPT $test --- IGNORING FAILURES"
     set +e
     echo "Running ./test_unstructured_ingest/$test"
-    ./test_unstructured_ingest/"$test"
+    ./test_unstructured_ingest/dest/"$test"
     set -e
     echo "--------- FINISHED SCRIPT $test ---------"
   else
     echo "--------- RUNNING SCRIPT $test ---------"
     echo "Running ./test_unstructured_ingest/$test"
-    ./test_unstructured_ingest/"$test"
+    ./test_unstructured_ingest/dest/"$test"
     echo "--------- FINISHED SCRIPT $test ---------"
   fi
 done
