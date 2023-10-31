@@ -4,6 +4,7 @@
 
 * **Add include_header argument for partition_csv and partition_tsv** Now supports retaining header rows in CSV and TSV documents element partitioning.
 * **Add retry logic for all source connectors** All http calls being made by the ingest source connectors have been isolated and wrapped by the `SourceConnectionNetworkError` custom error, which triggers the retry logic, if enabled, in the ingest pipeline.
+* **Google Drive source connector supports credentials from memory** Originally, the connector expected a filepath to pull the credentials from when creating the client. This was expanded to support passing that information from memory as a dict if access to the file system might not be available.
 
 ### Features
 
@@ -31,6 +32,7 @@
 * **Update `ocr_only` strategy in `partition_pdf()`** Adds the functionality to get accurate coordinate data when partitioning PDFs and Images with the `ocr_only` strategy.
 
 ### Fixes
+* **Fixed SharePoint permissions for the fetching to be opt-in** Problem: Sharepoint permissions were trying to be fetched even when no reletad cli params were provided, and this gave an error due to values for those keys not existing. Fix: Updated getting keys to be with .get() method and changed the "skip-check" to check individual cli params rather than checking the existance of a config object.
 
 * **Fixes issue where tables from markdown documents were being treated as text** Problem: Tables from markdown documents were being treated as text, and not being extracted as tables. Solution: Enable the `tables` extension when instantiating the `python-markdown` object. Importance: This will allow users to extract structured data from tables in markdown documents.
 * **Fix wrong logger for paddle info** Replace the logger from unstructured-inference with the logger from unstructured for paddle_ocr.py module.

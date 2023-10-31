@@ -4,9 +4,7 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
-from unstructured.ingest.cli.interfaces import (
-    CliMixin,
-)
+from unstructured.ingest.cli.interfaces import CliMixin, FileOrJson
 from unstructured.ingest.interfaces import BaseConfig
 
 CMD_NAME = "gcs"
@@ -14,17 +12,17 @@ CMD_NAME = "gcs"
 
 @dataclass
 class GcsCliConfig(BaseConfig, CliMixin):
-    token: t.Optional[str] = None
+    service_account_key: t.Optional[t.Union[dict, str]] = None
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--token"],
+                ["--service-account-key"],
                 default=None,
-                help="Token used to access Google Cloud. GCSFS will attempt to use your "
-                "default gcloud creds or get creds from the google metadata service "
-                "or fall back to anonymous access.",
+                type=FileOrJson(),
+                help="Either the file path of the credentials file to use or a json string of "
+                "those values to use for authentication",
             ),
         ]
         return options

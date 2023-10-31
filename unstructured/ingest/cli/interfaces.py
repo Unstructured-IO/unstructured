@@ -1,7 +1,9 @@
+import json
+import os.path
 import typing as t
 from abc import abstractmethod
 from dataclasses import fields
-from gettext import ngettext
+from gettext import gettext, ngettext
 from pathlib import Path
 
 import click
@@ -18,6 +20,33 @@ from unstructured.ingest.interfaces import (
     ReadConfig,
     RetryStrategyConfig,
 )
+
+
+class FileOrJson(click.ParamType):
+    name = "file-or-json"
+
+    def convert(
+        self,
+        value: t.Any,
+        param: t.Optional[click.Parameter],
+        ctx: t.Optional[click.Context],
+    ) -> t.Any:
+        # check if valid file
+        full_path = os.path.abspath(os.path.expanduser(value))
+        if os.path.isfile(full_path):
+            return str(Path(full_path).resolve())
+        if isinstance(value, str):
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError:
+                pass
+        self.fail(
+            gettext(
+                "{value} is not a valid json string nor an existing filepath.",
+            ).format(value=value),
+            param,
+            ctx,
+        )
 
 
 class DelimitedString(click.ParamType):
@@ -473,6 +502,7 @@ class CliPermissionsConfig(PermissionsConfig, CliMixin):
         doesn't require that as part of the field names in this class. It also checks if the
         CLI params are provided as intended.
         """
+
         if isinstance(kvs, dict):
             permissions_application_id = kvs.get("permissions_application_id")
             permissions_client_cred = kvs.get("permissions_client_cred")
