@@ -374,7 +374,15 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
     def get_ingest_docs(self):
         base_site_client = self.connector_config.get_site_client()
 
-        if self.connector_config.permissions_config:
+        if not all(
+            getattr(self.connector_config.permissions_config, attr, False)
+            for attr in ["application_id", "client_cred", "tenant"]
+        ):
+            logger.info(
+                "Permissions config is not fed with 'application_id', 'client_cred' and 'tenant'."
+                "Skipping permissions ingestion.",
+            )
+        else:
             permissions_client = self.connector_config.get_permissions_client()
             if permissions_client:
                 permissions_client.write_all_permissions(self.processor_config.output_dir)
