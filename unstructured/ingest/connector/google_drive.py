@@ -2,7 +2,7 @@ import io
 import json
 import os
 import typing as t
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from mimetypes import guess_extension
 from pathlib import Path
@@ -85,7 +85,7 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     # Google Drive Specific Options
     drive_id: str
     service_account_key: str
-    extension: t.Optional[str]
+    extension: t.Optional[str] = None
     recursive: bool = False
 
     def __post_init__(self):
@@ -105,7 +105,7 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 @dataclass
 class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
     connector_config: SimpleGoogleDriveConfig
-    meta: t.Dict[str, str]
+    meta: t.Dict[str, str] = field(default_factory=dict)
     registry_name: str = "google_drive"
 
     @property

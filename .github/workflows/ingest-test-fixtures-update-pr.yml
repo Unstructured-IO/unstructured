@@ -8,9 +8,38 @@ env:
   GHA_CACHE_KEY_VERSION: "v1"
   PYTHON_VERSION: "3.10"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
-  setup:
+  test_logins:
     runs-on: ubuntu-latest
+    environment: ci
+    steps:
+      - uses: 'actions/checkout@v4'
+      - name: 'Google Cloud Auth'
+        uses: 'google-github-actions/auth@v1'
+        id: gauth
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v1'
+      - name: 'run gcloud command'
+        run: |-
+          gcloud projects list
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: 'azure test command'
+        run: |-
+          az account show
+  setup:
+    runs-on: ubuntu-latest-m
     if: |
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'push' && contains(github.event.head_commit.message, 'ingest-test-fixtures-update'))
@@ -75,12 +104,36 @@ jobs:
           make install-all-ingest
 
   update-fixtures-and-pr:
+    environment: ci
     runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup_ingest]
     steps:
-      - uses: actions/checkout@v3
+      # actions/checkout MUST come before auth
+      - uses: 'actions/checkout@v4'
+      - name: 'Google Cloud Auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+          activate_credentials_file: true
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v1'
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Get full Python version
+        id: full-python-version
+        run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
       - uses: actions/cache/restore@v3
         id: virtualenv-cache
         with:

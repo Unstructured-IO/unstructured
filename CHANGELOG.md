@@ -1,4 +1,16 @@
-## 0.10.28-dev4
+## 0.10.29-dev1
+
+### Enhancements
+
+* **Add include_header argument for partition_csv and partition_tsv** Now supports retaining header rows in CSV and TSV documents element partitioning.
+
+### Features
+
+### Fixes
+
+* **Ingest session handler not being shared correctly** All ingest docs that leverage the session handler should only need to set it once per process. It was recreating it each time because the right values weren't being set nor available given how dataclasses work in python.
+
+## 0.10.28
 
 ### Enhancements
 
@@ -6,15 +18,24 @@
 * **Add table structure evaluation helpers** Adds functions to evaluate the similarity between predicted table structure and actual table structure.
 * **Use `yolox` by default for table extraction when partitioning pdf/image** `yolox` model provides higher recall of the table regions than the quantized version and it is now the default element detection model when `infer_table_structure=True` for partitioning pdf/image files
 * **Remove pdfminer elements from inside tables** Previously, when using `hi_res` some elements where extracted using pdfminer too, so we removed pdfminer from the tables pipeline to avoid duplicated elements.
+* **Fsspec downstream connectors** New destination connector added to ingest CLI, users may now use `unstructured-ingest` to write to any of the following:
+  * Azure
+  * Box
+  * Dropbox
+  * Google Cloud Service
 
 ### Features
 
+* **Update `ocr_only` strategy in `partition_pdf()`** Adds the functionality to get accurate coordinate data when partitioning PDFs and Images with the `ocr_only` strategy.
+
 ### Fixes
 
+* **Fixes issue where tables from markdown documents were being treated as text** Problem: Tables from markdown documents were being treated as text, and not being extracted as tables. Solution: Enable the `tables` extension when instantiating the `python-markdown` object. Importance: This will allow users to extract structured data from tables in markdown documents.
 * **Fix wrong logger for paddle info** Replace the logger from unstructured-inference with the logger from unstructured for paddle_ocr.py module.
 * **Fix ingest pipeline to be able to use chunking and embedding together** Problem: When ingest pipeline was using chunking and embedding together, embedding outputs were empty and the outputs of chunking couldn't be re-read into memory and be forwarded to embeddings. Fix: Added CompositeElement type to TYPE_TO_TEXT_ELEMENT_MAP to be able to process CompositeElements with unstructured.staging.base.isd_to_elements
 * **Fix unnecessary mid-text chunk-splitting.** The "pre-chunker" did not consider separator blank-line ("\n\n") length when grouping elements for a single chunk. As a result, sections were frequently over-populated producing a over-sized chunk that required mid-text splitting.
 * **Fix frequent dissociation of title from chunk.** The sectioning algorithm included the title of the next section with the prior section whenever it would fit, frequently producing association of a section title with the prior section and dissociating it from its actual section. Fix this by performing combination of whole sections only.
+* **Fix PDF attempt to get dict value from string.** Fixes a rare edge case that prevented some PDF's from being partitioned. The `get_uris_from_annots` function tried to access the dictionary value of a string instance variable. Assign `None` to the annotation variable if the instance type is not dictionary to avoid the erroneous attempt.
 
 ## 0.10.27
 
