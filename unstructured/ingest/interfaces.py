@@ -17,6 +17,8 @@ from dataclasses_json.core import Json, _asdict, _decode_dataclass
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
+from unstructured.embed.bedrock import BedrockEmbeddingEncoder
+from unstructured.embed.huggingface import HuggingFaceEmbeddingEncoder
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
@@ -36,6 +38,13 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "box",
     "dropbox",
 ]
+
+
+EMBEDDING_PROVIDER_TO_CLASS_MAP = {
+    "langchain-openai": OpenAIEmbeddingEncoder,
+    "langchain-huggingface": HuggingFaceEmbeddingEncoder,
+    "langchain-aws-bedrock": BedrockEmbeddingEncoder,
+}
 
 
 @dataclass
@@ -169,17 +178,19 @@ class ReadConfig(BaseConfig):
 
 @dataclass
 class EmbeddingConfig(BaseConfig):
-    api_key: str
+    provider: str
+    api_key: t.Optional[str] = None
     model_name: t.Optional[str] = None
 
     def get_embedder(self) -> BaseEmbeddingEncoder:
-        # TODO update to incorporate other embedder types once they exist
-        kwargs = {
-            "api_key": self.api_key,
-        }
+        kwargs = {}
+        if self.api_key:
+            kwargs["api_key"] = self.api_key
         if self.model_name:
             kwargs["model_name"] = self.model_name
-        return OpenAIEmbeddingEncoder(**kwargs)
+
+        cls = EMBEDDING_PROVIDER_TO_CLASS_MAP.get(self.provider, None)
+        return cls(**kwargs)
 
 
 @dataclass

@@ -369,11 +369,21 @@ class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
+                ["--embedding-provider"],
+                help="Type of the embedding class to be used. Can be: "
+                "langchain-huggingface, langchain-openai, or langchain-aws-bedrock.",
+                type=str,
+            ),
+            click.Option(
                 ["--embedding-api-key"],
-                help="openai api key",
+                help="API key for the embedding model, for the case an API key is needed.",
+                type=str,
+                default=None,
             ),
             click.Option(
                 ["--embedding-model-name"],
+                help="Embedding model name, if needed. "
+                "Chooses a particular LLM between different options, to embed with it.",
                 type=str,
                 default=None,
             ),
@@ -400,7 +410,7 @@ class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
             }
             if len(new_kvs.keys()) == 0:
                 return None
-            if not new_kvs.get("api_key", None):
+            if not new_kvs.get("provider", None):
                 return None
             return _decode_dataclass(cls, new_kvs, infer_missing)
         return _decode_dataclass(cls, kvs, infer_missing)
