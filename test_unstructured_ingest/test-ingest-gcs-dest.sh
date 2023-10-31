@@ -49,7 +49,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --input-path example-docs/fake-memo.pdf \
     --work-dir "$WORK_DIR" \
     gcs \
-    --token "$GCP_INGEST_SERVICE_KEY_FILE" \
+    --service-account-key "$GCP_INGEST_SERVICE_KEY_FILE" \
     --remote-url "$DESTINATION_GCS"
 
 # Simply check the number of files uploaded
