@@ -4,6 +4,7 @@ import csv
 import logging
 import os
 import statistics
+import sys
 from typing import Any, List, Optional, Tuple
 
 import click
@@ -81,10 +82,20 @@ def measure_text_edit_distance(
     Calculates text accuracy and percent missing. After looped through the whole list, write to tsv.
     Also calculates the aggregated accuracy and percent missing.
     """
+
+    print(f"output_dir is {output_dir}")
+    print(f"source_dir is {source_dir}")
     if not output_list:
         output_list = _listdir_recursive(output_dir)
     if not source_list:
         source_list = _listdir_recursive(source_dir)
+
+    print(f"output_list is {output_list}")
+    print(f"source_list is {source_list}")
+
+    if not output_list:
+        print("No output files to calculate to edit distances for, exiting")
+        sys.exit(0)
 
     rows = []
     accuracy_scores: List[float] = []

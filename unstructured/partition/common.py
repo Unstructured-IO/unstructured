@@ -285,6 +285,7 @@ def _add_element_metadata(
     section: Optional[str] = None,
     image_path: Optional[str] = None,
     detection_origin: Optional[str] = None,
+    languages: Optional[List[str]] = None,
     **kwargs,
 ) -> Element:
     """Adds document metadata to the document element. Document metadata includes information
@@ -332,6 +333,7 @@ def _add_element_metadata(
         section=section,
         category_depth=depth,
         image_path=image_path,
+        languages=languages,
     )
     metadata.detection_origin = detection_origin
     # NOTE(newel) - Element metadata is being merged into
@@ -549,6 +551,7 @@ def document_to_element_list(
     source_format: Optional[str] = None,
     detection_origin: Optional[str] = None,
     sort_mode: str = SORT_MODE_XY_CUT,
+    languages: Optional[List[str]] = None,
     **kwargs,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
@@ -617,6 +620,7 @@ def document_to_element_list(
                 category_depth=element.metadata.category_depth,
                 image_path=el_image_path,
                 detection_origin=detection_origin,
+                languages=languages,
                 **kwargs,
             )
 
@@ -633,5 +637,33 @@ def document_to_element_list(
         if include_page_breaks and i < num_pages - 1:
             sorted_page_elements.append(PageBreak(text=""))
         elements.extend(sorted_page_elements)
+
+    return elements
+
+
+def ocr_data_to_elements(
+    ocr_data: List["LayoutElement"],
+    image_size: Tuple[Union[int, float], Union[int, float]],
+    common_metadata: Optional[ElementMetadata] = None,
+    infer_list_items: bool = True,
+    source_format: Optional[str] = None,
+) -> List[Element]:
+    """Convert OCR layout data into `unstructured` elements with associated metadata."""
+
+    image_width, image_height = image_size
+    coordinate_system = PixelSpace(width=image_width, height=image_height)
+    elements = []
+    for layout_element in ocr_data:
+        element = normalize_layout_element(
+            layout_element,
+            coordinate_system=coordinate_system,
+            infer_list_items=infer_list_items,
+            source_format=source_format if source_format else "html",
+        )
+
+        if common_metadata:
+            element.metadata = element.metadata.merge(common_metadata)
+
+        elements.append(element)
 
     return elements
