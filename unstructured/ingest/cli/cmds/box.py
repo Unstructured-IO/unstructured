@@ -5,15 +5,14 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMixin,
+    CliMix,
 )
-from unstructured.ingest.interfaces import BaseConfig
 
 CMD_NAME = "box"
 
 
 @dataclass
-class BoxCliConfig(BaseConfig, CliMixin):
+class BoxCliConfig(CliMix):
     box_app_config: t.Optional[str] = None
 
     @staticmethod

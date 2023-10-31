@@ -4,12 +4,15 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
-from unstructured.ingest.cli.interfaces import CliMixin, CliRecursiveConfig, FileOrJson
-from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.cli.interfaces import (
+    CliMix,
+    CliRecursiveConfig,
+    FileOrJson,
+)
 
 
 @dataclass
-class GoogleDriveCliConfig(BaseConfig, CliMixin):
+class GoogleDriveCliConfig(CliMix):
     drive_id: str
     service_account_key: t.Union[dict, str]
     extension: t.Optional[str] = None

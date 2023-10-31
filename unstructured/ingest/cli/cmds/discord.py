@@ -5,14 +5,13 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMixin,
+    CliMix,
     DelimitedString,
 )
-from unstructured.ingest.interfaces import BaseConfig
 
 
 @dataclass
-class DiscordCliConfig(BaseConfig, CliMixin):
+class DiscordCliConfig(CliMix):
     channels: t.List[str]
     token: str
     period: t.Optional[int] = None

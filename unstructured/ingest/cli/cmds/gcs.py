@@ -4,14 +4,16 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
-from unstructured.ingest.cli.interfaces import CliMixin, FileOrJson
-from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.cli.interfaces import (
+    CliMix,
+    FileOrJson,
+)
 
 CMD_NAME = "gcs"
 
 
 @dataclass
-class GcsCliConfig(BaseConfig, CliMixin):
+class GcsCliConfig(CliMix):
     service_account_key: t.Optional[t.Union[dict, str]] = None
 
     @staticmethod

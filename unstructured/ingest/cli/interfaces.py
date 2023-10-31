@@ -108,6 +108,10 @@ class CliMixin:
                 cmd.params.append(param)
 
 
+class CliMix(BaseConfig, CliMixin):
+    pass
+
+
 class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
@@ -319,7 +323,7 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
         return options
 
 
-class CliRecursiveConfig(BaseConfig, CliMixin):
+class CliRecursiveConfig(CliMix):
     recursive: bool
 
     @staticmethod
