@@ -51,11 +51,11 @@ SOURCE_LIST=(
 )
 
 if [ "$EVAL_NAME" == "text-extraction" ]; then
-  STRATEGY="measure-text-edit-distance"
+  METRIC_STRATEGY="measure-text-edit-distance"
 elif [ "$EVAL_NAME" == "element-type" ]; then
-  STRATEGY="measure-element-type-accuracy"
+  METRIC_STRATEGY="measure-element-type-accuracy"
 else
-  echo "Wrong evaluation strategy given. Expected one of [ text-extraction, element-type ]. Got [ $EVAL_NAME ]."
+  echo "Wrong metric evaluation strategy given. Expected one of [ text-extraction, element-type ]. Got [ $EVAL_NAME ]."
   exit 1
 fi
 
@@ -63,5 +63,5 @@ read -ra output_args <<< "$(generate_args "output" "$OUTPUT_DIR" "${OUTPUT_LIST[
 read -ra source_args <<< "$(generate_args "source" "$SOURCE_DIR" "${SOURCE_LIST[@]}")"
 
 PYTHONPATH=. ./unstructured/ingest/evaluate.py \
-    $STRATEGY "${output_args[@]}" "${source_args[@]}" \
+    $METRIC_STRATEGY "${output_args[@]}" "${source_args[@]}" \
     --export_dir "$EXPORT_DIR"
