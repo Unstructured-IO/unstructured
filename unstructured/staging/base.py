@@ -233,7 +233,7 @@ def convert_to_csv(elements: List[Element]) -> str:
 
 
 @requires_dependencies(["pandas"])
-def get_default_dtypes() -> dict:
+def get_default_pandas_dtypes() -> dict:
     return {
         "text": pd.StringDtype(),
         "type": pd.StringDtype(),
@@ -303,7 +303,7 @@ def convert_to_dataframe(
         elements_as_dict,
     )
     if set_dtypes:
-        dt = {k: v for k, v in get_default_dtypes().items() if k in df.columns}
+        dt = {k: v for k, v in get_default_pandas_dtypes().items() if k in df.columns}
         df = df.astype(dt)
     if drop_empty_cols:
         df.dropna(axis=1, how="all", inplace=True)
