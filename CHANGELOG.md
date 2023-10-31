@@ -1,7 +1,8 @@
-## 0.10.29-dev2
+## 0.10.29-dev3
 
 ### Enhancements
 
+* **Separate chipper tests** Chipper tests are long-running and require special access, so the tests have been separated into their own file under their own marker, and now have a separate `make` target.
 * **Add include_header argument for partition_csv and partition_tsv** Now supports retaining header rows in CSV and TSV documents element partitioning.
 * **Add retry logic for all source connectors** All http calls being made by the ingest source connectors have been isolated and wrapped by the `SourceConnectionNetworkError` custom error, which triggers the retry logic, if enabled, in the ingest pipeline.
 
