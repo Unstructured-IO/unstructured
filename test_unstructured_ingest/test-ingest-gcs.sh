@@ -29,7 +29,7 @@ fi
 
 # Create temporary service key file
 GCP_INGEST_SERVICE_KEY_FILE=$(mktemp)
-echo "$GCP_INGEST_SERVICE_KEY" >"$GCP_INGEST_SERVICE_KEY_FILE"
+echo "$GCP_INGEST_SERVICE_KEY" > "$GCP_INGEST_SERVICE_KEY_FILE"
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     gcs \
@@ -40,7 +40,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --reprocess \
     --output-dir "$OUTPUT_DIR" \
     --verbose \
-    --token "$GCP_INGEST_SERVICE_KEY_FILE" \
+    --service-account-key "$GCP_INGEST_SERVICE_KEY_FILE" \
     --recursive \
     --remote-url gs://utic-test-ingest-fixtures/ \
     --work-dir "$WORK_DIR"

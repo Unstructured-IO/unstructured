@@ -7,7 +7,7 @@ from datetime import datetime
 from functools import cached_property
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -250,7 +250,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     """
 
     connector_config: SimpleJiraConfig
-    file_meta: JiraFileMeta
+    file_meta: t.Optional[JiraFileMeta] = None
     registry_name: str = "jira"
 
     @cached_property
@@ -263,6 +263,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
         }
 
     @cached_property
+    @SourceConnectionNetworkError.wrap
     def issue(self):
         """Gets issue data"""
         jira = self.session_handle.service

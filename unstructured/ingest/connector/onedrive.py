@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -113,19 +113,14 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             "server_relative_path": self.server_relative_path,
         }
 
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(["office365"], extras="onedrive")
     def _fetch_file(self):
         from office365.graph_client import GraphClient
-        from office365.runtime.client_request_exception import ClientRequestException
 
-        try:
-            client = GraphClient(self.connector_config.token_factory)
-            root = client.users[self.connector_config.user_pname].drive.get().execute_query().root
-            file = root.get_by_path(self.server_relative_path).get().execute_query()
-        except ClientRequestException as e:
-            if e.response.status_code == 404:
-                return None
-            raise
+        client = GraphClient(self.connector_config.token_factory)
+        root = client.users[self.connector_config.user_pname].drive.get().execute_query().root
+        file = root.get_by_path(self.server_relative_path).get().execute_query()
         return file
 
     def update_source_metadata(self, **kwargs):
