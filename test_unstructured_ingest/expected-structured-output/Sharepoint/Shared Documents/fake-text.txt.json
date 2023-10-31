@@ -5,7 +5,7 @@
     "metadata": {
       "data_source": {
         "url": "",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
@@ -13,6 +13,22 @@
         "date_created": "2023-06-16T05:04:55",
         "date_modified": "2023-06-16T05:04:55",
         "permissions_data": [
+          {
+            "id": "5896ac32-9e81-4c8b-ba83-0e25d1fa6db9",
+            "roles": [
+              "write"
+            ],
+            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n",
+            "hasPassword": false,
+            "grantedToIdentitiesV2": [],
+            "grantedToIdentities": [],
+            "link": {
+              "scope": "anonymous",
+              "type": "edit",
+              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg",
+              "preventsDownload": false
+            }
+          },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
             "roles": [
@@ -30,8 +46,7 @@
               "user": {
                 "displayName": "Communication site Owners"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
@@ -50,8 +65,7 @@
               "user": {
                 "displayName": "Communication site Visitors"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
@@ -70,8 +84,7 @@
               "user": {
                 "displayName": "Communication site Members"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
@@ -96,8 +109,7 @@
                 "displayName": "Global Administrator",
                 "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               }
-            },
-            "inheritedFrom": {}
+            }
           }
         ]
       },
@@ -115,7 +127,7 @@
     "metadata": {
       "data_source": {
         "url": "",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
@@ -123,6 +135,22 @@
         "date_created": "2023-06-16T05:04:55",
         "date_modified": "2023-06-16T05:04:55",
         "permissions_data": [
+          {
+            "id": "5896ac32-9e81-4c8b-ba83-0e25d1fa6db9",
+            "roles": [
+              "write"
+            ],
+            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n",
+            "hasPassword": false,
+            "grantedToIdentitiesV2": [],
+            "grantedToIdentities": [],
+            "link": {
+              "scope": "anonymous",
+              "type": "edit",
+              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg",
+              "preventsDownload": false
+            }
+          },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
             "roles": [
@@ -140,8 +168,7 @@
               "user": {
                 "displayName": "Communication site Owners"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
@@ -160,8 +187,7 @@
               "user": {
                 "displayName": "Communication site Visitors"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
@@ -180,8 +206,7 @@
               "user": {
                 "displayName": "Communication site Members"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
@@ -206,8 +231,7 @@
                 "displayName": "Global Administrator",
                 "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               }
-            },
-            "inheritedFrom": {}
+            }
           }
         ]
       },
@@ -225,7 +249,7 @@
     "metadata": {
       "data_source": {
         "url": "",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
@@ -233,6 +257,22 @@
         "date_created": "2023-06-16T05:04:55",
         "date_modified": "2023-06-16T05:04:55",
         "permissions_data": [
+          {
+            "id": "5896ac32-9e81-4c8b-ba83-0e25d1fa6db9",
+            "roles": [
+              "write"
+            ],
+            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n",
+            "hasPassword": false,
+            "grantedToIdentitiesV2": [],
+            "grantedToIdentities": [],
+            "link": {
+              "scope": "anonymous",
+              "type": "edit",
+              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg",
+              "preventsDownload": false
+            }
+          },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
             "roles": [
@@ -250,8 +290,7 @@
               "user": {
                 "displayName": "Communication site Owners"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
@@ -270,8 +309,7 @@
               "user": {
                 "displayName": "Communication site Visitors"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
@@ -290,8 +328,7 @@
               "user": {
                 "displayName": "Communication site Members"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
@@ -316,8 +353,7 @@
                 "displayName": "Global Administrator",
                 "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               }
-            },
-            "inheritedFrom": {}
+            }
           }
         ]
       },
@@ -335,7 +371,7 @@
     "metadata": {
       "data_source": {
         "url": "",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
@@ -343,6 +379,22 @@
         "date_created": "2023-06-16T05:04:55",
         "date_modified": "2023-06-16T05:04:55",
         "permissions_data": [
+          {
+            "id": "5896ac32-9e81-4c8b-ba83-0e25d1fa6db9",
+            "roles": [
+              "write"
+            ],
+            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n",
+            "hasPassword": false,
+            "grantedToIdentitiesV2": [],
+            "grantedToIdentities": [],
+            "link": {
+              "scope": "anonymous",
+              "type": "edit",
+              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg",
+              "preventsDownload": false
+            }
+          },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
             "roles": [
@@ -360,8 +412,7 @@
               "user": {
                 "displayName": "Communication site Owners"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
@@ -380,8 +431,7 @@
               "user": {
                 "displayName": "Communication site Visitors"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
@@ -400,8 +450,7 @@
               "user": {
                 "displayName": "Communication site Members"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
@@ -426,8 +475,7 @@
                 "displayName": "Global Administrator",
                 "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               }
-            },
-            "inheritedFrom": {}
+            }
           }
         ]
       },
@@ -445,7 +493,7 @@
     "metadata": {
       "data_source": {
         "url": "",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
@@ -453,6 +501,22 @@
         "date_created": "2023-06-16T05:04:55",
         "date_modified": "2023-06-16T05:04:55",
         "permissions_data": [
+          {
+            "id": "5896ac32-9e81-4c8b-ba83-0e25d1fa6db9",
+            "roles": [
+              "write"
+            ],
+            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n",
+            "hasPassword": false,
+            "grantedToIdentitiesV2": [],
+            "grantedToIdentities": [],
+            "link": {
+              "scope": "anonymous",
+              "type": "edit",
+              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg",
+              "preventsDownload": false
+            }
+          },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
             "roles": [
@@ -470,8 +534,7 @@
               "user": {
                 "displayName": "Communication site Owners"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
@@ -490,8 +553,7 @@
               "user": {
                 "displayName": "Communication site Visitors"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
@@ -510,8 +572,7 @@
               "user": {
                 "displayName": "Communication site Members"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
@@ -536,8 +597,7 @@
                 "displayName": "Global Administrator",
                 "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               }
-            },
-            "inheritedFrom": {}
+            }
           }
         ]
       },
@@ -555,7 +615,7 @@
     "metadata": {
       "data_source": {
         "url": "",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
@@ -563,6 +623,22 @@
         "date_created": "2023-06-16T05:04:55",
         "date_modified": "2023-06-16T05:04:55",
         "permissions_data": [
+          {
+            "id": "5896ac32-9e81-4c8b-ba83-0e25d1fa6db9",
+            "roles": [
+              "write"
+            ],
+            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n",
+            "hasPassword": false,
+            "grantedToIdentitiesV2": [],
+            "grantedToIdentities": [],
+            "link": {
+              "scope": "anonymous",
+              "type": "edit",
+              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg",
+              "preventsDownload": false
+            }
+          },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
             "roles": [
@@ -580,8 +656,7 @@
               "user": {
                 "displayName": "Communication site Owners"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
@@ -600,8 +675,7 @@
               "user": {
                 "displayName": "Communication site Visitors"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
@@ -620,8 +694,7 @@
               "user": {
                 "displayName": "Communication site Members"
               }
-            },
-            "inheritedFrom": {}
+            }
           },
           {
             "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
@@ -646,8 +719,7 @@
                 "displayName": "Global Administrator",
                 "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               }
-            },
-            "inheritedFrom": {}
+            }
           }
         ]
       },

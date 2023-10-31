@@ -43,7 +43,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --verbose \
     --token  "$DROPBOX_ACCESS_TOKEN" \
     --recursive \
-    --remote-url "dropbox:// /" \
+    --remote-url "dropbox://test-input/" \
     --work-dir "$WORK_DIR"
 
 

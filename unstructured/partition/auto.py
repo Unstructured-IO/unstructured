@@ -47,7 +47,7 @@ if dependency_exists("docx") and dependency_exists("pypandoc"):
     PARTITION_WITH_EXTRAS_MAP["odt"] = partition_odt
 
 
-if dependency_exists("ebooklib"):
+if dependency_exists("pypandoc"):
     from unstructured.partition.epub import partition_epub
 
     PARTITION_WITH_EXTRAS_MAP["epub"] = partition_epub
@@ -525,6 +525,6 @@ def decide_table_extraction(
                 f"and pdf_infer_table_structure: {pdf_infer_table_structure}, "
                 "please reset skip_infer_table_types to turn on table extraction for PDFs.",
             )
-        return not (doc_type in skip_infer_table_types) or pdf_infer_table_structure
+        return doc_type not in skip_infer_table_types or pdf_infer_table_structure
 
-    return not (doc_type in skip_infer_table_types)
+    return doc_type not in skip_infer_table_types
