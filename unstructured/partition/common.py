@@ -489,11 +489,27 @@ def convert_ms_office_table_to_text(
     Returns:
         str: An table string representation of the input table.
     """
-    fmt = "html" if as_html else "plain"
+    fmt = "unsafehtml" if as_html else "plain"
+
     rows = list(table.rows)
+    data = []
     if len(rows) > 0:
         headers = [cell.text for cell in rows[0].cells]
-        data = [[cell.text for cell in row.cells] for row in rows[1:]]
+        for row in rows[1:]:
+            row_data = []
+            for cell in row.cells:
+                if len(cell.tables) > 0:
+                    nested_table_text = convert_ms_office_table_to_text(
+                        cell.tables[0],
+                        as_html=as_html,
+                    )
+                    row_data.append(nested_table_text)
+                else:
+                    row_data.append(cell.text)
+
+            data.append(row_data)
+
+        # data = [[cell.text for cell in row.cells] for row in rows[1:]]
         table_text = tabulate(data, headers=headers, tablefmt=fmt)
     else:
         table_text = ""

@@ -560,10 +560,13 @@ class _DocxPartitioner:
         """Generate zero-or-one Table element for a DOCX `w:tbl` XML element."""
         # -- at present, we always generate exactly one Table element, but we might want
         # -- to skip, for example, an empty table, or accommodate nested tables.
+
         html_table = None
         if self._infer_table_structure:
             html_table = convert_ms_office_table_to_text(table, as_html=True)
+
         text_table = convert_ms_office_table_to_text(table, as_html=False)
+
         emphasized_text_contents, emphasized_text_tags = self._table_emphasis(table)
 
         yield Table(

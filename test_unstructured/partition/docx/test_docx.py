@@ -144,6 +144,32 @@ def test_partition_docx_processes_table(filename="example-docs/fake_table.docx")
     assert elements[0].metadata.filename == "fake_table.docx"
 
 
+def test_partition_docx_processes_nested_tables(filename="example-docs/fake_table_nested.docx"):
+    elements = partition_docx(filename=filename)
+
+    assert isinstance(elements[0], Table)
+    assert (
+        elements[0].metadata.text_as_html
+        == """<table>
+<thead>
+<tr><th>Header Col 1              </th><th>Header Col 2  </th></tr>
+</thead>
+<tbody>
+<tr><td>Lorem ipsum               </td><td>A Link example</td></tr>
+<tr><td>Parent table col 1 content</td><td><table>
+<thead>
+<tr><th>Nested Header Col 1  </th><th>Nested Header Col 2  </th></tr>
+</thead>
+<tbody>
+<tr><td>Nested col 1 content </td><td>Nested col 2 content </td></tr>
+</tbody>
+</table>               </td></tr>
+</tbody>
+</table>"""
+    )
+    assert elements[0].metadata.filename == "fake_table_nested.docx"
+
+
 def test_partition_docx_grabs_header_and_footer(filename="example-docs/handbook-1p.docx"):
     elements = partition_docx(filename=filename)
     assert elements[0] == Header("US Trustee Handbook")
