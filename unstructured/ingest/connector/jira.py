@@ -262,8 +262,8 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
             "issue_key": self.file_meta.issue_key,
         }
 
-    @SourceConnectionNetworkError.wrap
     @cached_property
+    @SourceConnectionNetworkError.wrap
     def issue(self):
         """Gets issue data"""
         jira = self.session_handle.service
