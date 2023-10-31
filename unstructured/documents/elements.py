@@ -220,6 +220,8 @@ class ElementMetadata:
             self.filename = filename
 
     def to_dict(self):
+        if not self.links:
+            self.links = None
         _dict = {
             key: value
             for key, value in self.__dict__.items()
@@ -231,8 +233,6 @@ class ElementMetadata:
             _dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
         if self.coordinates:
             _dict["coordinates"] = cast(CoordinatesMetadata, self.coordinates).to_dict()
-        if self.links is not None and not self.links:
-            _dict["links"] = None
         return _dict
 
     @classmethod
