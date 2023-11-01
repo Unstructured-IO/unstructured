@@ -9,7 +9,6 @@ from unstructured.ingest.runner.utils import update_download_dir_hash
 class DatabricksVolumesRunner(DatabricksVolumesBaseRunner):
     def run(
         self,
-        auth_configs: dict,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
@@ -33,7 +32,7 @@ class DatabricksVolumesRunner(DatabricksVolumesBaseRunner):
         source_doc_connector = DatabricksVolumesSourceConnector(  # type: ignore
             processor_config=self.processor_config,
             connector_config=SimpleDatabricksVolumesConfig(
-                auth_configs=auth_configs,
+                auth_configs=self.auth_configs,
                 volume_configs=self.databricks_volume_config,
             ),
             read_config=self.read_config,

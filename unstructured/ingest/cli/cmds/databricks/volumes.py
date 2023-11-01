@@ -5,14 +5,16 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.cmds.databricks.base_src import DatabricksSrcCmd
-from unstructured.ingest.cli.interfaces import (
-    CliMixin,
+from unstructured.ingest.cli.cmds.databricks.interfaces import (
+    AuthConfig,
+    DatabricksVolumesWriteConfig,
 )
-from unstructured.ingest.interfaces import BaseConfig
+
+CMD_NAME = "databricks-volumes"
 
 
 @dataclass
-class DatabricksVolumesCliConfig(BaseConfig, CliMixin):
+class DatabricksVolumesCliConfig(AuthConfig):
     host: t.Optional[str] = None
     account_id: t.Optional[str] = None
     token: t.Optional[str] = None
@@ -65,7 +67,16 @@ class DatabricksVolumesCliConfig(BaseConfig, CliMixin):
 
 
 def get_base_src_cmd() -> BaseSrcCmd:
-    cmd_cls = DatabricksSrcCmd(
-        cmd_name="databricks-volumes", auth_cli_config=DatabricksVolumesCliConfig
+    cmd_cls = DatabricksSrcCmd(cmd_name=CMD_NAME, auth_cli_config=DatabricksVolumesCliConfig)
+    return cmd_cls
+
+
+def get_base_dest_cmd():
+    from unstructured.ingest.cli.cmds.databricks.base_dest import DatabricksDestCmd
+
+    cmd_cls = DatabricksDestCmd(
+        cmd_name=CMD_NAME,
+        auth_cli_config=DatabricksVolumesCliConfig,
+        additional_cli_options=[DatabricksVolumesWriteConfig],
     )
     return cmd_cls

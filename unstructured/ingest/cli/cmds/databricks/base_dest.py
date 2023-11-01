@@ -1,15 +1,14 @@
 import typing as t
 from dataclasses import dataclass
 
-from unstructured.ingest.cli.base.src import BaseSrcCmd
+from unstructured.ingest.cli.base.dest import BaseDestCmd
 from unstructured.ingest.cli.cmds.databricks.interfaces import AuthConfig
 from unstructured.ingest.cli.interfaces import CliFilesStorageConfig
 from unstructured.ingest.interfaces import BaseConfig, DatabricksVolumesConfig
-from unstructured.ingest.runner.base_runner import DatabricksVolumesBaseRunner
 
 
 @dataclass
-class DatabricksSrcCmd(BaseSrcCmd):
+class DatabricksDestCmd(BaseDestCmd):
     cli_config: t.Optional[t.Type[BaseConfig]] = CliFilesStorageConfig
     auth_cli_config: t.Optional[t.Type[BaseConfig]] = None
 
@@ -21,12 +20,14 @@ class DatabricksSrcCmd(BaseSrcCmd):
         self.addition_configs["databricks_volume_config"] = DatabricksVolumesConfig
         self.addition_configs["auth_configs"] = self.auth_cli_config
 
-    def get_source_runner(self, options: dict):
-        runner = super().get_source_runner(options=options)
-        if isinstance(runner, DatabricksVolumesBaseRunner) and isinstance(
-            runner.auth_configs, AuthConfig
+    def get_dest_runner(self, source_cmd: str, options: dict, parent_options: dict):
+        runner = super().get_dest_runner(
+            source_cmd=source_cmd, options=options, parent_options=parent_options
+        )
+        if "auth_configs" in runner.writer_kwargs and isinstance(
+            runner.writer_kwargs["auth_configs"], AuthConfig
         ):
-            runner.auth_configs = runner.auth_configs.to_dict()
+            runner.writer_kwargs["auth_configs"] = runner.writer_kwargs["auth_configs"].to_dict()
         return runner
 
     @property

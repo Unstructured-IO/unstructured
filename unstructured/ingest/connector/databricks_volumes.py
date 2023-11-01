@@ -1,3 +1,4 @@
+import io
 import json
 import os
 import typing as t
@@ -67,7 +68,7 @@ class DatabricksVolumesIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
-    @requires_dependencies(dependencies=["databricks-sdk"], extras="databricks")
+    @requires_dependencies(dependencies=["databricks.sdk"], extras="databricks")
     def get_file(self):
         pass
 
@@ -83,13 +84,13 @@ class DatabricksVolumesIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return self._tmp_download_file()
 
 
-@requires_dependencies(dependencies=["databricks-sdk"], extras="databricks")
+@requires_dependencies(dependencies=["databricks.sdk"], extras="databricks")
 class DatabricksVolumesSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching document(s) from"""
 
     connector_config: SimpleDatabricksVolumesConfig
 
-    @requires_dependencies(dependencies=["databricks-sdk"], extras="databricks")
+    @requires_dependencies(dependencies=["databricks.sdk"], extras="databricks")
     def __post_init__(self):
         from databricks.sdk import WorkspaceClient
 
@@ -109,13 +110,14 @@ class DatabricksVolumesDestinationConnector(BaseDestinationConnector):
     write_config: DatabricksVolumesWriteConfig
     connector_config: SimpleDatabricksVolumesConfig
 
-    @requires_dependencies(dependencies=["databricks-sdk"], extras="databricks")
+    @requires_dependencies(dependencies=["databricks.sdk"], extras="databricks")
     def __post_init__(self):
         from databricks.sdk import WorkspaceClient
 
         self.workspace = WorkspaceClient(**self.connector_config.auth_configs)
 
-        self.workspace.files.upload()
+    def initialize(self):
+        pass
 
     def write_dict(
         self,
@@ -126,15 +128,21 @@ class DatabricksVolumesDestinationConnector(BaseDestinationConnector):
         encoding: str = "utf-8",
         **kwargs,
     ) -> None:
-        output_folder = self.connector_config.volume_configs.path
+        output_folder = self.connector_config.volume_configs.remote_url
         output_folder = os.path.join(output_folder)  # Make sure folder ends with file seperator
         filename = (
             filename.strip(os.sep) if filename else filename
         )  # Make sure filename doesn't begin with file seperator
         output_path = str(PurePath(output_folder, filename)) if filename else output_folder
         logger.debug(f"uploading content to {output_path}")
+        encoded_data = json.dumps(json_list, indent=indent).encode(encoding=encoding)
+        self.workspace.files.upload(
+            file_path=output_path,
+            overwrite=self.write_config.overwrite,
+            contents=io.BytesIO(encoded_data),
+        )
 
-    @requires_dependencies(dependencies=["databricks-sdk"], extras="databricks")
+    @requires_dependencies(dependencies=["databricks.sdk"], extras="databrsicks")
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         for doc in docs:
             file_path = doc.base_output_filename

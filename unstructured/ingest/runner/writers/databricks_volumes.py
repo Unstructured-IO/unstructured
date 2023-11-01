@@ -3,7 +3,7 @@ from unstructured.ingest.interfaces import BaseDestinationConnector, DatabricksV
 
 def databricks_volumes_writer(
     auth_configs: dict,
-    volume_configs: DatabricksVolumesConfig,
+    databricks_volume_config: DatabricksVolumesConfig,
     overwrite: bool = False,
     **kwargs,
 ) -> BaseDestinationConnector:
@@ -16,6 +16,6 @@ def databricks_volumes_writer(
     return DatabricksVolumesDestinationConnector(
         write_config=DatabricksVolumesWriteConfig(overwrite=overwrite),
         connector_config=SimpleDatabricksVolumesConfig(
-            auth_configs=auth_configs, volume_configs=volume_configs
+            auth_configs=auth_configs, volume_configs=databricks_volume_config
         ),
     )
