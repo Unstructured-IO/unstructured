@@ -170,10 +170,7 @@ def convert_and_partition_docx(
     return elements
 
 
-def convert_docx_table_to_html(
-    table: DocxTable,
-    as_html: bool = True,
-) -> str:
+def convert_docx_table_to_html(table: DocxTable, as_html: bool = True, nested: bool = False) -> str:
     """
     Convert a table object from a Word document to an HTML table string using the tabulate library.
 
@@ -192,14 +189,14 @@ def convert_docx_table_to_html(
             if isinstance(block_item, Paragraph):
                 yield f"<p>{block_item.text}</p>"
             elif isinstance(block_item, DocxTable):
-                yield convert_docx_table_to_html(block_item)
+                yield convert_docx_table_to_html(block_item, nested=True)
 
     def iter_cells(row) -> Iterator[str]:
         return ("\n".join(iter_cell_block_items(cell)) for cell in row.cells)
 
     rows = [list(iter_cells(row)) for row in table.rows]
 
-    return tabulate(rows, headers="firstrow", tablefmt=fmt)
+    return tabulate(rows, headers=("firstrow" if not nested else []), tablefmt=fmt)
 
 
 def iter_block_items(parent):

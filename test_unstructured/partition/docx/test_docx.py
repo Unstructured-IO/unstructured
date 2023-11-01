@@ -157,11 +157,9 @@ def test_partition_docx_processes_nested_tables(filename="example-docs/fake_tabl
 <tbody>
 <tr><td><p>Lorem ipsum</p>               </td><td><p>A Link example </p></td></tr>
 <tr><td><p>Parent table col 1 content</p></td><td><table>
-<thead>
-<tr><th><p>Nested Header Col 1</p>  </th><th><p>Nested Header Col 2</p>  </th></tr>
-</thead>
 <tbody>
-<tr><td><p>Nested col 1 content</p> </td><td><p>Nested col 2 content</p> </td></tr>
+<tr><td><p>Nested Header Col 1</p> </td><td><p>Nested Header Col 2</p> </td></tr>
+<tr><td><p>Nested col 1 content</p></td><td><p>Nested col 2 content</p></td></tr>
 </tbody>
 </table>
 <p></p>
