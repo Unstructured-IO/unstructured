@@ -27,16 +27,18 @@ from docx.document import Document
 from docx.enum.section import WD_SECTION_START
 from docx.oxml.ns import nsmap, qn
 from docx.oxml.section import CT_SectPr
-from docx.oxml.table import CT_Tbl
+from docx.oxml.table import CT_Tbl, CT_TcPr
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.oxml.xmlchemy import BaseOxmlElement
 from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
+from docx.table import _Cell
 from docx.text.hyperlink import Hyperlink
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 from lxml import etree
+from tabulate import tabulate
 from typing_extensions import TypeAlias
 
 from unstructured.chunking.title import add_chunking_strategy
@@ -59,7 +61,6 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
-    convert_ms_office_table_to_text,
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
@@ -167,6 +168,55 @@ def convert_and_partition_docx(
         )
 
     return elements
+
+
+def convert_docx_table_to_html(
+    table: DocxTable,
+    as_html: bool = True,
+) -> str:
+    """
+    Convert a table object from a Word document to an HTML table string using the tabulate library.
+
+    Args:
+        table (Table): A docx.table.Table object.
+        as_html (bool): Whether to return the table as an HTML string (True) or a
+            plain text string (False)
+
+    Returns:
+        str: An table string representation of the input table.
+    """
+    fmt = "unsafehtml" if as_html else "plain"
+
+    def iter_cell_block_items(cell) -> Iterator[str]:
+        for block_item in iter_block_items(cell):
+            if isinstance(block_item, Paragraph):
+                yield f"<p>{block_item.text}</p>"
+            elif isinstance(block_item, DocxTable):
+                yield convert_docx_table_to_html(block_item)
+
+    def iter_cells(row) -> Iterator[str]:
+        return ("\n".join(iter_cell_block_items(cell)) for cell in row.cells)
+
+    rows = [list(iter_cells(row)) for row in table.rows]
+
+    return tabulate(rows, headers="firstrow", tablefmt=fmt)
+
+
+def iter_block_items(parent):
+    if isinstance(parent, Document):
+        parent_elm = parent.element.body
+    elif isinstance(parent, _Cell):
+        parent_elm = parent._tc
+    else:
+        raise ValueError("something's not right")
+
+    for child in parent_elm.iterchildren():
+        if isinstance(child, CT_P):
+            yield Paragraph(child, parent)
+        elif isinstance(child, CT_TcPr):
+            yield _Cell(child, parent)
+        elif isinstance(child, CT_Tbl):
+            yield DocxTable(child, parent)
 
 
 @process_metadata()
@@ -558,14 +608,12 @@ class _DocxPartitioner:
 
     def _iter_table_element(self, table: DocxTable) -> Iterator[Table]:
         """Generate zero-or-one Table element for a DOCX `w:tbl` XML element."""
-        # -- at present, we always generate exactly one Table element, but we might want
-        # -- to skip, for example, an empty table, or accommodate nested tables.
 
         html_table = None
         if self._infer_table_structure:
-            html_table = convert_ms_office_table_to_text(table, as_html=True)
+            html_table = convert_docx_table_to_html(table, as_html=True)
 
-        text_table = convert_ms_office_table_to_text(table, as_html=False)
+        text_table = convert_docx_table_to_html(table, as_html=False)
 
         emphasized_text_contents, emphasized_text_tags = self._table_emphasis(table)
 

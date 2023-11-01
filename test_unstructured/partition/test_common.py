@@ -321,18 +321,6 @@ def test_convert_office_doc_captures_errors(monkeypatch, caplog):
     common.convert_office_doc("no-real.docx", "fake-directory", target_format="docx")
     assert "an error occurred" in caplog.text
 
-
-class MockDocxEmptyTable:
-    def __init__(self):
-        self.rows = []
-
-
-def test_convert_ms_office_table_to_text_works_with_empty_tables():
-    table = MockDocxEmptyTable()
-    assert common.convert_ms_office_table_to_text(table, as_html=True) == ""
-    assert common.convert_ms_office_table_to_text(table, as_html=False) == ""
-
-
 @pytest.mark.parametrize(
     ("text", "expected"),
     [

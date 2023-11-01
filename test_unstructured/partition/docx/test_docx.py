@@ -134,10 +134,10 @@ def test_partition_docx_processes_table(filename="example-docs/fake_table.docx")
         elements[0].metadata.text_as_html
         == """<table>
 <thead>
-<tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>
+<tr><th><p>Header Col 1 </p>  </th><th><p>Header Col 2</p>   </th></tr>
 </thead>
 <tbody>
-<tr><td>Lorem ipsum    </td><td>A Link example</td></tr>
+<tr><td><p>Lorem ipsum</p>    </td><td><p>A Link example </p></td></tr>
 </tbody>
 </table>"""
     )
@@ -152,18 +152,20 @@ def test_partition_docx_processes_nested_tables(filename="example-docs/fake_tabl
         elements[0].metadata.text_as_html
         == """<table>
 <thead>
-<tr><th>Header Col 1              </th><th>Header Col 2  </th></tr>
+<tr><th><p>Header Col 1 </p>             </th><th><p>Header Col 2</p>   </th></tr>
 </thead>
 <tbody>
-<tr><td>Lorem ipsum               </td><td>A Link example</td></tr>
-<tr><td>Parent table col 1 content</td><td><table>
+<tr><td><p>Lorem ipsum</p>               </td><td><p>A Link example </p></td></tr>
+<tr><td><p>Parent table col 1 content</p></td><td><table>
 <thead>
-<tr><th>Nested Header Col 1  </th><th>Nested Header Col 2  </th></tr>
+<tr><th><p>Nested Header Col 1</p>  </th><th><p>Nested Header Col 2</p>  </th></tr>
 </thead>
 <tbody>
-<tr><td>Nested col 1 content </td><td>Nested col 2 content </td></tr>
+<tr><td><p>Nested col 1 content</p> </td><td><p>Nested col 2 content</p> </td></tr>
 </tbody>
-</table>               </td></tr>
+</table>
+<p></p>
+<p>Cell with nested table and paragraph element</p>                       </td></tr>
 </tbody>
 </table>"""
     )

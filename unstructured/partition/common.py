@@ -19,7 +19,6 @@ from typing import (
 )
 
 import emoji
-from tabulate import tabulate
 
 from unstructured.documents.coordinates import CoordinateSystem, PixelSpace
 from unstructured.documents.elements import (
@@ -37,12 +36,6 @@ from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 from unstructured.partition.utils.constants import SORT_MODE_DONT, SORT_MODE_XY_CUT
 from unstructured.utils import dependency_exists, first
-
-if dependency_exists("docx") and dependency_exists("docx.table"):
-    from docx.table import Table as docxtable
-
-if dependency_exists("pptx") and dependency_exists("pptx.table"):
-    from pptx.table import Table as pptxtable
 
 if dependency_exists("numpy") and dependency_exists("cv2"):
     from unstructured.partition.utils.sorting import sort_page_elements
@@ -472,48 +465,6 @@ def convert_to_bytes(
         raise ValueError("Invalid file-like object type")
 
     return f_bytes
-
-
-def convert_ms_office_table_to_text(
-    table: Union["docxtable", "pptxtable"],
-    as_html: bool = True,
-) -> str:
-    """
-    Convert a table object from a Word document to an HTML table string using the tabulate library.
-
-    Args:
-        table (Table): A docx.table.Table object.
-        as_html (bool): Whether to return the table as an HTML string (True) or a
-            plain text string (False)
-
-    Returns:
-        str: An table string representation of the input table.
-    """
-    fmt = "unsafehtml" if as_html else "plain"
-
-    rows = list(table.rows)
-    data = []
-    if len(rows) > 0:
-        headers = [cell.text for cell in rows[0].cells]
-        for row in rows[1:]:
-            row_data = []
-            for cell in row.cells:
-                if len(cell.tables) > 0:
-                    nested_table_text = convert_ms_office_table_to_text(
-                        cell.tables[0],
-                        as_html=as_html,
-                    )
-                    row_data.append(nested_table_text)
-                else:
-                    row_data.append(cell.text)
-
-            data.append(row_data)
-
-        # data = [[cell.text for cell in row.cells] for row in rows[1:]]
-        table_text = tabulate(data, headers=headers, tablefmt=fmt)
-    else:
-        table_text = ""
-    return table_text
 
 
 def contains_emoji(s: str) -> bool:

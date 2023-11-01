@@ -12,7 +12,9 @@ from pptx.shapes.graphfrm import GraphicFrame
 from pptx.shapes.group import GroupShape
 from pptx.shapes.shapetree import _BaseGroupShapes  # pyright: ignore [reportPrivateUsage]
 from pptx.slide import Slide
+from pptx.table import Table as pptxtable
 from pptx.text.text import _Paragraph  # pyright: ignore [reportPrivateUsage]
+from tabulate import tabulate
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.documents.elements import (
@@ -29,7 +31,6 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
-    convert_ms_office_table_to_text,
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
@@ -121,6 +122,32 @@ def partition_pptx(
         detect_language_per_element=detect_language_per_element,
     )
     return list(elements)
+
+
+def convert_pptx_table_to_text(
+    table: pptxtable,
+    as_html: bool = True,
+) -> str:
+    """
+    Convert a table object from a Powerpoint document to an HTML table string using the tabulate library.
+
+    Args:
+        table (Table): A docx.table.Table object.
+        as_html (bool): Whether to return the table as an HTML string (True) or a
+            plain text string (False)
+
+    Returns:
+        str: An table string representation of the input table.
+    """
+    fmt = "html" if as_html else "plain"
+    rows = list(table.rows)
+    if len(rows) > 0:
+        headers = [cell.text for cell in rows[0].cells]
+        data = [[cell.text for cell in row.cells] for row in rows[1:]]
+        table_text = tabulate(data, headers=headers, tablefmt=fmt)
+    else:
+        table_text = ""
+    return table_text
 
 
 class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
@@ -328,12 +355,12 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
 
         An empty table does not produce an element.
         """
-        text_table = convert_ms_office_table_to_text(graphfrm.table, as_html=False).strip()
+        text_table = convert_pptx_table_to_text(graphfrm.table, as_html=False).strip()
         if not text_table:
             return
         html_table = None
         if self._infer_table_structure:
-            html_table = convert_ms_office_table_to_text(graphfrm.table, as_html=True)
+            html_table = convert_pptx_table_to_text(graphfrm.table, as_html=True)
         yield Table(
             text=text_table,
             metadata=self._table_metadata(html_table),

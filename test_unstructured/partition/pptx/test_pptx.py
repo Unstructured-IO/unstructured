@@ -262,6 +262,17 @@ def test_partition_pptx_grabs_tables():
     assert elements[1].metadata.filename == "fake-power-point-table.pptx"
 
 
+class MockDocxEmptyTable:
+    def __init__(self):
+        self.rows = []
+
+
+def test__convert_pptx_table_to_text_works_with_empty_tables():
+    table = MockDocxEmptyTable()
+    assert pptx.convert_pptx_table_to_text(table, as_html=True) == ""
+    assert pptx.convert_pptx_table_to_text(table, as_html=False) == ""
+
+
 @pytest.mark.parametrize(
     "infer_table_structure",
     [
