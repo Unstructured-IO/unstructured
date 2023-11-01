@@ -9,8 +9,9 @@ fi
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=api-ingest-output
-OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
-WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
+OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
+OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091
@@ -22,7 +23,8 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-PYTHONPATH=. ./unstructured/ingest/main.py \
+RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     local \
     --api-key "$UNS_API_KEY" \
     --metadata-exclude coordinates,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
