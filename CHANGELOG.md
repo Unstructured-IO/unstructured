@@ -1,4 +1,4 @@
-## 0.10.29-dev3
+## 0.10.29-dev4
 
 ### Enhancements
 
@@ -11,6 +11,7 @@
 
 ### Fixes
 
+* **Chipper example notebook failing** The example notebook demonstrating Chipper should use the public version of Chipper. The notebook was also updated to use the newer install method, and cell was added that allowed a user to execute the notebook according to the instructions provided in the notebook.
 * **Ingest session handler not being shared correctly** All ingest docs that leverage the session handler should only need to set it once per process. It was recreating it each time because the right values weren't being set nor available given how dataclasses work in python.
 * **Ingest download-only fix** Previously the download only flag was being checked after the doc factory pipeline step, which occurs before the files are actually downloaded by the source node. This check was moved after the source node to allow for the files to be downloaded first before exiting the pipeline.
 
