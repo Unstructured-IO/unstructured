@@ -98,21 +98,24 @@ def measure_text_edit_distance(
     accuracy_scores: List[float] = []
     percent_missing_scores: List[float] = []
 
+    # assumption: output file name convention is name-of-file.doc.json
     for doc in output_list:  # type: ignore
         fn = (doc.split("/")[-1]).split(".json")[0]
+        doctype = fn.rsplit(".", 1)[-1]
         fn_txt = fn + ".txt"
         connector = doc.split("/")[0]
+
         if fn_txt in source_list:  # type: ignore
             output_cct = elements_to_text(elements_from_json(os.path.join(output_dir, doc)))
             source_cct = _read_text(os.path.join(source_dir, fn_txt))
             accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
 
-            rows.append([fn, connector, accuracy, percent_missing])
+            rows.append([fn, doctype, connector, accuracy, percent_missing])
             accuracy_scores.append(accuracy)
             percent_missing_scores.append(percent_missing)
 
-    headers = ["filename", "connector", "cct-accuracy", "cct-%missing"]
+    headers = ["filename", "doctype", "connector", "cct-accuracy", "cct-%missing"]
     _write_to_file(export_dir, "all-docs-cct.tsv", rows, headers)
 
     agg_rows = []
