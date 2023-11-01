@@ -26,6 +26,7 @@ class BaseSrcCmd(BaseCmd):
             extras=addition_configs,
         )
         runner = runner_map[self.cmd_name_key]
+        logger.debug(f"Calling runner: {runner.__name__}")
         return runner(**configs)  # type: ignore
 
     def src(self, ctx: click.Context, **options):

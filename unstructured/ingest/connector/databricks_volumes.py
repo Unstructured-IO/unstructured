@@ -1,15 +1,22 @@
+import json
+import os
 import typing as t
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import PurePath
 
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
+    BaseDestinationConnector,
     BaseIngestDoc,
     BaseSourceConnector,
+    DatabricksVolumesConfig,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    WriteConfig,
 )
+from unstructured.ingest.logger import logger
 from unstructured.utils import (
     requires_dependencies,
 )
@@ -22,8 +29,7 @@ class SimpleDatabricksVolumesConfig(BaseConnectorConfig):
     """Connector config to process all messages by channel id's."""
 
     auth_configs: dict
-    remote_url: str
-    recursive: bool = False
+    volume_configs: DatabricksVolumesConfig
 
 
 @dataclass
@@ -83,8 +89,57 @@ class DatabricksVolumesSourceConnector(SourceConnectorCleanupMixin, BaseSourceCo
 
     connector_config: SimpleDatabricksVolumesConfig
 
-    def initialize(self):
-        """Verify that can get metadata for an object, validates connections info."""
+    @requires_dependencies(dependencies=["databricks-sdk"], extras="databricks")
+    def __post_init__(self):
+        from databricks.sdk import WorkspaceClient
+
+        self.workspace = WorkspaceClient(**self.connector_config.auth_configs)
 
     def get_ingest_docs(self):
         return []
+
+
+@dataclass
+class DatabricksVolumesWriteConfig(WriteConfig):
+    overwrite: bool = False
+
+
+@dataclass
+class DatabricksVolumesDestinationConnector(BaseDestinationConnector):
+    write_config: DatabricksVolumesWriteConfig
+    connector_config: SimpleDatabricksVolumesConfig
+
+    @requires_dependencies(dependencies=["databricks-sdk"], extras="databricks")
+    def __post_init__(self):
+        from databricks.sdk import WorkspaceClient
+
+        self.workspace = WorkspaceClient(**self.connector_config.auth_configs)
+
+        self.workspace.files.upload()
+
+    def write_dict(
+        self,
+        *args,
+        json_list: t.List[t.Dict[str, t.Any]],
+        filename: t.Optional[str] = None,
+        indent: int = 4,
+        encoding: str = "utf-8",
+        **kwargs,
+    ) -> None:
+        output_folder = self.connector_config.volume_configs.path
+        output_folder = os.path.join(output_folder)  # Make sure folder ends with file seperator
+        filename = (
+            filename.strip(os.sep) if filename else filename
+        )  # Make sure filename doesn't begin with file seperator
+        output_path = str(PurePath(output_folder, filename)) if filename else output_folder
+        logger.debug(f"uploading content to {output_path}")
+
+    @requires_dependencies(dependencies=["databricks-sdk"], extras="databricks")
+    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+        for doc in docs:
+            file_path = doc.base_output_filename
+            filename = file_path if file_path else None
+            with open(doc._output_filename) as json_file:
+                logger.debug(f"uploading content from {doc._output_filename}")
+                json_list = json.load(json_file)
+                self.write_dict(json_list=json_list, filename=filename)

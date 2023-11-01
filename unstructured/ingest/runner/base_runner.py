@@ -6,6 +6,7 @@ from unstructured.ingest.interfaces import (
     BaseDestinationConnector,
     BaseSourceConnector,
     ChunkingConfig,
+    DatabricksVolumesConfig,
     EmbeddingConfig,
     FsspecConfig,
     PartitionConfig,
@@ -76,3 +77,15 @@ class FsspecBaseRunner(Runner):
     def __post_init__(self):
         if self.fsspec_config is None:
             raise ValueError("fsspec_config must exist")
+
+
+@dataclass
+class DatabricksVolumesBaseRunner(Runner):
+    # TODO make this field required when python3.8 no longer supported
+    # python3.8 dataclass doesn't support default values in child classes, but this
+    # fsspec_config should be required in this class.
+    databricks_volume_config: t.Optional[DatabricksVolumesConfig] = None
+
+    def __post_init__(self):
+        if self.databricks_volume_config is None:
+            raise ValueError("databricks_volumes_config must exist")
