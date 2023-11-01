@@ -190,15 +190,16 @@ def measure_element_type_accuracy(
 
     for doc in output_list:  # type: ignore
         fn = (doc.split("/")[-1]).split(".json")[0]
+        doctype = fn.rsplit(".", 1)[-1]
         connector = doc.split("/")[0]
         if doc in source_list:  # type: ignore
             output = get_element_type_frequency(_read_text(os.path.join(output_dir, doc)))
             source = get_element_type_frequency(_read_text(os.path.join(source_dir, doc)))
             accuracy = round(calculate_element_type_percent_match(output, source), 3)
-            rows.append([fn, connector, accuracy])
+            rows.append([fn, doctype, connector, accuracy])
             accuracy_scores.append(accuracy)
 
-    headers = ["filename", "connector", "element-type-accuracy"]
+    headers = ["filename", "doctype", "connector", "element-type-accuracy"]
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", rows, headers)
 
     agg_rows = []
