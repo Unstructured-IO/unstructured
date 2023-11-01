@@ -1,4 +1,4 @@
-## 0.10.29-dev3
+## 0.10.29-dev5
 
 ### Enhancements
 
@@ -9,6 +9,8 @@
 * **Google Drive source connector supports credentials from memory** Originally, the connector expected a filepath to pull the credentials from when creating the client. This was expanded to support passing that information from memory as a dict if access to the file system might not be available.
 
 ### Features
+
+* **Allow setting table crop parameter** In certain circumstances, adjusting the table crop padding may improve table.
 
 ### Fixes
 
