@@ -11,6 +11,15 @@ mkdir -p "$OUTPUT_DIR"
 
 EVAL_NAME="$1"
 
+if [ "$EVAL_NAME" == "text-extraction" ]; then
+  METRIC_STRATEGY="measure-text-edit-distance"
+elif [ "$EVAL_NAME" == "element-type" ]; then
+  METRIC_STRATEGY="measure-element-type-accuracy"
+else
+  echo "Wrong metric evaluation strategy given. Expected one of [ text-extraction, element-type ]. Got [ $EVAL_NAME ]."
+  exit 1
+fi
+
 # Download cct test from s3
 BUCKET_NAME=utic-dev-tech-fixtures
 FOLDER_NAME=small-eval-"$EVAL_NAME"
@@ -49,15 +58,6 @@ OUTPUT_LIST=(
 # List selected source as a subset of SOURCE_DIR, if any
 SOURCE_LIST=(
 )
-
-if [ "$EVAL_NAME" == "text-extraction" ]; then
-  METRIC_STRATEGY="measure-text-edit-distance"
-elif [ "$EVAL_NAME" == "element-type" ]; then
-  METRIC_STRATEGY="measure-element-type-accuracy"
-else
-  echo "Wrong metric evaluation strategy given. Expected one of [ text-extraction, element-type ]. Got [ $EVAL_NAME ]."
-  exit 1
-fi
 
 read -ra output_args <<< "$(generate_args "output" "$OUTPUT_DIR" "${OUTPUT_LIST[@]}")"
 read -ra source_args <<< "$(generate_args "source" "$SOURCE_DIR" "${SOURCE_LIST[@]}")"
