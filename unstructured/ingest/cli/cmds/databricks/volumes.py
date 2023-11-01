@@ -67,7 +67,9 @@ class DatabricksVolumesCliConfig(AuthConfig):
 
 
 def get_base_src_cmd() -> BaseSrcCmd:
-    cmd_cls = DatabricksSrcCmd(cmd_name=CMD_NAME, auth_cli_config=DatabricksVolumesCliConfig)
+    cmd_cls = DatabricksSrcCmd(
+        cmd_name=f"{CMD_NAME} (unavailable)", auth_cli_config=DatabricksVolumesCliConfig
+    )
     return cmd_cls
 
 

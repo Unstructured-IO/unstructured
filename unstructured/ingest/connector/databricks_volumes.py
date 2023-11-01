@@ -97,7 +97,7 @@ class DatabricksVolumesSourceConnector(SourceConnectorCleanupMixin, BaseSourceCo
         self.workspace = WorkspaceClient(**self.connector_config.auth_configs)
 
     def get_ingest_docs(self):
-        return []
+        raise NotImplementedError()
 
 
 @dataclass

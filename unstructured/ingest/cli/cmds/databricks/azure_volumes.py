@@ -62,7 +62,7 @@ class DatabricksAzureVolumesAuthCliConfig(AuthConfig):
 
 def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = DatabricksSrcCmd(
-        cmd_name=CMD_NAME,
+        cmd_name=f"{CMD_NAME} (unavailable)",
         auth_cli_config=DatabricksAzureVolumesAuthCliConfig,
     )
     return cmd_cls
