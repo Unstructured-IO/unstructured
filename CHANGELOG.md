@@ -1,4 +1,4 @@
-## 0.10.29-dev4
+## 0.10.29-dev6
 
 ### Enhancements
 
@@ -9,6 +9,8 @@
 * **Google Drive source connector supports credentials from memory** Originally, the connector expected a filepath to pull the credentials from when creating the client. This was expanded to support passing that information from memory as a dict if access to the file system might not be available.
 
 ### Features
+
+* **Allow setting table crop parameter** In certain circumstances, adjusting the table crop padding may improve table.
 
 ### Fixes
 * **Handle empty string for `ocr_languages` with values for `languages`** Some API users ran into an issue with sending `languages` params because the API defaulted to also using an empty string for `ocr_languages`. This update handles situations where `languages` is defined and `ocr_languages` is an empty string.
