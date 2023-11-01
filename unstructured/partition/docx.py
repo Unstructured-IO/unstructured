@@ -32,6 +32,7 @@ from docx.table import Table as DocxTable
 from docx.text.hyperlink import Hyperlink
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
+from tabulate import tabulate
 from typing_extensions import TypeAlias
 
 from unstructured.chunking.title import add_chunking_strategy
@@ -54,7 +55,6 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
-    convert_ms_office_table_to_text,
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
@@ -302,6 +302,48 @@ class _DocxPartitioner:
 
             yield from self._iter_section_footers(section)
 
+    @staticmethod
+    def _convert_table_to_html(table: DocxTable) -> str:
+        """HTML string version of `table`.
+
+        Example:
+
+            <table>
+            <tbody>
+            <tr><th>item  </th><th style="text-align: right;">  qty</th></tr>
+            <tr><td>spam  </td><td style="text-align: right;">   42</td></tr>
+            <tr><td>eggs  </td><td style="text-align: right;">  451</td></tr>
+            <tr><td>bacon </td><td style="text-align: right;">    0</td></tr>
+            </tbody>
+            </table>
+
+        """
+        return tabulate(
+            [[cell.text for cell in row.cells] for row in table.rows],
+            headers="firstrow",
+            tablefmt="html",
+        )
+
+    @staticmethod
+    def _convert_table_to_plain_text(table: DocxTable) -> str:
+        """Plain-text version of `table`.
+
+        Each row appears on its own line. Cells in a column are aligned using spaces as padding:
+
+            item      qty
+            spam       42
+            eggs      451
+            bacon       0
+
+        The first row is unconditionally considered column headings, although the column headings
+        row is not differentiated in this format.
+        """
+        return tabulate(
+            [[cell.text for cell in row.cells] for row in table.rows],
+            headers="firstrow",
+            tablefmt="plain",
+        )
+
     @lazyproperty
     def _document(self) -> Document:
         """The python-docx `Document` object loaded from file or filename."""
@@ -537,8 +579,8 @@ class _DocxPartitioner:
         # -- to skip, for example, an empty table, or accommodate nested tables.
         html_table = None
         if self._infer_table_structure:
-            html_table = convert_ms_office_table_to_text(table, as_html=True)
-        text_table = convert_ms_office_table_to_text(table, as_html=False)
+            html_table = self._convert_table_to_html(table)
+        text_table = self._convert_table_to_plain_text(table)
         emphasized_text_contents, emphasized_text_tags = self._table_emphasis(table)
 
         yield Table(
