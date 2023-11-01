@@ -1191,3 +1191,15 @@ def test_partition_languages_incorrectly_defaults_to_English(tmpdir):
         f.write(german)
     elements = partition(filepath)
     assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_languages_and_empty_ocr_languages():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "category-level.docx")
+
+    lang_param_elements = partition(
+        filename=filename,
+        languages=["spa"],
+        ocr_languages="",
+    )
+
+    assert lang_param_elements[0].metadata.languages == ["spa"]
