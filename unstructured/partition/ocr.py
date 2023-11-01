@@ -257,7 +257,7 @@ def supplement_element_with_table_extraction(
     """
     for element in elements:
         if element.type == "Table":
-            padding = env_config.IMAGE_CROP_PAD
+            padding = env_config.TABLE_IMAGE_CROP_PAD
             padded_element = pad_element_bboxes(element, padding=padding)
             cropped_image = image.crop(
                 (
