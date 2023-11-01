@@ -214,18 +214,17 @@ def partition(
         )
     kwargs.setdefault("metadata_filename", metadata_filename)
 
+    if ocr_languages == "":
+        ocr_languages = None
+
     if ocr_languages is not None:
         # check if languages was set to anything not the default value
         # languages and ocr_languages were therefore both provided - raise error
         if languages is not None:
-            if ocr_languages == "":
-                ocr_languages = None
-            else:
-                raise ValueError(
-                    "Only one of languages and ocr_languages should be specified. "
-                    "languages is preferred. ocr_languages is marked for deprecation.",
-                )
-
+            raise ValueError(
+                "Only one of languages and ocr_languages should be specified. "
+                "languages is preferred. ocr_languages is marked for deprecation.",
+            )
         else:
             languages = convert_old_ocr_languages_to_languages(ocr_languages)
             logger.warning(
