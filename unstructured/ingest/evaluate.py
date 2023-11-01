@@ -37,38 +37,6 @@ def main():
     pass
 
 
-@main.command()
-@click.option("--output_dir", type=str, help="Directory to structured output.")
-@click.option(
-    "--output_list",
-    type=str,
-    multiple=True,
-    help="Optional: list of selected structured output file names under the \
-        directory to be evaluate. If none, all files under directory will be use.",
-)
-@click.option("--source_dir", type=str, help="Directory to source.")
-@click.option(
-    "--source_list",
-    type=str,
-    multiple=True,
-    help="Optional: list of selected source file names under the directory \
-        to be evaluate. If none, all files under directory will be use.",
-)
-@click.option(
-    "--export_dir",
-    type=str,
-    default="metrics",
-    help="Directory to save the output evaluation metrics to. Default to \
-        your/working/dir/metrics/",
-)
-@click.option(
-    "--weights",
-    type=(int, int, int),
-    default=(2, 1, 1),
-    show_default=True,
-    help="A tuple of weights to the Levenshtein distance calculation. \
-        See text_extraction.py/calculate_edit_distance for more details.",
-)
 def measure_text_edit_distance(
     output_dir: str,
     output_list: Optional[List[str]],
@@ -148,15 +116,15 @@ def measure_text_edit_distance(
     type=str,
     multiple=True,
     help="Optional: list of selected structured output file names under the \
-        directory to be evaluate. If none, all files under directory will be used.",
+        directory to be evaluate. If none, all files under directory will be use.",
 )
-@click.option("--source_dir", type=str, help="Directory to structured source.")
+@click.option("--source_dir", type=str, help="Directory to source.")
 @click.option(
     "--source_list",
     type=str,
     multiple=True,
     help="Optional: list of selected source file names under the directory \
-        to be evaluate. If none, all files under directory will be used.",
+        to be evaluate. If none, all files under directory will be use.",
 )
 @click.option(
     "--export_dir",
@@ -165,6 +133,27 @@ def measure_text_edit_distance(
     help="Directory to save the output evaluation metrics to. Default to \
         your/working/dir/metrics/",
 )
+@click.option(
+    "--weights",
+    type=(int, int, int),
+    default=(2, 1, 1),
+    show_default=True,
+    help="A tuple of weights to the Levenshtein distance calculation. \
+        See text_extraction.py/calculate_edit_distance for more details.",
+)
+def measure_text_edit_distance_command(
+    output_dir: str,
+    output_list: Optional[List[str]],
+    source_dir: str,
+    source_list: Optional[List[str]],
+    export_dir: str,
+    weights: Tuple[int, int, int],
+):
+    return measure_text_edit_distance(
+        output_dir, output_list, source_dir, source_list, export_dir, weights
+    )
+
+
 def measure_element_type_accuracy(
     output_dir: str,
     output_list: Optional[List[str]],
@@ -214,6 +203,42 @@ def measure_element_type_accuracy(
     )
     _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_rows, agg_headers)
     _display(agg_rows, agg_headers)
+
+
+@main.command()
+@click.option("--output_dir", type=str, help="Directory to structured output.")
+@click.option(
+    "--output_list",
+    type=str,
+    multiple=True,
+    help="Optional: list of selected structured output file names under the \
+        directory to be evaluate. If none, all files under directory will be used.",
+)
+@click.option("--source_dir", type=str, help="Directory to structured source.")
+@click.option(
+    "--source_list",
+    type=str,
+    multiple=True,
+    help="Optional: list of selected source file names under the directory \
+        to be evaluate. If none, all files under directory will be used.",
+)
+@click.option(
+    "--export_dir",
+    type=str,
+    default="metrics",
+    help="Directory to save the output evaluation metrics to. Default to \
+        your/working/dir/metrics/",
+)
+def measure_element_type_accuracy_command(
+    output_dir: str,
+    output_list: Optional[List[str]],
+    source_dir: str,
+    source_list: Optional[List[str]],
+    export_dir: str,
+):
+    return measure_element_type_accuracy(
+        output_dir, output_list, source_dir, source_list, export_dir
+    )
 
 
 def _listdir_recursive(dir: str):
