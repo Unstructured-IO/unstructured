@@ -1,4 +1,4 @@
-## 0.10.29-dev3
+## 0.10.29-dev4
 
 ### Enhancements
 
@@ -10,7 +10,7 @@
 ### Features
 
 ### Fixes
-
+* **Handle empty string for `ocr_languages` with values for `languages`** Some API users ran into an issue with sending `languages` params because the API defaulted to also using an empty string for `ocr_languages`. This update handles situations where `languages` is defined and `ocr_languages` is an empty string.
 * **Ingest session handler not being shared correctly** All ingest docs that leverage the session handler should only need to set it once per process. It was recreating it each time because the right values weren't being set nor available given how dataclasses work in python.
 * **Ingest download-only fix** Previously the download only flag was being checked after the doc factory pipeline step, which occurs before the files are actually downloaded by the source node. This check was moved after the source node to allow for the files to be downloaded first before exiting the pipeline.
 
