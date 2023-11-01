@@ -1,5 +1,13 @@
 ## 0.10.30-dev0
 
+### Enhancements
+
+* **Support nested DOCX tables.** In DOCX, like HTML, a table cell can itself contain a table. In this case, create nested HTML tables to reflect that structure and create a plain-text table with captures all the text in nested tables, formatting it as a reasonable facsimile of a table.
+
+### Features
+
+### Fixes
+
 ## 0.10.29
 
 ### Enhancements
