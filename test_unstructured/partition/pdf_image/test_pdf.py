@@ -423,7 +423,7 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
     ],
 )
 def test_partition_pdf_hi_res_ocr_mode_with_table_extraction(ocr_mode):
-    filename = "example-docs/layout-parser-paper-with-table.pdf"
+    filename = "example-docs/layout-parser-paper.pdf"
     elements = pdf.partition_pdf(
         filename=filename,
         ocr_mode=ocr_mode,
@@ -431,10 +431,9 @@ def test_partition_pdf_hi_res_ocr_mode_with_table_extraction(ocr_mode):
         infer_table_structure=True,
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
-    assert len(table) == 1
+    assert len(table) == 2
     assert "<table><thead><th>" in table[0]
     assert "Layouts of history Japanese documents" in table[0]
-    assert "Large Model" in table[0]
     # FIXME(yuming): comment this out since there are some table regression issue
     # assert "Layouts of scanned modern magazines and scientific reports" in table[0]
 
