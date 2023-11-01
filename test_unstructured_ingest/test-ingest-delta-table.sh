@@ -49,5 +49,3 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
 
 python "$SCRIPT_DIR"/python/test-ingest-delta-table-output.py --table-uri "$DESTINATION_TABLE"
-
-"$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"

@@ -35,5 +35,3 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-num-files-output.sh 3 $OUTPUT_FOLDER_NAME
-
-"$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"
