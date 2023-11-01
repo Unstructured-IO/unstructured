@@ -9,8 +9,9 @@ SCRIPT_DIR=$(dirname "$SRC_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
 
 OUTPUT_FOLDER_NAME=airtable-diff
-OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
-WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
+OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
+OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 CI=${CI:-"false"}
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
@@ -34,7 +35,8 @@ if [ -z "$AIRTABLE_PERSONAL_ACCESS_TOKEN" ]; then
    exit 0
 fi
 
-PYTHONPATH=. ./unstructured/ingest/main.py \
+RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     airtable \
     --download-dir "$DOWNLOAD_DIR" \
     --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
