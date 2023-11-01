@@ -104,7 +104,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
-      UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v3
@@ -141,6 +140,48 @@ jobs:
         make install-ci
         make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
         make check-coverage
+
+  test_chipper:
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+    runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+      UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    needs: [setup, lint]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/cache/restore@v3
+      id: virtualenv-cache
+      with:
+        path: |
+          .venv
+          nltk_data
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Setup virtual environment (no cache hit)
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+      run: |
+        python${{ matrix.python-version}} -m venv .venv
+        source .venv/bin/activate
+        mkdir "$NLTK_DATA"
+        make install-ci
+    - name: Test
+      env:
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+      run: |
+        source .venv/bin/activate
+        sudo apt-get update
+        sudo apt-get install -y poppler-utils
+        make install-pandoc
+        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+        tesseract --version
+        make test-chipper CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
 
   test_unit_no_extras:
     strategy:
@@ -271,7 +312,7 @@ jobs:
           make install-all-ingest
 
 
-  test_ingest:
+  test_ingest_src:
     environment: ci
     strategy:
       matrix:
@@ -283,21 +324,6 @@ jobs:
     steps:
     # actions/checkout MUST come before auth
     - uses: 'actions/checkout@v4'
-    - name: 'Google Cloud Auth'
-      uses: 'google-github-actions/auth@v1'
-      with:
-        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-        create_credentials_file: true
-        activate_credentials_file: true
-    - name: 'Set up Cloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v1'
-    - name: 'Az CLI login'
-      uses: azure/login@v1
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -371,7 +397,85 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
-        ./test_unstructured_ingest/test-ingest.sh
+        ./test_unstructured_ingest/test-ingest-src.sh
+
+
+  test_ingest_dest:
+    environment: ci
+    strategy:
+      matrix:
+        python-version: ["3.8","3.9","3.10","3.11"]
+    runs-on: ubuntu-latest-m
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    needs: [setup_ingest, lint]
+    steps:
+    # actions/checkout MUST come before auth
+    - uses: 'actions/checkout@v4'
+    - name: 'Google Cloud Auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+        create_credentials_file: true
+        activate_credentials_file: true
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+    - name: 'Az CLI login'
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Get full Python version
+      id: full-python-version
+      run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
+    - uses: actions/cache/restore@v3
+      id: virtualenv-cache
+      with:
+        path: |
+          .venv
+          nltk_data
+        key: unstructured-ingest-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
+        # Due to the dependency on setup_ingest, the cache should exist before this is ran. Set failed if it wasn't found.
+        fail-on-cache-miss: true
+    - name: Setup docker-compose
+      uses: KengoTODA/actions-setup-docker-compose@v1
+      with:
+        version: '2.22.0'
+    - name: Test Ingest (unit)
+      run: |
+        source .venv/bin/activate
+        PYTHONPATH=. pytest test_unstructured_ingest/unit
+    - name: Test (end-to-end)
+      env:
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+        AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
+        BOX_APP_CONFIG: ${{ secrets.BOX_APP_CONFIG }}
+        DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
+        DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
+        DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
+        GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        TABLE_OCR: "tesseract"
+        OCR_AGENT: "tesseract"
+        CI: "true"
+      run: |
+        source .venv/bin/activate
+        sudo apt-get update
+        sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get install -y tesseract-ocr
+        sudo apt-get install -y tesseract-ocr-kor
+        sudo apt-get install diffstat
+        tesseract --version
+        ./test_unstructured_ingest/test-ingest-dest.sh
 
   test_unstructured_api_unit:
     strategy:
@@ -464,6 +568,5 @@ jobs:
         run: |
           source .venv/bin/activate
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
-          echo "UNSTRUCTURED_HF_TOKEN=${{ secrets.HF_TOKEN }}" > uns_test_env_file
           make docker-build
           make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
