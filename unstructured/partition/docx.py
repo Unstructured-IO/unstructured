@@ -14,7 +14,6 @@ from typing import (
     Iterator,
     List,
     Optional,
-    Sequence,
     Tuple,
     Type,
     Union,
@@ -25,8 +24,6 @@ from typing import (
 import docx
 from docx.document import Document
 from docx.enum.section import WD_SECTION_START
-from docx.oxml.ns import nsmap
-from docx.oxml.section import CT_SectPr
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.xmlchemy import BaseOxmlElement
@@ -35,7 +32,6 @@ from docx.table import Table as DocxTable
 from docx.text.hyperlink import Hyperlink
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
-from lxml import etree
 from typing_extensions import TypeAlias
 
 from unstructured.chunking.title import add_chunking_strategy
@@ -292,14 +288,16 @@ class _DocxPartitioner:
             yield from self._iter_section_page_breaks(section_idx, section)
             yield from self._iter_section_headers(section)
 
-            for block_item in _SectBlockItemIterator.iter_sect_block_items(section, self._document):
-                # -- a block-item can only be a Paragraph ... --
+            for block_item in section.iter_inner_content():
+                # -- a block-item can be a Paragraph or a Table, maybe others later so elif here.
+                # -- Paragraph is more common so check that first.
                 if isinstance(block_item, Paragraph):
                     yield from self._iter_paragraph_elements(block_item)
                     # -- a paragraph can contain a page-break --
                     yield from self._iter_maybe_paragraph_page_breaks(block_item)
-                # -- ... or a Table --
-                else:
+                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                    block_item, DocxTable
+                ):
                     yield from self._iter_table_element(block_item)
 
             yield from self._iter_section_footers(section)
@@ -777,124 +775,3 @@ class _DocxPartitioner:
     def _parse_category_depth_by_style_ilvl(self) -> int:
         # TODO(newelh) Parsing category depth by style ilvl is not yet implemented
         return 0
-
-
-class _SectBlockItemIterator:
-    """Generates the block-items in a section.
-
-    A block item is a docx Paragraph or Table. This small class is separated from
-    `_SectBlockElementIterator` because these two aspects will live in different places upstream.
-    This makes them easier to transplant, which we expect to do soon.
-    """
-
-    @classmethod
-    def iter_sect_block_items(cls, section: Section, document: Document) -> Iterator[BlockItem]:
-        """Generate each Paragraph or Table object in `section`."""
-        for element in _SectBlockElementIterator.iter_sect_block_elements(section._sectPr):
-            yield (
-                Paragraph(element, document)
-                if isinstance(element, CT_P)
-                else DocxTable(element, document)
-            )
-
-
-class _SectBlockElementIterator:
-    """Generates the block-item XML elements in a section.
-
-    A block-item element is a `CT_P` (paragraph) or a `CT_Tbl` (table).
-    """
-
-    _compiled_blocks_xpath: Optional[etree.XPath] = None
-    _compiled_count_xpath: Optional[etree.XPath] = None
-
-    def __init__(self, sectPr: CT_SectPr):
-        self._sectPr = sectPr
-
-    @classmethod
-    def iter_sect_block_elements(cls, sectPr: CT_SectPr) -> Iterator[BlockElement]:
-        """Generate each CT_P or CT_Tbl element within the extents governed by `sectPr`."""
-        return cls(sectPr)._iter_sect_block_elements()
-
-    def _iter_sect_block_elements(self) -> Iterator[BlockElement]:
-        """Generate each CT_P or CT_Tbl element in section."""
-        # -- General strategy is to get all block (<w;p> and <w:tbl>) elements from start of doc
-        # -- to and including this section, then compute the count of those elements that came
-        # -- from prior sections and skip that many to leave only the ones in this section. It's
-        # -- possible to express this "between here and there" (end of prior section and end of
-        # -- this one) concept in XPath, but it would be harder to follow because there are
-        # -- special cases (e.g. no prior section) and the boundary expressions are fairly hairy.
-        # -- I also believe it would be computationally more expensive than doing it this
-        # -- straighforward albeit (theoretically) slightly wasteful way.
-
-        sectPr, sectPrs = self._sectPr, self._sectPrs
-        sectPr_idx = sectPrs.index(sectPr)
-
-        # -- count block items belonging to prior sections --
-        n_blks_to_skip = (
-            0
-            if sectPr_idx == 0
-            else self._count_of_blocks_in_and_above_section(sectPrs[sectPr_idx - 1])
-        )
-
-        # -- and skip those in set of all blks from doc start to end of this section --
-        for element in self._blocks_in_and_above_section(sectPr)[n_blks_to_skip:]:
-            yield element
-
-    def _blocks_in_and_above_section(self, sectPr: CT_SectPr) -> Sequence[BlockElement]:
-        """All ps and tbls in section defined by `sectPr` and all prior sections."""
-        if self._compiled_blocks_xpath is None:
-            self._compiled_blocks_xpath = etree.XPath(
-                self._blocks_in_and_above_section_xpath,
-                namespaces=nsmap,
-                regexp=False,
-            )
-        xpath = self._compiled_blocks_xpath
-        # -- XPath callable results are Any (basically), so need a cast --
-        return cast(Sequence[BlockElement], xpath(sectPr))
-
-    @lazyproperty
-    def _blocks_in_and_above_section_xpath(self) -> str:
-        """XPath expr for ps and tbls in context of a sectPr and all prior sectPrs."""
-        # -- "p_sect" is a section with sectPr located at w:p/w:pPr/w:sectPr. "body_sect" is a
-        # -- section with sectPr located at w:body/w:sectPr. The last section in the document is a
-        # -- "body_sect". All others are of the "p_sect" variety. "term" means "terminal", like
-        # -- the last p or tbl in the section. "pred" means "predecessor", like a preceding p or
-        # -- tbl in the section.
-
-        # -- the terminal block in a p-based sect is the p the sectPr appears in --
-        p_sect_term_block = "./parent::w:pPr/parent::w:p"
-        # -- the terminus of a body-based sect is the sectPr itself (not a block) --
-        body_sect_term = "self::w:sectPr[parent::w:body]"
-        # -- all the ps and tbls preceding (but not including) the context node --
-        pred_ps_and_tbls = "preceding-sibling::*[self::w:p | self::w:tbl]"
-
-        # -- p_sect_term_block and body_sect_term(inus) are mutually exclusive. So the result is
-        # -- either the union of nodes found by the first two selectors or the nodes found by the
-        # -- last selector, never both.
-        return (
-            # -- include the p containing a sectPr --
-            f"{p_sect_term_block}"
-            # -- along with all the blocks that precede it --
-            f" | {p_sect_term_block}/{pred_ps_and_tbls}"
-            # -- or all the preceding blocks if sectPr is body-based (last sectPr) --
-            f" | {body_sect_term}/{pred_ps_and_tbls}"
-        )
-
-    def _count_of_blocks_in_and_above_section(self, sectPr: CT_SectPr) -> int:
-        """All ps and tbls in section defined by `sectPr` and all prior sections."""
-        if self._compiled_count_xpath is None:
-            self._compiled_count_xpath = etree.XPath(
-                f"count({self._blocks_in_and_above_section_xpath})",
-                namespaces=nsmap,
-                regexp=False,
-            )
-        xpath = self._compiled_count_xpath
-        # -- numeric XPath results are always float, so need an int() conversion --
-        return int(cast(float, xpath(sectPr)))
-
-    @lazyproperty
-    def _sectPrs(self) -> Sequence[CT_SectPr]:
-        """All w:sectPr elements in document, in document-order."""
-        return self._sectPr.xpath(
-            "/w:document/w:body/w:p/w:pPr/w:sectPr | /w:document/w:body/w:sectPr",
-        )
