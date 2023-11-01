@@ -108,8 +108,8 @@ all_eval=(
   'element-type'
 )
 for eval in "${all_eval[@]}"; do
-  CURRENT_TEST="$eval"
-  echo "--------- RUNNING SCRIPT $eval ---------"
+  CURRENT_TEST="evaluation-metrics.sh $eval"
+  echo "--------- RUNNING SCRIPT evaluation-metrics.sh $eval ---------"
   ./test_unstructured_ingest/evaluation-metrics.sh "$eval"
-  echo "--------- FINISHED SCRIPT $eval ---------"
+  echo "--------- FINISHED SCRIPT evaluation-metrics.sh $eval ---------"
 done
