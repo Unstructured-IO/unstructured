@@ -1,4 +1,5 @@
 import json
+import os
 import typing as t
 from dataclasses import dataclass
 
@@ -20,6 +21,17 @@ class SimpleWeaviateConfig(BaseConnectorConfig):
     auth_keys: t.Optional[t.List[str]] = None
     additional_keys: t.Optional[t.List[str]] = None
 
+    def __post_init__(self):
+        if self.auth_keys:
+            self.auth_keys_dict = {
+                k: os.getenv(k) for k in self.auth_keys if (os.getenv(k) is not None)
+            }
+
+        if self.additional_keys:
+            self.additional_keys_dict = {
+                k: os.getenv(k) for k in self.additional_keys if (os.getenv(k) is not None)
+            }
+
 
 @dataclass
 class WeaviateWriteConfig(WriteConfig):
@@ -39,16 +51,38 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
             url=self.connector_config.host_url,
         )
 
+    def conform_dict(self, element: dict) -> None:
+        """
+        Updates the element dictionary to conform to the Weaviate schema
+        """
+
+        if (
+            record_locator := element.get("metadata", {})
+            .get("data_source", {})
+            .get("record_locator")
+        ):
+            # Explicit casting otherwise fails schema type checking
+            element["metadata"]["data_source"]["record_locator"] = str(json.dumps(record_locator))
+
+        if (
+            date_modified := element.get("metadata", {})
+            .get("data_source", {})
+            .get("date_modified", None)
+        ):
+            element["metadata"]["data_source"]["date_modified"] = date_modified + "Z"
+
     def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
             f"writing {len(json_list)} rows to destination "
             f"class {self.write_config.class_name} "
-            f"at {self.write_config.host_url}",
+            f"at {self.connector_config.host_url}",
         )
 
         with self.client.batch(batch_size=BATCH_SIZE) as b:
             created = []
             for e in json_list:
+                self.conform_dict(e)
+                print(e.get("metadata", {}).keys())
                 created_id = b.add_data_object(
                     {
                         "type": e.get("type", ""),
@@ -57,6 +91,7 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
                         "text": e.get("text", ""),
                     },
                     self.write_config.class_name,
+                    vector=e.get("embeddings"),
                 )
                 created.append(created_id)
 
@@ -67,7 +102,7 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
 
             logger.info(f"Wrote {len(created)}/{len(json_list)} elements.")
 
-    @requires_dependencies(["deltalake"], extras="delta-table")
+    @requires_dependencies(["weaviate"], extras="weaviate")
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         json_list: t.List[t.Dict[str, t.Any]] = []
         for doc in docs:

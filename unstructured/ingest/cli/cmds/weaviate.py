@@ -27,7 +27,7 @@ class WeaviateCliWriteConfig(BaseConfig, CliMixin):
             click.Option(
                 ["--class-name"],
                 default=None,
-                type=int,
+                type=str,
                 help="Class to ",
             ),
             click.Option(

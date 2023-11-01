@@ -14,7 +14,7 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup {
   # Index cleanup
   echo "Stopping Weaviate Docker container"
-  docker-compose -f scripts/weaviate-test-helpers/docker-compose.yaml down --remove-orphans -v
+  docker-compose -f scripts/weaviate-test-helpers/docker-compose.yml down --remove-orphans -v
 
 
   # Local file cleanup
@@ -28,9 +28,9 @@ function cleanup {
 trap cleanup EXIT
 
 # Create weaviate instance and create `elements` class
-echo "Creating weaviate instance with class `elements`"
+echo "Creating weaviate instance"
 # shellcheck source=/dev/null
-scripts/elasticsearch-test-helpers/create-and-check-es.sh
+scripts/weaviate-test-helpers/create-weaviate-instance.sh
 wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \

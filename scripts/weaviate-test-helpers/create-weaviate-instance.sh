@@ -6,8 +6,8 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 
 # Create the Weaviate instance
 docker compose version
-docker compose -f "$SCRIPT_DIR"/docker-compose.yaml up --wait
-docker compose -f "$SCRIPT_DIR"/docker-compose.yaml ps
+docker compose -f "$SCRIPT_DIR"/docker-compose.yml up --wait
+docker compose -f "$SCRIPT_DIR"/docker-compose.yml ps
 
 echo "Instance is live."
-python "$SCRIPT_DIR"/create_schema.py
+"$SCRIPT_DIR"/create_schema.py
