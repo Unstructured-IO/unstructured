@@ -25,11 +25,10 @@ from typing import (
 import docx
 from docx.document import Document
 from docx.enum.section import WD_SECTION_START
-from docx.oxml.ns import nsmap, qn
+from docx.oxml.ns import nsmap
 from docx.oxml.section import CT_SectPr
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
-from docx.oxml.text.run import CT_R
 from docx.oxml.xmlchemy import BaseOxmlElement
 from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
@@ -899,40 +898,3 @@ class _SectBlockElementIterator:
         return self._sectPr.xpath(
             "/w:document/w:body/w:p/w:pPr/w:sectPr | /w:document/w:body/w:sectPr",
         )
-
-
-# == monkey-patch docx.text.Paragraph.runs ===========================================
-
-
-def _get_paragraph_runs(paragraph: Paragraph) -> Sequence[Run]:
-    """Gets all runs in paragraph, including hyperlinks python-docx skips.
-
-    Without this, the default runs function skips over hyperlinks.
-
-    Args:
-        paragraph (Paragraph): A Paragraph object.
-
-    Returns:
-        list: A list of Run objects.
-    """
-
-    def _get_runs(node: BaseOxmlElement, parent: Paragraph) -> Iterator[Run]:
-        """Recursively get runs."""
-        for child in node:
-            # -- the Paragraph has runs as direct children --
-            if child.tag == qn("w:r"):
-                yield Run(cast(CT_R, child), parent)
-                continue
-            # -- but it also has hyperlink children that themselves contain runs, so
-            # -- recurse into those
-            if child.tag == qn("w:hyperlink"):
-                yield from _get_runs(child, parent)
-
-    return list(_get_runs(paragraph._element, paragraph))
-
-
-Paragraph.runs = property(  # pyright: ignore[reportGeneralTypeIssues]
-    lambda self: _get_paragraph_runs(self),
-)
-
-# ====================================================================================
