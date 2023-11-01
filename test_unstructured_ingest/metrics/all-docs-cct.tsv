@@ -1,5 +1,4 @@
 filename	doctype	connector	cct-accuracy	cct-%missing
-science-exploration-1p.pptx	pptx	dropbox	0.861	0.093
-science-exploration-1p.pptx	pptx	box	0.861	0.093
-example-10k.html	html	local	0.686	0.037
-IRS-form-1987.pdf	pdf	azure	0.783	0.135
+handbook-1p.docx	docx	box	0.974	0.03
+example-10k.html	html	local	0.686	0.04
+science-exploration-1p.pptx	pptx	dropbox	0.861	0.09
