@@ -152,7 +152,6 @@ def process_file_with_ocr(
                     dpi=pdf_image_dpi,
                     output_folder=temp_dir,
                     paths_only=True,
-                    fmt="jpg",
                 )
                 image_paths = cast(List[str], _image_paths)
                 for i, image_path in enumerate(image_paths):
@@ -494,7 +493,7 @@ def get_ocr_layout_tesseract(
         text_height < env_config.TESSERACT_MIN_TEXT_HEIGHT
         or text_height > env_config.TESSERACT_MAX_TEXT_HEIGHT
     ):
-        # rounding avoids unnecessary precision and potential numerical issues assocaited
+        # rounding avoids unnecessary precision and potential numerical issues associated
         # with numbers very close to 1 inside cv2 image processing
         zoom = np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1)
         ocr_df = unstructured_pytesseract.image_to_data(
