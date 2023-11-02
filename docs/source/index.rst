@@ -15,7 +15,7 @@ Library Documentation
   Access all the power of ``unstructured`` through the ``unstructured-api`` or learn to host it locally.
 
 :doc:`core`
-  Learn more about the core partitoning, chunking, cleaning, and staging functionality within the
+  Learn more about the core partitioning, chunking, cleaning, and staging functionality within the
   Unstructured library.
 
 :doc:`source_connectors`
