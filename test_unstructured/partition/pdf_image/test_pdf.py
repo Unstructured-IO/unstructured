@@ -90,7 +90,7 @@ class MockDocumentLayout(layout.DocumentLayout):
 @pytest.mark.parametrize(
     ("filename", "file"),
     [
-        ("example-docs/layout-parser-paper-fast.pdf", None),
+        (example_doc_path("layout-parser-paper-fast.pdf"), None),
         (None, b"0000"),
     ],
 )
@@ -141,7 +141,7 @@ def test_partition_pdf(
     strategy,
     expected,
     origin,
-    filename="example-docs/layout-parser-paper-with-empty-pages.pdf",
+    filename=example_doc_path("layout-parser-paper-with-empty-pages.pdf"),
 ):
     # Test that the partition_pdf function can handle filename
     def _test(result):
@@ -171,7 +171,7 @@ def test_partition_pdf(
 @mock.patch.dict(os.environ, {"UNSTRUCTURED_HI_RES_MODEL_NAME": "checkbox"})
 def test_partition_pdf_with_model_name_env_var(
     monkeypatch,
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
     with mock.patch.object(
@@ -185,7 +185,7 @@ def test_partition_pdf_with_model_name_env_var(
 
 def test_partition_pdf_with_model_name(
     monkeypatch,
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
     with mock.patch.object(
@@ -198,31 +198,31 @@ def test_partition_pdf_with_model_name(
 
 
 def test_partition_pdf_with_auto_strategy(
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
     assert elements[6].text == title
     assert elements[6].metadata.filename == "layout-parser-paper-fast.pdf"
-    assert elements[6].metadata.file_directory == "example-docs"
+    assert elements[6].metadata.file_directory == os.path.dirname(filename)
 
 
 def test_partition_pdf_with_page_breaks(
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     elements = pdf.partition_pdf(filename=filename, url=None, include_page_breaks=True)
     assert "PageBreak" in [elem.category for elem in elements]
 
 
 def test_partition_pdf_with_no_page_breaks(
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     elements = pdf.partition_pdf(filename=filename, url=None)
     assert "PageBreak" not in [elem.category for elem in elements]
 
 
 def test_partition_pdf_with_fast_strategy(
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
     assert len(elements) > 10
@@ -233,7 +233,7 @@ def test_partition_pdf_with_fast_strategy(
 
 
 def test_partition_pdf_with_fast_neg_coordinates():
-    filename = "example-docs/negative-coords.pdf"
+    filename = example_doc_path("negative-coords.pdf")
     elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
     assert len(elements) == 5
     assert elements[0].metadata.coordinates.points[0][0] < 0
@@ -241,7 +241,7 @@ def test_partition_pdf_with_fast_neg_coordinates():
 
 
 def test_partition_pdf_with_fast_groups_text(
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
 
@@ -257,7 +257,7 @@ def test_partition_pdf_with_fast_groups_text(
 
 
 def test_partition_pdf_with_fast_strategy_from_file(
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(file=f, url=None, strategy="fast")
@@ -266,7 +266,7 @@ def test_partition_pdf_with_fast_strategy_from_file(
 
 def test_partition_pdf_with_fast_strategy_and_page_breaks(
     caplog,
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     elements = pdf.partition_pdf(
         filename=filename,
@@ -283,7 +283,7 @@ def test_partition_pdf_with_fast_strategy_and_page_breaks(
 
 
 def test_partition_pdf_raises_with_bad_strategy(
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     with pytest.raises(ValueError):
         pdf.partition_pdf(filename=filename, url=None, strategy="made_up")
@@ -292,7 +292,7 @@ def test_partition_pdf_raises_with_bad_strategy(
 def test_partition_pdf_falls_back_to_fast(
     monkeypatch,
     caplog,
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     def mock_exists(dep):
         return dep not in ["unstructured_inference", "pytesseract"]
@@ -314,7 +314,7 @@ def test_partition_pdf_falls_back_to_fast(
 def test_partition_pdf_falls_back_to_fast_from_ocr_only(
     monkeypatch,
     caplog,
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     def mock_exists(dep):
         return dep not in ["pytesseract"]
@@ -340,7 +340,7 @@ def test_partition_pdf_falls_back_to_fast_from_ocr_only(
 def test_partition_pdf_falls_back_to_hi_res_from_ocr_only(
     monkeypatch,
     caplog,
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     def mock_exists(dep):
         return dep not in ["pytesseract"]
@@ -363,7 +363,7 @@ def test_partition_pdf_falls_back_to_hi_res_from_ocr_only(
 def test_partition_pdf_falls_back_to_ocr_only(
     monkeypatch,
     caplog,
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     def mock_exists(dep):
         return dep not in ["unstructured_inference"]
@@ -383,7 +383,7 @@ def test_partition_pdf_falls_back_to_ocr_only(
 
 
 def test_partition_pdf_uses_table_extraction():
-    filename = "example-docs/layout-parser-paper-fast.pdf"
+    filename = example_doc_path("layout-parser-paper-fast.pdf")
     with mock.patch(
         "unstructured.partition.ocr.process_file_with_ocr",
     ) as mock_process_file_with_model:
@@ -399,7 +399,7 @@ def test_partition_pdf_uses_table_extraction():
     ],
 )
 def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
-    filename = "example-docs/korean-text-with-tables.pdf"
+    filename = example_doc_path("korean-text-with-tables.pdf")
     elements = pdf.partition_pdf(
         filename=filename,
         ocr_mode=ocr_mode,
@@ -423,7 +423,7 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
     ],
 )
 def test_partition_pdf_hi_res_ocr_mode_with_table_extraction(ocr_mode):
-    filename = "example-docs/layout-parser-paper.pdf"
+    filename = example_doc_path("layout-parser-paper.pdf")
     elements = pdf.partition_pdf(
         filename=filename,
         ocr_mode=ocr_mode,
@@ -456,7 +456,7 @@ def test_partition_pdf_with_dpi():
         assert mock_process.call_args[1]["pdf_image_dpi"] == 100
 
 
-def test_partition_pdf_requiring_recursive_text_grab(filename="example-docs/reliance.pdf"):
+def test_partition_pdf_requiring_recursive_text_grab(filename=example_doc_path("reliance.pdf")):
     elements = pdf.partition_pdf(filename=filename, strategy="fast")
     assert len(elements) > 50
     assert elements[0].metadata.page_number == 1
@@ -474,7 +474,7 @@ def test_partition_pdf_with_copy_protection_fallback_to_hi_res(caplog):
 
 def test_partition_pdf_fails_if_pdf_not_processable(
     monkeypatch,
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     def mock_exists(dep):
         return dep not in ["unstructured_inference", "pytesseract"]
@@ -527,7 +527,7 @@ def test_partition_pdf_fast_groups_text_in_text_box():
 
 
 def test_partition_pdf_with_metadata_filename(
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     elements = pdf.partition_pdf(
         filename=filename,
@@ -540,7 +540,7 @@ def test_partition_pdf_with_metadata_filename(
 
 
 def test_partition_pdf_with_fast_strategy_from_file_with_metadata_filename(
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     with open(filename, "rb") as f:
         elements = pdf.partition_pdf(
@@ -558,7 +558,7 @@ def test_partition_pdf_with_fast_strategy_from_file_with_metadata_filename(
 def test_partition_pdf_exclude_metadata(
     file_mode,
     strategy,
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     if file_mode == "filename":
         elements = pdf.partition_pdf(
@@ -581,7 +581,7 @@ def test_partition_pdf_exclude_metadata(
 
 def test_partition_pdf_with_auto_strategy_metadata_date(
     mocker,
-    filename="example-docs/copy-protected.pdf",
+    filename=example_doc_path("copy-protected.pdf"),
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
@@ -599,7 +599,7 @@ def test_partition_pdf_with_auto_strategy_metadata_date(
 
 def test_partition_pdf_with_auto_strategy_custom_metadata_date(
     mocker,
-    filename="example-docs/copy-protected.pdf",
+    filename=example_doc_path("copy-protected.pdf"),
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = "2020-07-05T09:24:28"
@@ -619,7 +619,7 @@ def test_partition_pdf_with_auto_strategy_custom_metadata_date(
 
 def test_partition_pdf_with_hi_res_strategy_metadata_date(
     mocker,
-    filename="example-docs/copy-protected.pdf",
+    filename=example_doc_path("copy-protected.pdf"),
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
@@ -635,7 +635,7 @@ def test_partition_pdf_with_hi_res_strategy_metadata_date(
 
 def test_partition_pdf_with_hi_res_strategy_custom_metadata_date(
     mocker,
-    filename="example-docs/copy-protected.pdf",
+    filename=example_doc_path("copy-protected.pdf"),
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = "2020-07-05T09:24:28"
@@ -656,7 +656,7 @@ def test_partition_pdf_with_hi_res_strategy_custom_metadata_date(
 
 def test_partition_pdf_from_file_with_auto_strategy_metadata_date(
     mocker,
-    filename="example-docs/copy-protected.pdf",
+    filename=example_doc_path("copy-protected.pdf"),
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
@@ -675,7 +675,7 @@ def test_partition_pdf_from_file_with_auto_strategy_metadata_date(
 
 def test_partition_pdf_from_file_with_auto_strategy_custom_metadata_date(
     mocker,
-    filename="example-docs/copy-protected.pdf",
+    filename=example_doc_path("copy-protected.pdf"),
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = "2020-07-05T09:24:28"
@@ -696,7 +696,7 @@ def test_partition_pdf_from_file_with_auto_strategy_custom_metadata_date(
 
 def test_partition_pdf_from_file_with_hi_res_strategy_metadata_date(
     mocker,
-    filename="example-docs/copy-protected.pdf",
+    filename=example_doc_path("copy-protected.pdf"),
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
@@ -713,7 +713,7 @@ def test_partition_pdf_from_file_with_hi_res_strategy_metadata_date(
 
 def test_partition_pdf_from_file_with_hi_res_strategy_custom_metadata_date(
     mocker,
-    filename="example-docs/copy-protected.pdf",
+    filename=example_doc_path("copy-protected.pdf"),
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = "2020-07-05T09:24:28"
@@ -743,7 +743,7 @@ def test_partition_pdf_with_json(strategy: str):
 
 
 def test_add_chunking_strategy_by_title_on_partition_pdf(
-    filename="example-docs/layout-parser-paper-fast.pdf",
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     elements = pdf.partition_pdf(filename=filename)
     chunk_elements = pdf.partition_pdf(filename, chunking_strategy="by_title")
@@ -753,20 +753,20 @@ def test_add_chunking_strategy_by_title_on_partition_pdf(
 
 
 def test_partition_pdf_formats_languages_for_tesseract():
-    filename = "example-docs/DA-1p.pdf"
+    filename = example_doc_path("DA-1p.pdf")
     with mock.patch.object(ocr, "process_file_with_ocr", mock.MagicMock()) as mock_process:
         pdf.partition_pdf(filename=filename, strategy="hi_res", languages=["en"])
         assert mock_process.call_args[1]["ocr_languages"] == "eng"
 
 
 def test_partition_pdf_warns_with_ocr_languages(caplog):
-    filename = "example-docs/chevron-page.pdf"
+    filename = example_doc_path("chevron-page.pdf")
     pdf.partition_pdf(filename=filename, strategy="hi_res", ocr_languages="eng")
     assert "The ocr_languages kwarg will be deprecated" in caplog.text
 
 
 def test_partition_pdf_or_image_warns_with_ocr_languages(caplog):
-    filename = "example-docs/DA-1p.pdf"
+    filename = example_doc_path("DA-1p.pdf")
     pdf.partition_pdf_or_image(filename=filename, strategy="hi_res", ocr_languages="eng")
     assert "The ocr_languages kwarg will be deprecated" in caplog.text
 
@@ -775,7 +775,7 @@ def test_partition_categorization_backup():
     text = "This is Clearly a Title"
     with mock.patch.object(pdf, "_partition_pdf_or_image_local", return_value=[Text(text)]):
         elements = pdf.partition_pdf_or_image(
-            "example-docs/layout-parser-paper-fast.pdf",
+            example_doc_path("layout-parser-paper-fast.pdf"),
             strategy="hi_res",
         )
         # Should have changed the element class from Text to Title
@@ -785,7 +785,7 @@ def test_partition_categorization_backup():
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-docs/layout-parser-paper-fast.pdf"],
+    [example_doc_path("layout-parser-paper-fast.pdf")],
 )
 def test_combine_numbered_list(filename):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
@@ -803,7 +803,7 @@ def test_combine_numbered_list(filename):
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-docs/layout-parser-paper-fast.pdf"],
+    [example_doc_path("layout-parser-paper-fast.pdf")],
 )
 def test_partition_pdf_hyperlinks(filename):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
@@ -829,7 +829,7 @@ def test_partition_pdf_hyperlinks(filename):
 
 @pytest.mark.parametrize(
     "filename",
-    ["example-docs/embedded-link.pdf"],
+    [example_doc_path("embedded-link.pdf")],
 )
 def test_partition_pdf_hyperlinks_multiple_lines(filename):
     elements = pdf.partition_pdf(filename=filename, strategy="auto")
@@ -843,7 +843,7 @@ def test_partition_pdf_uses_model_name():
         "_partition_pdf_or_image_local",
     ) as mockpartition:
         pdf.partition_pdf(
-            "example-docs/layout-parser-paper-fast.pdf",
+            example_doc_path("layout-parser-paper-fast.pdf"),
             model_name="test",
             strategy="hi_res",
         )
@@ -854,7 +854,7 @@ def test_partition_pdf_uses_model_name():
 
 
 def test_partition_pdf_word_bbox_not_char(
-    filename="example-docs/interface-config-guide-p93.pdf",
+    filename=example_doc_path("interface-config-guide-p93.pdf"),
 ):
     try:
         elements = pdf.partition_pdf(filename=filename)
@@ -864,7 +864,7 @@ def test_partition_pdf_word_bbox_not_char(
 
 
 def test_partition_pdf_raises_TypeError_for_invalid_languages():
-    filename = "example-docs/chevron-page.pdf"
+    filename = example_doc_path("chevron-page.pdf")
     with pytest.raises(TypeError):
         pdf.partition_pdf(filename=filename, strategy="hi_res", languages="eng")
 
@@ -906,7 +906,7 @@ def test_default_hi_res_model(infer_table_structure, env, expected, monkeypatch)
 
 
 def test_partition_model_name_default_to_None():
-    filename = "example-docs/DA-1p.pdf"
+    filename = example_doc_path("DA-1p.pdf")
     try:
         pdf.partition_pdf(
             filename=filename,
@@ -944,7 +944,7 @@ def test_ocr_language_passes_through(strategy, ocr_func):
     # Patch the ocr function with the mock that will record the call and then terminate
     with mock.patch(ocr_func, mock_ocr_func), pytest.raises(CallException):
         pdf.partition_pdf(
-            "example-docs/layout-parser-paper-fast.pdf",
+            example_doc_path("layout-parser-paper-fast.pdf"),
             strategy=strategy,
             ocr_languages="kor",
         )
@@ -1003,8 +1003,8 @@ def test_get_uris_from_annots_string_annotation(
 @pytest.mark.parametrize(
     ("filename", "is_image"),
     [
-        ("example-docs/layout-parser-paper-fast.pdf", False),
-        ("example-docs/layout-parser-paper-fast.jpg", True),
+        (example_doc_path("layout-parser-paper-fast.pdf"), False),
+        (example_doc_path("layout-parser-paper-fast.jpg"), True),
     ],
 )
 @pytest.mark.parametrize("last_modification_date", [None, "2020-07-05T09:24:28"])
