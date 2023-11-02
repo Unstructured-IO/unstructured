@@ -5,14 +5,14 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
     CliRecursiveConfig,
     DelimitedString,
 )
 
 
 @dataclass
-class SalesforceCliConfig(CliMix):
+class SalesforceCliConfig(CliConfig):
     username: str
     consumer_key: str
     private_key_path: str

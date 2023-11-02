@@ -5,14 +5,14 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
 )
 
 CMD_NAME = "azure"
 
 
 @dataclass
-class AzureCliConfig(CliMix):
+class AzureCliConfig(CliConfig):
     account_id: t.Optional[str] = None
     account_name: t.Optional[str] = None
     connection_string: t.Optional[str] = None

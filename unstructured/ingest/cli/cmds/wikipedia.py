@@ -5,12 +5,12 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
 )
 
 
 @dataclass
-class WikipediaCliConfig(CliMix):
+class WikipediaCliConfig(CliConfig):
     page_title: str
     auto_suggest: bool = True
 

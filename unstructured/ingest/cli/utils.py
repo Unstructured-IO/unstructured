@@ -5,8 +5,8 @@ import click
 
 from unstructured.ingest.cli.interfaces import (
     CliChunkingConfig,
+    CliConfig,
     CliEmbeddingConfig,
-    CliMix,
     CliPartitionConfig,
     CliPermissionsConfig,
     CliProcessorConfig,
@@ -51,8 +51,8 @@ def extract_configs(
     return res
 
 
-def add_options(cmd: click.Command, extras=t.List[t.Type[CliMix]], is_src=True) -> click.Command:
-    configs: t.List[t.Type[CliMix]] = (
+def add_options(cmd: click.Command, extras=t.List[t.Type[CliConfig]], is_src=True) -> click.Command:
+    configs: t.List[t.Type[CliConfig]] = (
         [
             CliPartitionConfig,
             CliReadConfig,

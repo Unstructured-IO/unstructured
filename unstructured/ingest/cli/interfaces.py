@@ -108,7 +108,7 @@ class CliMixin:
                 cmd.params.append(param)
 
 
-class CliMix(BaseConfig, CliMixin):
+class CliConfig(BaseConfig, CliMixin):
     pass
 
 
@@ -323,7 +323,7 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
         return options
 
 
-class CliRecursiveConfig(CliMix):
+class CliRecursiveConfig(CliConfig):
     recursive: bool
 
     @staticmethod

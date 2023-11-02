@@ -5,14 +5,14 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
 )
 
 CMD_NAME = "dropbox"
 
 
 @dataclass
-class DropboxCliConfig(CliMix):
+class DropboxCliConfig(CliConfig):
     token: str
 
     @staticmethod

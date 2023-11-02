@@ -5,14 +5,14 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
 )
 
 CMD_NAME = "delta-table"
 
 
 @dataclass
-class DeltaTableCliConfig(CliMix):
+class DeltaTableCliConfig(CliConfig):
     table_uri: str
     version: t.Optional[int] = None
     storage_options: t.Optional[str] = None
@@ -50,7 +50,7 @@ class DeltaTableCliConfig(CliMix):
 
 
 @dataclass
-class DeltaTableCliWriteConfig(CliMix):
+class DeltaTableCliWriteConfig(CliConfig):
     write_column: str
     mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
 

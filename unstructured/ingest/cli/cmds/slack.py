@@ -5,13 +5,13 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
     DelimitedString,
 )
 
 
 @dataclass
-class SlackCliConfig(CliMix):
+class SlackCliConfig(CliConfig):
     token: str
     channels: t.List[str]
     start_date: t.Optional[str] = None

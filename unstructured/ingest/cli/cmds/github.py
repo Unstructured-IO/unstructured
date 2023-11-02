@@ -5,12 +5,12 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
 )
 
 
 @dataclass
-class GithubCliConfig(CliMix):
+class GithubCliConfig(CliConfig):
     url: str
     git_access_token: t.Optional[str] = None
     git_branch: t.Optional[str] = None

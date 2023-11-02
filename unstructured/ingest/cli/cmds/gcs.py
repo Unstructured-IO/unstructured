@@ -5,7 +5,7 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
     FileOrJson,
 )
 
@@ -13,7 +13,7 @@ CMD_NAME = "gcs"
 
 
 @dataclass
-class GcsCliConfig(CliMix):
+class GcsCliConfig(CliConfig):
     service_account_key: t.Optional[t.Union[dict, str]] = None
 
     @staticmethod

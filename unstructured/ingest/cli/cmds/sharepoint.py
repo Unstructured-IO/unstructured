@@ -5,13 +5,13 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
     CliRecursiveConfig,
 )
 
 
 @dataclass
-class SharepointCliConfig(CliMix):
+class SharepointCliConfig(CliConfig):
     client_id: t.Optional[str] = None
     client_cred: t.Optional[str] = None
     site: t.Optional[str] = None

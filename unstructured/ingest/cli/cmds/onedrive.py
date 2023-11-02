@@ -5,13 +5,13 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
     CliRecursiveConfig,
 )
 
 
 @dataclass
-class OnedriveCliConfig(CliMix):
+class OnedriveCliConfig(CliConfig):
     client_id: str
     client_cred: str
     user_pname: str

@@ -5,13 +5,13 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
     CliRecursiveConfig,
 )
 
 
 @dataclass
-class LocalCliConfig(CliMix):
+class LocalCliConfig(CliConfig):
     input_path: str
     file_glob: t.Optional[str] = None
 

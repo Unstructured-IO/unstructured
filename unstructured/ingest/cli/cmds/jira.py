@@ -5,13 +5,13 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
     DelimitedString,
 )
 
 
 @dataclass
-class JiraCliConfig(CliMix):
+class JiraCliConfig(CliConfig):
     api_token: str
     url: str
     user_email: str

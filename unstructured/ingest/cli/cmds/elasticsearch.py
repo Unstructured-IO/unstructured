@@ -5,12 +5,12 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
 )
 
 
 @dataclass
-class ElasticsearchCliConfig(CliMix):
+class ElasticsearchCliConfig(CliConfig):
     index_name: str
     url: str
     jq_query: t.Optional[str] = None

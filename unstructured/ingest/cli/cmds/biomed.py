@@ -5,12 +5,12 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
 )
 
 
 @dataclass
-class BiomedCliConfig(CliMix):
+class BiomedCliConfig(CliConfig):
     api_id: t.Optional[str] = None
     api_from: t.Optional[str] = None
     api_until: t.Optional[str] = None

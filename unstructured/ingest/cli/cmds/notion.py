@@ -5,14 +5,14 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
     CliRecursiveConfig,
     DelimitedString,
 )
 
 
 @dataclass
-class NotionCliConfig(CliMix):
+class NotionCliConfig(CliConfig):
     notion_api_key: str
     page_ids: t.Optional[t.List[str]]
     database_ids: t.Optional[t.List[str]]

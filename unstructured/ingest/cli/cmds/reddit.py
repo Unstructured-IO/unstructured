@@ -5,12 +5,12 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMix,
+    CliConfig,
 )
 
 
 @dataclass
-class RedditCliConfig(CliMix):
+class RedditCliConfig(CliConfig):
     client_id: str
     client_secret: str
     subreddit_name: str
