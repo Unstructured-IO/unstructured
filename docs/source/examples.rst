@@ -7,6 +7,16 @@ example documents in the
 with instructions on how to download additional documents that are too large to store in the
 repo.
 
+##############################################
+Gathering human feedback for LLMs with Argilla
+##############################################
+
+The following worklow will show how you can use the ``argilla`` library to gather and curating your data for human feedback.
+`Argilla <https://argilla.io/>`_ is an open-source annotation tool tailored to NLP and specialized in LLM data annotaiton.
+For this workflow, we asume the Python SDK is installed via ``pip install argilla`` and the annoation server is deployed.
+This can easily be `deployed manually <https://docs.argilla.io/en/latest/getting_started/installation/deployments/deployments.html>`_ or on `Hugging Face Spaces <https://huggingface.co/new-space?template=argilla/argilla-template-space>`_ with the click of one button.
+
+
 
 ##########################################
 Sentiment Analysis Labeling in LabelStudio
@@ -14,7 +24,7 @@ Sentiment Analysis Labeling in LabelStudio
 
 The following workflow will show how to format and upload the risk section from an SEC filing
 to LabelStudio for a sentiment analysis labeling task. In addition to the ``unstructured``
-library, this example assumes you have `LabelStudio <https://labelstud.io/guide/#Quick-start>`_ 
+library, this example assumes you have `LabelStudio <https://labelstud.io/guide/#Quick-start>`_
 installed and running locally.
 
 
