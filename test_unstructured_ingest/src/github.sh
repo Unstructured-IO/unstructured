@@ -37,8 +37,8 @@ elif [[ "$CI" == "true" ]]; then
     echo
 fi
 
-#shellcheck disable=SC2086
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+#shellcheck disable=SC2086
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     github \
     --num-processes "$max_processes" \
@@ -52,7 +52,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --url dcneiner/Downloadify \
     --git-file-glob '*.html,*.txt' \
     --work-dir "$WORK_DIR" \
-    "$ACCESS_TOKEN_FLAGS"
+    $ACCESS_TOKEN_FLAGS
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
 
