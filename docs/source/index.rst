@@ -18,11 +18,8 @@ Library Documentation
   Learn more about the core partitioning, chunking, cleaning, and staging functionality within the
   Unstructured library.
 
-:doc:`source_connectors`
+:doc:`ingest/index`
   Connect to your favorite data storage platforms for an effortless batch processing of your files.
-
-:doc:`destination_connectors`
-  Connect to your favorite data storage platforms to write you ingest results to.
 
 :doc:`metadata`
   Learn more about how metadata is tracked in the ``unstructured`` library.
@@ -47,8 +44,8 @@ Library Documentation
    installing
    api
    core
-   source_connectors
-   destination_connectors
+   bricks
+   ingest/index
    metadata
    examples
    integrations
