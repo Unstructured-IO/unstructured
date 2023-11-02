@@ -14,7 +14,6 @@ from typing import (
     Iterator,
     List,
     Optional,
-    Sequence,
     Tuple,
     Type,
     Union,
@@ -25,18 +24,15 @@ from typing import (
 import docx
 from docx.document import Document
 from docx.enum.section import WD_SECTION_START
-from docx.oxml.ns import nsmap, qn
-from docx.oxml.section import CT_SectPr
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
-from docx.oxml.text.run import CT_R
 from docx.oxml.xmlchemy import BaseOxmlElement
 from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
 from docx.text.hyperlink import Hyperlink
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
-from lxml import etree
+from tabulate import tabulate
 from typing_extensions import TypeAlias
 
 from unstructured.chunking.title import add_chunking_strategy
@@ -59,7 +55,6 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
-    convert_ms_office_table_to_text,
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
@@ -234,28 +229,6 @@ def partition_docx(
 class _DocxPartitioner:
     """Provides `.partition()` for MS-Word 2007+ (.docx) files."""
 
-    # TODO: I think we can do better on metadata.filename. Should that only be populated when a
-    #       `metadata_filename` argument was provided to `partition_docx()`? What about when not but
-    #       we do get a `filename` arg or a `file` arg that has a `.name` attribute?
-    # TODO: get last-modified date from document-properties (stored in docx package) rather than
-    #       relying on last filesystem-write date; maybe fall-back to filesystem-date.
-    # TODO: improve `._element_contains_pagebreak()`. It uses substring matching on the rendered
-    #       XML text which is error-prone and not performant. Use XPath instead with the specific
-    #       locations a page-break can be located. Also, there can be more than one, so return a
-    #       count instead of a boolean.
-    # TODO: Improve document-contains-pagebreaks algorithm to use XPath and to search for
-    #       `w:lastRenderedPageBreak` alone. Make it independent and don't rely on anything like
-    #        the "_element_contains_pagebreak()" function.
-    # TODO: Improve ._is_list_item() to include list-styles such that telling whether a paragraph is
-    #       a list-item is encapsulated in a single place rather than distributed around the code.
-    # TODO: Improve ._is_list_item() method of detecting a numbered-list-item to use XPath instead
-    #       of a substring match on the rendered XML. Include all permutations of how a numbered
-    #       list can be manually applied (as opposed to by using a style).
-    # TODO: Move _SectBlockIterator upstream into `python-docx`. It requires too much
-    #       domain-specific knowledge to comfortable here and is of general use so welcome in the
-    #       library.
-    # TODO: Move Paragraph._get_paragraph_runs() monkey-patch upstream to `python-docx`.
-
     def __init__(
         self,
         filename: Optional[str],
@@ -315,17 +288,61 @@ class _DocxPartitioner:
             yield from self._iter_section_page_breaks(section_idx, section)
             yield from self._iter_section_headers(section)
 
-            for block_item in _SectBlockItemIterator.iter_sect_block_items(section, self._document):
-                # -- a block-item can only be a Paragraph ... --
+            for block_item in section.iter_inner_content():
+                # -- a block-item can be a Paragraph or a Table, maybe others later so elif here.
+                # -- Paragraph is more common so check that first.
                 if isinstance(block_item, Paragraph):
                     yield from self._iter_paragraph_elements(block_item)
                     # -- a paragraph can contain a page-break --
                     yield from self._iter_maybe_paragraph_page_breaks(block_item)
-                # -- ... or a Table --
-                else:
+                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                    block_item, DocxTable
+                ):
                     yield from self._iter_table_element(block_item)
 
             yield from self._iter_section_footers(section)
+
+    @staticmethod
+    def _convert_table_to_html(table: DocxTable) -> str:
+        """HTML string version of `table`.
+
+        Example:
+
+            <table>
+            <tbody>
+            <tr><th>item  </th><th style="text-align: right;">  qty</th></tr>
+            <tr><td>spam  </td><td style="text-align: right;">   42</td></tr>
+            <tr><td>eggs  </td><td style="text-align: right;">  451</td></tr>
+            <tr><td>bacon </td><td style="text-align: right;">    0</td></tr>
+            </tbody>
+            </table>
+
+        """
+        return tabulate(
+            [[cell.text for cell in row.cells] for row in table.rows],
+            headers="firstrow",
+            tablefmt="html",
+        )
+
+    @staticmethod
+    def _convert_table_to_plain_text(table: DocxTable) -> str:
+        """Plain-text version of `table`.
+
+        Each row appears on its own line. Cells in a column are aligned using spaces as padding:
+
+            item      qty
+            spam       42
+            eggs      451
+            bacon       0
+
+        The first row is unconditionally considered column headings, although the column headings
+        row is not differentiated in this format.
+        """
+        return tabulate(
+            [[cell.text for cell in row.cells] for row in table.rows],
+            headers="firstrow",
+            tablefmt="plain",
+        )
 
     @lazyproperty
     def _document(self) -> Document:
@@ -562,8 +579,8 @@ class _DocxPartitioner:
         # -- to skip, for example, an empty table, or accommodate nested tables.
         html_table = None
         if self._infer_table_structure:
-            html_table = convert_ms_office_table_to_text(table, as_html=True)
-        text_table = convert_ms_office_table_to_text(table, as_html=False)
+            html_table = self._convert_table_to_html(table)
+        text_table = self._convert_table_to_plain_text(table)
         emphasized_text_contents, emphasized_text_tags = self._table_emphasis(table)
 
         yield Table(
@@ -800,161 +817,3 @@ class _DocxPartitioner:
     def _parse_category_depth_by_style_ilvl(self) -> int:
         # TODO(newelh) Parsing category depth by style ilvl is not yet implemented
         return 0
-
-
-class _SectBlockItemIterator:
-    """Generates the block-items in a section.
-
-    A block item is a docx Paragraph or Table. This small class is separated from
-    `_SectBlockElementIterator` because these two aspects will live in different places upstream.
-    This makes them easier to transplant, which we expect to do soon.
-    """
-
-    @classmethod
-    def iter_sect_block_items(cls, section: Section, document: Document) -> Iterator[BlockItem]:
-        """Generate each Paragraph or Table object in `section`."""
-        for element in _SectBlockElementIterator.iter_sect_block_elements(section._sectPr):
-            yield (
-                Paragraph(element, document)
-                if isinstance(element, CT_P)
-                else DocxTable(element, document)
-            )
-
-
-class _SectBlockElementIterator:
-    """Generates the block-item XML elements in a section.
-
-    A block-item element is a `CT_P` (paragraph) or a `CT_Tbl` (table).
-    """
-
-    _compiled_blocks_xpath: Optional[etree.XPath] = None
-    _compiled_count_xpath: Optional[etree.XPath] = None
-
-    def __init__(self, sectPr: CT_SectPr):
-        self._sectPr = sectPr
-
-    @classmethod
-    def iter_sect_block_elements(cls, sectPr: CT_SectPr) -> Iterator[BlockElement]:
-        """Generate each CT_P or CT_Tbl element within the extents governed by `sectPr`."""
-        return cls(sectPr)._iter_sect_block_elements()
-
-    def _iter_sect_block_elements(self) -> Iterator[BlockElement]:
-        """Generate each CT_P or CT_Tbl element in section."""
-        # -- General strategy is to get all block (<w;p> and <w:tbl>) elements from start of doc
-        # -- to and including this section, then compute the count of those elements that came
-        # -- from prior sections and skip that many to leave only the ones in this section. It's
-        # -- possible to express this "between here and there" (end of prior section and end of
-        # -- this one) concept in XPath, but it would be harder to follow because there are
-        # -- special cases (e.g. no prior section) and the boundary expressions are fairly hairy.
-        # -- I also believe it would be computationally more expensive than doing it this
-        # -- straighforward albeit (theoretically) slightly wasteful way.
-
-        sectPr, sectPrs = self._sectPr, self._sectPrs
-        sectPr_idx = sectPrs.index(sectPr)
-
-        # -- count block items belonging to prior sections --
-        n_blks_to_skip = (
-            0
-            if sectPr_idx == 0
-            else self._count_of_blocks_in_and_above_section(sectPrs[sectPr_idx - 1])
-        )
-
-        # -- and skip those in set of all blks from doc start to end of this section --
-        for element in self._blocks_in_and_above_section(sectPr)[n_blks_to_skip:]:
-            yield element
-
-    def _blocks_in_and_above_section(self, sectPr: CT_SectPr) -> Sequence[BlockElement]:
-        """All ps and tbls in section defined by `sectPr` and all prior sections."""
-        if self._compiled_blocks_xpath is None:
-            self._compiled_blocks_xpath = etree.XPath(
-                self._blocks_in_and_above_section_xpath,
-                namespaces=nsmap,
-                regexp=False,
-            )
-        xpath = self._compiled_blocks_xpath
-        # -- XPath callable results are Any (basically), so need a cast --
-        return cast(Sequence[BlockElement], xpath(sectPr))
-
-    @lazyproperty
-    def _blocks_in_and_above_section_xpath(self) -> str:
-        """XPath expr for ps and tbls in context of a sectPr and all prior sectPrs."""
-        # -- "p_sect" is a section with sectPr located at w:p/w:pPr/w:sectPr. "body_sect" is a
-        # -- section with sectPr located at w:body/w:sectPr. The last section in the document is a
-        # -- "body_sect". All others are of the "p_sect" variety. "term" means "terminal", like
-        # -- the last p or tbl in the section. "pred" means "predecessor", like a preceding p or
-        # -- tbl in the section.
-
-        # -- the terminal block in a p-based sect is the p the sectPr appears in --
-        p_sect_term_block = "./parent::w:pPr/parent::w:p"
-        # -- the terminus of a body-based sect is the sectPr itself (not a block) --
-        body_sect_term = "self::w:sectPr[parent::w:body]"
-        # -- all the ps and tbls preceding (but not including) the context node --
-        pred_ps_and_tbls = "preceding-sibling::*[self::w:p | self::w:tbl]"
-
-        # -- p_sect_term_block and body_sect_term(inus) are mutually exclusive. So the result is
-        # -- either the union of nodes found by the first two selectors or the nodes found by the
-        # -- last selector, never both.
-        return (
-            # -- include the p containing a sectPr --
-            f"{p_sect_term_block}"
-            # -- along with all the blocks that precede it --
-            f" | {p_sect_term_block}/{pred_ps_and_tbls}"
-            # -- or all the preceding blocks if sectPr is body-based (last sectPr) --
-            f" | {body_sect_term}/{pred_ps_and_tbls}"
-        )
-
-    def _count_of_blocks_in_and_above_section(self, sectPr: CT_SectPr) -> int:
-        """All ps and tbls in section defined by `sectPr` and all prior sections."""
-        if self._compiled_count_xpath is None:
-            self._compiled_count_xpath = etree.XPath(
-                f"count({self._blocks_in_and_above_section_xpath})",
-                namespaces=nsmap,
-                regexp=False,
-            )
-        xpath = self._compiled_count_xpath
-        # -- numeric XPath results are always float, so need an int() conversion --
-        return int(cast(float, xpath(sectPr)))
-
-    @lazyproperty
-    def _sectPrs(self) -> Sequence[CT_SectPr]:
-        """All w:sectPr elements in document, in document-order."""
-        return self._sectPr.xpath(
-            "/w:document/w:body/w:p/w:pPr/w:sectPr | /w:document/w:body/w:sectPr",
-        )
-
-
-# == monkey-patch docx.text.Paragraph.runs ===========================================
-
-
-def _get_paragraph_runs(paragraph: Paragraph) -> Sequence[Run]:
-    """Gets all runs in paragraph, including hyperlinks python-docx skips.
-
-    Without this, the default runs function skips over hyperlinks.
-
-    Args:
-        paragraph (Paragraph): A Paragraph object.
-
-    Returns:
-        list: A list of Run objects.
-    """
-
-    def _get_runs(node: BaseOxmlElement, parent: Paragraph) -> Iterator[Run]:
-        """Recursively get runs."""
-        for child in node:
-            # -- the Paragraph has runs as direct children --
-            if child.tag == qn("w:r"):
-                yield Run(cast(CT_R, child), parent)
-                continue
-            # -- but it also has hyperlink children that themselves contain runs, so
-            # -- recurse into those
-            if child.tag == qn("w:hyperlink"):
-                yield from _get_runs(child, parent)
-
-    return list(_get_runs(paragraph._element, paragraph))
-
-
-Paragraph.runs = property(  # pyright: ignore[reportGeneralTypeIssues]
-    lambda self: _get_paragraph_runs(self),
-)
-
-# ====================================================================================
