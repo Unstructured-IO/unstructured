@@ -7,7 +7,8 @@ import statistics
 import sys
 from typing import Any, List, Optional, Tuple
 
-from unstructured.ingest.evaluate import _display
+import click
+
 from unstructured.metrics.element_type import (
     calculate_element_type_percent_match,
     get_element_type_frequency,
@@ -165,6 +166,24 @@ def _listdir_recursive(dir: str):
             else:
                 listdir.append(f"{relative_path}/{filename}")
     return listdir
+
+
+def _display(rows, headers):
+    col_widths = [
+        max(len(headers[i]), max(len(str(row[i])) for row in rows)) for i in range(len(headers))
+    ]
+    click.echo(" ".join(headers[i].ljust(col_widths[i]) for i in range(len(headers))))
+    click.echo("-" * sum(col_widths) + "-" * (len(headers) - 1))
+    for row in rows:
+        formatted_row = []
+        for item in row:
+            if isinstance(item, float):
+                formatted_row.append(f"{item:.3f}")
+            else:
+                formatted_row.append(str(item))
+        click.echo(
+            " ".join(formatted_row[i].ljust(col_widths[i]) for i in range(len(formatted_row))),
+        )
 
 
 def _write_to_file(dir: str, filename: str, rows: List[Any], headers: List[Any], mode: str = "w"):
