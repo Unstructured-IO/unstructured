@@ -146,8 +146,16 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
     if languages is None:
         raise ValueError("`languages` can not be `None`")
     converted_languages = list(
-        filter(None, [convert_language_to_tesseract(lang) for lang in languages]),
+        filter(
+            lambda x: x is not None and x != "",
+            [convert_language_to_tesseract(lang) for lang in languages],
+        ),
     )
+    converted_languages = set(converted_languages)
+    if len(converted_languages) == 0:
+        raise ValueError(
+            f"Failed to find any valid standard language code from languages: {languages}"
+        )
     return "+".join(converted_languages)
 
 

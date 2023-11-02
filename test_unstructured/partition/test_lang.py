@@ -16,6 +16,11 @@ def test_prepare_languages_for_tesseract_with_one_language():
     assert prepare_languages_for_tesseract(languages) == "eng"
 
 
+def test_prepare_languages_for_tesseract_with_duplicated_languages():
+    languages = ["en", "eng"]
+    assert prepare_languages_for_tesseract(languages) == "eng"
+
+
 def test_prepare_languages_for_tesseract_special_case():
     languages = ["osd"]
     assert prepare_languages_for_tesseract(languages) == "osd"
@@ -49,6 +54,20 @@ def test_prepare_languages_for_tesseract_warns_non_tesseract_language(caplog):
     languages = ["kbd", "eng"]
     assert prepare_languages_for_tesseract(languages) == "eng"
     assert "not a language supported by Tesseract" in caplog.text
+
+
+def test_prepare_languages_for_tesseract_None_languages():
+    with pytest.raises(ValueError, match="`languages` can not be `None`"):
+        languages = None
+        prepare_languages_for_tesseract(languages)
+
+
+def test_prepare_languages_for_tesseract_no_valid_languages():
+    with pytest.raises(
+        ValueError, match="Failed to find any valid standard language code from languages"
+    ):
+        languages = [""]
+        prepare_languages_for_tesseract(languages)
 
 
 def test_detect_languages_english_auto():
