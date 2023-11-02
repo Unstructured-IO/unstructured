@@ -62,12 +62,10 @@ def test_prepare_languages_for_tesseract_None_languages():
         prepare_languages_for_tesseract(languages)
 
 
-def test_prepare_languages_for_tesseract_no_valid_languages():
-    with pytest.raises(
-        ValueError, match="Failed to find any valid standard language code from languages"
-    ):
-        languages = [""]
-        prepare_languages_for_tesseract(languages)
+def test_prepare_languages_for_tesseract_no_valid_languages(caplog):
+    languages = [""]
+    assert prepare_languages_for_tesseract(languages) == "eng"
+    assert "Failed to find any valid standard language code from languages" in caplog.text
 
 
 def test_detect_languages_english_auto():
