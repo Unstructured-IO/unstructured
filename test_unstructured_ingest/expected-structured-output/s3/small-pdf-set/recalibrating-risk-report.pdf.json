@@ -1458,6 +1458,24 @@
     "text": "World Nuclear Association Tower House 10 Southampton Street London WC2E 7HA United Kingdom"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "380918b946a526640a40df5dced65167",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": "306475068461766865312866697521104206816",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "="
+  },
+  {
     "type": "NarrativeText",
     "element_id": "8ff63a0f4af4de37eff90952d575f76d",
     "metadata": {

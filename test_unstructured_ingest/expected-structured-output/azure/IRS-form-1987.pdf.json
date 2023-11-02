@@ -1,7 +1,7 @@
 [
   {
     "type": "Title",
-    "element_id": "8b115710b659086909de658b116dd719",
+    "element_id": "4e3a2c46e17e3071a04eb9bf3551e8a7",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -16,7 +16,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "a Department of the Treasury Internal Revenue Service Instructions for Form 3115 (Rev. November 1987) Application for Change in Accounting Method"
+    "text": "¥M) Department of the Treasury Internal Revenue Service Instructions for Form 3115 (Rev. November 1987) Application for Change in Accounting Method"
   },
   {
     "type": "NarrativeText",
@@ -171,25 +171,6 @@
     "text": "File this form to request a change in your accounting method, including the accounting treatment of any item. If you are requesting a change in accounting period, use Form 1128, Application for Change in Accounting Period. For more information, see Publication 538, Accounting Periods and Methods."
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "2127f2ab4fc4feb4d32460c8317bf02f",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Form 3115,"
-  },
-  {
     "type": "Title",
     "element_id": "cf9c7aa24a26aac4f0ec4b6395cbfdcc",
     "metadata": {
@@ -209,8 +190,8 @@
     "text": "When"
   },
   {
-    "type": "NarrativeText",
-    "element_id": "7e3ae97a65f12ef0bb8b4d6b5f721f54",
+    "type": "UncategorizedText",
+    "element_id": "2127f2ab4fc4feb4d32460c8317bf02f",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -225,7 +206,26 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "filing taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115),"
+    "text": "Form 3115,"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "d3c76e8e037d3aec863db1d768b81f6d",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": "307846589923949318200712033143133817358",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "filing taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115)."
   },
   {
     "type": "Title",
@@ -286,7 +286,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "6272a6df76820c927d081a1041e3c079",
+    "element_id": "ccc69c4b187031aeaba21f5e93febb55",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -301,7 +301,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes !n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of income attributable to the sale or furnishing of utility services no later than the year In which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these"
+    "text": "Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes tn accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the inclusion of income attributable to the sale or furnishing of utility services no later than the year in which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these"
   },
   {
     "type": "Title",
@@ -321,25 +321,6 @@
       "page_number": 1
     },
     "text": "changes."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "faf2673a7d6b6f7c5bf7cae6770a4130",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Generally, applicants must complete Section In addition, complete the appropriate sections (B-1 through H) for which a change Is desired."
   },
   {
     "type": "UncategorizedText",
@@ -362,7 +343,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "bf2a070cb9d03d056e70b26bebf1ef79",
+    "element_id": "faf2673a7d6b6f7c5bf7cae6770a4130",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -377,7 +358,26 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "You must give all relevant facts, including a detailed description of your present and proposed methods. You must also state the reason(s) you believe approval to make the requested change should be granted. Attach additional pages if more space is needed for explanations. Each page should show your name, address, and identifying number."
+    "text": "Generally, applicants must complete Section In addition, complete the appropriate sections (B-1 through H) for which a change Is desired."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ebb0b39a67258b05aa3190287aad2139",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": "307846589923949318200712033143133817358",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "You must give all relevant facts, including a detailed description of your present and proposed methods. You must also state the reason(s) you believe approval to make the requested change should be granted. Attach additional pages if more space 1s needed for explanations. Each page should show your name, address, and identifying number."
   },
   {
     "type": "NarrativeText",
@@ -438,7 +438,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "582deac2def308ecc5250773e1683052",
+    "element_id": "a8ea8778e303fbcd611bd652ca474bf5",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -453,11 +453,11 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Uniform capitalization rules and limitation on cash method.—If you are required to change your method of accounting under section,263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change 1s treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustrnents into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required."
+    "text": "Uniform capitalization rules and limitation on cash method.—lf you are required to change your method of accounting under section,263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change Is treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustrnents into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required."
   },
   {
     "type": "NarrativeText",
-    "element_id": "550f9e99054c657264fb9bb26d3023de",
+    "element_id": "5109bb5c3ab0b7dc4b0c9bb275247942",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -472,7 +472,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Disregard the instructions under Time and Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method—Section 448\"). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information."
+    "text": "Disregard the instructions under Time and Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method—Section 448”). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information."
   },
   {
     "type": "Title",
@@ -666,7 +666,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "8605ee209656c311cec7ce4b001caab2",
+    "element_id": "ec3c2d03b846d2a186fc9a8f318f688b",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -681,7 +681,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Individuals.—An individual should enter his or her social security number in this block. If the application is made on behalf of a husband and wife who file their income tax return jointly, enter the social security numbers of both."
+    "text": "Individuals. —An individual should enter his or her social security number in this block. If the application is made on behalf of a husband and wife who file their income tax return jointly, enter the social security numbers of both."
   },
   {
     "type": "NarrativeText",
@@ -932,7 +932,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "58e977f2200b46ac8b372586dfd781bf",
+    "element_id": "e5a2893bc6d1da570465f39fa3a8da15",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -947,7 +947,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Taxpayers that are members of an affiliated group filing a consolidated return that seeks to change to the same accounting method for more than one member of the group must file a separate Form 3115 for each such member,"
+    "text": "Taxpayers that are members of an affiliated group filing a consolidated return that seeks to change to the same accounting method for more than one member of the group must file a separate Form 3115 for each such member."
   },
   {
     "type": "Title",
@@ -970,7 +970,7 @@
   },
   {
     "type": "Title",
-    "element_id": "bc272940e494acf9441070d3eb4b79f6",
+    "element_id": "a0737d07378e89036492defafc860548",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -985,7 +985,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Section A"
+    "text": "SectionA"
   },
   {
     "type": "NarrativeText",
@@ -1008,7 +1008,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "9eefeb9556d95a8dd563ff3270cae7f4",
+    "element_id": "267ab5b5c94eadd8fb433a19e01fbe9a",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1023,7 +1023,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "Item 6, page 2.—The term “gross receipts” includes total sales (net of returns and allowances) and all amounts received for services. In addition, gross receipts include any income from investments and from incidental or outside sources (e.g., interest, dividends, rents, royalties, and annuities). However, if you are a resaler of personal property, exclude from gross receipts any amounts not derived in the ordinary course of a trade or business. Gross receipts do not include amounts received for sales taxes if, under the applicable state or local law, the tax is legally imposed on the purchaser of the good or service, and the taxpayer merely collects and remits the tax to the taxing authority."
+    "text": "Item 6, page 2.—The term “gross receipts” includes total sales (net of returns and allowances) and all amounts received for services. In addition, gross receipts include any income from investments and from incidental or outside sources (e.g., interest, dividends, rents, royalties, and annuities). However, if you area resaler of personal property, exclude from gross receipts any amounts not derived in the ordinary course of a trade or business. Gross receipts do not include amounts received for sales taxes if, under the applicable state or local law, the tax is legally mposed on the purchaser of the good or service, and the taxpayer merely collects and remits the tax to the taxing authority."
   },
   {
     "type": "NarrativeText",
@@ -1217,7 +1217,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "751abc8c6a0fa412c3e8c18345f57f95",
+    "element_id": "1ca3fe4a69a54c0a0b7bb8a964da6ef4",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1232,7 +1232,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Item 13, page 2.—Insert the actual number of tax years. Use of the term “since inception” 1s not acceptable. However, “more than 6 years” Is acceptable."
+    "text": "Item 13, page 2.—Insert the actual number of tax years. Use of the term “since inception” is not acceptable. However, “more than 6 years” Is acceptable."
   },
   {
     "type": "Title",
@@ -1255,7 +1255,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e4a695ea83818204438fe08add6d1554",
+    "element_id": "22f1f56cebad656f2e080d96ab1da5e9",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1270,7 +1270,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Item 1b, page 2.—Include any amounts reported as income ina prior year although the income had not been accrued (earned) or received in the prior year; for example, discount on installment loans reported as income for the year in which the loans were made instead of for the year or years in which the income was received or earned. Advance payments under Rev. Proc. 71-21 or Regulations section 1.451-5 must be fully explained and all pertinent information must be submitted with this application."
+    "text": "Item 1b, page 2.—Include any amounts reported as income in a prior year although the income had not been accrued (earned) or received in the prior year; for example, discount on installment loans reported as income for the year in which the loans were made instead of for the year or years in which the income was received or earned. Advance payments under Rev. Proc. 71-21 or Regulations section 1.451-5 must be fully explained and all pertinent information must be submitted with this application."
   },
   {
     "type": "Title",
@@ -1293,7 +1293,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "eac562ca19f6198691856c695e2790bd",
+    "element_id": "c5db9834b04e3b41307f2384b5c26d9e",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1308,7 +1308,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Limitation on the Use of the Cash Method of Accounting. —Except as provided below, C corporations, partnerships with a C corporation as a partner, and tax shelters may not use the cash method of accounting. For purposes of this limitation, a trust subject to the tax on unrelated business income under section 511 1s treated as aC corporation with respect to its unrelated trade or business activities."
+    "text": "Limitation on the Use of the Cash Method of Accounting.—Except as provided below, C corporations, partnerships with a C corporation as a partner, and tax shelters may not use the cash method of accounting. For purposes of this limitation, a trust subject to the tax on unrelated business income under section 511 Is treated as aC corporation with respect to its unrelated trade or business activities."
   },
   {
     "type": "NarrativeText",
@@ -1331,7 +1331,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "69bd87b2ad5873c030748e62adf61b89",
+    "element_id": "533c003f8c3c91f55bc6e92b8449dc08",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1346,11 +1346,11 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "(1) Farming businesses.—F or this purpose, the term “farming business” 1s defined in section 263A(e)(4), but it also includes the raising, harvesting, or growing of trees to which section 263A(c)(5) applies. Notwithstanding this exception, section 447 requires certain C corporations and partnerships with a C corporation as a partner to use the accrual method."
+    "text": "(1) Farming businesses.—For this purpose, the term “farming business” 1s defined in section 263A(e)(4), but it also includes the raising, harvesting, or growing of trees to which section 263A(c)(5) applies. Notwithstanding this exception, section 447 requires certain C corporations and partnerships with a C corporation as a partner to use the accrual method."
   },
   {
     "type": "NarrativeText",
-    "element_id": "df67e4b3a4a1352209c2648b87d675e2",
+    "element_id": "7697845e1fcc45323aa02e732bb08508",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1365,7 +1365,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "(2) Qualified personal service corporations. — A “qualified personal service corporation” is any corporation: (a) substantially all of the activities of which involve the performance of services in the fields of health, law, engineering, architecture, accounting, actuarial science, performing arts, or consulting, and (b)"
+    "text": "(2) Qualified personal service corporations. — A “qualified personal service corporation” 1s any corporation: (a) substantially all of the activities of which involve the performance of services in the fields of health, law, engineering, architecture, accounting, actuarial science, performing arts, or consulting, and (b)"
   },
   {
     "type": "Title",
@@ -1445,7 +1445,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "b68a5b5b0d59122e0df42a96d68d2b5e",
+    "element_id": "ae0bcf5ac0522b3cafdfc2ce98a6402e",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1460,7 +1460,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "(3) Entities with gross receipts of $5,000,000 or less. —To qualify for this exception, the C corporation's or partnership’s annual average gross receipts for the three years ending with the prior tax year may not exceed $5,000,000. If the corporation or partnership was not in existence for the entire 3-year period, the period of existence is used to determine whether the corporation or partnership qualifies. If any tax year in the 3-year period is a short tax year, the corporation or partnership must annualize the gross receipts by multiplying the gross receipts by 12 and dividing the result by the number of months in the short period."
+    "text": "(3) Entities with gross receipts of $5,000,000 or less.—To qualify for this exception, the C corporation's or partnership's annual average gross receipts for the three years ending with the prior tax year may not exceed $5,000,000. If the corporation or partnership was not in existence for the entire 3-year period, the period of existence Is used to determine whether the corporation or partnership qualifies. If any tax year in the 3-year period is a short tax year, the corporation or partnership must annualize the gross receipts by multiplying the gross receipts by 12 and dividing the result by the number of months tn the short period."
   },
   {
     "type": "NarrativeText",
@@ -1502,7 +1502,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a9e8c96063f3fea7ea05eb3cd41ebe7a",
+    "element_id": "e3d40c5e9e483c17ff1de13ef8f72db5",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1517,11 +1517,30 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Applicants must give complete details about the present method of valuing inventory and the proposed method. State whether all or part of your inventory ts involved in the change."
+    "text": "Applicants must give complete details about present method of valuing inventory and the proposed method. State whether all or part of your inventory ts involved in the change."
+  },
+  {
+    "type": "Title",
+    "element_id": "b9776d7ddf459c9ad5b0e1d6ac61e27b",
+    "metadata": {
+      "data_source": {
+        "url": "abfs://container1/IRS-form-1987.pdf",
+        "version": "307846589923949318200712033143133817358",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "container1/IRS-form-1987.pdf"
+        },
+        "date_created": "2023-03-10T09:36:30+00:00",
+        "date_modified": "2023-03-10T09:36:30+00:00"
+      },
+      "filetype": "application/pdf",
+      "page_number": 2
+    },
+    "text": "the"
   },
   {
     "type": "NarrativeText",
-    "element_id": "7e90b155b5cdb2481b1dfbb1118142c5",
+    "element_id": "a7e2248cba71efc769b4e1a5d38129d2",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1536,7 +1555,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Inventories of retail merchants.—The retail method of pricing inventories does not contemplate valuation of goods at the retail selling price. The retail selling price of goods on hand must be reduced to approximate cost or cost or market, whichever Is lower, by the adjustments required in Regulations section 1.471-8."
+    "text": "Inventories of retail merchants.—The retail method of pricing inventories does not contemplate valuation of goods at the retail selling price. The retail selling price of goods on hand must be reduced to approximate cost or cost or market, whichever is lower, by the adjustments required in Regulations section 1.471-8."
   },
   {
     "type": "NarrativeText",
@@ -1578,7 +1597,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "347f638641329c72c971a522ec07f6b1",
+    "element_id": "f7d93af7606417ddb48746b57fc91f61",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1593,11 +1612,11 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "(1) The specific types and classes of goods in the LIFO inventories involved in the proposed changes and the comparative value of such Inventories as of the end of the tax year preceding the year of change determined by: (a) the LIFO method, and (b) the proposed method and basis (such as FIFO cost or lower of cost or market)."
+    "text": "(1) The specific types and classes of goods in the LIFO inventories involved in the proposed changes and the comparative value of such inventories as of the end of the tax year preceding the year of change determined by: (a) the LIFO method, and (b) the proposed method and basis (such as FIFO cost or lower of cost or market)."
   },
   {
     "type": "Title",
-    "element_id": "e850deb3f1e65c13e7cd728279a472bf",
+    "element_id": "a3b50c476732c7409d297c3d7d0e2356",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1612,7 +1631,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "State whether the"
+    "text": "State"
   },
   {
     "type": "Title",
@@ -1635,7 +1654,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "aca21cfeadca7d527dd36f01005ff44a",
+    "element_id": "b9b15b1b44409799776527ff84de6cde",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1650,7 +1669,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "(2) proposed and valuation methods conform to the inventory method currently used with respect to non-LIFO Inventories, if any, or how such method is otherwise consistent with Regulations section 1.4726."
+    "text": "(2) whether the proposed and valuation methods conform to the inventory method currently used with respect to non-LIFO inventories, if any, or how such method ts otherwise consistent with Regulations section 1.472-6."
   },
   {
     "type": "NarrativeText",
@@ -1710,46 +1729,8 @@
     "text": "Section D"
   },
   {
-    "type": "Title",
-    "element_id": "663ea1bfffe5038f3f0cf667f14c4257",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "to"
-  },
-  {
-    "type": "Title",
-    "element_id": "7574058dd32c12eb33bc649b5e36bdcb",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "their method of"
-  },
-  {
     "type": "NarrativeText",
-    "element_id": "3167823c1d2039b4c48efe2f6c89b5c2",
+    "element_id": "a8e72799229bc2d754f44ea167a6e7d6",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1764,26 +1745,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Applicants requesting change valuing property produced, property acquired for resale, or long-term contracts under section 263A or 460 MUST complete section D showing the treatment under both the present and proposed methods."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00"
-      },
-      "filetype": "application/pdf",
-      "page_number": 2
-    },
-    "text": "%"
+    "text": "Applicants requesting to change their method of valuing property produced, property acquired for resale, or long-term contracts under section 263A or 460 MUST complete section D showing the treatment under both the present and proposed methods."
   },
   {
     "type": "NarrativeText",
@@ -1825,7 +1787,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "86fab9f7b35d56a2d48baf0782b7c53d",
+    "element_id": "eb6d37436a954d25b9bcd202cfd6f6bc",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1840,7 +1802,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Section 460(f) provides that the term “long-term contract” means any contract for the manufacturing, building, installation, or construction of property that is not completed within the tax year in which it 1s entered into. However, a manufacturing contract will not qualify as a long-term contract unless the contract involves the manufacture of: (1) a unique item not normally included in your finished goods inventory, or (2) any item that normally requires more than 12 calendar months to complete."
+    "text": "Section 460(f) provides that the term “long-term contract” means any contract for the manufacturing, building, installation, or construction of property that is not completed within the tax year in which it is entered into. However, a manufacturing contract will not qualify as a long-term contract unless the contract involves the manufacture of: (1) a unique item not normally included in your finished goods inventory, or (2) any item that normally requires more than 12 calendar months to complete."
   },
   {
     "type": "NarrativeText",
@@ -1901,7 +1863,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "cf5e2bc86b7c77533924eb940fd522d5",
+    "element_id": "b936571394018013ed06be5467c23ae1",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1916,7 +1878,7 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "This section Is to be used only to request a change in a method of accounting for depreciation under section 167."
+    "text": "This section 1s to be used only to request a change in a method of accounting for depreciation under section 167."
   },
   {
     "type": "NarrativeText",
@@ -1977,7 +1939,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "cb1f664a186a87f6560cde136d70b558",
+    "element_id": "8be2644ce15e2b98ea08a92dcbd58fca",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -1992,11 +1954,11 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "Generally, this section should be used for requesting changes In a method of accounting for which provision has not been made elsewhere on this form. Attach additional pages if more space ts needed for a full explanation of the present method used and the proposed change requested."
+    "text": "Generally, this section should be used for requesting changes In a method of accounting for which provision has not been made elsewhere on this form. Attach additional pages if more space 1s needed for a full explanation of the present method used and the proposed change requested."
   },
   {
     "type": "NarrativeText",
-    "element_id": "86d11953bb813a770ecd242ff97d4e43",
+    "element_id": "16be8056dead49d2cdf618d7effe64b7",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
@@ -2011,6 +1973,6 @@
       "filetype": "application/pdf",
       "page_number": 2
     },
-    "text": "If you are making an election under section 458, show the applicable information under Regulations section 1.458-10."
+    "text": "lf you are making an election under section 458, show the applicable information under Regulations section 1.458-10."
   }
 ]
