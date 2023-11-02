@@ -1,8 +1,10 @@
-from typing import Sequence
+from typing import Iterator, Sequence
 
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_SECTION
 from docx.oxml.section import CT_SectPr
+from docx.table import Table
+from docx.text.paragraph import Paragraph
 
 class Section:
     _sectPr: CT_SectPr
@@ -20,6 +22,7 @@ class Section:
     def footer(self) -> _Footer: ...
     @property
     def header(self) -> _Header: ...
+    def iter_inner_content(self) -> Iterator[Paragraph | Table]: ...
     @property
     def start_type(self) -> WD_SECTION: ...
 
