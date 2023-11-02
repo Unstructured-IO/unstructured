@@ -89,6 +89,9 @@ class LocalIngestDoc(BaseIngestDoc):
 class LocalSourceConnector(BaseSourceConnector):
     """Objects of this class support fetching document(s) from local file system"""
 
+    def check_connection(self):
+        pass
+
     connector_config: SimpleLocalConfig
 
     def __post_init__(self):

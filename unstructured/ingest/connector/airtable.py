@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
+import requests
+
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
@@ -200,6 +202,12 @@ class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Fetches tables or views from an Airtable org."""
 
     connector_config: SimpleAirtableConfig
+
+    def check_connection(self):
+        try:
+            self.api.request(method="HEAD", url=self.api.build_url("meta", "bases"))
+        except requests.HTTPError as http_error:
+            raise SourceConnectionError(f"failed to validate connection: {http_error}")
 
     @requires_dependencies(["pyairtable"], extras="airtable")
     def initialize(self):

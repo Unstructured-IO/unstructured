@@ -113,7 +113,6 @@ class DocFactoryNode(PipelineNode):
             f"Source connector: {self.source_doc_connector.to_json()}",
         )
         super().initialize()
-        self.source_doc_connector.initialize()
 
     @abstractmethod
     def run(self, *args, **kwargs) -> t.Iterable[dict]:
