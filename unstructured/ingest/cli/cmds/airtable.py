@@ -5,13 +5,12 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMixin,
+    CliConfig,
 )
-from unstructured.ingest.interfaces import BaseConfig
 
 
 @dataclass
-class AirtableCliConfig(BaseConfig, CliMixin):
+class AirtableCliConfig(CliConfig):
     personal_access_token: t.Optional[str] = None
 
     @staticmethod
