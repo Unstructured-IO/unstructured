@@ -13,11 +13,6 @@ DESTINATION_TABLE=$SCRIPT_DIR/delta-table-dest
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 CI=${CI:-"false"}
 
-if [ -z "$AWS_ACCESS_KEY_ID" ] && [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
-   echo "Skipping Delta Table ingest test because either AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY env var was not set."
-   exit 0
-fi
-
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 
