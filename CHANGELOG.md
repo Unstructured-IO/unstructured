@@ -1,7 +1,8 @@
-## 0.10.29-dev8
+## 0.10.29-dev9
 
 ### Enhancements
 
+* **Add doctype field to CI metric functions** Adds a doctype column to the ingest metric sheets for use in subsequent aggregations.
 * **Add element type CI evaluation workflow** Adds element type frequency evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
 * **Separate chipper tests** Chipper tests are long-running and require special access, so the tests have been separated into their own file under their own marker, and now have a separate `make` target.
 * **Add include_header argument for partition_csv and partition_tsv** Now supports retaining header rows in CSV and TSV documents element partitioning.
