@@ -155,7 +155,8 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
     converted_languages = list(dict.fromkeys(converted_languages))
     if len(converted_languages) == 0:
         raise ValueError(
-            f"Failed to find any valid standard language code from languages: {languages}"
+            "Failed to find any valid standard language code",
+            f" from `languages` (List of Str): {languages}",
         )
     return "+".join(converted_languages)
 

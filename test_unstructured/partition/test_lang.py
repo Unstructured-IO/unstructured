@@ -64,7 +64,7 @@ def test_prepare_languages_for_tesseract_None_languages():
 
 def test_prepare_languages_for_tesseract_no_valid_languages():
     with pytest.raises(
-        ValueError, match="Failed to find any valid standard language code from languages"
+        ValueError, match="Failed to find any valid standard language code from `languages`"
     ):
         languages = [""]
         prepare_languages_for_tesseract(languages)
