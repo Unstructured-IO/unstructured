@@ -93,23 +93,5 @@ def measure_element_type_accuracy_command(
     )
 
 
-def _display(rows, headers):
-    col_widths = [
-        max(len(headers[i]), max(len(str(row[i])) for row in rows)) for i in range(len(headers))
-    ]
-    click.echo(" ".join(headers[i].ljust(col_widths[i]) for i in range(len(headers))))
-    click.echo("-" * sum(col_widths) + "-" * (len(headers) - 1))
-    for row in rows:
-        formatted_row = []
-        for item in row:
-            if isinstance(item, float):
-                formatted_row.append(f"{item:.3f}")
-            else:
-                formatted_row.append(str(item))
-        click.echo(
-            " ".join(formatted_row[i].ljust(col_widths[i]) for i in range(len(formatted_row))),
-        )
-
-
 if __name__ == "__main__":
     main()
