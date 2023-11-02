@@ -276,7 +276,7 @@ For more information about the ``replace_unicode_quotes`` function, you can chec
 ``translate_text``
 ------------------
 
-The ``translate_text`` cleaning functions translates text between languages. ``translate_text``
+The ``translate_text`` cleaning function translates text between languages. ``translate_text``
 uses the `Helsinki NLP MT models <https://huggingface.co/Helsinki-NLP>`_ from
 ``transformers`` for machine translation. Works for Russian, Chinese, Arabic, and many
 other languages.
