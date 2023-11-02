@@ -765,22 +765,6 @@
     "text": "Awa"
   },
   {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {
-        "url": "example-docs/language-docs/UDHR_first_article_all.txt",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "text/plain"
-    },
-    "text": ""
-  },
-  {
     "type": "Title",
     "element_id": "9989b925ebf5c724d61091d02fab6585",
     "metadata": {
