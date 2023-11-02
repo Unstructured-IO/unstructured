@@ -56,7 +56,7 @@ class ENVConfig:
         if estimated text height from tesseract OCR results is lower than this value the image is
         scaled up to be processed again
         """
-        return self._get_int("TESSERACT_MIN_TEXT_HEIGHT", 12)
+        return self._get_int("TESSERACT_MIN_TEXT_HEIGHT", 22)
 
     @property
     def TESSERACT_MAX_TEXT_HEIGHT(self) -> int:
@@ -74,14 +74,14 @@ class ENVConfig:
 
     @property
     def TABLE_TOKEN_ERROR_MARGIN(self) -> float:
-        """error margin when comparing if a ocr region is within the table element when perparing
+        """error margin when comparing if a ocr region is within the table element when preparing
         table tokens
         """
         return self._get_float("TABLE_TOKEN_ERROR_MARGIN", 0.0)
 
     @property
     def OCR_AGENT(self) -> str:
-        """error margin when comparing if a ocr region is within the table element when perparing
+        """error margin when comparing if a ocr region is within the table element when preparing
         table tokens
         """
         return self._get_string("OCR_AGENT", OCR_AGENT_TESSERACT)
