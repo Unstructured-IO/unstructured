@@ -8,6 +8,7 @@ from unstructured.ingest.connector.fsspec import (
     SimpleFsspecConfig,
 )
 from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 
@@ -38,6 +39,7 @@ class AzureBlobStorageSourceConnector(FsspecSourceConnector):
         try:
             AzureBlobFileSystem(**self.connector_config.access_kwargs)
         except ValueError as connection_error:
+            logger.error(f"failed to validate connection: {connection_error}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {connection_error}")
 
     def __post_init__(self):

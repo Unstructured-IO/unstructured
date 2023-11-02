@@ -207,6 +207,7 @@ class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         try:
             self.api.request(method="HEAD", url=self.api.build_url("meta", "bases"))
         except requests.HTTPError as http_error:
+            logger.error(f"failed to validate connection: {http_error}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {http_error}")
 
     @requires_dependencies(["pyairtable"], extras="airtable")

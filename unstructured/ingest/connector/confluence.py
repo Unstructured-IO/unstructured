@@ -5,6 +5,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
+import requests
+
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
@@ -185,6 +187,14 @@ class ConfluenceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
     """Fetches body fields from all documents within all spaces in a Confluence Cloud instance."""
 
     connector_config: SimpleConfluenceConfig
+
+    def check_connection(self):
+        url = "rest/api/space"
+        try:
+            self.confluence.request(method="HEAD", path=url)
+        except requests.HTTPError as http_error:
+            logger.error(f"failed to validate connection: {http_error}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {http_error}")
 
     @requires_dependencies(["atlassian"], extras="Confluence")
     def initialize(self):

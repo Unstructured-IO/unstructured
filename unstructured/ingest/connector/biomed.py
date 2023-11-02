@@ -151,7 +151,20 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching documents from Biomedical literature FTP directory"""
 
     connector_config: SimpleBiomedConfig
-    base_url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi"
+
+    def get_base_endpoints_url(self) -> str:
+        endpoint_url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?format=pdf"
+
+        if self.connector_config.id_:
+            endpoint_url += f"&id={self.connector_config.id_}"
+
+        if self.connector_config.from_:
+            endpoint_url += f"&from={self.connector_config.from_}"
+
+        if self.connector_config.until:
+            endpoint_url += f"&until={self.connector_config.until}"
+
+        return endpoint_url
 
     def _list_objects_api(self) -> t.List[BiomedFileMeta]:
         def urls_to_metadata(urls):
@@ -176,16 +189,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
         files: t.List[BiomedFileMeta] = []
 
-        endpoint_url = f"{self.base_url}?format=pdf"
-
-        if self.connector_config.id_:
-            endpoint_url += f"&id={self.connector_config.id_}"
-
-        if self.connector_config.from_:
-            endpoint_url += f"&from={self.connector_config.from_}"
-
-        if self.connector_config.until:
-            endpoint_url += f"&until={self.connector_config.until}"
+        endpoint_url = self.get_base_endpoints_url()
 
         while endpoint_url:
             session = requests.Session()
@@ -289,7 +293,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         pass
 
     def check_connection(self):
-        resp = requests.head(self.base_url)
+        resp = requests.head(self.get_base_endpoints_url())
         try:
             resp.raise_for_status()
         except requests.HTTPError as http_error:
