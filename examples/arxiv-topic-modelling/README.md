@@ -1,7 +1,7 @@
 ## arXiv Topic Modelling
 
 This directory contains an example of how to use the arXiv python package (wrapper for the arXiv api), berTopic python package (transformer based topic modelling)
-and several bricks from the `unstructured` library to run topic modelling on queried arXiV research papers. This notebook is very simple, but can easily modified for more complicated use cases.
+and several functions from the `unstructured` library to run topic modelling on queried arXiV research papers. This notebook is very simple, but can easily modified for more complicated use cases.
 
 To get started, use the following steps:
 
