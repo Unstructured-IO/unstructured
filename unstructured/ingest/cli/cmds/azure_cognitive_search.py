@@ -4,13 +4,12 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.interfaces import (
-    CliMixin,
+    CliConfig,
 )
-from unstructured.ingest.interfaces import BaseConfig
 
 
 @dataclass
-class AzureCognitiveSearchCliWriteConfig(BaseConfig, CliMixin):
+class AzureCognitiveSearchCliWriteConfig(CliConfig):
     key: str
     endpoint: str
     index: str
