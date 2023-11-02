@@ -25,6 +25,7 @@ def conform_click_options(options: dict):
 
 def extract_configs(
     data: dict,
+    use_defaults=True,
     extras: t.Optional[t.Dict[str, t.Type[BaseConfig]]] = None,
     validate: t.Optional[t.List[t.Type[BaseConfig]]] = None,
 ) -> t.Dict[str, BaseConfig]:
@@ -34,15 +35,20 @@ def extract_configs(
     options that are passed in during invocation.
     """
     validate = validate if validate else []
-    res = {
-        "read_config": CliReadConfig.from_dict(data),
-        "partition_config": CliPartitionConfig.from_dict(data),
-        "embedding_config": CliEmbeddingConfig.from_dict(data),
-        "chunking_config": CliChunkingConfig.from_dict(data),
-        "processor_config": CliProcessorConfig.from_dict(data),
-        "permissions_config": CliPermissionsConfig.from_dict(data),
-        "retry_strategy_config": CliRetryStrategyConfig.from_dict(data),
+
+    defaults = {
+        "read_config": CliReadConfig,
+        "partition_config": CliPartitionConfig,
+        "embedding_config": CliEmbeddingConfig,
+        "chunking_config": CliChunkingConfig,
+        "processor_config": CliProcessorConfig,
+        "permissions_config": CliPermissionsConfig,
+        "retry_strategy_config": CliRetryStrategyConfig,
     }
+    res = {}
+    if use_defaults:
+        for k, conf in defaults.items():
+            res[k] = conf.from_dict(data)
     if extras:
         for k, conf in extras.items():
             res[k] = conf.from_dict(data)

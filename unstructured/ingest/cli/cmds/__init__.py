@@ -13,6 +13,10 @@ from .biomed import get_base_src_cmd as biomed_base_src_cmd
 from .box import get_base_dest_cmd as box_base_dest_cmd
 from .box import get_base_src_cmd as box_base_src_cmd
 from .confluence import get_base_src_cmd as confluence_base_src_cmd
+from .databricks.azure_volumes import get_base_dest_cmd as databricks_azure_volumes_base_dest_cmd
+from .databricks.azure_volumes import get_base_src_cmd as databricks_azure_volumes_base_src_cmd
+from .databricks.volumes import get_base_dest_cmd as databricks_volumes_base_dest_cmd
+from .databricks.volumes import get_base_src_cmd as databricks_volumes_base_src_cmd
 from .delta_table import get_base_dest_cmd as delta_table_dest_cmd
 from .delta_table import get_base_src_cmd as delta_table_base_src_cmd
 from .discord import get_base_src_cmd as discord_base_src_cmd
@@ -48,6 +52,8 @@ base_src_cmd_fns: t.List[t.Callable[[], BaseSrcCmd]] = [
     biomed_base_src_cmd,
     box_base_src_cmd,
     confluence_base_src_cmd,
+    databricks_volumes_base_src_cmd,
+    databricks_azure_volumes_base_src_cmd,
     delta_table_base_src_cmd,
     discord_base_src_cmd,
     dropbox_base_src_cmd,
@@ -83,6 +89,8 @@ if src_duplicates:
 base_dest_cmd_fns: t.List[t.Callable[[], "BaseDestCmd"]] = [
     azure_base_dest_cmd,
     box_base_dest_cmd,
+    databricks_volumes_base_dest_cmd,
+    databricks_azure_volumes_base_dest_cmd,
     dropbox_base_dest_cmd,
     fsspec_base_dest_cmd,
     gcs_base_dest_cmd,

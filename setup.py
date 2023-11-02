@@ -160,6 +160,7 @@ setup(
         "embed-huggingface": load_requirements("requirements/embed-huggingface.in"),
         "openai": load_requirements("requirements/ingest/openai.in"),
         "bedrock": load_requirements("requirements/ingest/bedrock.in"),
+        "databricks": load_requirements("requirements/ingest/databricks.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

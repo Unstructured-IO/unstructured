@@ -107,6 +107,27 @@ class FileStorageConfig(BaseConfig):
 
 
 @dataclass
+class DatabricksVolumesConfig(FileStorageConfig):
+    catalog: str = field(init=False)
+    path: str = field(init=False)
+    full_name: str = field(init=False)
+
+    def __post_init__(self):
+        full_path = self.remote_url
+
+        if full_path.startswith("/"):
+            full_path = full_path[1:]
+        parts = full_path.split("/")
+        if parts[0] != "Volumes":
+            raise ValueError(
+                "remote url needs to be of the format /Volumes/catalog_name/volume/path"
+            )
+        self.catalog = parts[1]
+        self.path = "/".join(parts[2:])
+        self.full_name = ".".join(parts[1:])
+
+
+@dataclass
 class FsspecConfig(FileStorageConfig):
     access_kwargs: dict = field(default_factory=dict)
     protocol: str = field(init=False)
