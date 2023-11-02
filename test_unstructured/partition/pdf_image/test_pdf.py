@@ -553,30 +553,28 @@ def test_partition_pdf_with_fast_strategy_from_file_with_metadata_filename(
         assert element.metadata.filename == "test"
 
 
-def test_partition_pdf_with_auto_strategy_exclude_metadata(
+@pytest.mark.parametrize("file_mode", ["filename", "rb"])
+@pytest.mark.parametrize("strategy", ["auto", "hi_res", "fast", "ocr_only"])
+def test_partition_pdf_exclude_metadata(
+    file_mode,
+    strategy,
     filename="example-docs/layout-parser-paper-fast.pdf",
 ):
-    elements = pdf.partition_pdf(
-        filename=filename,
-        strategy="auto",
-        include_metadata=False,
-    )
-    title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[6].text == title
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
-
-
-def test_partition_pdf_with_fast_strategy_from_file_exclude_metadata(
-    filename="example-docs/layout-parser-paper-fast.pdf",
-):
-    with open(filename, "rb") as f:
+    if file_mode == "filename":
         elements = pdf.partition_pdf(
-            file=f,
-            url=None,
-            strategy="fast",
+            filename=filename,
+            strategy=strategy,
             include_metadata=False,
         )
+    else:
+        with open(filename, "rb") as f:
+            elements = pdf.partition_pdf(
+                file=f,
+                url=None,
+                strategy=strategy,
+                include_metadata=False,
+            )
+
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
 
