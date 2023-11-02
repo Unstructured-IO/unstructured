@@ -435,6 +435,7 @@ def test_partition_pdf_hi_res_ocr_mode_with_table_extraction(ocr_mode):
     assert "<table><thead><th>" in table[0]
     assert "Layouts of history Japanese documents" in table[0]
     assert "Layouts of scanned modern magazines and scientific reports" in table[0]
+    assert "Layouts of scanned US newspapers from the 20th century" in table[0]
 
 
 def test_partition_pdf_with_copy_protection():
