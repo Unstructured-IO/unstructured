@@ -156,7 +156,7 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
     if len(converted_languages) == 0:
         logger.warning(
             "Failed to find any valid standard language code from "
-            f"languages: {languages}, process with `eng` instead.",
+            f"languages: {languages}, proceed with `eng` instead.",
         )
         return "eng"
 
