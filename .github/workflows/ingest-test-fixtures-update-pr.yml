@@ -118,7 +118,6 @@ jobs:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
           create_credentials_file: true
-          activate_credentials_file: true
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v1'
       - name: 'Az CLI login'
@@ -200,7 +199,7 @@ jobs:
           sudo apt-get install -y tesseract-ocr
           sudo apt-get install -y tesseract-ocr-kor
           tesseract --version
-          ./test_unstructured_ingest/test-ingest.sh
+          ./test_unstructured_ingest/test-ingest-src.sh
 
       - name: Save branch name to environment file
         id: branch

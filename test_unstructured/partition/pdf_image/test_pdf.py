@@ -416,10 +416,10 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
 
 
 @pytest.mark.parametrize(
-    ("ocr_mode"),
+    "ocr_mode",
     [
-        ("entire_page"),
-        ("individual_blocks"),
+        "entire_page",
+        "individual_blocks",
     ],
 )
 def test_partition_pdf_hi_res_ocr_mode_with_table_extraction(ocr_mode):
