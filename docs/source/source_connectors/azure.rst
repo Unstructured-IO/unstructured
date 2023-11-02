@@ -30,7 +30,12 @@ Run Locally
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.interfaces import (
+            FsspecConfig,
+            PartitionConfig,
+            ProcessorConfig,
+            ReadConfig,
+        )
         from unstructured.ingest.runner import AzureRunner
 
         if __name__ == "__main__":
@@ -42,11 +47,14 @@ Run Locally
                 ),
                 read_config=ReadConfig(),
                 partition_config=PartitionConfig(),
+                fsspec_config=FsspecConfig(
+                    remote_url="abfs://container1/",
+                ),
             )
             runner.run(
-                remote_url="abfs://container1/",
                 account_name="azureunstructured1",
             )
+
 
 Run via the API
 ---------------
@@ -61,7 +69,12 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
         import os
 
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.interfaces import (
+            FsspecConfig,
+            PartitionConfig,
+            ProcessorConfig,
+            ReadConfig,
+        )
         from unstructured.ingest.runner import AzureRunner
 
         if __name__ == "__main__":
@@ -76,11 +89,14 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
                     partition_by_api=True,
                     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
                 ),
+                fsspec_config=FsspecConfig(
+                    remote_url="abfs://container1/",
+                ),
             )
             runner.run(
-                remote_url="abfs://container1/",
                 account_name="azureunstructured1",
             )
+
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 

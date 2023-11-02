@@ -1,23 +1,30 @@
-## 0.10.29-dev2
+## 0.10.29-dev8
 
 ### Enhancements
 
+* **Add element type CI evaluation workflow** Adds element type frequency evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
+* **Separate chipper tests** Chipper tests are long-running and require special access, so the tests have been separated into their own file under their own marker, and now have a separate `make` target.
 * **Add include_header argument for partition_csv and partition_tsv** Now supports retaining header rows in CSV and TSV documents element partitioning.
 * **Add retry logic for all source connectors** All http calls being made by the ingest source connectors have been isolated and wrapped by the `SourceConnectionNetworkError` custom error, which triggers the retry logic, if enabled, in the ingest pipeline.
+* **Google Drive source connector supports credentials from memory** Originally, the connector expected a filepath to pull the credentials from when creating the client. This was expanded to support passing that information from memory as a dict if access to the file system might not be available.
 
 ### Features
+
+* **Allow setting table crop parameter** In certain circumstances, adjusting the table crop padding may improve table.
 
 ### Fixes
 
 * **Fixes `partition_text` to prevent empty elements** Adds a check to filter out empty bullets.
+* **Handle empty string for `ocr_languages` with values for `languages`** Some API users ran into an issue with sending `languages` params because the API defaulted to also using an empty string for `ocr_languages`. This update handles situations where `languages` is defined and `ocr_languages` is an empty string.
+* **Fix PDF tried to loop through None** Previously the PDF annotation extraction tried to loop through `annots` that resolved out as None. A logical check added to avoid such error.
 * **Ingest session handler not being shared correctly** All ingest docs that leverage the session handler should only need to set it once per process. It was recreating it each time because the right values weren't being set nor available given how dataclasses work in python.
-* **Ingest download-only fix** Previously the download only flag was being checked after the doc factory pipeline step, which occurs before the files are actually downloaded by the source node. This check was moved after the source node to allow for the files to be downloaded first before exiting the pipeline.
+* **Ingest download-only fix.** Previously the download only flag was being checked after the doc factory pipeline step, which occurs before the files are actually downloaded by the source node. This check was moved after the source node to allow for the files to be downloaded first before exiting the pipeline.
+* **Fix flaky chunk-metadata.** Prior implementation was sensitive to element order in the section resulting in metadata values sometimes being dropped. Also, not all metadata items can be consolidated across multiple elements (e.g. coordinates) and so are now dropped from consolidated metadata.
 
 ## 0.10.28
 
 ### Enhancements
 
-* **Add element type CI evaluation workflow** Adds element type frequency evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
 * **Add table structure evaluation helpers** Adds functions to evaluate the similarity between predicted table structure and actual table structure.
 * **Use `yolox` by default for table extraction when partitioning pdf/image** `yolox` model provides higher recall of the table regions than the quantized version and it is now the default element detection model when `infer_table_structure=True` for partitioning pdf/image files
 * **Remove pdfminer elements from inside tables** Previously, when using `hi_res` some elements where extracted using pdfminer too, so we removed pdfminer from the tables pipeline to avoid duplicated elements.
@@ -32,6 +39,7 @@
 * **Update `ocr_only` strategy in `partition_pdf()`** Adds the functionality to get accurate coordinate data when partitioning PDFs and Images with the `ocr_only` strategy.
 
 ### Fixes
+* **Fixed SharePoint permissions for the fetching to be opt-in** Problem: Sharepoint permissions were trying to be fetched even when no reletad cli params were provided, and this gave an error due to values for those keys not existing. Fix: Updated getting keys to be with .get() method and changed the "skip-check" to check individual cli params rather than checking the existance of a config object.
 
 * **Fixes issue where tables from markdown documents were being treated as text** Problem: Tables from markdown documents were being treated as text, and not being extracted as tables. Solution: Enable the `tables` extension when instantiating the `python-markdown` object. Importance: This will allow users to extract structured data from tables in markdown documents.
 * **Fix wrong logger for paddle info** Replace the logger from unstructured-inference with the logger from unstructured for paddle_ocr.py module.
@@ -57,7 +65,7 @@
 
 ### Enhancements
 
-* **Add CI evaluation workflow** Adds evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
+* **Add text CCT CI evaluation workflow** Adds cct text extraction evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
 
 ### Features
 
