@@ -198,7 +198,7 @@ The **Connectors** 🔗 in `unstructured` serve as vital links between the pre-p
 ### PDF Document Parsing Example
 The following examples show how to get started with the `unstructured` library. You can parse over a dozen document types with one line of code! Use this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the example below.
 
-The easiest way to parse a document in unstructured is to use the `partition` function. If you use `partition` function, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning function. If you are using the `partition` function, you may need to install additional parameters via `pip install unstructured[local-inference]`. Ensure you first install `libmagic` using the instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection) `partition` will always apply the default arguments. If you need advanced features, use a document-specific partioning function.
+The easiest way to parse a document in unstructured is to use the `partition` function. If you use `partition` function, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning function. If you are using the `partition` function, you may need to install additional parameters via `pip install unstructured[local-inference]`. Ensure you first install `libmagic` using the instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection) `partition` will always apply the default arguments. If you need advanced features, use a document-specific partitioning function.
 
 ```python
 from unstructured.partition.auto import partition
