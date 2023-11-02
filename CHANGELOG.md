@@ -13,6 +13,8 @@
 * **Allow setting table crop parameter** In certain circumstances, adjusting the table crop padding may improve table.
 
 ### Fixes
+
+* **Fixes `partition_text` to prevent empty elements** Adds a check to filter out empty bullets.
 * **Handle empty string for `ocr_languages` with values for `languages`** Some API users ran into an issue with sending `languages` params because the API defaulted to also using an empty string for `ocr_languages`. This update handles situations where `languages` is defined and `ocr_languages` is an empty string.
 * **Fix PDF tried to loop through None** Previously the PDF annotation extraction tried to loop through `annots` that resolved out as None. A logical check added to avoid such error.
 * **Ingest session handler not being shared correctly** All ingest docs that leverage the session handler should only need to set it once per process. It was recreating it each time because the right values weren't being set nor available given how dataclasses work in python.
