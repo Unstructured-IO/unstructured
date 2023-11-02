@@ -82,7 +82,7 @@ jobs:
       # Due to the dependency on setup, the cache should exist before this is ran. Set failed if it wasn't found.
       - name: Setup base virtual environment (no cache hit)
         if: steps.base-virtualenv-cache.outputs.cache-hit != 'true'
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         with:
           script: |
             core.setFailed("base cached environment couldn't be found")
@@ -143,7 +143,7 @@ jobs:
       # Due to the dependency on setup_ingest, the cache should exist before this is ran. Set failed if it wasn't found.
       - name: Setup base virtual environment (no cache hit)
         if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         with:
           script: |
             core.setFailed("cached environment couldn't be found")
