@@ -22,6 +22,27 @@ from unstructured.ingest.interfaces import (
 )
 
 
+class Dict(click.ParamType):
+    name = "dict"
+
+    def convert(
+        self,
+        value: t.Any,
+        param: t.Optional[click.Parameter],
+        ctx: t.Optional[click.Context],
+    ) -> t.Any:
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            self.fail(
+                gettext(
+                    "{value} is not a valid json value.",
+                ).format(value=value),
+                param,
+                ctx,
+            )
+
+
 class FileOrJson(click.ParamType):
     name = "file-or-json"
 
@@ -240,12 +261,6 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--skip-infer-table-types"],
-                type=DelimitedString(),
-                default=None,
-                help="Optional list of document types to skip table extraction on",
-            ),
-            click.Option(
                 ["--pdf-infer-table-structure"],
                 default=False,
                 help="If set to True, partition will include the table's text "
@@ -271,6 +286,17 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 default=None,
                 help="Text encoding to use when reading documents. By default the encoding is "
                 "detected automatically.",
+            ),
+            click.Option(
+                ["--skip-infer-table-types"],
+                type=DelimitedString(),
+                default=None,
+                help="Optional list of document types to skip table extraction on",
+            ),
+            click.Option(
+                ["--additional-partition-args"],
+                type=Dict(),
+                help="A json string representation of values to pass through to partition()",
             ),
             click.Option(
                 ["--fields-include"],
