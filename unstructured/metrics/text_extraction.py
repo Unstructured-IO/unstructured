@@ -149,7 +149,7 @@ def calculate_percent_missing_text(
     if total_source_word_count == 0:
         return 0  # nothing missing because nothing in source document
 
-    fraction_missing = round(total_missing_word_count / total_source_word_count, 2)
+    fraction_missing = round(total_missing_word_count / total_source_word_count, 3)
     return min(fraction_missing, 1)  # limit to 100%
 
 

@@ -22,6 +22,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     ListItem,
+    PageBreak,
     RegexMetadata,
     Table,
     Text,
@@ -207,7 +208,7 @@ def test_split_elements_by_title_and_table():
 
     section = next(sections)
     assert isinstance(section, _TextSection)
-    assert section.elements == [
+    assert section._elements == [
         Title("A Great Day"),
         Text("Today is a great day."),
         Text("It is sunny outside."),
@@ -219,7 +220,7 @@ def test_split_elements_by_title_and_table():
     # ==
     section = next(sections)
     assert isinstance(section, _TextSection)
-    assert section.elements == [
+    assert section._elements == [
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -227,7 +228,7 @@ def test_split_elements_by_title_and_table():
     # --
     section = next(sections)
     assert isinstance(section, _TextSection)
-    assert section.elements == [
+    assert section._elements == [
         Title("A Bad Day"),
         Text("Today is a bad day."),
         Text("It is storming outside."),
@@ -722,16 +723,210 @@ class Describe_TableSection:
 class Describe_TextSection:
     """Unit-test suite for `unstructured.chunking.title._TextSection objects."""
 
-    def it_provides_access_to_its_elements(self):
-        elements: List[Element] = [
-            Title("Introduction"),
-            Text(
-                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
-                "lectus porta volutpat.",
-            ),
-        ]
+    def it_can_combine_itself_with_another_TextSection_instance(self):
+        """.combine() produces a new section by appending the elements of `other_section`.
+
+        Note that neither the original or other section are mutated.
+        """
+        section = _TextSection(
+            [
+                Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+                Text("In rhoncus ipsum sed lectus porta volutpat."),
+            ]
+        )
+        other_section = _TextSection(
+            [
+                Text("Donec semper facilisis metus finibus malesuada."),
+                Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
+            ]
+        )
+
+        new_section = section.combine(other_section)
+
+        assert new_section == _TextSection(
+            [
+                Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+                Text("In rhoncus ipsum sed lectus porta volutpat."),
+                Text("Donec semper facilisis metus finibus malesuada."),
+                Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
+            ]
+        )
+        assert section == _TextSection(
+            [
+                Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+                Text("In rhoncus ipsum sed lectus porta volutpat."),
+            ]
+        )
+        assert other_section == _TextSection(
+            [
+                Text("Donec semper facilisis metus finibus malesuada."),
+                Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
+            ]
+        )
+
+    @pytest.mark.parametrize(
+        ("elements", "expected_value"),
+        [
+            ([Text("foo"), Text("bar")], "foo\n\nbar"),
+            ([Text("foo"), PageBreak(""), Text("bar")], "foo\n\nbar"),
+            ([PageBreak(""), Text("foo"), Text("bar")], "foo\n\nbar"),
+            ([Text("foo"), Text("bar"), PageBreak("")], "foo\n\nbar"),
+        ],
+    )
+    def it_provides_access_to_the_concatenated_text_of_the_section(
+        self, elements: List[Text], expected_value: str
+    ):
+        """.text is the "joined" text of the section elements.
+
+        The text-segment contributed by each element is separated from the next by a blank line
+        ("\n\n"). An element that contributes no text does not give rise to a separator.
+        """
         section = _TextSection(elements)
-        assert section.elements == elements
+        assert section.text == expected_value
+
+    def it_knows_the_length_of_the_combined_text_of_its_elements_which_is_the_chunk_size(self):
+        """.text_length is the size of chunk this section will produce (before any splitting)."""
+        section = _TextSection([PageBreak(""), Text("foo"), Text("bar")])
+        assert section.text_length == 8
+
+    def it_extracts_all_populated_metadata_values_from_the_elements_to_help(self):
+        section = _TextSection(
+            [
+                Title(
+                    "Lorem Ipsum",
+                    metadata=ElementMetadata(
+                        category_depth=0,
+                        filename="foo.docx",
+                        languages=["lat"],
+                        parent_id="f87731e0",
+                    ),
+                ),
+                Text(
+                    "'Lorem ipsum dolor' means 'Thank you very much' in Latin.",
+                    metadata=ElementMetadata(
+                        category_depth=1,
+                        filename="foo.docx",
+                        image_path="sprite.png",
+                        languages=["lat", "eng"],
+                    ),
+                ),
+            ]
+        )
+
+        assert section._all_metadata_values == {
+            # -- scalar values are accumulated in a list in element order --
+            "category_depth": [0, 1],
+            # -- all values are accumulated, not only unique ones --
+            "filename": ["foo.docx", "foo.docx"],
+            # -- list-type fields produce a list of lists --
+            "languages": [["lat"], ["lat", "eng"]],
+            # -- fields that only appear in some elements are captured --
+            "image_path": ["sprite.png"],
+            "parent_id": ["f87731e0"],
+            # -- A `None` value never appears, neither does a field-name with an empty list --
+        }
+
+    def it_consolidates_regex_metadata_in_a_field_specific_way(self):
+        """regex_metadata of chunk is combined regex_metadatas of its elements.
+
+        Also, the `start` and `end` offsets of each regex-match are adjusted to reflect their new
+        position in the chunk after element text has been concatenated.
+        """
+        section = _TextSection(
+            [
+                Title(
+                    "Lorem Ipsum",
+                    metadata=ElementMetadata(
+                        regex_metadata={"ipsum": [RegexMetadata(text="Ipsum", start=6, end=11)]},
+                    ),
+                ),
+                Text(
+                    "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
+                    metadata=ElementMetadata(
+                        regex_metadata={
+                            "dolor": [RegexMetadata(text="dolor", start=12, end=17)],
+                            "ipsum": [RegexMetadata(text="ipsum", start=6, end=11)],
+                        },
+                    ),
+                ),
+                Text(
+                    "In rhoncus ipsum sed lectus porta volutpat.",
+                    metadata=ElementMetadata(
+                        regex_metadata={"ipsum": [RegexMetadata(text="ipsum", start=11, end=16)]},
+                    ),
+                ),
+            ]
+        )
+
+        regex_metadata = section._consolidated_regex_meta
+
+        assert regex_metadata == {
+            "dolor": [RegexMetadata(text="dolor", start=25, end=30)],
+            "ipsum": [
+                RegexMetadata(text="Ipsum", start=6, end=11),
+                RegexMetadata(text="ipsum", start=19, end=24),
+                RegexMetadata(text="ipsum", start=81, end=86),
+            ],
+        }
+
+    def it_forms_ElementMetadata_constructor_kwargs_by_applying_consolidation_strategies(self):
+        """._meta_kwargs is used like `ElementMetadata(**self._meta_kwargs)` to construct metadata.
+
+        Only non-None fields should appear in the dict and each field value should be the
+        consolidation of the values across the section elements.
+        """
+        section = _TextSection(
+            [
+                PageBreak(""),
+                Title(
+                    "Lorem Ipsum",
+                    metadata=ElementMetadata(
+                        filename="foo.docx",
+                        # -- category_depth has DROP strategy so doesn't appear in result --
+                        category_depth=0,
+                        emphasized_text_contents=["Lorem", "Ipsum"],
+                        emphasized_text_tags=["b", "i"],
+                        languages=["lat"],
+                        regex_metadata={"ipsum": [RegexMetadata(text="Ipsum", start=6, end=11)]},
+                    ),
+                ),
+                Text(
+                    "'Lorem ipsum dolor' means 'Thank you very much' in Latin.",
+                    metadata=ElementMetadata(
+                        # -- filename change doesn't happen IRL but demonstrates FIRST strategy --
+                        filename="bar.docx",
+                        # -- emphasized_text_contents has LIST_CONCATENATE strategy, so "Lorem"
+                        # -- appears twice in consolidated-meta (as it should) and length matches
+                        # -- that of emphasized_text_tags both before and after consolidation.
+                        emphasized_text_contents=["Lorem", "ipsum"],
+                        emphasized_text_tags=["i", "b"],
+                        # -- languages has LIST_UNIQUE strategy, so "lat(in)" appears only once --
+                        languages=["eng", "lat"],
+                        # -- regex_metadata has its own dedicated consolidation-strategy (REGEX) --
+                        regex_metadata={
+                            "dolor": [RegexMetadata(text="dolor", start=12, end=17)],
+                            "ipsum": [RegexMetadata(text="ipsum", start=6, end=11)],
+                        },
+                    ),
+                ),
+            ]
+        )
+
+        meta_kwargs = section._meta_kwargs
+
+        assert meta_kwargs == {
+            "filename": "foo.docx",
+            "emphasized_text_contents": ["Lorem", "Ipsum", "Lorem", "ipsum"],
+            "emphasized_text_tags": ["b", "i", "i", "b"],
+            "languages": ["lat", "eng"],
+            "regex_metadata": {
+                "ipsum": [
+                    RegexMetadata(text="Ipsum", start=6, end=11),
+                    RegexMetadata(text="ipsum", start=19, end=24),
+                ],
+                "dolor": [RegexMetadata(text="dolor", start=25, end=30)],
+            },
+        }
 
 
 class Describe_TextSectionBuilder:
@@ -772,7 +967,7 @@ class Describe_TextSectionBuilder:
         section = next(builder.flush())
 
         assert isinstance(section, _TextSection)
-        assert section.elements == [
+        assert section._elements == [
             Title("Introduction"),
             Text(
                 "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
