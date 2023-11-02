@@ -37,8 +37,8 @@ def measure_text_edit_distance(
     output_list: Optional[List[str]],
     source_dir: str,
     source_list: Optional[List[str]],
-    export_dir: str,
-    weights: Tuple[int, int, int],
+    export_dir: str = "metrics",
+    weights: Tuple[int, int, int] = (2, 1, 1),
 ) -> None:
     """
     Loops through the list of structured output from all of `output_dir` or selected files from
