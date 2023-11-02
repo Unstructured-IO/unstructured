@@ -1,7 +1,7 @@
 Core Functionality
 ==================
 
-The ``unstructured`` library includes functions to partioning, chunk, clean, and stage
+The ``unstructured`` library includes functions to partition, chunk, clean, and stage
 raw source documents. These functions serve as the primary public interfaces within the library.
 After reading this section, you should understand the following:
 
