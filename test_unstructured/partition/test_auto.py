@@ -399,6 +399,18 @@ def test_auto_partition_element_metadata_user_provided_languages():
     assert elements[0].metadata.languages == ["eng"]
 
 
+@pytest.mark.parametrize(
+    ("languages", "ocr_languages"),
+    [(["auto"], ""), (["eng"], "")],
+)
+def test_auto_partition_ignores_empty_string_for_ocr_languages(languages, ocr_languages):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "book-war-and-peace-1p.txt")
+    elements = partition(
+        filename=filename, strategy="ocr_only", ocr_languages=ocr_languages, languages=languages
+    )
+    assert elements[0].metadata.languages == ["eng"]
+
+
 def test_auto_partition_warns_with_ocr_languages(caplog):
     filename = "example-docs/chevron-page.pdf"
     partition(filename=filename, strategy="hi_res", ocr_languages="eng")

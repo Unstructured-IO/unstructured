@@ -10,6 +10,7 @@ from unstructured.documents.elements import (
     Address,
     ListItem,
     NarrativeText,
+    Table,
     Text,
     Title,
 )
@@ -269,6 +270,25 @@ def test_partition_doc_from_file_without_metadata_date(
         elements = partition_doc(file=sf, metadata_date="2020-07-05")
 
     assert elements[0].metadata.date == "2020-07-05"
+
+
+def test_partition_doc_grabs_emphasized_texts():
+    expected_emphasized_text_contents = ["bold", "italic", "bold-italic", "bold-italic"]
+    expected_emphasized_text_tags = ["b", "i", "b", "i"]
+
+    elements = partition_doc("example-docs/fake-doc-emphasized-text.doc")
+
+    assert isinstance(elements[0], Table)
+    assert elements[0].metadata.emphasized_text_contents == expected_emphasized_text_contents
+    assert elements[0].metadata.emphasized_text_tags == expected_emphasized_text_tags
+
+    assert elements[1] == NarrativeText("I am a bold italic bold-italic text.")
+    assert elements[1].metadata.emphasized_text_contents == expected_emphasized_text_contents
+    assert elements[1].metadata.emphasized_text_tags == expected_emphasized_text_tags
+
+    assert elements[2] == NarrativeText("I am a normal text.")
+    assert elements[2].metadata.emphasized_text_contents is None
+    assert elements[2].metadata.emphasized_text_tags is None
 
 
 def test_partition_doc_with_json(mock_document, tmpdir):

@@ -395,7 +395,7 @@ def test_partition_pptx_respects_detect_language_per_element():
 def test_partition_pptx_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
         filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
-        partition_pptx(filename=filename, languages="eng")
+        partition_pptx(filename=filename, languages="eng")  # type: ignore
 
 
 # == DescribePptxPartitionerDownstreamBehaviors ==================================================
