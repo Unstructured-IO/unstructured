@@ -14,6 +14,7 @@ all_tests=(
   'dropbox.sh'
   'gcs.sh'
   's3.sh'
+  'sql.sh'
 )
 
 full_python_matrix_tests=(

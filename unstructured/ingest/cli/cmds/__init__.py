@@ -37,6 +37,7 @@ from .s3 import get_base_src_cmd as s3_base_src_cmd
 from .salesforce import get_base_src_cmd as salesforce_base_src_cmd
 from .sharepoint import get_base_src_cmd as sharepoint_base_src_cmd
 from .slack import get_base_src_cmd as slack_base_src_cmd
+from .sql import get_base_dest_cmd as sql_base_dest_cmd
 from .wikipedia import get_base_src_cmd as wikipedia_base_src_cmd
 
 if t.TYPE_CHECKING:
@@ -89,6 +90,7 @@ base_dest_cmd_fns: t.List[t.Callable[[], "BaseDestCmd"]] = [
     s3_base_dest_cmd,
     azure_cognitive_search_base_dest_cmd,
     delta_table_dest_cmd,
+    sql_base_dest_cmd,
 ]
 
 # Make sure there are not overlapping names
