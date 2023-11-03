@@ -103,15 +103,28 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --index-name "$PINECONE_INDEX" \
   --environment "$PINECONE_ENVIRONMENT"
 
-sleep 15
-num_of_vectors_remote=$(curl --request POST \
-     -s \
-     --url "https://$PINECONE_INDEX-$PINECONE_PROJECT_ID.svc.$PINECONE_ENVIRONMENT.pinecone.io/describe_index_stats" \
-     --header "accept: application/json" \
-     --header "content-type: application/json" \
-     --header "Api-Key: $PINECONE_API_KEY" | jq -r '.totalVectorCount')
+# It can take some time for the index to catch up with the content that was written, this check between 10s sleeps
+# to give it that time process the writes. Will timeout after checking for a minute.
+num_of_vectors_remote=0
+attempt=1
+sleep_amount=8
+while [ "$num_of_vectors_remote" -eq 0 ] && [ "$attempt" -lt 4 ]; do
+  echo "attempt $attempt: sleeping $sleep_amount seconds to let index finish catching up after writes"
+  sleep $sleep_amount
+
+  num_of_vectors_remote=$(curl --request POST \
+      -s \
+      --url "https://$PINECONE_INDEX-$PINECONE_PROJECT_ID.svc.$PINECONE_ENVIRONMENT.pinecone.io/describe_index_stats" \
+      --header "accept: application/json" \
+      --header "content-type: application/json" \
+      --header "Api-Key: $PINECONE_API_KEY" | jq -r '.totalVectorCount')
+
+  echo "vector count in Pinecone: $num_of_vectors_remote"
+  attempt=$((attempt+1))
+done
 
 EXPECTED=3
+
 if [ "$num_of_vectors_remote" -ne $EXPECTED ];then
   echo "Number of vectors in Pinecone are $num_of_vectors_remote when the expected number is $EXPECTED. Test failed."
   exit 1
