@@ -14,7 +14,6 @@ permissions:
 jobs:
   test_logins:
     runs-on: ubuntu-latest
-    environment: ci
     steps:
       - uses: 'actions/checkout@v4'
       - name: 'Google Cloud Auth'
@@ -100,7 +99,6 @@ jobs:
           make install-all-ingest
 
   update-fixtures-and-pr:
-    environment: ci
     runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
