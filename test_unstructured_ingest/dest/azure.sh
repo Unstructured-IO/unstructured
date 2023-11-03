@@ -6,8 +6,9 @@ DEST_PATH=$(dirname "$(realpath "$0")")
 SCRIPT_DIR=$(dirname "$DEST_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=azure-dest
-OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
-WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
+OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
+OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 if [ -z "$AZURE_DEST_CONNECTION_STR" ]; then
@@ -34,10 +35,10 @@ trap cleanup EXIT
 # Create directory to use for testing
 az storage fs directory create -f "$CONTAINER" --n "$DIRECTORY" --connection-string "$AZURE_DEST_CONNECTION_STR"
 
-PYTHONPATH=. ./unstructured/ingest/main.py \
+RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     local \
     --num-processes "$max_processes" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --output-dir "$OUTPUT_DIR" \
     --strategy fast \
     --verbose \

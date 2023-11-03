@@ -7,8 +7,9 @@ SRC_PATH=$(dirname "$(realpath "$0")")
 SCRIPT_DIR=$(dirname "$SRC_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=s3-minio
-OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
-WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
+OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
+OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 secret_key=minioadmin
@@ -32,7 +33,9 @@ trap cleanup EXIT
 scripts/minio-test-helpers/create-and-check-minio.sh
 wait
 
-AWS_SECRET_ACCESS_KEY=$secret_key AWS_ACCESS_KEY_ID=$access_key PYTHONPATH=. ./unstructured/ingest/main.py \
+RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+AWS_SECRET_ACCESS_KEY=$secret_key AWS_ACCESS_KEY_ID=$access_key \
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     s3 \
     --num-processes "$max_processes" \
     --download-dir "$DOWNLOAD_DIR" \
