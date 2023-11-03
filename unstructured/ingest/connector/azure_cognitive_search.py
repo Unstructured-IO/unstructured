@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 import azure.core.exceptions
 
-from unstructured.ingest.error import WriteError
+from unstructured.ingest.error import DestinationConnectionError, WriteError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
@@ -31,6 +31,13 @@ class AzureCognitiveSearchWriteConfig(WriteConfig):
 class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
     write_config: AzureCognitiveSearchWriteConfig
     connector_config: SimpleAzureCognitiveSearchStorageConfig
+
+    def check_connection(self):
+        try:
+            self.client.get_document_count()
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
 
     @requires_dependencies(["azure"], extras="azure-cognitive-search")
     def initialize(self):

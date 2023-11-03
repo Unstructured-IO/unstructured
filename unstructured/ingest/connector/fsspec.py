@@ -5,7 +5,11 @@ from contextlib import suppress
 from dataclasses import dataclass, field
 from pathlib import Path, PurePath
 
-from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
+from unstructured.ingest.error import (
+    DestinationConnectionError,
+    SourceConnectionError,
+    SourceConnectionNetworkError,
+)
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
@@ -255,6 +259,18 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
             **self.connector_config.get_access_kwargs(),
         )
+
+    def check_connection(self):
+        from fsspec import get_filesystem_class
+
+        try:
+            fs = get_filesystem_class(self.connector_config.protocol)(
+                **self.connector_config.get_access_kwargs(),
+            )
+            fs.ls(path=self.connector_config.path_without_protocol)
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
 
     def write_dict(
         self,
