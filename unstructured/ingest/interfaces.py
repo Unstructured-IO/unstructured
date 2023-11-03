@@ -180,7 +180,15 @@ class EmbeddingConfig(BaseConfig):
         if self.model_name:
             kwargs["model_name"] = self.model_name
 
-        cls = EMBEDDING_PROVIDER_TO_CLASS_MAP.get(self.provider, None)
+        try:
+            cls = EMBEDDING_PROVIDER_TO_CLASS_MAP[self.provider]
+        except KeyError:
+            raise KeyError(
+                "Embedding provider is not typed correctly, or not supported. "
+                "Supported providers: "
+                f"{list(EMBEDDING_PROVIDER_TO_CLASS_MAP)}"
+            )
+
         return cls(**kwargs)
 
 
