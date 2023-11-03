@@ -56,7 +56,7 @@ class ENVConfig:
         if estimated text height from tesseract OCR results is lower than this value the image is
         scaled up to be processed again
         """
-        return self._get_int("TESSERACT_MIN_TEXT_HEIGHT", 22)
+        return self._get_int("TESSERACT_MIN_TEXT_HEIGHT", 12)
 
     @property
     def TESSERACT_MAX_TEXT_HEIGHT(self) -> int:
