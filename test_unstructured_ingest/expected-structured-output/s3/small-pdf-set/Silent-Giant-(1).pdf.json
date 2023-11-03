@@ -55,7 +55,7 @@
   },
   {
     "type": "Title",
-    "element_id": "14547603bad3329c14c74b8c4e2ff8d9",
+    "element_id": "3ad74247d9203b064430c509bfe0ebe0",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
@@ -69,7 +69,7 @@
       "filetype": "application/pdf",
       "page_number": 1
     },
-    "text": "//s88ciation"
+    "text": "/[s#8Peinron"
   },
   {
     "type": "Title",
@@ -1152,24 +1152,6 @@
     "text": "e"
   },
   {
-    "type": "Title",
-    "element_id": "f83714d89302473e0e4f5399bd50e7a9",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": "177372694731575984083482917563244941766",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 8
-    },
-    "text": "W T"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "380918b946a526640a40df5dced65167",
     "metadata": {
@@ -1186,6 +1168,24 @@
       "page_number": 8
     },
     "text": "="
+  },
+  {
+    "type": "Title",
+    "element_id": "f83714d89302473e0e4f5399bd50e7a9",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 8
+    },
+    "text": "W T"
   },
   {
     "type": "NarrativeText",
@@ -1747,24 +1747,6 @@
   },
   {
     "type": "Title",
-    "element_id": "d3fc2842ddfad4c8d3859f84d4439bfd",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": "177372694731575984083482917563244941766",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "Vv"
-  },
-  {
-    "type": "Title",
     "element_id": "4c94485e0c21ae6c41ce1dfe7b6bface",
     "metadata": {
       "data_source": {
@@ -1801,24 +1783,6 @@
   },
   {
     "type": "Title",
-    "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
-    "metadata": {
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": "177372694731575984083482917563244941766",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "date_modified": "2023-02-12T10:10:36"
-      },
-      "filetype": "application/pdf",
-      "page_number": 10
-    },
-    "text": "vi"
-  },
-  {
-    "type": "Title",
     "element_id": "c1d2906220d1eef1b17422b7132872a8",
     "metadata": {
       "data_source": {
@@ -1834,6 +1798,24 @@
       "page_number": 10
     },
     "text": "vii"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d2e2adf7177b7a8afddbc12d1634cf23",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 10
+    },
+    "text": "_"
   },
   {
     "type": "NarrativeText",
@@ -1960,6 +1942,24 @@
       "page_number": 12
     },
     "text": "World Nuclear Association Tower House 10 Southampton Street London WC2E 7HA United Kingdom"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "380918b946a526640a40df5dced65167",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "date_modified": "2023-02-12T10:10:36"
+      },
+      "filetype": "application/pdf",
+      "page_number": 12
+    },
+    "text": "="
   },
   {
     "type": "NarrativeText",

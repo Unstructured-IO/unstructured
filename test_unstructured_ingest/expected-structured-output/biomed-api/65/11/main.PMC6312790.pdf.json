@@ -61,16 +61,6 @@
   },
   {
     "type": "Title",
-    "element_id": "c21a7f75a507e8d1d940e30b66575616",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "(Jee"
-  },
-  {
-    "type": "Title",
     "element_id": "6d1999c49562bd7c2b15a41327b8fc36",
     "metadata": {
       "data_source": {},
@@ -431,16 +421,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "57e2eb94df928d0cf17b2c0d41ae042e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "100 4"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
       "data_source": {},
@@ -521,13 +501,13 @@
   },
   {
     "type": "Image",
-    "element_id": "aa4f0eca72d0603d384878e68fe5be57",
+    "element_id": "506dff384be7ac4026b4227e860b3a39",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "5 1 os = — 10; =o ° © —\" 205 i —~é é —ip a5 — Control -2 — & 2.5 T T T 0.0000001 + —-0.00001 0.001 O14 Current Density (A/cm2)"
+    "text": "25 14 os ~ — 1 2 0 i = —4 Zs 4 8 — bg 14 é — 2g 137 — Control 24 8g 25 T T T 0.0000001 0.00001 0.001 01 Current Density (A/cm2)"
   },
   {
     "type": "FigureCaption",
@@ -600,16 +580,6 @@
     "text": "C/0"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "e2b6d7e2ab125149fa820500cedfffbb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "—=—Cc/0"
-  },
-  {
     "type": "FigureCaption",
     "element_id": "a24d672821f7acb0bbe2c8a813debe16",
     "metadata": {
@@ -631,13 +601,13 @@
   },
   {
     "type": "Image",
-    "element_id": "273fb301b173075f79b2cbdab962e2ff",
+    "element_id": "59b3c54b48b40dffd68bd4d3e1859e95",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEM HV: Q0KY WD: 14.89 rmrm ‘9EM MAO: 209 x Det: DOE Pectomsence In nanospact"
+    "text": "SEM HV: 20.0KV 9D: 14.90 men ‘DEM MAO: 209 x Det: DOE 260 om Pectormence In nanos pac:"
   },
   {
     "type": "FigureCaption",
@@ -661,13 +631,13 @@
   },
   {
     "type": "Image",
-    "element_id": "520d1da08c86ce165cd2843e2dc27f98",
+    "element_id": "032df41d39ff55ef057e900ef83bad04",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEMHV: 20.0KV WD: 15.54 mm EM ING: ACO x Dei: OSE"
+    "text": "SEM HY: 70.0KV SEM IAAG: 400 x"
   },
   {
     "type": "FigureCaption",
@@ -738,6 +708,16 @@
       "page_number": 6
     },
     "text": "Austenitic stainless steel Type 316 was used in this study with chemical composition reported in [1,2]. The chemicals used were of annular grade. The inhibitor concentrations are in the range of 2, 4, 6, 8 and 10 g [3–5]. The structural formula of egg shell powder is shown in Fig. 9."
+  },
+  {
+    "type": "Image",
+    "element_id": "ee7729e0ad3c974c68a2b6bc1f09378a",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 6
+    },
+    "text": "Tie} = O iy oH H3;COCHN™ OH"
   },
   {
     "type": "FigureCaption",
@@ -928,6 +908,16 @@
       "page_number": 7
     },
     "text": "steps of the linear polarization plot are substituted to get corrosion current. Nova software was used with linear polarization resistance (LPR) and the current was set to 10 mA (maximum) and 10 nA (minimum). LSV staircase parameter start potential (cid:3) 1.5 v, step potential 0.001 m/s and stop potential of þ1.5 v set was used in this study."
+  },
+  {
+    "type": "Title",
+    "element_id": "c9015d53b90846454375a2fdf2829c66",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Acknowledgements"
   },
   {
     "type": "Title",

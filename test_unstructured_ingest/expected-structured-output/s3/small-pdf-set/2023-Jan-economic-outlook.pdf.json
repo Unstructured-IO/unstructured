@@ -631,7 +631,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "ab9d11a9dd37cfd5e1876f40777a4480",
+    "element_id": "57b9271999bf59e4bc0807fdffb4b865",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
@@ -645,7 +645,7 @@
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "International Monetary Fund | January 2023 3"
+    "text": "International Monetary Fund | January 2023. 3"
   },
   {
     "type": "Title",
@@ -1909,7 +1909,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "cbb9553ae9412cc864f9f254b47c3efc",
+    "element_id": "c78d5a22c9065ddd7f6da9efa8353eac",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
@@ -1923,11 +1923,11 @@
       "filetype": "application/pdf",
       "page_number": 10
     },
-    "text": "International Monetary Fund | January 2023 9"
+    "text": "International Monetary Fund | January 2023. 9"
   },
   {
     "type": "Image",
-    "element_id": "cd9e31727baaddee4567c7ef27c4937a",
+    "element_id": "02e937302c68fded4234aea81fe5b14b",
     "metadata": {
       "data_source": {
         "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
@@ -1941,7 +1941,7 @@
       "filetype": "application/pdf",
       "page_number": 11
     },
-    "text": "BOX 1. GL AL FINANCIAL STABILITY UPDATE"
+    "text": "JAN 2023 BOX 1. GLOBAL FINANCIAL STABILITY UPDATE"
   },
   {
     "type": "NarrativeText",
