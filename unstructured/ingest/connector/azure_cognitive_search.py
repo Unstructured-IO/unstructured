@@ -1,7 +1,7 @@
 import json
 import typing as t
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import azure.core.exceptions
 
@@ -14,6 +14,9 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
+
+if t.TYPE_CHECKING:
+    from azure.search.documents import SearchClient
 
 
 @dataclass
@@ -31,6 +34,26 @@ class AzureCognitiveSearchWriteConfig(WriteConfig):
 class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
     write_config: AzureCognitiveSearchWriteConfig
     connector_config: SimpleAzureCognitiveSearchStorageConfig
+    _client: t.Optional["SearchClient"] = field(init=False, default=None)
+
+    @requires_dependencies(["azure"], extras="azure-cognitive-search")
+    def generate_client(self) -> "SearchClient":
+        from azure.core.credentials import AzureKeyCredential
+        from azure.search.documents import SearchClient
+
+        # Create a client
+        credential = AzureKeyCredential(self.connector_config.key)
+        return SearchClient(
+            endpoint=self.connector_config.endpoint,
+            index_name=self.write_config.index,
+            credential=credential,
+        )
+
+    @property
+    def client(self) -> "SearchClient":
+        if self._client is None:
+            self._client = self.generate_client()
+        return self._client
 
     def check_connection(self):
         try:
@@ -39,18 +62,8 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")
 
-    @requires_dependencies(["azure"], extras="azure-cognitive-search")
     def initialize(self):
-        from azure.core.credentials import AzureKeyCredential
-        from azure.search.documents import SearchClient
-
-        # Create a client
-        credential = AzureKeyCredential(self.connector_config.key)
-        self.client = SearchClient(
-            endpoint=self.connector_config.endpoint,
-            index_name=self.write_config.index,
-            credential=credential,
-        )
+        _ = self.client
 
     def conform_dict(self, data: dict) -> None:
         """
