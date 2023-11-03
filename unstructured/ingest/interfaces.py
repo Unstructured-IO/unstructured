@@ -22,7 +22,7 @@ from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
-from unstructured.staging.base import convert_to_dict, elements_from_json
+from unstructured.staging.base import convert_to_dict, elements_from_json, flatten_dict
 
 A = t.TypeVar("A", bound="DataClassJsonMixin")
 
@@ -511,10 +511,9 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
             in_list = partition_config.fields_include
             elem = {k: v for k, v in elem.items() if k in in_list}
 
-            if partition_config.flatten_metadata:
-                for k, v in elem["metadata"].items():  # type: ignore[attr-defined]
-                    elem[k] = v
-                elem.pop("metadata")  # type: ignore[attr-defined]
+            if partition_config.flatten_metadata and "metadata" in elem:
+                metadata = elem.pop("metadata")
+                elem.update(flatten_dict(metadata, keys_to_omit=["data_source_record_locator"]))
 
             self.isd_elems_no_filename.append(elem)
 
@@ -568,12 +567,12 @@ class BaseDestinationConnector(DataClassJsonMixin, ABC):
         pass
 
     @abstractmethod
-    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         pass
 
     def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
-        elements_json = [e.to_dict() for e in elements]
-        self.write_dict(*args, json_list=elements_json, **kwargs)
+        elements_dict = [e.to_dict() for e in elements]
+        self.write_dict(*args, elements_dict=elements_dict, **kwargs)
 
 
 class SourceConnectorCleanupMixin:
