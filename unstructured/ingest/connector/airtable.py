@@ -1,6 +1,6 @@
 import os
 import typing as t
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
@@ -17,6 +17,9 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
+
+if t.TYPE_CHECKING:
+    from pyairtable import Api
 
 
 @dataclass
@@ -202,6 +205,17 @@ class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Fetches tables or views from an Airtable org."""
 
     connector_config: SimpleAirtableConfig
+    _api: t.Optional["Api"] = field(init=False, default=None)
+
+    @property
+    def api(self):
+        if self._api is None:
+            self._api = Api(self.connector_config.personal_access_token)
+        return self._api
+
+    @api.setter
+    def api(self, api: "Api"):
+        self._api = api
 
     def check_connection(self):
         try:

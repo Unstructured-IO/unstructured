@@ -535,9 +535,6 @@ class BaseSourceConnector(BaseConnector, ABC):
     read_config: ReadConfig
     connector_config: BaseConnectorConfig
 
-    def __post_init__(self):
-        self.initialize()
-
     @abstractmethod
     def cleanup(self, cur_dir=None):
         """Any additional cleanup up need after processing is complete. E.g., removing
@@ -566,9 +563,6 @@ class BaseDestinationConnector(BaseConnector, ABC):
     def __init__(self, write_config: WriteConfig, connector_config: BaseConnectorConfig):
         self.write_config = write_config
         self.connector_config = connector_config
-
-    def __post_init__(self):
-        self.initialize()
 
     @abstractmethod
     def initialize(self):
