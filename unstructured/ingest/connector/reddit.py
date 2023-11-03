@@ -16,6 +16,9 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
+if t.TYPE_CHECKING:
+    from praw import Reddit
+
 
 @dataclass
 class SimpleRedditConfig(BaseConnectorConfig):
@@ -110,16 +113,23 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 @dataclass
 class RedditSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleRedditConfig
+    _reddit: t.Optional["Reddit"] = field(init=False, default=None)
+
+    @property
+    def reddit(self) -> "Reddit":
+        from praw import Reddit
+
+        if self._reddit is None:
+            self._reddit = Reddit(
+                client_id=self.connector_config.client_id,
+                client_secret=self.connector_config.client_secret,
+                user_agent=self.connector_config.user_agent,
+            )
+        return self._reddit
 
     @requires_dependencies(["praw"], extras="reddit")
     def initialize(self):
-        from praw import Reddit
-
-        self.reddit = Reddit(
-            client_id=self.connector_config.client_id,
-            client_secret=self.connector_config.client_secret,
-            user_agent=self.connector_config.user_agent,
-        )
+        _ = self.reddit
 
     def check_connection(self):
         from praw.endpoints import API_PATH
