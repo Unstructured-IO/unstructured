@@ -7,7 +7,7 @@
 # Structured outputs are stored in elasticsearch-ingest-output
 
 # shellcheck source=/dev/null
-sh scripts/elasticsearch-test-helpers/create-and-check-es.sh
+sh scripts/elasticsearch-test-helpers/create-fill-and-check-es.sh
 wait
 
 # Kill the container so the script can be repeatedly run using the same ports

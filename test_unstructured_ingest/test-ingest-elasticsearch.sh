@@ -30,7 +30,7 @@ function cleanup() {
 trap cleanup EXIT
 
 # shellcheck source=/dev/null
-scripts/elasticsearch-test-helpers/create-and-check-es.sh
+scripts/elasticsearch-test-helpers/create-fill-and-check-es.sh
 wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
