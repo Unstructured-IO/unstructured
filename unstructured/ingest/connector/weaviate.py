@@ -11,19 +11,15 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-BATCH_SIZE = 100
-
-
 @dataclass
 class SimpleWeaviateConfig(BaseConnectorConfig):
     host_url: str
+    class_name: str
     auth_keys: t.Optional[t.Dict[str, str]] = None
-    additional_headers: t.Optional[t.Dict[str, str]] = None
-
 
 @dataclass
 class WeaviateWriteConfig(WriteConfig):
-    class_name: str
+    batch_size: int = 100
 
 
 @dataclass
@@ -40,7 +36,6 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
         self.client: Client = Client(
             url=self.connector_config.host_url,
             auth_client_secret=auth,
-            additional_headers=self.connector_config.additional_headers,
         )
 
     def _resolve_auth_method(self):
@@ -97,10 +92,10 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
     def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
             f"writing {len(json_list)} objects to destination "
-            f"class {self.write_config.class_name} "
+            f"class {self.connector_config.class_name} "
             f"at {self.connector_config.host_url}",
         )
-        self.client.batch.configure(batch_size=BATCH_SIZE)
+        self.client.batch.configure(batch_size=self.write_config.batch_size)
         with self.client.batch as b:
             created = []
             for e in json_list:
@@ -112,7 +107,7 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
                         "metadata": e.get("metadata", {}),
                         "text": e.get("text", ""),
                     },
-                    self.write_config.class_name,
+                    self.connector_config.class_name,
                     vector=e.get("embeddings"),
                 )
                 created.append(created_id)

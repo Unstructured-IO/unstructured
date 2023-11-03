@@ -3,18 +3,19 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.interfaces import CliMixin, Dict
-from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.cli.interfaces import (
+    CliConfig,
+    Dict
+)
+from unstructured.ingest.connector.weaviate import SimpleWeaviateConfig
 
 CMD_NAME = "weaviate"
 
-
 @dataclass
-class WeaviateCliWriteConfig(BaseConfig, CliMixin):
+class WeaviateCliConfig(CliConfig):
     host_url: str
     class_name: str
-    auth_keys: t.Optional[t.List[str]] = None
-    additional_headers: t.Optional[t.List[str]] = None
+    auth_keys: t.Optional[t.Dict[str, str]] = None
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
@@ -28,18 +29,27 @@ class WeaviateCliWriteConfig(BaseConfig, CliMixin):
                 ["--class-name"],
                 default=None,
                 type=str,
-                help="Class to ",
+                help="Target class collection name",
             ),
             click.Option(
                 ["--auth-keys"], required=False, type=Dict(), help="Key,value pairs representing"
-            ),
+            )
+        ]
+        return options
+
+@dataclass
+class WeaviateCliWriteConfig(CliConfig):
+    batch_size: int
+
+    @staticmethod
+    def get_cli_options() -> t.List[click.Option]:
+        options = [
             click.Option(
-                ["--additional-keys"],
-                is_flag=True,
-                default=False,
-                type=Dict(),
-                help="Additional env vars to initialize the weaviate client with.",
-            ),
+                ["--batch-size"],
+                default=100,
+                type=int,
+                help="Batch insert size",
+            )
         ]
         return options
 
@@ -49,6 +59,7 @@ def get_base_dest_cmd():
 
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
-        cli_config=WeaviateCliWriteConfig,
+        cli_config=WeaviateCliConfig,
+        additional_cli_options=[WeaviateCliWriteConfig]
     )
     return cmd_cls

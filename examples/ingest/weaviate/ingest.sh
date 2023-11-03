@@ -18,3 +18,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         weaviate \
         --host-url http://localhost:8080 \
         --class-name pdf_elements \
+        --batch-size 100

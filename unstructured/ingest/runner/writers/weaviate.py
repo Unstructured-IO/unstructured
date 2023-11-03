@@ -7,8 +7,8 @@ from unstructured.utils import requires_dependencies
 def weaviate_writer(
     host_url: str,
     class_name: str,
+    batch_size: int = 100,
     auth_keys: t.Optional[t.List[str]] = None,
-    additional_headers: t.Optional[t.List[str]] = None,
     **kwargs,
 ):
     from unstructured.ingest.connector.weaviate import (
@@ -18,10 +18,12 @@ def weaviate_writer(
     )
 
     return WeaviateDestinationConnector(
-        write_config=WeaviateWriteConfig(class_name=class_name),
+        write_config=WeaviateWriteConfig(
+            batch_size=batch_size
+        ),
         connector_config=SimpleWeaviateConfig(
             host_url=host_url,
+            class_name=class_name,
             auth_keys=auth_keys,
-            additional_headers=additional_headers,
         ),
     )
