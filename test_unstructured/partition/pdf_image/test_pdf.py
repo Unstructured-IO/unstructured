@@ -606,11 +606,12 @@ def test_partition_pdf_metadata_date(
             metadata_last_modified=last_modification_date,
         )
     elif file_mode == "rb":
-        elements = pdf.partition_pdf(
-            filename=filename,
-            strategy=strategy,
-            metadata_last_modified=last_modification_date,
-        )
+        with open(filename, "rb") as f:
+            elements = pdf.partition_pdf(
+                file=f,
+                strategy=strategy,
+                metadata_last_modified=last_modification_date,
+            )
     else:
         with open(filename, "rb") as test_file:
             spooled_temp_file = SpooledTemporaryFile()
@@ -900,7 +901,6 @@ def test_get_uris_from_annots_string_annotation(
     ],
 )
 def test_partition_pdf_with_ocr_only_strategy(
-    mocker,
     file_mode,
     filename,
     is_image,
