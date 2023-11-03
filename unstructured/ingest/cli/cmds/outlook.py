@@ -5,15 +5,14 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMixin,
+    CliConfig,
     CliRecursiveConfig,
     DelimitedString,
 )
-from unstructured.ingest.interfaces import BaseConfig
 
 
 @dataclass
-class OutlookCliConfig(BaseConfig, CliMixin):
+class OutlookCliConfig(CliConfig):
     client_id: str
     user_email: str
     tenant: t.Optional[str] = "common"
