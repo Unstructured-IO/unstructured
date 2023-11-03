@@ -3,14 +3,14 @@ Partitioning
 ############
 
 
-Partitioning bricks in ``unstructured`` allow users to extract structured content from a raw unstructured document.
+Partitioning functions in ``unstructured`` allow users to extract structured content from a raw unstructured document.
 These functions break a document down into elements such as ``Title``, ``NarrativeText``, and ``ListItem``,
 enabling users to decide what content they'd like to keep for their particular application.
 If you're training a summarization model, for example, you may only be interested in ``NarrativeText``.
 
 
-The easiest way to partition documents in unstructured is to use the ``partition`` brick.
-If you call the ``partition`` brick, ``unstructured`` will use ``libmagic`` to automatically determine the file type and invoke the appropriate partition function.
+The easiest way to partition documents in unstructured is to use the ``partition`` function.
+If you call the ``partition`` function, ``unstructured`` will use ``libmagic`` to automatically determine the file type and invoke the appropriate partition function.
 In cases where ``libmagic`` is not available, filetype detection will fall back to using the file extension.
 
 The following table shows the document types the ``unstructured`` library currently supports. ``partition`` will recognize each of these document types and route the document
@@ -89,13 +89,13 @@ You can find a full listing of optional kwargs in the documentation below.
   print("\n\n".join([str(el) for el in elements][5:15]))
 
 
-The ``unstructured`` library also includes partitioning bricks targeted at specific document types.
-The ``partition`` brick uses these document-specific partitioning bricks under the hood.
-There are a few reasons you may want to use a document-specific partitioning brick instead of ``partition``:
+The ``unstructured`` library also includes partitioning functions targeted at specific document types.
+The ``partition`` function uses these document-specific partitioning functions under the hood.
+There are a few reasons you may want to use a document-specific partitioning function instead of ``partition``:
 
-* If you already know the document type, filetype detection is unnecessary. Using the document-specific brick directly, or passing in the ``content_type`` will make your program run faster.
-* Fewer dependencies. You don't need to install ``libmagic`` for filetype detection if you're only using document-specific bricks.
-* Additional features. The API for partition is the least common denominator for all document types. Certain document-specific brick include extra features that you may want to take advantage of. For example, ``partition_html`` allows you to pass in a URL so you don't have to store the ``.html`` file locally. See the documentation below learn about the options available in each partitioning brick.
+* If you already know the document type, filetype detection is unnecessary. Using the document-specific function directly, or passing in the ``content_type`` will make your program run faster.
+* Fewer dependencies. You don't need to install ``libmagic`` for filetype detection if you're only using document-specific functions.
+* Additional features. The API for partition is the least common denominator for all document types. Certain document-specific function include extra features that you may want to take advantage of. For example, ``partition_html`` allows you to pass in a URL so you don't have to store the ``.html`` file locally. See the documentation below learn about the options available in each partitioning function.
 
 
 Below we see an example of how to partition a document directly with the URL using the partition_html function.
@@ -112,11 +112,11 @@ Below we see an example of how to partition a document directly with the URL usi
 ``partition``
 --------------
 
-The ``partition`` brick is the simplest way to partition a document in ``unstructured``.
+The ``partition`` function is the simplest way to partition a document in ``unstructured``.
 If you call the ``partition`` function, ``unstructured`` will attempt to detect the
-file type and route it to the appropriate partitioning brick. All partitioning bricks
+file type and route it to the appropriate partitioning function. All partitioning functions
 called within ``partition`` are called using the default kwargs. Use the document-type
-specific bricks if you need to apply non-default settings.
+specific functions if you need to apply non-default settings.
 ``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.xlsx``, ``.csv``, ``.tsv``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.xml``, ``.pdf``,
 ``.png``, ``.jpg``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
@@ -166,7 +166,7 @@ to disable SSL verification in the request.
   elements = partition(url=url)
   elements = partition(url=url, content_type="text/markdown")
 
-For more information about the ``partition`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/auto.py>`__.
+For more information about the ``partition`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/auto.py>`__.
 
 
 ``partition_csv``
@@ -185,14 +185,14 @@ Examples:
   elements = partition_csv(filename="example-docs/stanley-cups.csv")
   print(elements[0].metadata.text_as_html)
 
-For more information about the ``partition_csv`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/csv.py>`__.
+For more information about the ``partition_csv`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/csv.py>`__.
 
 
 ``partition_doc``
 ------------------
 
-The ``partition_doc`` partitioning brick pre-processes Microsoft Word documents
-saved in the ``.doc`` format. This partition brick uses a combination of the styling
+The ``partition_doc`` partitioning function pre-processes Microsoft Word documents
+saved in the ``.doc`` format. This partition function uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_doc`` can take a filename or file-like object
 as input.
@@ -208,14 +208,14 @@ Examples:
 
   elements = partition_doc(filename="example-docs/fake.doc")
 
-For more information about the ``partition_doc`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/doc.py>`__.
+For more information about the ``partition_doc`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/doc.py>`__.
 
 
 ``partition_docx``
 ------------------
 
-The ``partition_docx`` partitioning brick pre-processes Microsoft Word documents
-saved in the ``.docx`` format. This partition brick uses a combination of the styling
+The ``partition_docx`` partitioning function pre-processes Microsoft Word documents
+saved in the ``.docx`` format. This partition function uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_docx`` can take a filename or file-like object
 as input, as shown in the two examples below.
@@ -252,7 +252,7 @@ insert page breaks when you save the document. If your Word document renderer do
 you may not see page numbers in the output even if you see them visually when you open the
 document. If that is the case, you can try saving the document with a different renderer.
 
-For more information about the ``partition_docx`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/docx.py>`__.
+For more information about the ``partition_docx`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/docx.py>`__.
 
 
 ``partition_email``
@@ -317,7 +317,7 @@ workflow looks like:
 If the content of an email is PGP encrypted, ``partition_email`` will return an empty
 list of elements and emit a warning indicated the email is encrypted.
 
-For more information about the ``partition_email`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/email.py>`__.
+For more information about the ``partition_email`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/email.py>`__.
 
 
 ``partition_epub``
@@ -337,7 +337,7 @@ Examples:
 
   elements = partition_epub(filename="example-docs/winter-sports.epub")
 
-For more information about the ``partition_epub`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/epub.py>`__.
+For more information about the ``partition_epub`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/epub.py>`__.
 
 
 ``partition_html``
@@ -394,7 +394,7 @@ If ``html_assemble_articles`` is ``True``, each ``<article>`` tag will be treate
 If ``html_assemble_articles`` is ``True`` and no ``<article>`` tags are present, the behavior
 is the same as ``html_assemble_articles=False``.
 
-For more information about the ``partition_html`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/html.py>`__.
+For more information about the ``partition_html`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/html.py>`__.
 
 
 ``partition_image``
@@ -451,7 +451,7 @@ have the Korean language pack for Tesseract installed on your system.
   filename = "example-docs/english-and-korean.png"
   elements = partition_image(filename=filename, ocr_languages="eng+kor", strategy="ocr_only")
 
-For more information about the ``partition_image`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/image.py>`__.
+For more information about the ``partition_image`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/image.py>`__.
 
 
 ``partition_md``
@@ -469,7 +469,7 @@ Examples:
 
   elements = partition_md(filename="README.md")
 
-For more information about the ``partition_md`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/md.py>`__.
+For more information about the ``partition_md`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/md.py>`__.
 
 
 ``partition_msg``
@@ -512,7 +512,7 @@ workflow looks like:
 If the content of an email is PGP encrypted, ``partition_msg`` will return an empty
 list of elements and emit a warning indicated the email is encrypted.
 
-For more information about the ``partition_msg`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/msg.py>`__.
+For more information about the ``partition_msg`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/msg.py>`__.
 
 
 ``partition_multiple_via_api``
@@ -553,13 +553,13 @@ Examples:
       files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
       documents = partition_multiple_via_api(files=files, metadata_filenames=filenames)
 
-For more information about the ``partition_multiple_via_api`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/api.py>`__.
+For more information about the ``partition_multiple_via_api`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/api.py>`__.
 
 
 ``partition_odt``
 ------------------
 
-The ``partition_odt`` partitioning brick pre-processes Open Office documents
+The ``partition_odt`` partitioning function pre-processes Open Office documents
 saved in the ``.odt`` format. The function first converts the document
 to ``.docx`` using ``pandoc`` and then processes it using ``partition_docx``.
 
@@ -571,7 +571,7 @@ Examples:
 
   elements = partition_odt(filename="example-docs/fake.odt")
 
-For more information about the ``partition_odt`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/odt.py>`__.
+For more information about the ``partition_odt`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/odt.py>`__.
 
 
 ``partition_org``
@@ -591,7 +591,7 @@ Examples:
 
   elements = partition_org(filename="example-docs/README.org")
 
-For more information about the ``partition_org`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/org.py>`__.
+For more information about the ``partition_org`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/org.py>`__.
 
 
 ``partition_pdf``
@@ -671,14 +671,14 @@ The default value is ``1500``, which roughly corresponds to
 the average character length for a paragraph.
 You can disable ``max_partition`` by setting it to ``None``.
 
-For more information about the ``partition_pdf`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/pdf.py>`__.
+For more information about the ``partition_pdf`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/pdf.py>`__.
 
 
 ``partition_ppt``
 ---------------------
 
-The ``partition_ppt`` partitioning brick pre-processes Microsoft PowerPoint documents
-saved in the ``.ppt`` format. This partition brick uses a combination of the styling
+The ``partition_ppt`` partitioning function pre-processes Microsoft PowerPoint documents
+saved in the ``.ppt`` format. This partition function uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_ppt`` can take a filename or file-like object.
 ``partition_ppt`` uses ``libreoffice`` to convert the file to ``.pptx`` and then
@@ -693,14 +693,14 @@ Examples:
 
   elements = partition_ppt(filename="example-docs/fake-power-point.ppt")
 
-For more information about the ``partition_ppt`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/ppt.py>`__.
+For more information about the ``partition_ppt`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/ppt.py>`__.
 
 
 ``partition_pptx``
 ---------------------
 
-The ``partition_pptx`` partitioning brick pre-processes Microsoft PowerPoint documents
-saved in the ``.pptx`` format. This partition brick uses a combination of the styling
+The ``partition_pptx`` partitioning function pre-processes Microsoft PowerPoint documents
+saved in the ``.pptx`` format. This partition function uses a combination of the styling
 information in the document and the structure of the text to determine the type
 of a text element. The ``partition_pptx`` can take a filename or file-like object
 as input, as shown in the two examples below.
@@ -716,7 +716,7 @@ Examples:
   with open("example-docs/fake-power-point.pptx", "rb") as f:
       elements = partition_pptx(file=f)
 
-For more information about the ``partition_pptx`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/pptx.py>`__.
+For more information about the ``partition_pptx`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/pptx.py>`__.
 
 
 ``partition_rst``
@@ -736,7 +736,7 @@ Examples:
 
   elements = partition_rst(filename="example-docs/README.rst")
 
-For more information about the ``partition_rst`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/rst.py>`__.
+For more information about the ``partition_rst`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/rst.py>`__.
 
 
 ``partition_rtf``
@@ -756,7 +756,7 @@ Examples:
 
   elements = partition_rtf(filename="example-docs/fake-doc.rtf")
 
-For more information about the ``partition_rtf`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/rtf.py>`__.
+For more information about the ``partition_rtf`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/rtf.py>`__.
 
 
 ``partition_text``
@@ -807,7 +807,7 @@ The default value is ``1500``, which roughly corresponds to
 the average character length for a paragraph.
 You can disable ``max_partition`` by setting it to ``None``.
 
-For more information about the ``partition_text`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text.py>`__.
+For more information about the ``partition_text`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/text.py>`__.
 
 
 ``partition_tsv``
@@ -826,7 +826,7 @@ Examples:
   elements = partition_tsv(filename="example-docs/stanley-cups.tsv")
   print(elements[0].metadata.text_as_html)
 
-For more information about the ``partition_tsv`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/tsv.py>`__.
+For more information about the ``partition_tsv`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/partition/tsv.py>`__.
 
 
 ``partition_via_api``
@@ -884,7 +884,7 @@ documentation on how to run the API as a container locally.
     filename=filename, api_url="http://localhost:5000/general/v0/general"
   )
 
-For more information about the ``partition_via_api`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/api.py>`__.
+For more information about the ``partition_via_api`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/api.py>`__.
 
 
 ``partition_xlsx``
@@ -904,7 +904,7 @@ Examples:
   elements = partition_xlsx(filename="example-docs/stanley-cups.xlsx")
   print(elements[0].metadata.text_as_html)
 
-For more information about the ``partition_xlsx`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/xlsx.py>`__.
+For more information about the ``partition_xlsx`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/xlsx.py>`__.
 
 
 ``partition_xml``
@@ -926,4 +926,4 @@ If ``xml_keep_tags=True``, the function returns tag information in addition to t
 
   elements = partition_xml(filename="example-docs/factbook.xml", xml_keep_tags=False)
 
-For more information about the ``partition_xml`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/xml.py>`__.
+For more information about the ``partition_xml`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/xml.py>`__.

@@ -231,27 +231,6 @@
     "text": "!image"
   },
   {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {
-        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-1",
-        "record_locator": {
-          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
-          "issue_key": "JCTP1-1"
-        },
-        "date_created": "2023-08-22T11:29:37.774000+00:00",
-        "date_modified": "2023-08-24T12:05:04.690000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "cat",
-        "eng"
-      ]
-    },
-    "text": ""
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "d1e0c46eef256237b23aa43bfbadb23c",
     "metadata": {
@@ -271,27 +250,6 @@
       ]
     },
     "text": "20230823"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {
-        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-1",
-        "record_locator": {
-          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
-          "issue_key": "JCTP1-1"
-        },
-        "date_created": "2023-08-22T11:29:37.774000+00:00",
-        "date_modified": "2023-08-24T12:05:04.690000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "cat",
-        "eng"
-      ]
-    },
-    "text": ""
   },
   {
     "type": "UncategorizedText",
@@ -420,27 +378,6 @@
     "text": "https://unstructured"
   },
   {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {
-        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-1",
-        "record_locator": {
-          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
-          "issue_key": "JCTP1-1"
-        },
-        "date_created": "2023-08-22T11:29:37.774000+00:00",
-        "date_modified": "2023-08-24T12:05:04.690000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "cat",
-        "eng"
-      ]
-    },
-    "text": ""
-  },
-  {
     "type": "Title",
     "element_id": "1e32847769dc4a1588004a1dfdf10041",
     "metadata": {
@@ -462,27 +399,6 @@
     "text": "jira"
   },
   {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {
-        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-1",
-        "record_locator": {
-          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
-          "issue_key": "JCTP1-1"
-        },
-        "date_created": "2023-08-22T11:29:37.774000+00:00",
-        "date_modified": "2023-08-24T12:05:04.690000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "cat",
-        "eng"
-      ]
-    },
-    "text": ""
-  },
-  {
     "type": "Title",
     "element_id": "c08c6acfff81cafe379f88061e6b71bf",
     "metadata": {
@@ -502,27 +418,6 @@
       ]
     },
     "text": "connector"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {
-        "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP1-1",
-        "record_locator": {
-          "base_url": "https://unstructured-jira-connector-test.atlassian.net",
-          "issue_key": "JCTP1-1"
-        },
-        "date_created": "2023-08-22T11:29:37.774000+00:00",
-        "date_modified": "2023-08-24T12:05:04.690000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "cat",
-        "eng"
-      ]
-    },
-    "text": ""
   },
   {
     "type": "Title",

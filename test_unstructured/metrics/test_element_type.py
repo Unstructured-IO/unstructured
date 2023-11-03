@@ -15,7 +15,7 @@ from unstructured.staging.base import elements_to_json
             "fake-email.txt",
             {
                 ("UncategorizedText", None): 6,
-                ("ListItem", None): 12,
+                ("ListItem", None): 2,
                 ("Title", None): 5,
                 ("NarrativeText", None): 2,
             },

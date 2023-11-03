@@ -14,14 +14,12 @@ Library Documentation
 :doc:`api`
   Access all the power of ``unstructured`` through the ``unstructured-api`` or learn to host it locally.
 
-:doc:`bricks`
-  Learn more about partitioning, cleaning, and staging bricks, including advanced usage patterns.
+:doc:`core`
+  Learn more about the core partitioning, chunking, cleaning, and staging functionality within the
+  Unstructured library.
 
-:doc:`source_connectors`
+:doc:`ingest/index`
   Connect to your favorite data storage platforms for an effortless batch processing of your files.
-
-:doc:`destination_connectors`
-  Connect to your favorite data storage platforms to write you ingest results to.
 
 :doc:`metadata`
   Learn more about how metadata is tracked in the ``unstructured`` library.
@@ -45,9 +43,9 @@ Library Documentation
    introduction
    installing
    api
+   core
    bricks
-   source_connectors
-   destination_connectors
+   ingest/index
    metadata
    examples
    integrations
