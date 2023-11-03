@@ -2,7 +2,7 @@ import math
 import os
 import typing as t
 from collections import abc
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from functools import cached_property
 from pathlib import Path
@@ -342,20 +342,24 @@ class JiraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Fetches issues from projects in an Atlassian (Jira) Cloud instance."""
 
     connector_config: SimpleJiraConfig
+    _jira: t.Optional["Jira"] = field(init=False, default=None)
+
+    @property
+    def jira(self) -> "Jira":
+        if self._jira is None:
+            try:
+                self._jira = self.connector_config.create_session_handle().service
+            except Exception as e:
+                logger.error(f"failed to validate connection: {e}", exc_info=True)
+                raise SourceConnectionError(f"failed to validate connection: {e}")
+        return self._jira
 
     @requires_dependencies(["atlassian"], extras="jira")
     def initialize(self):
-        try:
-            self.jira = self.connector_config.create_session_handle().service
-        except Exception as e:
-            raise SourceConnectionError(f"failed to validate connection: {e}")
+        _ = self.jira
 
     def check_connection(self):
-        try:
-            self.connector_config.create_session_handle().service
-        except Exception as e:
-            logger.error(f"failed to validate connection: {e}", exc_info=True)
-            raise SourceConnectionError(f"failed to validate connection: {e}")
+        _ = self.jira
 
     @requires_dependencies(["atlassian"], extras="jira")
     def _get_all_project_ids(self):
