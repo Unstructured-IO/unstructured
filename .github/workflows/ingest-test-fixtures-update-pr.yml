@@ -1,7 +1,6 @@
 name: Ingest Test Fixtures Update PR
 
 on:
-  push:
   workflow_dispatch:
 
 env:
@@ -40,9 +39,6 @@ jobs:
           az account show
   setup:
     runs-on: ubuntu-latest-m
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'push' && contains(github.event.head_commit.message, 'ingest-test-fixtures-update'))
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     steps:
