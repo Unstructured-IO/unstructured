@@ -367,11 +367,13 @@ class CliFilesStorageConfig(FileStorageConfig, CliMixin):
 class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
+        from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
+
         options = [
             click.Option(
                 ["--embedding-provider"],
-                help="Type of the embedding class to be used. Can be: "
-                "langchain-huggingface, langchain-openai, or langchain-aws-bedrock.",
+                help="Type of the embedding class to be used. Can be one of: "
+                f"{list(EMBEDDING_PROVIDER_TO_CLASS_MAP)}",
                 type=str,
             ),
             click.Option(
