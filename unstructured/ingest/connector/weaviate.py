@@ -11,11 +11,13 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
+
 @dataclass
 class SimpleWeaviateConfig(BaseConnectorConfig):
     host_url: str
     class_name: str
     auth_keys: t.Optional[t.Dict[str, str]] = None
+
 
 @dataclass
 class WeaviateWriteConfig(WriteConfig):

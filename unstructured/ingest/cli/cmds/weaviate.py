@@ -3,13 +3,10 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.interfaces import (
-    CliConfig,
-    Dict
-)
-from unstructured.ingest.connector.weaviate import SimpleWeaviateConfig
+from unstructured.ingest.cli.interfaces import CliConfig, Dict
 
 CMD_NAME = "weaviate"
+
 
 @dataclass
 class WeaviateCliConfig(CliConfig):
@@ -33,9 +30,10 @@ class WeaviateCliConfig(CliConfig):
             ),
             click.Option(
                 ["--auth-keys"], required=False, type=Dict(), help="Key,value pairs representing"
-            )
+            ),
         ]
         return options
+
 
 @dataclass
 class WeaviateCliWriteConfig(CliConfig):
@@ -60,6 +58,6 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=WeaviateCliConfig,
-        additional_cli_options=[WeaviateCliWriteConfig]
+        additional_cli_options=[WeaviateCliWriteConfig],
     )
     return cmd_cls

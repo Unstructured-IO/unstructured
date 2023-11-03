@@ -18,9 +18,7 @@ def weaviate_writer(
     )
 
     return WeaviateDestinationConnector(
-        write_config=WeaviateWriteConfig(
-            batch_size=batch_size
-        ),
+        write_config=WeaviateWriteConfig(batch_size=batch_size),
         connector_config=SimpleWeaviateConfig(
             host_url=host_url,
             class_name=class_name,
