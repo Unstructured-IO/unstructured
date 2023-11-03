@@ -37,7 +37,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --input-path example-docs/fake-memo.pdf \
     --work-dir "$WORK_DIR" \
     delta-table \
-    --write-column json_data \
     --table-uri "$DESTINATION_TABLE"
 
 python "$SCRIPT_DIR"/python/test-ingest-delta-table-output.py --table-uri "$DESTINATION_TABLE"
