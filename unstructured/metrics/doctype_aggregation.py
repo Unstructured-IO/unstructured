@@ -1,12 +1,12 @@
+import csv
 import os
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
 import click
-import numpy as np
 import pandas as pd
 
-from unstructured.ingest.evaluate import measure_text_edit_distance
-from unstructured.ingest.evaluate import _write_to_file
+from unstructured.metrics.evaluate import measure_text_edit_distance
+
 
 @click.group()
 def main():
@@ -14,18 +14,15 @@ def main():
 
 def aggregate_cct_data_by_doctype(results_dir: str):
     # load tsv into dataframe
-    df = pd.read_csv(os.path.join(results_dir, "all-docs-cct.tsv"), sep='\t', header=0)
+    df = pd.read_csv(os.path.join(results_dir, "all-docs-cct.tsv"), sep="\t", header=0)
 
-    # group by doctype
-    # df.groupby(by="doctype").mean()
-    # df.groupby(by="doctype").std()
-    # df.groupby(by="doctype").agg(np.std, ddof=0)
-    agg_df = df.groupby(by="doctype").agg(['mean', 'std'])
-
-    # calculate stats (using eval functions or pandas)
+    # group by doctype and calculate stats
+    agg_df = df.groupby("doctype").agg(
+        {"cct-accuracy": ["mean", "std", "count"], "cct-%missing": ["mean", "std", "count"]}
+    )
 
     # write results to same export results folder
-    _write_to_file(results_dir, "all-docs-cct.tsv", agg_df, ["mean", "sample_sd"])
+    agg_df.to_csv(os.path.join(results_dir, "all-doctypes-agg-cct.tsv"))
 
 
 
@@ -61,7 +58,7 @@ def aggregate_cct_data_by_doctype(results_dir: str):
     help="A tuple of weights to the Levenshtein distance calculation. \
         See text_extraction.py/calculate_edit_distance for more details.",
 )
-def holistic_script_cct_entry_point(
+def measure_holistic_eval_cct(
     output_dir: str,
     output_list: Optional[List[str]],
     source_dir: str,
@@ -70,7 +67,9 @@ def holistic_script_cct_entry_point(
     weights: Tuple[int, int, int],
 ) -> None:
     export_dir = "result_doctype_aggregate"
-    measure_text_edit_distance(output_dir, output_list, source_dir, source_list, export_dir, weights)
+    measure_text_edit_distance(
+        output_dir, output_list, source_dir, source_list, export_dir, weights
+    )
     aggregate_cct_data_by_doctype(export_dir)
 
 
