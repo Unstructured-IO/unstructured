@@ -81,9 +81,9 @@ class SimpleJiraConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     user_email: str
     api_token: str
     url: str
-    projects: t.Optional[t.List[str]]
-    boards: t.Optional[t.List[str]]
-    issues: t.Optional[t.List[str]]
+    projects: t.Optional[t.List[str]] = None
+    boards: t.Optional[t.List[str]] = None
+    issues: t.Optional[t.List[str]] = None
 
     def create_session_handle(
         self,
@@ -345,7 +345,16 @@ class JiraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
     @requires_dependencies(["atlassian"], extras="jira")
     def initialize(self):
-        self.jira = self.connector_config.create_session_handle().service
+        try:
+            self.jira = self.connector_config.create_session_handle().service
+        except Exception as e:
+            raise SourceConnectionError(f"failed to validate connection: {e}")
+
+    def check_connection(self):
+        try:
+            self.connector_config.create_session_handle().service
+        except Exception as e:
+            raise SourceConnectionError(f"failed to validate connection: {e}")
 
     @requires_dependencies(["atlassian"], extras="jira")
     def _get_all_project_ids(self):
