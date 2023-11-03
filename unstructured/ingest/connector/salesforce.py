@@ -225,6 +225,16 @@ class SalesforceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         pass
 
     @requires_dependencies(["simple_salesforce"], extras="salesforce")
+    def check_connection(self):
+        from simple_salesforce.exceptions import SalesforceError
+
+        try:
+            self.connector_config.get_client()
+        except SalesforceError as salesforce_error:
+            logger.error(f"failed to validate connection: {salesforce_error}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {salesforce_error}")
+
+    @requires_dependencies(["simple_salesforce"], extras="salesforce")
     def get_ingest_docs(self) -> t.List[SalesforceIngestDoc]:
         """Get Salesforce Ids for the records.
         Send them to next phase where each doc gets downloaded into the

@@ -29,12 +29,12 @@ class MissingFolderError(Exception):
 class SimpleOutlookConfig(BaseConnectorConfig):
     """This class is getting the token."""
 
-    client_id: t.Optional[str]
-    client_credential: t.Optional[str] = field(repr=False)
     user_email: str
-    tenant: t.Optional[str] = field(repr=False)
-    authority_url: t.Optional[str] = field(repr=False)
-    ms_outlook_folders: t.List[str]
+    client_id: str
+    client_credential: str = field(repr=False)
+    tenant: t.Optional[str] = field(repr=False, default="common")
+    authority_url: t.Optional[str] = field(repr=False, default="https://login.microsoftonline.com")
+    ms_outlook_folders: t.List[str] = field(default_factory=list)
     recursive: bool = False
     registry_name: str = "outlook"
 
@@ -42,7 +42,7 @@ class SimpleOutlookConfig(BaseConnectorConfig):
         if not (self.client_id and self.client_credential and self.user_email):
             raise ValueError(
                 "Please provide one of the following mandatory values:"
-                "\n--client_id\n--client_cred\n--user-email",
+                "\nclient_id\nclient_cred\nuser_email",
             )
         self.token_factory = self._acquire_token
 
@@ -182,8 +182,18 @@ class OutlookSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleOutlookConfig
 
     def initialize(self):
-        self.client = self.connector_config._get_client()
-        self.get_folder_ids()
+        try:
+            self.client = self.connector_config._get_client()
+            self.get_folder_ids()
+        except Exception as e:
+            raise SourceConnectionError(f"failed to validate connection: {e}")
+
+    def check_connection(self):
+        try:
+            self.connector_config._get_client()
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
 
     def recurse_folders(self, folder_id, main_folder_dict):
         """We only get a count of subfolders for any folder.

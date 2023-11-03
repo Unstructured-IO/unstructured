@@ -354,6 +354,7 @@ class JiraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         try:
             self.connector_config.create_session_handle().service
         except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {e}")
 
     @requires_dependencies(["atlassian"], extras="jira")

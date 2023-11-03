@@ -114,6 +114,7 @@ class GitLabSourceConnector(GitSourceConnector):
             )
             gitlab.auth()
         except GitlabError as gitlab_error:
+            logger.error(f"failed to validate connection: {gitlab_error}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {gitlab_error}")
 
     def get_ingest_docs(self):

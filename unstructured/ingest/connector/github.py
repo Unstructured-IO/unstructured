@@ -151,6 +151,7 @@ class GitHubSourceConnector(GitSourceConnector):
             headers, _ = requester.requestJsonAndCheck("HEAD", url)
             logger.debug(f"headers from HEAD request: {headers}")
         except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {e}")
 
     def get_ingest_docs(self):

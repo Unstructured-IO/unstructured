@@ -197,6 +197,7 @@ class OneDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 )
             self._set_client()
         except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {e}")
 
     def _list_objects(self, folder, recursive) -> t.List["DriveItem"]:
