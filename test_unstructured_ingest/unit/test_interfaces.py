@@ -241,7 +241,7 @@ def test_process_file_flatten_metadata(mocker, partition_test_results):
         return_value=partition_test_results,
     )
     partition_config = PartitionConfig(
-        metadata_include=["filename", "data_source"],
+        metadata_include=["filename", "file_directory", "filetype"],
         flatten_metadata=True,
     )
     test_ingest_doc = TestIngestDoc(
@@ -252,6 +252,6 @@ def test_process_file_flatten_metadata(mocker, partition_test_results):
         ),
     )
     isd_elems = test_ingest_doc.process_file(partition_config=partition_config)
-    expected_keys = {"element_id", "text", "type", "filename", "data_source"}
+    expected_keys = {"element_id", "text", "type", "filename", "file_directory", "filetype"}
     for elem in isd_elems:
         assert expected_keys == set(elem.keys())
