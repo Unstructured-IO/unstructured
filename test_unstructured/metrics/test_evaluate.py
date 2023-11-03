@@ -24,6 +24,7 @@ def test_text_extraction_takes_list():
         source_list=None,
         export_dir=export_dir,
     )
+    # check that only the listed files are included
     with open(os.path.join(export_dir, "all-docs-cct.tsv")) as f:
         lines = f.read().splitlines()
     assert len(lines) == len(output_list) + 1  # includes header
