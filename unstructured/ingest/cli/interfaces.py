@@ -404,7 +404,7 @@ class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
                 ["--embedding-provider"],
                 help="Type of the embedding class to be used. Can be one of: "
                 f"{list(EMBEDDING_PROVIDER_TO_CLASS_MAP)}",
-                type=str,
+                type=click.Choice(list(EMBEDDING_PROVIDER_TO_CLASS_MAP)),
             ),
             click.Option(
                 ["--embedding-api-key"],
