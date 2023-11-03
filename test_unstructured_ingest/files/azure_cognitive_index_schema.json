@@ -82,6 +82,10 @@
               "type": "Edm.DateTimeOffset"
             },
             {
+              "name": "permissions_data",
+              "type": "Edm.String"
+            },
+            {
               "name": "record_locator",
               "type": "Edm.String"
             }
@@ -116,6 +120,10 @@
         {
           "name": "page_number",
           "type": "Edm.String"
+        },
+        {
+          "name": "links",
+          "type": "Collection(Edm.String)"
         },
         {
           "name": "page_name",

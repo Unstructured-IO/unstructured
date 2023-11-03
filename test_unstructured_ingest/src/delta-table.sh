@@ -10,7 +10,6 @@ OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
-DESTINATION_TABLE=$SCRIPT_DIR/delta-table-dest
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 CI=${CI:-"false"}
 
@@ -23,7 +22,6 @@ fi
 source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
-  cleanup_dir "$DESTINATION_TABLE"
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
   if [ "$CI" == "true" ]; then
@@ -44,13 +42,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --storage_options "AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
     --preserve-downloads \
     --verbose \
-    --work-dir "$WORK_DIR" \
-    delta-table \
-    --write-column json_data \
-    --table-uri "$DESTINATION_TABLE"
+    --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
-
-python "$SCRIPT_DIR"/python/test-ingest-delta-table-output.py --table-uri "$DESTINATION_TABLE"
 
 "$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"

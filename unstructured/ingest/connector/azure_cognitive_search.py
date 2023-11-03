@@ -61,6 +61,12 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
             data["metadata"]["data_source"]["version"] = str(version)
         if record_locator := data.get("metadata", {}).get("data_source", {}).get("record_locator"):
             data["metadata"]["data_source"]["record_locator"] = json.dumps(record_locator)
+        if permissions_data := (
+            data.get("metadata", {}).get("data_source", {}).get("permissions_data")
+        ):
+            data["metadata"]["data_source"]["permissions_data"] = json.dumps(permissions_data)
+        if links := data.get("metadata", {}).get("links"):
+            data["metadata"]["links"] = [json.dumps(link) for link in links]
         if last_modified := data.get("metadata", {}).get("last_modified"):
             data["metadata"]["last_modified"] = parser.parse(last_modified).strftime(
                 "%Y-%m-%dT%H:%M:%S.%fZ",
