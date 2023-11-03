@@ -7,7 +7,7 @@ from unstructured.ingest.connector.fsspec import (
     FsspecSourceConnector,
     SimpleFsspecConfig,
 )
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
@@ -32,7 +32,7 @@ class AzureBlobStorageIngestDoc(FsspecIngestDoc):
 class AzureBlobStorageSourceConnector(FsspecSourceConnector):
     connector_config: SimpleAzureBlobStorageConfig
 
-    @requires_dependencies(["adlfs", "fsspec"], extras="azure")
+    @requires_dependencies(["adlfs"], extras="azure")
     def check_connection(self):
         from adlfs import AzureBlobFileSystem
 
@@ -50,3 +50,13 @@ class AzureBlobStorageSourceConnector(FsspecSourceConnector):
 @dataclass
 class AzureBlobStorageDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleAzureBlobStorageConfig
+
+    @requires_dependencies(["adlfs"], extras="azure")
+    def check_connection(self):
+        from adlfs import AzureBlobFileSystem
+
+        try:
+            AzureBlobFileSystem(**self.connector_config.access_kwargs)
+        except ValueError as connection_error:
+            logger.error(f"failed to validate connection: {connection_error}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {connection_error}")
