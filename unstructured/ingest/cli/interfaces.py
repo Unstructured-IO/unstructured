@@ -35,22 +35,7 @@ class Dict(click.ParamType):
         ctx: t.Optional[click.Context],
     ) -> t.Any:
         try:
-            d = json.loads(value)
-            if not self.choices:
-                return d
-            choices_str = ", ".join(map(repr, self.choices))
-            for k in list(d.keys()):
-                if k not in self.choices:
-                    self.fail(
-                        ngettext(
-                            "{value!r} is not {choice}.",
-                            "{value!r} is not one of {choices}.",
-                            len(self.choices),
-                        ).format(value=k, choice=choices_str, choices=choices_str),
-                        param,
-                        ctx,
-                    )
-            return d
+            return json.loads(value)
 
         except json.JSONDecodeError:
             self.fail(
