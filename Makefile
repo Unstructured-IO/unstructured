@@ -232,8 +232,6 @@ install-paddleocr:
 pip-compile:
 	@scripts/pip-compile.sh
 
-
-
 ## install-project-local:   install unstructured into your local python environment
 .PHONY: install-project-local
 install-project-local: install

@@ -74,10 +74,11 @@ class RetryStrategyConfig(BaseConfig):
 class PartitionConfig(BaseConfig):
     # where to write structured data outputs
     pdf_infer_table_structure: bool = False
-    skip_infer_table_types: t.Optional[t.List[str]] = None
     strategy: str = "auto"
     ocr_languages: t.Optional[t.List[str]] = None
     encoding: t.Optional[str] = None
+    additional_partition_args: dict = field(default_factory=dict)
+    skip_infer_table_types: t.Optional[t.List[str]] = None
     fields_include: t.List[str] = field(
         default_factory=lambda: ["element_id", "text", "type", "metadata", "embeddings"],
     )
