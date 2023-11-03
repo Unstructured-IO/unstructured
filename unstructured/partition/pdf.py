@@ -920,39 +920,46 @@ def get_uris_from_annots(
         including its coordinates, bounding box, type, URI link, and page number.
     """
     annotation_list = []
-    for annotation in annots:
-        annotation_dict = try_resolve(annotation)
-        if str(annotation_dict["Subtype"]) != "/'Link'" or "A" not in annotation_dict:
-            continue
-        x1, y1, x2, y2 = rect_to_bbox(annotation_dict["Rect"], height)
-        uri_dict = try_resolve(annotation_dict["A"])
-        uri_type = str(uri_dict["S"])
+    if annots:
+        for annotation in annots:
+            annotation_dict = (
+                try_resolve(annotation) if isinstance(try_resolve(annotation), dict) else None
+            )
+            if (
+                not annotation_dict
+                or str(annotation_dict["Subtype"]) != "/'Link'"
+                or "A" not in annotation_dict
+            ):
+                continue
+            x1, y1, x2, y2 = rect_to_bbox(annotation_dict["Rect"], height)
+            uri_dict = try_resolve(annotation_dict["A"])
+            uri_type = str(uri_dict["S"])
 
-        uri = None
-        try:
-            if uri_type == "/'URI'":
-                uri = try_resolve(try_resolve(uri_dict["URI"])).decode("utf-8")
-            if uri_type == "/'GoTo'":
-                uri = try_resolve(try_resolve(uri_dict["D"])).decode("utf-8")
-        except Exception:
-            pass
+            uri = None
+            try:
+                if uri_type == "/'URI'":
+                    uri = try_resolve(try_resolve(uri_dict["URI"])).decode("utf-8")
+                if uri_type == "/'GoTo'":
+                    uri = try_resolve(try_resolve(uri_dict["D"])).decode("utf-8")
+            except Exception:
+                pass
 
-        points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+            points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
 
-        coordinates_metadata = CoordinatesMetadata(
-            points=points,
-            system=coordinate_system,
-        )
+            coordinates_metadata = CoordinatesMetadata(
+                points=points,
+                system=coordinate_system,
+            )
 
-        annotation_list.append(
-            {
-                "coordinates": coordinates_metadata,
-                "bbox": (x1, y1, x2, y2),
-                "type": uri_type,
-                "uri": uri,
-                "page_number": page_number,
-            },
-        )
+            annotation_list.append(
+                {
+                    "coordinates": coordinates_metadata,
+                    "bbox": (x1, y1, x2, y2),
+                    "type": uri_type,
+                    "uri": uri,
+                    "page_number": page_number,
+                },
+            )
     return annotation_list
 
 

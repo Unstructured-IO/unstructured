@@ -29,38 +29,41 @@ if "ingest_log_handler" not in [h.name for h in logger.handlers]:
 logger.setLevel(logging.DEBUG)
 
 
+agg_headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
+
+
 @click.group()
 def main():
     pass
 
 
 @main.command()
-@click.option("--output_dir", type=click.STRING, help="Directory to a structured output.")
+@click.option("--output_dir", type=str, help="Directory to structured output.")
 @click.option(
     "--output_list",
-    type=click.STRING,
+    type=str,
     multiple=True,
     help="Optional: list of selected structured output file names under the \
         directory to be evaluate. If none, all files under directory will be use.",
 )
-@click.option("--source_dir", type=click.STRING, help="Directory to a cct source.")
+@click.option("--source_dir", type=str, help="Directory to source.")
 @click.option(
     "--source_list",
-    type=click.STRING,
+    type=str,
     multiple=True,
-    help="Optional: list of selected cct source file names under the directory \
+    help="Optional: list of selected source file names under the directory \
         to be evaluate. If none, all files under directory will be use.",
 )
 @click.option(
     "--export_dir",
-    type=click.STRING,
+    type=str,
     default="metrics",
     help="Directory to save the output evaluation metrics to. Default to \
-        [your_working_dir]/metrics/",
+        your/working/dir/metrics/",
 )
 @click.option(
     "--weights",
-    type=(click.INT, click.INT, click.INT),
+    type=(int, int, int),
     default=(2, 1, 1),
     show_default=True,
     help="A tuple of weights to the Levenshtein distance calculation. \
@@ -82,16 +85,10 @@ def measure_text_edit_distance(
     Calculates text accuracy and percent missing. After looped through the whole list, write to tsv.
     Also calculates the aggregated accuracy and percent missing.
     """
-
-    print(f"output_dir is {output_dir}")
-    print(f"source_dir is {source_dir}")
     if not output_list:
         output_list = _listdir_recursive(output_dir)
     if not source_list:
         source_list = _listdir_recursive(source_dir)
-
-    print(f"output_list is {output_list}")
-    print(f"source_list is {source_list}")
 
     if not output_list:
         print("No output files to calculate to edit distances for, exiting")
@@ -101,25 +98,26 @@ def measure_text_edit_distance(
     accuracy_scores: List[float] = []
     percent_missing_scores: List[float] = []
 
+    # assumption: output file name convention is name-of-file.doc.json
     for doc in output_list:  # type: ignore
         fn = (doc.split("/")[-1]).split(".json")[0]
+        doctype = fn.rsplit(".", 1)[-1]
         fn_txt = fn + ".txt"
         connector = doc.split("/")[0]
+
         if fn_txt in source_list:  # type: ignore
             output_cct = elements_to_text(elements_from_json(os.path.join(output_dir, doc)))
-            with open(f"{os.path.join(source_dir, fn_txt)}") as f:
-                source_cct = f.read()
+            source_cct = _read_text(os.path.join(source_dir, fn_txt))
             accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
 
-            rows.append([fn, connector, accuracy, percent_missing])
+            rows.append([fn, doctype, connector, accuracy, percent_missing])
             accuracy_scores.append(accuracy)
             percent_missing_scores.append(percent_missing)
 
-    headers = ["filename", "connector", "cct-accuracy", "cct-%missing"]
+    headers = ["filename", "doctype", "connector", "cct-accuracy", "cct-%missing"]
     _write_to_file(export_dir, "all-docs-cct.tsv", rows, headers)
 
-    headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
     agg_rows = []
     agg_rows.append(
         [
@@ -139,33 +137,33 @@ def measure_text_edit_distance(
             len(percent_missing_scores),
         ],
     )
-    _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_rows, headers)
-    _display(agg_rows, headers)
+    _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_rows, agg_headers)
+    _display(agg_rows, agg_headers)
 
 
 @main.command()
-@click.option("--output_dir", type=click.STRING, help="Directory to a structured output.")
+@click.option("--output_dir", type=str, help="Directory to structured output.")
 @click.option(
     "--output_list",
-    type=click.STRING,
+    type=str,
     multiple=True,
     help="Optional: list of selected structured output file names under the \
-        directory to be evaluate. If none, all files under directory will be use.",
+        directory to be evaluate. If none, all files under directory will be used.",
 )
-@click.option("--source_dir", type=click.STRING, help="Directory to a structured source.")
+@click.option("--source_dir", type=str, help="Directory to structured source.")
 @click.option(
     "--source_list",
-    type=click.STRING,
+    type=str,
     multiple=True,
-    help="Optional: list of selected structured source file names under the directory \
-        to be evaluate. If none, all files under directory will be use.",
+    help="Optional: list of selected source file names under the directory \
+        to be evaluate. If none, all files under directory will be used.",
 )
 @click.option(
     "--export_dir",
-    type=click.STRING,
+    type=str,
     default="metrics",
     help="Directory to save the output evaluation metrics to. Default to \
-        [your_working_dir]/metrics/",
+        your/working/dir/metrics/",
 )
 def measure_element_type_accuracy(
     output_dir: str,
@@ -174,6 +172,14 @@ def measure_element_type_accuracy(
     source_list: Optional[List[str]],
     export_dir: str,
 ):
+    """
+    Loops through the list of structured output from all of `output_dir` or selected files from
+    `output_list`, and compare with gold-standard of the same file name under `source_dir` or
+    selected files from `source_list`.
+
+    Calculates element type frequency accuracy and percent missing. After looped through the
+    whole list, write to tsv. Also calculates the aggregated accuracy.
+    """
     if not output_list:
         output_list = _listdir_recursive(output_dir)
     if not source_list:
@@ -184,19 +190,18 @@ def measure_element_type_accuracy(
 
     for doc in output_list:  # type: ignore
         fn = (doc.split("/")[-1]).split(".json")[0]
-        fn_json = fn + ".json"
+        doctype = fn.rsplit(".", 1)[-1]
         connector = doc.split("/")[0]
-        if fn_json in source_list:  # type: ignore
+        if doc in source_list:  # type: ignore
             output = get_element_type_frequency(_read_text(os.path.join(output_dir, doc)))
-            source = get_element_type_frequency(_read_text(os.path.join(source_dir, fn_json)))
+            source = get_element_type_frequency(_read_text(os.path.join(source_dir, doc)))
             accuracy = round(calculate_element_type_percent_match(output, source), 3)
-            rows.append([fn, connector, accuracy])
+            rows.append([fn, doctype, connector, accuracy])
             accuracy_scores.append(accuracy)
 
-    headers = ["filename", "connector", "element-type-accuracy"]
-    _write_to_file(export_dir, "all-docs-element-type.tsv", rows, headers)
+    headers = ["filename", "doctype", "connector", "element-type-accuracy"]
+    _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", rows, headers)
 
-    headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
     agg_rows = []
     agg_rows.append(
         [
@@ -207,8 +212,8 @@ def measure_element_type_accuracy(
             len(accuracy_scores),
         ],
     )
-    _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_rows, headers)
-    _display(agg_rows, headers)
+    _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_rows, agg_headers)
+    _display(agg_rows, agg_headers)
 
 
 def _listdir_recursive(dir: str):
@@ -224,12 +229,15 @@ def _listdir_recursive(dir: str):
     return listdir
 
 
-def _write_to_file(dir: str, filename: str, rows: List[Any], headers: List[Any]):
+def _write_to_file(dir: str, filename: str, rows: List[Any], headers: List[Any], mode: str = "w"):
+    if mode not in ["w", "a"]:
+        raise ValueError("Mode not supported. Mode must be one of [w, a].")
     if dir and not os.path.exists(dir):
         os.makedirs(dir)
-    with open(os.path.join(os.path.join(dir, filename)), "w", newline="") as tsv:
+    with open(os.path.join(os.path.join(dir, filename)), mode, newline="") as tsv:
         writer = csv.writer(tsv, delimiter="\t")
-        writer.writerow(headers)
+        if mode == "w":
+            writer.writerow(headers)
         writer.writerows(rows)
 
 
@@ -280,7 +288,7 @@ def _pstdev(scores: List[float], rounding: Optional[int] = 3):
 
 
 def _read_text(path):
-    with open(path) as f:
+    with open(path, errors="ignore") as f:
         text = f.read()
     return text
 

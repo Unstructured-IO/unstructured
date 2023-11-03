@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -40,21 +40,18 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _create_full_tmp_dir_path(self):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
 
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(["praw"])
     def get_post(self):
         from praw import Reddit
         from praw.models import Submission
 
-        try:
-            reddit = Reddit(
-                client_id=self.connector_config.client_id,
-                client_secret=self.connector_config.client_secret,
-                user_agent=self.connector_config.user_agent,
-            )
-            post = Submission(reddit, self.post_id)
-        except Exception:
-            logger.error(f"Failed to retrieve post with id {self.post_id}")
-            return None
+        reddit = Reddit(
+            client_id=self.connector_config.client_id,
+            client_secret=self.connector_config.client_secret,
+            user_agent=self.connector_config.user_agent,
+        )
+        post = Submission(reddit, self.post_id)
         return post
 
     def update_source_metadata(self, **kwargs):

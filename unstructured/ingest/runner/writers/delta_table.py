@@ -6,7 +6,8 @@ from unstructured.ingest.interfaces import BaseDestinationConnector
 
 def delta_table_writer(
     table_uri: t.Union[str, Path],
-    write_column: str,
+    drop_empty_cols: bool = False,
+    overwrite_schema: bool = False,
     mode: t.Literal["error", "append", "overwrite", "ignore"] = "error",
     **kwargs,
 ) -> BaseDestinationConnector:
@@ -17,7 +18,9 @@ def delta_table_writer(
     )
 
     return DeltaTableDestinationConnector(
-        write_config=DeltaTableWriteConfig(write_column=write_column, mode=mode),
+        write_config=DeltaTableWriteConfig(
+            mode=mode, drop_empty_cols=drop_empty_cols, overwrite_schema=overwrite_schema
+        ),
         connector_config=SimpleDeltaTableConfig(
             table_uri=table_uri,
         ),

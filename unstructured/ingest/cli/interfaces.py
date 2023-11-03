@@ -1,7 +1,9 @@
+import json
+import os.path
 import typing as t
 from abc import abstractmethod
 from dataclasses import fields
-from gettext import ngettext
+from gettext import gettext, ngettext
 from pathlib import Path
 
 import click
@@ -18,6 +20,54 @@ from unstructured.ingest.interfaces import (
     ReadConfig,
     RetryStrategyConfig,
 )
+
+
+class Dict(click.ParamType):
+    name = "dict"
+
+    def convert(
+        self,
+        value: t.Any,
+        param: t.Optional[click.Parameter],
+        ctx: t.Optional[click.Context],
+    ) -> t.Any:
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            self.fail(
+                gettext(
+                    "{value} is not a valid json value.",
+                ).format(value=value),
+                param,
+                ctx,
+            )
+
+
+class FileOrJson(click.ParamType):
+    name = "file-or-json"
+
+    def convert(
+        self,
+        value: t.Any,
+        param: t.Optional[click.Parameter],
+        ctx: t.Optional[click.Context],
+    ) -> t.Any:
+        # check if valid file
+        full_path = os.path.abspath(os.path.expanduser(value))
+        if os.path.isfile(full_path):
+            return str(Path(full_path).resolve())
+        if isinstance(value, str):
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError:
+                pass
+        self.fail(
+            gettext(
+                "{value} is not a valid json string nor an existing filepath.",
+            ).format(value=value),
+            param,
+            ctx,
+        )
 
 
 class DelimitedString(click.ParamType):
@@ -77,6 +127,10 @@ class CliMixin:
                     raise ValueError(f"{opt} is already defined on the command {cmd.name}")
                 existing_opts.append(opt)
                 cmd.params.append(param)
+
+
+class CliConfig(BaseConfig, CliMixin):
+    pass
 
 
 class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
@@ -207,12 +261,6 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--skip-infer-table-types"],
-                type=DelimitedString(),
-                default=None,
-                help="Optional list of document types to skip table extraction on",
-            ),
-            click.Option(
                 ["--pdf-infer-table-structure"],
                 default=False,
                 help="If set to True, partition will include the table's text "
@@ -238,6 +286,17 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 default=None,
                 help="Text encoding to use when reading documents. By default the encoding is "
                 "detected automatically.",
+            ),
+            click.Option(
+                ["--skip-infer-table-types"],
+                type=DelimitedString(),
+                default=None,
+                help="Optional list of document types to skip table extraction on",
+            ),
+            click.Option(
+                ["--additional-partition-args"],
+                type=Dict(),
+                help="A json string representation of values to pass through to partition()",
             ),
             click.Option(
                 ["--fields-include"],
@@ -290,7 +349,7 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
         return options
 
 
-class CliRecursiveConfig(BaseConfig, CliMixin):
+class CliRecursiveConfig(CliConfig):
     recursive: bool
 
     @staticmethod
@@ -473,6 +532,7 @@ class CliPermissionsConfig(PermissionsConfig, CliMixin):
         doesn't require that as part of the field names in this class. It also checks if the
         CLI params are provided as intended.
         """
+
         if isinstance(kvs, dict):
             permissions_application_id = kvs.get("permissions_application_id")
             permissions_client_cred = kvs.get("permissions_client_cred")

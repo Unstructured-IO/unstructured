@@ -5,7 +5,7 @@ from unstructured.ingest.interfaces import BaseDestinationConnector
 
 def gcs_writer(
     remote_url: str,
-    token: t.Optional[str],
+    service_account_key: t.Optional[str],
     verbose: bool = False,
     **kwargs,
 ) -> BaseDestinationConnector:
@@ -19,6 +19,6 @@ def gcs_writer(
         write_config=FsspecWriteConfig(),
         connector_config=SimpleGcsConfig(
             remote_url=remote_url,
-            access_kwargs={"token": token},
+            access_kwargs={"token": service_account_key},
         ),
     )

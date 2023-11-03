@@ -9,7 +9,6 @@ from unstructured.ingest.runner.utils import update_download_dir_remote_url
 class AzureRunner(FsspecBaseRunner):
     def run(
         self,
-        remote_url: str,
         account_name: t.Optional[str] = None,
         account_key: t.Optional[str] = None,
         connection_string: t.Optional[str] = None,

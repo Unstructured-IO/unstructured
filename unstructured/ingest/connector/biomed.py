@@ -136,11 +136,15 @@ class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
             if dir_:
                 dir_.mkdir(parents=True, exist_ok=True)
+        self._retrieve()
+        logger.debug(f"File downloaded: {self.file_meta.download_filepath}")
+
+    @SourceConnectionNetworkError.wrap
+    def _retrieve(self):
         urllib.request.urlretrieve(
             self.file_meta.ftp_path,  # type: ignore
             self.file_meta.download_filepath,
         )
-        logger.debug(f"File downloaded: {self.file_meta.download_filepath}")
 
 
 class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):

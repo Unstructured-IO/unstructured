@@ -22,7 +22,7 @@ from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
-from unstructured.staging.base import convert_to_dict, elements_from_json
+from unstructured.staging.base import convert_to_dict, elements_from_json, flatten_dict
 
 A = t.TypeVar("A", bound="DataClassJsonMixin")
 
@@ -74,17 +74,18 @@ class RetryStrategyConfig(BaseConfig):
 class PartitionConfig(BaseConfig):
     # where to write structured data outputs
     pdf_infer_table_structure: bool = False
-    skip_infer_table_types: t.Optional[t.List[str]] = None
     strategy: str = "auto"
     ocr_languages: t.Optional[t.List[str]] = None
     encoding: t.Optional[str] = None
+    additional_partition_args: dict = field(default_factory=dict)
+    skip_infer_table_types: t.Optional[t.List[str]] = None
     fields_include: t.List[str] = field(
         default_factory=lambda: ["element_id", "text", "type", "metadata", "embeddings"],
     )
     flatten_metadata: bool = False
     metadata_exclude: t.List[str] = field(default_factory=list)
     metadata_include: t.List[str] = field(default_factory=list)
-    partition_endpoint: t.Optional[str] = None
+    partition_endpoint: t.Optional[str] = "https://api.unstructured.io/general/v0/general"
     partition_by_api: bool = False
     api_key: t.Optional[str] = None
 
@@ -510,10 +511,9 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
             in_list = partition_config.fields_include
             elem = {k: v for k, v in elem.items() if k in in_list}
 
-            if partition_config.flatten_metadata:
-                for k, v in elem["metadata"].items():  # type: ignore[attr-defined]
-                    elem[k] = v
-                elem.pop("metadata")  # type: ignore[attr-defined]
+            if partition_config.flatten_metadata and "metadata" in elem:
+                metadata = elem.pop("metadata")
+                elem.update(flatten_dict(metadata, keys_to_omit=["data_source_record_locator"]))
 
             self.isd_elems_no_filename.append(elem)
 
@@ -567,12 +567,12 @@ class BaseDestinationConnector(DataClassJsonMixin, ABC):
         pass
 
     @abstractmethod
-    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         pass
 
     def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
-        elements_json = [e.to_dict() for e in elements]
-        self.write_dict(*args, json_list=elements_json, **kwargs)
+        elements_dict = [e.to_dict() for e in elements]
+        self.write_dict(*args, elements_dict=elements_dict, **kwargs)
 
 
 class SourceConnectorCleanupMixin:
@@ -655,6 +655,7 @@ class ConfigSessionHandleMixin:
         session related resources across all document handling for a given subprocess."""
 
 
+@dataclass
 class IngestDocSessionHandleMixin:
     connector_config: ConfigSessionHandleMixin
     _session_handle: t.Optional[BaseSessionHandle] = None
