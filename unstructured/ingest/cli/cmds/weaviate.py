@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.interfaces import CliMixin, DelimitedString
+from unstructured.ingest.cli.interfaces import CliMixin, Dict
 from unstructured.ingest.interfaces import BaseConfig
 
 CMD_NAME = "weaviate"
@@ -14,7 +14,7 @@ class WeaviateCliWriteConfig(BaseConfig, CliMixin):
     host_url: str
     class_name: str
     auth_keys: t.Optional[t.List[str]] = None
-    additional_keys: t.Optional[t.List[str]] = None
+    additional_headers: t.Optional[t.List[str]] = None
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
@@ -31,17 +31,13 @@ class WeaviateCliWriteConfig(BaseConfig, CliMixin):
                 help="Class to ",
             ),
             click.Option(
-                ["--auth-keys"],
-                required=False,
-                type=DelimitedString(),
-                help="List of env variables to pull auth keys from. "
-                "These keys are used to authenticate the client.",
+                ["--auth-keys"], required=False, type=Dict(), help="Key,value pairs representing"
             ),
             click.Option(
                 ["--additional-keys"],
                 is_flag=True,
                 default=False,
-                type=DelimitedString(),
+                type=Dict(),
                 help="Additional env vars to initialize the weaviate client with.",
             ),
         ]

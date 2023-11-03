@@ -2,12 +2,14 @@
 
 set -e
 
-SCRIPT_DIR=$(dirname "$(realpath "$0")")
+DEST_PATH=$(dirname "$(realpath "$0")")
+SCRIPT_DIR=$(dirname "$DEST_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
-OUTPUT_FOLDER_NAME=s3-weaviate-dest
-OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
-WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
-DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
+OUTPUT_FOLDER_NAME=weaviate-dest
+OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
+OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
+CI=${CI:-"false"}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -36,7 +38,7 @@ wait
 PYTHONPATH=. ./unstructured/ingest/main.py \
   s3 \
   --download-dir "$DOWNLOAD_DIR" \
-  --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth,metadata.links \
   --strategy fast \
   --preserve-downloads \
   --reprocess \
@@ -48,3 +50,5 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   weaviate \
   --host-url http://localhost:8080 \
   --class-name pdf_elements \
+
+scripts/weaviate-test-helpers/test-ingest-weaviate-output.py

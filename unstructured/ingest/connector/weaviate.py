@@ -1,5 +1,4 @@
 import json
-import os
 import typing as t
 from dataclasses import dataclass
 
@@ -18,19 +17,8 @@ BATCH_SIZE = 100
 @dataclass
 class SimpleWeaviateConfig(BaseConnectorConfig):
     host_url: str
-    auth_keys: t.Optional[t.List[str]] = None
-    additional_keys: t.Optional[t.List[str]] = None
-
-    def __post_init__(self):
-        if self.auth_keys:
-            self.auth_keys_dict = {
-                k: os.getenv(k) for k in self.auth_keys if (os.getenv(k) is not None)
-            }
-
-        if self.additional_keys:
-            self.additional_keys_dict = {
-                k: os.getenv(k) for k in self.additional_keys if (os.getenv(k) is not None)
-            }
+    auth_keys: t.Optional[t.Dict[str, str]] = None
+    additional_headers: t.Optional[t.Dict[str, str]] = None
 
 
 @dataclass
@@ -47,9 +35,44 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
     def initialize(self):
         from weaviate import Client
 
+        auth = self._resolve_auth_method()
+
         self.client: Client = Client(
             url=self.connector_config.host_url,
+            auth_client_secret=auth,
+            additional_headers=self.connector_config.additional_headers,
         )
+
+    def _resolve_auth_method(self):
+        if self.connector_config.auth_keys is None:
+            return None
+
+        if access_token := self.connector_config.auth_keys.get("access_token"):
+            from weaviate.auth import AuthBearerToken
+
+            return AuthBearerToken(
+                access_token=access_token,
+                refresh_token=self.connector_config.auth_keys.get("refresh_token"),
+            )
+        elif api_key := self.connector_config.auth_keys.get("api_key"):
+            from weaviate.auth import AuthApiKey
+
+            return AuthApiKey(api_key=api_key)
+        elif client_secret := self.connector_config.auth_keys.get("client_secret"):
+            from weaviate.auth import AuthClientCredentials
+
+            return AuthClientCredentials(
+                client_secret=client_secret, scope=self.connector_config.auth_keys.get("scope")
+            )
+        elif (username := self.connector_config.auth_keys.get("username")) and (
+            pwd := self.connector_config.auth_keys.get("password")
+        ):
+            from weaviate.auth import AuthClientPassword
+
+            return AuthClientPassword(
+                username=username, password=pwd, scope=self.connector_config.auth_keys.get("scope")
+            )
+        return None
 
     def conform_dict(self, element: dict) -> None:
         """
@@ -73,16 +96,15 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
 
     def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
-            f"writing {len(json_list)} rows to destination "
+            f"writing {len(json_list)} objects to destination "
             f"class {self.write_config.class_name} "
             f"at {self.connector_config.host_url}",
         )
-
-        with self.client.batch(batch_size=BATCH_SIZE) as b:
+        self.client.batch.configure(batch_size=BATCH_SIZE)
+        with self.client.batch as b:
             created = []
             for e in json_list:
                 self.conform_dict(e)
-                print(e.get("metadata", {}).keys())
                 created_id = b.add_data_object(
                     {
                         "type": e.get("type", ""),
@@ -94,7 +116,6 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
                     vector=e.get("embeddings"),
                 )
                 created.append(created_id)
-
             if len(created) < len(json_list):
                 raise ValueError(
                     f"Missed {len(json_list)- len(created)} elements.",

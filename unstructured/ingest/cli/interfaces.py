@@ -25,6 +25,9 @@ from unstructured.ingest.interfaces import (
 class Dict(click.ParamType):
     name = "dict"
 
+    def __init__(self, choices: t.Optional[t.List[str]] = None):
+        self.choices = choices if choices else []
+
     def convert(
         self,
         value: t.Any,
@@ -32,7 +35,23 @@ class Dict(click.ParamType):
         ctx: t.Optional[click.Context],
     ) -> t.Any:
         try:
-            return json.loads(value)
+            d = json.loads(value)
+            if not self.choices:
+                return d
+            choices_str = ", ".join(map(repr, self.choices))
+            for k in list(d.keys()):
+                if k not in self.choices:
+                    self.fail(
+                        ngettext(
+                            "{value!r} is not {choice}.",
+                            "{value!r} is not one of {choices}.",
+                            len(self.choices),
+                        ).format(value=k, choice=choices_str, choices=choices_str),
+                        param,
+                        ctx,
+                    )
+            return d
+
         except json.JSONDecodeError:
             self.fail(
                 gettext(

@@ -8,7 +8,7 @@ def weaviate_writer(
     host_url: str,
     class_name: str,
     auth_keys: t.Optional[t.List[str]] = None,
-    additional_keys: t.Optional[t.List[str]] = None,
+    additional_headers: t.Optional[t.List[str]] = None,
     **kwargs,
 ):
     from unstructured.ingest.connector.weaviate import (
@@ -22,6 +22,6 @@ def weaviate_writer(
         connector_config=SimpleWeaviateConfig(
             host_url=host_url,
             auth_keys=auth_keys,
-            additional_keys=additional_keys,
+            additional_headers=additional_headers,
         ),
     )
