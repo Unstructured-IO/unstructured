@@ -5,15 +5,14 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMixin,
+    CliConfig,
 )
-from unstructured.ingest.interfaces import BaseConfig
 
 CMD_NAME = "s3"
 
 
 @dataclass
-class S3CliConfig(BaseConfig, CliMixin):
+class S3CliConfig(CliConfig):
     anonymous: bool = False
     endpoint_url: t.Optional[str] = None
 
