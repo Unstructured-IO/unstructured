@@ -313,7 +313,6 @@ jobs:
 
 
   test_ingest_src:
-    environment: ci
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
@@ -400,7 +399,6 @@ jobs:
 
 
   test_ingest_dest:
-    environment: ci
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
