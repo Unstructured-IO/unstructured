@@ -19,6 +19,8 @@ from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 MAX_NUM_EMAILS = 1000000  # Maximum number of emails per folder
+if t.TYPE_CHECKING:
+    from office365.graph_client import GraphClient
 
 
 class MissingFolderError(Exception):
@@ -180,17 +182,23 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 @dataclass
 class OutlookSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleOutlookConfig
+    _client: t.Optional["GraphClient"] = field(init=False, default=None)
+
+    @property
+    def client(self) -> "GraphClient":
+        if self._client is None:
+            self._client = self.connector_config._get_client()
+        return self._client
 
     def initialize(self):
         try:
-            self.client = self.connector_config._get_client()
             self.get_folder_ids()
         except Exception as e:
             raise SourceConnectionError(f"failed to validate connection: {e}")
 
     def check_connection(self):
         try:
-            self.connector_config._get_client()
+            _ = self.client
         except Exception as e:
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {e}")
