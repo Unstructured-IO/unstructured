@@ -19,6 +19,9 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
+if t.TYPE_CHECKING:
+    from atlassian import Confluence
+
 
 @dataclass
 class SimpleConfluenceConfig(BaseConnectorConfig):
@@ -187,7 +190,21 @@ class ConfluenceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
     """Fetches body fields from all documents within all spaces in a Confluence Cloud instance."""
 
     connector_config: SimpleConfluenceConfig
+    _confluence: t.Optional["Confluence"] = field(init=False, default=None)
 
+    @property
+    def confluence(self) -> "Confluence":
+        from atlassian import Confluence
+
+        if self._confluence is None:
+            self._confluence = Confluence(
+                url=self.connector_config.url,
+                username=self.connector_config.user_email,
+                password=self.connector_config.api_token,
+            )
+        return self._confluence
+
+    @requires_dependencies(["atlassian"], extras="Confluence")
     def check_connection(self):
         url = "rest/api/space"
         try:
@@ -198,14 +215,6 @@ class ConfluenceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 
     @requires_dependencies(["atlassian"], extras="Confluence")
     def initialize(self):
-        from atlassian import Confluence
-
-        self.confluence = Confluence(
-            url=self.connector_config.url,
-            username=self.connector_config.user_email,
-            password=self.connector_config.api_token,
-        )
-
         self.list_of_spaces = None
         if self.connector_config.spaces:
             self.list_of_spaces = self.connector_config.spaces
