@@ -5,7 +5,9 @@ from unstructured.metrics.evaluate import (
     measure_text_edit_distance,
 )
 
-EXAMPLE_DOCS_DIRECTORY = os.path.join(pathlib.Path(__file__).parent.resolve(), "..", "..", "example-docs")
+EXAMPLE_DOCS_DIRECTORY = os.path.join(
+    pathlib.Path(__file__).parent.resolve(), "..", "..", "example-docs"
+)
 TESTING_FILE_DIR = os.path.join(EXAMPLE_DOCS_DIRECTORY, "test_evaluate_files")
 
 UNSTRUCTURED_OUTPUT_DIRNAME = "unstructured_output"
