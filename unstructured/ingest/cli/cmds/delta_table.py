@@ -7,6 +7,7 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
+from unstructured.ingest.connector.delta_table import DeltaTableWriteConfig
 
 CMD_NAME = "delta-table"
 
@@ -50,18 +51,21 @@ class DeltaTableCliConfig(CliConfig):
 
 
 @dataclass
-class DeltaTableCliWriteConfig(CliConfig):
-    write_column: str
-    mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
-
+class DeltaTableCliWriteConfig(DeltaTableWriteConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--write-column"],
-                required=True,
-                type=str,
-                help="column in delta table to write json content",
+                ["--overwrite-schema"],
+                is_flag=True,
+                default=False,
+                help="Flag to overwrite schema of destination table",
+            ),
+            click.Option(
+                ["--drop-empty-cols"],
+                is_flag=True,
+                default=False,
+                help="Flag to drop any columns that have no content",
             ),
             click.Option(
                 ["--mode"],
