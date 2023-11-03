@@ -17,10 +17,8 @@ from dataclasses_json.core import Json, _asdict, _decode_dataclass
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
-from unstructured.embed.bedrock import BedrockEmbeddingEncoder
-from unstructured.embed.huggingface import HuggingFaceEmbeddingEncoder
+from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
-from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
@@ -38,13 +36,6 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "box",
     "dropbox",
 ]
-
-
-EMBEDDING_PROVIDER_TO_CLASS_MAP = {
-    "langchain-openai": OpenAIEmbeddingEncoder,
-    "langchain-huggingface": HuggingFaceEmbeddingEncoder,
-    "langchain-aws-bedrock": BedrockEmbeddingEncoder,
-}
 
 
 @dataclass
