@@ -184,11 +184,11 @@ def flatten_dict(dictionary, parent_key="", separator="_", flatten_lists=False, 
             flattened_dict[new_key] = value
         elif isinstance(value, dict):
             flattened_dict.update(
-                flatten_dict(value, new_key, separator, keys_to_omit=keys_to_omit),
+                flatten_dict(value, new_key, separator, flatten_lists, keys_to_omit=keys_to_omit),
             )
         elif isinstance(value, list) and flatten_lists:
             for index, item in enumerate(value):
-                flattened_dict.update(flatten_dict({f"{new_key}{separator}{index}": item}, "", separator))
+                flattened_dict.update(flatten_dict({f"{new_key}{separator}{index}": item}, "", separator, flatten_lists,keys_to_omit=keys_to_omit))
         else:
             flattened_dict[new_key] = value
     return flattened_dict
