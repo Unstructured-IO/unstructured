@@ -1,13 +1,6 @@
 import json
-import chromadb 
 
-from chromadb.errors import InvalidDimensionException
-
-import flatdict
-
-from unstructured.staging.base import flatten_dict
-
-
+import chromadb
 
 # try:
 #     docsearch = chromadb.from_documents(documents=..., embedding=...)
@@ -36,7 +29,7 @@ def flatten_values(value, seperator="\n", no_value_str=""):
 
 
 e="/Users/davidpotter/Documents/Unstructured/sessions/unstructured/test_unstructured_ingest/workdir/s3-pinecone-dest/embedded/42d06000044204b602333f8d3a0f592d.json"
-with open(e, "r") as read_content: 
+with open(e) as read_content: 
     ed=(json.load(read_content))
 
 

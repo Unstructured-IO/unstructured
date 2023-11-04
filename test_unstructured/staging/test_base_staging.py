@@ -314,7 +314,7 @@ def test_flatten_dict():
         "languages.0": "eng",
         "languages.1": "french",
     }
-    assert base.flatten_dict(dictionary, separator=".") == expected_output
+    assert base.flatten_dict(dictionary, separator=".", flatten_lists=True) == expected_output
 
     # Test with keys to omit
     keys_to_omit = ["b_d_e", "f_1", "g_i_0"]
@@ -326,4 +326,4 @@ def test_flatten_dict():
         "languages.0": "eng",
         "languages.1": "french",
     }
-    assert base.flatten_dict(dictionary, separator=".",keys_to_omit=keys_to_omit) == expected_output
+    assert base.flatten_dict(dictionary, separator=".",flatten_lists=True,keys_to_omit=keys_to_omit) == expected_output
