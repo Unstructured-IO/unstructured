@@ -186,6 +186,9 @@ def flatten_dict(dictionary, parent_key="", separator="_", keys_to_omit: List[st
             flattened_dict.update(
                 flatten_dict(value, new_key, separator, keys_to_omit=keys_to_omit),
             )
+        elif isinstance(value, list):
+            for index, item in enumerate(value):
+                flattened_dict.update(flatten_dict({f"{new_key}{separator}{index}": item}, "", separator))
         else:
             flattened_dict[new_key] = value
     return flattened_dict

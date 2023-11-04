@@ -292,3 +292,38 @@ def test_filter_element_types_with_exclude_and_include_element_type(
             exclude_element_types=element_types,
             include_element_types=element_types,
         )
+
+
+def test_flatten_dict():
+    dictionary = {
+        "data_source": {
+            "url": "example-docs/book-war-and-peace-1p.txt",
+            "date_created": "2023-10-25 10:05:44.916316",
+            "date_modified": "2023-10-25 10:05:44.916316",
+            "permissions_data": [{"mode": 33188}],
+        },
+        "filetype": "text/plain",
+        "languages": ["eng", "french"],
+    }
+    expected_output = {
+        "data_source.url": "example-docs/book-war-and-peace-1p.txt",
+        "data_source.date_created": "2023-10-25 10:05:44.916316",
+        "data_source.date_modified": "2023-10-25 10:05:44.916316",
+        "data_source.permissions_data.0.mode": 33188,
+        "filetype": "text/plain",
+        "languages.0": "eng",
+        "languages.1": "french",
+    }
+    assert base.flatten_dict(dictionary, separator=".") == expected_output
+
+    # Test with keys to omit
+    keys_to_omit = ["b_d_e", "f_1", "g_i_0"]
+    expected_output = {
+        "data_source.url": "example-docs/book-war-and-peace-1p.txt",
+        "data_source.date_created": "2023-10-25 10:05:44.916316",
+        "data_source.date_modified": "2023-10-25 10:05:44.916316",
+        "data_source.permissions_data.0.mode": 33188,
+        "languages.0": "eng",
+        "languages.1": "french",
+    }
+    assert base.flatten_dict(dictionary, separator=".",keys_to_omit=keys_to_omit) == expected_output
