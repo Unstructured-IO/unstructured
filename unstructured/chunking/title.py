@@ -5,16 +5,20 @@ Main entry point is the `@add_chunking_strategy()` decorator.
 
 from __future__ import annotations
 
+import collections
 import copy
 import functools
 import inspect
-from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, cast
+from typing import Any, Callable, DefaultDict, Dict, Iterable, Iterator, List, Optional, Tuple, cast
 
 from typing_extensions import ParamSpec, TypeAlias
 
 from unstructured.documents.elements import (
     CompositeElement,
+    ConsolidationStrategy,
     Element,
+    ElementMetadata,
+    RegexMetadata,
     Table,
     TableChunk,
     Text,
@@ -143,46 +147,13 @@ def chunk_by_title(
             chunked_elements.append(section.element)
             continue
 
-        elif isinstance(section, _TableSection):
+        if isinstance(section, _TableSection):
             chunked_elements.extend(chunk_table_element(section.table, max_characters))
             continue
 
-        text = ""
-        metadata = section.elements[0].metadata
-        start_char = 0
-
-        for element_idx, element in enumerate(section.elements):
-            # -- concatenate all element text in section into `text` --
-            if isinstance(element, Text):
-                # -- add a blank line between "squashed" elements --
-                text += "\n\n" if text else ""
-                start_char = len(text)
-                text += element.text
-
-            # -- "chunk" metadata should include union of list-items in all its elements --
-            for attr, value in vars(element.metadata).items():
-                if isinstance(value, list):
-                    value = cast(List[Any], value)
-                    # -- get existing (list) value from chunk_metadata --
-                    _value = getattr(metadata, attr, []) or []
-                    _value.extend(item for item in value if item not in _value)
-                    setattr(metadata, attr, _value)
-
-            # -- consolidate any `regex_metadata` matches, adjusting the match start/end offsets --
-            element_regex_metadata = element.metadata.regex_metadata
-            # -- skip the first element because it is "alredy consolidated" and otherwise this would
-            # -- duplicate it.
-            if element_regex_metadata and element_idx > 0:
-                if metadata.regex_metadata is None:
-                    metadata.regex_metadata = {}
-                chunk_regex_metadata = metadata.regex_metadata
-                for regex_name, matches in element_regex_metadata.items():
-                    for m in matches:
-                        m["start"] += start_char
-                        m["end"] += start_char
-                    chunk_matches = chunk_regex_metadata.get(regex_name, [])
-                    chunk_matches.extend(matches)
-                    chunk_regex_metadata[regex_name] = chunk_matches
+        # -- otherwise, it's a _TextSection object --
+        text = section.text
+        chunk_meta = section.consolidated_metadata
 
         # -- split chunk into CompositeElements objects maxlen or smaller --
         text_len = len(text)
@@ -191,7 +162,7 @@ def chunk_by_title(
 
         while remaining > 0:
             end = min(start + max_characters, text_len)
-            chunked_elements.append(CompositeElement(text=text[start:end], metadata=metadata))
+            chunked_elements.append(CompositeElement(text=text[start:end], metadata=chunk_meta))
             start = end
             remaining = text_len - end
 
@@ -224,6 +195,8 @@ def _split_elements_by_title_and_table(
         * **Minimize chunks that must be split mid-text.** Precompute the text length of each
           section and only produce a section that exceeds the chunk window size when there is a
           single element with text longer than that window.
+
+    A Table or Checkbox element is placed into a section by itself.
     """
     section_builder = _TextSectionBuilder(max_characters)
 
@@ -382,30 +355,152 @@ class _TextSection:
     This object is purposely immutable.
     """
 
-    def __init__(self, elements: Iterable[Element]) -> None:
+    def __init__(self, elements: Iterable[Text]) -> None:
         self._elements = list(elements)
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, _TextSection):
+            return False
+        return self._elements == other._elements
 
     def combine(self, other_section: _TextSection) -> _TextSection:
         """Return new `_TextSection` that combines this and `other_section`."""
         return _TextSection(self._elements + other_section._elements)
 
-    @property
-    def elements(self) -> List[Element]:
-        """The elements of this text-section."""
-        return self._elements
+    @lazyproperty
+    def consolidated_metadata(self) -> ElementMetadata:
+        """Metadata applicable to this section as a single chunk.
+
+        Formed by applying consolidation rules to all metadata fields across the elements of this
+        section.
+
+        For the sake of consistency, the same rules are applied (for example, for dropping values)
+        to a single-element section too, even though metadata for such a section is already
+        "consolidated".
+        """
+        return ElementMetadata(**self._meta_kwargs)
 
     @lazyproperty
-    def text_length(self) -> int:
-        """Length of concatenated text of this section, including separators."""
-        return len(self._text)
-
-    @lazyproperty
-    def _text(self) -> str:
+    def text(self) -> str:
         """The concatenated text of all elements in this section.
 
         Each element-text is separated from the next by a blank line ("\n\n").
         """
-        return TEXT_SEPARATOR.join(e.text for e in self._elements if isinstance(e, Text) and e.text)
+        return TEXT_SEPARATOR.join(e.text for e in self._elements if e.text)
+
+    @lazyproperty
+    def text_length(self) -> int:
+        """Length of concatenated text of this section, including separators."""
+        # -- used by section-combiner to identify combination candidates --
+        return len(self.text)
+
+    @lazyproperty
+    def _all_metadata_values(self) -> Dict[str, List[Any]]:
+        """Collection of all populated metadata values across elements.
+
+        The resulting dict has one key for each `ElementMetadata` field that had a non-None value in
+        at least one of the elements in this section. The value of that key is a list of all those
+        populated values, in element order, for example:
+
+            {
+                "filename": ["sample.docx", "sample.docx"],
+                "languages": [["lat"], ["lat", "eng"]]
+                ...
+            }
+
+        This preprocessing step provides the input for a specified consolidation strategy that will
+        resolve the list of values for each field to a single consolidated value.
+        """
+
+        def iter_populated_fields(metadata: ElementMetadata) -> Iterator[Tuple[str, Any]]:
+            """(field_name, value) pair for each non-None field in single `ElementMetadata`."""
+            return (
+                (field_name, value)
+                for field_name, value in vars(metadata).items()
+                if value is not None
+            )
+
+        field_values: DefaultDict[str, List[Any]] = collections.defaultdict(list)
+
+        # -- collect all non-None field values in a list for each field, in element-order --
+        for e in self._elements:
+            for field_name, value in iter_populated_fields(e.metadata):
+                field_values[field_name].append(value)
+
+        return dict(field_values)
+
+    @lazyproperty
+    def _consolidated_regex_meta(self) -> Dict[str, List[RegexMetadata]]:
+        """Consolidate the regex-metadata in `regex_metadata_dicts` into a single dict.
+
+        This consolidated value is suitable for use in the chunk metadata. `start` and `end`
+        offsets of each regex match are also adjusted for their new positions.
+        """
+        chunk_regex_metadata: Dict[str, List[RegexMetadata]] = {}
+        running_text_len = 0
+        start_offset = 0
+
+        for element in self._elements:
+            text_len = len(element.text)
+            # -- skip empty elements like `PageBreak("")` --
+            if not text_len:
+                continue
+            # -- account for blank line between "squashed" elements, but not before first element --
+            running_text_len += len(TEXT_SEPARATOR) if running_text_len else 0
+            start_offset = running_text_len
+            running_text_len += text_len
+
+            if not element.metadata.regex_metadata:
+                continue
+
+            # -- consolidate any `regex_metadata` matches, adjusting the match start/end offsets --
+            element_regex_metadata = copy.deepcopy(element.metadata.regex_metadata)
+            for regex_name, matches in element_regex_metadata.items():
+                for m in matches:
+                    m["start"] += start_offset
+                    m["end"] += start_offset
+                chunk_matches = chunk_regex_metadata.get(regex_name, [])
+                chunk_matches.extend(matches)
+                chunk_regex_metadata[regex_name] = chunk_matches
+
+        return chunk_regex_metadata
+
+    @lazyproperty
+    def _meta_kwargs(self) -> Dict[str, Any]:
+        """The consolidated metadata values as a dict suitable for constructing ElementMetadata.
+
+        This is where consolidation strategies are actually applied. The output is suitable for use
+        in constructing an `ElementMetadata` object like `ElementMetadata(**self._meta_kwargs)`.
+        """
+        CS = ConsolidationStrategy
+        field_consolidation_strategies = ConsolidationStrategy.field_consolidation_strategies()
+
+        def iter_kwarg_pairs() -> Iterator[Tuple[str, Any]]:
+            """Generate (field-name, value) pairs for each field in consolidated metadata."""
+            for field_name, values in self._all_metadata_values.items():
+                strategy = field_consolidation_strategies.get(field_name)
+                if strategy is CS.FIRST:
+                    yield field_name, values[0]
+                # -- concatenate lists from each element that had one, in order --
+                elif strategy is CS.LIST_CONCATENATE:
+                    yield field_name, sum(values, cast(List[Any], []))
+                # -- union lists from each element, preserving order of appearance --
+                elif strategy is CS.LIST_UNIQUE:
+                    # -- Python 3.7+ maintains dict insertion order --
+                    ordered_unique_keys = {key: None for val_list in values for key in val_list}
+                    yield field_name, list(ordered_unique_keys.keys())
+                elif strategy is CS.REGEX:
+                    yield field_name, self._consolidated_regex_meta
+                elif strategy is CS.DROP:
+                    continue
+                else:
+                    # -- not likely to hit this since we have a test in `text_elements.py` that
+                    # -- ensures every ElementMetadata fields has an assigned strategy.
+                    raise NotImplementedError(
+                        f"metadata field {repr(field_name)} has no defined consolidation strategy"
+                    )
+
+        return dict(iter_kwarg_pairs())
 
 
 class _TextSectionBuilder:
@@ -426,20 +521,20 @@ class _TextSectionBuilder:
     def __init__(self, maxlen: int) -> None:
         self._maxlen = maxlen
         self._separator_len = len(TEXT_SEPARATOR)
-        self._elements: List[Element] = []
+        self._elements: List[Text] = []
 
-        # == these working values probably represent premature optimization but improve performance
-        # -- and I expect will be welcome when processing a million elements
+        # -- these mutable working values probably represent premature optimization but improve
+        # -- performance and I expect will be welcome when processing a million elements
 
         # -- only includes non-empty element text, e.g. PageBreak.text=="" is not included --
         self._text_segments: List[str] = []
         # -- combined length of text-segments, not including separators --
         self._text_len: int = 0
 
-    def add_element(self, element: Element) -> None:
+    def add_element(self, element: Text) -> None:
         """Add `element` to this section."""
         self._elements.append(element)
-        if isinstance(element, Text) and element.text:
+        if element.text:
             self._text_segments.append(element.text)
             self._text_len += len(element.text)
 

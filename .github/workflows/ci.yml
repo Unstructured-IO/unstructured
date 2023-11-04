@@ -313,7 +313,6 @@ jobs:
 
 
   test_ingest_src:
-    environment: ci
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
@@ -401,7 +400,6 @@ jobs:
 
 
   test_ingest_dest:
-    environment: ci
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
@@ -418,7 +416,6 @@ jobs:
         workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
         service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
         create_credentials_file: true
-        activate_credentials_file: true
     - name: 'Set up Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v1'
     - name: 'Az CLI login'

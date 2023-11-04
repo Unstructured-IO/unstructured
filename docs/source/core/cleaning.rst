@@ -6,11 +6,11 @@ Cleaning
 
 As part of data preparation for an NLP model, it's common to need to clean up your data prior to passing it into the model.
 If there's unwanted content in your output, for example, it could impact the quality of your NLP model.
-To help with this, the ``unstructured`` library includes cleaning bricks to help users sanitize output before sending it to downstream applications.
+To help with this, the ``unstructured`` library includes cleaning functions to help users sanitize output before sending it to downstream applications.
 
 
-Some cleaning bricks apply automatically.
-In the example in the **Partition** section, the output ``Philadelphia Eaglesâ\x80\x99 victory`` automatically gets converted to ``Philadelphia Eagles' victory`` in ``partition_html`` using the ``replace_unicode_quotes`` cleaning brick.
+Some cleaning functions apply automatically.
+In the example in the **Partition** section, the output ``Philadelphia Eaglesâ\x80\x99 victory`` automatically gets converted to ``Philadelphia Eagles' victory`` in ``partition_html`` using the ``replace_unicode_quotes`` cleaning function.
 You can see how that works in the code snippet below:
 
 .. code:: python
@@ -23,7 +23,7 @@ You can see how that works in the code snippet below:
 
 Document elements in ``unstructured`` include an ``apply`` method that allow you to apply the text cleaning to the document element without instantiating a new element.
 The ``apply`` method expects a callable that takes a string as input and produces another string as output.
-In the example below, we invoke the ``replace_unicode_quotes`` cleaning brick using the ``apply`` method.
+In the example below, we invoke the ``replace_unicode_quotes`` cleaning function using the ``apply`` method.
 
 
 .. code:: python
@@ -35,7 +35,7 @@ In the example below, we invoke the ``replace_unicode_quotes`` cleaning brick us
   print(element)
 
 
-Since a cleaning brick is just a ``str -> str`` function, users can also easily include their own cleaning bricks for custom data preparation tasks.
+Since a cleaning function is just a ``str -> str`` function, users can also easily include their own cleaning functions for custom data preparation tasks.
 In the example below, we remove citations from a section of text.
 
 
@@ -50,7 +50,7 @@ In the example below, we remove citations from a section of text.
   print(element)
 
 
-See below for a full list of cleaning bricks in the ``unstructured`` library.
+See below for a full list of cleaning functions in the ``unstructured`` library.
 
 
 ``bytes_string_to_string``
@@ -82,7 +82,7 @@ Examples:
   # The output should be "Hello 😀"
   elements[0].text
 
-For more information about the ``bytes_string_to_string`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``bytes_string_to_string`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``clean``
@@ -112,7 +112,7 @@ Examples:
   # Returns "ITEM 1A: RISK FACTORS"
   clean("ITEM 1A:     RISK-FACTORS", extra_whitespace=True, dashes=True)
 
-For more information about the ``clean`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``clean`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``clean_bullets``
@@ -133,7 +133,7 @@ Examples:
   # Returns "I love Morse Code! ●●●"
   clean_bullets("I love Morse Code! ●●●")
 
-For more information about the ``clean_bullets`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``clean_bullets`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``clean_dashes``
@@ -151,7 +151,7 @@ Examples:
   # Returns "ITEM 1A: RISK FACTORS"
   clean_dashes("ITEM 1A: RISK-FACTORS\u2013")
 
-For more information about the ``clean_dashes`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``clean_dashes`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``clean_extra_whitespace``
@@ -169,7 +169,7 @@ Examples:
   # Returns "ITEM 1A: RISK FACTORS"
   clean_extra_whitespace("ITEM 1A:     RISK FACTORS\n")
 
-For more information about the ``clean_extra_whitespace`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``clean_extra_whitespace`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``clean_non_ascii_chars``
@@ -188,7 +188,7 @@ Examples:
   # Returns "This text containsnon-ascii characters!"
   clean_non_ascii_chars(text)
 
-For more information about the ``clean_non_ascii_chars`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``clean_non_ascii_chars`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``clean_ordered_bullets``
@@ -208,7 +208,7 @@ Examples:
   # Returns "This is a very important point ●"
   clean_bullets("a.b This is a very important point ●")
 
-For more information about the ``clean_ordered_bullets`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``clean_ordered_bullets`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``clean_postfix``
@@ -233,7 +233,7 @@ Examples:
   # Returns "The end!"
   clean_postfix(text, r"(END|STOP)", ignore_case=True)
 
-For more information about the ``clean_postfix`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``clean_postfix`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``clean_prefix``
@@ -258,7 +258,7 @@ Examples:
   # Returns "This is the best summary of all time!"
   clean_prefix(text, r"(SUMMARY|DESCRIPTION):", ignore_case=True)
 
-For more information about the ``clean_prefix`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``clean_prefix`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``clean_trailing_punctuation``
@@ -275,7 +275,7 @@ Examples:
   # Returns "ITEM 1A: RISK FACTORS"
   clean_trailing_punctuation("ITEM 1A: RISK FACTORS.")
 
-For more information about the ``clean_trailing_punctuation`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``clean_trailing_punctuation`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``group_broken_paragraphs``
@@ -320,7 +320,7 @@ Examples:
 
   group_broken_paragraphs(text, paragraph_split=para_split_re)
 
-For more information about the ``group_broken_paragraphs`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``group_broken_paragraphs`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``remove_punctuation``
@@ -337,7 +337,7 @@ Examples:
   # Returns "A lovely quote"
   remove_punctuation("“A lovely quote!”")
 
-For more information about the ``remove_punctuation`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
+For more information about the ``remove_punctuation`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`_.
 
 
 ``replace_unicode_quotes``
@@ -357,13 +357,13 @@ Examples:
   # Returns ""‘A lovely quote!’"
   replace_unicode_characters("\x91A lovely quote!\x92")
 
-For more information about the ``replace_unicode_quotes`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`__.
+For more information about the ``replace_unicode_quotes`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/core.py>`__.
 
 
 ``translate_text``
 ------------------
 
-The ``translate_text`` cleaning bricks translates text between languages. ``translate_text``
+The ``translate_text`` cleaning functions translates text between languages. ``translate_text``
 uses the `Helsinki NLP MT models <https://huggingface.co/Helsinki-NLP>`_ from
 ``transformers`` for machine translation. Works for Russian, Chinese, Arabic, and many
 other languages.
@@ -390,4 +390,4 @@ Examples:
   # Output is "I can also translate Russian!"
   translate_text("Я тоже можно переводать русский язык!", "ru", "en")
 
-For more information about the ``translate_text`` brick, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/translate.py>`__.
+For more information about the ``translate_text`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/translate.py>`__.
