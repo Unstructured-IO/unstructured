@@ -2,6 +2,7 @@ import json
 import typing as t
 from dataclasses import dataclass
 
+from unstructured.ingest.error import DestinationConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
@@ -30,15 +31,12 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleWeaviateConfig
 
     @requires_dependencies(["weaviate"], extras="weaviate")
+    @DestinationConnectionError.wrap
     def initialize(self):
         from weaviate import Client
 
         auth = self._resolve_auth_method()
-
-        self.client: Client = Client(
-            url=self.connector_config.host_url,
-            auth_client_secret=auth,
-        )
+        self.client: Client = Client(url=self.connector_config.host_url, auth_client_secret=auth)
 
     def _resolve_auth_method(self):
         if self.connector_config.auth_keys is None:
@@ -113,12 +111,8 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
                     vector=e.get("embeddings"),
                 )
                 created.append(created_id)
-            if len(created) < len(json_list):
-                raise ValueError(
-                    f"Missed {len(json_list)- len(created)} elements.",
-                )
 
-            logger.info(f"Wrote {len(created)}/{len(json_list)} elements.")
+            logger.info(f"Wrote {len(created)} elements.")
 
     @requires_dependencies(["weaviate"], extras="weaviate")
     def write(self, docs: t.List[BaseIngestDoc]) -> None:

@@ -1,4 +1,4 @@
-## 0.10.29-dev12
+## 0.10.29-dev13
 
 ### Enhancements
 
@@ -11,6 +11,7 @@
 ### Features
 
 * **Allow setting table crop parameter** In certain circumstances, adjusting the table crop padding may improve table.
+* **Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
 
 ### Fixes
 

@@ -26,10 +26,19 @@ class WeaviateCliConfig(CliConfig):
                 ["--class-name"],
                 default=None,
                 type=str,
-                help="Target class collection name",
+                help="Name of the class to push the records into, e.g: Pdf-elements",
             ),
             click.Option(
-                ["--auth-keys"], required=False, type=Dict(), help="Key,value pairs representing"
+                ["--auth-keys"],
+                required=False,
+                type=Dict(),
+                help=(
+                    "String representing a JSON-like dict with key,value containing "
+                    "the required parameters to create an authentication object. "
+                    "The connector resolves the type of authentication object based on the parameters. "
+                    "See https://weaviate.io/developers/weaviate/client-libraries/python_v3#api-key-authentication "
+                    "for more information."
+                ),
             ),
         ]
         return options
@@ -46,7 +55,7 @@ class WeaviateCliWriteConfig(CliConfig):
                 ["--batch-size"],
                 default=100,
                 type=int,
-                help="Batch insert size",
+                help="Number of records per batch",
             )
         ]
         return options

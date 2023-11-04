@@ -193,7 +193,7 @@ install-ingest-sharepoint:
 
 .PHONY: install-ingest-weaviate
 install-ingest-weaviate:
-	python3 -m pip install -r requirements/ingest/ingest-weaviate.txt
+	python3 -m pip install -r requirements/ingest/weaviate.txt
 
 .PHONY: install-ingest-local
 install-ingest-local:

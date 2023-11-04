@@ -25,9 +25,6 @@ from unstructured.ingest.interfaces import (
 class Dict(click.ParamType):
     name = "dict"
 
-    def __init__(self, choices: t.Optional[t.List[str]] = None):
-        self.choices = choices if choices else []
-
     def convert(
         self,
         value: t.Any,
@@ -36,7 +33,6 @@ class Dict(click.ParamType):
     ) -> t.Any:
         try:
             return json.loads(value)
-
         except json.JSONDecodeError:
             self.fail(
                 gettext(
