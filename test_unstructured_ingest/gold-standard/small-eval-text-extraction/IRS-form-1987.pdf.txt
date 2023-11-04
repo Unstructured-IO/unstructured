@@ -1,0 +1,156 @@
+Department of the Treasury 
+Internal Revenue Service
+Instructions for Form 3115
+(Rev. November 1987) Application for Change in Accounting Method
+(Section references are to the Internal Revenue Code unless otherwise noted.)
+
+
+Paperwork Reduction Act Notice
+
+We ask for this information to carry out the Internal Revenue laws of the United States. We. need i to ensure that taxpayers are complying. with these laws and to allow us to figure and collect the right amount of tax. You are required toge us this mformation
+
+General Instructions
+
+Purpose of Form File this form to request a change n your accounting method, Including the accounting freatment of any tem. I you re requesting 3 change n accounting period, use Form 1128, Application for Change n Accounting Pericd. For more mformation, see Publication 338, Accounting Periods and Methods.
+
+Vinen fiing Form 3115, taxpayers are reminded fo Getermine fIRS has published a ruling o procedure dealing with the specfic type of change since November 1987 (the current revsion date of Form 3115).
+
+Generally, applicants must complete Section A inaddition, complete the spproprate sections (81 thraugh H) for which a change 1 cesred.
+
+You must give allrelevant facts,including a detailed description of your present and proposed methods. You must also state the reason(s) you believe approval to make the requested change should be granted. Attach additional poges | more space s needed for explanations. Each page should shaw your narme. address, and dentitying numoer
+
+State wnether you desire a conference in the National Offce i the Service proposes o disapprove your application.
+
+
+
+Changes to Accounting Methods Required Under the Tax Reform Act of 1986
+
+Uniform capitalization rules and limitation on ‘cash method. —If you are required to change your method of accounting under section 2638 {relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (lmiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (*Act”), the change Is treated as initiated by the taspayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) inta account will not exceed 4 years. (Hospitals requrred to change from the cash method under section 448 have 10 years to take the adjustrments into account.) Complete Section A and the. appropriate sections (8+1 or C and D) for which the change is required.
+
+Disregard the instructions under Time and Place for Filing and Late Applications. Instead, attach Form 3115 to your imcome tax return for the year of change: do not file separately. Also include on a separate statement accompanying the Form 3115 the periad over which the section 481(2) adjustment wil be taken into account and the basis for that conclusion. Identiy the automatic change being made at the top of page 1of Form 3115 {e.g,, "Automatic Change to Accrual Method—Section 448"). See Temporary Regulatons sectons | 2634 [T and 144811 for additional nformation
+
+
+
+Long-term contracts.—If you are required to change your method of accounting for long term contracts under section 460, see Notice 87-61 (9/21/87). 1987-38 IR8 40, for the notfication procedures that must be followed.
+
+Other methods.—Unless the Service has published a regulation or procedure tothe Contrary. all other changes i accounting methods required by the Act are automatically considered to be approved by the Commssioner. Examples of method changes automatically approved by the Commissioner are those changes Tequred to ffect: 1) the repeal of the reserve method for bad debts of taxpayers other than financial nstitutions (Act section 805); (2) the repeal of the istallment method for sales under a revaluing credit plan (Act section 812): (3) the inclusion of Income attributabie to the sale or furnishing of utiity services o ater than the year inwhich the services were provided to customers (Act section 821):and (4) the repeal of the Geduction for uaified discount coupons (Act Section 823). Do not file Form 3115 for these Changes.
+
+
+
+
+Time and Place for Filing
+
+Generally, applicants must file this form within the first 180 days of the tax year In whichitis Gesired to make the change.
+
+Taxpayers, other than exemat organizations, should file Form 3115 with the Commissioner of Internal Revenve, Attention: CC-C:4, 1111 Constitution Averiue, NW, Washingtdn, DC 20224, Exempt organizations should fle with the Assistant Commissioner (Employee Plans and Exempt Organizations), 1111 Constitution Avenve, NW, Washington, DC 20224.
+
+You should normally receive an ‘acknowledgment of receipt of your application within 30 days. If you Go not hear from IRS within 30 days of submitting your compieted Form 3115, you may inquire as to the receipt of your application by writing to: Control Clerk, CC:C:4, Internal Revenue Service, Room 5040, 1111 Constitution Avende, NW, Washington, OC. 20226
+
+See section 5.03 of Rev. Proc. 84.74 for fiing an early application Note: i ths form is being filed in accordance with Rev. Proc. 74.11, see Section G below.
+
+Late Applications 1f your agpiication i filed after the 180-day period, it late. The application wil be ‘considered for processing only upon a showing of ‘000 cause” and if t can be shown to the. satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's mterests. For further information, see Rev. Proc. 79.63
+
+Identifying Number Individuals.—An inivicual should enter s or her Socialsecurity number n this biack. Ifthe appication s made on benalf of 8 hsband and Wie who fle ther income ta refurn oy, enter the social secury numbers o both
+
+Others.——The employer identificaton number of an applicant other than an indigual should be Enered m this block
+
+
+
+Signature Individuals.—An individual desirng the change should sign the appication. I the appication Dertains .2 Nusband and wife 1inga aint Income tax eturn. the names of both should appear i the heading and both should S gn Partnerships.—The form should be signed with the partnership name folowed by the sgnature of e of the general pariners and the words General Pariner. Corporations, cooperatives, and insurance companies.—The form shotid $how the name of the corporation, cooperative, o nsurance company and the signature of the president, vice presidert, treasurer: asistant ressurer,of hiel accounting officer (such as tax officer) authorized foign, and s or er ol e, Recanvers, trustess,or asaignees mustsign any appication they ara requred o 6. For 2 subsidary corporation fiing a consaiidated return with ts parent, e formsnould be signed by an officerof e parent corporation Fiduclaries.—The-form should show the name. ofthe estate or st and be signed by the fidutiary,personalrepresentative, execuior, executrx, admimistrator. administratr, etc Raving legalauthoriy to Sgn. and his o her fite Preparer other than partner, offcer, etc.—The ignature o the ncividualpreparing the appiication should appear i the space provided on'pages
+
+if the individual or firm s also authorized to reprosent the applicant before the IRS, receive 2 copy of the requested ruling, or perform any’ other act(s), the power of attorney must reflect such authorization(s).
+
+
+Affiliated Groups Taxpayers that are members of an affiiated group fling 2 consolidated return that seeks to change to the same accounting method for more. than one member of the group must file a separate Form 3115 for each such member.
+
+Specific Instructions Section A
+
+Item 5a, page 1.—*Taxable income or (1oss) from operations-is to be entered before application of any net operating loss deduction under section 172(a).
+
+Hem 6, page 2.—Te term “gross receipts” includes total sales (net of returns and allowances) and all amounts received for services. n addition, gross receipts include any income from investments and from incidental or outside sources (e.g.. nterest, dividends, rents, royalties, and annuities). However, if you are 2 resaler of personal property, exclude from gross receipts any amounts not dérived in the ordinary course of a trade or business, Gross receipts do ot Include amounts received for sales taxes if, under the applicable state or local law, the tax s legally imposed on the purchaser of the good or service, and the taxpayer merely collects and remits he tax o the taxing authorty
+
+Item 7b, page 2.—if item 7015 "Yes," indicate on a separate sheet the following for éach separate trade or business: Nature of business
+
+(manufacturing, retailer, wholesaler, etc.), employer identification number, overall methad of accounting, and wnether, in the last 6 years, that business has changed its accounting method, or i also changing its accounting method as part of this request or as 2 separate request.
+
+Item 11, page 2.—If you cannot provide the requested nformation. you mey sign a statement under penalties of perjury that.
+
+(1) Gives your best estimate of the percentage of the section 4B1(a) adjustment that would have been required f the requested change had been made for each of the 3 preceding years; and
+
+(2) Explains in detail why you cannot provide the requested information.
+
+See section 5.06(2) of Rev. Proc. 84.74 for the required perury statement that must be attached
+
+1 IRS later examines your return for the year of the change or for later years, it has the night to verify your statement at that time.
+
+Item 13, page 2.—Insert the actual number of taxyears. Use of the term "since inception” 1s not acceptable. However, “more than 6 years” is acceptable.
+
+Section B-1
+
+Item Lb, page 2.—include any amounts reported as income i a prior year although the income had not been accrued (earned) or eceived n the prior year, for example, discount on installment loans reported as income for the year in which the loans were made instead of for the year or years in which the income was received or earned. Advance payments under Reu_ Proc. 71-21 or Regulations section 1.451.5 must be fully explained and all pertinent information must be subrmitted with this application
+
+Sections B-2 and B-3
+
+Limitation on the Use of the Cash Method of Accounting. —Except as provided below, C corporations, partnerships with a C corporation a5 partner, and tax shelters may not use the cash method of accounting For purposes of this fimiation, a trust subject {0 the tax on unrelated business income under section 511 treated as 2 C corporation with respect o ts unrelated trade or business activitis.
+
+The limitation on the use of the cash method (except for tax shelters) does not apply to—
+
+(1) Farming businesses —For this purpose, the term “farming business" i defined i section 263A(e)(). but it also includes the rasing, harvesting, or growing of rees to which section 263A(C)(S) appies. Notwithstanding this ‘exception. section 447 requires certain C. corporations and partnerships with a C Corporation as a partner to use the accrual method
+
+(2) Qualified personal service corporations. — A“qualified personal service corporation 15 any corporation: (a) substantially allof the activities of which involve the performance of services in the fields of health, aw, engineering, architecture, accounting, actuanial science, performing arts, or consulting, anc (b)
+
+substantially allof the stock of which is owned by employees performing the services, retired employees who had performed the services, any estate of any Individual who had performed the services listed above, or any person who acquired stock of the corporation as a result of the death of an employee or retiree described above I the acauisition occurred within 2 years of death
+
+(3) Entities with gross receipts of $5,000,000 or ess —To quallfy or this exception, the C corporation’s or partnership's annual average gross receipts for the three years ending with the prior tax year may not exceed $5,000,000. Ifthe corporation or partnership was ot in existence for the entire 3-year period, the period of existenice s used to determine whether the corparation or partnership gualifes.If any tax year in the 3-year pertod 5 a shorttax year, the Corporation or partnership must annualize the. g705s receipts by muliplying the gross receipts by 12 an0 awicing the result by the number of months n the short period.
+
+For more information, see section 448 and Temparary Regulations Section 1.448-17.
+
+
+Section C
+
+Applicants must gve complete details about the present method of valuing inventary and the proposed method. State whether il or part of your mventory s involved n the chanige
+
+Inventones of retail merchants.—The retail method of pricing inventories does not contemplate valuation of goods at the retail selling price. The retail seling arice of goods on hand must be reduced to approxmate cost or cost or market, whichever i lower, by the adjustments required n Regulations section 14718
+
+LIFO inventory changes. —Attach a schedule with all the required computations when changing the method of figuring LIFO nventories If you are changing from LIFO to a ron-LIFO method, attach a schedule with the following. additional mformation:
+
+(1) Tne specific types and classes of goods 1n the LIFO inventories involved in the proposed changes and the comparative value of such Inventories as of the end of the tax year preceding the year of change determined by. () the LIFO method, and (b) the proposed method and basis (such as FIFO cost or lower of cost or market).
+
+(2) State whether the proposed dentification and valuation methods conform to the iventory method currently used with respect to non-LIFO inventories,if any. or how such method s otherwise consistent with Regulations section 14726,
+
+(3) The termination event statement required by Section 510 0f Rev. Proc. 8474 and an explanation f there has been a termnation event,
+
+Section D
+
+Applicants requesting to change therr metiod of valuing property produced, property acquired for resale, or long{erm contracts under section 263 or 460 MUST complete section D showing. he treatment under both the present and proposed methods
+
+
+
+Section E
+
+Section 460(1) provides that the term *long-term contract” means any contract for the. manufacturing, building, instalatian, or construction of property that s not completed within the tax year in which it s entered into. Hawever, 2 manufacturing contract wil not qualify a3 along-term contract uniess the Contract involves the manufacture of: (1) a unique item ot normally included n your finished goods inventory. or (2) any item that normally requires more than 12 calendar months. tocomplete.
+
+Alllongterm contracts entered nto after February 28, 1986, except for real proerty construction contracts expected to be completed within 2 years by contractors whose average annual gross recerpts for the 3 prior tax years do not exceed $10,000,000, must be accounted for using etner the percentage of completion-capitalzed cost method o the percentage of completion method. See section 460.
+
+‘Caution: At the time these instructions were printed, Congress was considering legislation that wouid repeal the use of the percentage of completion-capitalized cost method for certain fong-term contracts.
+
+
+
+Section G
+
+This section 1s o be used only to request a change n a method of accounting for deprecation under section 167.
+
+Rev. Proc. 74-11 provdes 3 procedure whereby applicans are considered to have. obtained the consent of the Commissioner to change therr method of accounting for depreciation. You must file Form 3115 with the Service Center where your return will be filed within the fist 180 days of the tax year in which it desired to make the change. Attach.a copy of the form to the income tax return for the tax year of the change.
+
+Note: Do not use Form 3115 fo make an election under section 168, Such an election may be ‘made only on the tax return for the year n which the property is placed in service. n addition, Form 31151 not to be used to request approval 10 revoke an election made under section 168, Such a request must be made i accordance with Rev. Proc. 87-1 (updated annually).
+
+Section H
+
+Generally, this section should be used for requesting changes 1n a method of accounting for ‘which provsion has not been made elsewhere on this form. Attach additional pages if more space 15 needed for a full explanation of the present method used and the proposed change requested
+
+if you are making an election under section 458, show the appiicable information under Regulations section 145810
+
+# US. Goremment Printing Office: 1987-201-993/50188.
+
+Page 2
+

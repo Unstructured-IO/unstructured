@@ -1,0 +1,205 @@
+[
+    {
+        "type": "Title",
+        "element_id": "",
+        "metadata": {
+            "filename": "science-exploration-1p.pptx",
+            "file_directory": "example-docs",
+            "last_modified": "2023-07-11T13:22:57",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "GSFC: Sciences and Exploration Directorate Virtual Machine Environment Scorecard"
+    },
+    {
+        "type": "ListItem",
+        "element_id": "",
+        "metadata": {
+            "filename": "science-exploration-1p.pptx",
+            "file_directory": "example-docs",
+            "last_modified": "2023-07-11T13:22:57",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "7cf7093dc3fec7fa3f7045666578e75a",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "Code 600: Sciences and Exploration Directorate (SED)"
+    },
+    {
+        "type": "ListItem",
+        "element_id": "",
+        "metadata": {
+            "filename": "science-exploration-1p.pptx",
+            "file_directory": "example-docs",
+            "last_modified": "2023-07-11T13:22:57",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "7cf7093dc3fec7fa3f7045666578e75a",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "Code 610: Earth Sciences Division"
+    },
+    {
+        "type": "ListItem",
+        "element_id": "",
+        "metadata": {
+            "filename": "science-exploration-1p.pptx",
+            "file_directory": "example-docs",
+            "last_modified": "2023-07-11T13:22:57",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "7cf7093dc3fec7fa3f7045666578e75a",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "Code 660: Astrophysics Science Division"
+    },
+    {
+        "type": "ListItem",
+        "element_id": "",
+        "metadata": {
+            "filename": "science-exploration-1p.pptx",
+            "file_directory": "example-docs",
+            "last_modified": "2023-07-11T13:22:57",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "7cf7093dc3fec7fa3f7045666578e75a",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "Code 670: Heliophysics Science Division"
+    },
+    {
+        "type": "ListItem",
+        "element_id": "",
+        "metadata": {
+            "filename": "science-exploration-1p.pptx",
+            "file_directory": "example-docs",
+            "last_modified": "2023-07-11T13:22:57",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "7cf7093dc3fec7fa3f7045666578e75a",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "Code 690: Solar System Exploration Division"
+    },
+    {
+        "type": "ListItem",
+        "element_id": "",
+        "metadata": {
+            "filename": "science-exploration-1p.pptx",
+            "file_directory": "example-docs",
+            "last_modified": "2023-07-11T13:22:57",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "7cf7093dc3fec7fa3f7045666578e75a",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "Support offices"
+    },
+    {
+        "type": "ListItem",
+        "element_id": "",
+        "metadata": {
+            "filename": "science-exploration-1p.pptx",
+            "file_directory": "example-docs",
+            "last_modified": "2023-07-11T13:22:57",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "4875cf409fe04ada73cef724f8ed3840",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "Code 603: Administration and Resources Management Office"
+    },
+    {
+        "type": "ListItem",
+        "element_id": "",
+        "metadata": {
+            "filename": "science-exploration-1p.pptx",
+            "file_directory": "example-docs",
+            "last_modified": "2023-07-11T13:22:57",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "4875cf409fe04ada73cef724f8ed3840",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "Code 605: Science Proposal Support Office"
+    },
+    {
+        "type": "ListItem",
+        "element_id": "",
+        "metadata": {
+            "filename": "science-exploration-1p.pptx",
+            "file_directory": "example-docs",
+            "last_modified": "2023-07-11T13:22:57",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "4875cf409fe04ada73cef724f8ed3840",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "Code 606: Computational and Information Sciences and Technology Office  ( The SEDVME project is managed out of 606)."
+    },
+    {
+        "type": "ListItem",
+        "element_id": "",
+        "metadata": {
+            "filename": "science-exploration-1p.pptx",
+            "file_directory": "example-docs",
+            "last_modified": "2023-07-11T13:22:57",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "7cf7093dc3fec7fa3f7045666578e75a",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "Code 700: Information Technology and Communication Directorate"
+    },
+    {
+        "type": "ListItem",
+        "element_id": "",
+        "metadata": {
+            "filename": "science-exploration-1p.pptx",
+            "file_directory": "example-docs",
+            "last_modified": "2023-07-11T13:22:57",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "3dbd91c87d3e2850a7cb31251c4a1b21",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "Project management help, CNE, Zoned Architecture, IT Security,  Production SEDVME Service Manager"
+    }
+]
