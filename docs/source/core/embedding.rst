@@ -47,7 +47,7 @@ To obtain an api key, visit: https://platform.openai.com/account/api-keys
 
     # Initialize the encoder with OpenAI credentials
     embedding_encoder = OpenAIEmbeddingEncoder(api_key=os.environ["OPENAI_API_KEY"])
-    
+
     # Embed a list of Elements
     elements = embedding_encoder.embed_documents(
         elements=[Text("This is sentence 1"), Text("This is sentence 2")],
@@ -63,7 +63,7 @@ To obtain an api key, visit: https://platform.openai.com/account/api-keys
     print(embedding_encoder.is_unit_vector(), embedding_encoder.num_of_dimensions())
 
 ``HuggingFaceEmbeddingEncoder``
---------------------------
+---------------------------------
 
 The ``HuggingFaceEmbeddingEncoder`` class uses langchain HuggingFace integration under the hood
 to obtain embeddings for pieces of text using a local model.
@@ -86,7 +86,7 @@ the embedding vector for the query string, and some metadata properties about th
 
 
 ``BedrockEmbeddingEncoder``
---------------------------
+-----------------------------
 
 The ``BedrockEmbeddingEncoder`` class provides an interface to obtain embeddings for text using the Bedrock embeddings via the langchain integration. It connects to the Bedrock Runtime using AWS's boto3 package.
 
@@ -105,37 +105,18 @@ To create an instance of the `BedrockEmbeddingEncoder`, AWS credentials and the 
 
 .. code:: python
 
-    import os
-
     from unstructured.documents.elements import Text
-<<<<<<< HEAD
-    from unstructured.embed.huggingface import HuggingFaceEmbeddingEncoder
-
-    embedding_encoder = HuggingFaceEmbeddingEncoder()
-    elements = embedding_encoder.embed_documents(
-        elements=[Text("This is sentence 1"), Text("This is sentence 2")],
-    )
-
-    query = "This is the query"
-    query_embedding = embedding_encoder.embed_query(query=query)
-
-    [print(e.embeddings, e) for e in elements]
-    print(query_embedding, query)
-    print(embedding_encoder.is_unit_vector(), embedding_encoder.num_of_dimensions())
-=======
     from unstructured.embed.bedrock import BedrockEmbeddingEncoder
 
     # Initialize the encoder with AWS credentials
     embedding_encoder = BedrockEmbeddingEncoder(
         aws_access_key_id="YOUR_AWS_ACCESS_KEY_ID",
         aws_secret_access_key="YOUR_AWS_SECRET_ACCESS_KEY",
-        region_name="us-west-2"
+        region_name="us-west-2",
     )
 
     # Embed a list of Elements
-    elements = embedding_encoder.embed_documents(
-        elements=[Text("Sentence A"), Text("Sentence B")]
-    )
+    elements = embedding_encoder.embed_documents(elements=[Text("Sentence A"), Text("Sentence B")])
 
     # Embed a single query string
     query = "Example query"
@@ -149,4 +130,3 @@ To create an instance of the `BedrockEmbeddingEncoder`, AWS credentials and the 
 
 Dependencies:
 This class relies on several dependencies which include boto3, numpy, and langchain. Ensure these are installed and available in the environment where this class is utilized.
->>>>>>> a0b44f72319b3c42807c1a7556e2a7533a5f502f

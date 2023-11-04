@@ -22,7 +22,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.nlp.patterns import PARAGRAPH_PATTERN
+from unstructured.nlp.patterns import PARAGRAPH_PATTERN, UNICODE_BULLETS_RE
 from unstructured.nlp.tokenize import sent_tokenize
 from unstructured.partition.common import (
     exactly_one,
@@ -186,7 +186,7 @@ def _partition_text(
     for ctext in file_content:
         ctext = ctext.strip()
 
-        if ctext:
+        if ctext and not is_empty_bullet(ctext):
             element = element_from_text(ctext)
             element.metadata = copy.deepcopy(metadata)
             elements.append(element)
@@ -201,14 +201,20 @@ def _partition_text(
     return elements
 
 
+def is_empty_bullet(text: str) -> bool:
+    """Checks if input text is an empty bullet."""
+    return UNICODE_BULLETS_RE.match(text) and len(text) == 1
+
+
 def element_from_text(
     text: str,
     coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
 ) -> Element:
     if is_bulleted_text(text):
+        clean_text = clean_bullets(text)
         return ListItem(
-            text=clean_bullets(text),
+            text=clean_text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )

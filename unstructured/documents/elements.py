@@ -224,6 +224,8 @@ class ElementMetadata:
             self.filename = filename
 
     def to_dict(self):
+        if not self.links:
+            self.links = None
         _dict = {
             key: value
             for key, value in self.__dict__.items()
