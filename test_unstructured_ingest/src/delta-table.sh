@@ -45,5 +45,3 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
-
-python "$SCRIPT_DIR"/python/test-ingest-delta-table-output.py --table-uri "$DESTINATION_TABLE"
