@@ -9,15 +9,18 @@ OUTPUT_FOLDER_NAME=chroma-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
-DESTINATION_TABLE=$SCRIPT_DIR/chroma-dest
+DESTINATION_CLIENT=$SCRIPT_DIR/chroma-dest
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
-CI=${CI:-"false"}
+CI=${CI:-"false"}o
+
+# FIX THIS!!!
+COLLECTION_NAME="chroma-test-output-$(date +%s)"
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
-  cleanup_dir "$DESTINATION_TABLE"
+  cleanup_dir "$DESTINATION_CLIENT"
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
   if [ "$CI" == "true" ]; then
@@ -39,7 +42,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --chunk-elements \
     --chunk-multipage-sections \
     --embedding-api-key "$OPENAI_API_KEY" \
-    # chroma \
-    # --table-uri "$DESTINATION_TABLE"
+    chroma \
+    --client "$DESTINATION_CLIENT" \
+    --collection-name "$COLLECTION_NAME"
 
 python "$SCRIPT_DIR"/python/test-ingest-chroma-output.py --table-uri "$DESTINATION_TABLE"

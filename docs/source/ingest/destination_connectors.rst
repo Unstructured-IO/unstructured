@@ -10,3 +10,4 @@ in our community `Slack. <https://join.slack.com/t/unstructuredw-kbe4326/shared_
 
    destination_connectors/delta_table
    destination_connectors/azure_cognitive_search
+   destination_connectors/chroma

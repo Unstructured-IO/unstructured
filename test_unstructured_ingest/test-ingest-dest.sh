@@ -12,6 +12,7 @@ all_tests=(
   'azure.sh'
   'azure-cognitive-search.sh'
   'box.sh'
+  'chroma.sh'
   'delta-table.sh'
   'dropbox.sh'
   'gcs.sh'
