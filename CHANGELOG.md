@@ -1,27 +1,271 @@
-## 0.10.17-dev8
+## 0.10.29-dev14
 
 ### Enhancements
 
-* **Adds data source properties to SharePoint, Outlook, Onedrive, Reddit, and Slack connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
-* **Add functionality to save embedded images in PDF's separately as images** This allows users to save embedded images in PDF's separately as images, given some directory path. The saved image path is written to the metadata for the Image element. Downstream applications may benefit by providing users with image links from relevant "hits."
-* **Azure Cognite Search destination connector** New Azure Cognitive Search destination connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to an Azure Cognitive Search index.
-* **Improves salesforce partitioning** Partitions Salesforce data as xlm instead of text for improved detail and flexibility. Partitions htmlbody instead of textbody for Salesforce emails. Importance: Allows all Salesforce fields to be ingested and gives Salesforce emails more detailed partitioning.
+* **Add include_header argument for partition_csv and partition_tsv** Now supports retaining header rows in CSV and TSV documents element partitioning.
+* **Add retry logic for all source connectors** All http calls being made by the ingest source connectors have been isolated and wrapped by the `SourceConnectionNetworkError` custom error, which triggers the retry logic, if enabled, in the ingest pipeline.
+* **Google Drive source connector supports credentials from memory** Originally, the connector expected a filepath to pull the credentials from when creating the client. This was expanded to support passing that information from memory as a dict if access to the file system might not be available.
+* **Add support for generic partition configs in ingest cli** Along with the explicit partition options supported by the cli, an `additional_partition_args` arg was added to allow users to pass in any other arguments that should be added when calling partition(). This helps keep any changes to the input parameters of the partition() exposed in the CLI.
+* **Map full output schema for table-based destination connectors** A full schema was introduced to map the type of all output content from the json partition output and mapped to a flattened table structure to leverage table-based destination connectors. The delta table destination connector was updated at the moment to take advantage of this.
+* **Incorporate multiple embedding model options into ingest, add diff test embeddings** Problem: Ingest pipeline already supported embedding functionality, however users might want to use different types of embedding providers. Enhancement: Extend ingest pipeline so that users can specify and embed via a particular embedding provider from a range of options. Also adds a diff test to compare output from an embedding module with the expected output
 
 ### Features
 
-* **Adds the embedding module to be able to embed Elements** Problem: Many NLP applications require the ability to represent parts of documents in a semantic way. Until now, Unstructured did not have text embedding ability within the core library. Feature: This embedding module is able to track embeddings related data with a class, embed a list of elements, and return an updated list of Elements with the *embeddings* property. The module is also able to embed query strings. Importance: Ability to embed documents or parts of documents will enable users to make use of these semantic representations in different NLP applications, such as search, retrieval, and retrieval augmented generation.
 * **Adds ability to pass timeout for a request when partitioning via a `url`.** `partition` now accepts a new optional parameter `request_timeout` which if set will prevent any `requests.get` from hanging indefinitely and instead will raise a timeout error. This is useful when partitioning a url that may be slow to respond or may not respond at all.
+* **Allow setting table crop parameter** In certain circumstances, adjusting the table crop padding may improve table.
+
+### Fixes
+
+* **Fixes `partition_text` to prevent empty elements** Adds a check to filter out empty bullets.
+* **Handle empty string for `ocr_languages` with values for `languages`** Some API users ran into an issue with sending `languages` params because the API defaulted to also using an empty string for `ocr_languages`. This update handles situations where `languages` is defined and `ocr_languages` is an empty string.
+* **Fix PDF tried to loop through None** Previously the PDF annotation extraction tried to loop through `annots` that resolved out as None. A logical check added to avoid such error.
+* **Ingest session handler not being shared correctly** All ingest docs that leverage the session handler should only need to set it once per process. It was recreating it each time because the right values weren't being set nor available given how dataclasses work in python.
+* **Ingest download-only fix.** Previously the download only flag was being checked after the doc factory pipeline step, which occurs before the files are actually downloaded by the source node. This check was moved after the source node to allow for the files to be downloaded first before exiting the pipeline.
+* **Fix flaky chunk-metadata.** Prior implementation was sensitive to element order in the section resulting in metadata values sometimes being dropped. Also, not all metadata items can be consolidated across multiple elements (e.g. coordinates) and so are now dropped from consolidated metadata.
+
+## 0.10.28
+
+### Enhancements
+
+* **Add table structure evaluation helpers** Adds functions to evaluate the similarity between predicted table structure and actual table structure.
+* **Use `yolox` by default for table extraction when partitioning pdf/image** `yolox` model provides higher recall of the table regions than the quantized version and it is now the default element detection model when `infer_table_structure=True` for partitioning pdf/image files
+* **Remove pdfminer elements from inside tables** Previously, when using `hi_res` some elements where extracted using pdfminer too, so we removed pdfminer from the tables pipeline to avoid duplicated elements.
+* **Fsspec downstream connectors** New destination connector added to ingest CLI, users may now use `unstructured-ingest` to write to any of the following:
+  * Azure
+  * Box
+  * Dropbox
+  * Google Cloud Service
+
+### Features
+
+* **Update `ocr_only` strategy in `partition_pdf()`** Adds the functionality to get accurate coordinate data when partitioning PDFs and Images with the `ocr_only` strategy.
+
+### Fixes
+* **Fixed SharePoint permissions for the fetching to be opt-in** Problem: Sharepoint permissions were trying to be fetched even when no reletad cli params were provided, and this gave an error due to values for those keys not existing. Fix: Updated getting keys to be with .get() method and changed the "skip-check" to check individual cli params rather than checking the existance of a config object.
+
+* **Fixes issue where tables from markdown documents were being treated as text** Problem: Tables from markdown documents were being treated as text, and not being extracted as tables. Solution: Enable the `tables` extension when instantiating the `python-markdown` object. Importance: This will allow users to extract structured data from tables in markdown documents.
+* **Fix wrong logger for paddle info** Replace the logger from unstructured-inference with the logger from unstructured for paddle_ocr.py module.
+* **Fix ingest pipeline to be able to use chunking and embedding together** Problem: When ingest pipeline was using chunking and embedding together, embedding outputs were empty and the outputs of chunking couldn't be re-read into memory and be forwarded to embeddings. Fix: Added CompositeElement type to TYPE_TO_TEXT_ELEMENT_MAP to be able to process CompositeElements with unstructured.staging.base.isd_to_elements
+* **Fix unnecessary mid-text chunk-splitting.** The "pre-chunker" did not consider separator blank-line ("\n\n") length when grouping elements for a single chunk. As a result, sections were frequently over-populated producing a over-sized chunk that required mid-text splitting.
+* **Fix frequent dissociation of title from chunk.** The sectioning algorithm included the title of the next section with the prior section whenever it would fit, frequently producing association of a section title with the prior section and dissociating it from its actual section. Fix this by performing combination of whole sections only.
+* **Fix PDF attempt to get dict value from string.** Fixes a rare edge case that prevented some PDF's from being partitioned. The `get_uris_from_annots` function tried to access the dictionary value of a string instance variable. Assign `None` to the annotation variable if the instance type is not dictionary to avoid the erroneous attempt.
+
+## 0.10.27
+
+### Enhancements
+
+* **Leverage dict to share content across ingest pipeline** To share the ingest doc content across steps in the ingest pipeline, this was updated to use a multiprocessing-safe dictionary so changes get persisted and each step has the option to modify the ingest docs in place.
+
+### Features
+
+### Fixes
+
+* **Removed `ebooklib` as a dependency** `ebooklib` is licensed under AGPL3, which is incompatible with the Apache 2.0 license. Thus it is being removed.
+* **Caching fixes in ingest pipeline** Previously, steps like the source node were not leveraging parameters such as `re_download` to dictate if files should be forced to redownload rather than use what might already exist locally.
+
+## 0.10.26
+
+### Enhancements
+
+* **Add text CCT CI evaluation workflow** Adds cct text extraction evaluation metrics to the current ingest workflow to measure the performance of each file extracted as well as aggregated-level performance.
+
+### Features
+
+* **Functionality to catch and classify overlapping/nested elements** Method to identify overlapping-bboxes cases within detected elements in a document. It returns two values: a boolean defining if there are overlapping elements present, and a list reporting them with relevant metadata. The output includes information about the `overlapping_elements`, `overlapping_case`, `overlapping_percentage`, `largest_ngram_percentage`, `overlap_percentage_total`, `max_area`, `min_area`, and `total_area`.
+* **Add Local connector source metadata** python's os module used to pull stats from local file when processing via the local connector and populates fields such as last modified time, created time.
+
+### Fixes
+
+* **Fixes elements partitioned from an image file missing certain metadata** Metadata for image files, like file type, was being handled differently from other file types. This caused a bug where other metadata, like the file name, was being missed. This change brought metadata handling for image files to be more in line with the handling for other file types so that file name and other metadata fields are being captured.
+* **Adds `typing-extensions` as an explicit dependency** This package is an implicit dependency, but the module is being imported directly in `unstructured.documents.elements` so the dependency should be explicit in case changes in other dependencies lead to `typing-extensions` being dropped as a dependency.
+* **Stop passing `extract_tables` to `unstructured-inference` since it is now supported in `unstructured` instead** Table extraction previously occurred in `unstructured-inference`, but that logic, except for the table model itself, is now a part of the `unstructured` library. Thus the parameter triggering table extraction is no longer passed to the `unstructured-inference` package. Also noted the table output regression for PDF files.
+* **Fix a bug in Table partitioning** Previously the `skip_infer_table_types` variable used in `partition` was not being passed down to specific file partitioners. Now you can utilize the `skip_infer_table_types` list variable when calling `partition` to specify the filetypes for which you want to skip table extraction, or the `infer_table_structure` boolean variable on the file specific partitioning function.
+* **Fix partition docx without sections** Some docx files, like those from teams output, do not contain sections and it would produce no results because the code assumes all components are in sections. Now if no sections is detected from a document we iterate through the paragraphs and return contents found in the paragraphs.
+* **Fix out-of-order sequencing of split chunks.** Fixes behavior where "split" chunks were inserted at the beginning of the chunk sequence. This would produce a chunk sequence like [5a, 5b, 3a, 3b, 1, 2, 4] when sections 3 and 5 exceeded `max_characters`.
+* **Deserialization of ingest docs fixed** When ingest docs are being deserialized as part of the ingest pipeline process (cli), there were certain fields that weren't getting persisted (metadata and date processed). The from_dict method was updated to take these into account and a unit test added to check.
+* **Map source cli command configs when destination set** Due to how the source connector is dynamically called when the destination connector is set via the CLI, the configs were being set incorrectoy, causing the source connector to break. The configs were fixed and updated to take into account Fsspec-specific connectors.
+
+## 0.10.25
+
+### Enhancements
+
+* **Duplicate CLI param check** Given that many of the options associated with the `Click` based cli ingest commands are added dynamically from a number of configs, a check was incorporated to make sure there were no duplicate entries to prevent new configs from overwriting already added options.
+* **Ingest CLI refactor for better code reuse** Much of the ingest cli code can be templated and was a copy-paste across files, adding potential risk. Code was refactored to use a base class which had much of the shared code templated.
+
+### Features
+
+* **Table OCR refactor** support Table OCR with pre-computed OCR data to ensure we only do one OCR for entrie document. User can specify
+ocr agent tesseract/paddle in environment variable `OCR_AGENT` for OCRing the entire document.
+* **Adds accuracy function** The accuracy scoring was originally an option under `calculate_edit_distance`. For easy function call, it is now a wrapper around the original function that calls edit_distance and return as "score".
+* **Adds HuggingFaceEmbeddingEncoder** The HuggingFace Embedding Encoder uses a local embedding model as opposed to using an API.
+* **Add AWS bedrock embedding connector** `unstructured.embed.bedrock` now provides a connector to use AWS bedrock's `titan-embed-text` model to generate embeddings for elements. This features requires valid AWS bedrock setup and an internet connectionto run.
+
+### Fixes
+
+* **Import PDFResourceManager more directly** We were importing `PDFResourceManager` from `pdfminer.converter` which was causing an error for some users. We changed to import from the actual location of `PDFResourceManager`, which is `pdfminer.pdfinterp`.
+* **Fix language detection of elements with empty strings** This resolves a warning message that was raised by `langdetect` if the language was attempted to be detected on an empty string. Language detection is now skipped for empty strings.
+* **Fix chunks breaking on regex-metadata matches.** Fixes "over-chunking" when `regex_metadata` was used, where every element that contained a regex-match would start a new chunk.
+* **Fix regex-metadata match offsets not adjusted within chunk.** Fixes incorrect regex-metadata match start/stop offset in chunks where multiple elements are combined.
+* **Map source cli command configs when destination set** Due to how the source connector is dynamically called when the destination connector is set via the CLI, the configs were being set incorrectoy, causing the source connector to break. The configs were fixed and updated to take into account Fsspec-specific connectors.
+* **Fix metrics folder not discoverable** Fixes issue where unstructured/metrics folder is not discoverable on PyPI by adding an `__init__.py` file under the folder.
+* **Fix a bug when `parition_pdf` get `model_name=None`** In API usage the `model_name` value is `None` and the `cast` function in `partition_pdf` would return `None` and lead to attribution error. Now we use `str` function to explicit convert the content to string so it is garanteed to have `starts_with` and other string functions as attributes
+* **Fix html partition fail on tables without `tbody` tag** HTML tables may sometimes just contain headers without body (`tbody` tag)
+
+## 0.10.24
+
+### Enhancements
+
+* **Improve natural reading order** Some `OCR` elements with only spaces in the text have full-page width in the bounding box, which causes the `xycut` sorting to not work as expected. Now the logic to parse OCR results removes any elements with only spaces (more than one space).
+* **Ingest compression utilities and fsspec connector support** Generic utility code added to handle files that get pulled from a source connector that are either tar or zip compressed and uncompress them locally. This is then processed using a local source connector. Currently this functionality has been incorporated into the fsspec connector and all those inheriting from it (currently: Azure Blob Storage, Google Cloud Storage, S3, Box, and Dropbox).
+* **Ingest destination connectors support for writing raw list of elements** Along with the default write method used in the ingest pipeline to write the json content associated with the ingest docs, each destination connector can now also write a raw list of elements to the desired downstream location without having an ingest doc associated with it.
+
+### Features
+
+* **Adds element type percent match function** In order to evaluate the element type extracted, we add a function that calculates the matched percentage between two frequency dictionary.
+
+### Fixes
+
+* **Fix paddle model file not discoverable** Fixes issue where ocr_models/paddle_ocr.py file is not discoverable on PyPI by adding
+an `__init__.py` file under the folder.
+* **Chipper v2 Fixes** Includes fix for a memory leak and rare last-element bbox fix. (unstructured-inference==0.7.7)
+* **Fix image resizing issue** Includes fix related to resizing images in the tables pipeline. (unstructured-inference==0.7.6)
+
+## 0.10.23
+
+### Enhancements
+
+* **Add functionality to limit precision when serializing to json** Precision for `points` is limited to 1 decimal point if coordinates["system"] == "PixelSpace" (otherwise 2 decimal points?). Precision for `detection_class_prob` is limited to 5 decimal points.
+* **Fix csv file detection logic when mime-type is text/plain** Previously the logic to detect csv file type was considering only first row's comma count comparing with the header_row comma count and both the rows being same line the result was always true, Now the logic is changed to consider the comma's count for all the lines except first line and compare with header_row comma count.
+* **Improved inference speed for Chipper V2** API requests with 'hi_res_model_name=chipper' now have ~2-3x faster responses.
+
+### Features
+
+### Fixes
+
+* **Cleans up temporary files after conversion** Previously a file conversion utility was leaving temporary files behind on the filesystem without removing them when no longer needed. This fix helps prevent an accumulation of temporary files taking up excessive disk space.
+* **Fixes `under_non_alpha_ratio` dividing by zero** Although this function guarded against a specific cause of division by zero, there were edge cases slipping through like strings with only whitespace. This update more generally prevents the function from performing a division by zero.
+* **Fix languages default** Previously the default language was being set to English when elements didn't have text or if langdetect could not detect the language. It now defaults to None so there is not misleading information about the language detected.
+* **Fixes recursion limit error that was being raised when partitioning Excel documents of a certain size** Previously we used a recursive method to find subtables within an excel sheet. However this would run afoul of Python's recursion depth limit when there was a contiguous block of more than 1000 cells within a sheet. This function has been updated to use the NetworkX library which avoids Python recursion issues.
+
+## 0.10.22
+
+### Enhancements
+
+* **bump `unstructured-inference` to `0.7.3`** The updated version of `unstructured-inference` supports a new version of the Chipper model, as well as a cleaner schema for its output classes. Support is included for new inference features such as hierarchy and ordering.
+* **Expose skip_infer_table_types in ingest CLI.** For each connector a new `--skip-infer-table-types` parameter was added to map to the `skip_infer_table_types` partition argument. This gives more granular control to unstructured-ingest users, allowing them to specify the file types for which we should attempt table extraction.
+* **Add flag to ingest CLI to raise error if any single doc fails in pipeline** Currently if a single doc fails in the pipeline, the whole thing halts due to the error. This flag defaults to log an error but continue with the docs it can.
+* **Emit hyperlink metadata for DOCX file-type.** DOCX partitioner now adds `metadata.links`, `metadata.link_texts` and `metadata.link_urls` for elements that contain a hyperlink that points to an external resource. So-called "jump" links pointing to document internal locations (such as those found in a table-of-contents "jumping" to a chapter or section) are excluded.
+
+### Features
+
+* **Add `elements_to_text` as a staging helper function** In order to get a single clean text output from unstructured for metric calculations, automate the process of extracting text from elements using this function.
+* **Adds permissions(RBAC) data ingestion functionality for the Sharepoint connector.** Problem: Role based access control is an important component in many data storage systems. Users may need to pass permissions (RBAC) data to downstream systems when ingesting data. Feature: Added permissions data ingestion functionality to the Sharepoint connector.
+
+### Fixes
+
+* **Fixes PDF list parsing creating duplicate list items** Previously a bug in PDF list item parsing caused removal of other elements and duplication of the list item
+* **Fixes duplicated elements** Fixes issue where elements are duplicated when embeddings are generated. This will allow users to generate embeddings for their list of Elements without duplicating/breaking the orginal content.
+* **Fixes failure when flagging for embeddings through unstructured-ingest** Currently adding the embedding parameter to any connector results in a failure on the copy stage. This is resolves the issue by adding the IngestDoc to the context map in the embedding node's `run` method. This allows users to specify that connectors fetch embeddings without failure.
+* **Fix ingest pipeline reformat nodes not discoverable** Fixes issue where  reformat nodes raise ModuleNotFoundError on import. This was due to the directory was missing `__init__.py` in order to make it discoverable.
+* **Fix default language in ingest CLI** Previously the default was being set to english which injected potentially incorrect information to downstream language detection libraries. By setting the default to None allows those libraries to better detect what language the text is in the doc being processed.
+
+## 0.10.21
+
+* **Adds Scarf analytics**.
+
+## 0.10.20
+
+### Enhancements
+
+* **Add document level language detection functionality.** Adds the "auto" default for the languages param to all partitioners. The primary language present in the document is detected using the `langdetect` package. Additional param `detect_language_per_element` is also added for partitioners that return multiple elements. Defaults to `False`.
+* **Refactor OCR code** The OCR code for entire page is moved from unstructured-inference to unstructured. On top of continuing support for OCR language parameter, we also support two OCR processing modes, "entire_page" or "individual_blocks".
+* **Align to top left when shrinking bounding boxes for `xy-cut` sorting:** Update `shrink_bbox()` to keep top left rather than center.
+* **Add visualization script to annotate elements** This script is often used to analyze/visualize elements with coordinates (e.g. partition_pdf()).
+* **Adds data source properties to the Jira, Github and Gitlab connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+* **Improve title detection in pptx documents** The default title textboxes on a pptx slide are now categorized as titles.
+* **Improve hierarchy detection in pptx documents** List items, and other slide text are properly nested under the slide title. This will enable better chunking of pptx documents.
+* **Refactor of the ingest cli workflow** The refactored approach uses a dynamically set pipeline with a snapshot along each step to save progress and accommodate continuation from a snapshot if an error occurs. This also allows the pipeline to dynamically assign any number of steps to modify the partitioned content before it gets written to a destination.
+* **Applies `max_characters=<n>` argument to all element types in `add_chunking_strategy` decorator** Previously this argument was only utilized in chunking Table elements and now applies to all partitioned elements if `add_chunking_strategy` decorator is utilized, further preparing the elements for downstream processing.
+* **Add common retry strategy utilities for unstructured-ingest** Dynamic retry strategy with exponential backoff added to Notion source connector.
+*
+### Features
+
+* **Adds `bag_of_words` and `percent_missing_text` functions** In order to count the word frequencies in two input texts and calculate the percentage of text missing relative to the source document.
+* **Adds `edit_distance` calculation metrics** In order to benchmark the cleaned, extracted text with unstructured, `edit_distance` (`Levenshtein distance`) is included.
+* **Adds detection_origin field to metadata** Problem: Currently isn't an easy way to find out how an element was created. With this change that information is added. Importance: With this information the developers and users are now able to know how an element was created to make decisions on how to use it. In order tu use this feature
+setting UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true is needed.
+* **Adds a function that calculates frequency of the element type and its depth** To capture the accuracy of element type extraction, this function counts the occurrences of each unique element type with its depth for use in element metrics.
+
+### Fixes
+
+* **Fix zero division error in annotation bbox size** This fixes the bug where we find annotation bboxes realted to an element that need to divide the intersection size between annotation bbox and element bbox by the size of the annotation bbox
+* **Fix prevent metadata module from importing dependencies from unnecessary modules** Problem: The `metadata` module had several top level imports that were only used in and applicable to code related to specific document types, while there were many general-purpose functions. As a result, general-purpose functions couldn't be used without unnecessary dependencies being installed. Fix: moved 3rd party dependency top level imports to inside the functions in which they are used and applied a decorator to check that the dependency is installed and emit a helpful error message if not.
+* **Fixes category_depth None value for Title elements** Problem: `Title` elements from `chipper` get `category_depth`= None even when `Headline` and/or `Subheadline` elements are present in the same page. Fix: all `Title` elements with `category_depth` = None should be set to have a depth of 0 instead iff there are `Headline` and/or `Subheadline` element-types present. Importance: `Title` elements should be equivalent html `H1` when nested headings are present; otherwise, `category_depth` metadata can result ambiguous within elements in a page.
+* **Tweak `xy-cut` ordering output to be more column friendly** This results in the order of elements more closely reflecting natural reading order which benefits downstream applications. While element ordering from `xy-cut` is usually mostly correct when ordering multi-column documents, sometimes elements from a RHS column will appear before elements in a LHS column. Fix: add swapped `xy-cut` ordering by sorting by X coordinate first and then Y coordinate.
+* **Fixes badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
+should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class
+allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
+* **Fixes pdf uri error** An error was encountered when URI type of `GoToR` which refers to pdf resources outside of its own was detected since no condition catches such case. The code is fixing the issue by initialize URI before any condition check.
+
+
+## 0.10.19
+
+### Enhancements
+
+* **Adds XLSX document level language detection** Enhancing on top of language detection functionality in previous release, we now support language detection within `.xlsx` file type at Element level.
+* **bump `unstructured-inference` to `0.6.6`** The updated version of `unstructured-inference` makes table extraction in `hi_res` mode configurable to fine tune table extraction performance; it also improves element detection by adding a deduplication post processing step in the `hi_res` partitioning of pdfs and images.
+* **Detect text in HTML Heading Tags as Titles** This will increase the accuracy of hierarchies in HTML documents and provide more accurate element categorization. If text is in an HTML heading tag and is not a list item, address, or narrative text, categorize it as a title.
+* **Update python-based docs** Refactor docs to use the actual unstructured code rather than using the subprocess library to run the cli command itself.
+* **Adds Table support for the `add_chunking_strategy` decorator to partition functions.** In addition to combining elements under Title elements, user's can now specify the `max_characters=<n>` argument to chunk Table elements into TableChunk elements with `text` and `text_as_html` of length <n> characters. This means partitioned Table results are ready for use in downstream applications without any post processing.
+* **Expose endpoint url for s3 connectors** By allowing for the endpoint url to be explicitly overwritten, this allows for any non-AWS data providers supporting the s3 protocol to be supported (i.e. minio).
+
+### Features
+
+* **change default `hi_res` model for pdf/image partition to `yolox`** Now partitioning pdf/image using `hi_res` strategy utilizes `yolox_quantized` model isntead of `detectron2_onnx` model. This new default model has better recall for tables and produces more detailed categories for elements.
+* **XLSX can now reads subtables within one sheet** Problem: Many .xlsx files are not created to be read as one full table per sheet. There are subtables, text and header along with more informations to extract from each sheet. Feature: This `partition_xlsx` now can reads subtable(s) within one .xlsx sheet, along with extracting other title and narrative texts. Importance: This enhance the power of .xlsx reading to not only one table per sheet, allowing user to capture more data tables from the file, if exists.
+* **Update Documentation on Element Types and Metadata**: We have updated the documentation according to the latest element types and metadata. It includes the common and additional metadata provided by the Partitions and Connectors.
+
+### Fixes
+
+* **Fixes partition_pdf is_alnum reference bug** Problem: The `partition_pdf` when attempt to get bounding box from element experienced a reference before assignment error when the first object is not text extractable.  Fix: Switched to a flag when the condition is met. Importance: Crucial to be able to partition with pdf.
+* **Fix various cases of HTML text missing after partition**
+  Problem: Under certain circumstances, text immediately after some HTML tags will be misssing from partition result.
+  Fix: Updated code to deal with these cases.
+  Importance: This will ensure the correctness when partitioning HTML and Markdown documents.
+* **Fixes chunking when `detection_class_prob` appears in Element metadata** Problem: when `detection_class_prob` appears in Element metadata, Elements will only be combined by chunk_by_title if they have the same `detection_class_prob` value (which is rare). This is unlikely a case we ever need to support and most often results in no chunking. Fix: `detection_class_prob` is included in the chunking list of metadata keys excluded for similarity comparison. Importance: This change allows `chunk_by_title` to operate as intended for documents which include `detection_class_prob` metadata in their Elements.
+
+## 0.10.18
+
+### Enhancements
+
+* **Better detection of natural reading order in images and PDF's** The elements returned by partition better reflect natural reading order in some cases, particularly in complicated multi-column layouts, leading to better chunking and retrieval for downstream applications. Achieved by improving the `xy-cut` sorting to preprocess bboxes, shrinking all bounding boxes by 90% along x and y axes (still centered around the same center point), which allows projection lines to be drawn where not possible before if layout bboxes overlapped.
+* **Improves `partition_xml` to be faster and more memory efficient when partitioning large XML files** The new behavior is to partition iteratively to prevent loading the entire XML tree into memory at once in most use cases.
+* **Adds data source properties to SharePoint, Outlook, Onedrive, Reddit, Slack, DeltaTable connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+* **Add functionality to save embedded images in PDF's separately as images** This allows users to save embedded images in PDF's separately as images, given some directory path. The saved image path is written to the metadata for the Image element. Downstream applications may benefit by providing users with image links from relevant "hits."
+* **Azure Cognite Search destination connector** New Azure Cognitive Search destination connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to an Azure Cognitive Search index.
+* **Improves salesforce partitioning** Partitions Salesforce data as xlm instead of text for improved detail and flexibility. Partitions htmlbody instead of textbody for Salesforce emails. Importance: Allows all Salesforce fields to be ingested and gives Salesforce emails more detailed partitioning.
+* **Add document level language detection functionality.** Introduces the "auto" default for the languages param, which then detects the languages present in the document using the `langdetect` package. Adds the document languages as ISO 639-3 codes to the element metadata. Implemented only for the partition_text function to start.
+* **PPTX partitioner refactored in preparation for enhancement.** Behavior should be unchanged except that shapes enclosed in a group-shape are now included, as many levels deep as required (a group-shape can itself contain a group-shape).
+* **Embeddings support for the SharePoint SourceConnector via unstructured-ingest CLI** The SharePoint connector can now optionally create embeddings from the elements it pulls out during partition and upload those embeddings to Azure Cognitive Search index.
+* **Improves hierarchy from docx files by leveraging natural hierarchies built into docx documents**  Hierarchy can now be detected from an indentation level for list bullets/numbers and by style name (e.g. Heading 1, List Bullet 2, List Number).
+* **Chunking support for the SharePoint SourceConnector via unstructured-ingest CLI** The SharePoint connector can now optionally chunk the elements pulled out during partition via the chunking unstructured brick. This can be used as a stage before creating embeddings.
+
+### Features
+
+* **Adds `links` metadata in `partition_pdf` for `fast` strategy.** Problem: PDF files contain rich information and hyperlink that Unstructured did not captured earlier. Feature: `partition_pdf` now can capture embedded links within the file along with its associated text and page number. Importance: Providing depth in extracted elements give user a better understanding and richer context of documents. This also enables user to map to other elements within the document if the hyperlink is refered internally.
+* **Adds the embedding module to be able to embed Elements** Problem: Many NLP applications require the ability to represent parts of documents in a semantic way. Until now, Unstructured did not have text embedding ability within the core library. Feature: This embedding module is able to track embeddings related data with a class, embed a list of elements, and return an updated list of Elements with the *embeddings* property. The module is also able to embed query strings. Importance: Ability to embed documents or parts of documents will enable users to make use of these semantic representations in different NLP applications, such as search, retrieval, and retrieval augmented generation.
 
 ### Fixes
 
 * **Fixes a metadata source serialization bug** Problem: In unstructured elements, when loading an elements json file from the disk, the data_source attribute is assumed to be an instance of DataSourceMetadata and the code acts based on that. However the loader did not satisfy the assumption, and loaded it as a dict instead, causing an error. Fix: Added necessary code block to initialize a DataSourceMetadata object, also refactored DataSourceMetadata.from_dict() method to remove redundant code. Importance: Crucial to be able to load elements (which have data_source fields) from json files.
 * **Fixes issue where unstructured-inference was not getting updated** Problem: unstructured-inference was not getting upgraded to the version to match unstructured release when doing a pip install.  Solution: using `pip install unstructured[all-docs]` it will now upgrade both unstructured and unstructured-inference. Importance: This will ensure that the inference library is always in sync with the unstructured library, otherwise users will be using outdated libraries which will likely lead to unintended behavior.
 * **Fixes SharePoint connector failures if any document has an unsupported filetype** Problem: Currently the entire connector ingest run fails if a single IngestDoc has an unsupported filetype. This is because a ValueError is raised in the IngestDoc's `__post_init__`. Fix: Adds a try/catch when the IngestConnector runs get_ingest_docs such that the error is logged but all processable documents->IngestDocs are still instantiated and returned. Importance: Allows users to ingest SharePoint content even when some files with unsupported filetypes exist there.
-* **Fixes badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
-should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class
-allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
+* **Fixes Sharepoint connector server_path issue** Problem: Server path for the Sharepoint Ingest Doc was incorrectly formatted, causing issues while fetching pages from the remote source. Fix: changes formatting of remote file path before instantiating SharepointIngestDocs and appends a '/' while fetching pages from the remote source. Importance: Allows users to fetch pages from Sharepoint Sites.
 * **Fixes Sphinx errors.** Fixes errors when running Sphinx `make html` and installs library to suppress warnings.
-
+* **Fixes a metadata backwards compatibility error** Problem: When calling `partition_via_api`, the hosted api may return an element schema that's newer than the current `unstructured`. In this case, metadata fields were added which did not exist in the local `ElementMetadata` dataclass, and `__init__()` threw an error. Fix: remove nonexistent fields before instantiating in `ElementMetadata.from_json()`. Importance: Crucial to avoid breaking changes when adding fields.
+* **Fixes issue with Discord connector when a channel returns `None`** Problem: Getting the `jump_url` from a nonexistent Discord `channel` fails. Fix: property `jump_url` is now retrieved within the same context as the messages from the channel. Importance: Avoids cascading issues when the connector fails to fetch information about a Discord channel.
+* **Fixes occasionally SIGABTR when writing table with `deltalake` on Linux** Problem: occasionally on Linux ingest can throw a `SIGABTR` when writing `deltalake` table even though the table was written correctly. Fix: put the writing function into a `Process` to ensure its execution to the fullest extent before returning to the main process. Importance: Improves stability of connectors using `deltalake`
+* **Fixes badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
 
 ## 0.10.16
 
@@ -30,6 +274,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 * **Adds data source properties to Airtable, Confluence, Discord, Elasticsearch, Google Drive, and Wikipedia connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
 * **DOCX partitioner refactored in preparation for enhancement.** Behavior should be unchanged except in multi-section documents containing different headers/footers for different sections. These will now emit all distinct headers and footers encountered instead of just those for the last section.
 * **Add a function to map between Tesseract and standard language codes.** This allows users to input language information to the `languages` param in any Tesseract-supported langcode or any ISO 639 standard language code.
+* **Add document level language detection functionality.** Introduces the "auto" default for the languages param, which then detects the languages present in the document using the `langdetect` package. Implemented only for the partition_text function to start.
 
 ### Features
 
@@ -38,6 +283,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 * ***Fixes an issue that caused a partition error for some PDF's.** Fixes GH Issue 1460 by bypassing a coordinate check if an element has invalid coordinates.
 
 ## 0.10.15
+
 
 ### Enhancements
 
@@ -192,6 +438,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 * Edit `add_pytesseract_bbox_to_elements`'s (`ocr_only` strategy) `metadata.coordinates.points` return type to `Tuple` for consistency.
 * Re-enable test-ingest-confluence-diff for ingest tests
 * Fix syntax for ingest test check number of files
+* Fix csv and tsv partitioners loosing the first line of the files when creating elements
 
 ## 0.10.8
 

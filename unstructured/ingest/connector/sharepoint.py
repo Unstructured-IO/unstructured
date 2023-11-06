@@ -1,3 +1,5 @@
+import json
+import os
 import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -6,7 +8,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -15,6 +17,7 @@ from unstructured.ingest.interfaces import (
     SourceConnectorCleanupMixin,
     SourceMetadata,
 )
+from unstructured.ingest.interfaces import PermissionsConfig as SharepointPermissionsConfig
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
@@ -35,6 +38,7 @@ class SimpleSharepointConfig(BaseConnectorConfig):
     path: str
     process_pages: bool = False
     recursive: bool = False
+    permissions_config: t.Optional[SharepointPermissionsConfig] = None
 
     def __post_init__(self):
         if not (self.client_id and self.client_credential and self.site_url):
@@ -56,6 +60,14 @@ class SimpleSharepointConfig(BaseConnectorConfig):
             logger.error("Couldn't set Sharepoint client.")
             raise
         return site_client
+
+    def get_permissions_client(self):
+        try:
+            permissions_connector = SharepointPermissionsConnector(self.permissions_config)
+            assert permissions_connector.access_token
+            return permissions_connector
+        except Exception as e:
+            logger.error("Couldn't obtain Sharepoint permissions ingestion access token:", e)
 
 
 @dataclass
@@ -83,7 +95,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _set_download_paths(self) -> None:
         """Parses the folder structure from the source and creates the download and output paths"""
         download_path = Path(f"{self.read_config.download_dir}")
-        output_path = Path(f"{self.partition_config.output_dir}")
+        output_path = Path(f"{self.processor_config.output_dir}")
         parent = Path(self.file_path).with_suffix(self.extension)
         self.download_dir = (download_path / parent.parent).resolve()
         self.download_filepath = (download_path / parent).resolve()
@@ -106,7 +118,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             "site_url": self.site_url,
         }
 
-    @SourceConnectionError.wrap
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(["office365"], extras="sharepoint")
     def _fetch_file(self, properties_only: bool = False):
         """Retrieves the actual page/file from the Sharepoint instance"""
@@ -116,13 +128,12 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
         try:
             if self.is_page:
-                file = site_client.web.get_file_by_server_relative_path(self.server_path)
+                file = site_client.web.get_file_by_server_relative_path("/" + self.server_path)
                 file = file.listItemAllFields.select(CONTENT_LABELS).get().execute_query()
             else:
                 file = site_client.web.get_file_by_server_relative_url(self.server_path)
                 if properties_only:
                     file = file.get().execute_query()
-
         except ClientRequestException as e:
             if e.response.status_code == 404:
                 return None
@@ -139,10 +150,48 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 .execute_query()
             )
         except Exception as e:
-            logger.error(f"Failed to retrieve page {self.server_path} from site {self.server_path}")
+            logger.error(f"Failed to retrieve page {self.server_path} from site {self.site_url}")
             logger.error(e)
             return None
         return page
+
+    def update_permissions_data(self):
+        def parent_name_matches(parent_type, permissions_filename, ingest_doc_filepath):
+            permissions_filename = permissions_filename.split("_SEP_")
+            ingest_doc_filepath = ingest_doc_filepath.split("/")
+
+            if parent_type == "sites":
+                return permissions_filename[0] == ingest_doc_filepath[1]
+
+            elif parent_type == "SitePages" or parent_type == "Shared Documents":
+                return True
+
+        permissions_data = None
+        permissions_dir = Path(self.processor_config.output_dir) / "permissions_data"
+
+        if permissions_dir.is_dir():
+            parent_type = self.file_path.split("/")[0]
+
+            if parent_type == "sites":
+                read_dir = permissions_dir / "sites"
+            elif parent_type == "SitePages" or parent_type == "Shared Documents":
+                read_dir = permissions_dir / "other"
+            else:
+                read_dir = permissions_dir / "other"
+
+            for filename in os.listdir(read_dir):
+                permissions_docname = os.path.splitext(filename)[0].split("_SEP_")[1]
+                ingestdoc_docname = self.file_path.split("/")[-1]
+
+                if ingestdoc_docname == permissions_docname and parent_name_matches(
+                    parent_type=parent_type,
+                    permissions_filename=filename,
+                    ingest_doc_filepath=self.file_path,
+                ):
+                    with open(read_dir / filename) as f:
+                        permissions_data = json.loads(f.read())
+
+        return permissions_data
 
     def update_source_metadata(self, **kwargs):
         if self.is_page:
@@ -158,6 +207,9 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 version=page.get_property("Version", ""),
                 source_url=page.absolute_url,
                 exists=True,
+                permissions_data=self.update_permissions_data()
+                if self.connector_config.permissions_config
+                else None,
             )
             return
 
@@ -176,6 +228,9 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             version=file.major_version,
             source_url=file.properties.get("LinkingUrl", None),
             exists=True,
+            permissions_data=self.update_permissions_data()
+            if self.connector_config.permissions_config
+            else None,
         )
 
     def _download_page(self):
@@ -222,6 +277,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         logger.info(f"File downloaded: {self.filename}")
 
     @BaseIngestDoc.skip_if_file_exists
+    @SourceConnectionError.wrap
     @requires_dependencies(["office365"])
     def get_file(self):
         if self.is_page:
@@ -257,7 +313,7 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
     def _prepare_ingest_doc(self, obj: t.Union["File", "SitePage"], base_url, is_page=False):
         if is_page:
             file_path = obj.get_property("Url", "")
-            server_path = f"/{file_path}" if file_path[0] != "/" else file_path
+            server_path = file_path if file_path[0] != "/" else file_path[1:]
             if (url_path := (urlparse(base_url).path)) and (url_path != "/"):
                 file_path = url_path[1:] + "/" + file_path
         else:
@@ -265,13 +321,13 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
             file_path = obj.serverRelativeUrl[1:]
 
         return SharepointIngestDoc(
-            self.read_config,
-            self.partition_config,
-            self.connector_config,
-            base_url,
-            server_path,
-            is_page,
-            file_path,
+            processor_config=self.processor_config,
+            read_config=self.read_config,
+            connector_config=self.connector_config,
+            site_url=base_url,
+            server_path=server_path,
+            is_page=is_page,
+            file_path=file_path,
         )
 
     @requires_dependencies(["office365"], extras="sharepoint")
@@ -317,6 +373,20 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 
     def get_ingest_docs(self):
         base_site_client = self.connector_config.get_site_client()
+
+        if not all(
+            getattr(self.connector_config.permissions_config, attr, False)
+            for attr in ["application_id", "client_cred", "tenant"]
+        ):
+            logger.info(
+                "Permissions config is not fed with 'application_id', 'client_cred' and 'tenant'."
+                "Skipping permissions ingestion.",
+            )
+        else:
+            permissions_client = self.connector_config.get_permissions_client()
+            if permissions_client:
+                permissions_client.write_all_permissions(self.processor_config.output_dir)
+
         if not base_site_client.is_tenant:
             return self._ingest_site_docs(base_site_client)
         tenant = base_site_client.tenant
@@ -328,3 +398,166 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
             site_client = self.connector_config.get_site_client(site_url)
             ingest_docs = ingest_docs + self._ingest_site_docs(site_client)
         return ingest_docs
+
+
+@dataclass
+class SharepointPermissionsConnector:
+    def __init__(self, permissions_config):
+        self.permissions_config: SharepointPermissionsConfig = permissions_config
+        self.initialize()
+
+    def initialize(self):
+        self.access_token: str = self.get_access_token()
+
+    @requires_dependencies(["requests"], extras="sharepoint")
+    def get_access_token(self) -> str:
+        import requests
+
+        url = (
+            f"https://login.microsoftonline.com/{self.permissions_config.tenant}/oauth2/v2.0/token"
+        )
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        data = {
+            "client_id": self.permissions_config.application_id,
+            "scope": "https://graph.microsoft.com/.default",
+            "client_secret": self.permissions_config.client_cred,
+            "grant_type": "client_credentials",
+        }
+        response = requests.post(url, headers=headers, data=data)
+        return response.json()["access_token"]
+
+    def validated_response(self, response):
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"Request failed with status code {response.status_code}:")
+            print(response.text)
+
+    @requires_dependencies(["requests"], extras="sharepoint")
+    def get_sites(self):
+        import requests
+
+        url = "https://graph.microsoft.com/v1.0/sites"
+        params = {
+            "$select": "webUrl, id",
+        }
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+        }
+
+        response = requests.get(url, params=params, headers=headers)
+        return self.validated_response(response)
+
+    @requires_dependencies(["requests"], extras="sharepoint")
+    def get_drives(self, site):
+        import requests
+
+        url = f"https://graph.microsoft.com/v1.0/sites/{site}/drives"
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+        }
+
+        response = requests.get(url, headers=headers)
+
+        return self.validated_response(response)
+
+    @requires_dependencies(["requests"], extras="sharepoint")
+    def get_drive_items(self, site, drive_id):
+        import requests
+
+        url = f"https://graph.microsoft.com/v1.0/sites/{site}/drives/{drive_id}/root/children"
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+        }
+
+        response = requests.get(url, headers=headers)
+
+        return self.validated_response(response)
+
+    def extract_site_name_from_weburl(self, weburl):
+        split_path = urlparse(weburl).path.lstrip("/").split("/")
+
+        if split_path[0] == "sites":
+            return "sites", split_path[1]
+
+        elif split_path[0] == "Shared%20Documents":
+            return "Shared Documents", "Shared Documents"
+
+        elif split_path[0] == "personal":
+            return "Personal", "Personal"
+
+        elif split_path[0] == "_layouts":
+            return "layouts", "layouts"
+
+        # if other weburl structures are found, additional logic might need to be implemented
+
+        logger.warning(
+            """Couldn't extract sitename, unknown site or parent type. Skipping permissions
+            ingestion for the document with the URL:""",
+            weburl,
+        )
+
+        return None, None
+
+    @requires_dependencies(["requests"], extras="sharepoint")
+    def get_permissions_for_drive_item(self, site, drive_id, item_id):
+        import requests
+
+        url = f"https://graph.microsoft.com/v1.0/sites/ \
+        {site}/drives/{drive_id}/items/{item_id}/permissions"
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+        }
+
+        response = requests.get(url, headers=headers)
+
+        return self.validated_response(response)
+
+    def write_all_permissions(self, output_dir):
+        sites = [(site["id"], site["webUrl"]) for site in self.get_sites()["value"]]
+        drive_ids = []
+
+        print("Obtaining drive data for sites for permissions (rbac)")
+        for site_id, site_url in sites:
+            drives = self.get_drives(site_id)
+            if drives:
+                drives_for_site = drives["value"]
+                drive_ids.extend([(site_id, drive["id"]) for drive in drives_for_site])
+
+        print("Obtaining item data from drives for permissions (rbac)")
+        item_ids = []
+        for site, drive_id in drive_ids:
+            drive_items = self.get_drive_items(site, drive_id)
+            if drive_items:
+                item_ids.extend(
+                    [
+                        (site, drive_id, item["id"], item["name"], item["webUrl"])
+                        for item in drive_items["value"]
+                    ],
+                )
+
+        permissions_dir = Path(output_dir) / "permissions_data"
+
+        print("Writing permissions data to disk")
+        for site, drive_id, item_id, item_name, item_web_url in item_ids:
+            res = self.get_permissions_for_drive_item(site, drive_id, item_id)
+            if res:
+                parent_type, parent_name = self.extract_site_name_from_weburl(item_web_url)
+
+                if parent_type == "sites":
+                    write_path = permissions_dir / "sites" / f"{parent_name}_SEP_{item_name}.json"
+
+                elif parent_type == "Personal" or parent_type == "Shared Documents":
+                    write_path = permissions_dir / "other" / f"{parent_name}_SEP_{item_name}.json"
+                else:
+                    write_path = permissions_dir / "other" / f"{parent_name}_SEP_{item_name}.json"
+
+                if not Path(os.path.dirname(write_path)).is_dir():
+                    os.makedirs(os.path.dirname(write_path))
+
+                with open(write_path, "w") as f:
+                    json.dump(res["value"], f)

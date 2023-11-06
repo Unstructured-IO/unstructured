@@ -48,14 +48,14 @@ class DropboxIngestDoc(FsspecIngestDoc):
         # creates some complications in path joining so a custom path is created here.
         # Dropbox uses an empty string `""`, or a space `" "`` or a `" /"` to list root
         if self.connector_config.dir_path == " ":
-            return Path(self.partition_config.output_dir) / re.sub(
+            return Path(self.processor_config.output_dir) / re.sub(
                 "^/",
                 "",
                 f"{self.remote_file_path}.json",
             )
         else:
             return (
-                Path(self.partition_config.output_dir)
+                Path(self.processor_config.output_dir)
                 / f"{self.remote_file_path.replace(f'/{self.connector_config.dir_path}/', '')}.json"
             )
 
@@ -82,7 +82,9 @@ class DropboxIngestDoc(FsspecIngestDoc):
 @dataclass
 class DropboxSourceConnector(FsspecSourceConnector):
     connector_config: SimpleDropboxConfig
-    ingest_doc_cls: Type[DropboxIngestDoc] = DropboxIngestDoc
+
+    def __post_init__(self):
+        self.ingest_doc_cls: Type[DropboxIngestDoc] = DropboxIngestDoc
 
     @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
     def initialize(self):
@@ -98,7 +100,7 @@ class DropboxSourceConnector(FsspecSourceConnector):
             return
         elif ls_output:
             raise ValueError(
-                f"No objects found in {self.connector_config.path}.",
+                f"No objects found in {self.connector_config.remote_url}.",
             )
         else:
             raise MissingFolderError(
@@ -133,6 +135,7 @@ class DropboxSourceConnector(FsspecSourceConnector):
             ]
 
 
+@requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
 @dataclass
 class DropboxDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleFsspecConfig

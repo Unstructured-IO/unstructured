@@ -3,11 +3,12 @@ import os
 import typing as t
 from dataclasses import dataclass
 from datetime import datetime as dt
+from multiprocessing import Process
 from pathlib import Path
 
 import pandas as pd
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
@@ -15,9 +16,11 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
+from unstructured.ingest.utils.table import convert_to_pandas_dataframe
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -26,7 +29,6 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class SimpleDeltaTableConfig(BaseConnectorConfig):
-    verbose: bool
     table_uri: t.Union[str, Path]
     version: t.Optional[int] = None
     storage_options: t.Optional[t.Dict[str, str]] = None
@@ -51,40 +53,21 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return os.path.splitext(basename)[0]
 
     @property
-    def source_url(self) -> t.Optional[str]:
-        """The url of the source document."""
-        return self.uri
-
-    @property
-    def date_created(self) -> t.Optional[str]:
-        """This is the creation time of the table itself, not the file or specific record"""
-        # TODO get creation time of file/record
-        return self.created_at
-
-    @property
     def filename(self):
         return (Path(self.read_config.download_dir) / f"{self.uri_filename()}.csv").resolve()
-
-    @property
-    def date_modified(self) -> t.Optional[str]:
-        """The date the document was last modified on the source system."""
-        return self.modified_date
 
     @property
     def _output_filename(self):
         """Create filename document id combined with a hash of the query to uniquely identify
         the output file."""
-        return Path(self.partition_config.output_dir) / f"{self.uri_filename()}.json"
+        return Path(self.processor_config.output_dir) / f"{self.uri_filename()}.json"
 
     def _create_full_tmp_dir_path(self):
         self.filename.parent.mkdir(parents=True, exist_ok=True)
         self._output_filename.parent.mkdir(parents=True, exist_ok=True)
 
-    @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["fsspec"], extras="delta-table")
-    def get_file(self):
-        import pyarrow.parquet as pq
+    def _get_fs_from_uri(self):
         from fsspec.core import url_to_fs
 
         try:
@@ -94,14 +77,41 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 f"uri {self.uri} may be associated with a filesystem that "
                 f"requires additional dependencies: {error}",
             )
+        return fs
+
+    def update_source_metadata(self, **kwargs):
+        fs = kwargs.get("fs", self._get_fs_from_uri())
+        version = (
+            fs.checksum(self.uri) if fs.protocol != "gs" else fs.info(self.uri).get("etag", "")
+        )
+        file_exists = fs.exists(self.uri)
+        self.source_metadata = SourceMetadata(
+            date_created=self.created_at,
+            date_modified=self.modified_date,
+            version=version,
+            source_url=self.uri,
+            exists=file_exists,
+        )
+
+    @SourceConnectionError.wrap
+    @BaseIngestDoc.skip_if_file_exists
+    def get_file(self):
+        fs = self._get_fs_from_uri()
+        self.update_source_metadata(fs=fs)
         logger.info(f"using a {fs} filesystem to collect table data")
         self._create_full_tmp_dir_path()
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
-        df: pd.DataFrame = pq.ParquetDataset(self.uri, filesystem=fs).read_pandas().to_pandas()
+        df = self._get_df(filesystem=fs)
 
         logger.info(f"writing {len(df)} rows to {self.filename}")
         df.to_csv(self.filename)
+
+    @SourceConnectionNetworkError.wrap
+    def _get_df(self, filesystem) -> pd.DataFrame:
+        import pyarrow.parquet as pq
+
+        return pq.ParquetDataset(self.uri, filesystem=filesystem).read_pandas().to_pandas()
 
 
 @dataclass
@@ -136,7 +146,7 @@ class DeltaTableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         return [
             DeltaTableIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 uri=uri,
                 modified_date=mod_date_dict[os.path.basename(uri)],
@@ -148,7 +158,8 @@ class DeltaTableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 
 @dataclass
 class DeltaTableWriteConfig(WriteConfig):
-    write_column: str
+    drop_empty_cols: bool = False
+    overwrite_schema: bool = False
     mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
 
 
@@ -161,24 +172,40 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
     def initialize(self):
         pass
 
-    @requires_dependencies(["deltalake"], extras="delta-table")
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         from deltalake.writer import write_deltalake
 
-        json_list = []
+        df = convert_to_pandas_dataframe(
+            elements_dict=elements_dict,
+            drop_empty_cols=self.write_config.drop_empty_cols,
+        )
+        logger.info(
+            f"writing {len(df)} rows to destination table "
+            f"at {self.connector_config.table_uri}\ndtypes: {df.dtypes}",
+        )
+        # NOTE: deltalake writer on Linux sometimes can finish but still trigger a SIGABRT and cause
+        # ingest to fail, even though all tasks are completed normally. Putting the writer into a
+        # process mitigates this issue by ensuring python interpreter waits properly for deltalake's
+        # rust backend to finish
+        writer = Process(
+            target=write_deltalake,
+            kwargs={
+                "table_or_uri": self.connector_config.table_uri,
+                "data": df,
+                "mode": self.write_config.mode,
+                "overwrite_schema": self.write_config.overwrite_schema,
+            },
+        )
+        writer.start()
+        writer.join()
+
+    @requires_dependencies(["deltalake"], extras="delta-table")
+    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+        elements_dict: t.List[t.Dict[str, t.Any]] = []
         for doc in docs:
             local_path = doc._output_filename
             with open(local_path) as json_file:
-                json_content = json.load(json_file)
-                json_items = [json.dumps(j) for j in json_content]
-                logger.info(f"converting {len(json_items)} rows from content in {local_path}")
-                json_list.extend(json_items)
-        logger.info(
-            f"writing {len(json_list)} rows to destination "
-            f"table at {self.connector_config.table_uri}",
-        )
-        write_deltalake(
-            table_or_uri=self.connector_config.table_uri,
-            data=pd.DataFrame(data={self.write_config.write_column: json_list}),
-            mode=self.write_config.mode,
-        )
+                element_dict = json.load(json_file)
+                logger.info(f"converting {len(element_dict)} rows from content in {local_path}")
+                elements_dict.extend(element_dict)
+        self.write_dict(elements_dict=elements_dict)

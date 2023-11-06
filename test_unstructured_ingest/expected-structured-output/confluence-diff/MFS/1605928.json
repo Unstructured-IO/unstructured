@@ -5,7 +5,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605928"
@@ -14,6 +14,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83D\\uDDD3 Date"
@@ -24,7 +27,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605928"
@@ -33,6 +36,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83D\\uDC65 Participants"
@@ -43,7 +49,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605928"
@@ -52,6 +58,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -62,7 +71,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605928"
@@ -71,6 +80,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -81,7 +93,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605928"
@@ -90,6 +102,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83E\\uDD45 Goals"
@@ -100,7 +115,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605928"
@@ -109,6 +124,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -119,7 +137,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605928"
@@ -128,6 +146,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "\\uD83D\\uDDE3 Discussion topics"
@@ -138,7 +159,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605928"
@@ -147,6 +168,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "text_as_html": "<table><br><tbody><br><tr><td>Time</td><td>Item</td><td>Presenter</td><td>Notes</td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br></tbody><br></table>"
     },
@@ -158,7 +182,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605928"
@@ -167,6 +191,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "✅ Action items"
@@ -177,7 +204,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605928"
@@ -186,6 +213,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -196,7 +226,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605928"
@@ -205,6 +235,9 @@
         "date_modified": "2023-07-09T12:54:45.162000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "⤴ Decisions"

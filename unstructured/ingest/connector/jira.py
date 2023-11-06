@@ -1,13 +1,13 @@
-import datetime
 import math
 import os
 import typing as t
 from collections import abc
 from dataclasses import dataclass
+from datetime import datetime
 from functools import cached_property
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -17,6 +17,7 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     IngestDocSessionHandleMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -223,9 +224,9 @@ def scroll_wrapper(func, results_key="results"):
 
         for _ in range(num_iterations):
             response = func(*args, **kwargs)
-            if type(response) is list:
+            if isinstance(response, list):
                 all_results += func(*args, **kwargs)
-            elif type(response) is dict:
+            elif isinstance(response, dict):
                 if results_key not in response:
                     raise KeyError(
                         "Response object has no known keys to \
@@ -249,12 +250,8 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     """
 
     connector_config: SimpleJiraConfig
-    file_meta: JiraFileMeta
+    file_meta: t.Optional[JiraFileMeta] = None
     registry_name: str = "jira"
-
-    @cached_property
-    def source_url(self):
-        return f"{self.connector_config.url}/browse/{self.file_meta.issue_key}"
 
     @cached_property
     def record_locator(self):  # Values must be JSON-serializable
@@ -266,6 +263,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
         }
 
     @cached_property
+    @SourceConnectionNetworkError.wrap
     def issue(self):
         """Gets issue data"""
         jira = self.session_handle.service
@@ -274,30 +272,6 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     @cached_property
     def parsed_fields(self):
         return nested_object_to_field_getter(self.issue["fields"])
-
-    @cached_property
-    @SourceConnectionError.wrap
-    @requires_dependencies(dependencies=["atlassian"], extras="jira")
-    def metadata_fields(self):
-        return {
-            "exists": bool(self.issue),
-            "date_modified": str(self.parsed_fields["updated"]),
-            "date_created": str(self.parsed_fields["created"]),
-            "date_processed": str(datetime.datetime.now().time()),
-            "record_locator": self.record_locator,
-        }
-
-    @cached_property
-    def date_created(self) -> t.Optional[str]:
-        return self.metadata_fields["date_created"]
-
-    @cached_property
-    def date_modified(self) -> t.Optional[str]:
-        return self.metadata_fields["date_modified"]
-
-    @cached_property
-    def date_processed(self) -> t.Optional[str]:
-        return self.metadata_fields["date_processed"]
 
     @property
     def grouping_folder_name(self):
@@ -320,8 +294,33 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
         output_file = f"{self.file_meta.issue_id}.json"
 
         return (
-            Path(self.partition_config.output_dir) / self.grouping_folder_name / output_file
+            Path(self.processor_config.output_dir) / self.grouping_folder_name / output_file
         ).resolve()
+
+    @property
+    def version(self) -> t.Optional[str]:
+        return None
+
+    def update_source_metadata(self, **kwargs) -> None:
+        exists = bool(self.issue)
+        if not exists:
+            self.source_metadata = SourceMetadata(
+                exists=exists,
+            )
+            return
+
+        self.source_metadata = SourceMetadata(
+            date_created=datetime.strptime(
+                self.parsed_fields["created"],
+                "%Y-%m-%dT%H:%M:%S.%f%z",
+            ).isoformat(),
+            date_modified=datetime.strptime(
+                self.parsed_fields["updated"],
+                "%Y-%m-%dT%H:%M:%S.%f%z",
+            ).isoformat(),
+            source_url=f"{self.connector_config.url}/browse/{self.file_meta.issue_key}",
+            exists=exists,
+        )
 
     @SourceConnectionError.wrap
     @requires_dependencies(["atlassian"], extras="jira")
@@ -329,12 +328,12 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
     def get_file(self):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
-        self.document = form_templated_string(self.issue, self.parsed_fields)
-
+        document = form_templated_string(self.issue, self.parsed_fields)
+        self.update_source_metadata()
         self.filename.parent.mkdir(parents=True, exist_ok=True)
 
         with open(self.filename, "w", encoding="utf8") as f:
-            f.write(self.document)
+            f.write(document)
 
 
 @requires_dependencies(["atlassian"], extras="jira")
@@ -438,7 +437,7 @@ class JiraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         return [
             JiraIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 file_meta=JiraFileMeta(
                     issue_id=issue_id,

@@ -3,11 +3,11 @@ import pathlib
 
 import pytest
 
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import ListItem, NarrativeText, Title
-from unstructured.partition.json import partition_json
 from unstructured.partition.ppt import partition_ppt
-from unstructured.staging.base import elements_to_json
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
@@ -28,6 +28,8 @@ def test_partition_ppt_from_filename():
     assert elements == EXPECTED_PPT_OUTPUT
     for element in elements:
         assert element.metadata.filename == "fake-power-point.ppt"
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert {element.metadata.detection_origin for element in elements} == {"pptx"}
 
 
 def test_partition_ppt_from_filename_with_metadata_filename():
@@ -161,20 +163,12 @@ def test_partition_ppt_from_file_with_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_ppt_with_json(
-    filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt"),
-):
-    elements = partition_ppt(filename=filename)
-    test_elements = partition_json(text=elements_to_json(elements))
-
-    assert len(elements) == len(test_elements)
-    assert elements[0].metadata.filename == test_elements[0].metadata.filename
-
-    for i in range(len(elements)):
-        assert elements[i] == test_elements[i]
+def test_partition_ppt_with_json():
+    elements = partition_ppt(example_doc_path("fake-power-point.ppt"))
+    assert_round_trips_through_JSON(elements)
 
 
-def test_add_chunking_strategy_on_partition_ppt(
+def test_add_chunking_strategy_by_title_on_partition_ppt(
     filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt"),
 ):
     elements = partition_ppt(filename=filename)
@@ -182,3 +176,20 @@ def test_add_chunking_strategy_on_partition_ppt(
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
+
+
+def test_partition_ppt_element_metadata_has_languages():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
+    elements = partition_ppt(filename=filename)
+    assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_ppt_respects_detect_language_per_element():
+    filename = "example-docs/language-docs/eng_spa_mult.ppt"
+    elements = partition_ppt(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    # languages other than English and Spanish are detected by this partitioner,
+    # so this test is slightly different from the other partition tests
+    langs = {element.metadata.languages[0] for element in elements if element.metadata.languages}
+    assert "eng" in langs
+    assert "spa" in langs

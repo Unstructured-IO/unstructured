@@ -3,7 +3,14 @@
     "type": "Title",
     "element_id": "30537dddb2f7525b398da1b2dfcf0255",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -13,7 +20,14 @@
     "type": "Title",
     "element_id": "86ea6f300d673f87f5841379f956e24d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -23,7 +37,14 @@
     "type": "UncategorizedText",
     "element_id": "98e636ffa4ea25e037f659685a56f41d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -33,7 +54,14 @@
     "type": "Title",
     "element_id": "85e4ff3addb38328ecc08ec49759def7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -43,7 +71,14 @@
     "type": "ListItem",
     "element_id": "f1d5f4ed63a14db581e985bf15416cdd",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -53,7 +88,14 @@
     "type": "ListItem",
     "element_id": "c4e0168ffab999611a92e8ebd8fe48a9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -63,7 +105,14 @@
     "type": "ListItem",
     "element_id": "5e9b501fc056965a744f6598d022f31d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -73,7 +122,14 @@
     "type": "NarrativeText",
     "element_id": "968162aa6cdc3927ef2b11bb03cdeb45",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -83,7 +139,14 @@
     "type": "NarrativeText",
     "element_id": "b2b4b36d4bf515115275d355aead0006",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -93,7 +156,14 @@
     "type": "NarrativeText",
     "element_id": "dff01c1978409b9a513db147290948f8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 2
     },
@@ -103,7 +173,14 @@
     "type": "NarrativeText",
     "element_id": "19ccdb0593ee86b14412348a6ec7f71b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -113,7 +190,14 @@
     "type": "NarrativeText",
     "element_id": "c140ad5c30b6075c1a553eddacd8eca5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -123,167 +207,31 @@
     "type": "Title",
     "element_id": "0cce65035ca66e9be782c845ddd606e2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
     "text": "Figure 1. Twin Peaks? Headline and Core Inflation (Percent, year over year)"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "808caaef5b114d874a25b7fec21b5516",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "18 16 14 12 10 8 6 4 2 0 –2"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "28a5aa3897d66de6c31caba99a4c337e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "–2"
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "e26dceaba57a5f670d91ac170e8706d1",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Sources: Haver Analytics; and IMF staff calculations. Note: The figure shows the developments in headline and core inflation across 18 advanced economies and 17 emerging market and developing economies. Core inflation is the change in prices for goods and services, but excluding those for food and energy (or the closest available measure). For the euro area (and other European countries for which the data are available), energy, food, alcohol, and tobacco are excluded. The gray bands depict the 10th to 90th percentiles of inflation across economies."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c2c7be4534a60790d1d18451c91dc138",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "16 14 12 10 8 6 4 2 0"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 2019"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 2019"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "63e35649dd179389ecc7251e1503489a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "1. Headline Inflation"
-  },
-  {
-    "type": "ListItem",
-    "element_id": "b790ab5fcad28bbedb50b568b3adeca2",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "2. Core Inflation"
-  },
-  {
-    "type": "Title",
-    "element_id": "323d79e74460eda1fb0f8d55a2e0ff42",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Median country Brazil"
-  },
-  {
-    "type": "Title",
-    "element_id": "646612b0a62b59fd13be769b4590a9ac",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 19"
-  },
-  {
-    "type": "Title",
-    "element_id": "646612b0a62b59fd13be769b4590a9ac",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 19"
-  },
-  {
-    "type": "Title",
-    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 20"
-  },
-  {
-    "type": "Title",
-    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 20"
-  },
-  {
-    "type": "Title",
-    "element_id": "6d2f5e3c057e12c92023d5501c3fd075",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 20"
-  },
-  {
-    "type": "Title",
-    "element_id": "6d2f5e3c057e12c92023d5501c3fd075",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 20"
-  },
-  {
     "type": "Title",
     "element_id": "49dca65f362fee401292ed7ada96f962",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
@@ -291,129 +239,475 @@
   },
   {
     "type": "Title",
-    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
+    "element_id": "323d79e74460eda1fb0f8d55a2e0ff42",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "Jan. 21"
-  },
-  {
-    "type": "Title",
-    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 21"
-  },
-  {
-    "type": "Title",
-    "element_id": "81db94f58819ee2fd6c05ddef2082ccc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 21"
-  },
-  {
-    "type": "Title",
-    "element_id": "81db94f58819ee2fd6c05ddef2082ccc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jul. 21"
-  },
-  {
-    "type": "Title",
-    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 22"
-  },
-  {
-    "type": "Title",
-    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "Jan. 22"
+    "text": "Median country Brazil"
   },
   {
     "type": "Title",
     "element_id": "007b2203e9e86a49c3108e9ffd16fbbc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
     "text": "Euro area"
   },
   {
-    "type": "Title",
-    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
+    "type": "UncategorizedText",
+    "element_id": "808caaef5b114d874a25b7fec21b5516",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "Jul. 22"
+    "text": "18 16 14 12 10 8 6 4 2 0 –2"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "63e35649dd179389ecc7251e1503489a",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "1. Headline Inflation"
   },
   {
     "type": "Title",
-    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
+    "element_id": "81db94f58819ee2fd6c05ddef2082ccc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "Jul. 22"
+    "text": "Jul. 21"
   },
   {
     "type": "Title",
-    "element_id": "cc874418b59b7ecb37a2c938783fb5ce",
+    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "Nov. 22"
+    "text": "Jan. 21"
   },
   {
     "type": "Title",
-    "element_id": "cc874418b59b7ecb37a2c938783fb5ce",
+    "element_id": "6d2f5e3c057e12c92023d5501c3fd075",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
-    "text": "Nov. 22"
+    "text": "Jul. 20"
+  },
+  {
+    "type": "Title",
+    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 20"
+  },
+  {
+    "type": "Title",
+    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 22"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 2019"
+  },
+  {
+    "type": "Title",
+    "element_id": "646612b0a62b59fd13be769b4590a9ac",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 19"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c2c7be4534a60790d1d18451c91dc138",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "16 14 12 10 8 6 4 2 0"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "b790ab5fcad28bbedb50b568b3adeca2",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "2. Core Inflation"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "28a5aa3897d66de6c31caba99a4c337e",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "–2"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 2019"
+  },
+  {
+    "type": "Title",
+    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 20"
+  },
+  {
+    "type": "Title",
+    "element_id": "6d2f5e3c057e12c92023d5501c3fd075",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 20"
+  },
+  {
+    "type": "Title",
+    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 21"
+  },
+  {
+    "type": "Title",
+    "element_id": "81db94f58819ee2fd6c05ddef2082ccc",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 21"
+  },
+  {
+    "type": "Title",
+    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jan. 22"
+  },
+  {
+    "type": "Title",
+    "element_id": "646612b0a62b59fd13be769b4590a9ac",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 19"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e26dceaba57a5f670d91ac170e8706d1",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Sources: Haver Analytics; and IMF staff calculations. Note: The figure shows the developments in headline and core inflation across 18 advanced economies and 17 emerging market and developing economies. Core inflation is the change in prices for goods and services, but excluding those for food and energy (or the closest available measure). For the euro area (and other European countries for which the data are available), energy, food, alcohol, and tobacco are excluded. The gray bands depict the 10th to 90th percentiles of inflation across economies."
   },
   {
     "type": "NarrativeText",
     "element_id": "506812d46204b2b93ab35f1a71755819",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 3
     },
     "text": "Winter comes to Europe. European economic growth in 2022 was more resilient than expected in the face of the large negative terms-of-trade shock from the war in Ukraine. This resilience––which is"
   },
   {
+    "type": "Title",
+    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 22"
+  },
+  {
+    "type": "Title",
+    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Jul. 22"
+  },
+  {
+    "type": "Title",
+    "element_id": "cc874418b59b7ecb37a2c938783fb5ce",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Nov. 22"
+  },
+  {
+    "type": "Title",
+    "element_id": "cc874418b59b7ecb37a2c938783fb5ce",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 3
+    },
+    "text": "Nov. 22"
+  },
+  {
     "type": "NarrativeText",
     "element_id": "32743006cd939bf08edd7aa3219e68b7",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -423,7 +717,14 @@
     "type": "NarrativeText",
     "element_id": "ca2f8e460c0041cff505ffb1954655db",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -433,7 +734,14 @@
     "type": "NarrativeText",
     "element_id": "e1af971402d72d253048e50c84e1c3f0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -443,7 +751,14 @@
     "type": "NarrativeText",
     "element_id": "29f7da43c21b67ccf73a6d82aaf2f37d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -453,7 +768,14 @@
     "type": "NarrativeText",
     "element_id": "a66ad6a891a98004d235816ccb6f798a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -463,7 +785,14 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -473,7 +802,14 @@
     "type": "NarrativeText",
     "element_id": "e8461ba4bbf4110ce195ca03366ae1f0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 4
     },
@@ -483,7 +819,14 @@
     "type": "NarrativeText",
     "element_id": "70f05b9620aa1b7236058898e7e59192",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -493,7 +836,14 @@
     "type": "ListItem",
     "element_id": "fd6c549473e196512c076844988f465c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -503,7 +853,14 @@
     "type": "ListItem",
     "element_id": "3be6554964c172468cceaee89294f59d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -513,7 +870,14 @@
     "type": "ListItem",
     "element_id": "b24771387a5318eeda21adaa49629186",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -523,7 +887,14 @@
     "type": "NarrativeText",
     "element_id": "ad7ee60befc68a0200bb75d81828b2d2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -533,7 +904,14 @@
     "type": "ListItem",
     "element_id": "2ba41350ae3c684802f0e2b785c2d11b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -543,7 +921,14 @@
     "type": "ListItem",
     "element_id": "afde979c99a73646915fe253c85c5a9c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -553,7 +938,14 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 5
     },
@@ -563,7 +955,14 @@
     "type": "NarrativeText",
     "element_id": "e7a8e30d6d49ffbca56f87cd6883c9a0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -573,7 +972,14 @@
     "type": "ListItem",
     "element_id": "25e2f1dc031b5421b8a234945098e58b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -583,7 +989,14 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -593,7 +1006,14 @@
     "type": "NarrativeText",
     "element_id": "8ffcfc8eb8488c2cca522b99de891877",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -603,7 +1023,14 @@
     "type": "NarrativeText",
     "element_id": "aef60cefeb4014893b92bb827a7bd5cb",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -613,7 +1040,14 @@
     "type": "NarrativeText",
     "element_id": "d0b0eab9a9d006919b637a5aba9e4d5c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 6
     },
@@ -623,7 +1057,14 @@
     "type": "UncategorizedText",
     "element_id": "8f81c653cbf1334344d3063cb9f4de04",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -633,7 +1074,14 @@
     "type": "Title",
     "element_id": "d11a1c04bd3a9891350b4bd94104df58",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -643,7 +1091,14 @@
     "type": "Title",
     "element_id": "aa22eb2e58c7cf45c528550d68e15c51",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -653,7 +1108,14 @@
     "type": "Title",
     "element_id": "8c327a62ae0e925498f5c68b819b32b4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -663,7 +1125,14 @@
     "type": "UncategorizedText",
     "element_id": "1bea20e1df19b12013976de2b5e0e3d1",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -673,7 +1142,14 @@
     "type": "Title",
     "element_id": "b88d850d87e55cb1fd14ae67e5644d57",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -683,7 +1159,14 @@
     "type": "Title",
     "element_id": "18665f77847d326417463628d8860261",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -693,7 +1176,14 @@
     "type": "UncategorizedText",
     "element_id": "6557739a67283a8de383fc5c0997fbec",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -703,7 +1193,14 @@
     "type": "Title",
     "element_id": "1968c7f7ac8a3b0483f733357bb50b16",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -713,7 +1210,14 @@
     "type": "UncategorizedText",
     "element_id": "d398b29d3dbbb9bf201d4c7e1c19ff9d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -723,7 +1227,14 @@
     "type": "UncategorizedText",
     "element_id": "6557739a67283a8de383fc5c0997fbec",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -733,7 +1244,14 @@
     "type": "Title",
     "element_id": "b88d850d87e55cb1fd14ae67e5644d57",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -743,7 +1261,14 @@
     "type": "Title",
     "element_id": "18665f77847d326417463628d8860261",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -753,7 +1278,14 @@
     "type": "UncategorizedText",
     "element_id": "6557739a67283a8de383fc5c0997fbec",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -763,7 +1295,14 @@
     "type": "Title",
     "element_id": "fcadc00fe663ee0e7818b0ffc5c46948",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -773,7 +1312,14 @@
     "type": "UncategorizedText",
     "element_id": "69dfc187e2e6d907a0546f7e76f8ee3f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -783,7 +1329,14 @@
     "type": "UncategorizedText",
     "element_id": "72d73db944cf6d9a5f11d6c073c1dce0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -793,7 +1346,14 @@
     "type": "UncategorizedText",
     "element_id": "f491e65f8d4b8dbec7621fcedaf1b7a4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -803,7 +1363,14 @@
     "type": "UncategorizedText",
     "element_id": "35efc6ded4e13f29a8d86e4f33294be0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -813,7 +1380,14 @@
     "type": "UncategorizedText",
     "element_id": "44896b09365746b5f7167ee4d64988a3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -823,7 +1397,14 @@
     "type": "UncategorizedText",
     "element_id": "4e6611d25d5013d40f58a6f82e3aecdf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -833,7 +1414,14 @@
     "type": "UncategorizedText",
     "element_id": "eca06fdd26e513a7b8510c8660228504",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -843,7 +1431,14 @@
     "type": "UncategorizedText",
     "element_id": "3135d2d71bff77be4838a7102bbac5b8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -853,7 +1448,14 @@
     "type": "UncategorizedText",
     "element_id": "a416ea84421fa7e1351582da48235bac",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -863,7 +1465,14 @@
     "type": "Title",
     "element_id": "6185fd66a4e106814e65c047c15dfb1f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -873,7 +1482,14 @@
     "type": "Title",
     "element_id": "18231df9f753f2eca887585247231761",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -883,7 +1499,14 @@
     "type": "Title",
     "element_id": "7559320d044a32fbb21a7a8da25e9045",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -893,7 +1516,14 @@
     "type": "UncategorizedText",
     "element_id": "2a9680555d457b6da4b6748492bb6f3d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -903,7 +1533,14 @@
     "type": "UncategorizedText",
     "element_id": "6976f35f9f91b539b46743f37d94014a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -913,7 +1550,14 @@
     "type": "UncategorizedText",
     "element_id": "d8236eb6a9bab4f3d37735048ab5aeee",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -923,7 +1567,14 @@
     "type": "UncategorizedText",
     "element_id": "777e0063772d428bf1c04383b8ad058e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -933,7 +1584,14 @@
     "type": "UncategorizedText",
     "element_id": "f22875edf393e3502ad60c82e81c5933",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -943,7 +1601,14 @@
     "type": "UncategorizedText",
     "element_id": "2f6f72296f8ab115fda4292808436b88",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -953,7 +1618,14 @@
     "type": "UncategorizedText",
     "element_id": "eae9d4d60a1fe2df23f7b65ae3d76ca8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -963,7 +1635,14 @@
     "type": "UncategorizedText",
     "element_id": "1a009e8c6bb6dada03c326655a15bedf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -973,7 +1652,14 @@
     "type": "UncategorizedText",
     "element_id": "1776cf91dccdf2cce268fcee416b28f6",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -983,7 +1669,14 @@
     "type": "Title",
     "element_id": "a4ca51cd6c74adf51f6e9ce60165d047",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -993,7 +1686,14 @@
     "type": "Title",
     "element_id": "d5d29f012a1237803ee7e623a134117a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1003,7 +1703,14 @@
     "type": "Title",
     "element_id": "8325885b8155742cebc672e0d7072a7d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1013,7 +1720,14 @@
     "type": "Title",
     "element_id": "33a3d8ed92b0709ba525369922e51387",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1023,7 +1737,14 @@
     "type": "Title",
     "element_id": "ad1094978303f5aa32665083ee1ed934",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1031,19 +1752,16 @@
   },
   {
     "type": "Title",
-    "element_id": "24af2841400373443d80b6c91180918b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 7
-    },
-    "text": "Middle East and Central Asia"
-  },
-  {
-    "type": "Title",
     "element_id": "e30a554d7d1cbf308651f8c267ad6872",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1051,9 +1769,33 @@
   },
   {
     "type": "Title",
+    "element_id": "24af2841400373443d80b6c91180918b",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 7
+    },
+    "text": "Middle East and Central Asia"
+  },
+  {
+    "type": "Title",
     "element_id": "b2800ff802361713acee893ebae272f6",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1063,7 +1805,14 @@
     "type": "Title",
     "element_id": "05704f84f4326b5f53a04d62f7ad62fc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1073,7 +1822,14 @@
     "type": "UncategorizedText",
     "element_id": "a7143daa9de8af6e0c465ca1354d45b6",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1083,7 +1839,14 @@
     "type": "UncategorizedText",
     "element_id": "53bcbc5ff007dd49a07f6fb79ef96ef9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1093,7 +1856,14 @@
     "type": "UncategorizedText",
     "element_id": "1ea8f3c3db2cb6c75f21ebf26acc28a5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1103,7 +1873,14 @@
     "type": "UncategorizedText",
     "element_id": "9d1bc5abd6f3e9c4c6ccb572ae521387",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1113,7 +1890,14 @@
     "type": "UncategorizedText",
     "element_id": "e06f96c6cf56b11e98615192247171fa",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1123,7 +1907,14 @@
     "type": "UncategorizedText",
     "element_id": "4d702c47ea48fa0dca98ce691995cc1b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1133,7 +1924,14 @@
     "type": "UncategorizedText",
     "element_id": "d7b26ee43ca5481505ca9eb7c3b29b2c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1143,7 +1941,14 @@
     "type": "UncategorizedText",
     "element_id": "f4e79a2ba19a5b842cff288f8e4eafd0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1153,7 +1958,14 @@
     "type": "UncategorizedText",
     "element_id": "07adb8acdd66b5d2490e542ae0604b71",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1163,7 +1975,14 @@
     "type": "UncategorizedText",
     "element_id": "9e5246f529e197f84af65bbcd8e0d2a4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1173,7 +1992,14 @@
     "type": "UncategorizedText",
     "element_id": "dbc6d298b0672b8176de90a623844b7f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1183,7 +2009,14 @@
     "type": "UncategorizedText",
     "element_id": "743f3bc42f087068035515a8dec4f85a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1193,7 +2026,14 @@
     "type": "UncategorizedText",
     "element_id": "96ccb4fe1ec705d9944d1c1ecf0938ab",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1203,7 +2043,14 @@
     "type": "UncategorizedText",
     "element_id": "123157612cd26d61b4760a5ecd1f4bfc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1213,7 +2060,14 @@
     "type": "UncategorizedText",
     "element_id": "effb80722a72ecff482b7a0d4a027e78",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1223,7 +2077,14 @@
     "type": "UncategorizedText",
     "element_id": "037023840d334f9f357a6c3da2b058ff",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1233,7 +2094,14 @@
     "type": "UncategorizedText",
     "element_id": "4d5d14d8c932363fe84036564c6c582b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1243,7 +2111,14 @@
     "type": "UncategorizedText",
     "element_id": "98e45a005510dc136e14094ee7ed7faf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1253,7 +2128,14 @@
     "type": "UncategorizedText",
     "element_id": "39b99440eae2f9ee75cf98100c285787",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1263,7 +2145,14 @@
     "type": "UncategorizedText",
     "element_id": "0c76bc4e35219e2a31b09428cd47d009",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1273,7 +2162,14 @@
     "type": "UncategorizedText",
     "element_id": "e4fe15854d6650b5b102d8b1c11eb0ba",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1283,7 +2179,14 @@
     "type": "UncategorizedText",
     "element_id": "e352203d837b1096ee96e1977f1c3d0b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1293,7 +2196,14 @@
     "type": "UncategorizedText",
     "element_id": "098d858ff74b2740723330ff6e43edf8",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1303,7 +2213,14 @@
     "type": "UncategorizedText",
     "element_id": "7fdc64e781146808df57eac112860f9b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1313,7 +2230,14 @@
     "type": "UncategorizedText",
     "element_id": "d35a737537febb07f01925c873444cbc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1323,7 +2247,14 @@
     "type": "UncategorizedText",
     "element_id": "7ac5e2e700f401ccf7d2c4770d3afd44",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1333,7 +2264,14 @@
     "type": "UncategorizedText",
     "element_id": "708c57a76a5cf81dc197cc1bd612adb2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1343,7 +2281,14 @@
     "type": "UncategorizedText",
     "element_id": "708c57a76a5cf81dc197cc1bd612adb2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1353,7 +2298,14 @@
     "type": "UncategorizedText",
     "element_id": "708c57a76a5cf81dc197cc1bd612adb2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1363,7 +2315,14 @@
     "type": "NarrativeText",
     "element_id": "3c0578f4d944258ffa4ffac7615f1ff9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1373,7 +2332,14 @@
     "type": "UncategorizedText",
     "element_id": "b432234c878eb484525dbb0c9be461fe",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1383,7 +2349,14 @@
     "type": "UncategorizedText",
     "element_id": "1baf3bebf4d4c9418858185bd491eb8f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1393,7 +2366,14 @@
     "type": "UncategorizedText",
     "element_id": "7268a41308c4276447de2a707b5df73c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1403,7 +2383,14 @@
     "type": "UncategorizedText",
     "element_id": "cf39ab5ed0773cea3681c2ac35e6b706",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1413,7 +2400,14 @@
     "type": "UncategorizedText",
     "element_id": "84bc47d0d0703878a250620230630525",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1423,7 +2417,14 @@
     "type": "UncategorizedText",
     "element_id": "ebb1568088af8b7c7b98878b895decaf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1433,7 +2434,14 @@
     "type": "UncategorizedText",
     "element_id": "3d5c2c97e00e0c5be2a870cf1cbaac06",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1443,7 +2451,14 @@
     "type": "UncategorizedText",
     "element_id": "4150b86a3fffd48fc159e81c9b7325db",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1453,7 +2468,14 @@
     "type": "UncategorizedText",
     "element_id": "301b9fd38725258f32816ff1a855be3e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1463,7 +2485,14 @@
     "type": "UncategorizedText",
     "element_id": "6bb1e757e09d7fa3aba323a375abd047",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1473,7 +2502,14 @@
     "type": "UncategorizedText",
     "element_id": "9db439c530ed3425c0a68724de199942",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1483,7 +2519,14 @@
     "type": "UncategorizedText",
     "element_id": "b7948d6976e997e76e343161b4b5d864",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1493,7 +2536,14 @@
     "type": "UncategorizedText",
     "element_id": "e7ac421147471fe341ae242e7544a44c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1503,7 +2553,14 @@
     "type": "UncategorizedText",
     "element_id": "4b48b0469ba9682a3e385ee7fbb6bbed",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1513,7 +2570,14 @@
     "type": "UncategorizedText",
     "element_id": "5277334fd8abe869f6a8de2e43942c9d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1523,7 +2587,14 @@
     "type": "UncategorizedText",
     "element_id": "44f0ab7953bb0b3696b9fa3cf0682f35",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1533,7 +2604,14 @@
     "type": "UncategorizedText",
     "element_id": "08e781dd2b6499b1ac8105a47f3520cc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1543,7 +2621,14 @@
     "type": "UncategorizedText",
     "element_id": "e586cf66e92b356a4611ee2ffdf85a16",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1553,7 +2638,14 @@
     "type": "UncategorizedText",
     "element_id": "41d85a7cc007a9c34136a786d6e61c15",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1563,7 +2655,14 @@
     "type": "NarrativeText",
     "element_id": "46c8e0c55b163d73d3d2766be8d1bf8d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1573,7 +2672,14 @@
     "type": "NarrativeText",
     "element_id": "7ceb88ebed64c26e9b1fe8e6c280a2f0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1583,7 +2689,14 @@
     "type": "ListItem",
     "element_id": "cf20f95904c591b6ac4ccd5d43fa8a98",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 7
     },
@@ -1593,7 +2706,14 @@
     "type": "NarrativeText",
     "element_id": "d379a79a55cecddeed62b21eb6a0ff00",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -1603,7 +2723,14 @@
     "type": "ListItem",
     "element_id": "2bbe57e6c291db638d3fcddca9e0199a",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -1613,7 +2740,14 @@
     "type": "NarrativeText",
     "element_id": "a2f806b25a06969405637298b4c85139",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -1623,7 +2757,14 @@
     "type": "ListItem",
     "element_id": "90a90e12a4c6b8b74d3c8d20a76f22dc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -1633,7 +2774,14 @@
     "type": "ListItem",
     "element_id": "42ac57e394bf7c98d908745cefce0b80",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -1643,7 +2791,14 @@
     "type": "ListItem",
     "element_id": "2d14934d52ff357c52e9ae1c38f7390e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -1653,7 +2808,14 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -1663,7 +2825,14 @@
     "type": "ListItem",
     "element_id": "33ccff3014b460178e62d9c8021fd728",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -1673,7 +2842,14 @@
     "type": "ListItem",
     "element_id": "75bd22ee0ba778cc3a616ed0a9b42292",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 8
     },
@@ -1683,7 +2859,14 @@
     "type": "NarrativeText",
     "element_id": "35514c59b45fbe18e13b3072e41ec0d4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -1693,7 +2876,14 @@
     "type": "NarrativeText",
     "element_id": "d2794ce8937fad1987c3f198850350c9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -1703,7 +2893,14 @@
     "type": "NarrativeText",
     "element_id": "6a6821a036952feacc8adf67dad86301",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -1713,7 +2910,14 @@
     "type": "NarrativeText",
     "element_id": "1e084ea6e8177e55fa934f29543f6f6b",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -1723,7 +2927,14 @@
     "type": "NarrativeText",
     "element_id": "f4e4cb4459e157a2d66aec36ba0652a2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -1733,7 +2944,14 @@
     "type": "NarrativeText",
     "element_id": "e572c3cf8978f18b38aa0b661e50b89f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -1743,7 +2961,14 @@
     "type": "UncategorizedText",
     "element_id": "40430ee7d1dc6b176a60b88df18a66c9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 9
     },
@@ -1753,7 +2978,14 @@
     "type": "NarrativeText",
     "element_id": "1344e770221822b381fb428d9390a446",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1763,7 +2995,14 @@
     "type": "NarrativeText",
     "element_id": "5f63f2b3388c5c9f2ab22f4136d4196d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1773,7 +3012,14 @@
     "type": "NarrativeText",
     "element_id": "c64f29a38dae74989484539db014364f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1783,7 +3029,14 @@
     "type": "ListItem",
     "element_id": "bd7674df887463bc9f05c8030a151dea",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1793,7 +3046,14 @@
     "type": "ListItem",
     "element_id": "af6eef18ec41f4980c1a4cbb5b7d4fec",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1803,7 +3063,14 @@
     "type": "ListItem",
     "element_id": "d6f6afcf055ed3084a0fac1093458c88",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1813,7 +3080,14 @@
     "type": "ListItem",
     "element_id": "089c5759e7030e34a3b537d9e20bcd13",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 10
     },
@@ -1823,27 +3097,31 @@
     "type": "NarrativeText",
     "element_id": "14187a5be9e3a125267bfe10e6c67fae",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
     "text": "Overall, financial stability risks remain elevated as investors reassess their inflation and monetary policy outlook. Global financial conditions have eased somewhat since the October 2022 Global Financial Stability Report, driven largely by changing market expectations regarding the interest rate cycle (Figure 1.1). While the expected peak in policy rates—the terminal rate—has risen, markets now also expect the subsequent fall in rates will be significantly faster, and further, than what was forecast in October (Figure 1.2). As a result, global bond yields have recently declined, corporate spreads have tightened, and equity markets have rebounded. That said, central banks are likely to continue to tighten monetary policy to fight inflation, and concerns that this restrictive stance could tip the economy into a recession have increased in major advanced economies."
   },
   {
-    "type": "NarrativeText",
-    "element_id": "e118be83abfed92b8969eca98bb4d53b",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "Slowing aggregate demand and weaker-than-expected inflation prints in some major advanced economies have prompted investors’ anticipation of a further reduction in the pace of future policy rate hikes. Corporate earnings forecasts have been cut due to headwinds from slowing demand, and margins have contracted across most regions. In addition, survey-based probabilities of recession have been increasing, particularly in the United States and Europe. However, upside risks to the inflation outlook remain. Despite the recent moderation in headline inflation, core inflation remains stubbornly high across most regions, labor markets are still tight, energy prices remain pressured by Russia’s ongoing war in Ukraine, and supply chain disruptions may reappear. To keep these risks in check, financial conditions will likely need to tighten further. If not, central banks may need to increase policy rates even more in order to achieve their inflation objectives."
-  },
-  {
     "type": "Title",
     "element_id": "57de33ba9eaa9e5980d4cf6da83abf46",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1853,7 +3131,14 @@
     "type": "UncategorizedText",
     "element_id": "7902699be42c8a8e46fbbb4501726517",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1863,7 +3148,14 @@
     "type": "UncategorizedText",
     "element_id": "e7f6c011776e8db7cd330b54174fd76f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1873,7 +3165,14 @@
     "type": "UncategorizedText",
     "element_id": "ef2d127de37b942baad06145e54b0c61",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1883,7 +3182,14 @@
     "type": "UncategorizedText",
     "element_id": "4b227777d4dd1fc61c6f884f48641d02",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1893,7 +3199,14 @@
     "type": "Title",
     "element_id": "4255f2d53f6408c450b02b249d53c220",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1903,7 +3216,14 @@
     "type": "Title",
     "element_id": "53d79cec96694df67ce3baff95d8a2e3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1913,7 +3233,14 @@
     "type": "UncategorizedText",
     "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1923,7 +3250,14 @@
     "type": "UncategorizedText",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1933,7 +3267,14 @@
     "type": "UncategorizedText",
     "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1943,7 +3284,14 @@
     "type": "UncategorizedText",
     "element_id": "5feceb66ffc86f38d952786c6d696c79",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1953,7 +3301,14 @@
     "type": "UncategorizedText",
     "element_id": "467792e5d9b6bec26f556875e9ccab10",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1963,7 +3318,14 @@
     "type": "UncategorizedText",
     "element_id": "28a5aa3897d66de6c31caba99a4c337e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1973,7 +3335,14 @@
     "type": "UncategorizedText",
     "element_id": "a43f5d32a34c9b54fe96097c3d491389",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1983,7 +3352,14 @@
     "type": "UncategorizedText",
     "element_id": "4108466a9a52ce87e39eb1836a42f6f2",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -1993,7 +3369,14 @@
     "type": "UncategorizedText",
     "element_id": "aacd834b5cdc64a329e27649143406dd",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2003,7 +3386,14 @@
     "type": "UncategorizedText",
     "element_id": "785329d8f1c63e8d0cdeedba9e6bc2ea",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2013,7 +3403,14 @@
     "type": "UncategorizedText",
     "element_id": "1e46bf7c5134da75e3a2aae852d7bddf",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2023,7 +3420,14 @@
     "type": "UncategorizedText",
     "element_id": "c81a1234a265c680bbc9e96e73073acd",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2033,7 +3437,14 @@
     "type": "UncategorizedText",
     "element_id": "b17ef6d19c7a5b1ee83b907c595526dc",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2043,7 +3454,14 @@
     "type": "UncategorizedText",
     "element_id": "99cb7a0185216a0acb0ed918e7058868",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2053,7 +3471,14 @@
     "type": "UncategorizedText",
     "element_id": "0c5e98c11d7bb005adbaf731ebfbbb2c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2063,7 +3488,14 @@
     "type": "UncategorizedText",
     "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2073,17 +3505,48 @@
     "type": "NarrativeText",
     "element_id": "1ac9d411aa1266cb68aba2a8a9b70379",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
     "text": "Sources: Bloomberg Finance L.P.; Haver Analytics; national data sources; and IMF staff calculations. Note: AEs = advanced economies; EMs = emerging markets. GFSR = Global Financial Stability Report."
   },
   {
+    "type": "NarrativeText",
+    "element_id": "e118be83abfed92b8969eca98bb4d53b",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "Slowing aggregate demand and weaker-than-expected inflation prints in some major advanced economies have prompted investors’ anticipation of a further reduction in the pace of future policy rate hikes. Corporate earnings forecasts have been cut due to headwinds from slowing demand, and margins have contracted across most regions. In addition, survey-based probabilities of recession have been increasing, particularly in the United States and Europe. However, upside risks to the inflation outlook remain. Despite the recent moderation in headline inflation, core inflation remains stubbornly high across most regions, labor markets are still tight, energy prices remain pressured by Russia’s ongoing war in Ukraine, and supply chain disruptions may reappear. To keep these risks in check, financial conditions will likely need to tighten further. If not, central banks may need to increase policy rates even more in order to achieve their inflation objectives."
+  },
+  {
     "type": "Title",
     "element_id": "6ef230728534d871e5126e2a55e12b26",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2093,7 +3556,14 @@
     "type": "Title",
     "element_id": "8730d3c2022abf1f9665e4ca1da43e4d",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2103,7 +3573,14 @@
     "type": "Title",
     "element_id": "53d79cec96694df67ce3baff95d8a2e3",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2113,7 +3590,14 @@
     "type": "UncategorizedText",
     "element_id": "e7f6c011776e8db7cd330b54174fd76f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2123,7 +3607,14 @@
     "type": "ListItem",
     "element_id": "7d4f55875c970d850a152ba1d5ba02a5",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2133,7 +3624,14 @@
     "type": "ListItem",
     "element_id": "8e655408cf212df5f74df13e05cdf02c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2143,7 +3641,14 @@
     "type": "UncategorizedText",
     "element_id": "ef2d127de37b942baad06145e54b0c61",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2153,7 +3658,14 @@
     "type": "UncategorizedText",
     "element_id": "4b227777d4dd1fc61c6f884f48641d02",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2163,7 +3675,14 @@
     "type": "UncategorizedText",
     "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2173,7 +3692,14 @@
     "type": "UncategorizedText",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2183,7 +3709,14 @@
     "type": "UncategorizedText",
     "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2193,7 +3726,14 @@
     "type": "Title",
     "element_id": "49cf8421218222b21a0fc54ffce584c9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2203,7 +3743,14 @@
     "type": "Title",
     "element_id": "24a234895630131d612fc1b4605a256e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2213,7 +3760,14 @@
     "type": "Title",
     "element_id": "914e31edcbd035dbe9f1cfb7b29089a9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2223,7 +3777,14 @@
     "type": "Title",
     "element_id": "d8478f45b9790d52201238244d0e9698",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2233,7 +3794,14 @@
     "type": "Title",
     "element_id": "fe1cc1c654c8a4fde402cfe2426326ef",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2243,7 +3811,14 @@
     "type": "Title",
     "element_id": "49cf8421218222b21a0fc54ffce584c9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2253,7 +3828,14 @@
     "type": "Title",
     "element_id": "24a234895630131d612fc1b4605a256e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2263,7 +3845,14 @@
     "type": "Title",
     "element_id": "914e31edcbd035dbe9f1cfb7b29089a9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2273,7 +3862,14 @@
     "type": "Title",
     "element_id": "d8478f45b9790d52201238244d0e9698",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2283,67 +3879,31 @@
     "type": "Title",
     "element_id": "fe1cc1c654c8a4fde402cfe2426326ef",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
     "text": "Dec. 26"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "ef2d127de37b942baad06145e54b0c61",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "5"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "4"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "3"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "2"
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 11
-    },
-    "text": "1"
   },
   {
     "type": "NarrativeText",
     "element_id": "da431b9817da923cc48a538c4b3b8ade",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2353,7 +3913,14 @@
     "type": "NarrativeText",
     "element_id": "d073e054fbe8931eb0e200b268710187",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2363,7 +3930,14 @@
     "type": "NarrativeText",
     "element_id": "f26da6b7c082faebee84771dcc2c1cf4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
@@ -2373,10 +3947,102 @@
     "type": "UncategorizedText",
     "element_id": "09b3166aab28edac8872d46b3b34ab02",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 11
     },
     "text": "WEO Update © 2023 • ISBN: 979-8-40023-224-4"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ef2d127de37b942baad06145e54b0c61",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "5"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "4"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "3"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "2"
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "6b86b273ff34fce19d6b804eff5a3f57",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/s3/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 11
+    },
+    "text": "1"
   }
 ]

@@ -5,7 +5,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1867777",
-        "version": 2,
+        "version": "2",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1867777"
@@ -14,6 +14,9 @@
         "date_modified": "2023-07-11T17:02:21.081000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Testdoc1 has only this text for 10 times: 1"
@@ -24,7 +27,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1867777",
-        "version": 2,
+        "version": "2",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1867777"
@@ -33,6 +36,9 @@
         "date_modified": "2023-07-11T17:02:21.081000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Testdoc1 has only this text for 10 times: 2"
@@ -43,7 +49,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1867777",
-        "version": 2,
+        "version": "2",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1867777"
@@ -52,6 +58,9 @@
         "date_modified": "2023-07-11T17:02:21.081000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Testdoc1 has only this text for 10 times: 3"
@@ -62,7 +71,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1867777",
-        "version": 2,
+        "version": "2",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1867777"
@@ -71,6 +80,9 @@
         "date_modified": "2023-07-11T17:02:21.081000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Testdoc1 has only this text for 10 times: 4"
@@ -81,7 +93,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1867777",
-        "version": 2,
+        "version": "2",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1867777"
@@ -90,6 +102,9 @@
         "date_modified": "2023-07-11T17:02:21.081000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Testdoc1 has only this text for 10 times: 5"
@@ -100,7 +115,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1867777",
-        "version": 2,
+        "version": "2",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1867777"
@@ -109,6 +124,9 @@
         "date_modified": "2023-07-11T17:02:21.081000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Testdoc1 has only this text for 10 times: 6"
@@ -119,7 +137,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1867777",
-        "version": 2,
+        "version": "2",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1867777"
@@ -128,6 +146,9 @@
         "date_modified": "2023-07-11T17:02:21.081000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Testdoc1 has only this text for 10 times: 7"
@@ -138,7 +159,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1867777",
-        "version": 2,
+        "version": "2",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1867777"
@@ -147,6 +168,9 @@
         "date_modified": "2023-07-11T17:02:21.081000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Testdoc1 has only this text for 10 times: 8"
@@ -157,7 +181,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1867777",
-        "version": 2,
+        "version": "2",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1867777"
@@ -166,6 +190,9 @@
         "date_modified": "2023-07-11T17:02:21.081000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Testdoc1 has only this text for 10 times: 9"
@@ -176,7 +203,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1867777",
-        "version": 2,
+        "version": "2",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1867777"
@@ -185,6 +212,9 @@
         "date_modified": "2023-07-11T17:02:21.081000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Testdoc1 has only this text for 10 times: 10"

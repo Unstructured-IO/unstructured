@@ -3,57 +3,48 @@
     "type": "UncategorizedText",
     "element_id": "055b9fd1463ee2c4481b4eb9e20d4b0f",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-path/07/07/sbaa031.073.PMC7234218.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
     "text": "S32"
   },
   {
-    "type": "Title",
-    "element_id": "b8b976f4707d2af116239c70acf8f2be",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Poster Session I"
-  },
-  {
     "type": "NarrativeText",
     "element_id": "f7573da2765829e5fcbc8eed02057106",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-path/07/07/sbaa031.073.PMC7234218.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
     "text": "ns; 40 mg/day=3.6%, p<0.05; 80 mg/day=4.9%, p<0.01; 120 mg/day=9.3%, p<0.001, PM dosing group: 20 mg/day=-0.4%, ns; 40 mg/day=2.8%, p<0.05: 80 mg/day=0.2%, ns; 160 mg/day=5.8%, p<0.05). There was no clear dose-dependent trend associated with nausea and RD was similar between AM and PM dosing group (AM dosing group: 20 mg/ day=0.2% ns; 40 mg/day=3.8%, p<0.05; 80 mg/day=3.8%, ns; 120 mg/ day=6.6%, ns, PM dosing group: 20 mg/day=-1.6%, ns; 40 mg/day=-1.7%, ns; 80 mg/day=5.5%, p<0.01; 160 mg/day=2.8%, ns). Discussion: The risk of adverse events in the treatment of schizophrenia with lurasidone can vary depending on the timing of administration. In particular, for akathisia and somnolence, the incidence risks were reduced when lurasidone was administered in PM. Unlike with AM administration, the dose-dependence in the risks of these adverse events were not observed in lurasidone PM administration. The timing of lurasidone administration could be considered in effort to minimize potential adverse events."
   },
   {
-    "type": "NarrativeText",
-    "element_id": "e77987c7b17439bcfe8150c849de15a9",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "Discussion: Our data confirm previous findings on reduced slow wave density in FEP, and expand them to acute subjects, before any treatment is prescribed. This is in line with available data on diffuse abnormalities of cortico-cortical and cortico-thalamic networks in these patients. Interestingly, our data also offer preliminary evidence that this deficit is specific for SCZ, as it appears to differentiate patients who developed SCZ from those with other diagnoses at follow-up. Given the traveling properties of slow waves, future research should establish their potential as markers of connectivity in SCZ."
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "15ef5407945d4d6b7863b5afaeb5ccb7",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "S7. INVESTIGATING THE LINK BETWEEN THE PERIPHERAL ENDOCANNABINOID SYSTEM AND CENTRAL GLUTAMATERGIC NEUROTRANSMISSION IN EARLY PSYCHOSIS: A 7T-MRS STUDY"
-  },
-  {
     "type": "UncategorizedText",
     "element_id": "87729f38cab913c4c23019736f8609f0",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-path/07/07/sbaa031.073.PMC7234218.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -63,7 +54,14 @@
     "type": "UncategorizedText",
     "element_id": "e97f1cf1c49f397732e68cf1efb2355e",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-path/07/07/sbaa031.073.PMC7234218.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -73,17 +71,99 @@
     "type": "NarrativeText",
     "element_id": "1252f8d8921acac5f706e4402e504a75",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-path/07/07/sbaa031.073.PMC7234218.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
     "text": "Background: Slow waves, the hallmark of the deep nonrapid eye move- ment sleep electroencephalogram (EEG), are critical for restorative sleep and brain plasticity. They arise from the synchronous depolarization and hyperpolarization of millions of cortical neurons and their proper gen- eration and propagation relies upon the integrity of widespread cortico- thalamic networks. Slow wave abnormalities have been reported in patient with Schizophrenia, although with partially contradictory results, probably related to antipsychotic and sedative medications. Recently, their presence and delineation, have been convincingly shown in first-episode psychosis patients (FEP). However, clear evidence of this biomarker at the onset of the disease, prior to any psychopharmacological intervention, remains limited. Moreover, no attempt has been made to elucidate the prognostic meaning of this finding. Methods: We collected whole night sleep high–density electroencephalog- raphy recordings (64-channel BrainAmp, Brain Products GmbH, Gilching, Germany) in 20 drug-naive FEP patients and 20 healthy control subjects (HC). Several clinical psychometric scales as well as neurocognitive tests were administered to all subjects in order to better define psychopatholog- ical status and vulnerability. EEG slow wave activity (SWA, spectral power between 1 and 4 Hz) and several slow wave parameters were computed at each electrode location, including density and amplitude, at each electrode location. Along with a group analysis between FEP and HC, a subgroup analysis was also computed between patients who showed a progression of symptoms to full-blown Schizophrenia (SCZ, n = 10) over the next 12-month follow-up and those who did not (OTH, n = 10). Results: Sleep macro-architecture was globally preserved in FEP patients. SWA (1–4 Hz) was lower in FEP compared to HC but this difference didn’t reach statistical significance. Slow wave density was decreased in FEP compared to HC, with a significance that survived multiple comparison correction over a large fronto-central cluster. Mean amplitude was pre- served. At the subgroup analysis, these results were largely driven by the subgroup of patients with a confirmed diagnosis of SCZ at a 12-month fol- low-up. Indeed, no difference could be found between OTH and HC, while a strong significance was still evident between SCZ and HC."
   },
   {
+    "type": "Title",
+    "element_id": "574d62523bf0c0a56967c26c82840550",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-path/07/07/sbaa031.073.PMC7234218.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "SIRS 2020 Abstracts"
+  },
+  {
+    "type": "Title",
+    "element_id": "b8b976f4707d2af116239c70acf8f2be",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-path/07/07/sbaa031.073.PMC7234218.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Poster Session I"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e77987c7b17439bcfe8150c849de15a9",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-path/07/07/sbaa031.073.PMC7234218.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "Discussion: Our data confirm previous findings on reduced slow wave density in FEP, and expand them to acute subjects, before any treatment is prescribed. This is in line with available data on diffuse abnormalities of cortico-cortical and cortico-thalamic networks in these patients. Interestingly, our data also offer preliminary evidence that this deficit is specific for SCZ, as it appears to differentiate patients who developed SCZ from those with other diagnoses at follow-up. Given the traveling properties of slow waves, future research should establish their potential as markers of connectivity in SCZ."
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "15ef5407945d4d6b7863b5afaeb5ccb7",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-path/07/07/sbaa031.073.PMC7234218.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "page_number": 1
+    },
+    "text": "S7. INVESTIGATING THE LINK BETWEEN THE PERIPHERAL ENDOCANNABINOID SYSTEM AND CENTRAL GLUTAMATERGIC NEUROTRANSMISSION IN EARLY PSYCHOSIS: A 7T-MRS STUDY"
+  },
+  {
     "type": "UncategorizedText",
     "element_id": "5ce0f6dc16582eaf81312c412e99ebb9",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-path/07/07/sbaa031.073.PMC7234218.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -93,7 +173,14 @@
     "type": "NarrativeText",
     "element_id": "9e7cc386b1093b082bccf936861747aa",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-path/07/07/sbaa031.073.PMC7234218.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -103,7 +190,14 @@
     "type": "UncategorizedText",
     "element_id": "5807689818fb4d4d7e7112bae842b50c",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-path/07/07/sbaa031.073.PMC7234218.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -113,7 +207,14 @@
     "type": "UncategorizedText",
     "element_id": "59aa170fed2f7a1ab36e75f0cd0461c4",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-path/07/07/sbaa031.073.PMC7234218.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
@@ -123,20 +224,17 @@
     "type": "Title",
     "element_id": "3aa954bd1e29835edef83b7cd04e9769",
     "metadata": {
-      "data_source": {},
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-path/07/07/sbaa031.073.PMC7234218.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
       "filetype": "application/pdf",
       "page_number": 1
     },
     "text": "AQ3"
-  },
-  {
-    "type": "Title",
-    "element_id": "574d62523bf0c0a56967c26c82840550",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 1
-    },
-    "text": "SIRS 2020 Abstracts"
   }
 ]

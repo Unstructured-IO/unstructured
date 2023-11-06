@@ -30,9 +30,12 @@ class GcsIngestDoc(FsspecIngestDoc):
 @dataclass
 class GcsSourceConnector(FsspecSourceConnector):
     connector_config: SimpleGcsConfig
-    ingest_doc_cls: Type[GcsIngestDoc] = GcsIngestDoc
+
+    def __post_init__(self):
+        self.ingest_doc_cls: Type[GcsIngestDoc] = GcsIngestDoc
 
 
+@requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
 @dataclass
 class GcsDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleGcsConfig

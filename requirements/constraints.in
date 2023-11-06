@@ -5,6 +5,8 @@
 ####################################################################################################
 # NOTE(alan): Pinning to avoid conflicts with downstream ingest-s3
 urllib3<1.27, >=1.25.4
+boto3<1.28.18
+botocore<1.31.18
 # consistency with local-inference-pin
 protobuf<4.24
 # NOTE(robinson) - Required pins for security scans
@@ -39,3 +41,15 @@ matplotlib==3.7.2
 # NOTE(crag) - pin to available pandas for python 3.8 (at least in CI)
 fsspec==2023.9.1
 pandas<2.0.4
+# langchain limits anyio to below 4.0
+anyio<4.0
+# NOTE(crag): earlier versions fail in compilation step when pip installing the package
+pycocotools>=2.0.7
+# NOTE(crag): python3.8-python3.11 compat (if it ends up being required)
+torch>2
+# pinned in unstructured paddleocr
+opencv-python==4.8.0.76
+opencv-contrib-python==4.8.0.76
+onnxruntime==1.15.1
+platformdirs==3.10.0
+pillow<=10.0.1

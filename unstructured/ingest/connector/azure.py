@@ -30,9 +30,12 @@ class AzureBlobStorageIngestDoc(FsspecIngestDoc):
 @dataclass
 class AzureBlobStorageSourceConnector(FsspecSourceConnector):
     connector_config: SimpleAzureBlobStorageConfig
-    ingest_doc_cls: t.Type[AzureBlobStorageIngestDoc] = AzureBlobStorageIngestDoc
+
+    def __post_init__(self):
+        self.ingest_doc_cls: t.Type[AzureBlobStorageIngestDoc] = AzureBlobStorageIngestDoc
 
 
+@requires_dependencies(["adlfs", "fsspec"], extras="azure")
 @dataclass
 class AzureBlobStorageDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleAzureBlobStorageConfig

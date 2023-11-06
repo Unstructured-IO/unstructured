@@ -1,30 +1,23 @@
-import logging
+import typing as t
 from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import Group
-from unstructured.ingest.cli.common import (
-    log_options,
-)
+from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMixin,
-    CliPartitionConfig,
-    CliReadConfig,
-    CliRecursiveConfig,
-    CliRemoteUrlConfig,
+    CliConfig,
 )
-from unstructured.ingest.interfaces import BaseConfig
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import s3 as s3_fn
+
+CMD_NAME = "s3"
 
 
 @dataclass
-class S3CliConfig(BaseConfig, CliMixin):
+class S3CliConfig(CliConfig):
     anonymous: bool = False
+    endpoint_url: t.Optional[str] = None
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--anonymous"],
@@ -32,83 +25,24 @@ class S3CliConfig(BaseConfig, CliMixin):
                 default=False,
                 help="Connect to s3 without local AWS credentials.",
             ),
+            click.Option(
+                ["--endpoint-url"],
+                type=str,
+                default=None,
+                help="Use this endpoint_url, if specified. Needed for "
+                "connecting to non-AWS S3 buckets.",
+            ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
-@click.group(name="s3", invoke_without_command=True, cls=Group)
-@click.pass_context
-def s3_source(ctx: click.Context, **options):
-    if ctx.invoked_subcommand:
-        return
-
-    # Click sets all multiple fields as tuple, this needs to be updated to list
-    for k, v in options.items():
-        if isinstance(v, tuple):
-            options[k] = list(v)
-    verbose = options.get("verbose", False)
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(options, verbose=verbose)
-    try:
-        # run_init_checks(**options)
-        read_config = CliReadConfig.from_dict(options)
-        partition_config = CliPartitionConfig.from_dict(options)
-        # Run for schema validation
-        S3CliConfig.from_dict(options)
-        s3_fn(read_config=read_config, partition_config=partition_config, **options)
-    except Exception as e:
-        logger.error(e, exc_info=True)
-        raise click.ClickException(str(e)) from e
+def get_base_src_cmd():
+    cmd_cls = BaseSrcCmd(cmd_name=CMD_NAME, cli_config=S3CliConfig, is_fsspec=True)
+    return cmd_cls
 
 
-@click.command(name="s3")
-@click.pass_context
-def s3_dest(ctx: click.Context, **options):
-    parent_options: dict = ctx.parent.params if ctx.parent else {}
-    # Click sets all multiple fields as tuple, this needs to be updated to list
-    for k, v in options.items():
-        if isinstance(v, tuple):
-            options[k] = list(v)
-    for k, v in parent_options.items():
-        if isinstance(v, tuple):
-            parent_options[k] = list(v)
-    verbose = parent_options.get("verbose", False)
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(parent_options, verbose=verbose)
-    log_options(options, verbose=verbose)
-    try:
-        # run_init_checks(**options)
-        read_config = CliReadConfig.from_dict(parent_options)
-        partition_config = CliPartitionConfig.from_dict(parent_options)
-        # Run for schema validation
-        S3CliConfig.from_dict(options)
-        s3_fn(
-            read_config=read_config,
-            partition_config=partition_config,
-            writer_type="s3",
-            writer_kwargs=options,
-            **parent_options,
-        )
-    except Exception as e:
-        logger.error(e, exc_info=True)
-        raise click.ClickException(str(e)) from e
+def get_base_dest_cmd():
+    from unstructured.ingest.cli.base.dest import BaseDestCmd
 
-
-def get_dest_cmd() -> click.Command:
-    cmd = s3_dest
-    S3CliConfig.add_cli_options(cmd)
-    CliRemoteUrlConfig.add_cli_options(cmd)
-    return cmd
-
-
-def get_source_cmd() -> click.Group:
-    cmd = s3_source
-    S3CliConfig.add_cli_options(cmd)
-    CliRemoteUrlConfig.add_cli_options(cmd)
-    CliRecursiveConfig.add_cli_options(cmd)
-
-    # Common CLI configs
-    CliReadConfig.add_cli_options(cmd)
-    CliPartitionConfig.add_cli_options(cmd)
-    cmd.params.append(click.Option(["-v", "--verbose"], is_flag=True, default=False))
-    return cmd
+    cmd_cls = BaseDestCmd(cmd_name=CMD_NAME, cli_config=S3CliConfig, is_fsspec=True)
+    return cmd_cls

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -65,7 +65,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _output_filename(self):
         """Create output file path based on output directory, base id, and table id"""
         output_file = f"{self.table_meta.table_id}.json"
-        return Path(self.partition_config.output_dir) / self.table_meta.base_id / output_file
+        return Path(self.processor_config.output_dir) / self.table_meta.base_id / output_file
 
     @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
@@ -80,22 +80,20 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         return None
 
     @requires_dependencies(["pyairtable"], extras="airtable")
-    def _get_table_rows(self):
+    def _query_table(self):
         from pyairtable import Api
-        from requests.exceptions import HTTPError
 
         api = Api(self.connector_config.personal_access_token)
-        try:
-            table = api.table(self.table_meta.base_id, self.table_meta.table_id)
-            table_url = table.url
-            rows = table.all(
-                view=self.table_meta.view_id,
-            )
-        except HTTPError as e:
-            # TODO: more specific error handling?
-            if e.response.status_code >= 400 and e.response.status_code < 500:
-                return None, None
-            raise
+        table = api.table(self.table_meta.base_id, self.table_meta.table_id)
+        table_url = table.url
+        rows = table.all(
+            view=self.table_meta.view_id,
+        )
+        return rows, table_url
+
+    @SourceConnectionNetworkError.wrap
+    def _get_table_rows(self):
+        rows, table_url = self._query_table()
 
         if len(rows) == 0:
             logger.info("Empty document, retrieved table but it has no rows.")
@@ -274,8 +272,8 @@ class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             baseid_tableid_viewid_tuples += self.fetch_table_ids()
         return [
             AirtableIngestDoc(
+                processor_config=self.processor_config,
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
                 read_config=self.read_config,
                 table_meta=AirtableTableMeta(base_id, table_id, view_id),
             )

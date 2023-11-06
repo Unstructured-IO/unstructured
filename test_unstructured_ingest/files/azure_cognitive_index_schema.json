@@ -16,6 +16,12 @@
       "type": "Edm.String"
     },
     {
+      "name": "embeddings",
+      "type": "Collection(Edm.Single)",
+      "dimensions": 1536,
+      "vectorSearchConfiguration": "embeddings-config"
+    },
+    {
       "name": "type",
       "type": "Edm.String"
     },
@@ -76,6 +82,10 @@
               "type": "Edm.DateTimeOffset"
             },
             {
+              "name": "permissions_data",
+              "type": "Edm.String"
+            },
+            {
               "name": "record_locator",
               "type": "Edm.String"
             }
@@ -104,7 +114,19 @@
           ]
         },
         {
+          "name": "languages",
+          "type": "Collection(Edm.String)"
+        },
+        {
           "name": "page_number",
+          "type": "Edm.String"
+        },
+        {
+          "name": "links",
+          "type": "Collection(Edm.String)"
+        },
+        {
+          "name": "page_name",
           "type": "Edm.String"
         },
         {
@@ -161,5 +183,19 @@
         }
       ]
     }
-  ]
+  ],
+  "vectorSearch": {
+    "algorithmConfigurations": [
+      {
+        "name": "embeddings-config",
+        "kind": "hnsw",
+        "hnswParameters": {
+          "metric": "cosine",
+          "m": 4,
+          "efConstruction": 400,
+          "efSearch": 500
+        }
+      }
+    ]
+  }
 }

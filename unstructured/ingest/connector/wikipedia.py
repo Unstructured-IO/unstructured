@@ -3,7 +3,7 @@ import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -22,7 +22,7 @@ if t.TYPE_CHECKING:
 @dataclass
 class SimpleWikipediaConfig(BaseConnectorConfig):
     title: str
-    auto_suggest: bool
+    auto_suggest: bool = False
 
 
 @dataclass
@@ -38,6 +38,11 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             self.connector_config.title,
             auto_suggest=self.connector_config.auto_suggest,
         )
+
+    def get_filename_prefix(self) -> str:
+        title: str = str(self.connector_config.title)
+        title = " ".join(title.split()).replace(" ", "-")
+        return title
 
     @property
     def filename(self) -> Path:
@@ -105,19 +110,20 @@ class WikipediaIngestHTMLDoc(WikipediaIngestDoc):
     @property
     def filename(self) -> Path:
         return (
-            Path(self.read_config.download_dir) / f"{self.page.title}-{self.page.revision_id}.html"
+            Path(self.read_config.download_dir) / f"{self.get_filename_prefix()}.html"
         ).resolve()
 
     @property
     def text(self):
+        return self._get_html()
+
+    @SourceConnectionNetworkError.wrap
+    def _get_html(self):
         return self.page.html()
 
     @property
     def _output_filename(self):
-        return (
-            Path(self.partition_config.output_dir)
-            / f"{self.page.title}-{self.page.revision_id}-html.json"
-        )
+        return Path(self.processor_config.output_dir) / f"{self.get_filename_prefix()}-html.json"
 
 
 @dataclass
@@ -126,20 +132,19 @@ class WikipediaIngestTextDoc(WikipediaIngestDoc):
 
     @property
     def filename(self) -> Path:
-        return (
-            Path(self.read_config.download_dir) / f"{self.page.title}-{self.page.revision_id}.txt"
-        ).resolve()
+        return (Path(self.read_config.download_dir) / f"{self.get_filename_prefix()}.txt").resolve()
 
     @property
     def text(self):
+        return self._get_content()
+
+    @SourceConnectionNetworkError.wrap
+    def _get_content(self):
         return self.page.content
 
     @property
     def _output_filename(self):
-        return (
-            Path(self.partition_config.output_dir)
-            / f"{self.page.title}-{self.page.revision_id}-txt.json"
-        )
+        return Path(self.processor_config.output_dir) / f"{self.get_filename_prefix()}-txt.json"
 
 
 @dataclass
@@ -149,20 +154,20 @@ class WikipediaIngestSummaryDoc(WikipediaIngestDoc):
     @property
     def filename(self) -> Path:
         return (
-            Path(self.read_config.download_dir)
-            / f"{self.page.title}-{self.page.revision_id}-summary.txt"
+            Path(self.read_config.download_dir) / f"{self.get_filename_prefix()}-summary.txt"
         ).resolve()
 
     @property
     def text(self):
+        return self._get_summary()
+
+    @SourceConnectionNetworkError.wrap
+    def _get_summary(self):
         return self.page.summary
 
     @property
     def _output_filename(self):
-        return (
-            Path(self.partition_config.output_dir)
-            / f"{self.page.title}-{self.page.revision_id}-summary.json"
-        )
+        return Path(self.processor_config.output_dir) / f"{self.get_filename_prefix()}-summary.json"
 
 
 @dataclass
@@ -175,18 +180,18 @@ class WikipediaSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector)
     def get_ingest_docs(self):
         return [
             WikipediaIngestTextDoc(
+                processor_config=self.processor_config,
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
                 read_config=self.read_config,
             ),
             WikipediaIngestHTMLDoc(
+                processor_config=self.processor_config,
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
                 read_config=self.read_config,
             ),
             WikipediaIngestSummaryDoc(
+                processor_config=self.processor_config,
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
                 read_config=self.read_config,
             ),
         ]

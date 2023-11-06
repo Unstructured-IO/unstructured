@@ -1,12 +1,16 @@
+from dataclasses import dataclass
+from unittest import mock
+
 import pytest
 from PIL import Image
 from unstructured_inference.inference import layout
-from unstructured_inference.inference.layout import LayoutElement
-from unstructured_inference.inference.layoutelement import LocationlessLayoutElement
+from unstructured_inference.inference.elements import TextRegion
+from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CheckBox,
+    CoordinatesMetadata,
     ElementMetadata,
     FigureCaption,
     Header,
@@ -16,11 +20,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition import common
-from unstructured.partition.common import (
-    _get_page_image_metadata,
-    contains_emoji,
-    document_to_element_list,
-)
+from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_DONT, SORT_MODE_XY_CUT
 
 
 class MockPageLayout(layout.PageLayout):
@@ -31,9 +31,25 @@ class MockPageLayout(layout.PageLayout):
     @property
     def elements(self):
         return [
-            LocationlessLayoutElement(
+            LayoutElement(
                 type="Headline",
                 text="Charlie Brown and the Great Pumpkin",
+                bbox=None,
+            ),
+            LayoutElement(
+                type="Subheadline",
+                text="The Beginning",
+                bbox=None,
+            ),
+            LayoutElement(
+                type="Text",
+                text="This time Charlie Brown had it really tricky...",
+                bbox=None,
+            ),
+            LayoutElement(
+                type="Title",
+                text="Another book title in the same page",
+                bbox=None,
             ),
         ]
 
@@ -141,7 +157,7 @@ def test_normalize_layout_element_dict_misc():
 
 
 def test_normalize_layout_element_layout_element():
-    layout_element = LayoutElement(
+    layout_element = LayoutElement.from_coords(
         type="Text",
         x1=1,
         y1=2,
@@ -162,7 +178,7 @@ def test_normalize_layout_element_layout_element():
 
 
 def test_normalize_layout_element_layout_element_narrative_text():
-    layout_element = LayoutElement(
+    layout_element = LayoutElement.from_coords(
         type="NarrativeText",
         x1=1,
         y1=2,
@@ -183,7 +199,7 @@ def test_normalize_layout_element_layout_element_narrative_text():
 
 
 def test_normalize_layout_element_checked_box():
-    layout_element = LayoutElement(
+    layout_element = LayoutElement.from_coords(
         type="Checked",
         x1=1,
         y1=2,
@@ -204,7 +220,7 @@ def test_normalize_layout_element_checked_box():
 
 
 def test_normalize_layout_element_unchecked_box():
-    layout_element = LayoutElement(
+    layout_element = LayoutElement.from_coords(
         type="Unchecked",
         x1=1,
         y1=2,
@@ -225,7 +241,7 @@ def test_normalize_layout_element_unchecked_box():
 
 
 def test_normalize_layout_element_enumerated_list():
-    layout_element = LayoutElement(
+    layout_element = LayoutElement.from_coords(
         type="List",
         x1=1,
         y1=2,
@@ -258,7 +274,7 @@ def test_normalize_layout_element_enumerated_list():
 
 
 def test_normalize_layout_element_bulleted_list():
-    layout_element = LayoutElement(
+    layout_element = LayoutElement.from_coords(
         type="List",
         x1=1,
         y1=2,
@@ -325,18 +341,21 @@ def test_convert_ms_office_table_to_text_works_with_empty_tables():
     ],
 )
 def test_contains_emoji(text, expected):
-    assert contains_emoji(text) is expected
+    assert common.contains_emoji(text) is expected
 
 
 def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
     layout_elem_absent_coordinates = MockDocumentLayout()
-    elements = document_to_element_list(layout_elem_absent_coordinates)
+    for page in layout_elem_absent_coordinates.pages:
+        for el in page.elements:
+            el.bbox = None
+    elements = common.document_to_element_list(layout_elem_absent_coordinates)
     assert elements[0].metadata.coordinates is None
 
 
 def test_get_page_image_metadata_and_coordinate_system():
     doc = MockDocumentLayout()
-    metadata = _get_page_image_metadata(doc.pages[0])
+    metadata = common._get_page_image_metadata(doc.pages[0])
     assert isinstance(metadata, dict)
 
 
@@ -405,3 +424,116 @@ def test_set_element_hierarchy_custom_rule_set():
     assert (
         elements[5].metadata.parent_id == elements[4].id
     ), "FigureCaption should be child of Title 2"
+
+
+@dataclass
+class MockImage:
+    width = 640
+    height = 480
+    format = "JPG"
+
+
+def test_document_to_element_list_handles_parent():
+    block1 = LayoutElement.from_coords(1, 2, 3, 4, text="block 1", type="NarrativeText")
+    block2 = LayoutElement.from_coords(
+        1,
+        2,
+        3,
+        4,
+        text="block 2",
+        parent=block1,
+        type="NarrativeText",
+    )
+    page = PageLayout(
+        number=1,
+        image=MockImage(),
+        layout=None,
+    )
+    page.elements = [block1, block2]
+    doc = DocumentLayout.from_pages([page])
+    el1, el2 = common.document_to_element_list(doc)
+    assert el2.metadata.parent_id == el1.id
+
+
+@pytest.mark.parametrize(
+    ("sort_mode", "call_count"),
+    [(SORT_MODE_DONT, 0), (SORT_MODE_BASIC, 1), (SORT_MODE_XY_CUT, 1)],
+)
+def test_document_to_element_list_doesnt_sort_on_sort_method(sort_mode, call_count):
+    block1 = LayoutElement.from_coords(1, 2, 3, 4, text="block 1", type="NarrativeText")
+    block2 = LayoutElement.from_coords(
+        1,
+        2,
+        3,
+        4,
+        text="block 2",
+        parent=block1,
+        type="NarrativeText",
+    )
+    page = PageLayout(
+        number=1,
+        image=MockImage(),
+        layout=None,
+    )
+    page.elements = [block1, block2]
+    doc = DocumentLayout.from_pages([page])
+    with mock.patch.object(common, "sort_page_elements") as mock_sort_page_elements:
+        common.document_to_element_list(doc, sortable=True, sort_mode=sort_mode)
+    assert mock_sort_page_elements.call_count == call_count
+
+
+def test_document_to_element_list_sets_category_depth_titles():
+    layout_with_hierarchies = MockDocumentLayout()
+    elements = common.document_to_element_list(layout_with_hierarchies)
+    assert elements[0].metadata.category_depth == 1
+    assert elements[1].metadata.category_depth == 2
+    assert elements[2].metadata.category_depth is None
+    assert elements[3].metadata.category_depth == 0
+
+
+def test_ocr_data_to_elements(
+    filename="example-docs/layout-parser-paper-fast.jpg",
+):
+    text_regions = [
+        TextRegion.from_coords(
+            163.0,
+            115.0,
+            452.0,
+            129.0,
+            text="LayoutParser: A Unified Toolkit for Deep",
+        ),
+        TextRegion.from_coords(
+            156.0,
+            132.0,
+            457.0,
+            147.0,
+            text="Learning Based Document Image Analysis",
+        ),
+    ]
+    ocr_data = [
+        LayoutElement(
+            bbox=r.bbox,
+            text=r.text,
+            source=r.source,
+            type="UncategorizedText",
+        )
+        for r in text_regions
+    ]
+    image = Image.open(filename)
+
+    elements = common.ocr_data_to_elements(
+        ocr_data=ocr_data,
+        image_size=image.size,
+    )
+
+    assert len(ocr_data) == len(elements)
+    assert {el.category for el in elements} == {"UncategorizedText"}
+
+    # check coordinates metadata
+    image_width, image_height = image.size
+    coordinate_system = PixelSpace(width=image_width, height=image_height)
+    for el, layout_el in zip(elements, ocr_data):
+        assert el.metadata.coordinates == CoordinatesMetadata(
+            points=layout_el.bbox.coordinates,
+            system=coordinate_system,
+        )

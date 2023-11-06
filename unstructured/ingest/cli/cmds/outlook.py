@@ -1,30 +1,18 @@
-import logging
 import typing as t
 from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import (
-    DelimitedString,
-    Group,
-    conform_click_options,
-)
-from unstructured.ingest.cli.common import (
-    log_options,
-)
+from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMixin,
-    CliPartitionConfig,
-    CliReadConfig,
+    CliConfig,
     CliRecursiveConfig,
+    DelimitedString,
 )
-from unstructured.ingest.interfaces import BaseConfig
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import outlook as outlook_fn
 
 
 @dataclass
-class OutlookCliConfig(BaseConfig, CliMixin):
+class OutlookCliConfig(CliConfig):
     client_id: str
     user_email: str
     tenant: t.Optional[str] = "common"
@@ -33,7 +21,7 @@ class OutlookCliConfig(BaseConfig, CliMixin):
     authority_url: t.Optional[str] = "https://login.microsoftonline.com"
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--client-id"],
@@ -73,38 +61,13 @@ class OutlookCliConfig(BaseConfig, CliMixin):
                 "https://login.microsoftonline.com",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
-@click.group(name="outlook", invoke_without_command=True, cls=Group)
-@click.pass_context
-def outlook_source(ctx: click.Context, **options):
-    if ctx.invoked_subcommand:
-        return
-
-    conform_click_options(options)
-    verbose = options.get("verbose", False)
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(options, verbose=verbose)
-    try:
-        # run_init_checks(**options)
-        read_config = CliReadConfig.from_dict(options)
-        partition_config = CliPartitionConfig.from_dict(options)
-        # Run for schema validation
-        OutlookCliConfig.from_dict(options)
-        outlook_fn(read_config=read_config, partition_config=partition_config, **options)
-    except Exception as e:
-        logger.error(e, exc_info=True)
-        raise click.ClickException(str(e)) from e
-
-
-def get_source_cmd() -> click.Group:
-    cmd = outlook_source
-    OutlookCliConfig.add_cli_options(cmd)
-    CliRecursiveConfig.add_cli_options(cmd)
-
-    # Common CLI configs
-    CliReadConfig.add_cli_options(cmd)
-    CliPartitionConfig.add_cli_options(cmd)
-    cmd.params.append(click.Option(["-v", "--verbose"], is_flag=True, default=False))
-    return cmd
+def get_base_src_cmd() -> BaseSrcCmd:
+    cmd_cls = BaseSrcCmd(
+        cmd_name="outlook",
+        cli_config=OutlookCliConfig,
+        additional_cli_options=[CliRecursiveConfig],
+    )
+    return cmd_cls

@@ -35,11 +35,24 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def _output_filename(self):
-        return Path(self.partition_config.output_dir) / f"{self.path}.json"
+        return Path(self.processor_config.output_dir) / f"{self.path}.json"
+
+    @property
+    def record_locator(self) -> t.Dict[str, t.Any]:
+        record_locator = {
+            "repo_path": self.connector_config.repo_path,
+            "file_path": self.path,
+        }
+        if self.connector_config.branch is not None:
+            record_locator["branch"] = self.connector_config.branch
+        return record_locator
 
     def _create_full_tmp_dir_path(self):
         """includes directories in in the gitlab repository"""
         self.filename.parent.mkdir(parents=True, exist_ok=True)
+
+    def update_source_metadata(self, **kwargs):
+        raise NotImplementedError()
 
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
@@ -48,6 +61,9 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._create_full_tmp_dir_path()
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         self._fetch_and_write()
+
+    def _fetch_content(self) -> None:
+        raise NotImplementedError()
 
     def _fetch_and_write(self) -> None:
         raise NotImplementedError()

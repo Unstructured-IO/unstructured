@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from itertools import chain
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -87,7 +87,7 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _set_download_paths(self) -> None:
         """Creates paths for downloading and parsing."""
         download_path = Path(f"{self.read_config.download_dir}")
-        output_path = Path(f"{self.partition_config.output_dir}")
+        output_path = Path(f"{self.processor_config.output_dir}")
 
         self.download_dir = download_path
         self.download_filepath = (
@@ -139,13 +139,20 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             exists=True,
         )
 
+    @SourceConnectionNetworkError.wrap
+    def _run_download(self, local_file):
+        client = self.connector_config._get_client()
+        client.users[self.connector_config.user_email].messages[self.message_id].download(
+            local_file,
+        ).execute_query()
+
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"], extras="outlook")
     def get_file(self):
         """Relies on Office365 python sdk message object to do the download."""
         try:
-            client = self.connector_config._get_client()
+            self.connector_config._get_client()
             self.update_source_metadata()
             if not self.download_dir.is_dir():
                 logger.debug(f"Creating directory: {self.download_dir}")
@@ -158,9 +165,7 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 ),
                 "wb",
             ) as local_file:
-                client.users[self.connector_config.user_email].messages[self.message_id].download(
-                    local_file,
-                ).execute_query()
+                self._run_download(local_file=local_file)
 
         except Exception as e:
             logger.error(
@@ -247,7 +252,7 @@ class OutlookSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         return [
             OutlookIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 message_id=message.id,
             )

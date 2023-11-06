@@ -5,7 +5,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -14,6 +14,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Create a stellar overview"
@@ -24,7 +27,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -33,6 +36,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "The overview is the first page visitors will see when they visit your space, so it helps to include some information on what the space is about and what your team is working on."
@@ -43,7 +49,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -52,6 +58,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "emphasized_text_contents": [
         "Add a header image."
@@ -68,7 +77,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -77,6 +86,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "emphasized_text_contents": [
         "Explain what the space is for."
@@ -93,7 +105,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -102,6 +114,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.atlassian.com/software/confluence/templates/okrs",
@@ -128,7 +143,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -137,6 +152,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "emphasized_text_contents": [
         "Tell people how to contact you."
@@ -153,7 +171,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -162,6 +180,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Use shortcuts for easy access"
@@ -172,7 +193,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -181,6 +202,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Shortcuts are helpful for important pages that members of a space might need to get to often. These shortcuts are added and organized by the space administrator. Space admins can link to pages in the space, other related spaces, or relevant external web content as well as reorder the shortcuts as needed."
@@ -191,7 +215,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -200,6 +224,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "💭Start discussions with inline comments"
@@ -210,7 +237,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -219,6 +246,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://support.atlassian.com/confluence-cloud/docs/comment-on-pages-and-blog-posts/"
@@ -235,7 +265,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -244,6 +274,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "To leave an inline comment, highlight text on the page and the comment icon will appear."
@@ -254,7 +287,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -263,6 +296,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Team members with permission to access the page can respond to any comment. Plus, when a comment thread comes to its natural conclusion, comments can be resolved and cleared away."
@@ -273,7 +309,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -282,6 +318,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "👋Loop in team members with @mentions"
@@ -292,7 +331,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -301,6 +340,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://support.atlassian.com/confluence-cloud/docs/mention-a-person-or-team/"
@@ -317,7 +359,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -326,6 +368,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "👏Endorse ideas with reactions"
@@ -336,7 +381,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -345,6 +390,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Use reactions when you want to support a comment or acknowledge you've seen one without clogging up the thread with another comment."
@@ -355,7 +403,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -364,6 +412,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "You can also use reactions on a page or blog post. The author of the content will be notified, and if enough team members react or add comments to the content, it'll be surfaced on Confluence home feed"
@@ -374,7 +425,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -383,6 +434,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Take your Confluence space to the next level"
@@ -393,7 +447,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -402,6 +456,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Extend the capabilities of your Confluence pages by  adding extra functionality or including dynamic content."
@@ -412,7 +469,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -421,6 +478,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "emphasized_text_contents": [
         "To add functionality:"
@@ -437,7 +497,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -446,6 +506,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Type ' / ' to open the list of items available to use"
@@ -456,7 +519,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -465,6 +528,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Find the item to be inserted and select it"
@@ -475,7 +541,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -484,6 +550,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "emphasized_text_contents": [
         "Insert"
@@ -500,7 +569,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -509,6 +578,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Useful elements for Team space"
@@ -519,7 +591,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -528,6 +600,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "emphasized_text_contents": [
         "Introduce the team"
@@ -544,7 +619,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -553,6 +628,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://support.atlassian.com/confluence-cloud/docs/insert-the-user-profile-macro/"
@@ -569,7 +647,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -578,6 +656,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "emphasized_text_contents": [
         "Share news and announcements with your team"
@@ -594,7 +675,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -603,6 +684,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://support.atlassian.com/confluence-cloud/docs/insert-the-blog-posts-macro/"
@@ -619,7 +703,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -628,6 +712,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "emphasized_text_contents": [
         "Display a list of important pages"
@@ -644,7 +731,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605956"
@@ -653,6 +740,9 @@
         "date_modified": "2023-07-09T12:54:45.288000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://support.atlassian.com/confluence-cloud/docs/insert-the-content-report-table-macro/"

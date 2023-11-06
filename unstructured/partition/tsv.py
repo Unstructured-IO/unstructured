@@ -17,6 +17,9 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
+from unstructured.partition.lang import apply_lang_metadata
+
+DETECTION_ORIGIN: str = "tsv"
 
 
 @process_metadata()
@@ -26,7 +29,11 @@ def partition_tsv(
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    include_header: bool = False,
     include_metadata: bool = True,
+    languages: Optional[List[str]] = ["auto"],
+    # NOTE (jennings) partition_tsv generates a single TableElement
+    # so detect_language_per_element is not included as a param
     **kwargs,
 ) -> List[Element]:
     """Partitions TSV files into document elements.
@@ -37,24 +44,33 @@ def partition_tsv(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    include_header
+        Determines whether or not header info info is included in text and medatada.text_as_html.
     include_metadata
         Determines whether or not metadata is included in the output.
     metadata_last_modified
-        The day of the last modification
+        The day of the last modification.
+    languages
+        User defined value for `metadata.languages` if provided. Otherwise language is detected
+        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
+        in either language.
     """
     exactly_one(filename=filename, file=file)
+
     last_modification_date = None
+    header = 0 if include_header else None
+
     if filename:
-        table = pd.read_csv(filename, sep="\t")
+        table = pd.read_csv(filename, sep="\t", header=header)
         last_modification_date = get_last_modified_date(filename)
     elif file:
         f = spooled_to_bytes_io_if_needed(
             cast(Union[BinaryIO, SpooledTemporaryFile], file),
         )
-        table = pd.read_csv(f, sep="\t")
+        table = pd.read_csv(f, sep="\t", header=header)
         last_modification_date = get_last_modified_date_from_file(file)
 
-    html_text = table.to_html(index=False, header=False, na_rep="")
+    html_text = table.to_html(index=False, header=include_header, na_rep="")
     text = soupparser_fromstring(html_text).text_content()
 
     if include_metadata:
@@ -62,8 +78,14 @@ def partition_tsv(
             text_as_html=html_text,
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
+            languages=languages,
         )
+        metadata.detection_origin = DETECTION_ORIGIN
     else:
         metadata = ElementMetadata()
 
-    return [Table(text=text, metadata=metadata)]
+    elements = apply_lang_metadata(
+        [Table(text=text, metadata=metadata)],
+        languages=languages,
+    )
+    return list(elements)

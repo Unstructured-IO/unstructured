@@ -8,9 +8,8 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
-from urllib3.util import Retry
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -46,9 +45,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     id_: t.Optional[str]
     from_: t.Optional[str]
     until: t.Optional[str]
-    max_retries: int = 5
     request_timeout: int = 45
-    decay: float = 0.3
 
     def validate_api_inputs(self):
         valid = False
@@ -139,11 +136,15 @@ class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
             if dir_:
                 dir_.mkdir(parents=True, exist_ok=True)
+        self._retrieve()
+        logger.debug(f"File downloaded: {self.file_meta.download_filepath}")
+
+    @SourceConnectionNetworkError.wrap
+    def _retrieve(self):
         urllib.request.urlretrieve(
             self.file_meta.ftp_path,  # type: ignore
             self.file_meta.download_filepath,
         )
-        logger.debug(f"File downloaded: {self.file_meta.download_filepath}")
 
 
 class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
@@ -164,7 +165,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                             download_filepath=(Path(self.read_config.download_dir) / local_path)
                             .resolve()
                             .as_posix(),
-                            output_filepath=(Path(self.partition_config.output_dir) / local_path)
+                            output_filepath=(Path(self.processor_config.output_dir) / local_path)
                             .resolve()
                             .as_posix(),
                         ),
@@ -187,14 +188,10 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
         while endpoint_url:
             session = requests.Session()
-            retries = Retry(
-                total=self.connector_config.max_retries,
-                backoff_factor=self.connector_config.decay,
-            )
-            adapter = HTTPAdapter(max_retries=retries)
+            adapter = HTTPAdapter()
             session.mount("http://", adapter)
             session.mount("https://", adapter)
-            response = session.get(endpoint_url, timeout=self.connector_config.request_timeout)
+            response = self._get_request(session=session, endpoint_url=endpoint_url)
             soup = BeautifulSoup(response.content, features="lxml")
             urls = [link["href"] for link in soup.find_all("link")]
 
@@ -208,6 +205,10 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             files.extend(urls_to_metadata(urls))
 
         return files
+
+    @SourceConnectionNetworkError.wrap
+    def _get_request(self, session: requests.Session, endpoint_url: str) -> requests.Response:
+        return session.get(endpoint_url, timeout=self.connector_config.request_timeout)
 
     def _list_objects(self) -> t.List[BiomedFileMeta]:
         files = []
@@ -246,7 +247,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                                 .resolve()
                                 .as_posix(),
                                 output_filepath=(
-                                    Path(self.partition_config.output_dir) / local_path
+                                    Path(self.processor_config.output_dir) / local_path
                                 )
                                 .resolve()
                                 .as_posix(),
@@ -269,7 +270,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                     download_filepath=(Path(self.read_config.download_dir) / local_path)
                     .resolve()
                     .as_posix(),
-                    output_filepath=(Path(self.partition_config.output_dir) / local_path)
+                    output_filepath=(Path(self.processor_config.output_dir) / local_path)
                     .resolve()
                     .as_posix(),
                 ),
@@ -278,7 +279,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             traverse(
                 Path(path),
                 Path(self.read_config.download_dir),
-                Path(self.partition_config.output_dir),
+                Path(self.processor_config.output_dir),
             )
 
         return files
@@ -290,9 +291,9 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         files = self._list_objects_api() if self.connector_config.is_api else self._list_objects()
         return [
             BiomedIngestDoc(
+                processor_config=self.processor_config,
                 connector_config=self.connector_config,
                 read_config=self.read_config,
-                partition_config=self.partition_config,
                 file_meta=file,
             )
             for file in files

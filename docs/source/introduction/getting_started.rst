@@ -101,20 +101,41 @@ Document elements
 When we partition a document, the output is a list of document ``Element`` objects.
 These element objects represent different components of the source document. Currently, the ``unstructured`` library supports the following element types:
 
-* ``Element``
-	* ``Text``
-		* ``FigureCaption``
-		* ``NarrativeText``
-		* ``ListItem``
-		* ``Title``
-		* ``Address``
-		* ``Table``
-		* ``PageBreak``
-		* ``Header``
-		* ``Footer``
-        	* ``EmailAddress``
-	* ``CheckBox``
-	* ``Image``
+**Elements**
+^^^^^^^^^^^^
+
+* ``type``
+
+  * ``FigureCaption``
+
+  * ``NarrativeText``
+
+  * ``ListItem``
+
+  * ``Title``
+
+  * ``Address``
+
+  * ``Table``
+
+  * ``PageBreak``
+
+  * ``Header``
+
+  * ``Footer``
+
+  * ``UncategorizedText``
+
+  * ``Image``
+
+  * ``Formula``
+
+* ``element_id``
+
+* ``metadata`` - see: :ref:`Metadata page <metadata-label>`
+
+* ``text``
+
 
 Other element types that we will add in the future include tables and figures.
 Different partitioning functions use different methods for determining the element type and extracting the associated content.
@@ -152,7 +173,7 @@ of the table will be available in the element metadata under ``element.metadata.
 table extraction is available, the ``partition`` function will extract tables automatically if they are present.
 For PDFs and images, table extraction requires a relatively expensive call to a table recognition model, and so for those
 document types table extraction is an option you need to enable. If you would like to extract tables for PDFs or images,
-pass in ``infer_table_structured=True``. Here is an example (Note: this example requires the ``pdf`` extra. This can be installed with ``pip install "unstructured[pdf]"``):
+pass in ``infer_table_structure=True``. Here is an example (Note: this example requires the ``pdf`` extra. This can be installed with ``pip install "unstructured[pdf]"``):
 
 .. code:: python
 

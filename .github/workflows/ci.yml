@@ -11,6 +11,10 @@ on:
 env:
   GHA_CACHE_KEY_VERSION: "v1"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   setup:
     strategy:
@@ -28,11 +32,14 @@ jobs:
           .venv
           nltk_data
         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+        lookup-only: true
     - name: Set up Python ${{ matrix.python-version }}
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment (no cache hit)
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
         python${{ matrix.python-version }} -m venv .venv
         source .venv/bin/activate
@@ -44,30 +51,14 @@ jobs:
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
     runs-on: ubuntu-latest
-    needs: setup
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      run: |
-        python${{ matrix.python-version }} -m venv .venv
-        source .venv/bin/activate
-        make install-base-pip-packages
     - name: Check for dependency conflicts
-      run: |
-        source .venv/bin/activate
-        make check-deps
+      run: make check-deps
 
   lint:
     strategy:
@@ -147,8 +138,50 @@ jobs:
         tesseract --version
         # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
         make install-ci
-        make test CI=true
+        make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
         make check-coverage
+
+  test_chipper:
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+    runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+      UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    needs: [setup, lint]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/cache/restore@v3
+      id: virtualenv-cache
+      with:
+        path: |
+          .venv
+          nltk_data
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Setup virtual environment (no cache hit)
+      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+      run: |
+        python${{ matrix.python-version}} -m venv .venv
+        source .venv/bin/activate
+        mkdir "$NLTK_DATA"
+        make install-ci
+    - name: Test
+      env:
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+      run: |
+        source .venv/bin/activate
+        sudo apt-get update
+        sudo apt-get install -y poppler-utils
+        make install-pandoc
+        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+        tesseract --version
+        make test-chipper CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
 
   test_unit_no_extras:
     strategy:
@@ -216,6 +249,7 @@ jobs:
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+        UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
         source .venv-${{ matrix.extra }}/bin/activate
         # NOTE(newelh) - determine what needs to be installed here
@@ -227,34 +261,88 @@ jobs:
         tesseract --version
         make test-extra-${{ matrix.extra }} CI=true
 
-  test_ingest:
+  setup_ingest:
+    strategy:
+      matrix:
+        python-version: [ "3.8","3.9","3.10","3.11" ]
+    runs-on: ubuntu-latest-m
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    needs: [setup]
+    steps:
+      - uses: actions/checkout@v3
+      # The following checks to see whether the ingest cache exists.
+      # If so we don't want to download the base cache.
+      - uses: actions/cache/restore@v3
+        id: ingest-cache-exists
+        with:
+          lookup-only: true
+          path: |
+            .venv
+            nltk_data
+          key: unstructured-ingest-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
+      - uses: actions/cache/restore@v3
+        if: steps.ingest-cache-exists.outputs.cache-hit != 'true'
+        id: base-virtualenv-cache
+        with:
+          path: |
+            .venv
+            nltk_data
+          key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+          # Due to the dependency on setup, the cache should exist before this is ran. Set failed if it wasn't found.
+          fail-on-cache-miss: true
+      - uses: actions/cache@v3
+        if: steps.ingest-cache-exists.outputs.cache-hit != 'true'
+        id: virtualenv-cache
+        with:
+          path: |
+            .venv
+            nltk_data
+          key: unstructured-ingest-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
+      - name: Set up Python ${{ matrix.python-version }}
+        if: steps.ingest-cache-exists.outputs.cache-hit != 'true'
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Setup virtual environment (no cache hit)
+        if: steps.ingest-cache-exists.outputs.cache-hit != 'true'
+        run: |
+          python${{ matrix.python-version }} -m venv .venv
+          source .venv/bin/activate
+          make install-all-ingest
+
+
+  test_ingest_src:
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10","3.11"]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup, lint]
+    needs: [setup_ingest, lint]
     steps:
-    - uses: actions/checkout@v3
+    # actions/checkout MUST come before auth
+    - uses: 'actions/checkout@v4'
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Get full Python version
+      id: full-python-version
+      run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
     - uses: actions/cache/restore@v3
       id: virtualenv-cache
       with:
         path: |
           .venv
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+        key: unstructured-ingest-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
+        # Due to the dependency on setup_ingest, the cache should exist before this is ran. Set failed if it wasn't found.
+        fail-on-cache-miss: true
+    - name: Setup docker-compose
+      uses: KengoTODA/actions-setup-docker-compose@v1
       with:
-        python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      run: |
-        python${{ matrix.python-version}} -m venv .venv
-        source .venv/bin/activate
-        mkdir "$NLTK_DATA"
-        make install-ci
+        version: '2.22.0'
     - name: Test Ingest (unit)
       run: |
         source .venv/bin/activate
@@ -284,6 +372,9 @@ jobs:
         SHAREPOINT_CLIENT_ID: ${{secrets.SHAREPOINT_CLIENT_ID}}
         SHAREPOINT_CRED: ${{secrets.SHAREPOINT_CRED}}
         SHAREPOINT_SITE: ${{secrets.SHAREPOINT_SITE}}
+        SHAREPOINT_PERMISSIONS_APP_ID: ${{secrets.SHAREPOINT_PERMISSIONS_APP_ID}}
+        SHAREPOINT_PERMISSIONS_APP_CRED: ${{secrets.SHAREPOINT_PERMISSIONS_APP_CRED}}
+        SHAREPOINT_PERMISSIONS_TENANT: ${{secrets.SHAREPOINT_PERMISSIONS_TENANT}}
         SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
         NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
@@ -291,8 +382,10 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
         AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         TABLE_OCR: "tesseract"
-        ENTIRE_PAGE_OCR: "tesseract"
+        OCR_AGENT: "tesseract"
+        CI: "true"
       run: |
         source .venv/bin/activate
         sudo apt-get update
@@ -302,27 +395,84 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
-        make install-ingest-s3
-        make install-ingest-airtable
-        make install-ingest-azure
-        make install-ingest-box
-        make install-ingest-confluence
-        make install-ingest-discord
-        make install-ingest-elasticsearch
-        make install-ingest-dropbox
-        make install-ingest-gcs
-        make install-ingest-google-drive
-        make install-ingest-github
-        make install-ingest-gitlab
-        make install-ingest-jira
-        make install-ingest-onedrive
-        make install-ingest-outlook
-        make install-ingest-salesforce
-        make install-ingest-slack
-        make install-ingest-wikipedia
-        make install-ingest-notion
-        make install-ingest-delta-table
-        ./test_unstructured_ingest/test-ingest.sh
+        ./test_unstructured_ingest/test-ingest-src.sh
+
+
+  test_ingest_dest:
+    environment: ci
+    strategy:
+      matrix:
+        python-version: ["3.8","3.9","3.10","3.11"]
+    runs-on: ubuntu-latest-m
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    needs: [setup_ingest, lint]
+    steps:
+    # actions/checkout MUST come before auth
+    - uses: 'actions/checkout@v4'
+    - name: 'Google Cloud Auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+        create_credentials_file: true
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+    - name: 'Az CLI login'
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Get full Python version
+      id: full-python-version
+      run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
+    - uses: actions/cache/restore@v3
+      id: virtualenv-cache
+      with:
+        path: |
+          .venv
+          nltk_data
+        key: unstructured-ingest-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
+        # Due to the dependency on setup_ingest, the cache should exist before this is ran. Set failed if it wasn't found.
+        fail-on-cache-miss: true
+    - name: Setup docker-compose
+      uses: KengoTODA/actions-setup-docker-compose@v1
+      with:
+        version: '2.22.0'
+    - name: Test Ingest (unit)
+      run: |
+        source .venv/bin/activate
+        PYTHONPATH=. pytest test_unstructured_ingest/unit
+    - name: Test (end-to-end)
+      env:
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+        AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
+        BOX_APP_CONFIG: ${{ secrets.BOX_APP_CONFIG }}
+        DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
+        DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
+        DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
+        GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        TABLE_OCR: "tesseract"
+        OCR_AGENT: "tesseract"
+        CI: "true"
+      run: |
+        source .venv/bin/activate
+        sudo apt-get update
+        sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get install -y tesseract-ocr
+        sudo apt-get install -y tesseract-ocr-kor
+        sudo apt-get install diffstat
+        tesseract --version
+        ./test_unstructured_ingest/test-ingest-dest.sh
 
   test_unstructured_api_unit:
     strategy:
@@ -376,6 +526,8 @@ jobs:
   changelog:
     runs-on: ubuntu-latest
     steps:
+    # need to checkout otherwise paths-filter will fail on merge-queue trigger
+    - uses: actions/checkout@v3
     - if: github.ref != 'refs/heads/main'
       uses: dorny/paths-filter@v2
       id: changes
@@ -414,4 +566,4 @@ jobs:
           source .venv/bin/activate
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
           make docker-build
-          make docker-test CI=true
+          make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true

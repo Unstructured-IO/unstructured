@@ -21,7 +21,7 @@
 <div>
   <p align="center">
   <a
-  href="https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-23kciff0y-bvzXxJkgtbXe5POo_rxMkw">
+  href="https://short.unstructured.io/vqfyc51">
     <img src="https://img.shields.io/badge/JOIN US ON SLACK-4A154B?style=for-the-badge&logo=slack&logoColor=white" />
   </a>
   <a href="https://www.linkedin.com/company/unstructuredio/">
@@ -33,7 +33,7 @@
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
 </h2>
 
-The `unstructured` library provides open-source components for ingesting and pre-processing images and text documents, such as PDFs, HTML, Word docs, and [many more](https://unstructured-io.github.io/unstructured/bricks.html#partitioning). The use cases of `unstructured` revolve around streamlining and optimizing the data processing workflow for LLMs. `unstructured` modular bricks and connectors form a cohesive system that simplifies data ingestion and pre-processing, making it adaptable to different platforms and efficient in transforming unstructured data into structured outputs.
+The `unstructured` library provides open-source components for ingesting and pre-processing images and text documents, such as PDFs, HTML, Word docs, and [many more](https://unstructured-io.github.io/unstructured/core.html#partitioning). The use cases of `unstructured` revolve around streamlining and optimizing the data processing workflow for LLMs. `unstructured` modular functions and connectors form a cohesive system that simplifies data ingestion and pre-processing, making it adaptable to different platforms and efficient in transforming unstructured data into structured outputs.
 
 <h3 align="center">
   <p>API Announcement!</p>
@@ -47,7 +47,7 @@ While access to the hosted Unstructured API will remain free, API Keys are requi
 
 We are releasing the beta version of our Chipper model to deliver superior performance when processing high-resolution, complex documents. To start using the Chipper model in your API request, you can utilize the `hi_res_model_name=chipper` parameter. Please refer to the documentation [here](https://unstructured-io.github.io/unstructured/api.html#beta-version-hi-res-strategy-with-chipper-model).
 
-As the Chipper model is in beta version, we welcome feedback and suggestions. For those interested in testing the Chipper model, we encourage you to connect with us on [Slack community](https://join.slack.com/t/unstructuredw-kbe4326/shared_invite/zt-23kciff0y-bvzXxJkgtbXe5POo_rxMkw).
+As the Chipper model is in beta version, we welcome feedback and suggestions. For those interested in testing the Chipper model, we encourage you to connect with us on [Slack community](https://short.unstructured.io/vqfyc51).
 
 ## :eight_pointed_black_star: Quick Start
 
@@ -180,19 +180,25 @@ This README overviews how to install, use and develop the library. For more comp
 
 ### Concepts Guide
 
-**Bricks** 🧱 in `unstructured` are the foundational elements that drive the data processing workflow within the system. These components provide users with the building blocks to build pipelines targeted at the documents they care about. The bricks fall into three categories:
-- :jigsaw: *Partitioning* bricks break raw documents into standard, structured elements.
-- :broom: *Cleaning* bricks remove unwanted text from documents, such as boilerplate and sentence fragments.
-- :performing_arts: *Staging* bricks format data for downstream tasks, such as ML inference and data labeling. 
+The `unstructured` library includes core functionality for partitioning, chunking, cleaning, and
+staging raw documents for NLP tasks.
+You can see a complete list of available functions and how to use them from the [Core Functionality documentation](https://unstructured-io.github.io/unstructured/core.html).
 
-These bricks create a cohesive, streamlined process that enables effective data handling and analysis. Check out the available bricks and how to use them from the [Bricks documentation](https://unstructured-io.github.io/unstructured/bricks.html).
+In general, these functions fall into several categories:
+- *Partitioning* functions break raw documents into standard, structured elements.
+- *Cleaning* functions remove unwanted text from documents, such as boilerplate and sentence fragments.
+- *Staging* functions format data for downstream tasks, such as ML inference and data labeling.
+- *Chunking* functions split documents into smaller sections for use in RAG apps and similarity
+  search.
+- *Embedding* encoder classes provide an interfaces for easily converting preprocessed text to
+  vectors.
 
 The **Connectors** 🔗 in `unstructured` serve as vital links between the pre-processing pipeline and various data storage platforms. They allow for the batch processing of documents across various sources, including cloud services, repositories, and local directories. Each connector is tailored to a specific platform, such as Azure, Google Drive, or Github, and comes with unique commands and dependencies. To see the list of Connectors available in `unstructured` library, please check out the [Connectors GitHub folder](https://github.com/Unstructured-IO/unstructured/tree/main/unstructured/ingest/connector) and [documentation](https://unstructured-io.github.io/unstructured/connectors.html)
 
 ### PDF Document Parsing Example
 The following examples show how to get started with the `unstructured` library. You can parse over a dozen document types with one line of code! Use this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the example below.
 
-The easiest way to parse a document in unstructured is to use the `partition` brick. If you use `partition` brick, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning brick. If you are using the `partition` brick, you may need to install additional parameters via `pip install unstructured[local-inference]`. Ensure you first install `libmagic` using the instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection) `partition` will always apply the default arguments. If you need advanced features, use a document-specific brick.
+The easiest way to parse a document in unstructured is to use the `partition` function. If you use `partition` function, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning function. If you are using the `partition` function, you may need to install additional parameters via `pip install unstructured[local-inference]`. Ensure you first install `libmagic` using the instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection) `partition` will always apply the default arguments. If you need advanced features, use a document-specific partitioning function.
 
 ```python
 from unstructured.partition.auto import partition
@@ -233,7 +239,7 @@ Deep Learning(DL)-based approaches are the state-of-the-art for a wide range of 
 including document image classiﬁcation [11,
 ```
 
-See the [partitioning](https://unstructured-io.github.io/unstructured/bricks.html#partitioning)
+See the [partitioning](https://unstructured-io.github.io/unstructured/core.html#partitioning)
 section in our documentation for a full list of options and instructions on how to use
 file-specific partitioning functions.
 
@@ -257,3 +263,4 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 ## :chart_with_upwards_trend: Analytics
 
 We’ve partnered with Scarf (https://scarf.sh) to collect anonymized user statistics to understand which features our community is using and how to prioritize product decision-making in the future. To learn more about how we collect and use this data, please read our [Privacy Policy](https://unstructured.io/privacy-policy).
+To opt out of this data collection, you can set the environment variable `SCARF_NO_ANALYTICS=true` before running any `unstructured` commands.

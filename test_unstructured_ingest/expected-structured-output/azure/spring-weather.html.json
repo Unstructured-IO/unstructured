@@ -5,7 +5,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -14,6 +14,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "News Around NOAA"
@@ -24,7 +27,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -33,6 +36,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "National Program"
@@ -43,7 +49,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -52,6 +58,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Are You Weather-Ready for the Spring?"
@@ -62,7 +71,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -71,6 +80,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov"
@@ -87,7 +99,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -96,6 +108,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov/news"
@@ -112,7 +127,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -121,6 +136,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "http://www.weather.gov/safetycampaign",
@@ -177,7 +195,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -186,6 +204,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov/safetycampaign",
@@ -214,7 +235,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -223,6 +244,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov/wrn/ambassadors",
@@ -263,7 +287,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -272,6 +296,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "http://www.weather.gov/owlie/",
@@ -308,7 +335,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -317,6 +344,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov/wrn/collaborate",
@@ -351,7 +381,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -360,6 +390,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "http://www.weather.gov/news/",
@@ -384,7 +417,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -393,6 +426,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov/wrn/wrns"
@@ -409,7 +445,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -418,6 +454,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov/wrn/about",
@@ -454,7 +493,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -463,6 +502,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "The spring season is all about change – a rebirth both literally and figuratively. Even though the spring season doesn’t officially (astronomically, that is) begin until March 20 this year, climatologically, it starts March 1."
@@ -473,7 +515,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -482,6 +524,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "As cold winter nights are replaced by the warmth of longer daylight hours, the National Weather Service invites you to do two important things that may save your life or the life of a loved one."
@@ -492,7 +537,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -501,6 +546,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "emphasized_text_contents": [
         "First, take steps to better prepare for the seasonal hazards weather can throw at you."
@@ -517,7 +565,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -526,6 +574,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "This could include a spring cleaning of your storm shelter or ensuring your emergency kit is fully stocked. Take a look at our infographics and social media posts to help you become “weather-ready.”"
@@ -536,7 +587,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -545,6 +596,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov/wrn/spring-safety"
@@ -567,7 +621,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -576,6 +630,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov/wrn/spring-infographics"
@@ -592,7 +649,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -601,6 +658,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Stay safe this spring, and every season, by being informed, prepared, and Weather-Ready."
@@ -611,7 +671,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -620,6 +680,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "http://www.commerce.gov"
@@ -636,7 +699,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -645,6 +708,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "http://www.noaa.gov"
@@ -661,7 +727,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -670,6 +736,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov"
@@ -686,7 +755,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -695,6 +764,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "News Around NOAA"
@@ -705,7 +777,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -714,6 +786,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "1325 East West Highway"
@@ -724,7 +799,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -733,6 +808,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Silver Spring, MD 20910"
@@ -743,7 +821,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -752,6 +830,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov/news/contact"
@@ -768,7 +849,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -777,6 +858,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov/disclaimer"
@@ -793,7 +877,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -802,6 +886,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "http://www.cio.noaa.gov/services_programs/info_quality.html"
@@ -818,7 +905,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -827,6 +914,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov/help"
@@ -843,7 +933,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -852,6 +942,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "http://www.weather.gov/glossary"
@@ -868,7 +961,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -877,6 +970,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov/privacy"
@@ -893,7 +989,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -902,6 +998,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.noaa.gov/foia-freedom-of-information-act"
@@ -918,7 +1017,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -927,6 +1026,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov/about"
@@ -943,7 +1045,7 @@
     "metadata": {
       "data_source": {
         "url": "abfs://container1/spring-weather.html",
-        "version": 33162948758480923750580927186981266752,
+        "version": "33162948758480923750580927186981266752",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "container1/spring-weather.html"
@@ -952,6 +1054,9 @@
         "date_modified": "2023-03-10T09:40:16+00:00"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "link_urls": [
         "https://www.weather.gov/careers"

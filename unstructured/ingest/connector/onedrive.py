@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -82,7 +82,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _set_download_paths(self) -> None:
         """Parses the folder structure from the source and creates the download and output paths"""
         download_path = Path(f"{self.read_config.download_dir}")
-        output_path = Path(f"{self.partition_config.output_dir}")
+        output_path = Path(f"{self.processor_config.output_dir}")
 
         if parent_path := self.file_path:
             download_path = (
@@ -113,19 +113,14 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             "server_relative_path": self.server_relative_path,
         }
 
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(["office365"], extras="onedrive")
     def _fetch_file(self):
         from office365.graph_client import GraphClient
-        from office365.runtime.client_request_exception import ClientRequestException
 
-        try:
-            client = GraphClient(self.connector_config.token_factory)
-            root = client.users[self.connector_config.user_pname].drive.get().execute_query().root
-            file = root.get_by_path(self.server_relative_path).get().execute_query()
-        except ClientRequestException as e:
-            if e.response.status_code == 404:
-                return None
-            raise
+        client = GraphClient(self.connector_config.token_factory)
+        root = client.users[self.connector_config.user_pname].drive.get().execute_query().root
+        file = root.get_by_path(self.server_relative_path).get().execute_query()
         return file
 
     def update_source_metadata(self, **kwargs):
@@ -204,7 +199,7 @@ class OneDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         file_path = file_path[1:] if file_path[0] == "/" else file_path
         return OneDriveIngestDoc(
             connector_config=self.connector_config,
-            partition_config=self.partition_config,
+            processor_config=self.processor_config,
             read_config=self.read_config,
             file_name=file.name,
             file_path=file_path,

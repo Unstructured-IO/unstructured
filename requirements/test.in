@@ -20,3 +20,4 @@ types-requests
 types-tabulate
 vcrpy
 grpcio
+autoflake

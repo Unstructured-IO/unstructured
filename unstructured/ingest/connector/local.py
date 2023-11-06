@@ -3,12 +3,14 @@ import glob
 import os
 import typing as t
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
     BaseSourceConnector,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 
@@ -38,17 +40,35 @@ class LocalIngestDoc(BaseIngestDoc):
     registry_name: str = "local"
 
     @property
+    def base_filename(self) -> t.Optional[str]:
+        download_path = str(Path(self.connector_config.input_path).resolve())
+        full_path = str(self.filename)
+        base_path = full_path.replace(download_path, "")
+        return base_path
+
+    @property
     def filename(self):
         """The filename of the local file to be processed"""
         return Path(self.path)
 
     def cleanup_file(self):
         """Not applicable to local file system"""
-        pass
 
     def get_file(self):
         """Not applicable to local file system"""
-        pass
+
+    def update_source_metadata(self, **kwargs) -> None:
+        try:
+            out = os.lstat(self.path)
+            self._source_metadata = SourceMetadata(
+                exists=True,
+                date_created=str(datetime.fromtimestamp(out.st_ctime)),
+                date_modified=str(datetime.fromtimestamp(out.st_mtime)),
+                permissions_data=[{"mode": out.st_mode}],
+                source_url=self.path,
+            )
+        except FileNotFoundError:
+            self._source_metadata = SourceMetadata(exists=False)
 
     @property
     def _output_filename(self) -> Path:
@@ -58,11 +78,11 @@ class LocalIngestDoc(BaseIngestDoc):
         """
         input_path = Path(self.connector_config.input_path)
         basename = (
-            f"{Path(self.path).name}.json"
+            f"{self.base_filename}.json"
             if input_path.is_file()
             else f"{Path(self.path).relative_to(input_path)}.json"
         )
-        return Path(self.partition_config.output_dir) / basename
+        return Path(self.processor_config.output_dir) / basename
 
 
 @dataclass
@@ -70,15 +90,15 @@ class LocalSourceConnector(BaseSourceConnector):
     """Objects of this class support fetching document(s) from local file system"""
 
     connector_config: SimpleLocalConfig
-    ingest_doc_cls: t.Type[LocalIngestDoc] = LocalIngestDoc
+
+    def __post_init__(self):
+        self.ingest_doc_cls: t.Type[LocalIngestDoc] = LocalIngestDoc
 
     def cleanup(self, cur_dir=None):
         """Not applicable to local file system"""
-        pass
 
     def initialize(self):
         """Not applicable to local file system"""
-        pass
 
     def _list_files(self):
         if self.connector_config.input_path_is_file:
@@ -105,7 +125,7 @@ class LocalSourceConnector(BaseSourceConnector):
         return [
             self.ingest_doc_cls(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 path=file,
             )

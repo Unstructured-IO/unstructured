@@ -1,32 +1,23 @@
-import logging
 import typing as t
 from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.cmds.utils import Group, conform_click_options
-from unstructured.ingest.cli.common import (
-    log_options,
-)
+from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMixin,
-    CliPartitionConfig,
-    CliReadConfig,
+    CliConfig,
 )
-from unstructured.ingest.interfaces import BaseConfig
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner import gitlab as gitlab_fn
 
 
 @dataclass
-class GitlabCliConfig(BaseConfig, CliMixin):
+class GitlabCliConfig(CliConfig):
     url: str
     git_access_token: t.Optional[str] = None
     git_branch: t.Optional[str] = None
     git_file_glob: t.Optional[str] = None
 
     @staticmethod
-    def add_cli_options(cmd: click.Command) -> None:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--url"],
@@ -58,37 +49,9 @@ class GitlabCliConfig(BaseConfig, CliMixin):
                 "files are accepted, e.g. '*.html,*.txt'",
             ),
         ]
-        cmd.params.extend(options)
+        return options
 
 
-@click.group(name="gitlab", invoke_without_command=True, cls=Group)
-@click.pass_context
-def gitlab_source(ctx: click.Context, **options):
-    if ctx.invoked_subcommand:
-        return
-
-    conform_click_options(options)
-    verbose = options.get("verbose", False)
-    ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    log_options(options, verbose=verbose)
-    try:
-        # run_init_checks(**options)
-        read_config = CliReadConfig.from_dict(options)
-        partition_config = CliPartitionConfig.from_dict(options)
-        # Run for schema validation
-        GitlabCliConfig.from_dict(options)
-        gitlab_fn(read_config=read_config, partition_config=partition_config, **options)
-    except Exception as e:
-        logger.error(e, exc_info=True)
-        raise click.ClickException(str(e)) from e
-
-
-def get_source_cmd() -> click.Group:
-    cmd = gitlab_source
-    GitlabCliConfig.add_cli_options(cmd)
-
-    # Common CLI configs
-    CliReadConfig.add_cli_options(cmd)
-    CliPartitionConfig.add_cli_options(cmd)
-    cmd.params.append(click.Option(["-v", "--verbose"], is_flag=True, default=False))
-    return cmd
+def get_base_src_cmd() -> BaseSrcCmd:
+    cmd_cls = BaseSrcCmd(cmd_name="gitlab", cli_config=GitlabCliConfig)
+    return cmd_cls

@@ -5,7 +5,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605942"
@@ -14,6 +14,9 @@
         "date_modified": "2023-07-09T12:54:45.226000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Copy and paste this section for each week."
@@ -24,7 +27,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605942"
@@ -33,6 +36,9 @@
         "date_modified": "2023-07-09T12:54:45.226000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "emphasized_text_contents": [
         "Win"
@@ -49,7 +55,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605942"
@@ -58,6 +64,9 @@
         "date_modified": "2023-07-09T12:54:45.226000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -68,7 +77,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605942"
@@ -77,6 +86,9 @@
         "date_modified": "2023-07-09T12:54:45.226000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -87,7 +99,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605942"
@@ -96,6 +108,9 @@
         "date_modified": "2023-07-09T12:54:45.226000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -106,7 +121,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605942"
@@ -115,6 +130,9 @@
         "date_modified": "2023-07-09T12:54:45.226000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "emphasized_text_contents": [
         "Needs input"
@@ -131,7 +149,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605942"
@@ -140,6 +158,9 @@
         "date_modified": "2023-07-09T12:54:45.226000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -150,7 +171,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605942"
@@ -159,6 +180,9 @@
         "date_modified": "2023-07-09T12:54:45.226000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -169,7 +193,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605942"
@@ -178,6 +202,9 @@
         "date_modified": "2023-07-09T12:54:45.226000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -188,7 +215,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605942"
@@ -197,6 +224,9 @@
         "date_modified": "2023-07-09T12:54:45.226000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "emphasized_text_contents": [
         "Focus"
@@ -213,7 +243,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605942"
@@ -222,6 +252,9 @@
         "date_modified": "2023-07-09T12:54:45.226000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -232,7 +265,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605942"
@@ -241,6 +274,9 @@
         "date_modified": "2023-07-09T12:54:45.226000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ""
@@ -251,7 +287,7 @@
     "metadata": {
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": 1,
+        "version": "1",
         "record_locator": {
           "url": "https://unstructured-ingest-test.atlassian.net",
           "page_id": "1605942"
@@ -260,6 +296,9 @@
         "date_modified": "2023-07-09T12:54:45.226000"
       },
       "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "text_as_html": "<table><br><tbody><br><tr><td>Notes          </td></tr><br><tr><td>Important Links</td></tr><br></tbody><br></table>"
     },

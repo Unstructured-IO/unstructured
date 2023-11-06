@@ -61,6 +61,12 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
             data["metadata"]["data_source"]["version"] = str(version)
         if record_locator := data.get("metadata", {}).get("data_source", {}).get("record_locator"):
             data["metadata"]["data_source"]["record_locator"] = json.dumps(record_locator)
+        if permissions_data := (
+            data.get("metadata", {}).get("data_source", {}).get("permissions_data")
+        ):
+            data["metadata"]["data_source"]["permissions_data"] = json.dumps(permissions_data)
+        if links := data.get("metadata", {}).get("links"):
+            data["metadata"]["links"] = [json.dumps(link) for link in links]
         if last_modified := data.get("metadata", {}).get("last_modified"):
             data["metadata"]["last_modified"] = parser.parse(last_modified).strftime(
                 "%Y-%m-%dT%H:%M:%S.%fZ",
@@ -82,25 +88,13 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
         if page_number := data.get("metadata", {}).get("page_number"):
             data["metadata"]["page_number"] = str(page_number)
 
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
-        json_list = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                # TODO element id not a sufficient unique id to use
-                json_content = json.load(json_file)
-                for content in json_content:
-                    self.conform_dict(data=content)
-                logger.info(
-                    f"appending {len(json_content)} json elements from content in {local_path}",
-                )
-                json_list.extend(json_content)
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
-            f"writing {len(json_list)} documents to destination "
+            f"writing {len(elements_dict)} documents to destination "
             f"index at {self.write_config.index}",
         )
         try:
-            results = self.client.upload_documents(documents=json_list)
+            results = self.client.upload_documents(documents=elements_dict)
 
         except azure.core.exceptions.HttpResponseError as http_error:
             raise WriteError(f"http error: {http_error}") from http_error
@@ -121,3 +115,17 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
                     ],
                 ),
             )
+
+    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+        json_list: t.List[t.Dict[str, t.Any]] = []
+        for doc in docs:
+            local_path = doc._output_filename
+            with open(local_path) as json_file:
+                json_content = json.load(json_file)
+                for content in json_content:
+                    self.conform_dict(data=content)
+                logger.info(
+                    f"appending {len(json_content)} json elements from content in {local_path}",
+                )
+                json_list.extend(json_content)
+        self.write_dict(elements_dict=json_list)

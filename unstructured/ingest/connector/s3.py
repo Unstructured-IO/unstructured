@@ -29,9 +29,12 @@ class S3IngestDoc(FsspecIngestDoc):
 @dataclass
 class S3SourceConnector(FsspecSourceConnector):
     connector_config: SimpleS3Config
-    ingest_doc_cls: Type[S3IngestDoc] = S3IngestDoc
+
+    def __post_init__(self):
+        self.ingest_doc_cls: Type[S3IngestDoc] = S3IngestDoc
 
 
+@requires_dependencies(["s3fs", "fsspec"], extras="s3")
 @dataclass
 class S3DestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleS3Config

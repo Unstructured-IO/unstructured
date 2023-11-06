@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -62,9 +62,9 @@ def scroll_wrapper(func):
 
         for _ in range(num_iterations):
             response = func(*args, **kwargs)
-            if type(response) is list:
+            if isinstance(response, list):
                 all_results += func(*args, **kwargs)
-            elif type(response) is dict:
+            elif isinstance(response, dict):
                 all_results += func(*args, **kwargs)["results"]
 
             kwargs["start"] += kwargs["limit"]
@@ -102,7 +102,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _output_filename(self):
         """Create output file path based on output directory, space id and document id."""
         output_file = f"{self.document_meta.document_id}.json"
-        return Path(self.partition_config.output_dir) / self.document_meta.space_id / output_file
+        return Path(self.processor_config.output_dir) / self.document_meta.space_id / output_file
 
     @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
@@ -111,6 +111,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             "page_id": self.document_meta.document_id,
         }
 
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(["atlassian"], extras="Confluence")
     def _get_page(self):
         from atlassian import Confluence
@@ -253,7 +254,7 @@ class ConfluenceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         return [
             ConfluenceIngestDoc(
                 connector_config=self.connector_config,
-                partition_config=self.partition_config,
+                processor_config=self.processor_config,
                 read_config=self.read_config,
                 document_meta=ConfluenceDocumentMeta(space_id, doc_id),
             )

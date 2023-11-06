@@ -3,12 +3,18 @@ import os
 import pathlib
 import warnings
 from importlib import import_module
-from unittest.mock import patch
+from unittest.mock import ANY, patch
 
 import docx
 import pytest
 
-from test_unstructured.partition.test_constants import EXPECTED_TABLE, EXPECTED_TEXT
+from test_unstructured.partition.test_constants import (
+    EXPECTED_TABLE,
+    EXPECTED_TABLE_XLSX,
+    EXPECTED_TEXT,
+    EXPECTED_TEXT_XLSX,
+    EXPECTED_TITLE,
+)
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
@@ -17,6 +23,7 @@ from unstructured.documents.elements import (
     ListItem,
     NarrativeText,
     Table,
+    TableChunk,
     Text,
     Title,
 )
@@ -300,26 +307,28 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename, content_type, 
         strategy="hi_res",
     )
 
-    assert isinstance(elements[0], Title)
-    assert elements[0].text.startswith("LayoutParser")
+    idx = 3
+    assert isinstance(elements[idx], Title)
+    assert elements[idx].text.startswith("LayoutParser")
 
-    assert elements[0].metadata.filename == os.path.basename(filename)
-    assert elements[0].metadata.file_directory == os.path.split(filename)[0]
+    assert elements[idx].metadata.filename == os.path.basename(filename)
+    assert elements[idx].metadata.file_directory == os.path.split(filename)[0]
 
     # NOTE(alan): Xfail since new model skips the word Zejiang
     request.applymarker(pytest.mark.xfail)
 
-    assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Zejiang Shen")
+    idx += 1
+    assert isinstance(elements[idx], NarrativeText)
+    assert elements[idx].text.startswith("Zejiang Shen")
 
 
 def test_auto_partition_pdf_uses_table_extraction():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     with patch(
-        "unstructured_inference.inference.layout.process_file_with_model",
+        "unstructured.partition.ocr.process_file_with_ocr",
     ) as mock_process_file_with_model:
         partition(filename, pdf_infer_table_structure=True, strategy="hi_res")
-        assert mock_process_file_with_model.call_args[1]["extract_tables"]
+        assert mock_process_file_with_model.call_args[1]["infer_table_structure"]
 
 
 def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
@@ -338,8 +347,10 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         url=None,
         include_page_breaks=False,
         infer_table_structure=False,
+        extract_images_in_pdf=ANY,
+        image_output_dir_path=ANY,
         strategy="fast",
-        languages=["eng"],
+        languages=None,
     )
 
 
@@ -359,30 +370,45 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
             strategy="hi_res",
         )
 
-    assert isinstance(elements[0], Title)
-    assert elements[0].text.startswith("LayoutParser")
+    idx = 3
+    assert isinstance(elements[idx], Title)
+    assert elements[idx].text.startswith("LayoutParser")
 
     # NOTE(alan): Xfail since new model misses the first word Zejiang
     request.applymarker(pytest.mark.xfail)
 
-    assert isinstance(elements[1], NarrativeText)
-    assert elements[1].text.startswith("Zejiang Shen")
+    idx += 1
+    assert isinstance(elements[idx], NarrativeText)
+    assert elements[idx].text.startswith("Zejiang Shen")
 
 
 def test_auto_partition_formats_languages_for_tesseract():
     filename = "example-docs/chi_sim_image.jpeg"
     with patch(
-        "unstructured_inference.inference.layout.process_file_with_model",
-    ) as mock_process_file_with_model:
+        "unstructured.partition.ocr.process_file_with_ocr",
+    ) as mock_process_file_with_ocr:
         partition(filename, strategy="hi_res", languages=["zh"])
-        mock_process_file_with_model.assert_called_once_with(
-            filename,
-            is_image=True,
-            ocr_languages="chi_sim+chi_sim_vert+chi_tra+chi_tra_vert",
-            ocr_mode="entire_page",
-            extract_tables=False,
-            model_name=None,
-        )
+        _, kwargs = mock_process_file_with_ocr.call_args_list[0]
+        assert "ocr_languages" in kwargs
+        assert kwargs["ocr_languages"] == "chi_sim+chi_sim_vert+chi_tra+chi_tra_vert"
+
+
+def test_auto_partition_element_metadata_user_provided_languages():
+    filename = "example-docs/chevron-page.pdf"
+    elements = partition(filename=filename, strategy="ocr_only", languages=["eng"])
+    assert elements[0].metadata.languages == ["eng"]
+
+
+@pytest.mark.parametrize(
+    ("languages", "ocr_languages"),
+    [(["auto"], ""), (["eng"], "")],
+)
+def test_auto_partition_ignores_empty_string_for_ocr_languages(languages, ocr_languages):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "book-war-and-peace-1p.txt")
+    elements = partition(
+        filename=filename, strategy="ocr_only", ocr_languages=ocr_languages, languages=languages
+    )
+    assert elements[0].metadata.languages == ["eng"]
 
 
 def test_auto_partition_warns_with_ocr_languages(caplog):
@@ -417,9 +443,10 @@ def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, co
     )
 
     # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
-    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    assert elements[0].text == first_line
-    assert elements[0].metadata.coordinates is not None
+    title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    idx = 3
+    assert elements[idx].text == title
+    assert elements[idx].metadata.coordinates is not None
 
 
 @pytest.mark.parametrize(
@@ -698,38 +725,82 @@ EXPECTED_XLSX_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsh
 
 
 def test_auto_partition_xlsx_from_filename(filename="example-docs/stanley-cups.xlsx"):
-    elements = partition(filename=filename, include_header=False)
+    elements = partition(filename=filename, include_header=False, skip_infer_table_types=[])
 
-    assert all(isinstance(element, Table) for element in elements)
-    assert len(elements) == 2
+    assert sum(isinstance(element, Table) for element in elements) == 2
+    assert sum(isinstance(element, Title) for element in elements) == 2
+    assert len(elements) == 4
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
-    assert elements[0].metadata.page_number == 1
-    assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
+    assert elements[1].metadata.page_number == 1
+    assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
+
+
+@pytest.mark.parametrize(
+    ("skip_infer_table_types", "filename", "has_text_as_html_field"),
+    [
+        (["xlsx"], "stanley-cups.xlsx", False),
+        ([], "stanley-cups.xlsx", True),
+        (["odt"], "fake.odt", False),
+        ([], "fake.odt", True),
+    ],
+)
+def test_auto_partition_respects_skip_infer_table_types(
+    skip_infer_table_types,
+    filename,
+    has_text_as_html_field,
+):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
+    with open(filename, "rb") as f:
+        table_elements = [
+            e
+            for e in partition(file=f, skip_infer_table_types=skip_infer_table_types)
+            if isinstance(e, Table)
+        ]
+        for table_element in table_elements:
+            table_element_has_text_as_html_field = (
+                hasattr(table_element.metadata, "text_as_html")
+                and table_element.metadata.text_as_html is not None
+            )
+        assert table_element_has_text_as_html_field == has_text_as_html_field
 
 
 def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"):
     with open(filename, "rb") as f:
-        elements = partition(file=f, include_header=False)
+        elements = partition(file=f, include_header=False, skip_infer_table_types=[])
 
-    assert all(isinstance(element, Table) for element in elements)
-    assert len(elements) == 2
+    assert sum(isinstance(element, Table) for element in elements) == 2
+    assert sum(isinstance(element, Title) for element in elements) == 2
+    assert len(elements) == 4
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
-    assert elements[0].metadata.page_number == 1
-    assert elements[0].metadata.filetype == EXPECTED_XLSX_FILETYPE
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
+    assert elements[1].metadata.page_number == 1
+    assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
-EXPECTED_XLS_TEXT_LEN = 507
+EXPECTED_XLS_TEXT_LEN = 550
 
 
-EXPECTED_XLS_INITIAL_45_CLEAN_TEXT = "MA What C datatypes are 8 bits? (assume i386)"
+EXPECTED_XLS_INITIAL_45_CLEAN_TEXT = "MC What is 2+2? 4 correct 3 incorrect MA What"
 
 EXPECTED_XLS_TABLE = (
     """<table border="1" class="dataframe">
   <tbody>
+    <tr>
+      <td>MC</td>
+      <td>What is 2+2?</td>
+      <td>4</td>
+      <td>correct</td>
+      <td>3</td>
+      <td>incorrect</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
     <tr>
       <td>MA</td>
       <td>What C datatypes are 8 bits? (assume i386)</td>
@@ -804,10 +875,10 @@ EXPECTED_XLS_TABLE = (
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.xls"):
-    elements = partition(filename=filename, include_header=False)
+    elements = partition(filename=filename, include_header=False, skip_infer_table_types=[])
 
-    assert all(isinstance(element, Table) for element in elements)
-    assert len(elements) == 3
+    assert sum(isinstance(element, Table) for element in elements) == 2
+    assert len(elements) == 18
 
     assert clean_extra_whitespace(elements[0].text)[:45] == EXPECTED_XLS_INITIAL_45_CLEAN_TEXT
     # NOTE(crag): if the beautifulsoup4 package is installed, some (but not all) additional
@@ -931,37 +1002,45 @@ def test_get_partition_with_extras_prompts_for_install_if_missing():
 
 def test_add_chunking_strategy_on_partition_auto():
     filename = "example-docs/example-10k-1p.html"
-    chunk_elements = partition(filename, chunking_strategy="by_title")
     elements = partition(filename)
+    chunk_elements = partition(filename, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
 
 
-def test_add_chunking_strategy_on_partition_auto_respects_multipage():
+def test_add_chunking_strategy_title_on_partition_auto_respects_multipage():
     filename = "example-docs/example-10k-1p.html"
     partitioned_elements_multipage_false_combine_chars_0 = partition(
         filename,
         chunking_strategy="by_title",
         multipage_sections=False,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     partitioned_elements_multipage_true_combine_chars_0 = partition(
         filename,
         chunking_strategy="by_title",
         multipage_sections=True,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     elements = partition(filename)
     cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(
         elements,
         multipage_sections=False,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(
         elements,
         multipage_sections=True,
-        combine_under_n_chars=0,
+        combine_text_under_n_chars=0,
+        new_after_n_chars=300,
+        max_characters=400,
     )
     assert (
         partitioned_elements_multipage_false_combine_chars_0
@@ -974,3 +1053,141 @@ def test_add_chunking_strategy_on_partition_auto_respects_multipage():
     assert len(partitioned_elements_multipage_true_combine_chars_0) != len(
         partitioned_elements_multipage_false_combine_chars_0,
     )
+
+
+def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
+    filename = "example-docs/example-10k-1p.html"
+
+    # default chunk size in chars is 200
+    partitioned_table_elements_200_chars = [
+        e
+        for e in partition(
+            filename,
+            chunking_strategy="by_title",
+            max_characters=200,
+            combine_text_under_n_chars=5,
+        )
+        if isinstance(e, (Table, TableChunk))
+    ]
+
+    partitioned_table_elements_5_chars = [
+        e
+        for e in partition(
+            filename,
+            chunking_strategy="by_title",
+            max_characters=5,
+            combine_text_under_n_chars=5,
+        )
+        if isinstance(e, (Table, TableChunk))
+    ]
+
+    elements = partition(filename)
+
+    table_elements = [e for e in elements if isinstance(e, Table)]
+
+    assert len(partitioned_table_elements_5_chars) != len(table_elements)
+    assert len(partitioned_table_elements_200_chars) != len(table_elements)
+
+    assert len(partitioned_table_elements_5_chars[0].text) == 5
+    assert len(partitioned_table_elements_5_chars[0].metadata.text_as_html) == 5
+
+    # the first table element is under 200 chars so doesn't get chunked!
+    assert table_elements[0] == partitioned_table_elements_200_chars[0]
+    assert len(partitioned_table_elements_200_chars[0].text) < 200
+    assert len(partitioned_table_elements_200_chars[1].text) == 200
+    assert len(partitioned_table_elements_200_chars[1].metadata.text_as_html) == 200
+
+
+def test_add_chunking_strategy_chars_on_partition_auto_adds_is_continuation():
+    filename = "example-docs/example-10k-1p.html"
+
+    table_elements = [e for e in partition(filename) if isinstance(e, Table)]
+    chunked_table_elements = [
+        e
+        for e in partition(
+            filename,
+            chunking_strategy="by_title",
+        )
+        if isinstance(e, Table)
+    ]
+
+    assert table_elements != chunked_table_elements
+
+    i = 0
+    for table in chunked_table_elements:
+        # have to reset the counter to 0 here when we encounter a Table element
+        if isinstance(table, Table):
+            i = 0
+        if i > 0 and isinstance(table, TableChunk):
+            assert table.metadata.is_continuation is True
+            i += 1
+
+
+EXAMPLE_LANG_DOCS = "example-docs/language-docs/eng_spa_mult."
+
+
+@pytest.mark.parametrize(
+    "file_extension",
+    [
+        "doc",
+        "docx",
+        "eml",
+        "epub",
+        "html",
+        "md",
+        "odt",
+        "org",
+        "ppt",
+        "pptx",
+        "rst",
+        "rtf",
+        "txt",
+        "xml",
+    ],
+)
+def test_partition_respects_language_arg(file_extension):
+    filename = EXAMPLE_LANG_DOCS + file_extension
+    elements = partition(filename=filename, languages=["deu"])
+    assert all(element.metadata.languages == ["deu"] for element in elements)
+
+
+def test_partition_respects_detect_language_per_element_arg():
+    filename = "example-docs/language-docs/eng_spa_mult.txt"
+    elements = partition(filename=filename, detect_language_per_element=True)
+    langs = [element.metadata.languages for element in elements]
+    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+# check that the ["eng"] default in `partition` does not overwrite the ["auto"]
+# default in other `partition_` functions.
+def test_partition_default_does_not_overwrite_other_defaults():
+    # the default for `languages` is ["auto"] in partiton_text
+    from unstructured.partition.text import partition_text
+
+    # Use a document that is primarily in a language other than English
+    filename = "example-docs/language-docs/UDHR_first_article_all.txt"
+    text_elements = partition_text(filename)
+    assert text_elements[0].metadata.languages != ["eng"]
+
+    auto_elements = partition(filename)
+    assert auto_elements[0].metadata.languages != ["eng"]
+    assert auto_elements[0].metadata.languages == text_elements[0].metadata.languages
+
+
+def test_partition_languages_default_to_None():
+    filename = "example-docs/handbook-1p.docx"
+    elements = partition(filename=filename, detect_language_per_element=True)
+    # PageBreak and other elements with no text will have `None` for `languages`
+    none_langs = [element for element in elements if element.metadata.languages is None]
+    assert none_langs[0].text == ""
+
+
+def test_partition_languages_incorrectly_defaults_to_English(tmpdir):
+    # We don't totally rely on langdetect for short text, so text like the following that is
+    # in German will be labeled as English.
+    german = "Ein kurzer Satz."
+    filepath = os.path.join(tmpdir, "short-german.txt")
+    with open(filepath, "w") as f:
+        f.write(german)
+    elements = partition(filepath)
+    assert elements[0].metadata.languages == ["eng"]
