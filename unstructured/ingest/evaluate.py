@@ -14,6 +14,7 @@ def main():
 
 @main.command()
 @click.option("--output_dir", type=str, help="Directory to structured output.")
+@click.option("--source_dir", type=str, help="Directory to source.")
 @click.option(
     "--output_list",
     type=str,
@@ -21,7 +22,6 @@ def main():
     help="Optional: list of selected structured output file names under the \
         directory to be evaluate. If none, all files under directory will be use.",
 )
-@click.option("--source_dir", type=str, help="Directory to source.")
 @click.option(
     "--source_list",
     type=str,
@@ -46,19 +46,20 @@ def main():
 )
 def measure_text_edit_distance_command(
     output_dir: str,
-    output_list: Optional[List[str]],
     source_dir: str,
+    output_list: Optional[List[str]],
     source_list: Optional[List[str]],
     export_dir: str,
     weights: Tuple[int, int, int],
 ):
     return measure_text_edit_distance(
-        output_dir, output_list, source_dir, source_list, export_dir, weights
+        output_dir, source_dir, output_list, source_list, export_dir, weights
     )
 
 
 @main.command()
 @click.option("--output_dir", type=str, help="Directory to structured output.")
+@click.option("--source_dir", type=str, help="Directory to structured source.")
 @click.option(
     "--output_list",
     type=str,
@@ -66,7 +67,6 @@ def measure_text_edit_distance_command(
     help="Optional: list of selected structured output file names under the \
         directory to be evaluate. If none, all files under directory will be used.",
 )
-@click.option("--source_dir", type=str, help="Directory to structured source.")
 @click.option(
     "--source_list",
     type=str,
@@ -83,13 +83,13 @@ def measure_text_edit_distance_command(
 )
 def measure_element_type_accuracy_command(
     output_dir: str,
-    output_list: Optional[List[str]],
     source_dir: str,
+    output_list: Optional[List[str]],
     source_list: Optional[List[str]],
     export_dir: str,
 ):
     return measure_element_type_accuracy(
-        output_dir, output_list, source_dir, source_list, export_dir
+        output_dir, source_dir, output_list, source_list, export_dir
     )
 
 

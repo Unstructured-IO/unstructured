@@ -34,9 +34,9 @@ agg_headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
 
 def measure_text_edit_distance(
     output_dir: str,
-    output_list: Optional[List[str]],
     source_dir: str,
-    source_list: Optional[List[str]],
+    output_list: Optional[List[str]] = None,
+    source_list: Optional[List[str]] = None,
     export_dir: str = "metrics",
     weights: Tuple[int, int, int] = (2, 1, 1),
 ) -> None:

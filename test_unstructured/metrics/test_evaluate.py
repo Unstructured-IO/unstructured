@@ -21,9 +21,8 @@ def test_text_extraction_takes_list():
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
     measure_text_edit_distance(
         output_dir=output_dir,
-        output_list=output_list,
         source_dir=source_dir,
-        source_list=None,
+        output_list=output_list,
         export_dir=export_dir,
     )
     # check that only the listed files are included
