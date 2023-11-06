@@ -106,10 +106,10 @@ def measure_text_edit_distance(
 
 def measure_element_type_accuracy(
     output_dir: str,
-    output_list: Optional[List[str]],
     source_dir: str,
-    source_list: Optional[List[str]],
-    export_dir: str,
+    output_list: Optional[List[str]] = None,
+    source_list: Optional[List[str]] = None,
+    export_dir: str = "metrics",
 ):
     """
     Loops through the list of structured output from all of `output_dir` or selected files from
