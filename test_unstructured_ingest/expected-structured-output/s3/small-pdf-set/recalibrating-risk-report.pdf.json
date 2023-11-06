@@ -450,6 +450,24 @@
     "text": "r a e y"
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "83cfd2526736ff7583aa15a44eaec8e6",
+    "metadata": {
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": "306475068461766865312866697521104206816",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "date_modified": "2023-02-12T10:09:32"
+      },
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "TW,"
+  },
+  {
     "type": "Title",
     "element_id": "3f79bb7b435b05321651daefd374cdc6",
     "metadata": {

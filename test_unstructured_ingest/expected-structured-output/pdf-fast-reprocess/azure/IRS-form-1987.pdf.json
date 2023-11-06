@@ -201,7 +201,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "fdb8017fc73bdc12f7200dece8b76c99",
+    "element_id": "f56d2e27c162702cf94bde02654de85b",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -217,11 +217,11 @@
       ],
       "page_number": 1
     },
-    "text": "File this form to request a change in your accounting method, including the accounting treatment of any item. If you are requesting a change in accounting period, use Form 1128, Application for Change in Accounting Period. For more information, see Publication 538, Accounting Periods and Methods."
+    "text": "File this form to request change in your accounting method, including the accounting treatment of any item. If you are requesting a change accounting period, use Form 1128, Application for Change in Accounting Period. For more information, see Publication 538, Accounting Periods and Methods. a in"
   },
   {
     "type": "NarrativeText",
-    "element_id": "45f1ee6a617b92c165698c4456a870fb",
+    "element_id": "6e4632b61bdeb138f0fab16a2799a328",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -237,11 +237,11 @@
       ],
       "page_number": 1
     },
-    "text": "When filing Form 3115, taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115),"
+    "text": "When filing Form 3115, taxpayers are reminded to determine if IRS has published ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115), a"
   },
   {
     "type": "NarrativeText",
-    "element_id": "84e7e32f584e2ee9f47ba593bf86c559",
+    "element_id": "3c1dd5ee6309cfa13f6fce6110860703",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -257,11 +257,11 @@
       ],
       "page_number": 1
     },
-    "text": "Generally, applicants must complete Section A. In addition, complete the appropriate sections (B-1 through H) for which a change Is desired."
+    "text": "In Generally, applicants must complete Section A. addition, complete the appropriate sections (B-1 through H) for which change Is desired. a"
   },
   {
     "type": "NarrativeText",
-    "element_id": "bf2a070cb9d03d056e70b26bebf1ef79",
+    "element_id": "98c346a1639313c912f8d7bb324783b0",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -277,11 +277,11 @@
       ],
       "page_number": 1
     },
-    "text": "You must give all relevant facts, including a detailed description of your present and proposed methods. You must also state the reason(s) you believe approval to make the requested change should be granted. Attach additional pages if more space is needed for explanations. Each page should show your name, address, and identifying number."
+    "text": "You must give all relevant facts, including detailed description of your present and proposed methods. You must also state the reason(s) you believe approval to make the requested change should be granted. Attach additional pages if more space is needed for explanations. Each page should show your name, address, and identifying number. a"
   },
   {
     "type": "NarrativeText",
-    "element_id": "505160cf4f5ef1cf128734840a8c98d1",
+    "element_id": "40ab10a97ecf0b1652ccf9a800b9d5d1",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -297,7 +297,7 @@
       ],
       "page_number": 1
     },
-    "text": "State whether you desire a conference in the National Office if the Service proposes to disapprove your application."
+    "text": "State whether you desire conference the National Office if the Service proposes to disapprove your application. in a"
   },
   {
     "type": "Title",
@@ -321,7 +321,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "582deac2def308ecc5250773e1683052",
+    "element_id": "9c6d9af26921d28ec53c538578fda6a6",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -337,11 +337,11 @@
       ],
       "page_number": 1
     },
-    "text": "Uniform capitalization rules and limitation on cash method.—If you are required to change your method of accounting under section,263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change 1s treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustrnents into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required."
+    "text": "Uniform capitalization rules and limitation on cash you are required to change your method of accounting under section,263A (relating to the capitalization and inclusion inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustrnents into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required. in"
   },
   {
     "type": "NarrativeText",
-    "element_id": "550f9e99054c657264fb9bb26d3023de",
+    "element_id": "aa5ba4cf31f9dbfeeca951acc605338f",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -357,7 +357,7 @@
       ],
       "page_number": 1
     },
-    "text": "Disregard the instructions under Time and Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method—Section 448\"). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information."
+    "text": "Disregard the instructions under Time and Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on separate statement accompanying the Form 3115 the period over which the section adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method—Section See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information. a"
   },
   {
     "type": "NarrativeText",
@@ -381,7 +381,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "d30c76a61eda53cddda756c6d370d0e9",
+    "element_id": "37b8dbaaec4d0bfeb152a80e56f591b2",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -397,7 +397,7 @@
       ],
       "page_number": 1
     },
-    "text": "Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes !n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of income attributable to the sale or furnishing of utility services no later than the year In which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these changes."
+    "text": "In Other the Service has published regulation or procedure to the contrary, all other changes !n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the of income attributable to the sale or furnishing of utility services no later than the year which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these changes. a"
   },
   {
     "type": "Title",
@@ -521,7 +521,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "02dd043b5686a46b2f03cfe8cf56aae9",
+    "element_id": "8b364cbc1d6f9040797ab56ec69211d2",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -537,7 +537,7 @@
       ],
       "page_number": 1
     },
-    "text": "If your application is filed after the 180-day period, it is late. The application will be considered for processing only upon a showing of “good cause” and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev, Proc. 79-63."
+    "text": "If your application is filed after the 180-day period, it is late. The application be considered for processing only upon showing of “good cause” and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev, Proc. 79-63. a"
   },
   {
     "type": "Title",
@@ -561,7 +561,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "174c82e3aaff00ca222300c67ebf8478",
+    "element_id": "1e9e10b66f027f84fa28fe5ae6f71860",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -577,7 +577,7 @@
       ],
       "page_number": 1
     },
-    "text": "Individuals.—An individual should enter his or her social security number in this block. If the application is made on behalf of a husband and wife who file their income tax return jointly, enter the social security numbers of both. Others.-—The employer identification number of"
+    "text": "Individuals.—An individual should enter his or her social security number in this block. If the application is made on behalf of husband and wife who file their income tax return jointly, enter the social security numbers of both. Others.-—The employer identification number of a"
   },
   {
     "type": "NarrativeText",
@@ -621,7 +621,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "dc1531183c8e3f45a78f110ec1efe15f",
+    "element_id": "3cdc85348f9d9ab6e5590341434990ec",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -637,7 +637,7 @@
       ],
       "page_number": 1
     },
-    "text": "Individuals. —An individual desiring the change should sign the application. If the application pertains to a husband and wife filing a joint income tax return, the names of both should appear in the heading and both should sign."
+    "text": "Individuals. —An individual desiring the change should sign the application. If the application pertains to husband and wife filing a joint income tax return, the names of both should appear in the heading and both should sign. a"
   },
   {
     "type": "NarrativeText",
@@ -661,7 +661,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "9de285e8e3b042aa9ac86edde98a21a9",
+    "element_id": "e5a5dd1b32ec6ed02e1f2b599bbc2059",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -677,7 +677,7 @@
       ],
       "page_number": 1
     },
-    "text": "Corporations, cooperatives, and insurance companies.—The form should show the name of the corporation, cooperative, or insurance company and the signature of the president, vice president, treasurer, assistant treasurer, or chief accounting officer (such as tax officer) authorized to sign, and his or her official title. Receivers, trustees, or assignees must sign any application they are required to file. For a subsidiary corporation filing a consolidated return with its parent, the form should be signed by an officer of the parent corporation."
+    "text": "Corporations, cooperatives, and insurance companies.—The form should show the name of the corporation, cooperative, or insurance company and the signature of the president, vice president, treasurer, assistant treasurer, or chief accounting officer (such as tax officer) authorized to sign, and his or her official title. Receivers, trustees, or assignees must sign any application they are required to file. For subsidiary corporation filing a consolidated return with its parent, the form should be signed by an officer of the parent corporation. a"
   },
   {
     "type": "NarrativeText",
@@ -721,7 +721,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1df7107903f249d938fbf3710f50283a",
+    "element_id": "b3709a16efb979cbcfb2a180cc670f83",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -737,7 +737,7 @@
       ],
       "page_number": 1
     },
-    "text": "If the individual or firm is also authorized to represent the applicant before the IRS, receive a copy of the requested ruling, or perform any other act(s), the power of attorney must reflect such authorization(s)."
+    "text": "If the individual or firm is also authorized to represent the applicant before the IRS, receive copy of the requested ruling, or perform any other act(s), the power of attorney must reflect such authorization(s). a"
   },
   {
     "type": "Title",
@@ -761,7 +761,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "58e977f2200b46ac8b372586dfd781bf",
+    "element_id": "8225c14fe71d62ade2b61d3ffd399c28",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -777,7 +777,7 @@
       ],
       "page_number": 1
     },
-    "text": "Taxpayers that are members of an affiliated group filing a consolidated return that seeks to change to the same accounting method for more than one member of the group must file a separate Form 3115 for each such member,"
+    "text": "Taxpayers that are members of an affiliated group filing consolidated return that seeks to change to the same accounting method for more than one member of the group must file a separate Form 3115 for each such member, a"
   },
   {
     "type": "Title",
@@ -821,7 +821,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "9eefeb9556d95a8dd563ff3270cae7f4",
+    "element_id": "8d698c4500922f19a3a7246d85f30937",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -837,11 +837,11 @@
       ],
       "page_number": 1
     },
-    "text": "Item 6, page 2.—The term “gross receipts” includes total sales (net of returns and allowances) and all amounts received for services. In addition, gross receipts include any income from investments and from incidental or outside sources (e.g., interest, dividends, rents, royalties, and annuities). However, if you are a resaler of personal property, exclude from gross receipts any amounts not derived in the ordinary course of a trade or business. Gross receipts do not include amounts received for sales taxes if, under the applicable state or local law, the tax is legally imposed on the purchaser of the good or service, and the taxpayer merely collects and remits the tax to the taxing authority."
+    "text": "Item 6, page 2.—The term “gross receipts” includes total sales (net of returns and allowances) and all amounts received for services. In addition, gross receipts include any income from investments and from incidental or outside sources (e.g., interest, dividends, rents, royalties, and annuities). However, if you resaler of personal property, exclude from gross receipts any amounts not derived in the ordinary course of trade or business. Gross receipts do not include amounts received for sales taxes if, under the applicable state or local law, the tax is legally imposed on the purchaser of the good or service, and the taxpayer merely collects and remits the tax to the taxing authority. a"
   },
   {
     "type": "NarrativeText",
-    "element_id": "3e63f740940cd3ab94c17d2bbf48b13a",
+    "element_id": "0be7c9318b356e96d93bb606d695b4cb",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -857,11 +857,11 @@
       ],
       "page_number": 1
     },
-    "text": "Item 7b, page 2.—If item 7b 1s “Yes,” indicate on a separate sheet the following for each separate trade or business: Nature of business"
+    "text": "Item 7b, page 2.—If item 7b “Yes,” indicate on separate sheet the following for each separate trade or business: Nature of business"
   },
   {
     "type": "NarrativeText",
-    "element_id": "3db206c935841c3dcd5b3a1d41e56b84",
+    "element_id": "48c2d5f3a529a7b13c8d44c01aafc9bf",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -877,7 +877,7 @@
       ],
       "page_number": 2
     },
-    "text": "(manufacturing, retailer, wholesaler, etc.), employer identification number, overall method of accounting, and whether, in the last 6 years, that business has changed its accounting method, or is also changing its accounting method as part of this request or as a separate request."
+    "text": "(manufacturing, retailer, wholesaler, etc.), employer identification number, overall method of accounting, and whether, in the last 6 years, that business has changed its accounting method, or also changing its accounting method as part of this request or as a separate request. is"
   },
   {
     "type": "NarrativeText",
@@ -961,7 +961,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "678ecc0340dc8848f891bf12a555a3fd",
+    "element_id": "974b9f131c1f043a065e6f83d430e341",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -977,11 +977,11 @@
       ],
       "page_number": 2
     },
-    "text": "If IRS later examines your return for the year of the change or for later years, it has the right to verify your statement at that time."
+    "text": "If IRS later examines your return for the year of the change or for later years, it has the to verify your statement at that time."
   },
   {
     "type": "NarrativeText",
-    "element_id": "751abc8c6a0fa412c3e8c18345f57f95",
+    "element_id": "e52de98302f927ff1db0034a3ffe7802",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -997,7 +997,7 @@
       ],
       "page_number": 2
     },
-    "text": "Item 13, page 2.—Insert the actual number of tax years. Use of the term “since inception” 1s not acceptable. However, “more than 6 years” Is acceptable."
+    "text": "Is Item 13, page 2.—Insert the actual number of tax years. Use of the term “since inception” not acceptable. However, “more than 6 years” acceptable. 1s"
   },
   {
     "type": "Title",
@@ -1021,7 +1021,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e4a695ea83818204438fe08add6d1554",
+    "element_id": "0a077d32317de52ea5d06696bce4f07d",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1037,7 +1037,7 @@
       ],
       "page_number": 2
     },
-    "text": "Item 1b, page 2.—Include any amounts reported as income ina prior year although the income had not been accrued (earned) or received in the prior year; for example, discount on installment loans reported as income for the year in which the loans were made instead of for the year or years in which the income was received or earned. Advance payments under Rev. Proc. 71-21 or Regulations section 1.451-5 must be fully explained and all pertinent information must be submitted with this application."
+    "text": "Item 1b, page 2.—Include any amounts reported as income prior year although the income had not been accrued (earned) or received in the prior year; for example, discount on installment loans reported as income for the year which the loans were made instead of for the year or years in which the income was received or earned. Advance payments under Rev. Proc. 71-21 or Regulations section 1.451-5 must be fully explained and all pertinent information must be submitted with this application. in"
   },
   {
     "type": "Title",
@@ -1061,7 +1061,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "eac562ca19f6198691856c695e2790bd",
+    "element_id": "b2b05ff81b9ba9aa551fbe6badffff2d",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1077,7 +1077,7 @@
       ],
       "page_number": 2
     },
-    "text": "Limitation on the Use of the Cash Method of Accounting. —Except as provided below, C corporations, partnerships with a C corporation as a partner, and tax shelters may not use the cash method of accounting. For purposes of this limitation, a trust subject to the tax on unrelated business income under section 511 1s treated as aC corporation with respect to its unrelated trade or business activities."
+    "text": "a Limitation on the Use of the Cash Method of as provided below, C corporations, partnerships with a C corporation as a partner, and tax shelters may not use the cash method of accounting. For purposes of this limitation, trust subject to the tax on unrelated business income under section 511 treated as aC corporation with respect to its unrelated trade or business activities. 1s"
   },
   {
     "type": "NarrativeText",
@@ -1101,7 +1101,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "69bd87b2ad5873c030748e62adf61b89",
+    "element_id": "a9686a84dbff35ec51ae244fb40cc0dd",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1117,11 +1117,11 @@
       ],
       "page_number": 2
     },
-    "text": "(1) Farming businesses.—F or this purpose, the term “farming business” 1s defined in section 263A(e)(4), but it also includes the raising, harvesting, or growing of trees to which section 263A(c)(5) applies. Notwithstanding this exception, section 447 requires certain C corporations and partnerships with a C corporation as a partner to use the accrual method."
+    "text": "a (1) Farming this purpose, the term “farming business” defined section 263A(e)(4), but it also includes the raising, harvesting, or growing of trees to which section 263A(c)(5) applies. Notwithstanding this exception, section 447 requires certain C corporations and partnerships with a C corporation as partner to use the method. 1s or in"
   },
   {
     "type": "NarrativeText",
-    "element_id": "df67e4b3a4a1352209c2648b87d675e2",
+    "element_id": "a21fa1a0d2fdb8ba6d1b364f3310a0c4",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1137,7 +1137,7 @@
       ],
       "page_number": 2
     },
-    "text": "(2) Qualified personal service corporations. — A “qualified personal service corporation” is any corporation: (a) substantially all of the activities of which involve the performance of services in the fields of health, law, engineering, architecture, accounting, actuarial science, performing arts, or consulting, and (b)"
+    "text": "(2) Qualified personal service corporations. — A “qualified service corporation” any corporation: (a) substantially all of the activities of which involve the performance of services the fields of health, law, engineering, architecture, accounting, actuarial science, performing arts, consulting, and (b) or is in"
   },
   {
     "type": "Title",
@@ -1161,7 +1161,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "44902073e7cc4fa753f25d40e009dcef",
+    "element_id": "df2c6ceeb67c64033a0963c8cacd8f91",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1177,11 +1177,11 @@
       ],
       "page_number": 2
     },
-    "text": "substantially all of the stock of which is owned by employees performing the services, retired employees who had performed the services, any estate of any individual who had performed the services listed above, or any person who acquired stock of the corporation as a result of the death of an employee or retiree described above if the acquisition occurred within 2 years of death."
+    "text": "a substantially all of the stock of which owned by employees performing the services, retired employees who had performed the services, any estate of any individual who had performed the services listed above, any person who acquired stock of the corporation as result of the death of an employee or retiree described above if the acquisition occurred within 2 years of death. or is"
   },
   {
     "type": "NarrativeText",
-    "element_id": "b68a5b5b0d59122e0df42a96d68d2b5e",
+    "element_id": "d4bd2ca8d1afdef76abc11f83d27fa85",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1197,7 +1197,7 @@
       ],
       "page_number": 2
     },
-    "text": "(3) Entities with gross receipts of $5,000,000 or less. —To qualify for this exception, the C corporation's or partnership’s annual average gross receipts for the three years ending with the prior tax year may not exceed $5,000,000. If the corporation or partnership was not in existence for the entire 3-year period, the period of existence is used to determine whether the corporation or partnership qualifies. If any tax year in the 3-year period is a short tax year, the corporation or partnership must annualize the gross receipts by multiplying the gross receipts by 12 and dividing the result by the number of months in the short period."
+    "text": "a (3) Entities with gross receipts of $5,000,000 less. —To qualify for this exception, the C corporation's or partnership’s annual average gross receipts for the three years ending with the prior tax year may not exceed $5,000,000. If the corporation or partnership was not existence for the entire 3-year period, the period of existence used to determine whether the corporation or partnership qualifies. If any tax year the 3-year period short tax year, the corporation or partnership must annualize the gross receipts by multiplying the gross receipts by 12 and dividing the result by the number of months in the short period. or is in in is"
   },
   {
     "type": "NarrativeText",
@@ -1241,7 +1241,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a9e8c96063f3fea7ea05eb3cd41ebe7a",
+    "element_id": "48443864b847523f5e4afbe9d1c189bb",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1257,11 +1257,11 @@
       ],
       "page_number": 2
     },
-    "text": "Applicants must give complete details about the present method of valuing inventory and the proposed method. State whether all or part of your inventory ts involved in the change."
+    "text": "Applicants must give complete details about the present method of valuing inventory and the proposed method. State whether all part of your inventory involved the change. or in"
   },
   {
     "type": "NarrativeText",
-    "element_id": "7e90b155b5cdb2481b1dfbb1118142c5",
+    "element_id": "4fb5091cc347bf91cd14d73d3e0e84a9",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1277,11 +1277,11 @@
       ],
       "page_number": 2
     },
-    "text": "Inventories of retail merchants.—The retail method of pricing inventories does not contemplate valuation of goods at the retail selling price. The retail selling price of goods on hand must be reduced to approximate cost or cost or market, whichever Is lower, by the adjustments required in Regulations section 1.471-8."
+    "text": "Is Inventories of retail retail method of pricing inventories does not contemplate valuation of goods at the retail selling price. The retail selling price of goods on hand must be reduced to approximate cost cost or market, whichever lower, by the adjustments required Regulations section 1.471-8. or in"
   },
   {
     "type": "NarrativeText",
-    "element_id": "357d52f500b965abc29ea60039de4fd8",
+    "element_id": "b7f9b3322f3beac993fff0f40b7afe6a",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1297,11 +1297,11 @@
       ],
       "page_number": 2
     },
-    "text": "LIFO inventory changes.—Attach a schedule with all the required computations when changing the method of figuring LIFO inventories. If you are changing from LIFO to a non-LIFO method, attach a schedule with the following additional information:"
+    "text": "a LIFO inventory changes.—Attach a schedule with all the required computations when changing the method of figuring LIFO inventories. If you are changing from LIFO to a non-LIFO method, attach schedule with the following additional information:"
   },
   {
     "type": "NarrativeText",
-    "element_id": "347f638641329c72c971a522ec07f6b1",
+    "element_id": "1089116aa82cb0091cd96656669a7388",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1317,11 +1317,11 @@
       ],
       "page_number": 2
     },
-    "text": "(1) The specific types and classes of goods in the LIFO inventories involved in the proposed changes and the comparative value of such Inventories as of the end of the tax year preceding the year of change determined by: (a) the LIFO method, and (b) the proposed method and basis (such as FIFO cost or lower of cost or market)."
+    "text": "(1) The specific types and classes of goods the LIFO inventories involved the proposed changes and the comparative value of such as of the end of the tax year preceding the year of change determined by: (a) the LIFO method, and (b) the proposed method and basis (such as FIFO cost lower of cost or market). or in in"
   },
   {
     "type": "NarrativeText",
-    "element_id": "ea8e44805e010fa33ed03e9a8f22ddb2",
+    "element_id": "f508dbc491dd1183b01f7814a8922ac2",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1337,11 +1337,11 @@
       ],
       "page_number": 2
     },
-    "text": "(2) State whether the proposed identification and valuation methods conform to the inventory method currently used with respect to non-LIFO Inventories, if any, or how such method is otherwise consistent with Regulations section 1.4726."
+    "text": "(2) State whether the proposed identification and valuation methods conform to the inventory method currently used with respect to non-LIFO if any, how such method otherwise consistent with Regulations section or is"
   },
   {
     "type": "NarrativeText",
-    "element_id": "6028c579dc843bb5aa2c704f46085914",
+    "element_id": "89743ff144e53ecca2d0fb1601f4b86f",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1357,7 +1357,7 @@
       ],
       "page_number": 2
     },
-    "text": "(3) The termination event statement required by section 5.10 of Rev. Proc. 84-74 and an explanation if there has been a termination event."
+    "text": "a (3) The termination event statement required by section 5.10 of Rev. Proc. 84-74 and an explanation if there has been termination event."
   },
   {
     "type": "Title",
@@ -1381,7 +1381,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a8e72799229bc2d754f44ea167a6e7d6",
+    "element_id": "870442ad7eee0943ff98ba99511e7327",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1397,11 +1397,11 @@
       ],
       "page_number": 2
     },
-    "text": "Applicants requesting to change their method of valuing property produced, property acquired for resale, or long-term contracts under section 263A or 460 MUST complete section D showing the treatment under both the present and proposed methods."
+    "text": "Applicants requesting to change their method of valuing property produced, property acquired for resale, long-term contracts under section 263A or 460 MUST complete section D showing the treatment under both the present and proposed methods. or"
   },
   {
     "type": "Title",
-    "element_id": "b6b99aba936d71652bca9a28d2a68eb8",
+    "element_id": "4bde94dc330268d2f63a09423409c6d4",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1417,7 +1417,7 @@
       ],
       "page_number": 2
     },
-    "text": "% U.S. Government Printing Office: 1987—201-993/60166"
+    "text": "U.S. Government Printing Office: 1987—201-993/60166"
   },
   {
     "type": "Title",
@@ -1441,7 +1441,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "86fab9f7b35d56a2d48baf0782b7c53d",
+    "element_id": "8b0e2087ca0c9244a9677138ac8933ed",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1457,11 +1457,11 @@
       ],
       "page_number": 2
     },
-    "text": "Section 460(f) provides that the term “long-term contract” means any contract for the manufacturing, building, installation, or construction of property that is not completed within the tax year in which it 1s entered into. However, a manufacturing contract will not qualify as a long-term contract unless the contract involves the manufacture of: (1) a unique item not normally included in your finished goods inventory, or (2) any item that normally requires more than 12 calendar months to complete."
+    "text": "1s a Section 460(f) provides that the term “long-term contract” means any contract for the manufacturing, building, installation, construction of property that not completed within the tax year which it is entered into. However, a manufacturing contract will not qualify as a long-term contract unless the contract involves the manufacture of: (1) unique item not normally included your finished goods inventory, or (2) any item that normally requires more than 12 calendar months to complete. or in in"
   },
   {
     "type": "NarrativeText",
-    "element_id": "825f9197a40400f76d2a527e8d7a2c71",
+    "element_id": "bf9382204391392a6b1acc08012b20bc",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1477,7 +1477,7 @@
       ],
       "page_number": 2
     },
-    "text": "All long-term contracts entered into after February 28, 1986, except for real property construction contracts expected to be completed within 2 years by contractors whose average annual gross receipts for the 3 prior tax years do not exceed $10,000,000, must be accounted for using either the percentage of completion- capitalized cost method or the percentage of completion method. See section 460."
+    "text": "All long-term contracts entered into after February 28, 1986, except for real property construction contracts expected to be completed within 2 years by contractors whose average annual gross receipts for the 3 prior tax years do not exceed $10,000,000, must be accounted for using either the percentage of completion- capitalized cost method the percentage of completion method. See section 460."
   },
   {
     "type": "NarrativeText",
@@ -1521,7 +1521,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "cf5e2bc86b7c77533924eb940fd522d5",
+    "element_id": "e13c58174ab36a2fc09e1ca8b10e60ae",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1537,11 +1537,11 @@
       ],
       "page_number": 2
     },
-    "text": "This section Is to be used only to request a change in a method of accounting for depreciation under section 167."
+    "text": "a This section to be used only to request a change method of accounting for depreciation under section 167. in"
   },
   {
     "type": "NarrativeText",
-    "element_id": "b8355dc568ea042f9da586188b404bca",
+    "element_id": "e292da020dd388f61a96ace65bb7f43a",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1557,11 +1557,11 @@
       ],
       "page_number": 2
     },
-    "text": "Rev. Proc. 74-11 provides a procedure whereby applicants are considered to have obtained the consent of the Commissioner to change their method of accounting for depreciation. You must file Form 3115 with the Service Center where your return will be filed within the first 180 days of the tax year in which it is desired to make the change. Attach a copy of the form to the income tax return for the tax year of the change."
+    "text": "is a Rev. Proc. 74-11 provides a procedure whereby applicants are considered to have obtained the consent of the Commissioner to change their method of accounting for depreciation. You must file Form 3115 with the Service Center where your return will be filed within the first 180 days of the tax year which it desired to make the change. Attach copy of the form to the income tax return for the tax year of the change."
   },
   {
     "type": "NarrativeText",
-    "element_id": "319882ba6726e29222f5522c53887960",
+    "element_id": "87c74c290fad079d3b935c7e15be2b92",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1577,7 +1577,7 @@
       ],
       "page_number": 2
     },
-    "text": "Note: Do not use Form 3115 to make an election under section 168. Such an election may be made only on the tax return for the year in which the property 1s placed in service. In addition, Form 3115 is not to be used to request approval to revoke an election made under section 168. Such a request must be made in accordance with Rev. Proc. 87-1 (updated annually)."
+    "text": "In is a Note: Do not use Form 3115 to make an election under section 168. Such an election may be made only on the tax return for the year which the property 1s placed service. addition, Form 3115 not to be used to request approval to revoke an election made under section 168. Such request must be made accordance with Rev. Proc. 87-1 (updated annually)."
   },
   {
     "type": "Title",
@@ -1601,7 +1601,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "cb1f664a186a87f6560cde136d70b558",
+    "element_id": "55be8f061c79875d6ca46283bea27d15",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/IRS-form-1987.pdf",
@@ -1617,7 +1617,7 @@
       ],
       "page_number": 2
     },
-    "text": "Generally, this section should be used for requesting changes In a method of accounting for which provision has not been made elsewhere on this form. Attach additional pages if more space ts needed for a full explanation of the present method used and the proposed change requested."
+    "text": "In a Generally, this section should be used for requesting changes a method of accounting for which provision has not been made elsewhere on this form. Attach additional pages if more space needed for full explanation of the present method used and the proposed change requested."
   },
   {
     "type": "NarrativeText",

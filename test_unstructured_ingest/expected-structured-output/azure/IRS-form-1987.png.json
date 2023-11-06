@@ -1,7 +1,7 @@
 [
   {
     "type": "Title",
-    "element_id": "b936b2ee403883f6bff0295edb71fae1",
+    "element_id": "7ccbd00b909fbdd42c3c314711b1ee88",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -16,7 +16,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "FM) Department of the Treasury Internal Revenue Service Instructions for Form 3115 (Rev. November 1987) Application for Change in Accounting Method"
+    "text": "Ai) Department of the Treasury Internal Revenue Service Instructions for Form 3115 (Rev. November 1987) Application for Change in Accounting Method"
   },
   {
     "type": "NarrativeText",
@@ -77,7 +77,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1dc07a295891aaf9dfd2559efee66ab2",
+    "element_id": "a2ca75c8dc1e941a00ccb5f842190cb0",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -92,7 +92,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws and to allow us to figure and collect the right amount of tax. You are required to this information."
+    "text": "Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws anc to allow us to figure and collect the right amount of tax. You are required to this information."
   },
   {
     "type": "NarrativeText",
@@ -267,7 +267,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c259777a4c46933ffda4f8b06922fcfd",
+    "element_id": "bf7e52c5297309b8e43fd0e68ce560f3",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -282,7 +282,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes 1n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the inclusion of income attributable to the sale or furnishing of utility services no later than the year in which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these"
+    "text": "Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes !n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the inclusion of income attributable to the sale or furnishing of utility services no later than the year in which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these"
   },
   {
     "type": "Title",
@@ -305,7 +305,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "790998c70f51276d6fae7db8df6e8351",
+    "element_id": "0dfd676478b4162d0dbad1727a37327f",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -320,7 +320,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Generally, applicants must complete Section A. In addition, complete the appropriate sections (B-1 through H) for which a change ts desired."
+    "text": "Generally, applicants must complete Section A. In addition, complete the appropriate sections (B-1 through H) for which a change is desired."
   },
   {
     "type": "NarrativeText",
@@ -343,7 +343,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "505160cf4f5ef1cf128734840a8c98d1",
+    "element_id": "1a046ab83947b0df207c4e5f24dcd3fb",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -358,7 +358,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "State whether you desire a conference in the National Office if the Service proposes to disapprove your application."
+    "text": "State whether you desire a conference in the National Office if the Service proposes to Gisapprove your application."
   },
   {
     "type": "Title",
@@ -381,7 +381,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "6fef08d976462f03567612cbea207d0b",
+    "element_id": "4fc36f4c93c2a50359b24e42890a3d85",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -396,11 +396,11 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Uniform capitalization rules and limitation on cash method.—If you are required to change your method of accounting under sectior,263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change is treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustments into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required."
+    "text": "Uniform capitalization rules and limitation on cash method.—lf you are required to change your method of accounting under sectiorn,263A (relating to the capitalization ang inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change is treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustrnents into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required."
   },
   {
     "type": "NarrativeText",
-    "element_id": "207be7b7dc9e8cd420376c5aef291cfc",
+    "element_id": "550f9e99054c657264fb9bb26d3023de",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -415,7 +415,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Disregard the instructions under Time and Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method Section 448\"). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information."
+    "text": "Disregard the instructions under Time and Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method—Section 448\"). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information."
   },
   {
     "type": "Title",
@@ -571,7 +571,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "d6fca66a91f1ac21a81f0123a2641176",
+    "element_id": "04382bd5e57c0cfa1ea2a12d55155b22",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -586,7 +586,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "If your application is filed after the 180-day period, it is late. The application will be considered for processing only upon a showing of “good cause\" and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev. Proc. 79-63."
+    "text": "If your application is filed after the 180-day period, it is late. The application will be considered for processing only upon a showing of “good cause” and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev. Proc. 79-63."
   },
   {
     "type": "Title",
@@ -609,7 +609,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "8605ee209656c311cec7ce4b001caab2",
+    "element_id": "ec3c2d03b846d2a186fc9a8f318f688b",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -624,11 +624,11 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Individuals.—An individual should enter his or her social security number in this block. If the application is made on behalf of a husband and wife who file their income tax return jointly, enter the social security numbers of both."
+    "text": "Individuals. —An individual should enter his or her social security number in this block. If the application is made on behalf of a husband and wife who file their income tax return jointly, enter the social security numbers of both."
   },
   {
     "type": "NarrativeText",
-    "element_id": "7d82c5876c5c1a3596338ae8cfbd1a50",
+    "element_id": "b7dbbe92002f45ee479e8a71df57370a",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -643,7 +643,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Others.-—The employer identification number applicant other than an individual should be entered in this block."
+    "text": "Others.-—The employer identification number applicant other than an individual should be entered tn this block."
   },
   {
     "type": "Title",
@@ -723,7 +723,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7d3a67d75914a504a52ec53998b796af",
+    "element_id": "f852a69ea02a6e1c8d488db828fefc67",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -738,7 +738,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Partnerships.—The form should be signed with the partnership name followed by the signature of one of the general partners and the words “General Partner.”"
+    "text": "Partnerships. —The form shouid be signed with the partnership name followed by the signature of one of the general partners and the words “General Partner.”"
   },
   {
     "type": "NarrativeText",
@@ -761,7 +761,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ba7f9dc18be2bf9219e020112b426526",
+    "element_id": "c05e131c0e2171f023b5a68d07103315",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -776,11 +776,11 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Fiduciaries.—The-form should show the"
+    "text": "should show the"
   },
   {
     "type": "NarrativeText",
-    "element_id": "15388163cb5265b432737b06d98790e5",
+    "element_id": "8d4efeef67e365495ff805e5330346e7",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -795,7 +795,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrix, etc., having legal authority to sign, and his or her title."
+    "text": "Fiduciaries. —The-form name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrix, etc., having legal authority to sign, and his or her title."
   },
   {
     "type": "NarrativeText",
@@ -932,7 +932,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "b57b7502430c59194bb865cfa1bcfab5",
+    "element_id": "941bccdfc294fef98cf367bad9361987",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -947,7 +947,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Item 5a, page 1.—“Taxable income or (loss) from operations” is to be entered before application of any net operating loss deduction under section 172(a)."
+    "text": "Item 5a, page 1.— “Taxable income or (loss) from operations” is to be entered before application of any net operating loss deduction under section 172(a)."
   },
   {
     "type": "NarrativeText",
@@ -970,7 +970,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "372359d8718b28cc34e7a5f1fdd05213",
+    "element_id": "3e63f740940cd3ab94c17d2bbf48b13a",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -985,6 +985,6 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Item 7b, page 2.—If item 7b 1s “Yes,” indicate ona separate sheet the following for each separate trade or business: Nature of business"
+    "text": "Item 7b, page 2.—If item 7b 1s “Yes,” indicate on a separate sheet the following for each separate trade or business: Nature of business"
   }
 ]

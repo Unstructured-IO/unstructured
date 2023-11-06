@@ -35,7 +35,7 @@
   },
   {
     "type": "Table",
-    "element_id": "cbbf7b2ca7e0cda98760d1a4dfb657a8",
+    "element_id": "8ee40dc2cee458eb641c95ea64c8694b",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
@@ -47,13 +47,13 @@
       },
       "filetype": "image/jpeg",
       "page_number": 1,
-      "text_as_html": "<table><thead><th>Dataset</th><th>| Base Model\"</th><th>Large Model</th><th>| Notes</th></thead><tr><td>PubLayNet [38]</td><td>P/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA [3)</td><td>M</td><td>-</td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper [17]</td><td>P</td><td>-</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>‘TableBank (18)</td><td>P</td><td>P</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset (31)</td><td>| F/M</td><td>-</td><td>Layouts of history Japanese documents</td></tr></table>"
+      "text_as_html": "<table><thead><th>Dataset</th><th>| Base Model\"|</th><th>Large Model</th><th>| Notes</th></thead><tr><td>PubLayNet [33]</td><td>P/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA [3]</td><td>M</td><td>-</td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper [17]</td><td>P</td><td>-</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank [18]</td><td>P</td><td>P</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset [31]</td><td>P/M</td><td>-</td><td>Layouts of history Japanese documents</td></tr></table>"
     },
-    "text": "Dataset | Base Model\" Large Model | Notes PubLayNet [38] P/M M Layouts of modern scientific documents PRImA [3) M - Layouts of scanned modern magazines and scientific reports Newspaper [17] P - Layouts of scanned US newspapers from the 20th century ‘TableBank (18) P P Table region on modern scientific and business document HJDataset (31) | F/M - Layouts of history Japanese documents"
+    "text": "Dataset | Base Model\"| Large Model | Notes PubLayNet [33] P/M M Layouts of modern scientific documents PRImA [3] M - Layouts of scanned modern magazines and scientific reports Newspaper [17] P - Layouts of scanned US newspapers from the 20th century TableBank [18] P P Table region on modern scientific and business document HJDataset [31] P/M - Layouts of history Japanese documents"
   },
   {
     "type": "UncategorizedText",
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "element_id": "8a8de823d5ed3e12746a62ef169bcf37",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
@@ -66,11 +66,11 @@
       "filetype": "image/jpeg",
       "page_number": 1
     },
-    "text": "2"
+    "text": "?"
   },
   {
     "type": "FigureCaption",
-    "element_id": "2ad24f5a5e3078b568fa6e9525e64f77",
+    "element_id": "1305f7d536047e9c5bc5c55c6d56eef5",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
@@ -83,11 +83,11 @@
       "filetype": "image/jpeg",
       "page_number": 1
     },
-    "text": "For each dataset, we train several models of different sizes for different needs (the trade-off between accuracy vs. computational cost). For “base model” and “large model”, we refer to using the ResNet 50 or ResNet 101 backbones [13], respectively. One can train models of different architectures, like Faster R-CNN [28] (P) and Mask R-CNN [12] (M). For example, an F in the Large Model column indicates it has m Faster R-CNN model trained using the ResNet 101 backbone. The platform is maintained and a number of additions will be made to the model zoo in coming months."
+    "text": "For each dataset, we train several models of different sizes for different needs (the trade-off between accuracy vs. computational cost). For “base model” and “large model”, we refer to using the ResNet 50 or ResNet 101 backbones [13], respectively. One can train models of different architectures, like Faster R-CNN [28] (P) and Mask R-CNN [12] (M). For example, an F in the Large Model column indicates it has a Faster R-CNN model trained using the ResNet 101 backbone. The platfcem is maintained and a number of additions will be made to the model zoo in coming months."
   },
   {
     "type": "NarrativeText",
-    "element_id": "10d504d8b13f993462c1fb2b259a637c",
+    "element_id": "33dffbb2a495c5e5f9d2677ce3ec87c1",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
@@ -100,7 +100,7 @@
       "filetype": "image/jpeg",
       "page_number": 1
     },
-    "text": "layout data structures, which are optimized for efficiency and versatility. 3) When necessary, users can employ existing or customized OCR models via the unified API provided in the OCR module. 4) LayoutParser comes with a set of utility functions for the visualization and stomge of the layout data. 5) LayoutParser is also highly customizable, via its integration with functions for layout data annotation and model training. We now provide detailed descriptions for each component."
+    "text": "layout data structures, which are optimized for efficiency and versatility. 3) When necessary, users can employ existing or customized OCR models via the unified API provided in the OCR module. 4) LayoutParser comes with a set of utility functions for the visualization and storage of the layout data. 5) LayoutParser is also highly customizable, via its integration with functions for layout data annotation and model training. We now provide detailed descriptions for each component."
   },
   {
     "type": "Title",
@@ -121,7 +121,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "6308564d51ecc38117d56ca4d886e7b7",
+    "element_id": "64c461d45fdeae211ee342ea97f16f8d",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
@@ -134,7 +134,7 @@
       "filetype": "image/jpeg",
       "page_number": 1
     },
-    "text": "In LayoutParser, a layout model takes a document image as an input and generates a list of rectangular boxes for the target content regions. Different from traditional methods, it relies on deep convolutional neural networks rather than manually curated rules to identify content regions. It is formulated as an object detection problem and state-of-the-art models like Faster R-CNN [28] and Mask R-CNN [12] are used. This yields prediction results of high accuracy and makes it possible to build a concise, generalized interface for layout detection. LayoutParser, built upon Detectron2 [35], provides a minimal API that can perform layout detection with only four lines of code in Python:"
+    "text": "In LayoutParser, a layout model takes a document image as an input and generates a list of rectangular boxes for the target content regions. Different from traditional methods, it relies on deep convolutional neural networks rather than manually curated rules to identify content regions. It is formulated as an object detection problem and state-of-the-art models like Faster R-CNN [28] and Mask R-CNN [12] are used. This yields prediction results of high accuracy and makes it possible to build a concise, generalized interface for layout detection. LayoutParser, built upon Detectron?2 [35], provides a minimal API that can perform layout detection with only four lines of code in Python:"
   },
   {
     "type": "ListItem",
@@ -154,23 +154,6 @@
     "text": "import layoutparser as lp"
   },
   {
-    "type": "Title",
-    "element_id": "c3f2c80e9cd96953dc1abb477c61dfbc",
-    "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "image/jpeg",
-      "page_number": 1
-    },
-    "text": "wwe"
-  },
-  {
     "type": "ListItem",
     "element_id": "cbb879049df7bd737ffc487a61b05f70",
     "metadata": {
@@ -188,8 +171,8 @@
     "text": "image = cv2.imread(\"image_file\") # load images"
   },
   {
-    "type": "ListItem",
-    "element_id": "61869c4b92bc306c9fa617681ce746f6",
+    "type": "Title",
+    "element_id": "b84ff8057ee3a7f87deac4ae29ac5929",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
@@ -202,11 +185,11 @@
       "filetype": "image/jpeg",
       "page_number": 1
     },
-    "text": "model = lp. Detectron2LayoutModel ("
+    "text": "ww"
   },
   {
     "type": "ListItem",
-    "element_id": "a647b916460ee5c705d0d2bb911e5804",
+    "element_id": "3c820b1130e318d98c2bf71356bca106",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
@@ -219,11 +202,11 @@
       "filetype": "image/jpeg",
       "page_number": 1
     },
-    "text": "ea \"lp: //PubLayNet/faster_rcnn_R_50_FPN_3x/config\")"
+    "text": "model = lp.Detectron2LayoutModel ("
   },
   {
     "type": "ListItem",
-    "element_id": "d327c74e28b98f9a40394148e2ed8be7",
+    "element_id": "0fe30a3458e9e73a183df2ea78b6fe61",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
@@ -236,7 +219,24 @@
       "filetype": "image/jpeg",
       "page_number": 1
     },
-    "text": "layout = model.detect (image)"
+    "text": "@ \"lp: //PubLayNet/faster_rcnn_R_50_FPN_3x/config\")"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "cefc17869ac998e9c172c6161e604bee",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper-with-table.jpg",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "image/jpeg",
+      "page_number": 1
+    },
+    "text": "o layout = model.detect (image)"
   },
   {
     "type": "NarrativeText",
