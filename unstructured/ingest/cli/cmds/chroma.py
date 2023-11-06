@@ -11,8 +11,8 @@ from unstructured.ingest.interfaces import BaseConfig
 
 @dataclass
 class ChromaCliWriteConfig(BaseConfig, CliMixin):
-    api_key: str
-    index_name: str
+    client: str
+    collection_name: str
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:

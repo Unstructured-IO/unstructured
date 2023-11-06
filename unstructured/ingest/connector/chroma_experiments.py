@@ -50,3 +50,13 @@ print(collection.peek())
 print(collection.count())
 
 chroma_client.delete_collection(name="my_collection")
+
+dict_content = json.load(json_file)
+
+data={}
+for i,x in enumerate(dict_content):
+    dict_content[i]["metadata"]["type"]=dict_content[i]["type"]
+data["ids"]=[x.get("element_id") for x in dict_content]
+data["documents"]=[x.get("text") for x in dict_content]
+data["embeddings"]=[x.get("embeddings") for x in dict_content]
+data["metadatas"]=[flatten_dict(x.get("metadata"),flatten_lists=True) for x in dict_content]
