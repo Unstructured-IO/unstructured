@@ -28,10 +28,11 @@ from unstructured.documents.elements import (
     CoordinatesMetadata,
     Element,
     ElementMetadata,
+    ElementType,
     ListItem,
     PageBreak,
     Text,
-    Title, ElementType,
+    Title,
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE

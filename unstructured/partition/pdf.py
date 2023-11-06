@@ -45,12 +45,13 @@ from unstructured.documents.elements import (
     CoordinatesMetadata,
     Element,
     ElementMetadata,
+    ElementType,
     Image,
     Link,
     ListItem,
     PageBreak,
     Text,
-    process_metadata, ElementType,
+    process_metadata,
 )
 from unstructured.file_utils.filetype import (
     FileType,

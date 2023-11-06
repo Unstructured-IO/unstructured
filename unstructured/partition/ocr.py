@@ -369,7 +369,9 @@ def get_layout_elements_from_ocr(
         # and merging steps are not necessary.
 
         layout_elements = [
-            LayoutElement(bbox=r.bbox, text=r.text, source=r.source, type=ElementType.UNCATEGORIZED_TEXT)
+            LayoutElement(
+                bbox=r.bbox, text=r.text, source=r.source, type=ElementType.UNCATEGORIZED_TEXT
+            )
             for r in ocr_regions
         ]
     else:
@@ -763,7 +765,9 @@ def get_elements_from_ocr_regions(
 
     merged_regions = [merge_text_regions(group) for group in grouped_regions]
     return [
-        LayoutElement(text=r.text, source=r.source, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
+        LayoutElement(
+            text=r.text, source=r.source, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox
+        )
         for r in merged_regions
     ]
 

@@ -15,6 +15,7 @@ from unstructured.documents.elements import (
     CoordinateSystem,
     DataSourceMetadata,
     ElementMetadata,
+    ElementType,
     FigureCaption,
     Image,
     Link,
@@ -40,7 +41,7 @@ def test_convert_to_isd():
     isd = base.convert_to_isd(elements)
 
     assert isd[0]["text"] == "Title 1"
-    assert isd[0]["type"] == "Title"
+    assert isd[0]["type"] == ElementType.TITLE
 
     assert isd[1]["text"] == "Narrative 1"
     assert isd[1]["type"] == "NarrativeText"
