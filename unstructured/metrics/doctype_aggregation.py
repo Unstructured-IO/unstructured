@@ -1,6 +1,5 @@
-import csv
 import os
-from typing import Any, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 import click
 import pandas as pd
@@ -11,6 +10,7 @@ from unstructured.metrics.evaluate import measure_text_edit_distance
 @click.group()
 def main():
     pass
+
 
 def aggregate_cct_data_by_doctype(results_dir: str):
     # load tsv into dataframe
@@ -23,7 +23,6 @@ def aggregate_cct_data_by_doctype(results_dir: str):
 
     # write results to same export results folder
     agg_df.to_csv(os.path.join(results_dir, "all-doctypes-agg-cct.tsv"))
-
 
 
 @main.command()
@@ -60,15 +59,20 @@ def aggregate_cct_data_by_doctype(results_dir: str):
 )
 def measure_holistic_eval_cct(
     output_dir: str,
-    output_list: Optional[List[str]],
     source_dir: str,
+    output_list: Optional[List[str]],
     source_list: Optional[List[str]],
     export_dir: str,
     weights: Tuple[int, int, int],
 ) -> None:
     export_dir = "result_doctype_aggregate"
     measure_text_edit_distance(
-        output_dir, output_list, source_dir, source_list, export_dir, weights
+        output_dir=output_dir,
+        source_dir=source_dir,
+        output_list=output_list,
+        source_list=source_list,
+        export_dir=export_dir,
+        weights=weights,
     )
     aggregate_cct_data_by_doctype(export_dir)
 
