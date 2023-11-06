@@ -677,6 +677,41 @@ class Footer(Text):
     category = "Footer"
 
 
+class ElementType:
+    TITLE = "Title"
+    TEXT = "Text"
+    UNCATEGORIZED_TEXT = "UncategorizedText"
+    NARRATIVE_TEXT = "NarrativeText"
+    BULLETED_TEXT = "BulletedText"
+    ABSTRACT = "Abstract"
+    THREADING = "Threading"
+    FORM = "Form"
+    FIELD_NAME = "Field-Name"
+    VALUE = "Value"
+    LINK = "Link"
+    COMPOSITE_ELEMENT = "CompositeElement"
+    IMAGE = "Image"
+    PICTURE = "Picture"
+    FIGURE_CAPTION = "FigureCaption"
+    FIGURE = "Figure"
+    CAPTION = "Caption"
+    LIST_ITEM = "ListItem"
+    LIST_ITEM_OTHER = "List-item"
+    ADDRESS = "Address"
+    EMAIL_ADDRESS = "EmailAddress"
+    PAGE_BREAK = "PageBreak"
+    FORMULA = "Formula"
+    TABLE = "Table"
+    HEADER = "Header"
+    HEADLINE = "Headline"
+    SUB_HEADLINE = "Subheadline"
+    PAGE_HEADER = "Page-header"  # Title?
+    SECTION_HEADER = "Section-header"
+    FOOTER = "Footer"
+    FOOTNOTE = "Footnote"
+    PAGE_FOOTER = "Page-footer"
+
+
 TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     "UncategorizedText": Text,
     "FigureCaption": FigureCaption,
