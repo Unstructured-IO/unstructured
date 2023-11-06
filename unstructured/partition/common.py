@@ -31,7 +31,7 @@ from unstructured.documents.elements import (
     ListItem,
     PageBreak,
     Text,
-    Title,
+    Title, ElementType,
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
@@ -136,7 +136,7 @@ def normalize_layout_element(
         class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))  # type: ignore
     else:
         class_prob_metadata = ElementMetadata()
-    if element_type == "List":
+    if element_type == ElementType.LIST:
         if infer_list_items:
             return layout_list_to_list_items(
                 text,
@@ -163,12 +163,12 @@ def normalize_layout_element(
             metadata=class_prob_metadata,
             detection_origin=origin,
         )
-        if element_type == "Headline":
+        if element_type == ElementType.HEADLINE:
             _element_class.metadata.category_depth = 1
-        elif element_type == "Subheadline":
+        elif element_type == ElementType.SUB_HEADLINE:
             _element_class.metadata.category_depth = 2
         return _element_class
-    elif element_type == "Checked":
+    elif element_type == ElementType.CHECKED:
         return CheckBox(
             checked=True,
             coordinates=coordinates,
@@ -176,7 +176,7 @@ def normalize_layout_element(
             metadata=class_prob_metadata,
             detection_origin=origin,
         )
-    elif element_type == "Unchecked":
+    elif element_type == ElementType.UNCHECKED:
         return CheckBox(
             checked=False,
             coordinates=coordinates,
