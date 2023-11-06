@@ -1,4 +1,4 @@
-## 0.10.29-dev12
+## 0.10.29-dev13
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 * **Google Drive source connector supports credentials from memory** Originally, the connector expected a filepath to pull the credentials from when creating the client. This was expanded to support passing that information from memory as a dict if access to the file system might not be available.
 * **Add support for generic partition configs in ingest cli** Along with the explicit partition options supported by the cli, an `additional_partition_args` arg was added to allow users to pass in any other arguments that should be added when calling partition(). This helps keep any changes to the input parameters of the partition() exposed in the CLI.
 * **Map full output schema for table-based destination connectors** A full schema was introduced to map the type of all output content from the json partition output and mapped to a flattened table structure to leverage table-based destination connectors. The delta table destination connector was updated at the moment to take advantage of this.
+* **Incorporate multiple embedding model options into ingest, add diff test embeddings** Problem: Ingest pipeline already supported embedding functionality, however users might want to use different types of embedding providers. Enhancement: Extend ingest pipeline so that users can specify and embed via a particular embedding provider from a range of options. Also adds a diff test to compare output from an embedding module with the expected output
 
 ### Features
 
