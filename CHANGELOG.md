@@ -1,4 +1,4 @@
-## 0.10.29-dev13
+## 0.10.29-dev14
 
 ### Enhancements
 
@@ -11,6 +11,7 @@
 
 ### Features
 
+* **Allow setting image zoom parameter** In certain circumstances, adjusting the image zoom may improve table in Tesseract OCR.
 * **Allow setting table crop parameter** In certain circumstances, adjusting the table crop padding may improve table.
 
 ### Fixes
