@@ -55,5 +55,3 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     $ACCESS_TOKEN_FLAGS
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
-
-"$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"
