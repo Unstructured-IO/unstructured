@@ -123,7 +123,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):
         for doc in docs:
             local_path = doc._output_filename
             with open(local_path) as json_file:
-                doc_content = json.load(json_file)
+                dict_content = json.load(json_file)
                 # breakpoint()
 
                 # we want a list of dicts that it can upload one at a time.
@@ -134,13 +134,30 @@ class ChromaDestinationConnector(BaseDestinationConnector):
                 # ids=["id1", "id2"]
                 # embeddings=[[1,2,3],[4,5,6]]
 
-                data={}
-                #### Add type
-                data["ids"]=[x.get("element_id") for x in doc_content]
-                data["documents"]=[x.get("text") for x in doc_content]
-                data["embeddings"]=[x.get("embeddings") for x in doc_content]
-                # flatten this:
-                data["metadatas"]=[flatten_dict(x.get("metadata"),flatten_lists=True) for x in doc_content]
+                # assign element_id and embeddings to "id" and "values"
+                # assign everything else to "metadata" field
+                dict_content = [
+                    {
+                        "ids": element.pop("element_id", None),
+                        "embeddings": element.pop("embeddings", None),
+                        "text": element.pop("text", None),
+                        "metadata": flatten_dict({k: json.dumps(v) for k, v in element.items()},flatten_lists=True),
+                    }
+                    for element in dict_content
+                ]
+                logger.info(
+                    f"appending {len(dict_content)} json elements from content in {local_path}",
+                )
+                dict_list.extend(dict_content)
+                breakpoint()
+
+                # data={}
+                # #### Add type
+                # data["ids"]=[x.get("element_id") for x in doc_content]
+                # data["documents"]=[x.get("text") for x in doc_content]
+                # data["embeddings"]=[x.get("embeddings") for x in doc_content]
+                # # flatten this:
+                # data["metadatas"]=[flatten_dict(x.get("metadata"),flatten_lists=True) for x in doc_content]
 
 
                 # assign element_id and embeddings to "id" and "values"

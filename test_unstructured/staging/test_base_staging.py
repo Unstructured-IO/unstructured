@@ -317,13 +317,11 @@ def test_flatten_dict():
     assert base.flatten_dict(dictionary, separator=".", flatten_lists=True) == expected_output
 
     # Test with keys to omit
-    keys_to_omit = ["b_d_e", "f_1", "g_i_0"]
+    keys_to_omit = ["filetype", "languages"]
     expected_output = {
         "data_source.url": "example-docs/book-war-and-peace-1p.txt",
         "data_source.date_created": "2023-10-25 10:05:44.916316",
         "data_source.date_modified": "2023-10-25 10:05:44.916316",
         "data_source.permissions_data.0.mode": 33188,
-        "languages.0": "eng",
-        "languages.1": "french",
     }
     assert base.flatten_dict(dictionary, separator=".",flatten_lists=True,keys_to_omit=keys_to_omit) == expected_output
