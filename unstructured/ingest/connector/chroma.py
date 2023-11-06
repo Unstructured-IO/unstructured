@@ -61,7 +61,8 @@ class ChromaWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixin,
         #     raise WriteError(f"http error: {api_error}") from api_error
         collection = self.create_chroma_object(self.client, self.collection_name)
         try:
-            response = collection.add(batch)
+            # breakpoint()
+            response = collection.add(ids=batch["ids"], documents=batch["documents"], embeddings=batch["embeddings"], metadatas=batch["metadatas"])
         except Exception as e:
             raise WriteError(f"chroma error: {e}") from e
         logger.debug(f"results: {response}")
@@ -102,8 +103,8 @@ class ChromaDestinationConnector(BaseDestinationConnector):
         # num_processes = 1
         # if num_processes == 1:
         for i in range(0, len(dict_list)):
-            breakpoint()
-            self.write_config.add(ids=dict_list[i]["ids"])  
+            # breakpoint()
+            self.write_config.upsert_batch(dict_list[i])  
 
         # else:
         #     with mp.Pool(
@@ -123,7 +124,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):
             local_path = doc._output_filename
             with open(local_path) as json_file:
                 doc_content = json.load(json_file)
-                breakpoint()
+                # breakpoint()
 
                 # we want a list of dicts that it can upload one at a time.
                 # each dict should have documents (aka text), embeddings, metadatas, and ids
@@ -139,7 +140,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):
                 data["documents"]=[x.get("text") for x in doc_content]
                 data["embeddings"]=[x.get("embeddings") for x in doc_content]
                 # flatten this:
-                data["metadatas"]=[x.get("metadata") for x in doc_content]
+                data["metadatas"]=[flatten_dict(x.get("metadata"),flatten_lists=True) for x in doc_content]
 
 
                 # assign element_id and embeddings to "id" and "values"

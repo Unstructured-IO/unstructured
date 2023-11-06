@@ -41,9 +41,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --work-dir "$WORK_DIR" \
     --chunk-elements \
     --chunk-multipage-sections \
-    --embedding-api-key "$OPENAI_API_KEY" \
+    --embedding-provider "langchain-huggingface" \
     chroma \
     --client "$DESTINATION_CLIENT" \
     --collection-name "$COLLECTION_NAME"
 
-python "$SCRIPT_DIR"/python/test-ingest-chroma-output.py --table-uri "$DESTINATION_TABLE"
+python "$SCRIPT_DIR"/python/test-ingest-chroma-output.py --client "$DESTINATION_CLIENT" --collection-name "$COLLECTION_NAME"
+
