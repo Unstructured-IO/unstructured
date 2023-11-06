@@ -21,7 +21,7 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-"$SCRIPT_DIR"/check-num-files-expected-output.sh 3 $OUTPUT_FOLDER_NAME 20k
+"$SCRIPT_DIR"/check-num-files-expected-output.sh 4 $OUTPUT_FOLDER_NAME 20k
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
