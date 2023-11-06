@@ -473,7 +473,7 @@ def get_ocr_layout_tesseract(
     """Get the OCR regions from image as a list of text regions with tesseract."""
 
     logger.info("Processing entire page OCR with tesseract...")
-    zoom = 1
+
     ocr_df: pd.DataFrame = unstructured_pytesseract.image_to_data(
         np.array(image),
         lang=ocr_languages,
@@ -496,12 +496,15 @@ def get_ocr_layout_tesseract(
         # rounding avoids unnecessary precision and potential numerical issues associated
         # with numbers very close to 1 inside cv2 image processing
         zoom = np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1)
-        ocr_df = unstructured_pytesseract.image_to_data(
-            np.array(zoom_image(image, zoom)),
-            lang=ocr_languages,
-            output_type=Output.DATAFRAME,
-        )
-        ocr_df = ocr_df.dropna()
+    else:
+        zoom = env_config.TESSERACT_IMAGE_ZOOM
+
+    ocr_df = unstructured_pytesseract.image_to_data(
+        np.array(zoom_image(image, zoom)),
+        lang=ocr_languages,
+        output_type=Output.DATAFRAME,
+    )
+    ocr_df = ocr_df.dropna()
 
     ocr_regions = parse_ocr_data_tesseract(ocr_df, zoom=zoom)
 
