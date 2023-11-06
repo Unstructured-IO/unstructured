@@ -23,17 +23,16 @@ RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     local \
     --num-processes "$max_processes" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --output-dir "$OUTPUT_DIR" \
     --verbose \
     --reprocess \
-    --input-path example-docs/fake-text-utf-16.txt \
+    --input-path example-docs/book-war-and-peace-1p.txt \
     --work-dir "$WORK_DIR" \
-    --embedding-api-key "$OPENAI_API_KEY"
+    --embedding-provider "langchain-huggingface"
 
 set +e
 
-# currently openai encoder is non-deterministic
-# once we have an alternative encoder that is deterministic, we test the diff here
-# until then just validating the file was created
-"$SCRIPT_DIR"/check-num-files-output.sh 1 "$OUTPUT_FOLDER_NAME"
+"$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+
+"$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"
