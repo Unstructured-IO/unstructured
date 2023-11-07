@@ -431,16 +431,6 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "57e2eb94df928d0cf17b2c0d41ae042e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 3
-    },
-    "text": "100 4"
-  },
-  {
-    "type": "UncategorizedText",
     "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
       "data_source": {},
@@ -521,13 +511,13 @@
   },
   {
     "type": "Image",
-    "element_id": "aa4f0eca72d0603d384878e68fe5be57",
+    "element_id": "68912488a08ba392e83b4290b77aa882",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 4
     },
-    "text": "5 1 os = — 10; =o ° © —\" 205 i —~é é —ip a5 — Control -2 — & 2.5 T T T 0.0000001 + —-0.00001 0.001 O14 Current Density (A/cm2)"
+    "text": "154 1 4 05 4 S of ' = — 4g 2-05 4 4 1 é —. 2g 15] —— Control -2 4 8g -2.5 T T T T 0.0000001 0.00001 0.001 0.1 Current Density (A/cm2)"
   },
   {
     "type": "FigureCaption",
@@ -600,16 +590,6 @@
     "text": "C/0"
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "e2b6d7e2ab125149fa820500cedfffbb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "page_number": 4
-    },
-    "text": "—=—Cc/0"
-  },
-  {
     "type": "FigureCaption",
     "element_id": "a24d672821f7acb0bbe2c8a813debe16",
     "metadata": {
@@ -631,13 +611,13 @@
   },
   {
     "type": "Image",
-    "element_id": "273fb301b173075f79b2cbdab962e2ff",
+    "element_id": "9506847c45be9e3978f2965b41d9e055",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEM HV: Q0KY WD: 14.89 rmrm ‘9EM MAO: 209 x Det: DOE Pectomsence In nanospact"
+    "text": "SEM HV: 20.0KV W/O: 14.89 mrn | Li Li VEC% TEES 3EM MAO: 20) «x Det: DOE 200 wm Performence In nance pec"
   },
   {
     "type": "FigureCaption",
@@ -648,6 +628,16 @@
       "page_number": 5
     },
     "text": "Fig. 6. SEM/EDX image of as-received stainless steel."
+  },
+  {
+    "type": "Image",
+    "element_id": "4b7874ac58c341763a7ec4135e1f2141",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "page_number": 5
+    },
+    "text": "1 a 4 _ 7 ¢ —_ | ' ' 7 SEM NV. 200 KV WD: 14.24 cern i pllepupms | VEGAS TESCAN SEMMAG. 100hKx oOvt. Sse oo ym Perrone rce in nancepece"
   },
   {
     "type": "FigureCaption",
@@ -661,13 +651,13 @@
   },
   {
     "type": "Image",
-    "element_id": "520d1da08c86ce165cd2843e2dc27f98",
+    "element_id": "67763fb315442c58bbb4eac65cd3f0ee",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
       "page_number": 5
     },
-    "text": "SEMHV: 20.0KV WD: 15.54 mm EM ING: ACO x Dei: OSE"
+    "text": "SEM HY: 70.0kV VEGAS TESCAN SEM MAG: 400 x Perforrmance in nancsoace"
   },
   {
     "type": "FigureCaption",

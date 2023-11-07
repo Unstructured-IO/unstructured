@@ -1,7 +1,7 @@
 [
   {
     "type": "Title",
-    "element_id": "b936b2ee403883f6bff0295edb71fae1",
+    "element_id": "46171ed6bf378bef11e3f84a63b073da",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -16,7 +16,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "FM) Department of the Treasury Internal Revenue Service Instructions for Form 3115 (Rev. November 1987) Application for Change in Accounting Method"
+    "text": "Fi) Department of the Treasury Internal Revenue Service Instructions for Form 3115 (Rev. November 1987) Application for Change in Accounting Method"
   },
   {
     "type": "NarrativeText",
@@ -77,7 +77,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1dc07a295891aaf9dfd2559efee66ab2",
+    "element_id": "1793d06a20569041639f00a123db12cd",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -92,7 +92,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws and to allow us to figure and collect the right amount of tax. You are required to this information."
+    "text": "Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws and to allow us to figure and collect the right amount of tax. You are required to this information,"
   },
   {
     "type": "NarrativeText",
@@ -171,27 +171,8 @@
     "text": "File this form to request a change in your accounting method, including the accounting treatment of any item. If you are requesting a change in accounting period, use Form 1128, Application for Change in Accounting Period. For more information, see Publication 538, Accounting Periods and Methods."
   },
   {
-    "type": "Title",
-    "element_id": "cf9c7aa24a26aac4f0ec4b6395cbfdcc",
-    "metadata": {
-      "data_source": {
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": "328871203465633719836776597535876541325",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00"
-      },
-      "filetype": "image/png",
-      "page_number": 1
-    },
-    "text": "When"
-  },
-  {
     "type": "UncategorizedText",
-    "element_id": "2127f2ab4fc4feb4d32460c8317bf02f",
+    "element_id": "51b34fb102a0192332978bdc455b6684",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -206,11 +187,11 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Form 3115,"
+    "text": "When filing Form 3115,"
   },
   {
     "type": "NarrativeText",
-    "element_id": "d3c76e8e037d3aec863db1d768b81f6d",
+    "element_id": "6aeecdfd12bba30f21ad0b8d76fa1e6a",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -225,11 +206,11 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "filing taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115)."
+    "text": "taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115)."
   },
   {
     "type": "NarrativeText",
-    "element_id": "4e7936ce3e93c2ae3ca21444e573c208",
+    "element_id": "03c4a83e399f2f669047b3fcfeae5867",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -244,7 +225,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Long-term contracts. —If you are required to"
+    "text": "Long-term contracts.—If you are required to"
   },
   {
     "type": "NarrativeText",
@@ -305,7 +286,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "790998c70f51276d6fae7db8df6e8351",
+    "element_id": "923ae47574eacff7023fb26792b3c017",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -320,7 +301,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Generally, applicants must complete Section A. In addition, complete the appropriate sections (B-1 through H) for which a change ts desired."
+    "text": "Generally, applicants must complete Section A. In addition, complete the appropriate sections (B-1 through H) for which a change !s desired."
   },
   {
     "type": "NarrativeText",
@@ -381,7 +362,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "6fef08d976462f03567612cbea207d0b",
+    "element_id": "58dd0290ae3e9324df92b51244c7cf83",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -396,11 +377,11 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Uniform capitalization rules and limitation on cash method.—If you are required to change your method of accounting under sectior,263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change is treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustments into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required."
+    "text": "Uniform capitalization rules and limitation on cash method.—If you are required to change your method of accounting under sectiori,263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (“Act”), the change ts treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustrnents into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required."
   },
   {
     "type": "NarrativeText",
-    "element_id": "207be7b7dc9e8cd420376c5aef291cfc",
+    "element_id": "550f9e99054c657264fb9bb26d3023de",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -415,7 +396,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Disregard the instructions under Time and Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method Section 448\"). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information."
+    "text": "Disregard the instructions under Time and Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., “Automatic Change to Accrual Method—Section 448\"). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information."
   },
   {
     "type": "Title",
@@ -476,7 +457,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "4d063cdbd131401fa29e1d0e824dc017",
+    "element_id": "7f0f4e94a881407eac87fc6e6faeba11",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -491,7 +472,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "You should normally receive an acknowledgment of receipt of your application within 30 days. If you do not hear from IRS within 30 days of submitting your completed Form 3115, you may inquire as to the receipt of your application by writing to: Control Clerk, CC:C:4, Internal Revenue Service, Room 5040, 1111 Constitution Avenue, NW, Washington, DC 20224."
+    "text": "You should normally receive an acknowledgment of receipt of your application within 30 days. If you do not hear from IRS within 30 days of submitting your completed Form 3115, you may inquire as to the receipt of your application by writing to: Control Clerk, CC:C:4, Internal Revenue Service, Room 5040, 1111 Constitution Avenue, NW, Washington, DC 20224"
   },
   {
     "type": "NarrativeText",
@@ -571,7 +552,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "d6fca66a91f1ac21a81f0123a2641176",
+    "element_id": "de408dfc3e84d1baf0d1809fa7f3a8e7",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -586,7 +567,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "If your application is filed after the 180-day period, it is late. The application will be considered for processing only upon a showing of “good cause\" and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev. Proc. 79-63."
+    "text": "If your application is filed after the 180-day period, it ts late. The application will be considered for processing only upon a showing of “good cause\" and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev. Proc. 79-63."
   },
   {
     "type": "Title",
@@ -609,7 +590,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "8605ee209656c311cec7ce4b001caab2",
+    "element_id": "ec3c2d03b846d2a186fc9a8f318f688b",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -624,7 +605,7 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Individuals.—An individual should enter his or her social security number in this block. If the application is made on behalf of a husband and wife who file their income tax return jointly, enter the social security numbers of both."
+    "text": "Individuals. —An individual should enter his or her social security number in this block. If the application is made on behalf of a husband and wife who file their income tax return jointly, enter the social security numbers of both."
   },
   {
     "type": "NarrativeText",
@@ -951,7 +932,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1c43ecf3a4844d9537d924d892d7c546",
+    "element_id": "8c8ae5788b09eded3b051cfd8ee61ee0",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -966,11 +947,11 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Item 6, page 2.—The term “gross receipts” includes total sales (net of returns and allowances) and all amounts received for services. In addition, gross receipts include any income from investments and from incidental or outside sources (e.g., interest, dividends, rents, royalties, and annuities). However, if you area resaler of personal property, exclude from gross receipts any amounts not derived in the ordinary course of a trade or business. Gross receipts do not include amounts received for sales taxes if, under the applicable state or local law, the tax is legatly imposed on the purchaser of the good or service, and the taxpayer merely collects and remits the tax to the taxing authority."
+    "text": "Item 6, page 2.—The term “gross receipts” includes total sales (net of returns and allowances) and all amounts received for services, In addition, gross receipts include any income from investments and from incidental or outside sources (e.g., interest, dividends, rents, royalties, and annuities). However, if you area resaler of personal property, exclude from gross receipts any amounts not derived in the ordinary course of a trade or business. Gross receipts do not include amounts received for sales taxes if, under the applicable state or local law, the tax is legatly imposed on the purchaser of the good or service, and the taxpayer merely collects and remits the tax to the taxing authority."
   },
   {
     "type": "NarrativeText",
-    "element_id": "372359d8718b28cc34e7a5f1fdd05213",
+    "element_id": "3e63f740940cd3ab94c17d2bbf48b13a",
     "metadata": {
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
@@ -985,6 +966,6 @@
       "filetype": "image/png",
       "page_number": 1
     },
-    "text": "Item 7b, page 2.—If item 7b 1s “Yes,” indicate ona separate sheet the following for each separate trade or business: Nature of business"
+    "text": "Item 7b, page 2.—If item 7b 1s “Yes,” indicate on a separate sheet the following for each separate trade or business: Nature of business"
   }
 ]
