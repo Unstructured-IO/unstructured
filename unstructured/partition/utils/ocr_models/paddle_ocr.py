@@ -6,7 +6,7 @@ from unstructured.logger import logger
 @functools.lru_cache(maxsize=None)
 def load_agent(language: str = "en"):
     import paddle
-    from unstructured_paddleocr import PaddleOCR
+    from paddleocr import PaddleOCR
 
     """Loads the PaddleOCR agent as a global variable to ensure that we only load it once."""
 
@@ -30,6 +30,7 @@ def load_agent(language: str = "en"):
             lang=language,
             enable_mkldnn=True,
             show_log=False,
+            ocr_version="PP-OCRv4"
         )
     except AttributeError:
         paddle_ocr = PaddleOCR(
@@ -38,5 +39,6 @@ def load_agent(language: str = "en"):
             lang=language,
             enable_mkldnn=False,
             show_log=False,
+            ocr_version="PP-OCRv4"
         )
     return paddle_ocr
