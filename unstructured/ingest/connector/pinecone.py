@@ -27,9 +27,6 @@ class PineconeWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixi
     api_key: str
     index_name: str
     environment: str
-    # todo: fix buggy session handle implementation
-    # with the bug, session handle gets created for each batch,
-    # rather than with each process
 
     @requires_dependencies(["pinecone"], extras="pinecone")
     def create_pinecone_object(self, api_key, index_name, environment):
