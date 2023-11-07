@@ -17,12 +17,12 @@ from dataclasses_json.core import Json, _asdict, _decode_dataclass
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
+from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
-from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
-from unstructured.staging.base import convert_to_dict, elements_from_json
+from unstructured.staging.base import convert_to_dict, elements_from_json, flatten_dict
 
 A = t.TypeVar("A", bound="DataClassJsonMixin")
 
@@ -170,17 +170,19 @@ class ReadConfig(BaseConfig):
 
 @dataclass
 class EmbeddingConfig(BaseConfig):
-    api_key: str
+    provider: str
+    api_key: t.Optional[str] = None
     model_name: t.Optional[str] = None
 
     def get_embedder(self) -> BaseEmbeddingEncoder:
-        # TODO update to incorporate other embedder types once they exist
-        kwargs = {
-            "api_key": self.api_key,
-        }
+        kwargs = {}
+        if self.api_key:
+            kwargs["api_key"] = self.api_key
         if self.model_name:
             kwargs["model_name"] = self.model_name
-        return OpenAIEmbeddingEncoder(**kwargs)
+
+        cls = EMBEDDING_PROVIDER_TO_CLASS_MAP[self.provider]
+        return cls(**kwargs)
 
 
 @dataclass
@@ -511,10 +513,9 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
             in_list = partition_config.fields_include
             elem = {k: v for k, v in elem.items() if k in in_list}
 
-            if partition_config.flatten_metadata:
-                for k, v in elem["metadata"].items():  # type: ignore[attr-defined]
-                    elem[k] = v
-                elem.pop("metadata")  # type: ignore[attr-defined]
+            if partition_config.flatten_metadata and "metadata" in elem:
+                metadata = elem.pop("metadata")
+                elem.update(flatten_dict(metadata, keys_to_omit=["data_source_record_locator"]))
 
             self.isd_elems_no_filename.append(elem)
 
@@ -568,12 +569,12 @@ class BaseDestinationConnector(DataClassJsonMixin, ABC):
         pass
 
     @abstractmethod
-    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         pass
 
     def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
-        elements_json = [e.to_dict() for e in elements]
-        self.write_dict(*args, json_list=elements_json, **kwargs)
+        elements_dict = [e.to_dict() for e in elements]
+        self.write_dict(*args, elements_dict=elements_dict, **kwargs)
 
 
 class SourceConnectorCleanupMixin:

@@ -10,7 +10,9 @@ export OMP_THREAD_LIMIT=1
 
 all_tests=(
   'azure.sh'
+  'azure-cognitive-search.sh'
   'box.sh'
+  'delta-table.sh'
   'dropbox.sh'
   'gcs.sh'
   's3.sh'
