@@ -463,6 +463,8 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
                     api_url=endpoint,
                     **passthrough_partition_kwargs,
                 )
+                # TODO: add m_data_source_metadata to unstructured-api pipeline_api and then
+                # pass the stringified json here
         return elements
 
     def process_file(
