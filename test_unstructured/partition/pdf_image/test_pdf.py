@@ -408,6 +408,7 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
         infer_table_structure=True,
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert elements[0].metadata.languages == "kor"
     assert len(table) == 2
     assert "<table><thead><th>" in table[0]
     # FIXME(yuming): didn't test full sentence here since unit test and docker test have

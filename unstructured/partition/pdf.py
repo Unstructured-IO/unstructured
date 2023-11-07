@@ -458,6 +458,7 @@ def _partition_pdf_or_image_local(
         # block with NLP rules. Otherwise, the assumptions in
         # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
         infer_list_items=False,
+        languages=languages,
         **kwargs,
     )
 
