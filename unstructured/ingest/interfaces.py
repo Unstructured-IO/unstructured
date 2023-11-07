@@ -17,8 +17,8 @@ from dataclasses_json.core import Json, _asdict, _decode_dataclass
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
+from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
-from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.partition.auto import partition
@@ -170,17 +170,19 @@ class ReadConfig(BaseConfig):
 
 @dataclass
 class EmbeddingConfig(BaseConfig):
-    api_key: str
+    provider: str
+    api_key: t.Optional[str] = None
     model_name: t.Optional[str] = None
 
     def get_embedder(self) -> BaseEmbeddingEncoder:
-        # TODO update to incorporate other embedder types once they exist
-        kwargs = {
-            "api_key": self.api_key,
-        }
+        kwargs = {}
+        if self.api_key:
+            kwargs["api_key"] = self.api_key
         if self.model_name:
             kwargs["model_name"] = self.model_name
-        return OpenAIEmbeddingEncoder(**kwargs)
+
+        cls = EMBEDDING_PROVIDER_TO_CLASS_MAP[self.provider]
+        return cls(**kwargs)
 
 
 @dataclass
