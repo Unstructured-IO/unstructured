@@ -264,8 +264,7 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 ["--pdf-infer-table-structure"],
                 is_flag=True,
                 default=False,
-                help="Partition will include the table's text_as_html "
-                "in the response metadata.",
+                help="Partition will include the table's text_as_html " "in the response metadata.",
             ),
             click.Option(
                 ["--strategy"],

@@ -2,7 +2,6 @@
 through Unstructured."""
 
 import functools
-import json
 import os
 import re
 import typing as t
@@ -11,7 +10,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-import requests
 from dataclasses_json import DataClassJsonMixin
 from dataclasses_json.core import Json, _asdict, _decode_dataclass
 
@@ -23,7 +21,7 @@ from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.partition.api import partition_via_api
 from unstructured.partition.auto import partition
-from unstructured.staging.base import convert_to_dict, elements_from_json, flatten_dict
+from unstructured.staging.base import convert_to_dict, flatten_dict
 
 A = t.TypeVar("A", bound="DataClassJsonMixin")
 
