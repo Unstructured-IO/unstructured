@@ -47,7 +47,7 @@ class ENVConfig:
     @property
     def TESSERACT_TEXT_HEIGHT_QUANTILE(self) -> float:
         """the quantile to check for text height"""
-        return self._get_float("TESSERACT_TEXT_HEIGHT_QUANTILE", 0.5)
+        return self._get_float("TESSERACT_TEXT_HEIGHT_QUANTILE", 0.2)
 
     @property
     def TESSERACT_MIN_TEXT_HEIGHT(self) -> int:
@@ -56,7 +56,7 @@ class ENVConfig:
         if estimated text height from tesseract OCR results is lower than this value the image is
         scaled up to be processed again
         """
-        return self._get_int("TESSERACT_MIN_TEXT_HEIGHT", 12)
+        return self._get_int("TESSERACT_MIN_TEXT_HEIGHT", 14)
 
     @property
     def TESSERACT_MAX_TEXT_HEIGHT(self) -> int:
