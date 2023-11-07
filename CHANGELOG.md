@@ -1,3 +1,13 @@
+## 0.10.30-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix ingest partition parameters not being passed to the api.** When using the --partition-by-api flag via unstructured-ingest, none of the partition arguments are forwarded, meaning that these options are disregarded. With this change, we now pass through all of the relevant partition arguments to the api. This allows a user to specify all of the same partition arguments they would locally and have them respected when specifying --partition-by-api.
+
 ## 0.10.29
 
 ### Enhancements
