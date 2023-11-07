@@ -461,6 +461,7 @@ jobs:
         DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
         GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "tesseract"
         CI: "true"
