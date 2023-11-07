@@ -1,0 +1,36 @@
+Bank Good Credit
+Accredited with IABACTM
+(International Association of Business Analytics Certifications) 
+IABAC International Association of 
+Business Analytics Certification
+DataMitesTM. All Right Reserved
+
+Objective & Background
+Classify credit card customers as good / bad, based on information from internal and external sources. 
+Data provided
+Demographic: Base file of with credit card history details. Only one record for every customer.
+Account: Contians data for various loans availed by the customer. Not related to credit card. Multiple records for every customer.
+Enquiries: Enquired made by customers for different loan purposes. Multiple records for every customer.
+DataMitesTM. All Right Reserved
+
+Design
+Data to be downloaded using SQL queries.
+Required information to be extracted from Account and Enquiry files and converted to one-to-one files.
+The columns from the two files should be merged with Demographic file using Left Join with customer no as key column, to create a final file. The final file should contain all the records in demographic and additional columns/features from Account and Enquiry files will get added to Demographic file.
+There will be many customers in account and enquiry file who will get left out. This is fine as we anyway dont know their good/bad label for training purpose. 
+DataMitesTM. All Right Reserved
+
+Analysis of Data
+Show using Excel File
+DataMitesTM. All Right Reserved
+
+Explain Coding / outcomes 
+Show using Jupyter
+DataMitesTM. All Right Reserved
+
+
+Thank You
+DataMitesTM. All Right Reserved
+
+
+
