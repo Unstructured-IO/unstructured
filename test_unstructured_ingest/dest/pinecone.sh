@@ -11,8 +11,8 @@ WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
-if [ -z "$OPENAI_API_KEY" ] && [ -z "$PINECONE_API_KEY" ]; then
-   echo "Skipping Pinecone ingest test because neither OPENAI_API_KEY nor PINECONE_API_KEY env vars are set."
+if [ -z "$PINECONE_API_KEY" ]; then
+   echo "Skipping Pinecone ingest test because PINECONE_API_KEY env var is not set."
    exit 0
 fi
 
@@ -71,7 +71,7 @@ response_code=$(curl \
      --data '
 {
   "name": "'"$PINECONE_INDEX"'",
-  "dimension": 1536,
+  "dimension": 384,
   "metric": "cosine",
   "pods": 1,
   "replicas": 1,
@@ -98,7 +98,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --work-dir "$WORK_DIR" \
   --chunk-elements \
   --chunk-multipage-sections \
-  --embedding-api-key "$OPENAI_API_KEY" \
+  --embedding-provider "langchain-huggingface" \
   pinecone \
   --api-key "$PINECONE_API_KEY" \
   --index-name "$PINECONE_INDEX" \
