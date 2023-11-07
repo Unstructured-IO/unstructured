@@ -417,6 +417,25 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
 
 
 @pytest.mark.parametrize(
+    ("strategy"),
+    [
+        ("auto"),
+        ("fast"),
+        ("hi_res"),
+        ("ocr_only"),
+    ],
+)
+def test_partition_pdf_strategies_keep_languages_metadata(strategy):
+    filename = example_doc_path("korean-text-with-tables.pdf")
+    elements = pdf.partition_pdf(
+        filename=filename,
+        languages=["kor"],
+        strategy=strategy,
+    )
+    assert elements[0].metadata.languages == ["kor"]
+
+
+@pytest.mark.parametrize(
     "ocr_mode",
     [
         "entire_page",
