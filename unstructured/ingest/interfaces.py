@@ -21,6 +21,7 @@ from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
+from unstructured.partition.api import partition_via_api
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict, elements_from_json, flatten_dict
 
@@ -88,6 +89,7 @@ class PartitionConfig(BaseConfig):
     partition_endpoint: t.Optional[str] = "https://api.unstructured.io/general/v0/general"
     partition_by_api: bool = False
     api_key: t.Optional[str] = None
+    hi_res_model_name: t.Optional[str] = None
 
 
 @dataclass
@@ -452,20 +454,15 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
             logger.debug(f"Using remote partition ({endpoint})")
 
             with open(self.filename, "rb") as f:
-                headers_dict = {}
-                if partition_config.api_key:
-                    headers_dict["UNSTRUCTURED-API-KEY"] = partition_config.api_key
-                response = requests.post(
-                    f"{endpoint}",
-                    files={"files": (str(self.filename), f)},
-                    headers=headers_dict,
-                    # TODO: add m_data_source_metadata to unstructured-api pipeline_api and then
-                    # pass the stringified json here
+                passthrough_partition_kwargs = {
+                    k: str(v) for k, v in partition_kwargs.items() if v is not None
+                }
+                elements = partition_via_api(
+                    filename=str(self.filename),
+                    api_key=partition_config.api_key,
+                    api_url=endpoint,
+                    **passthrough_partition_kwargs,
                 )
-
-            if response.status_code != 200:
-                raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
-            elements = elements_from_json(text=json.dumps(response.json()))
         return elements
 
     def process_file(
