@@ -31,7 +31,7 @@ fi
 IMAGE_NAME="unstructured-ubuntu:latest"
 CREATION_TIMESTAMP=$(docker inspect --format='{{.Created}}' "$IMAGE_NAME")
 CREATION_DATE=$(date -d "$CREATION_TIMESTAMP" +%s)
-CURRENT_DATE=$(uuidgen)
+CURRENT_DATE=$(date +%s)
 AGE_DAYS=$(( (CURRENT_DATE - CREATION_DATE) / 86400 ))
 if [ "$AGE_DAYS" -gt 6 ]; then
     echo "WARNING: The image \"$IMAGE_NAME\" is more than 7 days old ($AGE_DAYS days)."
