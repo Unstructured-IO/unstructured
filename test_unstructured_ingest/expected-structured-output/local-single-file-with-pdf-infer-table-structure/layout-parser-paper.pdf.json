@@ -659,7 +659,7 @@
       },
       "filetype": "application/pdf",
       "page_number": 5,
-      "text_as_html": "<table><thead><th>Dataset</th><th>| Base Model'|</th><th>Notes</th></thead><tr><td>PubLayNet B8]|</td><td>F/M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA</td><td>M</td><td>nned modern magazines and scientific reports</td></tr><tr><td>Newspapei</td><td>F</td><td>canned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset</td><td>F/M</td><td>Layouts of history Japanese documents</td></tr></table>"
+      "text_as_html": "<table><thead><th>Dataset</th><th>| Base Model'|</th><th>| Notes</th></thead><tr><td>PubLayNet [33]</td><td>F/M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA [3]</td><td>M</td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper</td><td>F</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset [31]</td><td>F/M</td><td>Layouts of history Japanese documents</td></tr></table>"
     },
     "text": "Base Model1 Large Model Notes Dataset PubLayNet [38] PRImA [3] Newspaper [17] TableBank [18] HJDataset [31] F / M M F F F / M M - - F - Layouts of modern scientiﬁc documents Layouts of scanned modern magazines and scientiﬁc reports Layouts of scanned US newspapers from the 20th century Table region on modern scientiﬁc and business document Layouts of history Japanese documents"
   },
@@ -801,7 +801,7 @@
   },
   {
     "type": "Image",
-    "element_id": "3b30176246b01e00c3051a7e2a11669c",
+    "element_id": "aa6c52b0cabbe6ac3a5d4615bcbb5aae",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
@@ -814,7 +814,7 @@
       "filetype": "application/pdf",
       "page_number": 6
     },
-    "text": "- ° . 3 a a 4 a 3 oo er ‘ 2 § 8 a 8 3 3 ‘ £ 4 A g a 9 ‘ 3 ¥ Coordinate g 4 5 3 + § 3 H Extra Features [O=\") [Bo] eaing i Text | | Type | | ower ° & a ¢ o [ coordinatel textblock1, 3 3 ’ g Q 3 , textblock2 , layoutl ] 4 q ® A list of the layout elements Ff"
+    "text": "an 8 H % Sg a 3 Rectangle Quadrilateral ¢ re ° ° rs | ° g 2 o) = =) ° 4 Qa ° : g 3 Coordinate 8 4 & 3 + § 3 Block Block Reading 4 »v Extra features Text Type Order 5 fe] 4 E [ coordinatel textblock1 | B 7 wee 3 : ° > ey textblock2 , layout1 ] g q ® A list of the layout elements é"
   },
   {
     "type": "FigureCaption",
@@ -1703,7 +1703,7 @@
   },
   {
     "type": "Image",
-    "element_id": "7f494d0f1a8170f2ed0da01c039fcbd2",
+    "element_id": "815da08cbb3f06ffc5a936baaca0cee7",
     "metadata": {
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf",
@@ -1716,7 +1716,7 @@
       "filetype": "application/pdf",
       "page_number": 13
     },
-    "text": "(@) Partial table at the bottom (&) Full page table (6) Partial table at the top (d) Mis-detected tet line"
+    "text": "(2) Partial table at the bottom (b) Full page table (c) Partial table at the top (4) Mis-detected text line"
   },
   {
     "type": "FigureCaption",
