@@ -1,3 +1,4 @@
+from unstructured_inference.constants import Source
 import os
 import tempfile
 from copy import deepcopy
@@ -163,6 +164,8 @@ def process_file_with_ocr(
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
                         )
+                        # *********** Deduplication/removal of extracted elements can go after here
+
                         merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
     except Exception as e:
@@ -255,6 +258,9 @@ def supplement_element_with_table_extraction(
     that are extracted will have a metadata field "text_as_html" where
     the table's text content is rendered into an html string.
     """
+
+    potential_token_elements = ocr_layout + [el for el in elements if el.source == Source.PDFMINER]
+    # Sort potential_token_elements into reading order
     for element in elements:
         if element.type == "Table":
             padding = env_config.TABLE_IMAGE_CROP_PAD
@@ -269,7 +275,7 @@ def supplement_element_with_table_extraction(
             )
             table_tokens = get_table_tokens_per_element(
                 padded_element,
-                ocr_layout,
+                potential_token_elements,
             )
             element.text_as_html = table_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
@@ -303,23 +309,42 @@ def get_table_tokens_per_element(
     # TODO(yuming): update table_tokens from List[Dict] to List[TABLE_TOKEN]
     # where TABLE_TOKEN will be a data class defined in unstructured-inference
     table_tokens = []
+    regions_within_table_element: List[LayoutElement] = []
     for ocr_region in ocr_layout:
         if ocr_region.bbox.is_in(
             table_element.bbox,
             error_margin=env_config.TABLE_TOKEN_ERROR_MARGIN,
         ):
-            table_tokens.append(
-                {
-                    "bbox": [
-                        # token bound box is relative to table element
-                        ocr_region.bbox.x1 - table_element.bbox.x1,
-                        ocr_region.bbox.y1 - table_element.bbox.y1,
-                        ocr_region.bbox.x2 - table_element.bbox.x1,
-                        ocr_region.bbox.y2 - table_element.bbox.y1,
-                    ],
-                    "text": ocr_region.text,
-                },
-            )
+            regions_within_table_element.append(ocr_region)
+
+    from unstructured_inference.inference.elements import region_bounding_boxes_are_almost_the_same
+
+    ocr_elements_to_remove = []
+    for i, el1 in enumerate(regions_within_table_element):
+        next_idx = i + 1
+        for el2 in regions_within_table_element[next_idx:]:
+            if region_bounding_boxes_are_almost_the_same(el1.bbox, el2.bbox):
+                if el1.source != Source.PDFMINER:
+                    ocr_elements_to_remove.append(el1)
+                else:
+                    ocr_elements_to_remove.append(el2)
+    regions_within_table_element = [
+        el for el in regions_within_table_element if el not in ocr_elements_to_remove
+    ]
+
+    for ocr_region in regions_within_table_element:
+        table_tokens.append(
+            {
+                "bbox": [
+                    # token bound box is relative to table element
+                    ocr_region.bbox.x1 - table_element.bbox.x1,
+                    ocr_region.bbox.y1 - table_element.bbox.y1,
+                    ocr_region.bbox.x2 - table_element.bbox.x1,
+                    ocr_region.bbox.y2 - table_element.bbox.y1,
+                ],
+                "text": ocr_region.text,
+            },
+        )
 
     # 'table_tokens' is a list of tokens
     # Need to be in a relative reading order
