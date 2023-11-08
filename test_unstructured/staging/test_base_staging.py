@@ -158,7 +158,6 @@ def test_default_pandas_dtypes():
             emphasized_text_tags=["emphasized", "text", "tags"],
             text_as_html="text_as_html",
             regex_metadata={"key": [RegexMetadata(text="text", start=0, end=4)]},
-            max_characters=2,
             is_continuation=True,
             detection_class_prob=0.5,
         ),
