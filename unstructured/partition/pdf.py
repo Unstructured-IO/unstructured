@@ -352,6 +352,9 @@ def _partition_pdf_or_image_local(
         process_file_with_ocr,
     )
 
+    if languages is None:
+        languages = ["eng"]
+
     ocr_languages = prepare_languages_for_tesseract(languages)
 
     model_name = model_name or default_hi_res_model(infer_table_structure)
@@ -474,6 +477,9 @@ def _partition_pdf_with_pdfminer(
 
     ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
     """
+    if languages is None:
+        languages = ["eng"]
+
     exactly_one(filename=filename, file=file)
     if filename:
         with open_filename(filename, "rb") as fp:
@@ -531,6 +537,9 @@ def _process_pdfminer_pages(
 ):
     """Uses PDF miner to split a document into pages and process them."""
     elements: List[Element] = []
+
+    if languages is None:
+        languages = ["eng"]
 
     rsrcmgr = PDFResourceManager()
     laparams = LAParams()
