@@ -40,11 +40,11 @@ class SimpleBiomedConfig(BaseConnectorConfig):
     """Connector config where path is the FTP directory path and
     id_, from_, until, format are API parameters."""
 
-    path: t.Optional[str]
+    path: t.Optional[str] = None
     # OA Web Service API Options
-    id_: t.Optional[str]
-    from_: t.Optional[str]
-    until: t.Optional[str]
+    id_: t.Optional[str] = None
+    from_: t.Optional[str] = None
+    until: t.Optional[str] = None
     request_timeout: int = 45
 
     def validate_api_inputs(self):
@@ -152,6 +152,20 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
     connector_config: SimpleBiomedConfig
 
+    def get_base_endpoints_url(self) -> str:
+        endpoint_url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?format=pdf"
+
+        if self.connector_config.id_:
+            endpoint_url += f"&id={self.connector_config.id_}"
+
+        if self.connector_config.from_:
+            endpoint_url += f"&from={self.connector_config.from_}"
+
+        if self.connector_config.until:
+            endpoint_url += f"&until={self.connector_config.until}"
+
+        return endpoint_url
+
     def _list_objects_api(self) -> t.List[BiomedFileMeta]:
         def urls_to_metadata(urls):
             files = []
@@ -175,16 +189,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
         files: t.List[BiomedFileMeta] = []
 
-        endpoint_url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?format=pdf"
-
-        if self.connector_config.id_:
-            endpoint_url += f"&id={self.connector_config.id_}"
-
-        if self.connector_config.from_:
-            endpoint_url += f"&from={self.connector_config.from_}"
-
-        if self.connector_config.until:
-            endpoint_url += f"&until={self.connector_config.until}"
+        endpoint_url = self.get_base_endpoints_url()
 
         while endpoint_url:
             session = requests.Session()
@@ -286,6 +291,13 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
     def initialize(self):
         pass
+
+    def check_connection(self):
+        resp = requests.head(self.get_base_endpoints_url())
+        try:
+            resp.raise_for_status()
+        except requests.HTTPError as http_error:
+            raise SourceConnectionError(f"failed to validate connection: {http_error}")
 
     def get_ingest_docs(self):
         files = self._list_objects_api() if self.connector_config.is_api else self._list_objects()

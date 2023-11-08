@@ -198,6 +198,18 @@ class SlackSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
     connector_config: SimpleSlackConfig
 
+    @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
+    def check_connection(self):
+        from slack_sdk import WebClient
+        from slack_sdk.errors import SlackClientError
+
+        try:
+            client = WebClient(token=self.connector_config.token)
+            client.users_identity()
+        except SlackClientError as slack_error:
+            logger.error(f"failed to validate connection: {slack_error}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {slack_error}")
+
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""
 

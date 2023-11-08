@@ -291,6 +291,14 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleSharepointConfig
 
+    def check_connection(self):
+        try:
+            site_client = self.connector_config.get_site_client()
+            site_client.site_pages.pages.get().execute_query()
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
+
     @requires_dependencies(["office365"], extras="sharepoint")
     def _list_files(self, folder, recursive) -> t.List["File"]:
         from office365.runtime.client_request_exception import ClientRequestException
