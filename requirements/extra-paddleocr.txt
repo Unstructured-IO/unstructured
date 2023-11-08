@@ -61,7 +61,7 @@ imgaug==0.4.0
     # via unstructured-paddleocr
 importlib-metadata==6.8.0
     # via flask
-importlib-resources==6.1.0
+importlib-resources==6.1.1
     # via matplotlib
 itsdangerous==2.1.2
     # via flask

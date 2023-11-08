@@ -12,9 +12,9 @@ mkdir -p "$OUTPUT_DIR"
 EVAL_NAME="$1"
 
 if [ "$EVAL_NAME" == "text-extraction" ]; then
-  METRIC_STRATEGY="measure-text-edit-distance"
+  METRIC_STRATEGY="measure-text-edit-distance-command"
 elif [ "$EVAL_NAME" == "element-type" ]; then
-  METRIC_STRATEGY="measure-element-type-accuracy"
+  METRIC_STRATEGY="measure-element-type-accuracy-command"
 else
   echo "Wrong metric evaluation strategy given. Expected one of [ text-extraction, element-type ]. Got [ $EVAL_NAME ]."
   exit 1
