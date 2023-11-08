@@ -124,7 +124,7 @@ def test_parition_docx_from_team_chat():
     assert [e.category for e in elements] == [
         ElementType.UNCATEGORIZED_TEXT,
         ElementType.UNCATEGORIZED_TEXT,
-        ElementType.TABLE
+        ElementType.TABLE,
     ]
 
 
