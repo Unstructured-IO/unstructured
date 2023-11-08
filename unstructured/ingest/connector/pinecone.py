@@ -14,6 +14,7 @@ from unstructured.ingest.interfaces import (
     WriteConfigSessionHandleMixin,
 )
 from unstructured.ingest.logger import logger
+from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 
@@ -106,13 +107,15 @@ class PineconeDestinationConnector(BaseDestinationConnector):
             with open(local_path) as json_file:
                 dict_content = json.load(json_file)
 
-                # assign element_id and embeddings to "id" and "values"
-                # assign everything else to "metadata" field
+                # assign element_id to "id", embeddings to "values", and other fields to "metadata"
                 dict_content = [
                     {
                         "id": element.pop("element_id", None),
                         "values": element.pop("embeddings", None),
-                        "metadata": {k: json.dumps(v) for k, v in element.items()},
+                        "metadata": {
+                            k: (json.dumps(v) if isinstance(v, list) else v)
+                            for k, v in flatten_dict(element["metadata"], separator="-").items()
+                        },
                     }
                     for element in dict_content
                 ]
