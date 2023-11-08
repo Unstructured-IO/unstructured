@@ -2,7 +2,6 @@
 through Unstructured."""
 
 import functools
-import json
 import os
 import re
 import typing as t
@@ -11,7 +10,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-import requests
 from dataclasses_json import DataClassJsonMixin
 from dataclasses_json.core import Json, _asdict, _decode_dataclass
 
@@ -21,8 +19,9 @@ from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
+from unstructured.partition.api import partition_via_api
 from unstructured.partition.auto import partition
-from unstructured.staging.base import convert_to_dict, elements_from_json, flatten_dict
+from unstructured.staging.base import convert_to_dict, flatten_dict
 
 A = t.TypeVar("A", bound="DataClassJsonMixin")
 
@@ -88,6 +87,7 @@ class PartitionConfig(BaseConfig):
     partition_endpoint: t.Optional[str] = "https://api.unstructured.io/general/v0/general"
     partition_by_api: bool = False
     api_key: t.Optional[str] = None
+    hi_res_model_name: t.Optional[str] = None
 
 
 @dataclass
@@ -453,21 +453,17 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
 
             logger.debug(f"Using remote partition ({endpoint})")
 
-            with open(self.filename, "rb") as f:
-                headers_dict = {}
-                if partition_config.api_key:
-                    headers_dict["UNSTRUCTURED-API-KEY"] = partition_config.api_key
-                response = requests.post(
-                    f"{endpoint}",
-                    files={"files": (str(self.filename), f)},
-                    headers=headers_dict,
-                    # TODO: add m_data_source_metadata to unstructured-api pipeline_api and then
-                    # pass the stringified json here
-                )
-
-            if response.status_code != 200:
-                raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
-            elements = elements_from_json(text=json.dumps(response.json()))
+            passthrough_partition_kwargs = {
+                k: str(v) for k, v in partition_kwargs.items() if v is not None
+            }
+            elements = partition_via_api(
+                filename=str(self.filename),
+                api_key=partition_config.api_key,
+                api_url=endpoint,
+                **passthrough_partition_kwargs,
+            )
+            # TODO: add m_data_source_metadata to unstructured-api pipeline_api and then
+            # pass the stringified json here
         return elements
 
     def process_file(
