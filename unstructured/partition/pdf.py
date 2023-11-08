@@ -332,7 +332,7 @@ def _partition_pdf_or_image_local(
     is_image: bool = False,
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
-    languages: Optional[List[str]] = ["eng"],
+    languages: Optional[List[str]] = None,
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
