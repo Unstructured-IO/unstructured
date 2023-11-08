@@ -17,7 +17,7 @@ if [ -z "$AZURE_DEST_CONNECTION_STR" ]; then
 fi
 
 CONTAINER=utic-ingest-test-fixtures-output
-DIRECTORY=$(date +%s)
+DIRECTORY=$(uuidgen)
 REMOTE_URL="abfs://$CONTAINER/$DIRECTORY/"
 
 # shellcheck disable=SC1091
