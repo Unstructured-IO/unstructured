@@ -94,16 +94,18 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --strategy fast \
   --verbose \
   --reprocess \
-  --input-path example-docs/book-war-and-peace-1p.txt \
+  --input-path example-docs/book-war-and-peace-1225p.txt \
   --work-dir "$WORK_DIR" \
   --chunk-elements \
+  --chunk-combine-text-under-n-chars 200\
+  --chunk-max-characters 38000\
   --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \
   pinecone \
   --api-key "$PINECONE_API_KEY" \
   --index-name "$PINECONE_INDEX" \
   --environment "$PINECONE_ENVIRONMENT" \
-  --batch-size 85
+  --batch-size 80
 
 # It can take some time for the index to catch up with the content that was written, this check between 10s sleeps
 # to give it that time process the writes. Will timeout after checking for a minute.
@@ -125,7 +127,7 @@ while [ "$num_of_vectors_remote" -eq 0 ] && [ "$attempt" -lt 4 ]; do
   attempt=$((attempt+1))
 done
 
-EXPECTED=3
+EXPECTED=558
 
 if [ "$num_of_vectors_remote" -ne $EXPECTED ];then
   echo "Number of vectors in Pinecone are $num_of_vectors_remote when the expected number is $EXPECTED. Test failed."
