@@ -61,8 +61,8 @@ class ChromaWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixin,
         #     raise WriteError(f"http error: {api_error}") from api_error
         collection = self.create_chroma_object(self.client, self.collection_name)
         try:
-            # breakpoint()
-            response = collection.add(ids=batch["ids"], documents=batch["documents"], embeddings=batch["embeddings"], metadatas=batch["metadatas"])
+            # Chroma wants lists even if there is only one element
+            response = collection.add(ids=[batch["ids"]], documents=[batch["documents"]], embeddings=[batch["embeddings"]], metadatas=[batch["metadatas"]])
         except Exception as e:
             raise WriteError(f"chroma error: {e}") from e
         logger.debug(f"results: {response}")
@@ -140,16 +140,16 @@ class ChromaDestinationConnector(BaseDestinationConnector):
                     {
                         "ids": element.pop("element_id", None),
                         "embeddings": element.pop("embeddings", None),
-                        "text": element.pop("text", None),
-                        "metadata": flatten_dict({k: json.dumps(v) for k, v in element.items()},flatten_lists=True),
+                        "documents": element.pop("text", None),
+                        "metadatas": flatten_dict({k: v for k, v in element.items()},flatten_lists=True),
                     }
                     for element in dict_content
                 ]
                 logger.info(
-                    f"appending {len(dict_content)} json elements from content in {local_path}",
+                    f"Extending {len(dict_content)} json elements from content in {local_path}",
                 )
                 dict_list.extend(dict_content)
-                breakpoint()
+                # breakpoint()
 
                 # data={}
                 # #### Add type
@@ -173,7 +173,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):
                 # logger.info(
                 #     f"appending {len(dict_content)} json elements from content in {local_path}",
                 # )
-                dict_list.append(data)
+                # dict_list.append(data)
         self.write_dict(dict_list=dict_list)
 
 

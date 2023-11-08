@@ -19,11 +19,12 @@ def run_check(client, collection_name):
     )
 
     assert number_of_embeddings == expected_embeddings, (
-        f"number of rows in generated table ({number_of_embeddings}) "
+        f"Number of rows in generated table ({number_of_embeddings}) "
         f"doesn't match expected value: {expected_embeddings}"
     )
 
-    print("table check complete")
+    print("Table check complete")
+    
 
 
 if __name__ == "__main__":

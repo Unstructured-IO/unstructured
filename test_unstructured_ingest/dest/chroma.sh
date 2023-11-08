@@ -37,7 +37,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --strategy fast \
     --verbose \
     --reprocess \
-    --input-path example-docs/book-war-and-peace-1p.txt \
+    --input-path example-docs/multiple-docs \
     --work-dir "$WORK_DIR" \
     --chunk-elements \
     --chunk-multipage-sections \
