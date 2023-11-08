@@ -119,6 +119,9 @@ class DeltaTableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
     connector_config: SimpleDeltaTableConfig
     delta_table: t.Optional["DeltaTable"] = None
 
+    def check_connection(self):
+        pass
+
     @requires_dependencies(["deltalake"], extras="delta-table")
     def initialize(self):
         from deltalake import DeltaTable
@@ -170,6 +173,9 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
 
     @requires_dependencies(["deltalake"], extras="delta-table")
     def initialize(self):
+        pass
+
+    def check_connection(self):
         pass
 
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:

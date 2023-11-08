@@ -10,7 +10,7 @@ pillow==10.0.1
     # via
     #   -c constraints.in
     #   python-pptx
-python-pptx==0.6.21
+python-pptx==0.6.23
     # via -r extra-pptx.in
 xlsxwriter==3.1.9
     # via python-pptx
