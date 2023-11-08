@@ -324,6 +324,13 @@ class GoogleDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnecto
     def initialize(self):
         pass
 
+    def check_connection(self):
+        try:
+            self.connector_config.create_session_handle().service
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
+
     def get_ingest_docs(self):
         files = self._list_objects(self.connector_config.drive_id, self.connector_config.recursive)
         return [
