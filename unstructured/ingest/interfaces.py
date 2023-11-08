@@ -523,7 +523,14 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
 
 
 @dataclass
-class BaseSourceConnector(DataClassJsonMixin, ABC):
+class BaseConnector(DataClassJsonMixin, ABC):
+    @abstractmethod
+    def check_connection(self):
+        pass
+
+
+@dataclass
+class BaseSourceConnector(BaseConnector, ABC):
     """Abstract Base Class for a connector to a remote source, e.g. S3 or Google Drive."""
 
     processor_config: ProcessorConfig
@@ -551,7 +558,7 @@ class BaseSourceConnector(DataClassJsonMixin, ABC):
 
 
 @dataclass
-class BaseDestinationConnector(DataClassJsonMixin, ABC):
+class BaseDestinationConnector(BaseConnector, ABC):
     write_config: WriteConfig
     connector_config: BaseConnectorConfig
 
