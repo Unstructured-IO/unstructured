@@ -1,0 +1,420 @@
+[
+    {
+        "type": "Title",
+        "element_id": "0405351ac64213c7b1e40e31aff7d21b",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "Bank Good Credit "
+    },
+    {
+        "type": "NarrativeText",
+        "element_id": "214987ebee9fd615365185fb3d692253",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "0405351ac64213c7b1e40e31aff7d21b",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "Accredited with IABAC\u2122"
+    },
+    {
+        "type": "Title",
+        "element_id": "fc3d53b1d173c5c72205914ea331b052",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "( International Association of Business Analytics Certifications)`"
+    },
+    {
+        "type": "Title",
+        "element_id": "b952b3e6d0e34020f1f48b5d9243d0a4",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 1
+        },
+        "text": "\u00a9 DataMites\u2122. All Rights Reserved | www.datamites.com"
+    },
+    {
+        "type": "Title",
+        "element_id": "2dc308bd8d3a5c745dfacc3bdccd81db",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 2
+        },
+        "text": "Objective & Background"
+    },
+    {
+        "type": "ListItem",
+        "element_id": "5a0a7e2a14285297ff3752656cb6df44",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "2dc308bd8d3a5c745dfacc3bdccd81db",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 2
+        },
+        "text": "Classify credit card customers as good / bad, based on information from internal and external sources. "
+    },
+    {
+        "type": "ListItem",
+        "element_id": "5eb6ec96e6a3493c1ae56747ae457b7f",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "2dc308bd8d3a5c745dfacc3bdccd81db",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 2
+        },
+        "text": "Data provided"
+    },
+    {
+        "type": "ListItem",
+        "element_id": "adec2b6c75369165b1d87dccdfd2dab8",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "5eb6ec96e6a3493c1ae56747ae457b7f",
+            "category_depth": 2,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 2
+        },
+        "text": "Demographic: Base file of with credit card history details. Only one record for every customer."
+    },
+    {
+        "type": "ListItem",
+        "element_id": "c26d6dc6982b7f42045f4ffee951f8e0",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "5eb6ec96e6a3493c1ae56747ae457b7f",
+            "category_depth": 2,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 2
+        },
+        "text": "Account: Contians data for various loans availed by the customer. Not related to credit card. Multiple records for every customer."
+    },
+    {
+        "type": "ListItem",
+        "element_id": "be3fc5cb3da83e6c22d1906330ee9f96",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "5eb6ec96e6a3493c1ae56747ae457b7f",
+            "category_depth": 2,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 2
+        },
+        "text": "Enquiries: Enquired made by customers for different loan purposes. Multiple records for every customer.\t"
+    },
+    {
+        "type": "Title",
+        "element_id": "b952b3e6d0e34020f1f48b5d9243d0a4",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "2dc308bd8d3a5c745dfacc3bdccd81db",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 2
+        },
+        "text": "\u00a9 DataMites\u2122. All Rights Reserved | www.datamites.com"
+    },
+    {
+        "type": "Title",
+        "element_id": "0072e6b934945d5ba08f9729e0084739",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 3
+        },
+        "text": "Design"
+    },
+    {
+        "type": "ListItem",
+        "element_id": "af14c0ecaaa7ac1d2bca5cdfbcc32ec7",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "0072e6b934945d5ba08f9729e0084739",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 3
+        },
+        "text": "Data to be downloaded using SQL queries."
+    },
+    {
+        "type": "ListItem",
+        "element_id": "51d8e67259ab8a11d2fdfc5cb9bcf45e",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "0072e6b934945d5ba08f9729e0084739",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 3
+        },
+        "text": "Required information to be extracted from Account and Enquiry files and converted to one-to-one files."
+    },
+    {
+        "type": "ListItem",
+        "element_id": "6165e3bc219556f6ec397adc7240386b",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "0072e6b934945d5ba08f9729e0084739",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 3
+        },
+        "text": "The columns from the two files should be merged with Demographic file using Left Join with \u201ccustomer no\u201d as key column, to create a final file. The final file should contain all the records in demographic and additional columns/features from Account and Enquiry files will get added to Demographic file."
+    },
+    {
+        "type": "ListItem",
+        "element_id": "31930936fc3bad2175b05e324e9923e4",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "0072e6b934945d5ba08f9729e0084739",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 3
+        },
+        "text": "There will be many customers in account and enquiry file who will get left out. This is fine as we anyway don\u2019t know their good/bad label for training purpose. "
+    },
+    {
+        "type": "Title",
+        "element_id": "b952b3e6d0e34020f1f48b5d9243d0a4",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "0072e6b934945d5ba08f9729e0084739",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 3
+        },
+        "text": "\u00a9 DataMites\u2122. All Rights Reserved | www.datamites.com"
+    },
+    {
+        "type": "Title",
+        "element_id": "ed83647ab77addbea9e4dca5f7d8f216",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 4
+        },
+        "text": "Analysis of Data"
+    },
+    {
+        "type": "ListItem",
+        "element_id": "d936f750c577a228ebabd9ed2cec9a70",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "ed83647ab77addbea9e4dca5f7d8f216",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 4
+        },
+        "text": "Show using Excel File"
+    },
+    {
+        "type": "Title",
+        "element_id": "b952b3e6d0e34020f1f48b5d9243d0a4",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "ed83647ab77addbea9e4dca5f7d8f216",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 4
+        },
+        "text": "\u00a9 DataMites\u2122. All Rights Reserved | www.datamites.com"
+    },
+    {
+        "type": "Title",
+        "element_id": "7207da66fd1c6771ee1a5705dc41c0c7",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "category_depth": 0,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 5
+        },
+        "text": "Explain Coding / outcomes "
+    },
+    {
+        "type": "ListItem",
+        "element_id": "815ef1753a8bcb1ce21d59819bdc6834",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "7207da66fd1c6771ee1a5705dc41c0c7",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 5
+        },
+        "text": "Show using Jupyter"
+    },
+    {
+        "type": "Title",
+        "element_id": "b952b3e6d0e34020f1f48b5d9243d0a4",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "7207da66fd1c6771ee1a5705dc41c0c7",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 5
+        },
+        "text": "\u00a9 DataMites\u2122. All Rights Reserved | www.datamites.com"
+    },
+    {
+        "type": "Title",
+        "element_id": "2034ce6155036f8a009ef33985209e88",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "7207da66fd1c6771ee1a5705dc41c0c7",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 6
+        },
+        "text": "Thank You"
+    },
+    {
+        "type": "Title",
+        "element_id": "b952b3e6d0e34020f1f48b5d9243d0a4",
+        "metadata": {
+            "filename": "Bank Good Credit Loan.pptx",
+            "file_directory": "tmpdocs",
+            "last_modified": "2023-11-02T15:16:14",
+            "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "parent_id": "7207da66fd1c6771ee1a5705dc41c0c7",
+            "category_depth": 1,
+            "languages": [
+                "eng"
+            ],
+            "page_number": 6
+        },
+        "text": "\u00a9 DataMites\u2122. All Rights Reserved | www.datamites.com"
+    }
+]
