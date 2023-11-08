@@ -16,15 +16,18 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
+if t.TYPE_CHECKING:
+    from praw import Reddit
+
 
 @dataclass
 class SimpleRedditConfig(BaseConnectorConfig):
     subreddit_name: str
-    client_id: t.Optional[str]
-    client_secret: t.Optional[str]
-    user_agent: str
-    search_query: t.Optional[str]
     num_posts: int
+    user_agent: str
+    client_id: str
+    client_secret: t.Optional[str] = None
+    search_query: t.Optional[str] = None
 
     def __post_init__(self):
         if self.num_posts <= 0:
@@ -110,16 +113,33 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 @dataclass
 class RedditSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleRedditConfig
+    _reddit: t.Optional["Reddit"] = field(init=False, default=None)
+
+    @property
+    def reddit(self) -> "Reddit":
+        from praw import Reddit
+
+        if self._reddit is None:
+            self._reddit = Reddit(
+                client_id=self.connector_config.client_id,
+                client_secret=self.connector_config.client_secret,
+                user_agent=self.connector_config.user_agent,
+            )
+        return self._reddit
 
     @requires_dependencies(["praw"], extras="reddit")
     def initialize(self):
-        from praw import Reddit
+        _ = self.reddit
 
-        self.reddit = Reddit(
-            client_id=self.connector_config.client_id,
-            client_secret=self.connector_config.client_secret,
-            user_agent=self.connector_config.user_agent,
-        )
+    def check_connection(self):
+        from praw.endpoints import API_PATH
+        from prawcore import ResponseException
+
+        try:
+            self.reddit._objectify_request(method="HEAD", params=None, path=API_PATH["me"])
+        except ResponseException as response_error:
+            logger.error(f"failed to validate connection: {response_error}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {response_error}")
 
     def get_ingest_docs(self):
         subreddit = self.reddit.subreddit(self.connector_config.subreddit_name)

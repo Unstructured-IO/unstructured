@@ -17,6 +17,7 @@ from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
+    from office365.graph_client import GraphClient
     from office365.onedrive.driveitems.driveItem import DriveItem
 
 MAX_MB_SIZE = 512_000_000
@@ -28,7 +29,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
     client_credential: str = field(repr=False)
     user_pname: str
     tenant: str = field(repr=False)
-    authority_url: t.Optional[str] = field(repr=False)
+    authority_url: t.Optional[str] = field(repr=False, default="https://login.microsoftonline.com")
     path: t.Optional[str] = field(default="")
     recursive: bool = False
 
@@ -177,12 +178,32 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 @dataclass
 class OneDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleOneDriveConfig
+    _client: t.Optional["GraphClient"] = field(init=False, default=None)
 
-    @requires_dependencies(["office365"], extras="onedrive")
-    def _set_client(self):
+    @property
+    def client(self) -> "GraphClient":
         from office365.graph_client import GraphClient
 
-        self.client = GraphClient(self.connector_config.token_factory)
+        if self._client is None:
+            self._client = GraphClient(self.connector_config.token_factory)
+        return self._client
+
+    @requires_dependencies(["office365"], extras="onedrive")
+    def initialize(self):
+        _ = self.client
+
+    @requires_dependencies(["office365"], extras="onedrive")
+    def check_connection(self):
+        try:
+            token_resp: dict = self.connector_config.token_factory()
+            if error := token_resp.get("error"):
+                raise SourceConnectionError(
+                    "{} ({})".format(error, token_resp.get("error_description"))
+                )
+            _ = self.client
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
 
     def _list_objects(self, folder, recursive) -> t.List["DriveItem"]:
         drive_items = folder.children.get().execute_query()
@@ -204,9 +225,6 @@ class OneDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             file_name=file.name,
             file_path=file_path,
         )
-
-    def initialize(self):
-        self._set_client()
 
     def get_ingest_docs(self):
         root = self.client.users[self.connector_config.user_pname].drive.get().execute_query().root

@@ -21,7 +21,7 @@
 <div>
   <p align="center">
   <a
-  href="https://short.unstructured.io/vqfyc51">
+  href="https://short.unstructured.io/pzw05l7">
     <img src="https://img.shields.io/badge/JOIN US ON SLACK-4A154B?style=for-the-badge&logo=slack&logoColor=white" />
   </a>
   <a href="https://www.linkedin.com/company/unstructuredio/">
@@ -47,7 +47,7 @@ While access to the hosted Unstructured API will remain free, API Keys are requi
 
 We are releasing the beta version of our Chipper model to deliver superior performance when processing high-resolution, complex documents. To start using the Chipper model in your API request, you can utilize the `hi_res_model_name=chipper` parameter. Please refer to the documentation [here](https://unstructured-io.github.io/unstructured/api.html#beta-version-hi-res-strategy-with-chipper-model).
 
-As the Chipper model is in beta version, we welcome feedback and suggestions. For those interested in testing the Chipper model, we encourage you to connect with us on [Slack community](https://short.unstructured.io/vqfyc51).
+As the Chipper model is in beta version, we welcome feedback and suggestions. For those interested in testing the Chipper model, we encourage you to connect with us on [Slack community](https://short.unstructured.io/pzw05l7).
 
 ## :eight_pointed_black_star: Quick Start
 

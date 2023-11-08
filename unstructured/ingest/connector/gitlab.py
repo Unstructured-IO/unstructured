@@ -103,6 +103,20 @@ class GitLabIngestDoc(GitIngestDoc):
 class GitLabSourceConnector(GitSourceConnector):
     connector_config: SimpleGitLabConfig
 
+    @requires_dependencies(["gitlab"], extras="gitlab")
+    def check_connection(self):
+        from gitlab import Gitlab
+        from gitlab.exceptions import GitlabError
+
+        try:
+            gitlab = Gitlab(
+                self.connector_config.base_url, private_token=self.connector_config.access_token
+            )
+            gitlab.auth()
+        except GitlabError as gitlab_error:
+            logger.error(f"failed to validate connection: {gitlab_error}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {gitlab_error}")
+
     def get_ingest_docs(self):
         # Load the Git tree with all files, and then create Ingest docs
         # for all blobs, i.e. all files, ignoring directories
