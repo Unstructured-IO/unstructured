@@ -202,7 +202,8 @@ def supplement_page_layout_with_ocr(
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
         for element in page_layout.elements:
             if element.text == "":
-                padded_element = pad_element_bboxes(element, padding=12)
+                padding = env_config.IMAGE_CROP_PAD
+                padded_element = pad_element_bboxes(element, padding=padding)
                 cropped_image = image.crop(
                     (
                         padded_element.bbox.x1,
