@@ -12,7 +12,7 @@ def run_check(table_uri):
 
     df = delta_table.to_pandas()
     expected_rows = 5
-    expected_columns = 18
+    expected_columns = 19
     print(f"Number of rows in table vs expected: {len(df)}/{expected_rows}")
     print(f"Number of columns in table vs expected: {len(df.columns)}/{expected_columns}")
     number_of_rows = len(df)
