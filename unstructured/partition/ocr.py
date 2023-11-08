@@ -263,9 +263,7 @@ def supplement_element_with_table_extraction(
                 ),
             )
             table_tokens = get_table_tokens(
-                image=cropped_image,
-                ocr_languages=ocr_languages,
-                ocr_agent=ocr_agent
+                image=cropped_image, ocr_languages=ocr_languages, ocr_agent=ocr_agent
             )
             element.text_as_html = table_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
