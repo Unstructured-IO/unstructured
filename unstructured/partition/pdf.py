@@ -283,6 +283,8 @@ def partition_pdf_or_image(
         )
         != "ocr_only"
     ):
+        # `languages` needs to be passed down to the creation of element.metadata
+        kwargs["languages"] = languages
         extracted_elements = extractable_elements(
             filename=filename,
             file=spooled_to_bytes_io_if_needed(file),
@@ -290,6 +292,7 @@ def partition_pdf_or_image(
             metadata_last_modified=metadata_last_modified or last_modification_date,
             **kwargs,
         )
+        kwargs.pop("languages")
         pdf_text_extractable = any(
             isinstance(el, Text) and el.text.strip() for el in extracted_elements
         )
@@ -631,13 +634,14 @@ def _process_pdfminer_pages(
                                     ),
                                 },
                             )
-
+                    languages = kwargs.get("languages")
                     element.metadata = ElementMetadata(
                         filename=filename,
                         page_number=i + 1,
                         coordinates=coordinates_metadata,
                         last_modified=metadata_last_modified,
                         links=links,
+                        languages=languages,
                     )
                     element.metadata.detection_origin = "pdfminer"
                     page_elements.append(element)
