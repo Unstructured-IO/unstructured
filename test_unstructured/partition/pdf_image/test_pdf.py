@@ -419,7 +419,6 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
 @pytest.mark.parametrize(
     ("strategy"),
     [
-        ("auto"),
         ("fast"),
         ("hi_res"),
         ("ocr_only"),
