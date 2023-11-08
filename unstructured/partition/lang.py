@@ -163,6 +163,33 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
     return "+".join(converted_languages)
 
 
+def check_user_defined_languages(languages, ocr_languages):
+    # The auto `partition` function uses `None` as a default because the default for
+    # `partition_pdf` and `partition_img` conflict with the other partitioners that use ["auto"]
+    if languages is None:
+        languages = ["eng"]
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            "The language parameter must be a list of language codes as strings, ex. ['eng']",
+        )
+
+    if ocr_languages is not None:
+        if languages != ["eng"]:
+            raise ValueError(
+                "Only one of languages and ocr_languages should be specified. "
+                "languages is preferred. ocr_languages is marked for deprecation.",
+            )
+
+        else:
+            languages = convert_old_ocr_languages_to_languages(ocr_languages)
+            logger.warning(
+                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
+                "Please use languages instead.",
+            )
+    return languages
+
+
 def convert_old_ocr_languages_to_languages(ocr_languages: str):
     """
     Convert ocr_languages parameter to list of langcode strings.
