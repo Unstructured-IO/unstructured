@@ -163,9 +163,9 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
     return "+".join(converted_languages)
 
 
-def check_user_defined_languages(languages: Optional[List[str]], ocr_languages: Optional[str]):
-    # The auto `partition` function uses `None` as a default because the default for
-    # `partition_pdf` and `partition_img` conflict with the other partitioners that use ["auto"]
+def check_languages(languages: Optional[List[str]], ocr_languages: Optional[str]):
+    """Handle `ocr_languages` and `languages`, defining `languages` to ['eng'] as default and
+    converting `ocr_languages` if needed"""
     if languages is None:
         languages = ["eng"]
 

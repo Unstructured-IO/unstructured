@@ -68,7 +68,7 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.lang import (
-    check_user_defined_languages,
+    check_languages,
     prepare_languages_for_tesseract,
 )
 from unstructured.partition.ocr import (
@@ -163,7 +163,7 @@ def partition_pdf(
     """
     exactly_one(filename=filename, file=file)
 
-    languages = check_user_defined_languages(languages, ocr_languages)
+    languages = check_languages(languages, ocr_languages)
 
     return partition_pdf_or_image(
         filename=filename,
@@ -231,7 +231,7 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
-    languages = check_user_defined_languages(languages, ocr_languages)
+    languages = check_languages(languages, ocr_languages)
 
     last_modification_date = get_the_last_modification_date_pdf_or_img(
         file=file,
