@@ -188,7 +188,6 @@ def supplement_page_layout_with_ocr(
     """
 
     ocr_agent = get_ocr_agent()
-    ocr_layout = None
     if ocr_mode == OCRMode.FULL_PAGE.value:
         ocr_layout = get_ocr_layout_from_image(
             image,
@@ -233,6 +232,8 @@ def supplement_page_layout_with_ocr(
             elements=cast(List[LayoutElement], page_layout.elements),
             image=image,
             table_agent=table_agent,
+            ocr_languages=ocr_languages,
+            ocr_agent=ocr_agent,
         )
 
     return page_layout
@@ -242,6 +243,8 @@ def supplement_element_with_table_extraction(
     elements: List[LayoutElement],
     image: PILImage,
     table_agent: "UnstructuredTableTransformerModel",
+    ocr_languages: str = "eng",
+    ocr_agent: str = OCR_AGENT_TESSERACT,
 ) -> List[LayoutElement]:
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata field "text_as_html" where
@@ -259,15 +262,27 @@ def supplement_element_with_table_extraction(
                     padded_element.bbox.y2,
                 ),
             )
-            table_tokens = get_table_tokens(cropped_image)
+            table_tokens = get_table_tokens(
+                image=cropped_image,
+                ocr_languages=ocr_languages,
+                ocr_agent=ocr_agent
+            )
             element.text_as_html = table_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
 
 
-def get_table_tokens(image: PILImage) -> List[Dict]:
+def get_table_tokens(
+    image: PILImage,
+    ocr_languages: str = "eng",
+    ocr_agent: str = OCR_AGENT_TESSERACT,
+) -> List[Dict]:
     """Get OCR tokens from either paddleocr or tesseract"""
 
-    ocr_layout = get_ocr_layout_from_image(image)
+    ocr_layout = get_ocr_layout_from_image(
+        image,
+        ocr_languages=ocr_languages,
+        ocr_agent=ocr_agent,
+    )
     table_tokens = []
     for ocr_region in ocr_layout:
         table_tokens.append(

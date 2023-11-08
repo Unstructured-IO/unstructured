@@ -33,7 +33,7 @@ class ENVConfig:
     @property
     def IMAGE_CROP_PAD(self) -> int:
         """extra image content to add around an identified element region; measured in pixels"""
-        return self._get_int("IMAGE_CROP_PAD", 0)
+        return self._get_int("IMAGE_CROP_PAD", 12)
 
     @property
     def TABLE_IMAGE_CROP_PAD(self) -> int:
