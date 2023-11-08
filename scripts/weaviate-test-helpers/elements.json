@@ -1,5 +1,5 @@
 {
-    "class": "Pdf_elements",
+    "class": "Elements",
     "invertedIndexConfig": {
         "bm25": {
             "b": 0.75,
@@ -170,7 +170,17 @@
                             "indexSearchable": true,
                             "name": "record_locator",
                             "tokenization": "word"
+                        },
+                        {
+                            "dataType": [
+                                "text"
+                            ],
+                            "indexFilterable": true,
+                            "indexSearchable": true,
+                            "name": "permissions_data",
+                            "tokenization": "word"
                         }
+
                     ]
                 },
                 {
@@ -228,7 +238,7 @@
                 },
                 {
                     "dataType": [
-                        "int"
+                        "text"
                     ],
                     "indexFilterable": true,
                     "indexSearchable": false,
@@ -254,7 +264,7 @@
                 },
                 {
                     "dataType": [
-                        "text[]"
+                        "text"
                     ],
                     "indexFilterable": true,
                     "indexSearchable": true,

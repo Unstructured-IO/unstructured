@@ -48,6 +48,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --work-dir "$WORK_DIR" \
   weaviate \
   --host-url http://localhost:8080 \
-  --class-name pdf_elements \
+  --class-name elements \
 
 scripts/weaviate-test-helpers/test-ingest-weaviate-output.py

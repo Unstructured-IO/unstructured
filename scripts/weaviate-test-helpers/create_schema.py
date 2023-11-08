@@ -6,10 +6,10 @@ import os
 import weaviate
 
 weaviate_host_url = os.getenv("WEAVIATE_HOST_URL", "http://localhost:8080")
-class_name = os.getenv("WEAVIATE_CLASS_NAME", "Pdf_elements")
+class_name = os.getenv("WEAVIATE_CLASS_NAME", "Elements")
 new_class = None
 
-with open("./scripts/weaviate-test-helpers/pdf_elements.json") as f:
+with open("./scripts/weaviate-test-helpers/elements.json") as f:
     new_class = json.load(f)
 
 client = weaviate.Client(

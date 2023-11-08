@@ -69,25 +69,50 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
             )
         return None
 
-    def conform_dict(self, element: dict) -> None:
+    def conform_dict(self, data: dict) -> None:
         """
         Updates the element dictionary to conform to the Weaviate schema
         """
 
-        if (
-            record_locator := element.get("metadata", {})
-            .get("data_source", {})
-            .get("record_locator")
-        ):
+        # Dict as string formatting
+        if record_locator := data.get("metadata", {}).get("data_source", {}).get("record_locator"):
             # Explicit casting otherwise fails schema type checking
-            element["metadata"]["data_source"]["record_locator"] = str(json.dumps(record_locator))
+            data["metadata"]["data_source"]["record_locator"] = str(json.dumps(record_locator))
 
-        if (
-            date_modified := element.get("metadata", {})
-            .get("data_source", {})
-            .get("date_modified", None)
+        # Array of items as string formatting
+        if points := data.get("metadata", {}).get("coordinates", {}).get("points"):
+            data["metadata"]["coordinates"]["points"] = str(json.dumps(points))
+
+        if links := data.get("metadata", {}).get("links", {}):
+            data["metadata"]["links"] = str(json.dumps(links))
+
+        if permissions_data := (
+            data.get("metadata", {}).get("data_source", {}).get("permissions_data")
         ):
-            element["metadata"]["data_source"]["date_modified"] = date_modified + "Z"
+            data["metadata"]["data_source"]["permissions_data"] = json.dumps(permissions_data)
+
+        # Datetime formatting
+        if date_created := data.get("metadata", {}).get("data_source", {}).get("date_created"):
+            data["metadata"]["data_source"]["date_created"] = date_created + "Z"
+
+        if date_modified := data.get("metadata", {}).get("data_source", {}).get("date_modified"):
+            data["metadata"]["data_source"]["date_modified"] = date_modified + "Z"
+
+        if date_processed := data.get("metadata", {}).get("data_source", {}).get("date_processed"):
+            data["metadata"]["data_source"]["date_processed"] = date_processed + "Z"
+
+        if last_modified := data.get("metadata", {}).get("last_modified", {}):
+            data["metadata"]["last_modified"] = last_modified + "Z"
+
+        # String casting
+        if version := data.get("metadata", {}).get("data_source", {}).get("version"):
+            data["metadata"]["data_source"]["version"] = str(version)
+
+        if page_number := data.get("metadata", {}).get("page_number"):
+            data["metadata"]["page_number"] = str(page_number)
+
+        if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
+            data["metadata"]["regex_metadata"] = str(json.dumps(regex_metadata))
 
     def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
@@ -97,10 +122,9 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
         )
         self.client.batch.configure(batch_size=self.write_config.batch_size)
         with self.client.batch as b:
-            created = []
             for e in json_list:
                 self.conform_dict(e)
-                created_id = b.add_data_object(
+                b.add_data_object(
                     {
                         "type": e.get("type", ""),
                         "element_id": e.get("element_id", ""),
@@ -110,9 +134,6 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
                     self.connector_config.class_name,
                     vector=e.get("embeddings"),
                 )
-                created.append(created_id)
-
-            logger.info(f"Wrote {len(created)} elements.")
 
     @requires_dependencies(["weaviate"], extras="weaviate")
     def write(self, docs: t.List[BaseIngestDoc]) -> None:

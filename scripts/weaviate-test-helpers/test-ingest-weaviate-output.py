@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 
 import weaviate
 
 weaviate_host_url = os.getenv("WEAVIATE_HOST_URL", "http://localhost:8080")
-class_name = os.getenv("WEAVIATE_CLASS_NAME", "Pdf_elements")
+class_name = os.getenv("WEAVIATE_CLASS_NAME", "Elements")
 N_ELEMENTS = 605
 
 if __name__ == "__main__":
@@ -20,5 +21,5 @@ if __name__ == "__main__":
     try:
         assert count == N_ELEMENTS
     except AssertionError:
-        print(f"weaviate dest check failed: expected {N_ELEMENTS}, got {count}")
-    print("weaviate dest check complete")
+        sys.exit(f"weaviate dest check failed: got {count}, expected {N_ELEMENTS}")
+    print("weaviate dest check success")
