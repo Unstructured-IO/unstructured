@@ -262,9 +262,9 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
         options = [
             click.Option(
                 ["--pdf-infer-table-structure"],
+                is_flag=True,
                 default=False,
-                help="If set to True, partition will include the table's text "
-                "content in the response.",
+                help="Partition will include the table's text_as_html " "in the response metadata.",
             ),
             click.Option(
                 ["--strategy"],
@@ -344,6 +344,11 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 ["--api-key"],
                 default=None,
                 help="API Key for partition endpoint.",
+            ),
+            click.Option(
+                ["--hi-res-model-name"],
+                default=None,
+                help="Model name for hi-res strategy.",
             ),
         ]
         return options

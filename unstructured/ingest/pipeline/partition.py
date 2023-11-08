@@ -37,6 +37,7 @@ class Partitioner(PartitionNode):
                 "encoding": self.partition_config.encoding,
                 "pdf_infer_table_structure": self.partition_config.pdf_infer_table_structure,
                 "languages": self.partition_config.ocr_languages,
+                "hi_res_model_name": self.partition_config.hi_res_model_name,
             }
             if self.partition_config.skip_infer_table_types:
                 partition_kwargs[
