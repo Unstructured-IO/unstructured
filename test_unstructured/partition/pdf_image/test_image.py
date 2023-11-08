@@ -213,7 +213,7 @@ def test_partition_image_strategies_keep_languages_metadata(strategy):
     )
     elements = image.partition_image(
         filename=filename,
-        languages="eng+kor",
+        languages=["eng", "kor"],
         strategy=strategy,
     )
 
