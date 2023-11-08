@@ -263,14 +263,23 @@ class _DocxPartitioner:
         metadata_last_modified: Optional[str] = None,
     ) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
-        return cls(
-            filename,
-            file,
-            metadata_filename,
-            include_page_breaks,
-            infer_table_structure,
-            metadata_last_modified,
-        )._iter_document_elements()
+        self = cls(
+            filename=filename,
+            file=file,
+            metadata_filename=metadata_filename,
+            include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
+            metadata_last_modified=metadata_last_modified,
+        )
+        # NOTE(scanny): It's possible for a Word document to have no sections. In particular, a
+        # Microsoft Teams chat transcript exported to DOCX contains no sections. Such a
+        # "section-less" document has to be interated differently and has no headers or footers and
+        # therefore no page-size or margins.
+        return (
+            self._iter_document_elements()
+            if self._document_contains_sections
+            else self._iter_sectionless_document_elements()
+        )
 
     def _iter_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in (docx) `document` in document order."""
@@ -285,11 +294,6 @@ class _DocxPartitioner:
         # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
         # -- functions like `._iter_paragraph_elements()` where the "just return when done"
         # -- characteristic of a generator avoids repeated code to form interim results into lists.
-
-        if not self._document.sections:
-            for paragraph in self._document.paragraphs:
-                yield from self._iter_paragraph_elements(paragraph)
-
         for section_idx, section in enumerate(self._document.sections):
             yield from self._iter_section_page_breaks(section_idx, section)
             yield from self._iter_section_headers(section)
@@ -307,6 +311,21 @@ class _DocxPartitioner:
                     yield from self._iter_table_element(block_item)
 
             yield from self._iter_section_footers(section)
+
+    def _iter_sectionless_document_elements(self) -> Iterator[Element]:
+        """Generate each document-element in a docx `document` that has no sections.
+
+        A "section-less" DOCX must be iterated differently. Also it will have no headers or footers
+        (because those live in a section).
+        """
+        for block_item in self._document.iter_inner_content():
+            if isinstance(block_item, Paragraph):
+                yield from self._iter_paragraph_elements(block_item)
+                # -- a paragraph can contain a page-break --
+                yield from self._iter_maybe_paragraph_page_breaks(block_item)
+            # -- can only be a Paragraph or Table so far but more types may come later --
+            elif isinstance(block_item, DocxTable):  # pyright: ignore[reportUnnecessaryIsInstance]
+                yield from self._iter_table_element(block_item)
 
     def _convert_table_to_html(self, table: DocxTable, is_nested: bool = False) -> str:
         """HTML string version of `table`.
@@ -393,7 +412,17 @@ class _DocxPartitioner:
     @lazyproperty
     def _document_contains_pagebreaks(self) -> bool:
         """True when there is at least one page-break detected in the document."""
-        return self._element_contains_pagebreak(self._document._element)
+        return self._element_contains_pagebreak(self._document.element)
+
+    @lazyproperty
+    def _document_contains_sections(self) -> bool:
+        """True when there is at least one section in the document.
+
+        This is always true for a document produced by Word, but may not always be the case when the
+        document results from conversion or export. In particular, a Microsoft Teams chat-transcript
+        export will have no sections.
+        """
+        return bool(self._document.sections)
 
     def _element_contains_pagebreak(self, element: BaseOxmlElement) -> bool:
         """True when `element` contains a page break.
