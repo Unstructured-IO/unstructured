@@ -25,4 +25,5 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         pinecone \
         --api-key "<Pinecone API Key to write into a Pinecone index>" \
         --index-name "<Pinecone index name, ie: ingest-test>" \
-        --environment "<Pinecone environment name, ie: gcp-starter>"
+        --environment "<Pinecone environment name, ie: gcp-starter>" \
+        --batch-size "<Number of records per batch, to be uploaded>"

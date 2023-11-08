@@ -14,6 +14,7 @@ class PineconeCliWriteConfig(BaseConfig, CliMixin):
     api_key: str
     index_name: str
     environment: str
+    batch_size: int
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
@@ -37,6 +38,12 @@ class PineconeCliWriteConfig(BaseConfig, CliMixin):
                 required=True,
                 type=str,
                 help="The environment where the index lives. Eg. 'gcp-starter' or 'us-east1-gcp'",
+            ),
+            click.Option(
+                ["--batch-size"],
+                default=50,
+                type=int,
+                help="Number of records per batch",
             ),
         ]
         return options

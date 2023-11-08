@@ -27,6 +27,7 @@ class PineconeWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixi
     api_key: str
     index_name: str
     environment: str
+    batch_size: str
 
     @requires_dependencies(["pinecone"], extras="pinecone")
     def create_pinecone_object(self, api_key, index_name, environment):
@@ -62,7 +63,7 @@ class SimplePineconeConfig(BaseConnectorConfig):
 
 @dataclass
 class PineconeDestinationConnector(BaseDestinationConnector):
-    write_config: WriteConfig
+    write_config: PineconeWriteConfig
     connector_config: SimplePineconeConfig
 
     @DestinationConnectionError.wrap
@@ -79,7 +80,7 @@ class PineconeDestinationConnector(BaseDestinationConnector):
         # this is advised to be 100 at maximum in pinecone docs, however when we
         # chunk content, we hit to the object size limits, so we decrease the batch
         # size even more here
-        pinecone_batch_size = 10
+        pinecone_batch_size = self.write_config.batch_size
 
         num_processes = 1
         if num_processes == 1:
