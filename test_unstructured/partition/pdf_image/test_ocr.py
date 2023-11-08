@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -436,7 +438,7 @@ def table_element():
 
 
 @pytest.fixture()
-def ocr_layout():
+def mock_ocr_layout():
     ocr_regions = [
         TextRegion.from_coords(x1=15, y1=25, x2=35, y2=45, text="Token1"),
         TextRegion.from_coords(x1=40, y1=30, x2=45, y2=50, text="Token2"),
@@ -444,23 +446,24 @@ def ocr_layout():
     return ocr_regions
 
 
-def test_get_table_tokens_per_element(table_element, ocr_layout):
-    table_tokens = ocr.get_table_tokens_per_element(table_element, ocr_layout)
-    expected_tokens = [
-        {
-            "bbox": [5, 5, 25, 25],
-            "text": "Token1",
-            "span_num": 0,
-            "line_num": 0,
-            "block_num": 0,
-        },
-        {
-            "bbox": [30, 10, 35, 30],
-            "text": "Token2",
-            "span_num": 1,
-            "line_num": 0,
-            "block_num": 0,
-        },
-    ]
+def test_get_table_tokens(mock_ocr_layout):
+    with patch.object(ocr, "get_ocr_layout_from_image", return_value=mock_ocr_layout):
+        table_tokens = ocr.get_table_tokens(image=None)
+        expected_tokens = [
+            {
+                "bbox": [15, 25, 35, 45],
+                "text": "Token1",
+                "span_num": 0,
+                "line_num": 0,
+                "block_num": 0,
+            },
+            {
+                "bbox": [40, 30, 45, 50],
+                "text": "Token2",
+                "span_num": 1,
+                "line_num": 0,
+                "block_num": 0,
+            },
+        ]
 
-    assert table_tokens == expected_tokens
+        assert table_tokens == expected_tokens
