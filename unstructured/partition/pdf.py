@@ -117,7 +117,7 @@ def partition_pdf(
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
-    languages: List[str] = ["eng"],
+    languages: Optional[List[str]] = None,
     include_metadata: bool = True,  # used by decorator
     metadata_filename: Optional[str] = None,  # used by decorator
     metadata_last_modified: Optional[str] = None,
@@ -183,7 +183,7 @@ def extractable_elements(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
     include_page_breaks: bool = False,
-    languages: List[str] = None,
+    languages: Optional[List[str]] = None,
     metadata_last_modified: Optional[str] = None,
     **kwargs: Any,
 ):
@@ -219,7 +219,7 @@ def partition_pdf_or_image(
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
-    languages: Optional[List[str]] = ["eng"],
+    languages: Optional[List[str]] = None,
     metadata_last_modified: Optional[str] = None,
     extract_images_in_pdf: bool = False,
     image_output_dir_path: Optional[str] = None,
@@ -463,7 +463,7 @@ def _partition_pdf_with_pdfminer(
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
-    languages: List[str] = None,
+    languages: Optional[List[str]] = None,
     **kwargs: Any,
 ) -> List[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
@@ -524,7 +524,7 @@ def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str = "",
     include_page_breaks: bool = False,
-    languages: List[str] = None,
+    languages: Optional[List[str]] = None,
     metadata_last_modified: Optional[str] = None,
     sort_mode: str = SORT_MODE_XY_CUT,
     **kwargs,
