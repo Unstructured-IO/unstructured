@@ -28,13 +28,99 @@ from unstructured.partition.docx import _DocxPartitioner, partition_docx
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 
+class Describe_DocxPartitioner:
+    """Unit-test suite for `unstructured.partition.docx._DocxPartitioner`."""
+
+    def it_can_convert_a_table_to_html(self):
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
+        assert _DocxPartitioner()._convert_table_to_html(table) == (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>Header Col 1  </th><th>Header Col 2  </th></tr>\n"
+            "</thead>\n"
+            "<tbody>\n"
+            "<tr><td>Lorem ipsum   </td><td>A link example</td></tr>\n"
+            "</tbody>\n"
+            "</table>"
+        )
+
+    def and_it_can_convert_a_nested_table_to_html(self):
+        """
+        Fixture table is:
+
+            +---+-------------+---+
+            | a |     >b<     | c |
+            +---+-------------+---+
+            |   | +-----+---+ |   |
+            |   | |  e  | f | |   |
+            | d | +-----+---+ | i |
+            |   | | g&t | h | |   |
+            |   | +-----+---+ |   |
+            +---+-------------+---+
+            | j |      k      | l |
+            +---+-------------+---+
+        """
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[1]
+
+        html = _DocxPartitioner()._convert_table_to_html(table)
+
+        expected_lines = [
+            "<table>",
+            "<thead>",
+            f"<tr><th>a  </th><th>&gt;b&lt;{' ' * 96}</th><th>c  </th></tr>",
+            "</thead>",
+            "<tbody>",
+            "<tr><td>d  </td><td><table>",
+            "<tbody>",
+            "<tr><td>e      </td><td>f</td></tr>",
+            "<tr><td>g&amp;t</td><td>h</td></tr>",
+            "</tbody>",
+            "</table></td><td>i  </td></tr>",
+            f"<tr><td>j  </td><td>k{' ' * 104}</td><td>l  </td></tr>",
+            "</tbody>",
+            "</table>",
+        ]
+        actual_lines = html.splitlines()
+        for expected, actual in zip(expected_lines, actual_lines):
+            assert actual == expected
+
+    def it_can_convert_a_table_to_plain_text(self):
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
+        assert _DocxPartitioner()._convert_table_to_plain_text(table) == (
+            "Header Col 1  Header Col 2\n" "Lorem ipsum   A link example"
+        )
+
+    def and_it_can_convert_a_nested_table_to_plain_text(self):
+        """
+        Fixture table is:
+
+            +---+-------------+---+
+            | a |     >b<     | c |
+            +---+-------------+---+
+            |   | +-----+---+ |   |
+            |   | |  e  | f | |   |
+            | d | +-----+---+ | i |
+            |   | | g&t | h | |   |
+            |   | +-----+---+ |   |
+            +---+-------------+---+
+            | j |      k      | l |
+            +---+-------------+---+
+        """
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[1]
+        assert _DocxPartitioner()._convert_table_to_plain_text(table) == (
+            "a  >b<     c\nd  e    f  i\n   g&t  h\nj  k       l"
+        )
+
+
 def test_parition_docx_from_team_chat():
+    """Docx with no sections partitions recognizing both paragraphs and tables."""
     elements = cast(List[Text], partition_docx(example_doc_path("teams_chat.docx")))
-    assert [element.text for element in elements] == [
+    assert [e.text for e in elements] == [
         "0:0:0.0 --> 0:0:1.510\nSome Body\nOK. Yeah.",
         "0:0:3.270 --> 0:0:4.250\nJames Bond\nUmm.",
+        "saved-by  Dennis Forsythe",
     ]
-    assert all(element.category == "UncategorizedText" for element in elements)
+    assert [e.category for e in elements] == ["UncategorizedText", "UncategorizedText", "Table"]
 
 
 def test_partition_docx_from_filename(

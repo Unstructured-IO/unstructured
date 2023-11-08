@@ -156,6 +156,21 @@ class DiscordSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     def initialize(self):
         pass
 
+    @requires_dependencies(dependencies=["discord"], extras="discord")
+    def check_connection(self):
+        import asyncio
+
+        import discord
+        from discord.client import Client
+
+        intents = discord.Intents.default()
+        try:
+            client = Client(intents=intents)
+            asyncio.run(client.start(token=self.connector_config.token))
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
+
     def get_ingest_docs(self):
         return [
             DiscordIngestDoc(

@@ -18,9 +18,9 @@ from unstructured.ingest.logger import logger
 @dataclass
 class SimpleGitConfig(BaseConnectorConfig):
     url: str
-    access_token: t.Optional[str]
-    branch: t.Optional[str]
-    file_glob: t.Optional[str]
+    access_token: t.Optional[str] = None
+    branch: t.Optional[str] = None
+    file_glob: t.Optional[str] = None
     repo_path: str = field(init=False, repr=False)
 
 
@@ -74,6 +74,9 @@ class GitSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleGitConfig
 
     def initialize(self):
+        pass
+
+    def check_connection(self):
         pass
 
     def is_file_type_supported(self, path: str) -> bool:

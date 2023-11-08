@@ -99,7 +99,7 @@ importlib-metadata==6.8.0
     #   jupyterlab
     #   jupyterlab-server
     #   nbconvert
-importlib-resources==6.1.0
+importlib-resources==6.1.1
     # via
     #   jsonschema
     #   jsonschema-specifications
@@ -196,7 +196,7 @@ matplotlib-inline==0.1.6
     #   ipython
 mistune==3.0.2
     # via nbconvert
-nbclient==0.8.0
+nbclient==0.9.0
     # via nbconvert
 nbconvert==7.11.0
     # via
