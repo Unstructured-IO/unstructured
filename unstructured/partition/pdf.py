@@ -183,6 +183,7 @@ def extractable_elements(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
     include_page_breaks: bool = False,
+    languages: List[str] = None,
     metadata_last_modified: Optional[str] = None,
     **kwargs: Any,
 ):
@@ -192,6 +193,7 @@ def extractable_elements(
         filename=filename,
         file=file,
         include_page_breaks=include_page_breaks,
+        languages=languages,
         metadata_last_modified=metadata_last_modified,
         **kwargs,
     )
@@ -247,16 +249,14 @@ def partition_pdf_or_image(
         )
         != "ocr_only"
     ):
-        # `languages` needs to be passed down to the creation of element.metadata
-        kwargs["languages"] = languages
         extracted_elements = extractable_elements(
             filename=filename,
             file=spooled_to_bytes_io_if_needed(file),
             include_page_breaks=include_page_breaks,
+            languages=languages,
             metadata_last_modified=metadata_last_modified or last_modification_date,
             **kwargs,
         )
-        kwargs.pop("languages")
         pdf_text_extractable = any(
             isinstance(el, Text) and el.text.strip() for el in extracted_elements
         )
@@ -463,6 +463,7 @@ def _partition_pdf_with_pdfminer(
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
+    languages: List[str] = None,
     **kwargs: Any,
 ) -> List[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
@@ -481,6 +482,7 @@ def _partition_pdf_with_pdfminer(
                 fp=fp,
                 filename=filename,
                 include_page_breaks=include_page_breaks,
+                languages=languages,
                 metadata_last_modified=metadata_last_modified,
                 **kwargs,
             )
@@ -491,6 +493,7 @@ def _partition_pdf_with_pdfminer(
             fp=fp,
             filename=filename,
             include_page_breaks=include_page_breaks,
+            languages=languages,
             metadata_last_modified=metadata_last_modified,
             **kwargs,
         )
@@ -521,6 +524,7 @@ def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str = "",
     include_page_breaks: bool = False,
+    languages: List[str] = None,
     metadata_last_modified: Optional[str] = None,
     sort_mode: str = SORT_MODE_XY_CUT,
     **kwargs,
@@ -598,7 +602,6 @@ def _process_pdfminer_pages(
                                     ),
                                 },
                             )
-                    languages = kwargs.get("languages")
                     element.metadata = ElementMetadata(
                         filename=filename,
                         page_number=i + 1,
