@@ -27,6 +27,7 @@ def aggregate_cct_data_by_doctype(results_dir: str):
 
 @main.command()
 @click.option("--output_dir", type=str, help="Directory to structured output.")
+@click.option("--source_dir", type=str, help="Directory to source.")
 @click.option(
     "--output_list",
     type=str,
@@ -34,7 +35,6 @@ def aggregate_cct_data_by_doctype(results_dir: str):
     help="Optional: list of selected structured output file names under the \
         directory to be evaluate. If none, all files under directory will be use.",
 )
-@click.option("--source_dir", type=str, help="Directory to source.")
 @click.option(
     "--source_list",
     type=str,
