@@ -113,12 +113,14 @@ class Describe_DocxPartitioner:
 
 
 def test_parition_docx_from_team_chat():
+    """Docx with no sections partitions recognizing both paragraphs and tables."""
     elements = cast(List[Text], partition_docx(example_doc_path("teams_chat.docx")))
-    assert [element.text for element in elements] == [
+    assert [e.text for e in elements] == [
         "0:0:0.0 --> 0:0:1.510\nSome Body\nOK. Yeah.",
         "0:0:3.270 --> 0:0:4.250\nJames Bond\nUmm.",
+        "saved-by  Dennis Forsythe",
     ]
-    assert all(element.category == "UncategorizedText" for element in elements)
+    assert [e.category for e in elements] == ["UncategorizedText", "UncategorizedText", "Table"]
 
 
 def test_partition_docx_from_filename(
