@@ -47,7 +47,7 @@ class ENVConfig:
     @property
     def TESSERACT_TEXT_HEIGHT_QUANTILE(self) -> float:
         """the quantile to check for text height"""
-        return self._get_float("TESSERACT_TEXT_HEIGHT_QUANTILE", 0.2)
+        return self._get_float("TESSERACT_TEXT_HEIGHT_QUANTILE", 0.5)
 
     @property
     def TESSERACT_MIN_TEXT_HEIGHT(self) -> int:
@@ -56,7 +56,7 @@ class ENVConfig:
         if estimated text height from tesseract OCR results is lower than this value the image is
         scaled up to be processed again
         """
-        return self._get_int("TESSERACT_MIN_TEXT_HEIGHT", 14)
+        return self._get_int("TESSERACT_MIN_TEXT_HEIGHT", 12)
 
     @property
     def TESSERACT_MAX_TEXT_HEIGHT(self) -> int:
@@ -71,14 +71,6 @@ class ENVConfig:
     def TESSERACT_OPTIMUM_TEXT_HEIGHT(self) -> int:
         """optimum text height for tesseract OCR"""
         return self._get_int("TESSERACT_OPTIMUM_TEXT_HEIGHT", 20)
-
-
-    @property
-    def TABLE_TOKEN_ERROR_MARGIN(self) -> float:
-        """error margin when comparing if a ocr region is within the table element when preparing
-        table tokens
-        """
-        return self._get_float("TABLE_TOKEN_ERROR_MARGIN", 0.0)
 
     @property
     def OCR_AGENT(self) -> str:

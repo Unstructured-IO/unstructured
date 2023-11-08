@@ -228,16 +228,8 @@ def supplement_page_layout_with_ocr(
     # Note(yuming): use the OCR data from entire page OCR for table extraction
     if infer_table_structure:
         table_agent = init_table_agent()
-        if ocr_layout is None:
-            # Note(yuming): ocr_layout is None for individual_blocks ocr_mode
-            ocr_layout = get_ocr_layout_from_image(
-                image,
-                ocr_languages=ocr_languages,
-                ocr_agent=ocr_agent,
-            )
         page_layout.elements[:] = supplement_element_with_table_extraction(
             elements=cast(List[LayoutElement], page_layout.elements),
-            ocr_layout=ocr_layout,
             image=image,
             table_agent=table_agent,
         )
@@ -247,7 +239,6 @@ def supplement_page_layout_with_ocr(
 
 def supplement_element_with_table_extraction(
     elements: List[LayoutElement],
-    ocr_layout: List[TextRegion],
     image: PILImage,
     table_agent: "UnstructuredTableTransformerModel",
 ) -> List[LayoutElement]:
@@ -267,59 +258,28 @@ def supplement_element_with_table_extraction(
                     padded_element.bbox.y2,
                 ),
             )
-            table_tokens = get_table_tokens_per_element(
-                padded_element,
-                ocr_layout,
-            )
+            table_tokens = get_table_tokens(cropped_image)
             element.text_as_html = table_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
 
 
-def get_table_tokens_per_element(
-    table_element: LayoutElement,
-    ocr_layout: List[TextRegion],
-) -> List[Dict]:
-    """
-    Extract and prepare table tokens within the specified table element
-    based on the OCR layout of an entire image.
+def get_table_tokens(image: PILImage) -> List[Dict]:
+    """Get OCR tokens from either paddleocr or tesseract"""
 
-    Parameters:
-    - table_element (LayoutElement): The table element for which table tokens
-      should be extracted. It typically represents the bounding box of the table.
-    - ocr_layout (List[TextRegion]): A list of TextRegion objects representing
-      the OCR layout of the entire image.
-
-    Returns:
-    - List[Dict]: A list of dictionaries, each containing information about a table
-      token within the specified table element. Each dictionary includes the
-      following fields:
-        - 'bbox': A list of four coordinates [x1, y1, x2, y2]
-                    relative to the table element's bounding box.
-        - 'text': The text content of the table token.
-        - 'span_num': (Optional) The span number of the table token.
-        - 'line_num': (Optional) The line number of the table token.
-        - 'block_num': (Optional) The block number of the table token.
-    """
-    # TODO(yuming): update table_tokens from List[Dict] to List[TABLE_TOKEN]
-    # where TABLE_TOKEN will be a data class defined in unstructured-inference
+    ocr_layout = get_ocr_layout_from_image(image)
     table_tokens = []
     for ocr_region in ocr_layout:
-        if ocr_region.bbox.is_in(
-            table_element.bbox,
-            error_margin=env_config.TABLE_TOKEN_ERROR_MARGIN,
-        ):
-            table_tokens.append(
-                {
-                    "bbox": [
-                        # token bound box is relative to table element
-                        ocr_region.bbox.x1 - table_element.bbox.x1,
-                        ocr_region.bbox.y1 - table_element.bbox.y1,
-                        ocr_region.bbox.x2 - table_element.bbox.x1,
-                        ocr_region.bbox.y2 - table_element.bbox.y1,
-                    ],
-                    "text": ocr_region.text,
-                },
-            )
+        table_tokens.append(
+            {
+                "bbox": [
+                    ocr_region.bbox.x1,
+                    ocr_region.bbox.y1,
+                    ocr_region.bbox.x2,
+                    ocr_region.bbox.y2,
+                ],
+                "text": ocr_region.text,
+            }
+        )
 
     # 'table_tokens' is a list of tokens
     # Need to be in a relative reading order
