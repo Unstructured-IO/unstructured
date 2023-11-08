@@ -10,7 +10,7 @@ OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
-DESTINATION_GCS="gs://utic-test-ingest-fixtures-output/$(date +%s)"
+DESTINATION_GCS="gs://utic-test-ingest-fixtures-output/$(uuidgen)"
 CI=${CI:-"false"}
 
 if [ -z "$GCP_INGEST_SERVICE_KEY" ]; then

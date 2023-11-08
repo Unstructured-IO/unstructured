@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html
 import io
 import itertools
 import os
@@ -29,6 +30,7 @@ from docx.oxml.text.paragraph import CT_P
 from docx.oxml.xmlchemy import BaseOxmlElement
 from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
+from docx.table import _Cell, _Row
 from docx.text.hyperlink import Hyperlink
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
@@ -231,12 +233,16 @@ class _DocxPartitioner:
 
     def __init__(
         self,
-        filename: Optional[str],
-        file: Optional[IO[bytes]],
-        metadata_filename: Optional[str],
-        include_page_breaks: bool,
-        infer_table_structure: bool,
-        metadata_last_modified: Optional[str],
+        # -- NOTE(scanny): default values here are unnecessary for production use because
+        # -- `.iter_document_elements()` is the only interface method and always calls with all
+        # -- args. However, providing defaults eases unit-testing and decouples unit-tests from
+        # -- future changes to args.
+        filename: Optional[str] = None,
+        file: Optional[IO[bytes]] = None,
+        metadata_filename: Optional[str] = None,
+        include_page_breaks: bool = True,
+        infer_table_structure: bool = True,
+        metadata_last_modified: Optional[str] = None,
     ) -> None:
         self._filename = filename
         self._file = file
@@ -302,8 +308,7 @@ class _DocxPartitioner:
 
             yield from self._iter_section_footers(section)
 
-    @staticmethod
-    def _convert_table_to_html(table: DocxTable) -> str:
+    def _convert_table_to_html(self, table: DocxTable, is_nested: bool = False) -> str:
         """HTML string version of `table`.
 
         Example:
@@ -317,15 +322,35 @@ class _DocxPartitioner:
             </tbody>
             </table>
 
+        `is_nested` is used for recursive calls when a nested table is encountered. Certain
+        behaviors are different in that case, but the caller can safely ignore that parameter and
+        allow it to take its default value.
         """
+
+        def iter_cell_block_items(cell: _Cell) -> Iterator[str]:
+            for block_item in cell.iter_inner_content():
+                if isinstance(block_item, Paragraph):
+                    # -- all docx content is ultimately in a paragraph; a nested table contributes
+                    # -- structure only
+                    yield f"{html.escape(block_item.text)}"
+                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                    block_item, DocxTable
+                ):
+                    yield self._convert_table_to_html(block_item, is_nested=True)
+
+        def iter_cells(row: _Row) -> Iterator[str]:
+            return ("\n".join(iter_cell_block_items(cell)) for cell in row.cells)
+
         return tabulate(
-            [[cell.text for cell in row.cells] for row in table.rows],
-            headers="firstrow",
-            tablefmt="html",
+            [list(iter_cells(row)) for row in table.rows],
+            headers=[] if is_nested else "firstrow",
+            # -- tabulate isn't really designed for recursive tables so we have to do any
+            # -- HTML-escaping for ourselves. `unsafehtml` disables tabulate html-escaping of cell
+            # -- contents.
+            tablefmt="unsafehtml",
         )
 
-    @staticmethod
-    def _convert_table_to_plain_text(table: DocxTable) -> str:
+    def _convert_table_to_plain_text(self, table: DocxTable) -> str:
         """Plain-text version of `table`.
 
         Each row appears on its own line. Cells in a column are aligned using spaces as padding:
@@ -335,14 +360,21 @@ class _DocxPartitioner:
             eggs      451
             bacon       0
 
-        The first row is unconditionally considered column headings, although the column headings
-        row is not differentiated in this format.
         """
-        return tabulate(
-            [[cell.text for cell in row.cells] for row in table.rows],
-            headers="firstrow",
-            tablefmt="plain",
-        )
+
+        def iter_cell_block_items(cell: _Cell) -> Iterator[str]:
+            for block_item in cell.iter_inner_content():
+                if isinstance(block_item, Paragraph):
+                    yield block_item.text
+                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                    block_item, DocxTable
+                ):
+                    yield self._convert_table_to_plain_text(block_item)
+
+        def iter_cells(row: _Row) -> Iterator[str]:
+            return ("\n".join(iter_cell_block_items(cell)) for cell in row.cells)
+
+        return tabulate([list(iter_cells(row)) for row in table.rows], tablefmt="plain")
 
     @lazyproperty
     def _document(self) -> Document:
@@ -576,10 +608,8 @@ class _DocxPartitioner:
     def _iter_table_element(self, table: DocxTable) -> Iterator[Table]:
         """Generate zero-or-one Table element for a DOCX `w:tbl` XML element."""
         # -- at present, we always generate exactly one Table element, but we might want
-        # -- to skip, for example, an empty table, or accommodate nested tables.
-        html_table = None
-        if self._infer_table_structure:
-            html_table = self._convert_table_to_html(table)
+        # -- to skip, for example, an empty table.
+        html_table = self._convert_table_to_html(table) if self._infer_table_structure else None
         text_table = self._convert_table_to_plain_text(table)
         emphasized_text_contents, emphasized_text_tags = self._table_emphasis(table)
 

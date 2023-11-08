@@ -17,7 +17,8 @@ from unstructured.ingest.connector.fsspec import (
     FsspecSourceConnector,
     SimpleFsspecConfig,
 )
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
+from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 
@@ -57,6 +58,16 @@ class BoxIngestDoc(FsspecIngestDoc):
 class BoxSourceConnector(FsspecSourceConnector):
     connector_config: SimpleBoxConfig
 
+    @requires_dependencies(["boxfs"], extras="box")
+    def check_connection(self):
+        from boxfs import BoxFileSystem
+
+        try:
+            BoxFileSystem(**self.connector_config.access_kwargs)
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
+
     def __post_init__(self):
         self.ingest_doc_cls: t.Type[BoxIngestDoc] = BoxIngestDoc
 
@@ -65,3 +76,13 @@ class BoxSourceConnector(FsspecSourceConnector):
 @dataclass
 class BoxDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleBoxConfig
+
+    @requires_dependencies(["boxfs"], extras="box")
+    def check_connection(self):
+        from boxfs import BoxFileSystem
+
+        try:
+            BoxFileSystem(**self.connector_config.access_kwargs)
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
