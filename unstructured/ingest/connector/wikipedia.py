@@ -177,6 +177,19 @@ class WikipediaSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector)
     def initialize(self):
         pass
 
+    @requires_dependencies(["wikipedia"], extras="wikipedia")
+    def check_connection(self):
+        import wikipedia
+
+        try:
+            wikipedia.page(
+                self.connector_config.title,
+                auto_suggest=self.connector_config.auto_suggest,
+            )
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
+
     def get_ingest_docs(self):
         return [
             WikipediaIngestTextDoc(
