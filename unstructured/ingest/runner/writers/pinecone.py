@@ -8,6 +8,7 @@ def pinecone_writer(
     index_name: str,
     environment: str,
     batch_size: int,
+    num_processes: int,
     **kwargs,
 ) -> BaseDestinationConnector:
     from unstructured.ingest.connector.pinecone import (
@@ -23,6 +24,10 @@ def pinecone_writer(
             environment=environment,
         ),
         write_config=PineconeWriteConfig(
-            api_key=api_key, index_name=index_name, environment=environment, batch_size=batch_size
+            api_key=api_key,
+            index_name=index_name,
+            environment=environment,
+            batch_size=batch_size,
+            num_processes=num_processes,
         ),
     )

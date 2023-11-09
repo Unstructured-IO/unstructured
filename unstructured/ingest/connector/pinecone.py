@@ -29,6 +29,7 @@ class PineconeWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixi
     index_name: str
     environment: str
     batch_size: str
+    num_processes: int
 
     @DestinationConnectionError.wrap
     @requires_dependencies(["pinecone"], extras="pinecone")
@@ -76,23 +77,19 @@ class PineconeDestinationConnector(BaseDestinationConnector):
 
     def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
-            f"Inserting / updating {len(dict_list)} documents to destination "
+            f"Upserting {len(dict_list)} elements to destination "
             f"index at {self.connector_config.index_name}",
         )
 
-        # this is advised to be 100 at maximum in pinecone docs, however when we
-        # chunk content, we hit to the object size limits, so we decrease the batch
-        # size even more here
         pinecone_batch_size = self.write_config.batch_size
 
-        num_processes = 1
-        if num_processes == 1:
+        if self.write_config.num_processes == 1:
             for i in range(0, len(dict_list), pinecone_batch_size):
                 self.write_config.upsert_batch(dict_list[i : i + pinecone_batch_size])  # noqa: E203
 
         else:
             with mp.Pool(
-                processes=num_processes,
+                processes=self.write_config.num_processes,
             ) as pool:
                 pool.map(
                     self.write_config.upsert_batch,

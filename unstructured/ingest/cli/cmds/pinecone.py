@@ -15,6 +15,7 @@ class PineconeCliWriteConfig(BaseConfig, CliMixin):
     index_name: str
     environment: str
     batch_size: int
+    num_processes: int
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
@@ -44,6 +45,12 @@ class PineconeCliWriteConfig(BaseConfig, CliMixin):
                 default=50,
                 type=int,
                 help="Number of records per batch",
+            ),
+            click.Option(
+                ["--num-processes"],
+                default=2,
+                type=int,
+                help="Number of parallel processes with which to upload elements",
             ),
         ]
         return options
