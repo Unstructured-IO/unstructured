@@ -25,7 +25,7 @@ class ChromaSessionHandle(BaseSessionHandle):
 
 @dataclass
 class ChromaWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixin, WriteConfig):
-    client: str
+    client: str # RENAME CLIENT
     collection_name: str
     # api_key: str
     # index_name: str
@@ -34,11 +34,14 @@ class ChromaWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixin,
     # with the bug, session handle gets created for each batch,
     # rather than with each process
 
+    @DestinationConnectionError.wrap
     @requires_dependencies(["chromadb"], extras="chroma")
     def create_chroma_object(self, client, collection_name): #api_key, index_name, environment): # maybe chroma client?
         import chromadb
 
         chroma_client = chromadb.PersistentClient(path=client)
+        print("** getting client **")
+        print(chroma_client)
         collection = chroma_client.get_or_create_collection(name=collection_name)
 
         # chroma.init(api_key=api_key, environment=environment)
@@ -46,20 +49,23 @@ class ChromaWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixin,
         # logger.debug(f"Connected to index: {pinecone.describe_index(index_name)}")
         return collection
 
-    # def create_session_handle(self) -> PineconeSessionHandle:
-    #     service = self.create_pinecone_object(self.api_key, self.index_name, self.environment)
-    #     return PineconeSessionHandle(service=service)
+    def create_session_handle(self) -> ChromaSessionHandle:
+        service = self.create_chroma_object(self.client, self.collection_name)
+        return ChromaSessionHandle(service=service)
 
     @requires_dependencies(["chromadb"], extras="chroma")
     def upsert_batch(self, batch):
         # import pinecone.core.client.exceptions
 
-        # index = self.session_handle.service
+        collection = self.session_handle.service
+        print(collection)
+
         # try:
         #     response = index.upsert(batch)
         # except pinecone.core.client.exceptions.ApiException as api_error:
         #     raise WriteError(f"http error: {api_error}") from api_error
-        collection = self.create_chroma_object(self.client, self.collection_name)
+
+        # collection = self.create_chroma_object(self.client, self.collection_name)
         try:
             # Chroma wants lists even if there is only one element
             response = collection.add(ids=[batch["ids"]], documents=[batch["documents"]], embeddings=[batch["embeddings"]], metadatas=[batch["metadatas"]])

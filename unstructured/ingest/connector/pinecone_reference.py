@@ -14,6 +14,7 @@ from unstructured.ingest.interfaces import (
     WriteConfigSessionHandleMixin,
 )
 from unstructured.ingest.logger import logger
+from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 
@@ -27,10 +28,9 @@ class PineconeWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixi
     api_key: str
     index_name: str
     environment: str
-    # todo: fix buggy session handle implementation
-    # with the bug, session handle gets created for each batch,
-    # rather than with each process
+    batch_size: str
 
+    @DestinationConnectionError.wrap
     @requires_dependencies(["pinecone"], extras="pinecone")
     def create_pinecone_object(self, api_key, index_name, environment):
         import pinecone
@@ -47,10 +47,6 @@ class PineconeWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixi
     @requires_dependencies(["pinecone"], extras="pinecone")
     def upsert_batch(self, batch):
         import pinecone.core.client.exceptions
-
-        breakpoint()
-
-        # Here is where it upserts the batch!!!!!
 
         index = self.session_handle.service
         try:
@@ -69,12 +65,13 @@ class SimplePineconeConfig(BaseConnectorConfig):
 
 @dataclass
 class PineconeDestinationConnector(BaseDestinationConnector):
-    write_config: WriteConfig
+    write_config: PineconeWriteConfig
     connector_config: SimplePineconeConfig
 
-    @DestinationConnectionError.wrap
-    @requires_dependencies(["pinecone"], extras="pinecone")
     def initialize(self):
+        pass
+
+    def check_connection(self):
         pass
 
     def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
@@ -83,14 +80,10 @@ class PineconeDestinationConnector(BaseDestinationConnector):
             f"index at {self.connector_config.index_name}",
         )
 
-
-        # Chroma does not lock the database between clients, each client maintains its own locking structure, so these clients can overwrite each other.
-        # Solution: Don't use multiple Ephemeral or Persistent clients at the same time. Create one client and use it for all your operations.
-
         # this is advised to be 100 at maximum in pinecone docs, however when we
         # chunk content, we hit to the object size limits, so we decrease the batch
         # size even more here
-        pinecone_batch_size = 10
+        pinecone_batch_size = self.write_config.batch_size
 
         num_processes = 1
         if num_processes == 1:
@@ -116,19 +109,15 @@ class PineconeDestinationConnector(BaseDestinationConnector):
             with open(local_path) as json_file:
                 dict_content = json.load(json_file)
 
-                breakpoint()
-
-
-                # this is where we break the document down.!!!
-                # I will need to flatten dictionary
-
-                # assign element_id and embeddings to "id" and "values"
-                # assign everything else to "metadata" field
+                # assign element_id to "id", embeddings to "values", and other fields to "metadata"
                 dict_content = [
                     {
                         "id": element.pop("element_id", None),
                         "values": element.pop("embeddings", None),
-                        "metadata": {k: json.dumps(v) for k, v in element.items()},
+                        "metadata": {
+                            k: (json.dumps(v) if isinstance(v, list) else v)
+                            for k, v in flatten_dict(element["metadata"], separator="-").items()
+                        },
                     }
                     for element in dict_content
                 ]
