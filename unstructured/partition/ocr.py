@@ -22,6 +22,7 @@ from unstructured_inference.inference.layoutelement import (
 from unstructured_inference.models.tables import UnstructuredTableTransformerModel
 from unstructured_pytesseract import Output
 
+from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
@@ -256,7 +257,7 @@ def supplement_element_with_table_extraction(
     the table's text content is rendered into an html string.
     """
     for element in elements:
-        if element.type == "Table":
+        if element.type == ElementType.TABLE:
             padding = env_config.TABLE_IMAGE_CROP_PAD
             padded_element = pad_element_bboxes(element, padding=padding)
             cropped_image = image.crop(
@@ -368,7 +369,9 @@ def get_layout_elements_from_ocr(
         # and merging steps are not necessary.
 
         layout_elements = [
-            LayoutElement(bbox=r.bbox, text=r.text, source=r.source, type="UncategorizedText")
+            LayoutElement(
+                bbox=r.bbox, text=r.text, source=r.source, type=ElementType.UNCATEGORIZED_TEXT
+            )
             for r in ocr_regions
         ]
     else:
@@ -762,7 +765,9 @@ def get_elements_from_ocr_regions(
 
     merged_regions = [merge_text_regions(group) for group in grouped_regions]
     return [
-        LayoutElement(text=r.text, source=r.source, type="UncategorizedText", bbox=r.bbox)
+        LayoutElement(
+            text=r.text, source=r.source, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox
+        )
         for r in merged_regions
     ]
 

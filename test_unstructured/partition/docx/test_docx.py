@@ -15,6 +15,7 @@ from unstructured.documents.elements import (
     Address,
     CompositeElement,
     Element,
+    ElementType,
     Footer,
     Header,
     ListItem,
@@ -120,7 +121,11 @@ def test_parition_docx_from_team_chat():
         "0:0:3.270 --> 0:0:4.250\nJames Bond\nUmm.",
         "saved-by  Dennis Forsythe",
     ]
-    assert [e.category for e in elements] == ["UncategorizedText", "UncategorizedText", "Table"]
+    assert [e.category for e in elements] == [
+        ElementType.UNCATEGORIZED_TEXT,
+        ElementType.UNCATEGORIZED_TEXT,
+        ElementType.TABLE,
+    ]
 
 
 def test_partition_docx_from_filename(
