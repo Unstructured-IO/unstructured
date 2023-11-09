@@ -10,6 +10,7 @@ from unstructured_inference.inference.layoutelement import (
     LayoutElement,
 )
 
+from unstructured.documents.elements import ElementType
 from unstructured.partition import ocr
 from unstructured.partition.ocr import pad_element_bboxes
 from unstructured.partition.utils.constants import (
@@ -248,7 +249,7 @@ def test_get_elements_from_ocr_regions(mock_embedded_text_regions):
             x2=1256.334784222222,
             y2=406.9837855555556,
             text="LayoutParser: A Unified Toolkit for Deep Learning Based Document Image",
-            type="UncategorizedText",
+            type=ElementType.UNCATEGORIZED_TEXT,
         ),
     ]
 
@@ -271,7 +272,7 @@ def test_zoom_image(zoom):
 @pytest.fixture()
 def mock_layout(mock_embedded_text_regions):
     return [
-        LayoutElement(text=r.text, type="UncategorizedText", bbox=r.bbox)
+        LayoutElement(text=r.text, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
         for r in mock_embedded_text_regions
     ]
 
@@ -354,7 +355,7 @@ def mock_embedded_text_regions():
 
 def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
     ocr_elements = [
-        LayoutElement(text=r.text, source=None, type="UncategorizedText", bbox=r.bbox)
+        LayoutElement(text=r.text, source=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
         for r in mock_ocr_regions
     ]
 
@@ -379,7 +380,7 @@ def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
 
 def test_merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions):
     ocr_elements = [
-        LayoutElement(text=r.text, source=None, type="UncategorizedText", bbox=r.bbox)
+        LayoutElement(text=r.text, source=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
         for r in mock_ocr_regions
     ]
 
@@ -410,7 +411,7 @@ def test_pad_element_bboxes(padding, expected_bbox):
         y2=40,
         text="",
         source=None,
-        type="UncategorizedText",
+        type=ElementType.UNCATEGORIZED_TEXT,
     )
     expected_original_element_bbox = (10, 20, 30, 40)
 

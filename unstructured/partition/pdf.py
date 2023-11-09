@@ -45,6 +45,7 @@ from unstructured.documents.elements import (
     CoordinatesMetadata,
     Element,
     ElementMetadata,
+    ElementType,
     Image,
     Link,
     ListItem,
@@ -290,7 +291,7 @@ def partition_pdf_or_image(
             )
             layout_elements = []
             for el in _layout_elements:
-                if hasattr(el, "category") and el.category == "UncategorizedText":
+                if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
                     new_el = element_from_text(cast(Text, el).text)
                     new_el.metadata = el.metadata
                 else:
@@ -315,7 +316,7 @@ def partition_pdf_or_image(
 
             layout_elements = []
             for el in _layout_elements:
-                if hasattr(el, "category") and el.category == "UncategorizedText":
+                if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
                     new_el = element_from_text(cast(Text, el).text)
                     new_el.metadata = el.metadata
                 else:
