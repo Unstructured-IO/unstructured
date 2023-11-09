@@ -11,14 +11,14 @@ from unstructured.ingest.interfaces import BaseConfig
 
 @dataclass
 class ChromaCliWriteConfig(BaseConfig, CliMixin):
-    client: str
+    db_path: str
     collection_name: str
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--client"], #### Could be endpoint?
+                ["--db-path"],
                 required=True,
                 type=str,
                 help="Location where Chroma is persisted.",

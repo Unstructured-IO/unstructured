@@ -25,7 +25,7 @@ class ChromaSessionHandle(BaseSessionHandle):
 
 @dataclass
 class ChromaWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixin, WriteConfig):
-    client: str # RENAME CLIENT
+    db_path: str # RENAME CLIENT
     collection_name: str
     # api_key: str
     # index_name: str
@@ -36,10 +36,10 @@ class ChromaWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixin,
 
     @DestinationConnectionError.wrap
     @requires_dependencies(["chromadb"], extras="chroma")
-    def create_chroma_object(self, client, collection_name): #api_key, index_name, environment): # maybe chroma client?
+    def create_chroma_object(self, db_path, collection_name): #api_key, index_name, environment): # maybe chroma client?
         import chromadb
 
-        chroma_client = chromadb.PersistentClient(path=client)
+        chroma_client = chromadb.PersistentClient(path=db_path)
         print("** getting client **")
         print(chroma_client)
         collection = chroma_client.get_or_create_collection(name=collection_name)
@@ -50,7 +50,7 @@ class ChromaWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixin,
         return collection
 
     def create_session_handle(self) -> ChromaSessionHandle:
-        service = self.create_chroma_object(self.client, self.collection_name)
+        service = self.create_chroma_object(self.db_path, self.collection_name)
         return ChromaSessionHandle(service=service)
 
     @requires_dependencies(["chromadb"], extras="chroma")
@@ -79,7 +79,7 @@ class SimpleChromaConfig(BaseConnectorConfig):
     # api_key: str
     # index_name: str
     # environment: str
-    client: str
+    db_path: str
     collection_name: str
 
 
@@ -106,23 +106,24 @@ class ChromaDestinationConnector(BaseDestinationConnector):
         #THIS IS THE REAL WRITE SPOT. We are not sub batching.
         # pinecone_batch_size = 10
 
-        # num_processes = 1
-        # if num_processes == 1:
-        for i in range(0, len(dict_list)):
-            # breakpoint()
-            self.write_config.upsert_batch(dict_list[i])  
+        num_processes = 1
+        if num_processes == 1:
+            for i in range(0, len(dict_list)):
+                # breakpoint()
+                self.write_config.upsert_batch(dict_list[i])  
 
-        # else:
-        #     with mp.Pool(
-        #         processes=num_processes,
-        #     ) as pool:
-        #         pool.map(
-        #             self.write_config.upsert_batch,
-        #             [
-        #                 dict_list[i : i + pinecone_batch_size]  # noqa: E203
-        #                 for i in range(0, len(dict_list), pinecone_batch_size)
-        #             ],  # noqa: E203
-        #         )
+        else:
+            print("%%%%%%%%%%%%% Multiprocessing %%%%%%%%%%%%%%")
+            with mp.Pool(
+                processes=num_processes,
+            ) as pool:
+                pool.map(
+                    self.write_config.upsert_batch,
+                    [
+                        dict_list[i]  # noqa: E203
+                        for i in range(0, len(dict_list))
+                    ],  # noqa: E203
+                )
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         dict_list: t.List[t.Dict[str, t.Any]] = []

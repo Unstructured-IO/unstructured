@@ -3,12 +3,12 @@ import chromadb
 
 
 @click.command()
-@click.option("--client", type=str)
+@click.option("--db-path", type=str)
 @click.option("--collection-name", type=str)
-def run_check(client, collection_name):
+def run_check(db_path, collection_name):
     print(f"Checking contents of Chroma collection: {collection_name}")
 
-    chroma_client = chromadb.PersistentClient(path=client)
+    chroma_client = chromadb.PersistentClient(path=db_path)
 
     collection = chroma_client.get_or_create_collection(name=collection_name)
 
@@ -24,7 +24,7 @@ def run_check(client, collection_name):
     )
 
     print("Table check complete")
-    
+
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@ def chroma_writer(
     # api_key: str,
     # index_name: str,
     # environment: str,
-    client: str,
+    db_path: str,
     collection_name: str,
     **kwargs,
 ) -> BaseDestinationConnector:
@@ -22,14 +22,14 @@ def chroma_writer(
             # api_key=api_key,
             # index_name=index_name,
             # environment=environment,
-            client=client,
+            db_path=db_path,
             collection_name=collection_name,
         ),
         write_config=ChromaWriteConfig(
             # api_key=api_key,
             # index_name=index_name,
             # environment=environment,
-            client=client,
+            db_path=db_path,
             collection_name=collection_name,
         ),
     )

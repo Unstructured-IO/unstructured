@@ -9,7 +9,7 @@ OUTPUT_FOLDER_NAME=chroma-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
-DESTINATION_CLIENT=$SCRIPT_DIR/chroma-dest
+DESTINATION_PATH=$SCRIPT_DIR/chroma-dest
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 CI=${CI:-"false"}o
 
@@ -20,7 +20,7 @@ COLLECTION_NAME="chroma-test-output-$(date +%s)"
 source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
-  cleanup_dir "$DESTINATION_CLIENT"
+  cleanup_dir "$DESTINATION_PATH"
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
   if [ "$CI" == "true" ]; then
@@ -36,15 +36,14 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --output-dir "$OUTPUT_DIR" \
     --strategy fast \
     --verbose \
-    --reprocess \
     --input-path example-docs/multiple-docs \
     --work-dir "$WORK_DIR" \
     --chunk-elements \
     --chunk-multipage-sections \
     --embedding-provider "langchain-huggingface" \
     chroma \
-    --client "$DESTINATION_CLIENT" \
+    --db-path "$DESTINATION_PATH" \
     --collection-name "$COLLECTION_NAME"
 
-python "$SCRIPT_DIR"/python/test-ingest-chroma-output.py --client "$DESTINATION_CLIENT" --collection-name "$COLLECTION_NAME"
+python "$SCRIPT_DIR"/python/test-ingest-chroma-output.py --db-path "$DESTINATION_PATH" --collection-name "$COLLECTION_NAME"
 
