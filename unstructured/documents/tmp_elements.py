@@ -1,27 +1,21 @@
 """Temporary test-bed for prototyping and review of a dynamic ElementMetadata object.
 
+- [ ] We may want to consider whether end-users should be able to add ad-hoc fields to "sub"
+      metadata objects too, like `DataSourceMetadata` and conceivably `CoordinatesMetadata`
+      (although I'm not immediately seeing a use-case for the second one).
+
+- [ ] Maybe we should store `None` for an ad-hoc field when the user purposely assigns that ... so
+      they can get a uniform value? That's complicated by JSON round-trip though because we'd have
+      to store `null` for that in JSON ... hmm.. maybe not do this.
+
+- [ ] We have no way to distinguish an ad-hoc field from any "noise" fields that might appear in a
+      JSON/dict be loaded by `.from_dict()`, so unlike the original (which only loaded
+      known-fields), we'll rehydrate anything that we find there.
+
 - [ ] .__eq__() ?
-
-- [ ] .from_dict()
-- [ ] .merge()
-
-merge creates a new ElementMetadata object where self is updated by _all populated fields_ in
-`other`. So you can give precedence both ways by switching the order, like:
-
-    self.metadata = self.metadata.merge(other_metadata)
-      OR
-    self.metadata = other_metadata.merge(self.metadata)
-
-The latter of these two is the current behavior and it mutates the instance `.merge()` is called on.
-It might be better named `update_empty_fields_from(other_metadata)` which is a little bit of a
-complicated and non-standard behavior. I'd be thinking a behavior like that of dict.update().
 
 
 Key Questions:
-
-1. Require registration of user-defined fields?
-  OR
-2. Risk typos in an assignment making it into production?
 
 - [ ] What is the behavior we want for "debug" fields?
     - always populate when assigned (can't really avoid that probably)
@@ -30,10 +24,6 @@ Key Questions:
     - what options do we want for setting these fields?:
         - debug fields are "registered" when a flag is set and so can be specified in a constructor.
         - debug fields are not registered but can be set by assignment like an end-user meta field.
-
-- Q: What about JSON-ification of things like dates? Do we want to add some custom serializers for
-     common types other than (str, bool, number)?
-  A: That is the responsibility of the "json-ifier", all we do here is convert to a dict.
 
 - [ ] Should flag be a constant? Wouldn't it be better to be an environment variable so you didn't
       need a source-code change to set/clear it?
@@ -44,8 +34,8 @@ Key Questions:
 - [ ] Debug fields are populated unconditionally, but are discarded at construction-time when a flag
       is not set.
 
-- There is no type-safety on ad-hoc fields but the type-checker does not complain because the type
-  of all ad-hoc fields is `Any`.
+- No real type-safety is possible on ad-hoc fields but the type-checker does not complain because
+  the type of all ad-hoc fields is `Any` (which is the best available behavior in my view).
 
 - Current implementation of `ElementMetadata.merge()` returns `self` such that `meta.merge()` can
   conveniently be used in an assignment statement like:
@@ -63,8 +53,9 @@ Key Questions:
 from __future__ import annotations
 
 import copy
-from typing import Any, Dict, FrozenSet
+from typing import Any, Dict, FrozenSet, List
 
+from unstructured.documents.elements import CoordinatesMetadata, DataSourceMetadata
 from unstructured.utils import lazyproperty
 
 
@@ -72,7 +63,10 @@ class ElementMetadata:
     """Fully-dynamic replacement for dataclass-based ElementMetadata."""
 
     category_depth: int | None
+    coordinates: CoordinatesMetadata | None = None
+    data_source: DataSourceMetadata | None
     file_directory: str | None
+    languages: List[str] | None
     page_number: int | None
     text_as_html: str | None
     url: str | None
@@ -80,13 +74,19 @@ class ElementMetadata:
     def __init__(
         self,
         category_depth: int | None = None,
+        coordinates: CoordinatesMetadata | None = None,
+        data_source: DataSourceMetadata | None = None,
         file_directory: str | None = None,
+        languages: List[str] | None = None,
         page_number: int | None = None,
         text_as_html: str | None = None,
         url: str | None = None,
     ) -> None:
         self.category_depth = category_depth
+        self.data_source = data_source
+        self.coordinates = coordinates
         self.file_directory = file_directory
+        self.languages = languages
         self.page_number = page_number
         self.text_as_html = text_as_html
         self.url = url
@@ -104,6 +104,26 @@ class ElementMetadata:
                 delattr(self, __name)
             return
         super().__setattr__(__name, __value)
+
+    @classmethod
+    def from_dict(cls, meta_dict: Dict[str, Any]) -> ElementMetadata:
+        """Construct from a metadata-dict.
+
+        This would generally be a dict formed using the `.to_dict()` method and stored as JSON
+        before "rehydrating" it using this method.
+        """
+        # -- avoid unexpected mutation by working on a copy of provided dict --
+        meta_dict = copy.deepcopy(meta_dict)
+        self = ElementMetadata()
+        for field_name, field_value in meta_dict.items():
+            if field_name == "coordinates":
+                self.coordinates = CoordinatesMetadata.from_dict(field_value)
+            elif field_name == "data_source":
+                self.data_source = DataSourceMetadata.from_dict(field_value)
+            else:
+                setattr(self, field_name, field_value)
+
+        return self
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert this metadata to dict form, suitable for JSON serialization.
@@ -128,8 +148,8 @@ class ElementMetadata:
         if not isinstance(other, ElementMetadata):  # pyright: ignore[reportUnnecessaryIsInstance]
             raise ValueError("argument to '.update()' must be an instance of 'ElementMetadata'")
 
-        for field_name, value in other.__dict__.items():
-            setattr(self, field_name, value)
+        for field_name, field_value in other.__dict__.items():
+            setattr(self, field_name, field_value)
 
     @lazyproperty
     def _known_fields(self) -> FrozenSet[str]:

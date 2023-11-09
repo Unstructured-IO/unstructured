@@ -48,7 +48,7 @@ class DataSourceMetadata:
         return {key: value for key, value in self.__dict__.items() if value is not None}
 
     @classmethod
-    def from_dict(cls, input_dict):
+    def from_dict(cls, input_dict: Dict[str, Any]):
         # Only use existing fields when constructing
         supported_fields = [f.name for f in dc.fields(cls)]
         args = {k: v for k, v in input_dict.items() if k in supported_fields}
@@ -91,7 +91,7 @@ class CoordinatesMetadata:
         }
 
     @classmethod
-    def from_dict(cls, input_dict):
+    def from_dict(cls, input_dict: Dict[str, Any]):
         # `input_dict` may contain a tuple of tuples or a list of lists
         def convert_to_tuple_of_tuples(sequence_of_sequences):
             subsequences = []
