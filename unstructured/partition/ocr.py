@@ -560,10 +560,8 @@ def parse_ocr_data_tesseract(ocr_data: pd.DataFrame, zoom: float = 1) -> List[Te
         if not text:
             continue
 
-        if not isinstance(text, str):
-            text = str(text)
+        cleaned_text = str(text) if not isinstance(text, str) else text.strip()
 
-        cleaned_text = text.strip()
         if cleaned_text:
             x1 = idtx.left / zoom
             y1 = idtx.top / zoom
