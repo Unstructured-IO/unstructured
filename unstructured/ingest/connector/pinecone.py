@@ -30,6 +30,7 @@ class PineconeWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixi
     environment: str
     batch_size: str
 
+    @DestinationConnectionError.wrap
     @requires_dependencies(["pinecone"], extras="pinecone")
     def create_pinecone_object(self, api_key, index_name, environment):
         import pinecone
@@ -67,9 +68,10 @@ class PineconeDestinationConnector(BaseDestinationConnector):
     write_config: PineconeWriteConfig
     connector_config: SimplePineconeConfig
 
-    @DestinationConnectionError.wrap
-    @requires_dependencies(["pinecone"], extras="pinecone")
     def initialize(self):
+        pass
+
+    def check_connection(self):
         pass
 
     def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
