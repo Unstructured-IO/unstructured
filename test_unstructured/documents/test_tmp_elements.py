@@ -7,6 +7,8 @@ import sys
 
 import pytest
 
+from unstructured.documents.coordinates import RelativeCoordinateSystem
+from unstructured.documents.elements import CoordinatesMetadata, DataSourceMetadata
 from unstructured.documents.tmp_elements import ElementMetadata
 
 
@@ -107,6 +109,62 @@ class DescribeElementMetadata:
             "text_as_html": "<table></table>",
             "url": "https://google.com",
         }
+
+    # -- It can deserialize itself from a dict ---------------------------------------------------
+
+    def it_can_deserialize_itself_from_a_dict(self):
+        meta_dict = {
+            "category_depth": 1,
+            "coefficient": 0.58,
+            "coordinates": {
+                "layout_height": 4,
+                "layout_width": 2,
+                "points": ((1, 2), (1, 4), (3, 4), (3, 2)),
+                "system": "RelativeCoordinateSystem",
+            },
+            "data_source": {
+                "url": "https:https://www.nih.gov/about-nih/who-we-are/nih-director",
+                "date_created": "2023-11-09",
+            },
+            "languages": ["eng"],
+        }
+
+        meta = ElementMetadata.from_dict(meta_dict)
+
+        # -- known fields present in dict are present in meta --
+        assert meta.category_depth == 1
+
+        # -- known sub-object fields present in dict are present in meta --
+        assert meta.coordinates == CoordinatesMetadata(
+            points=((1, 2), (1, 4), (3, 4), (3, 2)),
+            system=RelativeCoordinateSystem(),
+        )
+        assert meta.data_source == DataSourceMetadata(
+            url="https:https://www.nih.gov/about-nih/who-we-are/nih-director",
+            date_created="2023-11-09",
+        )
+
+        # -- known fields absent from dict report None but are not present in meta --
+        assert meta.file_directory is None
+        assert "file_directory" not in meta.__dict__
+
+        # -- non-known fields present in dict are present in meta (we have no way to tell whether
+        # -- they are "ad-hoc" or not because we lack indication of user-intent)
+        assert meta.coefficient == 0.58
+
+        # -- ad-hoc fields absent from dict raise on attempted access --
+        with pytest.raises(AttributeError, match="ntMetadata' object has no attribute 'quotient'"):
+            meta.quotient
+
+        # -- but that can be worked around by end-user --
+        assert (meta.quotient if hasattr(meta, "quotient") else None) is None
+
+        # -- mutating a mutable (collection) field does not affect the original value --
+        assert isinstance(meta.languages, list)
+        assert meta.languages == ["eng"]
+        meta.languages.append("spa")
+        assert meta.languages == ["eng", "spa"]
+        assert meta_dict["languages"] == ["eng"]
 
     # -- It allows downstream users to add an arbitrary new member by assignment. ----------------
 
