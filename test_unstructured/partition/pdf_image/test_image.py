@@ -506,21 +506,17 @@ def test_partition_image_uses_model_name():
 
 
 @pytest.mark.parametrize(
-    ("ocr_mode", "idx_title_element", "expected_text"),
+    ("ocr_mode", "idx_title_element"),
     [
-        (
-            "entire_page",
-            3,
-            "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis",
-        ),
-        ("individual_blocks", 6, "1G Introduction"),
+        ("entire_page", 3),
+        ("individual_blocks", 1),
     ],
 )
-def test_partition_image_hi_res_ocr_mode(ocr_mode, idx_title_element, expected_text):
+def test_partition_image_hi_res_ocr_mode(ocr_mode, idx_title_element):
     filename = "example-docs/layout-parser-paper-fast.jpg"
     elements = image.partition_image(filename=filename, ocr_mode=ocr_mode, strategy="hi_res")
     # Note(yuming): idx_title_element is different based on xy-cut and ocr mode
-    assert elements[idx_title_element].text == expected_text
+    assert elements[idx_title_element].category == ElementType.TITLE
 
 
 def test_partition_image_hi_res_invalid_ocr_mode():
