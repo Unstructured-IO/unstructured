@@ -462,11 +462,11 @@ def _partition_pdf_or_image_local(
 
 @requires_dependencies("pdfminer", "local-inference")
 def _partition_pdf_with_pdfminer(
-    filename: str = "",
-    file: Optional[IO[bytes]] = None,
-    include_page_breaks: bool = False,
-    metadata_last_modified: Optional[str] = None,
-    languages: Optional[List[str]] = None,
+    filename: str,
+    file: Optional[IO[bytes]],
+    include_page_breaks: bool,
+    languages: List[str],
+    metadata_last_modified: Optional[str],
     **kwargs: Any,
 ) -> List[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
@@ -528,18 +528,15 @@ def _extract_text(item: LTItem) -> str:
 
 def _process_pdfminer_pages(
     fp: BinaryIO,
-    filename: str = "",
-    include_page_breaks: bool = False,
-    languages: Optional[List[str]] = None,
-    metadata_last_modified: Optional[str] = None,
+    filename: str,
+    include_page_breaks: bool,
+    languages: List[str],
+    metadata_last_modified: Optional[str],
     sort_mode: str = SORT_MODE_XY_CUT,
     **kwargs,
 ):
     """Uses PDF miner to split a document into pages and process them."""
     elements: List[Element] = []
-
-    if languages is None:
-        languages = ["eng"]
 
     rsrcmgr = PDFResourceManager()
     laparams = LAParams()
@@ -762,7 +759,7 @@ def _partition_pdf_or_image_with_ocr(
 
 def _partition_pdf_or_image_with_ocr_from_image(
     image: PILImage,
-    languages: Optional[List[str]] = ["eng"],
+    languages: Optional[List[str]] = None,
     page_number: int = 1,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
