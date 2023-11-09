@@ -77,15 +77,7 @@ def determine_pdf_or_image_strategy(
             "or remove copy protection from the PDF.",
         )
 
-    if strategy == "fast" and not pdf_text_extractable:
-        logger.warning(
-            "PDF text is not extractable. Cannot use the fast partitioning "
-            "strategy. Falling back to partitioning with the ocr_only strategy.",
-        )
-        # NOTE(robinson) - fallback to ocr_only here because it is faster than hi_res
-        return "ocr_only"
-
-    elif strategy == "hi_res" and not unstructured_inference_installed:
+    if strategy == "hi_res" and not unstructured_inference_installed:
         logger.warning(
             "unstructured_inference is not installed. Cannot use the hi_res partitioning "
             "strategy. Falling back to partitioning with another strategy.",
