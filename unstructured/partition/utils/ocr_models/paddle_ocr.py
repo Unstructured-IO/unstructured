@@ -2,6 +2,8 @@ import functools
 
 from unstructured.logger import logger
 
+if "PADDLE_OCR_VERSION" not in os.environ:
+    os.environ["PADDLE_OCR_VERSION"] = "PP-OCRv4"
 
 @functools.lru_cache(maxsize=None)
 def load_agent(language: str = "en"):
@@ -30,6 +32,7 @@ def load_agent(language: str = "en"):
             lang=language,
             enable_mkldnn=True,
             show_log=False,
+            ocr_version=os.environ["PADDLE_OCR_VERSION"]
         )
     except AttributeError:
         paddle_ocr = PaddleOCR(
@@ -38,5 +41,6 @@ def load_agent(language: str = "en"):
             lang=language,
             enable_mkldnn=False,
             show_log=False,
+            ocr_version=os.environ["PADDLE_OCR_VERSION"]
         )
     return paddle_ocr
