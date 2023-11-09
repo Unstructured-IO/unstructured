@@ -13,11 +13,10 @@ from unstructured.documents.tmp_elements import ElementMetadata
 class DescribeElementMetadata:
     """Unit-test suite for `unstructured.documents.elements.ElementMetadata`."""
 
-    # -- It is as small as possible, only storing fields that have a non-None value.
-    # --
-    # -- Measuring the actual consumed size is a recursive problem because every value is
-    # -- essentially a 8-byte pointer to an object. This size value is naively computed but gives
-    # -- some sense of the growth dynamics. Also size is non-deterministic so ranges are used.
+    # -- It is as small as possible, only storing fields that have a non-None value. --
+
+    # -- The size value is naively computed but gives some sense of the growth dynamics.
+    # -- Size is non-deterministic so ranges are used.
 
     def it_is_small_when_empty(self):
         meta = ElementMetadata()
@@ -25,8 +24,6 @@ class DescribeElementMetadata:
         assert 232 <= sys.getsizeof(meta.__dict__) <= 296
 
     def and_it_is_still_pretty_small_when_it_has_some_fields_populated(self):
-        # -- Looks like the pre-allocated size of .__dict__ is already enough for the normally used
-        # -- number of metadata fields.
         meta = ElementMetadata(
             category_depth=1,
             file_directory="foo/bar",
@@ -36,7 +33,10 @@ class DescribeElementMetadata:
         )
         assert meta.file_directory == "foo/bar"
         assert meta.url == "https://google.com"
-        assert 232 <= sys.getsizeof(meta.__dict__) <= 296
+        rough_size = sys.getsizeof(meta.__dict__) + sum(
+            sys.getsizeof(v) for v in meta.__dict__.values()
+        )
+        assert 531 <= rough_size <= 539
 
     # -- It can be constructed with known keyword arguments. In particular, including a non-known
     # -- keyword argument produces a type-error at development time and raises an exception at
@@ -131,3 +131,43 @@ class DescribeElementMetadata:
             AttributeError, match="'ElementMetadata' object has no attribute 'foobar'"
         ):
             meta.foobar
+
+    # -- It can update itself from another instance ----------------------------------------------
+
+    def it_can_update_itself_from_another_instance(self):
+        meta = ElementMetadata(category_depth=1, page_number=1)
+        meta.coefficient = 0.58
+        meta.stem_length = 18
+        other = ElementMetadata(file_directory="tmp/", page_number=2)
+        other.quotient = 1.4
+        other.stem_length = 20
+
+        meta.update(other)
+
+        # -- known-fields present on self but not other are unchanged --
+        assert meta.category_depth == 1
+        # -- known-fields present on other but not self are added --
+        assert meta.file_directory == "tmp/"
+        # -- known-fields present on both self and other are updated --
+        assert meta.page_number == 2
+        # -- ad-hoc-fields present on self but not other are unchanged --
+        assert meta.coefficient == 0.58
+        # -- ad-hoc-fields present on other but not self are added --
+        assert meta.quotient == 1.4
+        # -- ad-hoc-fields present on both self and other are updated --
+        assert meta.stem_length == 20
+        # -- other is left unchanged --
+        assert other.category_depth is None
+        assert other.file_directory == "tmp/"
+        assert other.page_number == 2
+        assert other.text_as_html is None
+        assert other.url is None
+        assert other.quotient == 1.4
+        assert other.stem_length == 20
+        with pytest.raises(AttributeError, match="etadata' object has no attribute 'coefficient'"):
+            other.coefficient
+
+    def but_it_raises_on_attempt_to_update_from_a_non_ElementMetadata_object(self):
+        meta = ElementMetadata()
+        with pytest.raises(ValueError, match=r"ate\(\)' must be an instance of 'ElementMetadata'"):
+            meta.update({"coefficient": "0.56"})  # pyright: ignore[reportGeneralTypeIssues]

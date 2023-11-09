@@ -1,5 +1,7 @@
 """Temporary test-bed for prototyping and review of a dynamic ElementMetadata object.
 
+- [ ] .__eq__() ?
+
 - [ ] .from_dict()
 - [ ] .merge()
 
@@ -29,8 +31,9 @@ Key Questions:
         - debug fields are "registered" when a flag is set and so can be specified in a constructor.
         - debug fields are not registered but can be set by assignment like an end-user meta field.
 
-- [ ] What about JSON-ification of things like dates? Do we want to add some custom serializers for
-      common types other than (str, bool, number)?
+- Q: What about JSON-ification of things like dates? Do we want to add some custom serializers for
+     common types other than (str, bool, number)?
+  A: That is the responsibility of the "json-ifier", all we do here is convert to a dict.
 
 - [ ] Should flag be a constant? Wouldn't it be better to be an environment variable so you didn't
       need a source-code change to set/clear it?
@@ -40,6 +43,20 @@ Key Questions:
 
 - [ ] Debug fields are populated unconditionally, but are discarded at construction-time when a flag
       is not set.
+
+- There is no type-safety on ad-hoc fields but the type-checker does not complain because the type
+  of all ad-hoc fields is `Any`.
+
+- Current implementation of `ElementMetadata.merge()` returns `self` such that `meta.merge()` can
+  conveniently be used in an assignment statement like:
+  `self.metadata = common_metadata.merge(differentiated_metadata)`.
+
+  This seems risky to me however because it hides the mutation that's happening and if
+  `common_metadata` is used repeatedly then it will accumulate historical values. I'd say either
+  name it to `.update()` and give it `dict.update()` semantics (including returning `None`),
+  or make it produce a new ElementMetadata instance and return that.
+
+  I went with the former for now.
 
 """
 
@@ -82,26 +99,11 @@ class ElementMetadata:
 
     def __setattr__(self, __name: str, __value: Any) -> None:
         if __value is None:
-            print(f"attr {__name} was assigned None")
             # -- can't use `hasattr()` for this because it calls `__getattr__()` to find out --
             if __name in self.__dict__:
                 delattr(self, __name)
             return
         super().__setattr__(__name, __value)
-
-    # ===== WIP ====================================================
-
-    def merge(self, other: ElementMetadata) -> ElementMetadata:
-        """Update empty fields in this from `other`.
-
-        Mutates `self` but returns `self` for convenience.
-        """
-        for field_name, this_value in self.__dict__.items():
-            if this_value is None:
-                setattr(self, field_name, getattr(other, field_name))
-        return self
-
-    # ==============================================================
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert this metadata to dict form, suitable for JSON serialization.
@@ -110,6 +112,24 @@ class ElementMetadata:
         `None`.
         """
         return copy.deepcopy(self.__dict__)
+
+    def update(self, other: ElementMetadata) -> None:
+        """Update self with all fields present in `other`.
+
+        Semantics are like those of `dict.update()`.
+
+        - fields present in both `self` and `other` will be updated to the value in `other`.
+        - fields present in `other` but not `self` will be added to `self`.
+        - fields present in `self` but not `other` are unchanged.
+        - `other` is unchanged.
+        - both ad-hoc and known fields participate in update with the same semantics.
+
+        """
+        if not isinstance(other, ElementMetadata):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise ValueError("argument to '.update()' must be an instance of 'ElementMetadata'")
+
+        for field_name, value in other.__dict__.items():
+            setattr(self, field_name, value)
 
     @lazyproperty
     def _known_fields(self) -> FrozenSet[str]:
