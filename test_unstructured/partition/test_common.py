@@ -12,6 +12,7 @@ from unstructured.documents.elements import (
     CheckBox,
     CoordinatesMetadata,
     ElementMetadata,
+    ElementType,
     FigureCaption,
     Header,
     ListItem,
@@ -515,7 +516,7 @@ def test_ocr_data_to_elements(
             bbox=r.bbox,
             text=r.text,
             source=r.source,
-            type="UncategorizedText",
+            type=ElementType.UNCATEGORIZED_TEXT,
         )
         for r in text_regions
     ]
@@ -527,7 +528,7 @@ def test_ocr_data_to_elements(
     )
 
     assert len(ocr_data) == len(elements)
-    assert {el.category for el in elements} == {"UncategorizedText"}
+    assert {el.category for el in elements} == {ElementType.UNCATEGORIZED_TEXT}
 
     # check coordinates metadata
     image_width, image_height = image.size
