@@ -2,7 +2,6 @@
 through Unstructured."""
 
 import functools
-import json
 import os
 import re
 import typing as t
@@ -11,18 +10,18 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-import requests
 from dataclasses_json import DataClassJsonMixin
 from dataclasses_json.core import Json, _asdict, _decode_dataclass
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
+from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
-from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
+from unstructured.partition.api import partition_via_api
 from unstructured.partition.auto import partition
-from unstructured.staging.base import convert_to_dict, elements_from_json
+from unstructured.staging.base import convert_to_dict, flatten_dict
 
 A = t.TypeVar("A", bound="DataClassJsonMixin")
 
@@ -74,19 +73,21 @@ class RetryStrategyConfig(BaseConfig):
 class PartitionConfig(BaseConfig):
     # where to write structured data outputs
     pdf_infer_table_structure: bool = False
-    skip_infer_table_types: t.Optional[t.List[str]] = None
     strategy: str = "auto"
     ocr_languages: t.Optional[t.List[str]] = None
     encoding: t.Optional[str] = None
+    additional_partition_args: dict = field(default_factory=dict)
+    skip_infer_table_types: t.Optional[t.List[str]] = None
     fields_include: t.List[str] = field(
         default_factory=lambda: ["element_id", "text", "type", "metadata", "embeddings"],
     )
     flatten_metadata: bool = False
     metadata_exclude: t.List[str] = field(default_factory=list)
     metadata_include: t.List[str] = field(default_factory=list)
-    partition_endpoint: t.Optional[str] = None
+    partition_endpoint: t.Optional[str] = "https://api.unstructured.io/general/v0/general"
     partition_by_api: bool = False
     api_key: t.Optional[str] = None
+    hi_res_model_name: t.Optional[str] = None
 
 
 @dataclass
@@ -132,6 +133,13 @@ class FsspecConfig(FileStorageConfig):
             self.file_path = ""
             return
 
+        # dropbox paths can start with slash
+        match = re.match(rf"{self.protocol}:///([^/\s]+?)/([^\s]*)", self.remote_url)
+        if match and self.protocol == "dropbox":
+            self.dir_path = match.group(1)
+            self.file_path = match.group(2) or ""
+            return
+
         # just a path with no trailing prefix
         match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.remote_url)
         if match:
@@ -162,17 +170,19 @@ class ReadConfig(BaseConfig):
 
 @dataclass
 class EmbeddingConfig(BaseConfig):
-    api_key: str
+    provider: str
+    api_key: t.Optional[str] = None
     model_name: t.Optional[str] = None
 
     def get_embedder(self) -> BaseEmbeddingEncoder:
-        # TODO update to incorporate other embedder types once they exist
-        kwargs = {
-            "api_key": self.api_key,
-        }
+        kwargs = {}
+        if self.api_key:
+            kwargs["api_key"] = self.api_key
         if self.model_name:
             kwargs["model_name"] = self.model_name
-        return OpenAIEmbeddingEncoder(**kwargs)
+
+        cls = EMBEDDING_PROVIDER_TO_CLASS_MAP[self.provider]
+        return cls(**kwargs)
 
 
 @dataclass
@@ -335,6 +345,15 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
         return None
 
     @property
+    def base_output_filename(self) -> t.Optional[str]:
+        if self.processor_config.output_dir and self._output_filename:
+            output_path = str(Path(self.processor_config.output_dir).resolve())
+            full_path = str(self._output_filename)
+            base_path = full_path.replace(output_path, "")
+            return base_path
+        return None
+
+    @property
     @abstractmethod
     def _output_filename(self):
         """Filename of the structured output for this doc."""
@@ -434,21 +453,17 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
 
             logger.debug(f"Using remote partition ({endpoint})")
 
-            with open(self.filename, "rb") as f:
-                headers_dict = {}
-                if partition_config.api_key:
-                    headers_dict["UNSTRUCTURED-API-KEY"] = partition_config.api_key
-                response = requests.post(
-                    f"{endpoint}",
-                    files={"files": (str(self.filename), f)},
-                    headers=headers_dict,
-                    # TODO: add m_data_source_metadata to unstructured-api pipeline_api and then
-                    # pass the stringified json here
-                )
-
-            if response.status_code != 200:
-                raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
-            elements = elements_from_json(text=json.dumps(response.json()))
+            passthrough_partition_kwargs = {
+                k: str(v) for k, v in partition_kwargs.items() if v is not None
+            }
+            elements = partition_via_api(
+                filename=str(self.filename),
+                api_key=partition_config.api_key,
+                api_url=endpoint,
+                **passthrough_partition_kwargs,
+            )
+            # TODO: add m_data_source_metadata to unstructured-api pipeline_api and then
+            # pass the stringified json here
         return elements
 
     def process_file(
@@ -494,10 +509,9 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
             in_list = partition_config.fields_include
             elem = {k: v for k, v in elem.items() if k in in_list}
 
-            if partition_config.flatten_metadata:
-                for k, v in elem["metadata"].items():  # type: ignore[attr-defined]
-                    elem[k] = v
-                elem.pop("metadata")  # type: ignore[attr-defined]
+            if partition_config.flatten_metadata and "metadata" in elem:
+                metadata = elem.pop("metadata")
+                elem.update(flatten_dict(metadata, keys_to_omit=["data_source_record_locator"]))
 
             self.isd_elems_no_filename.append(elem)
 
@@ -505,7 +519,14 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
 
 
 @dataclass
-class BaseSourceConnector(DataClassJsonMixin, ABC):
+class BaseConnector(DataClassJsonMixin, ABC):
+    @abstractmethod
+    def check_connection(self):
+        pass
+
+
+@dataclass
+class BaseSourceConnector(BaseConnector, ABC):
     """Abstract Base Class for a connector to a remote source, e.g. S3 or Google Drive."""
 
     processor_config: ProcessorConfig
@@ -533,7 +554,7 @@ class BaseSourceConnector(DataClassJsonMixin, ABC):
 
 
 @dataclass
-class BaseDestinationConnector(DataClassJsonMixin, ABC):
+class BaseDestinationConnector(BaseConnector, ABC):
     write_config: WriteConfig
     connector_config: BaseConnectorConfig
 
@@ -551,12 +572,12 @@ class BaseDestinationConnector(DataClassJsonMixin, ABC):
         pass
 
     @abstractmethod
-    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         pass
 
     def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
-        elements_json = [e.to_dict() for e in elements]
-        self.write_dict(*args, json_list=elements_json, **kwargs)
+        elements_dict = [e.to_dict() for e in elements]
+        self.write_dict(*args, elements_dict=elements_dict, **kwargs)
 
 
 class SourceConnectorCleanupMixin:
@@ -639,6 +660,7 @@ class ConfigSessionHandleMixin:
         session related resources across all document handling for a given subprocess."""
 
 
+@dataclass
 class IngestDocSessionHandleMixin:
     connector_config: ConfigSessionHandleMixin
     _session_handle: t.Optional[BaseSessionHandle] = None

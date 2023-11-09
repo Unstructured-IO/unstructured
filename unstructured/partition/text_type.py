@@ -311,6 +311,6 @@ def is_email_address(text: str) -> bool:
     return EMAIL_ADDRESS_PATTERN_RE.match(text.strip()) is not None
 
 
-def is_possible_numbered_list(text) -> bool:
+def is_possible_numbered_list(text: str) -> bool:
     """Checks to see if the text is a potential numbered list."""
     return NUMBERED_LIST_RE.match(text.strip()) is not None

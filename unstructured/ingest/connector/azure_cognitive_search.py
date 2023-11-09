@@ -1,11 +1,11 @@
 import json
 import typing as t
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import azure.core.exceptions
 
-from unstructured.ingest.error import WriteError
+from unstructured.ingest.error import DestinationConnectionError, WriteError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
@@ -14,6 +14,9 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
+
+if t.TYPE_CHECKING:
+    from azure.search.documents import SearchClient
 
 
 @dataclass
@@ -31,19 +34,36 @@ class AzureCognitiveSearchWriteConfig(WriteConfig):
 class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
     write_config: AzureCognitiveSearchWriteConfig
     connector_config: SimpleAzureCognitiveSearchStorageConfig
+    _client: t.Optional["SearchClient"] = field(init=False, default=None)
 
     @requires_dependencies(["azure"], extras="azure-cognitive-search")
-    def initialize(self):
+    def generate_client(self) -> "SearchClient":
         from azure.core.credentials import AzureKeyCredential
         from azure.search.documents import SearchClient
 
         # Create a client
         credential = AzureKeyCredential(self.connector_config.key)
-        self.client = SearchClient(
+        return SearchClient(
             endpoint=self.connector_config.endpoint,
             index_name=self.write_config.index,
             credential=credential,
         )
+
+    @property
+    def client(self) -> "SearchClient":
+        if self._client is None:
+            self._client = self.generate_client()
+        return self._client
+
+    def check_connection(self):
+        try:
+            self.client.get_document_count()
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
+
+    def initialize(self):
+        _ = self.client
 
     def conform_dict(self, data: dict) -> None:
         """
@@ -61,6 +81,12 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
             data["metadata"]["data_source"]["version"] = str(version)
         if record_locator := data.get("metadata", {}).get("data_source", {}).get("record_locator"):
             data["metadata"]["data_source"]["record_locator"] = json.dumps(record_locator)
+        if permissions_data := (
+            data.get("metadata", {}).get("data_source", {}).get("permissions_data")
+        ):
+            data["metadata"]["data_source"]["permissions_data"] = json.dumps(permissions_data)
+        if links := data.get("metadata", {}).get("links"):
+            data["metadata"]["links"] = [json.dumps(link) for link in links]
         if last_modified := data.get("metadata", {}).get("last_modified"):
             data["metadata"]["last_modified"] = parser.parse(last_modified).strftime(
                 "%Y-%m-%dT%H:%M:%S.%fZ",
@@ -82,13 +108,13 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
         if page_number := data.get("metadata", {}).get("page_number"):
             data["metadata"]["page_number"] = str(page_number)
 
-    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
-            f"writing {len(json_list)} documents to destination "
+            f"writing {len(elements_dict)} documents to destination "
             f"index at {self.write_config.index}",
         )
         try:
-            results = self.client.upload_documents(documents=json_list)
+            results = self.client.upload_documents(documents=elements_dict)
 
         except azure.core.exceptions.HttpResponseError as http_error:
             raise WriteError(f"http error: {http_error}") from http_error
@@ -122,4 +148,4 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
                     f"appending {len(json_content)} json elements from content in {local_path}",
                 )
                 json_list.extend(json_content)
-        self.write_dict(json_list=json_list)
+        self.write_dict(elements_dict=json_list)

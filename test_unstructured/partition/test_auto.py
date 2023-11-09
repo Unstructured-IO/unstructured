@@ -3,7 +3,7 @@ import os
 import pathlib
 import warnings
 from importlib import import_module
-from unittest.mock import ANY, patch
+from unittest.mock import ANY, Mock, patch
 
 import docx
 import pytest
@@ -396,6 +396,18 @@ def test_auto_partition_formats_languages_for_tesseract():
 def test_auto_partition_element_metadata_user_provided_languages():
     filename = "example-docs/chevron-page.pdf"
     elements = partition(filename=filename, strategy="ocr_only", languages=["eng"])
+    assert elements[0].metadata.languages == ["eng"]
+
+
+@pytest.mark.parametrize(
+    ("languages", "ocr_languages"),
+    [(["auto"], ""), (["eng"], "")],
+)
+def test_auto_partition_ignores_empty_string_for_ocr_languages(languages, ocr_languages):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "book-war-and-peace-1p.txt")
+    elements = partition(
+        filename=filename, strategy="ocr_only", ocr_languages=ocr_languages, languages=languages
+    )
     assert elements[0].metadata.languages == ["eng"]
 
 
@@ -1179,3 +1191,17 @@ def test_partition_languages_incorrectly_defaults_to_English(tmpdir):
         f.write(german)
     elements = partition(filepath)
     assert elements[0].metadata.languages == ["eng"]
+
+
+def test_partition_timeout_gets_routed():
+    class CallException(Exception):
+        pass
+
+    mock_ocr_func = Mock(side_effect=CallException("Function called!"))
+    with patch("unstructured.partition.auto.file_and_type_from_url", mock_ocr_func), pytest.raises(
+        CallException
+    ):
+        auto.partition(url="fake_url", request_timeout=326)
+    kwargs = mock_ocr_func.call_args.kwargs
+    assert "request_timeout" in kwargs
+    assert kwargs["request_timeout"] == 326

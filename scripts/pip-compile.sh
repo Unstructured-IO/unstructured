@@ -8,10 +8,9 @@ if ! python -c "import sys; assert sys.version_info.major == $major and sys.vers
   exit 1
 fi
 
-for file in requirements/**/*.in; do
-  if [[ "$file" =~ "constraints" ]]; then
-    continue;
-  fi;
-  echo "running: pip-compile --upgrade $file"
-  pip-compile --upgrade "$file" -c requirements/constraints.in
-done
+pushd ./requirements || exit
+make clean
+make all
+popd || exit
+
+cp requirements/build.txt docs/requirements.txt

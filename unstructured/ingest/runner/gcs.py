@@ -9,7 +9,7 @@ from unstructured.ingest.runner.utils import update_download_dir_remote_url
 class GCSRunner(FsspecBaseRunner):
     def run(
         self,
-        token: t.Optional[str] = None,
+        service_account_key: t.Optional[t.Union[dict, str]] = None,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
@@ -24,7 +24,11 @@ class GCSRunner(FsspecBaseRunner):
         from unstructured.ingest.connector.gcs import GcsSourceConnector, SimpleGcsConfig
 
         connector_config = SimpleGcsConfig.from_dict(self.fsspec_config.to_dict())  # type: ignore
-        connector_config.access_kwargs = {"token": token}
+        access_kwargs = {}
+        if service_account_key:
+            access_kwargs["token"] = service_account_key
+
+        connector_config.access_kwargs = access_kwargs
 
         source_doc_connector = GcsSourceConnector(  # type: ignore
             connector_config=connector_config,

@@ -5,14 +5,13 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMixin,
+    CliConfig,
     DelimitedString,
 )
-from unstructured.ingest.interfaces import BaseConfig
 
 
 @dataclass
-class ConfluenceCliConfig(BaseConfig, CliMixin):
+class ConfluenceCliConfig(CliConfig):
     api_token: str
     url: str
     user_email: str

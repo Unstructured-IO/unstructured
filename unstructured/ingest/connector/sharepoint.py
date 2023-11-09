@@ -8,7 +8,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -118,7 +118,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             "site_url": self.site_url,
         }
 
-    @SourceConnectionError.wrap
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(["office365"], extras="sharepoint")
     def _fetch_file(self, properties_only: bool = False):
         """Retrieves the actual page/file from the Sharepoint instance"""
@@ -277,6 +277,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         logger.info(f"File downloaded: {self.filename}")
 
     @BaseIngestDoc.skip_if_file_exists
+    @SourceConnectionError.wrap
     @requires_dependencies(["office365"])
     def get_file(self):
         if self.is_page:
@@ -289,6 +290,14 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 @dataclass
 class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleSharepointConfig
+
+    def check_connection(self):
+        try:
+            site_client = self.connector_config.get_site_client()
+            site_client.site_pages.pages.get().execute_query()
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
 
     @requires_dependencies(["office365"], extras="sharepoint")
     def _list_files(self, folder, recursive) -> t.List["File"]:
@@ -373,7 +382,15 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
     def get_ingest_docs(self):
         base_site_client = self.connector_config.get_site_client()
 
-        if self.connector_config.permissions_config:
+        if not all(
+            getattr(self.connector_config.permissions_config, attr, False)
+            for attr in ["application_id", "client_cred", "tenant"]
+        ):
+            logger.info(
+                "Permissions config is not fed with 'application_id', 'client_cred' and 'tenant'."
+                "Skipping permissions ingestion.",
+            )
+        else:
             permissions_client = self.connector_config.get_permissions_client()
             if permissions_client:
                 permissions_client.write_all_permissions(self.processor_config.output_dir)

@@ -5,7 +5,9 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+import requests
+
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -16,6 +18,9 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
+
+if t.TYPE_CHECKING:
+    from atlassian import Confluence
 
 
 @dataclass
@@ -62,9 +67,9 @@ def scroll_wrapper(func):
 
         for _ in range(num_iterations):
             response = func(*args, **kwargs)
-            if type(response) is list:
+            if isinstance(response, list):
                 all_results += func(*args, **kwargs)
-            elif type(response) is dict:
+            elif isinstance(response, dict):
                 all_results += func(*args, **kwargs)["results"]
 
             kwargs["start"] += kwargs["limit"]
@@ -111,6 +116,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             "page_id": self.document_meta.document_id,
         }
 
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(["atlassian"], extras="Confluence")
     def _get_page(self):
         from atlassian import Confluence
@@ -184,17 +190,31 @@ class ConfluenceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
     """Fetches body fields from all documents within all spaces in a Confluence Cloud instance."""
 
     connector_config: SimpleConfluenceConfig
+    _confluence: t.Optional["Confluence"] = field(init=False, default=None)
+
+    @property
+    def confluence(self) -> "Confluence":
+        from atlassian import Confluence
+
+        if self._confluence is None:
+            self._confluence = Confluence(
+                url=self.connector_config.url,
+                username=self.connector_config.user_email,
+                password=self.connector_config.api_token,
+            )
+        return self._confluence
+
+    @requires_dependencies(["atlassian"], extras="Confluence")
+    def check_connection(self):
+        url = "rest/api/space"
+        try:
+            self.confluence.request(method="HEAD", path=url)
+        except requests.HTTPError as http_error:
+            logger.error(f"failed to validate connection: {http_error}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {http_error}")
 
     @requires_dependencies(["atlassian"], extras="Confluence")
     def initialize(self):
-        from atlassian import Confluence
-
-        self.confluence = Confluence(
-            url=self.connector_config.url,
-            username=self.connector_config.user_email,
-            password=self.connector_config.api_token,
-        )
-
         self.list_of_spaces = None
         if self.connector_config.spaces:
             self.list_of_spaces = self.connector_config.spaces

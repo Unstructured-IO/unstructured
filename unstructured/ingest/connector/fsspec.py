@@ -2,15 +2,14 @@ import json
 import os
 import typing as t
 from contextlib import suppress
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path, PurePath
 
-from unstructured.ingest.compression_support import (
-    TAR_FILE_EXT,
-    ZIP_FILE_EXT,
-    CompressionSourceConnectorMixin,
+from unstructured.ingest.error import (
+    DestinationConnectionError,
+    SourceConnectionError,
+    SourceConnectionNetworkError,
 )
-from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
@@ -20,8 +19,14 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
     SourceMetadata,
+    WriteConfig,
 )
 from unstructured.ingest.logger import logger
+from unstructured.ingest.utils.compression import (
+    TAR_FILE_EXT,
+    ZIP_FILE_EXT,
+    CompressionSourceConnectorMixin,
+)
 from unstructured.utils import (
     requires_dependencies,
 )
@@ -84,8 +89,13 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             **self.connector_config.get_access_kwargs(),
         )
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
+        self._get_file(fs=fs)
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
         self.update_source_metadata()
+
+    @SourceConnectionNetworkError.wrap
+    def _get_file(self, fs):
+        fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
 
     @requires_dependencies(["fsspec"])
     def update_source_metadata(self):
@@ -140,6 +150,18 @@ class FsspecSourceConnector(
     """Objects of this class support fetching document(s) from"""
 
     connector_config: SimpleFsspecConfig
+
+    def check_connection(self):
+        from fsspec import get_filesystem_class
+
+        try:
+            fs = get_filesystem_class(self.connector_config.protocol)(
+                **self.connector_config.get_access_kwargs(),
+            )
+            fs.ls(path=self.connector_config.path_without_protocol)
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
 
     def __post_init__(self):
         self.ingest_doc_cls: t.Type[FsspecIngestDoc] = FsspecIngestDoc
@@ -222,8 +244,14 @@ class FsspecSourceConnector(
 
 
 @dataclass
+class FsspecWriteConfig(WriteConfig):
+    write_text_kwargs: t.Dict[str, t.Any] = field(default_factory=dict)
+
+
+@dataclass
 class FsspecDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleFsspecConfig
+    write_config: FsspecWriteConfig
 
     def initialize(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
@@ -232,10 +260,22 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             **self.connector_config.get_access_kwargs(),
         )
 
+    def check_connection(self):
+        from fsspec import get_filesystem_class
+
+        try:
+            fs = get_filesystem_class(self.connector_config.protocol)(
+                **self.connector_config.get_access_kwargs(),
+            )
+            fs.ls(path=self.connector_config.path_without_protocol)
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
+
     def write_dict(
         self,
         *args,
-        json_list: t.List[t.Dict[str, t.Any]],
+        elements_dict: t.List[t.Dict[str, t.Any]],
         filename: t.Optional[str] = None,
         indent: int = 4,
         encoding: str = "utf-8",
@@ -255,15 +295,20 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             filename.strip(os.sep) if filename else filename
         )  # Make sure filename doesn't begin with file seperator
         output_path = str(PurePath(output_folder, filename)) if filename else output_folder
-        full_output_path = f"s3://{output_path}"
+        full_output_path = f"{self.connector_config.protocol}://{output_path}"
         logger.debug(f"uploading content to {full_output_path}")
-        fs.write_text(full_output_path, json.dumps(json_list, indent=indent), encoding=encoding)
+        fs.write_text(
+            full_output_path,
+            json.dumps(elements_dict, indent=indent),
+            encoding=encoding,
+            **self.write_config.write_text_kwargs,
+        )
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         for doc in docs:
-            file_path = doc.base_filename
+            file_path = doc.base_output_filename
             filename = file_path if file_path else None
             with open(doc._output_filename) as json_file:
                 logger.debug(f"uploading content from {doc._output_filename}")
                 json_list = json.load(json_file)
-                self.write_dict(json_list=json_list, filename=filename)
+                self.write_dict(elements_dict=json_list, filename=filename)

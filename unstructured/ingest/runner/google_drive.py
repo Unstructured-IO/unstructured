@@ -10,7 +10,7 @@ from unstructured.ingest.runner.utils import update_download_dir_hash
 class GoogleDriveRunner(Runner):
     def run(
         self,
-        service_account_key: str,
+        service_account_key: t.Union[str, dict],
         drive_id: str,
         recursive: bool = False,
         extension: t.Optional[str] = None,

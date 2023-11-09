@@ -4,6 +4,7 @@ import abc
 import copy
 import dataclasses as dc
 import datetime
+import enum
 import functools
 import hashlib
 import inspect
@@ -136,6 +137,9 @@ class Link(TypedDict):
 
 @dc.dataclass
 class ElementMetadata:
+    # NOTE(scanny): if you ADD a field here you must specify a consolidation strategy for it below
+    # in ConsolidationStrategy.field_consolidation_strategies() to be used when combining elements
+    # during chunking.
     coordinates: Optional[CoordinatesMetadata] = None
     data_source: Optional[DataSourceMetadata] = None
     filename: Optional[str] = None
@@ -147,10 +151,10 @@ class ElementMetadata:
     category_depth: Optional[int] = None
     image_path: Optional[str] = None
 
-    # Languages in element. TODO(newelh) - More strongly type languages
+    # Languages in element.
     languages: Optional[List[str]] = None
 
-    # Page numbers currenlty supported for PDF, HTML and PPT documents
+    # Page numbers currently supported for DOCX, HTML, PDF, and PPTX documents
     page_number: Optional[int] = None
 
     # Page name. The sheet name in XLXS documents.
@@ -184,7 +188,6 @@ class ElementMetadata:
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
 
     # Chunking metadata fields
-    max_characters: Optional[int] = None
     is_continuation: Optional[bool] = None
 
     # Detection Model Class Probabilities from Unstructured-Inference Hi-Res
@@ -220,6 +223,8 @@ class ElementMetadata:
             self.filename = filename
 
     def to_dict(self):
+        if not self.links:
+            self.links = None
         _dict = {
             key: value
             for key, value in self.__dict__.items()
@@ -263,6 +268,70 @@ class ElementMetadata:
         if self.last_modified is not None:
             dt = datetime.datetime.fromisoformat(self.last_modified)
         return dt
+
+
+class ConsolidationStrategy(enum.Enum):
+    """Methods by which a metadata field can be consolidated across a collection of elements.
+
+    These are assigned to `ElementMetadata` field-names immediately below. Metadata consolidation is
+    part of the chunking process and may arise elsewhere as well.
+    """
+
+    DROP = "drop"
+    """Do not include this field in the consolidated metadata object."""
+
+    FIRST = "first"
+    """Use the first value encountered, omit if not present in any elements."""
+
+    LIST_CONCATENATE = "LIST_CONCATENATE"
+    """Concatenate the list values across elements. Only suitable for fields of `List` type."""
+
+    LIST_UNIQUE = "list_unique"
+    """Union list values across elements, preserving order. Only suitable for `List` fields."""
+
+    REGEX = "regex"
+    """Combine regex-metadata of elements, adjust start and stop offsets for concatenated text."""
+
+    @classmethod
+    def field_consolidation_strategies(cls) -> Dict[str, ConsolidationStrategy]:
+        """Mapping from ElementMetadata field-name to its consolidation strategy.
+
+        Note that only _TextSection objects ("pre-chunks" containing only `Text` elements that are
+        not `Table`) have their metadata consolidated, so these strategies are only applicable for
+        non-Table Text elements.
+        """
+        return {
+            "attached_to_filename": cls.FIRST,
+            "category_depth": cls.DROP,
+            "coordinates": cls.DROP,
+            "data_source": cls.FIRST,
+            "detection_class_prob": cls.DROP,
+            "detection_origin": cls.DROP,
+            "emphasized_text_contents": cls.LIST_CONCATENATE,
+            "emphasized_text_tags": cls.LIST_CONCATENATE,
+            "file_directory": cls.FIRST,
+            "filename": cls.FIRST,
+            "filetype": cls.FIRST,
+            "header_footer_type": cls.DROP,
+            "image_path": cls.DROP,
+            "is_continuation": cls.DROP,  # -- not expected, added by chunking, not before --
+            "languages": cls.LIST_UNIQUE,
+            "last_modified": cls.FIRST,
+            "link_texts": cls.LIST_CONCATENATE,
+            "link_urls": cls.LIST_CONCATENATE,
+            "links": cls.DROP,  # -- deprecated field --
+            "max_characters": cls.DROP,  # -- unused, remove from ElementMetadata --
+            "page_name": cls.FIRST,
+            "page_number": cls.FIRST,
+            "parent_id": cls.DROP,
+            "regex_metadata": cls.REGEX,
+            "section": cls.FIRST,
+            "sent_from": cls.FIRST,
+            "sent_to": cls.FIRST,
+            "subject": cls.FIRST,
+            "text_as_html": cls.DROP,  # -- not expected, only occurs in _TableSection --
+            "url": cls.FIRST,
+        }
 
 
 _P = ParamSpec("_P")
@@ -607,37 +676,76 @@ class Footer(Text):
     category = "Footer"
 
 
+class ElementType:
+    TITLE = "Title"
+    TEXT = "Text"
+    UNCATEGORIZED_TEXT = "UncategorizedText"
+    NARRATIVE_TEXT = "NarrativeText"
+    BULLETED_TEXT = "BulletedText"
+    ABSTRACT = "Abstract"
+    THREADING = "Threading"
+    FORM = "Form"
+    FIELD_NAME = "Field-Name"
+    VALUE = "Value"
+    LINK = "Link"
+    COMPOSITE_ELEMENT = "CompositeElement"
+    IMAGE = "Image"
+    PICTURE = "Picture"
+    FIGURE_CAPTION = "FigureCaption"
+    FIGURE = "Figure"
+    CAPTION = "Caption"
+    LIST = "List"
+    LIST_ITEM = "ListItem"
+    LIST_ITEM_OTHER = "List-item"
+    CHECKED = "Checked"
+    UNCHECKED = "Unchecked"
+    ADDRESS = "Address"
+    EMAIL_ADDRESS = "EmailAddress"
+    PAGE_BREAK = "PageBreak"
+    FORMULA = "Formula"
+    TABLE = "Table"
+    HEADER = "Header"
+    HEADLINE = "Headline"
+    SUB_HEADLINE = "Subheadline"
+    PAGE_HEADER = "Page-header"  # Title?
+    SECTION_HEADER = "Section-header"
+    FOOTER = "Footer"
+    FOOTNOTE = "Footnote"
+    PAGE_FOOTER = "Page-footer"
+
+
 TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
-    "UncategorizedText": Text,
-    "FigureCaption": FigureCaption,
-    "Figure": FigureCaption,
-    "Text": NarrativeText,
-    "NarrativeText": NarrativeText,
-    "ListItem": ListItem,
-    "BulletedText": ListItem,
-    "Title": Title,
-    "Address": Address,
-    "EmailAddress": EmailAddress,
-    "Image": Image,
-    "PageBreak": PageBreak,
-    "Table": Table,
-    "Header": Header,
-    "Footer": Footer,
-    "Caption": FigureCaption,
-    "Footnote": Footer,
-    "Formula": Formula,
-    "List-item": ListItem,
-    "Page-footer": Footer,
-    "Page-header": Header,  # Title?
-    "Picture": Image,
+    ElementType.UNCATEGORIZED_TEXT: Text,
+    ElementType.FIGURE_CAPTION: FigureCaption,
+    ElementType.FIGURE: FigureCaption,
+    ElementType.TEXT: NarrativeText,
+    ElementType.NARRATIVE_TEXT: NarrativeText,
+    ElementType.LIST_ITEM: ListItem,
+    ElementType.BULLETED_TEXT: ListItem,
+    ElementType.TITLE: Title,
+    ElementType.ADDRESS: Address,
+    ElementType.EMAIL_ADDRESS: EmailAddress,
+    ElementType.IMAGE: Image,
+    ElementType.PAGE_BREAK: PageBreak,
+    ElementType.TABLE: Table,
+    ElementType.HEADER: Header,
+    ElementType.FOOTER: Footer,
+    ElementType.CAPTION: FigureCaption,
+    ElementType.FOOTNOTE: Footer,
+    ElementType.FORMULA: Formula,
+    ElementType.LIST_ITEM_OTHER: ListItem,
+    ElementType.PAGE_FOOTER: Footer,
+    ElementType.PAGE_HEADER: Header,  # Title?
+    ElementType.PICTURE: Image,
     # this mapping favors ensures yolox produces backward compatible categories
-    "Section-header": Title,
-    "Headline": Title,
-    "Subheadline": Title,
-    "Abstract": NarrativeText,
-    "Threading": NarrativeText,
-    "Form": NarrativeText,
-    "Field-Name": Title,
-    "Value": NarrativeText,
-    "Link": NarrativeText,
+    ElementType.SECTION_HEADER: Title,
+    ElementType.HEADLINE: Title,
+    ElementType.SUB_HEADLINE: Title,
+    ElementType.ABSTRACT: NarrativeText,
+    ElementType.THREADING: NarrativeText,
+    ElementType.FORM: NarrativeText,
+    ElementType.FIELD_NAME: Title,
+    ElementType.VALUE: NarrativeText,
+    ElementType.LINK: NarrativeText,
+    ElementType.COMPOSITE_ELEMENT: Text,
 }

@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
@@ -20,6 +20,7 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
+from unstructured.ingest.utils.table import convert_to_pandas_dataframe
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -95,24 +96,31 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists
     def get_file(self):
-        import pyarrow.parquet as pq
-
         fs = self._get_fs_from_uri()
         self.update_source_metadata(fs=fs)
         logger.info(f"using a {fs} filesystem to collect table data")
         self._create_full_tmp_dir_path()
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
-        df: pd.DataFrame = pq.ParquetDataset(self.uri, filesystem=fs).read_pandas().to_pandas()
+        df = self._get_df(filesystem=fs)
 
         logger.info(f"writing {len(df)} rows to {self.filename}")
         df.to_csv(self.filename)
+
+    @SourceConnectionNetworkError.wrap
+    def _get_df(self, filesystem) -> pd.DataFrame:
+        import pyarrow.parquet as pq
+
+        return pq.ParquetDataset(self.uri, filesystem=filesystem).read_pandas().to_pandas()
 
 
 @dataclass
 class DeltaTableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleDeltaTableConfig
     delta_table: t.Optional["DeltaTable"] = None
+
+    def check_connection(self):
+        pass
 
     @requires_dependencies(["deltalake"], extras="delta-table")
     def initialize(self):
@@ -153,7 +161,8 @@ class DeltaTableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 
 @dataclass
 class DeltaTableWriteConfig(WriteConfig):
-    write_column: str
+    drop_empty_cols: bool = False
+    overwrite_schema: bool = False
     mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
 
 
@@ -166,14 +175,19 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
     def initialize(self):
         pass
 
-    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
-        # Need json list as strings
-        json_list_s = [json.dumps(e) for e in json_list]
+    def check_connection(self):
+        pass
+
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         from deltalake.writer import write_deltalake
 
+        df = convert_to_pandas_dataframe(
+            elements_dict=elements_dict,
+            drop_empty_cols=self.write_config.drop_empty_cols,
+        )
         logger.info(
-            f"writing {len(json_list_s)} rows to destination "
-            f"table at {self.connector_config.table_uri}",
+            f"writing {len(df)} rows to destination table "
+            f"at {self.connector_config.table_uri}\ndtypes: {df.dtypes}",
         )
         # NOTE: deltalake writer on Linux sometimes can finish but still trigger a SIGABRT and cause
         # ingest to fail, even though all tasks are completed normally. Putting the writer into a
@@ -183,8 +197,9 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
             target=write_deltalake,
             kwargs={
                 "table_or_uri": self.connector_config.table_uri,
-                "data": pd.DataFrame(data={self.write_config.write_column: json_list_s}),
+                "data": df,
                 "mode": self.write_config.mode,
+                "overwrite_schema": self.write_config.overwrite_schema,
             },
         )
         writer.start()
@@ -192,11 +207,11 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
 
     @requires_dependencies(["deltalake"], extras="delta-table")
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
-        json_list: t.List[t.Dict[str, t.Any]] = []
+        elements_dict: t.List[t.Dict[str, t.Any]] = []
         for doc in docs:
             local_path = doc._output_filename
             with open(local_path) as json_file:
-                json_content = json.load(json_file)
-                logger.info(f"converting {len(json_content)} rows from content in {local_path}")
-                json_list.extend(json_content)
-        self.write_dict(json_list=json_list)
+                element_dict = json.load(json_file)
+                logger.info(f"converting {len(element_dict)} rows from content in {local_path}")
+                elements_dict.extend(element_dict)
+        self.write_dict(elements_dict=elements_dict)

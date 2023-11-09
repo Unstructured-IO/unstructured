@@ -63,7 +63,7 @@ A RAG workflow can be broken down into the following steps:
 
 1. **Data ingestion**: The first step is acquiring data from your relevant sources. At Unstructured we make this super easy with our `data connectors <https://unstructured-io.github.io/unstructured/source_connectors.html>`__.
 
-2. **Data preprocessing and cleaning**: Once you've identified and collected your data sources a good practice is to remove any unnecessary artifacts within the dataset. At Unstructured we have a variety of different tools to remove unneccesary elements. Found `here <https://unstructured-io.github.io/unstructured/bricks.html>`_
+2. **Data preprocessing and cleaning**: Once you've identified and collected your data sources a good practice is to remove any unnecessary artifacts within the dataset. At Unstructured we have a variety of different tools to remove unneccesary elements. Found `here <https://unstructured-io.github.io/unstructured/functions.html>`_
 
 3. **Chunking**: The next step is to break your text down into digestable pieces for your LLM to be able to consume. LangChain, Llama Index and Haystack offer chunking funcionalities.
 

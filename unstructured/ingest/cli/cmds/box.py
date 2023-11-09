@@ -5,13 +5,14 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMixin,
+    CliConfig,
 )
-from unstructured.ingest.interfaces import BaseConfig
+
+CMD_NAME = "box"
 
 
 @dataclass
-class BoxCliConfig(BaseConfig, CliMixin):
+class BoxCliConfig(CliConfig):
     box_app_config: t.Optional[str] = None
 
     @staticmethod
@@ -27,5 +28,12 @@ class BoxCliConfig(BaseConfig, CliMixin):
 
 
 def get_base_src_cmd() -> BaseSrcCmd:
-    cmd_cls = BaseSrcCmd(cmd_name="box", cli_config=BoxCliConfig, is_fsspec=True)
+    cmd_cls = BaseSrcCmd(cmd_name=CMD_NAME, cli_config=BoxCliConfig, is_fsspec=True)
+    return cmd_cls
+
+
+def get_base_dest_cmd():
+    from unstructured.ingest.cli.base.dest import BaseDestCmd
+
+    cmd_cls = BaseDestCmd(cmd_name=CMD_NAME, cli_config=BoxCliConfig, is_fsspec=True)
     return cmd_cls

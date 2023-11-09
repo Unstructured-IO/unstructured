@@ -4,7 +4,7 @@ import typing as t
 from dataclasses import dataclass
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -67,6 +67,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(dependencies=["discord"], extras="discord")
     def _get_messages(self):
         """Actually fetches the data from discord."""
@@ -154,6 +155,21 @@ class DiscordSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
     def initialize(self):
         pass
+
+    @requires_dependencies(dependencies=["discord"], extras="discord")
+    def check_connection(self):
+        import asyncio
+
+        import discord
+        from discord.client import Client
+
+        intents = discord.Intents.default()
+        try:
+            client = Client(intents=intents)
+            asyncio.run(client.start(token=self.connector_config.token))
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
 
     def get_ingest_docs(self):
         return [
