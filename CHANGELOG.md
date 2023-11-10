@@ -1,4 +1,4 @@
-## 0.10.30
+## 0.10.30-dev0
 
 ### Enhancements
 
@@ -12,6 +12,7 @@
 
 ### Fixes
 
+* **Fix `fast` strategy fall back to `ocr_only`.** The `fast` strategy should not fall back to a more expensive strategy.
 * **Fix logic that determines pdf auto strategy.** Previously, `_determine_pdf_auto_strategy` returned `hi_res` strategy only if `infer_table_structure` was true. It now returns the `hi_res` strategy if either `infer_table_structure` or `extract_images_in_pdf` is true.   
 * **Fix invalid coordinates when parsing tesseract ocr data.** Previously, when parsing tesseract ocr data, the ocr data had invalid bboxes if zoom was set to `0`. A logical check is now added to avoid such error. 
 * **Fix ingest partition parameters not being passed to the api.** When using the --partition-by-api flag via unstructured-ingest, none of the partition arguments are forwarded, meaning that these options are disregarded. With this change, we now pass through all of the relevant partition arguments to the api. This allows a user to specify all of the same partition arguments they would locally and have them respected when specifying --partition-by-api.
