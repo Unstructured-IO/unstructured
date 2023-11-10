@@ -1,4 +1,7 @@
-import dataclasses as dc
+# pyright: reportPrivateUsage=false
+
+"""Test-suite for `unstructured.documents.elements` module."""
+
 import json
 from functools import partial
 
@@ -189,6 +192,7 @@ def test_element_to_dict():
         "type": None,
         "element_id": "awt32t1",
     }
+
     assert element.to_dict() == expected
 
 
@@ -211,10 +215,10 @@ def test_regex_metadata_round_trips_through_JSON():
 
 
 def test_metadata_from_dict_extra_fields():
-    """
-    Assert that the metadata classes ignore nonexistent fields.
-    This can be an issue when elements_from_json gets a schema
-    from the future.
+    """Metadata sub-objects ignore fields they do not explicitly define.
+
+    Note this is _not_ the case for ElementMetadata itself where an non-known field is welcomed as a
+    user-defined ad-hoc metadata field.
     """
     element_metadata = {
         "new_field": "hello",
@@ -229,13 +233,14 @@ def test_metadata_from_dict_extra_fields():
     metadata = ElementMetadata.from_dict(element_metadata)
     metadata_dict = metadata.to_dict()
 
-    assert "new_field" not in metadata_dict
+    assert "new_field" in metadata_dict
     assert "new_field" not in metadata_dict["coordinates"]
     assert "new_field" not in metadata_dict["data_source"]
 
 
 def test_there_is_a_consolidation_strategy_for_every_ElementMetadata_field():
-    metadata_field_names = sorted(f.name for f in dc.fields(ElementMetadata))
+    metadata = ElementMetadata()
+    metadata_field_names = sorted(metadata._known_field_names)
     consolidation_strategies = ConsolidationStrategy.field_consolidation_strategies()
 
     for field_name in metadata_field_names:

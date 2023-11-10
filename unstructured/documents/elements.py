@@ -12,7 +12,8 @@ import os
 import pathlib
 import re
 import uuid
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
+from types import MappingProxyType
+from typing import Any, Callable, Dict, FrozenSet, List, Optional, Tuple, Union, cast
 
 from typing_extensions import ParamSpec, Self, TypedDict
 
@@ -22,6 +23,7 @@ from unstructured.documents.coordinates import (
     RelativeCoordinateSystem,
 )
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
+from unstructured.utils import lazyproperty
 
 
 class NoID(abc.ABC):
@@ -135,13 +137,205 @@ class Link(TypedDict):
     start_index: int
 
 
-@dc.dataclass
 class ElementMetadata:
+    """Fully-dynamic replacement for dataclass-based ElementMetadata."""
+
+    # NOTE(scanny): To add a field:
+    # - Add the field declaration with type here at the top. This makes it a "known" field and
+    #   enables type-checking and completion.
+    # - Add a parameter with default for field in __init__() and assign it in __init__() body.
+    # - Add a consolidation strategy for the field below in `ConsolidationStrategy`
+    #   `.field_consolidation_strategies()` to be used when combining elements during chunking.
+
+    attached_to_filename: Optional[str]
+    category_depth: Optional[int]
+    coordinates: Optional[CoordinatesMetadata]
+    data_source: Optional[DataSourceMetadata]
+    detection_class_prob: Optional[float]
+    emphasized_text_contents: Optional[List[str]]
+    emphasized_text_tags: Optional[List[str]]
+    file_directory: Optional[str]
+    filename: Optional[str]
+    filetype: Optional[str]
+    header_footer_type: Optional[str]
+    image_path: Optional[str]
+    is_continuation: Optional[bool]
+    languages: Optional[List[str]]
+    last_modified: Optional[str]
+    link_texts: Optional[List[str]]
+    link_urls: Optional[List[str]]
+    links: Optional[List[Link]]
+    page_name: Optional[str]
+    page_number: Optional[int]
+    parent_id: Optional[str | uuid.UUID | NoID | UUID]
+    regex_metadata: Optional[Dict[str, List[RegexMetadata]]]
+    section: Optional[str]
+    sent_from: Optional[List[str]]
+    sent_to: Optional[List[str]]
+    subject: Optional[str]
+    text_as_html: Optional[str]
+    url: Optional[str]
+
+    def __init__(
+        self,
+        attached_to_filename: Optional[str] = None,
+        category_depth: Optional[int] = None,
+        coordinates: Optional[CoordinatesMetadata] = None,
+        data_source: Optional[DataSourceMetadata] = None,
+        detection_class_prob: Optional[float] = None,
+        emphasized_text_contents: Optional[List[str]] = None,
+        emphasized_text_tags: Optional[List[str]] = None,
+        file_directory: Optional[str] = None,
+        filename: Optional[str] = None,
+        filetype: Optional[str] = None,
+        header_footer_type: Optional[str] = None,
+        image_path: Optional[str] = None,
+        is_continuation: Optional[bool] = None,
+        languages: Optional[List[str]] = None,
+        last_modified: Optional[str] = None,
+        link_texts: Optional[List[str]] = None,
+        link_urls: Optional[List[str]] = None,
+        links: Optional[List[Link]] = None,
+        page_name: Optional[str] = None,
+        page_number: Optional[int] = None,
+        parent_id: Optional[str | uuid.UUID | NoID | UUID] = None,
+        regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None,
+        section: Optional[str] = None,
+        sent_from: Optional[List[str]] = None,
+        sent_to: Optional[List[str]] = None,
+        subject: Optional[str] = None,
+        text_as_html: Optional[str] = None,
+        url: Optional[str] = None,
+    ) -> None:
+        self.attached_to_filename = attached_to_filename
+        self.category_depth = category_depth
+        self.coordinates = coordinates
+        self.data_source = data_source
+        self.detection_class_prob = detection_class_prob
+        self.emphasized_text_contents = emphasized_text_contents
+        self.emphasized_text_tags = emphasized_text_tags
+        self.file_directory = file_directory
+        self.filename = filename
+        self.filetype = filetype
+        self.header_footer_type = header_footer_type
+        self.image_path = image_path
+        self.is_continuation = is_continuation
+        self.languages = languages
+        self.last_modified = last_modified
+        self.link_texts = link_texts
+        self.link_urls = link_urls
+        self.links = links
+        self.page_name = page_name
+        self.page_number = page_number
+        self.parent_id = parent_id
+        self.regex_metadata = regex_metadata
+        self.section = section
+        self.sent_from = sent_from
+        self.sent_to = sent_to
+        self.subject = subject
+        self.text_as_html = text_as_html
+        self.url = url
+
+    def __eq__(self, other: object) -> bool:
+        """Implments equivalence, like meta == other_meta.
+
+        All fields at all levels must match. Unpopulated fields are not considered except when
+        populated in one and not the other.
+        """
+        if not isinstance(other, ElementMetadata):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __getattr__(self, attr_name: str) -> None:
+        """Only called when attribute doesn't exist."""
+        if attr_name in self._known_field_names:
+            return None
+        raise AttributeError(f"'ElementMetadata' object has no attribute '{attr_name}'")
+
+    def __setattr__(self, __name: str, __value: Any) -> None:
+        if __value is None:
+            # -- can't use `hasattr()` for this because it calls `__getattr__()` to find out --
+            if __name in self.__dict__:
+                delattr(self, __name)
+            return
+        super().__setattr__(__name, __value)
+
+    @classmethod
+    def from_dict(cls, meta_dict: Dict[str, Any]) -> ElementMetadata:
+        """Construct from a metadata-dict.
+
+        This would generally be a dict formed using the `.to_dict()` method and stored as JSON
+        before "rehydrating" it using this method.
+        """
+        # -- avoid unexpected mutation by working on a copy of provided dict --
+        meta_dict = copy.deepcopy(meta_dict)
+        self = ElementMetadata()
+        for field_name, field_value in meta_dict.items():
+            if field_name == "coordinates":
+                self.coordinates = CoordinatesMetadata.from_dict(field_value)
+            elif field_name == "data_source":
+                self.data_source = DataSourceMetadata.from_dict(field_value)
+            else:
+                setattr(self, field_name, field_value)
+
+        return self
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert this metadata to dict form, suitable for JSON serialization.
+
+        The returned dict is "sparse" in that no key-value pair appears for a field with value
+        `None`.
+        """
+        meta_dict = copy.deepcopy(dict(self._fields))
+        if self.coordinates is not None:
+            meta_dict["coordinates"] = self.coordinates.to_dict()
+        if self.data_source is not None:
+            meta_dict["data_source"] = self.data_source.to_dict()
+        return meta_dict
+
+    def update(self, other: ElementMetadata) -> None:
+        """Update self with all fields present in `other`.
+
+        Semantics are like those of `dict.update()`.
+
+        - fields present in both `self` and `other` will be updated to the value in `other`.
+        - fields present in `other` but not `self` will be added to `self`.
+        - fields present in `self` but not `other` are unchanged.
+        - `other` is unchanged.
+        - both ad-hoc and known fields participate in update with the same semantics.
+
+        """
+        if not isinstance(other, ElementMetadata):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise ValueError("argument to '.update()' must be an instance of 'ElementMetadata'")
+
+        for field_name, field_value in other._fields.items():
+            setattr(self, field_name, field_value)
+
+    @property
+    def _fields(self) -> MappingProxyType[str, Any]:
+        """Populated metadata fields in this object as a read-only dict.
+
+        Basically `self.__dict__` but it needs a little filtering to remove entries like
+        "_known_field_names".
+        """
+        return MappingProxyType(
+            {key: value for key, value in self.__dict__.items() if not key.startswith("_")}
+        )
+
+    @lazyproperty
+    def _known_field_names(self) -> FrozenSet[str]:
+        """field-names for non-user-defined fields, available on all ElementMetadata instances."""
+        return frozenset(self.__annotations__)
+
+
+@dc.dataclass
+class OldElementMetadata:
     # NOTE(scanny): if you ADD a field here you must specify a consolidation strategy for it below
     # in ConsolidationStrategy.field_consolidation_strategies() to be used when combining elements
     # during chunking.
     coordinates: Optional[CoordinatesMetadata] = None
     data_source: Optional[DataSourceMetadata] = None
+    # --
     filename: Optional[str] = None
     file_directory: Optional[str] = None
     last_modified: Optional[str] = None
@@ -434,11 +628,9 @@ class Element(abc.ABC):
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
-        if metadata is None:
-            metadata = ElementMetadata()
-            metadata.detection_origin = detection_origin
         self.id: Union[str, uuid.UUID, NoID, UUID] = element_id
-        coordinates_metadata = (
+        self.metadata = ElementMetadata() if metadata is None else metadata
+        self.metadata.coordinates = (
             None
             if coordinates is None and coordinate_system is None
             else (
@@ -447,9 +639,6 @@ class Element(abc.ABC):
                     system=coordinate_system,
                 )
             )
-        )
-        self.metadata = metadata.merge(
-            ElementMetadata(coordinates=coordinates_metadata),
         )
         self.metadata.detection_origin = detection_origin
 
