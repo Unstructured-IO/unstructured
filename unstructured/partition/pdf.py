@@ -333,7 +333,7 @@ def partition_pdf_or_image(
                 layout_elements.append(new_el)
 
     elif strategy == "fast":
-        return extracted_elements if pdf_text_extractable else []
+        return extracted_elements
 
     elif strategy == "ocr_only":
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
