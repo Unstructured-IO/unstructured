@@ -110,6 +110,44 @@ class DescribeElementMetadata:
             "url": "https://google.com",
         }
 
+    def and_it_serializes_a_coordinates_sub_object_to_a_dict_when_it_is_present(self):
+        meta = ElementMetadata(
+            category_depth=1,
+            coordinates=CoordinatesMetadata(
+                points=((2, 2), (1, 4), (3, 4), (3, 2)),
+                system=RelativeCoordinateSystem(),
+            ),
+            page_number=2,
+        )
+        assert meta.to_dict() == {
+            "category_depth": 1,
+            "coordinates": {
+                "layout_height": 1,
+                "layout_width": 1,
+                "points": ((2, 2), (1, 4), (3, 4), (3, 2)),
+                "system": "RelativeCoordinateSystem",
+            },
+            "page_number": 2,
+        }
+
+    def and_it_serializes_a_data_source_sub_object_to_a_dict_when_it_is_present(self):
+        meta = ElementMetadata(
+            category_depth=1,
+            data_source=DataSourceMetadata(
+                url="https://www.nih.gov/about-nih/who-we-are/nih-director",
+                date_created="2023-11-09",
+            ),
+            page_number=2,
+        )
+        assert meta.to_dict() == {
+            "category_depth": 1,
+            "data_source": {
+                "url": "https://www.nih.gov/about-nih/who-we-are/nih-director",
+                "date_created": "2023-11-09",
+            },
+            "page_number": 2,
+        }
+
     # -- It can deserialize itself from a dict ---------------------------------------------------
 
     def it_can_deserialize_itself_from_a_dict(self):
@@ -123,7 +161,7 @@ class DescribeElementMetadata:
                 "system": "RelativeCoordinateSystem",
             },
             "data_source": {
-                "url": "https:https://www.nih.gov/about-nih/who-we-are/nih-director",
+                "url": "https://www.nih.gov/about-nih/who-we-are/nih-director",
                 "date_created": "2023-11-09",
             },
             "languages": ["eng"],
@@ -140,7 +178,7 @@ class DescribeElementMetadata:
             system=RelativeCoordinateSystem(),
         )
         assert meta.data_source == DataSourceMetadata(
-            url="https:https://www.nih.gov/about-nih/who-we-are/nih-director",
+            url="https://www.nih.gov/about-nih/who-we-are/nih-director",
             date_created="2023-11-09",
         )
 
@@ -240,7 +278,7 @@ class DescribeElementMetadata:
                 system=RelativeCoordinateSystem(),
             ),
             data_source=DataSourceMetadata(
-                url="https:https://www.nih.gov/about-nih/who-we-are/nih-director",
+                url="https://www.nih.gov/about-nih/who-we-are/nih-director",
                 date_created="2023-11-08",
             ),
             file_directory="tmp/",
@@ -256,7 +294,7 @@ class DescribeElementMetadata:
                 system=RelativeCoordinateSystem(),
             ),
             data_source=DataSourceMetadata(
-                url="https:https://www.nih.gov/about-nih/who-we-are/nih-director",
+                url="https://www.nih.gov/about-nih/who-we-are/nih-director",
                 date_created="2023-11-08",
             ),
             file_directory="tmp/",
@@ -315,13 +353,13 @@ class DescribeElementMetadata:
     def and_it_is_not_equal_when_the_data_source_sub_object_field_differs(self):
         meta = ElementMetadata(
             data_source=DataSourceMetadata(
-                url="https:https://www.nih.gov/about-nih/who-we-are/nih-director",
+                url="https://www.nih.gov/about-nih/who-we-are/nih-director",
                 date_created="2023-11-08",
             )
         )
         assert meta != ElementMetadata(
             data_source=DataSourceMetadata(
-                url="https:https://www.nih.gov/about-nih/who-we-are/nih-director",
+                url="https://www.nih.gov/about-nih/who-we-are/nih-director",
                 date_created="2023-11-09",
             )
         )

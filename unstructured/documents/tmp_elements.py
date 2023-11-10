@@ -53,41 +53,117 @@ Key Questions:
 from __future__ import annotations
 
 import copy
-from typing import Any, Dict, FrozenSet, List
+import uuid
+from types import MappingProxyType
+from typing import Any, Dict, FrozenSet, List, Optional
 
-from unstructured.documents.elements import CoordinatesMetadata, DataSourceMetadata
+from unstructured.documents.elements import (
+    UUID,
+    CoordinatesMetadata,
+    DataSourceMetadata,
+    Link,
+    NoID,
+    RegexMetadata,
+)
 from unstructured.utils import lazyproperty
 
 
 class ElementMetadata:
     """Fully-dynamic replacement for dataclass-based ElementMetadata."""
 
-    category_depth: int | None
-    coordinates: CoordinatesMetadata | None = None
-    data_source: DataSourceMetadata | None
-    file_directory: str | None
-    languages: List[str] | None
-    page_number: int | None
-    text_as_html: str | None
-    url: str | None
+    # NOTE(scanny): To add a field:
+    # - Add the field declaration with type here at the top. This makes it a "known" field and
+    #   enables type-checking and completion.
+    # - Add a parameter with default for field in __init__() and assign it in __init__() body.
+    # - Add a consolidation strategy for the field below in `ConsolidationStrategy`
+    #   `.field_consolidation_strategies()` to be used when combining elements during chunking.
+
+    attached_to_filename: Optional[str]
+    category_depth: Optional[int]
+    coordinates: Optional[CoordinatesMetadata]
+    data_source: Optional[DataSourceMetadata]
+    detection_class_prob: Optional[float]
+    emphasized_text_contents: Optional[List[str]]
+    emphasized_text_tags: Optional[List[str]]
+    file_directory: Optional[str]
+    filename: Optional[str]
+    filetype: Optional[str]
+    header_footer_type: Optional[str]
+    image_path: Optional[str]
+    is_continuation: Optional[bool]
+    languages: Optional[List[str]]
+    last_modified: Optional[str]
+    link_texts: Optional[List[str]]
+    link_urls: Optional[List[str]]
+    links: Optional[List[Link]]
+    page_name: Optional[str]
+    page_number: Optional[int]
+    parent_id: Optional[str | uuid.UUID | NoID | UUID]
+    regex_metadata: Optional[Dict[str, List[RegexMetadata]]]
+    section: Optional[str]
+    sent_from: Optional[List[str]]
+    sent_to: Optional[List[str]]
+    subject: Optional[str]
+    text_as_html: Optional[str]
+    url: Optional[str]
 
     def __init__(
         self,
-        category_depth: int | None = None,
-        coordinates: CoordinatesMetadata | None = None,
-        data_source: DataSourceMetadata | None = None,
-        file_directory: str | None = None,
-        languages: List[str] | None = None,
-        page_number: int | None = None,
-        text_as_html: str | None = None,
-        url: str | None = None,
+        attached_to_filename: Optional[str] = None,
+        category_depth: Optional[int] = None,
+        coordinates: Optional[CoordinatesMetadata] = None,
+        data_source: Optional[DataSourceMetadata] = None,
+        detection_class_prob: Optional[float] = None,
+        emphasized_text_contents: Optional[List[str]] = None,
+        emphasized_text_tags: Optional[List[str]] = None,
+        file_directory: Optional[str] = None,
+        filename: Optional[str] = None,
+        filetype: Optional[str] = None,
+        header_footer_type: Optional[str] = None,
+        image_path: Optional[str] = None,
+        is_continuation: Optional[bool] = None,
+        languages: Optional[List[str]] = None,
+        last_modified: Optional[str] = None,
+        link_texts: Optional[List[str]] = None,
+        link_urls: Optional[List[str]] = None,
+        links: Optional[List[Link]] = None,
+        page_name: Optional[str] = None,
+        page_number: Optional[int] = None,
+        parent_id: Optional[str | uuid.UUID | NoID | UUID] = None,
+        regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None,
+        section: Optional[str] = None,
+        sent_from: Optional[List[str]] = None,
+        sent_to: Optional[List[str]] = None,
+        subject: Optional[str] = None,
+        text_as_html: Optional[str] = None,
+        url: Optional[str] = None,
     ) -> None:
+        self.attached_to_filename = attached_to_filename
         self.category_depth = category_depth
-        self.data_source = data_source
         self.coordinates = coordinates
+        self.data_source = data_source
+        self.detection_class_prob = detection_class_prob
+        self.emphasized_text_contents = emphasized_text_contents
+        self.emphasized_text_tags = emphasized_text_tags
         self.file_directory = file_directory
+        self.filename = filename
+        self.filetype = filetype
+        self.header_footer_type = header_footer_type
+        self.image_path = image_path
+        self.is_continuation = is_continuation
         self.languages = languages
+        self.last_modified = last_modified
+        self.link_texts = link_texts
+        self.link_urls = link_urls
+        self.links = links
+        self.page_name = page_name
         self.page_number = page_number
+        self.parent_id = parent_id
+        self.regex_metadata = regex_metadata
+        self.section = section
+        self.sent_from = sent_from
+        self.sent_to = sent_to
+        self.subject = subject
         self.text_as_html = text_as_html
         self.url = url
 
@@ -103,7 +179,7 @@ class ElementMetadata:
 
     def __getattr__(self, attr_name: str) -> None:
         """Only called when attribute doesn't exist."""
-        if attr_name in self._known_fields:
+        if attr_name in self._known_field_names:
             return None
         raise AttributeError(f"'ElementMetadata' object has no attribute '{attr_name}'")
 
@@ -141,7 +217,12 @@ class ElementMetadata:
         The returned dict is "sparse" in that no key-value pair appears for a field with value
         `None`.
         """
-        return copy.deepcopy(self.__dict__)
+        meta_dict = copy.deepcopy(dict(self._fields))
+        if self.coordinates is not None:
+            meta_dict["coordinates"] = self.coordinates.to_dict()
+        if self.data_source is not None:
+            meta_dict["data_source"] = self.data_source.to_dict()
+        return meta_dict
 
     def update(self, other: ElementMetadata) -> None:
         """Update self with all fields present in `other`.
@@ -158,10 +239,21 @@ class ElementMetadata:
         if not isinstance(other, ElementMetadata):  # pyright: ignore[reportUnnecessaryIsInstance]
             raise ValueError("argument to '.update()' must be an instance of 'ElementMetadata'")
 
-        for field_name, field_value in other.__dict__.items():
+        for field_name, field_value in other._fields.items():
             setattr(self, field_name, field_value)
 
+    @property
+    def _fields(self) -> MappingProxyType[str, Any]:
+        """Populated metadata fields in this object as a read-only dict.
+
+        Basically `self.__dict__` but it needs a little filtering to remove entries like
+        "_known_field_names".
+        """
+        return MappingProxyType(
+            {key: value for key, value in self.__dict__.items() if not key.startswith("_")}
+        )
+
     @lazyproperty
-    def _known_fields(self) -> FrozenSet[str]:
+    def _known_field_names(self) -> FrozenSet[str]:
         """field-names for non-user-defined fields, available on all ElementMetadata instances."""
         return frozenset(self.__annotations__)
