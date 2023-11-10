@@ -39,6 +39,7 @@ def determine_pdf_or_image_strategy(
     is_image: bool = False,
     infer_table_structure: bool = False,
     pdf_text_extractable: bool = True,
+    extract_images_in_pdf: bool = False,
 ):
     """Determines what strategy to use for processing PDFs or images, accounting for fallback
     logic if some dependencies are not available."""
@@ -62,6 +63,7 @@ def determine_pdf_or_image_strategy(
             strategy = _determine_pdf_auto_strategy(
                 pdf_text_extractable=pdf_text_extractable,
                 infer_table_structure=infer_table_structure,
+                extract_images_in_pdf=extract_images_in_pdf,
             )
 
     if file is not None:
@@ -116,12 +118,13 @@ def _determine_image_auto_strategy():
 def _determine_pdf_auto_strategy(
     pdf_text_extractable: bool = True,
     infer_table_structure: bool = False,
+    extract_images_in_pdf: bool = False,
 ):
     """If "auto" is passed in as the strategy, determines what strategy to use
     for PDFs."""
     # NOTE(robinson) - Currrently "hi_res" is the only stategy where
     # infer_table_structure is used.
-    if infer_table_structure:
+    if infer_table_structure or extract_images_in_pdf:
         return "hi_res"
 
     if pdf_text_extractable:
