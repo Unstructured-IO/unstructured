@@ -337,10 +337,7 @@ def _add_element_metadata(
         languages=languages,
     )
     metadata.detection_origin = detection_origin
-    # NOTE(newel) - Element metadata is being merged into
-    # newly constructed metadata, not the other way around
-    # TODO? Make this more expected behavior?
-    element.metadata = metadata.merge(element.metadata)
+    element.metadata.update(metadata)
     return element
 
 
@@ -663,7 +660,7 @@ def ocr_data_to_elements(
         )
 
         if common_metadata:
-            element.metadata = element.metadata.merge(common_metadata)
+            element.metadata.update(common_metadata)
 
         elements.append(element)
 

@@ -8,6 +8,7 @@ from datetime import datetime
 from functools import wraps
 from itertools import combinations
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Dict,
@@ -26,7 +27,9 @@ import requests
 from typing_extensions import ParamSpec
 
 from unstructured.__version__ import __version__
-from unstructured.documents.elements import Text
+
+if TYPE_CHECKING:
+    from unstructured.documents.elements import Text
 
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
@@ -614,7 +617,7 @@ def identify_overlapping_or_nesting_case(
 
 
 def catch_overlapping_and_nested_bboxes(
-    elements: List[Text],
+    elements: List["Text"],
     nested_error_tolerance_px: int = 5,
     sm_overlap_threshold: float = 10.0,
 ) -> (bool, List[Dict]):
