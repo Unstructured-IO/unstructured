@@ -34,8 +34,6 @@ def validate_strategy(strategy: str, filetype: str):
 
 def determine_pdf_or_image_strategy(
     strategy: str,
-    filename: str = "",
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
     infer_table_structure: bool = False,
     pdf_text_extractable: bool = True,
@@ -65,9 +63,6 @@ def determine_pdf_or_image_strategy(
                 infer_table_structure=infer_table_structure,
                 extract_images_in_pdf=extract_images_in_pdf,
             )
-
-    if file is not None:
-        file.seek(0)  # type: ignore
 
     if all(
         [not unstructured_inference_installed, not pytesseract_installed, not pdf_text_extractable],

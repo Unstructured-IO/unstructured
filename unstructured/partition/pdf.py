@@ -278,8 +278,6 @@ def partition_pdf_or_image(
         not is_image
         and determine_pdf_or_image_strategy(
             strategy,
-            filename=filename,
-            file=file,
             is_image=is_image,
             infer_table_structure=infer_table_structure,
             extract_images_in_pdf=extract_images_in_pdf,
@@ -301,8 +299,6 @@ def partition_pdf_or_image(
 
     strategy = determine_pdf_or_image_strategy(
         strategy,
-        filename=filename,
-        file=file,
         is_image=is_image,
         infer_table_structure=infer_table_structure,
         pdf_text_extractable=pdf_text_extractable,
