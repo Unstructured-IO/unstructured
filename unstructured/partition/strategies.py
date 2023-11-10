@@ -1,35 +1,16 @@
-from tempfile import SpooledTemporaryFile
-from typing import BinaryIO, Dict, List, Optional, Union
-
 from unstructured.logger import logger
 from unstructured.utils import dependency_exists
 
-VALID_STRATEGIES: Dict[str, List[str]] = {
-    "auto": [
-        "pdf",
-        "image",
-    ],
-    "hi_res": [
-        "pdf",
-        "image",
-    ],
-    "ocr_only": [
-        "pdf",
-        "image",
-    ],
-    "fast": [
-        "pdf",
-    ],
-}
 
-
-def validate_strategy(strategy: str, filetype: str):
+def validate_strategy(strategy: str, is_image: bool = False):
     """Determines if the strategy is valid for the specified filetype."""
-    valid_filetypes = VALID_STRATEGIES.get(strategy, None)
-    if valid_filetypes is None:
+
+    valid_strategies = ["auto", "fast", "ocr_only", "hi_res"]
+    if strategy not in valid_strategies:
         raise ValueError(f"{strategy} is not a valid strategy.")
-    if filetype not in valid_filetypes:
-        raise ValueError(f"{strategy} is not a valid strategy for filetype {filetype}.")
+
+    if strategy == "fast" and is_image:
+        raise ValueError(f"The fast strategy is not available for image files.")
 
 
 def determine_pdf_or_image_strategy(
@@ -49,10 +30,7 @@ def determine_pdf_or_image_strategy(
         # use hi_res as a fallback plan since it is the auto default.
         if strategy == "fast":
             strategy = "hi_res"
-        validate_strategy(strategy, "image")
         pdf_text_extractable = False
-    else:
-        validate_strategy(strategy, "pdf")
 
     if strategy == "auto":
         if is_image:

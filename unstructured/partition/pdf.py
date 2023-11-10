@@ -76,7 +76,7 @@ from unstructured.partition.ocr import (
     get_layout_elements_from_ocr,
     get_ocr_agent,
 )
-from unstructured.partition.strategies import determine_pdf_or_image_strategy
+from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.constants import (
     OCR_AGENT_TESSERACT,
@@ -162,6 +162,7 @@ def partition_pdf(
         If extract_images_in_pdf=True and strategy=hi_res, any detected images will be saved in the
         given path
     """
+
     exactly_one(filename=filename, file=file)
 
     if ocr_languages is not None:
@@ -246,6 +247,9 @@ def partition_pdf_or_image(
 
     # The auto `partition` function uses `None` as a default because the default for
     # `partition_pdf` and `partition_img` conflict with the other partitioners that use ["auto"]
+
+    validate_strategy(strategy, is_image)
+
     if languages is None:
         languages = ["eng"]
 
