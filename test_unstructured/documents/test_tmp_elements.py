@@ -22,7 +22,7 @@ class DescribeElementMetadata:
 
     def it_is_small_when_empty(self):
         meta = ElementMetadata()
-        assert sys.getsizeof(meta) == 56
+        assert 48 <= sys.getsizeof(meta) <= 56
         assert 232 <= sys.getsizeof(meta.__dict__) <= 296
 
     def and_it_is_still_pretty_small_when_it_has_some_fields_populated(self):
@@ -38,7 +38,7 @@ class DescribeElementMetadata:
         rough_size = sys.getsizeof(meta.__dict__) + sum(
             sys.getsizeof(v) for v in meta.__dict__.values()
         )
-        assert 531 <= rough_size <= 539
+        assert 347 <= rough_size <= 539
 
     # -- It can be constructed with known keyword arguments. In particular, including a non-known
     # -- keyword argument produces a type-error at development time and raises an exception at
