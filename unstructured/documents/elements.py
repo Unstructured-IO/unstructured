@@ -145,7 +145,8 @@ class ElementMetadata:
     #   enables type-checking and completion.
     # - Add a parameter with default for field in __init__() and assign it in __init__() body.
     # - Add a consolidation strategy for the field below in `ConsolidationStrategy`
-    #   `.field_consolidation_strategies()` to be used when combining elements during chunking.
+    #   `.field_consolidation_strategies()` to be used when consolidating metadata fields of a
+    #   section's elements during chunking.
 
     attached_to_filename: Optional[str]
     category_depth: Optional[int]

@@ -180,7 +180,8 @@ def test_element_to_dict():
         coordinates=coordinates,
         coordinate_system=coordinate_system,
     )
-    expected = {
+
+    assert element.to_dict() == {
         "metadata": {
             "coordinates": {
                 "layout_height": 1,
@@ -192,8 +193,6 @@ def test_element_to_dict():
         "type": None,
         "element_id": "awt32t1",
     }
-
-    assert element.to_dict() == expected
 
 
 def test_regex_metadata_round_trips_through_JSON():
