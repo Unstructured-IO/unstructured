@@ -1,9 +1,12 @@
-## 0.10.31-dev3
+## 0.11.0-dev1
 
 ### Enhancements
+
 * **Temporary Support for paddle language parameter** User can specify default langage code for paddle with ENV `DEFAULT_PADDLE_LANG` before we have the language mapping for paddle.
 
 ### Features
+
+* **Add ad-hoc fields to ElementMetadata instance.** End-users can now add their own metadata fields simply by assigning to an element-metadata attribute-name of their choice, like `element.metadata.coefficient = 0.58`. These fields will round-trip through JSON and can be accessed with dotted notation.
 
 ### Fixes
 
