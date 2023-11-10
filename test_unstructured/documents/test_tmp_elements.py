@@ -229,3 +229,99 @@ class DescribeElementMetadata:
         meta = ElementMetadata()
         with pytest.raises(ValueError, match=r"ate\(\)' must be an instance of 'ElementMetadata'"):
             meta.update({"coefficient": "0.56"})  # pyright: ignore[reportGeneralTypeIssues]
+
+    # -- It knows when it is equal to another instance -------------------------------------------
+
+    def it_is_equal_to_another_instance_with_the_same_known_field_values(self):
+        meta = ElementMetadata(
+            category_depth=1,
+            coordinates=CoordinatesMetadata(
+                points=((1, 2), (1, 4), (3, 4), (3, 2)),
+                system=RelativeCoordinateSystem(),
+            ),
+            data_source=DataSourceMetadata(
+                url="https:https://www.nih.gov/about-nih/who-we-are/nih-director",
+                date_created="2023-11-08",
+            ),
+            file_directory="tmp/",
+            languages=["eng"],
+            page_number=2,
+            text_as_html="<table></table>",
+            url="https://google.com",
+        )
+        assert meta == ElementMetadata(
+            category_depth=1,
+            coordinates=CoordinatesMetadata(
+                points=((1, 2), (1, 4), (3, 4), (3, 2)),
+                system=RelativeCoordinateSystem(),
+            ),
+            data_source=DataSourceMetadata(
+                url="https:https://www.nih.gov/about-nih/who-we-are/nih-director",
+                date_created="2023-11-08",
+            ),
+            file_directory="tmp/",
+            languages=["eng"],
+            page_number=2,
+            text_as_html="<table></table>",
+            url="https://google.com",
+        )
+
+    def but_it_is_never_equal_to_a_non_ElementMetadata_object(self):
+        class NotElementMetadata:
+            pass
+
+        meta = ElementMetadata()
+        other = NotElementMetadata()
+
+        # -- all the "fields" are the same --
+        assert meta.__dict__ == other.__dict__
+        # -- but it is rejected solely because its type is different --
+        assert meta != other
+
+    def it_is_equal_to_another_instance_with_the_same_ad_hoc_field_values(self):
+        meta = ElementMetadata(category_depth=1)
+        meta.coefficient = 0.58
+        other = ElementMetadata(category_depth=1)
+        other.coefficient = 0.58
+
+        assert meta == other
+
+    def but_it_is_not_equal_to_an_instance_with_ad_hoc_fields_that_differ(self):
+        meta = ElementMetadata(category_depth=1)
+        meta.coefficient = 0.58
+        other = ElementMetadata(category_depth=1)
+        other.coefficient = 0.72
+
+        assert meta != other
+
+    def it_is_not_equal_when_a_list_field_contains_different_items(self):
+        meta = ElementMetadata(languages=["eng"])
+        assert meta != ElementMetadata(languages=["eng", "spa"])
+
+    def and_it_is_not_equal_when_the_coordinates_sub_object_field_differs(self):
+        meta = ElementMetadata(
+            coordinates=CoordinatesMetadata(
+                points=((1, 2), (1, 4), (3, 4), (3, 2)),
+                system=RelativeCoordinateSystem(),
+            )
+        )
+        assert meta != ElementMetadata(
+            coordinates=CoordinatesMetadata(
+                points=((2, 2), (2, 4), (3, 4), (4, 2)),
+                system=RelativeCoordinateSystem(),
+            )
+        )
+
+    def and_it_is_not_equal_when_the_data_source_sub_object_field_differs(self):
+        meta = ElementMetadata(
+            data_source=DataSourceMetadata(
+                url="https:https://www.nih.gov/about-nih/who-we-are/nih-director",
+                date_created="2023-11-08",
+            )
+        )
+        assert meta != ElementMetadata(
+            data_source=DataSourceMetadata(
+                url="https:https://www.nih.gov/about-nih/who-we-are/nih-director",
+                date_created="2023-11-09",
+            )
+        )
