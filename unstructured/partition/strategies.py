@@ -82,14 +82,14 @@ def _determine_image_auto_strategy():
 
 
 def _determine_pdf_auto_strategy(
-    pdf_text_extractable: bool = True,
+    pdf_text_extractable: bool = False,
     infer_table_structure: bool = False,
     extract_images_in_pdf: bool = False,
 ):
     """If "auto" is passed in as the strategy, determines what strategy to use
     for PDFs."""
-    # NOTE(robinson) - Currrently "hi_res" is the only stategy where
-    # infer_table_structure is used.
+    # NOTE(robinson) - Currently "hi_res" is the only strategy where
+    # infer_table_structure and extract_images_in_pdf are used.
     if infer_table_structure or extract_images_in_pdf:
         return "hi_res"
 
