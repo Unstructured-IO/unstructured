@@ -1,5 +1,6 @@
 """Utilities that ease unit-testing."""
 
+import difflib
 import pathlib
 from typing import List
 
@@ -26,9 +27,20 @@ def assert_round_trips_through_JSON(elements: List[Element]) -> None:
     round_tripped_json = elements_to_json(round_tripped_elements)
     assert round_tripped_json is not None
 
-    assert (
-        round_tripped_json == original_json
-    ), f"JSON differs, expected\n{original_json},\ngot\n{round_tripped_json}\n"
+    assert round_tripped_json == original_json, _diff(
+        "JSON differs:", round_tripped_json, original_json
+    )
+
+
+def _diff(heading: str, actual: str, expected: str):
+    """Diff of actual compared to expected.
+
+    "+" indicates unexpected lines actual, "-" indicates lines missing from actual.
+    """
+    expected_lines = expected.splitlines(keepends=True)
+    actual_lines = actual.splitlines(keepends=True)
+    heading = "diff: '+': unexpected lines in actual, '-': lines missing from actual\n"
+    return heading + "".join(difflib.Differ().compare(actual_lines, expected_lines))
 
 
 def example_doc_path(file_name: str) -> str:
