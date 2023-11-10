@@ -16,21 +16,14 @@ def validate_strategy(strategy: str, is_image: bool = False):
 def determine_pdf_or_image_strategy(
     strategy: str,
     is_image: bool = False,
+    pdf_text_extractable: bool = False,
     infer_table_structure: bool = False,
-    pdf_text_extractable: bool = True,
     extract_images_in_pdf: bool = False,
 ):
     """Determines what strategy to use for processing PDFs or images, accounting for fallback
     logic if some dependencies are not available."""
     pytesseract_installed = dependency_exists("pytesseract")
     unstructured_inference_installed = dependency_exists("unstructured_inference")
-
-    if is_image:
-        # Note(yuming): There is no fast strategy for images,
-        # use hi_res as a fallback plan since it is the auto default.
-        if strategy == "fast":
-            strategy = "hi_res"
-        pdf_text_extractable = False
 
     if strategy == "auto":
         if is_image:
