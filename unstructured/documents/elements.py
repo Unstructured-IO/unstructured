@@ -147,6 +147,7 @@ class ElementMetadata:
     # - Add a consolidation strategy for the field below in `ConsolidationStrategy`
     #   `.field_consolidation_strategies()` to be used when consolidating metadata fields of a
     #   section's elements during chunking.
+    # - Add field-name to UNSERIALIZED_FIELD_NAMES if it shouldn't appear in dict/JSON.
 
     attached_to_filename: Optional[str]
     category_depth: Optional[int]
@@ -176,6 +177,9 @@ class ElementMetadata:
     subject: Optional[str]
     text_as_html: Optional[str]
     url: Optional[str]
+
+    # --
+    UNSERIALIZED_FIELD_NAMES = ("detection_origin",)
 
     def __init__(
         self,
@@ -215,8 +219,16 @@ class ElementMetadata:
         self.detection_class_prob = detection_class_prob
         self.emphasized_text_contents = emphasized_text_contents
         self.emphasized_text_tags = emphasized_text_tags
-        self.file_directory = file_directory
-        self.filename = filename
+
+        # -- accommodate pathlib.Path for filename --
+        filename = str(filename) if isinstance(filename, pathlib.Path) else filename
+        # -- produces "", "" when filename arg is None --
+        directory_path, file_name = os.path.split(filename or "")
+        # -- prefer `file_directory` arg if specified, otherwise split of file-path passed as
+        # -- `filename` arg, or None if that's the empty string.
+        self.file_directory = file_directory or directory_path or None
+        self.filename = file_name or None
+
         self.filetype = filetype
         self.header_footer_type = header_footer_type
         self.image_path = image_path
@@ -281,17 +293,35 @@ class ElementMetadata:
 
         return self
 
+    @property
+    def fields(self) -> MappingProxyType[str, Any]:
+        """Populated metadata fields in this object as a read-only dict.
+
+        Basically `self.__dict__` but it needs a little filtering to remove entries like
+        "_known_field_names". Note this is a *snapshot* and will not reflect later changes.
+        """
+        return MappingProxyType(
+            {key: value for key, value in self.__dict__.items() if not key.startswith("_")}
+        )
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert this metadata to dict form, suitable for JSON serialization.
 
         The returned dict is "sparse" in that no key-value pair appears for a field with value
         `None`.
         """
-        meta_dict = copy.deepcopy(dict(self._fields))
+        meta_dict = copy.deepcopy(dict(self.fields))
+
+        # -- remove fields that should not be serialized --
+        for field_name in self.UNSERIALIZED_FIELD_NAMES:
+            meta_dict.pop(field_name, None)
+
+        # -- serialize sub-object types when present --
         if self.coordinates is not None:
             meta_dict["coordinates"] = self.coordinates.to_dict()
         if self.data_source is not None:
             meta_dict["data_source"] = self.data_source.to_dict()
+
         return meta_dict
 
     def update(self, other: ElementMetadata) -> None:
@@ -309,19 +339,8 @@ class ElementMetadata:
         if not isinstance(other, ElementMetadata):  # pyright: ignore[reportUnnecessaryIsInstance]
             raise ValueError("argument to '.update()' must be an instance of 'ElementMetadata'")
 
-        for field_name, field_value in other._fields.items():
+        for field_name, field_value in other.fields.items():
             setattr(self, field_name, field_value)
-
-    @property
-    def _fields(self) -> MappingProxyType[str, Any]:
-        """Populated metadata fields in this object as a read-only dict.
-
-        Basically `self.__dict__` but it needs a little filtering to remove entries like
-        "_known_field_names".
-        """
-        return MappingProxyType(
-            {key: value for key, value in self.__dict__.items() if not key.startswith("_")}
-        )
 
     @lazyproperty
     def _known_field_names(self) -> FrozenSet[str]:
