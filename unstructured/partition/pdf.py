@@ -281,6 +281,7 @@ def partition_pdf_or_image(
             file=file,
             is_image=is_image,
             infer_table_structure=infer_table_structure,
+            extract_images_in_pdf=extract_images_in_pdf,
         )
         != "ocr_only"
     ):
@@ -304,6 +305,7 @@ def partition_pdf_or_image(
         is_image=is_image,
         infer_table_structure=infer_table_structure,
         pdf_text_extractable=pdf_text_extractable,
+        extract_images_in_pdf=extract_images_in_pdf,
     )
 
     if strategy == "hi_res":
