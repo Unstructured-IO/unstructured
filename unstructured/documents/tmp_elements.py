@@ -1,5 +1,7 @@
 """Temporary test-bed for prototyping and review of a dynamic ElementMetadata object.
 
+- [ ] Do we want any special behavior on `.__eq__()` like only check known fields maybe?
+
 - [ ] We may want to consider whether end-users should be able to add ad-hoc fields to "sub"
       metadata objects too, like `DataSourceMetadata` and conceivably `CoordinatesMetadata`
       (although I'm not immediately seeing a use-case for the second one).
@@ -9,10 +11,8 @@
       to store `null` for that in JSON ... hmm.. maybe not do this.
 
 - [ ] We have no way to distinguish an ad-hoc field from any "noise" fields that might appear in a
-      JSON/dict be loaded by `.from_dict()`, so unlike the original (which only loaded
+      JSON/dict loaded using `.from_dict()`, so unlike the original (which only loaded
       known-fields), we'll rehydrate anything that we find there.
-
-- [ ] .__eq__() ?
 
 
 Key Questions:
@@ -90,6 +90,16 @@ class ElementMetadata:
         self.page_number = page_number
         self.text_as_html = text_as_html
         self.url = url
+
+    def __eq__(self, other: object) -> bool:
+        """Implments equivalence, like meta == other_meta.
+
+        All fields at all levels must match. Unpopulated fields are not considered except when
+        populated in one and not the other.
+        """
+        if not isinstance(other, ElementMetadata):
+            return False
+        return self.__dict__ == other.__dict__
 
     def __getattr__(self, attr_name: str) -> None:
         """Only called when attribute doesn't exist."""
