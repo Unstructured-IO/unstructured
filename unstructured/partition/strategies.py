@@ -10,7 +10,7 @@ def validate_strategy(strategy: str, is_image: bool = False):
         raise ValueError(f"{strategy} is not a valid strategy.")
 
     if strategy == "fast" and is_image:
-        raise ValueError(f"The fast strategy is not available for image files.")
+        raise ValueError("The fast strategy is not available for image files.")
 
 
 def determine_pdf_or_image_strategy(

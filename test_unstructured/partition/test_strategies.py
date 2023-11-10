@@ -5,19 +5,20 @@ import pytest
 from unstructured.partition import pdf, strategies
 
 
-def test_validate_strategy_validates():
+@pytest.mark.parametrize("strategy", ["auto", "fast", "ocr_only", "hi_res"])
+def test_validate_strategy(strategy):
     # Nothing should raise for a valid strategy
-    strategies.validate_strategy("hi_res", "pdf")
+    strategies.validate_strategy(strategy=strategy)
 
 
-def test_validate_strategy_raises_for_bad_filetype():
+def test_validate_strategy_raises_for_fast_strategy():
     with pytest.raises(ValueError):
-        strategies.validate_strategy("fast", "image")
+        strategies.validate_strategy(strategy="fast", is_image=True)
 
 
 def test_validate_strategy_raises_for_bad_strategy():
     with pytest.raises(ValueError):
-        strategies.validate_strategy("totally_guess_the_text", "image")
+        strategies.validate_strategy("totally_guess_the_text")
 
 
 @pytest.mark.parametrize(
@@ -65,7 +66,6 @@ def test_determine_pdf_auto_strategy(pdf_text_extractable, infer_table_structure
     assert strategy is expected
 
 
-@pytest.mark.parametrize("is_image", [False, True])
 @pytest.mark.parametrize(
     ("pdf_text_extractable", "infer_table_structure"),
     [
@@ -75,14 +75,10 @@ def test_determine_pdf_auto_strategy(pdf_text_extractable, infer_table_structure
         (False, False),
     ],
 )
-def test_determine_pdf_or_image_fast_strategy(
-    is_image, pdf_text_extractable, infer_table_structure
-):
-    fallback_strategy = strategies.determine_pdf_or_image_strategy(
+def test_determine_pdf_or_image_fast_strategy(pdf_text_extractable, infer_table_structure):
+    strategy = strategies.determine_pdf_or_image_strategy(
         strategy="fast",
-        is_image=is_image,
         pdf_text_extractable=pdf_text_extractable,
         infer_table_structure=infer_table_structure,
     )
-    expected = "hi_res" if is_image else "fast"
-    assert fallback_strategy == expected
+    assert strategy == "fast"
