@@ -178,7 +178,7 @@ class ElementMetadata:
     text_as_html: Optional[str]
     url: Optional[str]
 
-    # --
+    # -- debug fields and others that should not appear in JSON must be specified here --
     UNSERIALIZED_FIELD_NAMES = ("detection_origin",)
 
     def __init__(
@@ -650,16 +650,10 @@ class Element(abc.ABC):
     ):
         self.id: Union[str, uuid.UUID, NoID, UUID] = element_id
         self.metadata = ElementMetadata() if metadata is None else metadata
-        self.metadata.coordinates = (
-            None
-            if coordinates is None and coordinate_system is None
-            else (
-                CoordinatesMetadata(
-                    points=coordinates,
-                    system=coordinate_system,
-                )
+        if coordinates is not None or coordinate_system is not None:
+            self.metadata.coordinates = CoordinatesMetadata(
+                points=coordinates, system=coordinate_system
             )
-        )
         self.metadata.detection_origin = detection_origin
 
     def id_to_uuid(self):
