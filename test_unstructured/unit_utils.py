@@ -1,8 +1,9 @@
 """Utilities that ease unit-testing."""
 
+import datetime as dt
 import difflib
 import pathlib
-from typing import List
+from typing import List, Optional
 
 from unstructured.documents.elements import Element
 from unstructured.staging.base import elements_from_json, elements_to_json
@@ -48,3 +49,8 @@ def example_doc_path(file_name: str) -> str:
     example_docs_dir = pathlib.Path(__file__).parent.parent / "example-docs"
     file_path = example_docs_dir / file_name
     return str(file_path.resolve())
+
+
+def parse_optional_datetime(datetime_str: Optional[str]) -> Optional[dt.datetime]:
+    """Parse `datetime_str` to a datetime.datetime instance or None if `datetime_str` is None."""
+    return dt.datetime.fromisoformat(datetime_str) if datetime_str else None
