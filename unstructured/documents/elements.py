@@ -363,6 +363,8 @@ class ElementMetadata:
         - `other` is unchanged.
         - both ad-hoc and known fields participate in update with the same semantics.
 
+        Note that fields listed in DEBUG_FIELD_NAMES are skipped in this process. Those can only be
+        updated by direct assignment to the instance.
         """
         if not isinstance(other, ElementMetadata):  # pyright: ignore[reportUnnecessaryIsInstance]
             raise ValueError("argument to '.update()' must be an instance of 'ElementMetadata'")
