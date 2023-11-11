@@ -2,7 +2,10 @@
 
 """Test-suite for `unstructured.documents.elements` module."""
 
+from __future__ import annotations
+
 import json
+import pathlib
 from functools import partial
 
 import pytest
@@ -224,6 +227,48 @@ class DescribeElementMetadata:
     def it_detects_unknown_constructor_args_at_both_development_time_and_runtime(self):
         with pytest.raises(TypeError, match="got an unexpected keyword argument 'file_name'"):
             ElementMetadata(file_name="memo.docx")  # pyright: ignore[reportGeneralTypeIssues]
+
+    @pytest.mark.parametrize(
+        "file_path",
+        [
+            pathlib.Path("documents/docx") / "memos" / "memo-2023-11-10.docx",
+            "documents/docx/memos/memo-2023-11-10.docx",
+        ],
+    )
+    def it_accommodates_either_a_pathlib_Path_or_str_for_its_filename_arg(
+        self, file_path: pathlib.Path | str
+    ):
+        meta = ElementMetadata(filename=file_path)
+
+        assert meta.file_directory == "documents/docx/memos"
+        assert meta.filename == "memo-2023-11-10.docx"
+
+    def it_leaves_both_filename_and_file_directory_None_when_neither_is_specified(self):
+        meta = ElementMetadata()
+
+        assert meta.file_directory is None
+        assert meta.filename is None
+
+    @pytest.mark.parametrize("file_path", [pathlib.Path("memo.docx"), "memo.docx"])
+    def and_it_leaves_file_directory_None_when_not_specified_and_filename_is_not_a_path(
+        self, file_path: pathlib.Path | str
+    ):
+        meta = ElementMetadata(filename=file_path)
+
+        assert meta.file_directory is None
+        assert meta.filename == "memo.docx"
+
+    def and_it_splits_off_directory_path_from_its_filename_arg_when_it_is_a_file_path(self):
+        meta = ElementMetadata(filename="documents/docx/memo-2023-11-11.docx")
+
+        assert meta.file_directory == "documents/docx"
+        assert meta.filename == "memo-2023-11-11.docx"
+
+    def but_it_prefers_a_specified_file_directory_when_filename_also_contains_a_path(self):
+        meta = ElementMetadata(filename="tmp/staging/memo.docx", file_directory="documents/docx")
+
+        assert meta.file_directory == "documents/docx"
+        assert meta.filename == "memo.docx"
 
     # -- It knows the types of its known members so type-checking support is available. --
 
