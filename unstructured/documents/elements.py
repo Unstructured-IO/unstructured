@@ -3,7 +3,6 @@ from __future__ import annotations
 import abc
 import copy
 import dataclasses as dc
-import datetime as dt
 import enum
 import functools
 import hashlib
@@ -325,12 +324,6 @@ class ElementMetadata:
                 if not field_name.startswith("_") and field_name not in self.DEBUG_FIELD_NAMES
             }
         )
-
-    @property
-    def last_modified_datetime(self) -> Optional[dt.datetime]:
-        """The `.last_modified` field as a datetime or None."""
-        last_modified = self.last_modified
-        return dt.datetime.fromisoformat(last_modified) if last_modified else None
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert this metadata to dict form, suitable for JSON serialization.
