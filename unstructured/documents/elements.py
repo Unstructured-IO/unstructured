@@ -13,9 +13,9 @@ import pathlib
 import re
 import uuid
 from types import MappingProxyType
-from typing import Any, Callable, Dict, FrozenSet, List, Optional, Tuple, Union, cast
+from typing import Any, Callable, Dict, FrozenSet, List, Optional, Tuple, Union
 
-from typing_extensions import ParamSpec, Self, TypedDict
+from typing_extensions import ParamSpec, TypedDict
 
 from unstructured.documents.coordinates import (
     TYPE_TO_COORDINATE_SYSTEM_MAP,
@@ -147,39 +147,53 @@ class ElementMetadata:
     # - Add a consolidation strategy for the field below in `ConsolidationStrategy`
     #   `.field_consolidation_strategies()` to be used when consolidating metadata fields of a
     #   section's elements during chunking.
-    # - Add field-name to UNSERIALIZED_FIELD_NAMES if it shouldn't appear in dict/JSON.
+    # - Add field-name to DEBUG_FIELD_NAMES if it shouldn't appear in dict/JSON or participate in
+    #   equality comparison.
 
     attached_to_filename: Optional[str]
     category_depth: Optional[int]
     coordinates: Optional[CoordinatesMetadata]
     data_source: Optional[DataSourceMetadata]
+    # -- Detection Model Class Probabilities from Unstructured-Inference Hi-Res --
     detection_class_prob: Optional[float]
     emphasized_text_contents: Optional[List[str]]
     emphasized_text_tags: Optional[List[str]]
     file_directory: Optional[str]
     filename: Optional[str]
     filetype: Optional[str]
+    # -- specific to DOCX which has distinct primary, first-page, and even-page header/footers --
     header_footer_type: Optional[str]
     image_path: Optional[str]
+    # -- used in chunks only, when chunk must be split mid-text to fit window --
     is_continuation: Optional[bool]
     languages: Optional[List[str]]
     last_modified: Optional[str]
     link_texts: Optional[List[str]]
     link_urls: Optional[List[str]]
     links: Optional[List[Link]]
+    # -- the worksheet name in XLXS documents --
     page_name: Optional[str]
+    # -- page numbers currently supported for DOCX, HTML, PDF, and PPTX documents --
     page_number: Optional[int]
     parent_id: Optional[str | uuid.UUID | NoID | UUID]
+    # -- "fields" e.g. status, dept.no, etc. extracted from text via regex --
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]]
+    # -- EPUB document section --
     section: Optional[str]
+
+    # -- e-mail specific metadata fields --
     sent_from: Optional[List[str]]
     sent_to: Optional[List[str]]
     subject: Optional[str]
+
+    # -- used for Table elements to capture rows/col structure --
     text_as_html: Optional[str]
     url: Optional[str]
 
-    # -- debug fields and others that should not appear in JSON must be specified here --
-    UNSERIALIZED_FIELD_NAMES = ("detection_origin",)
+    # -- debug fields can be assigned and referenced using dotted-notation but are not serialized
+    # -- to dict/JSON, do not participate in equality comparison, and are not included in the
+    # -- `.fields` dict used by other parts of the library like chunking and weaviate.
+    DEBUG_FIELD_NAMES = frozenset(["detection_origin"])
 
     def __init__(
         self,
@@ -225,7 +239,7 @@ class ElementMetadata:
         # -- produces "", "" when filename arg is None --
         directory_path, file_name = os.path.split(filename or "")
         # -- prefer `file_directory` arg if specified, otherwise split of file-path passed as
-        # -- `filename` arg, or None if that's the empty string.
+        # -- `filename` arg, or None if `filename` is the empty string.
         self.file_directory = file_directory or directory_path or None
         self.filename = file_name or None
 
@@ -271,6 +285,8 @@ class ElementMetadata:
             if __name in self.__dict__:
                 delattr(self, __name)
             return
+        if not UNSTRUCTURED_INCLUDE_DEBUG_METADATA and __name in self.DEBUG_FIELD_NAMES:
+            return
         super().__setattr__(__name, __value)
 
     @classmethod
@@ -301,7 +317,11 @@ class ElementMetadata:
         "_known_field_names". Note this is a *snapshot* and will not reflect later changes.
         """
         return MappingProxyType(
-            {key: value for key, value in self.__dict__.items() if not key.startswith("_")}
+            {
+                field_name: field_value
+                for field_name, field_value in self.__dict__.items()
+                if not field_name.startswith("_") and field_name not in self.DEBUG_FIELD_NAMES
+            }
         )
 
     @property
@@ -319,7 +339,7 @@ class ElementMetadata:
         meta_dict = copy.deepcopy(dict(self.fields))
 
         # -- remove fields that should not be serialized --
-        for field_name in self.UNSERIALIZED_FIELD_NAMES:
+        for field_name in self.DEBUG_FIELD_NAMES:
             meta_dict.pop(field_name, None)
 
         # -- serialize sub-object types when present --
@@ -352,142 +372,6 @@ class ElementMetadata:
     def _known_field_names(self) -> FrozenSet[str]:
         """field-names for non-user-defined fields, available on all ElementMetadata instances."""
         return frozenset(self.__annotations__)
-
-
-@dc.dataclass
-class OldElementMetadata:
-    # NOTE(scanny): if you ADD a field here you must specify a consolidation strategy for it below
-    # in ConsolidationStrategy.field_consolidation_strategies() to be used when combining elements
-    # during chunking.
-    coordinates: Optional[CoordinatesMetadata] = None
-    data_source: Optional[DataSourceMetadata] = None
-    # --
-    filename: Optional[str] = None
-    file_directory: Optional[str] = None
-    last_modified: Optional[str] = None
-    filetype: Optional[str] = None
-    attached_to_filename: Optional[str] = None
-    parent_id: Optional[Union[str, uuid.UUID, NoID, UUID]] = None
-    category_depth: Optional[int] = None
-    image_path: Optional[str] = None
-
-    # Languages in element.
-    languages: Optional[List[str]] = None
-
-    # Page numbers currently supported for DOCX, HTML, PDF, and PPTX documents
-    page_number: Optional[int] = None
-
-    # Page name. The sheet name in XLXS documents.
-    page_name: Optional[str] = None
-
-    # Webpage specific metadata fields
-    url: Optional[str] = None
-    link_urls: Optional[List[str]] = None
-    link_texts: Optional[List[str]] = None
-    links: Optional[List[Link]] = None
-
-    # E-mail specific metadata fields
-    sent_from: Optional[List[str]] = None
-    sent_to: Optional[List[str]] = None
-    subject: Optional[str] = None
-
-    # Document section fields
-    section: Optional[str] = None
-
-    # MSFT Word specific metadata fields
-    header_footer_type: Optional[str] = None
-
-    # Formatting metadata fields
-    emphasized_text_contents: Optional[List[str]] = None
-    emphasized_text_tags: Optional[List[str]] = None
-
-    # Text format metadata fields
-    text_as_html: Optional[str] = None
-
-    # Metadata extracted via regex
-    regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
-
-    # Chunking metadata fields
-    is_continuation: Optional[bool] = None
-
-    # Detection Model Class Probabilities from Unstructured-Inference Hi-Res
-    detection_class_prob: Optional[float] = None
-
-    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-        # -- The detection mechanism that emitted this element, for debugging purposes. Only
-        # -- defined when UNSTRUCTURED_INCLUDE_DEBUG_METADATA flag is True. Note the `compare=False`
-        # -- setting meaning it's value is not included when comparing two ElementMetadata instances
-        # -- for equality (`.__eq__()`).
-        detection_origin: Optional[str] = dc.field(default=None, compare=False)
-
-    def __setattr__(self, key: str, value: Any):
-        # -- Avoid triggering `AttributeError` when assigning to `metadata.detection_origin` when
-        # -- when the UNSTRUCTURED_INCLUDE_DEBUG_METADATA flag is False (and the `.detection_origin`
-        # -- field is not defined).
-        if not UNSTRUCTURED_INCLUDE_DEBUG_METADATA and key == "detection_origin":
-            return
-        else:
-            super().__setattr__(key, value)
-
-    def __post_init__(self):
-        if isinstance(self.filename, pathlib.Path):
-            self.filename = str(self.filename)
-
-        if self.filename is not None:
-            file_directory, filename = os.path.split(self.filename)
-            # -- Only replace file-directory when we have something better. When ElementMetadata is
-            # -- being re-loaded from JSON, the file-directory we want will already be there and
-            # -- filename will be just the file-name portion of the path.
-            if file_directory:
-                self.file_directory = file_directory
-            self.filename = filename
-
-    def to_dict(self):
-        if not self.links:
-            self.links = None
-        _dict = {
-            key: value
-            for key, value in self.__dict__.items()
-            if value is not None and key != "detection_origin"
-        }
-        if "regex_metadata" in _dict and not _dict["regex_metadata"]:
-            _dict.pop("regex_metadata")
-        if self.data_source:
-            _dict["data_source"] = cast(DataSourceMetadata, self.data_source).to_dict()
-        if self.coordinates:
-            _dict["coordinates"] = cast(CoordinatesMetadata, self.coordinates).to_dict()
-        return _dict
-
-    @classmethod
-    def from_dict(cls, input_dict: Dict[str, Any]) -> Self:
-        constructor_args = copy.deepcopy(input_dict)
-        if constructor_args.get("coordinates", None) is not None:
-            constructor_args["coordinates"] = CoordinatesMetadata.from_dict(
-                constructor_args["coordinates"],
-            )
-        if constructor_args.get("data_source", None) is not None:
-            constructor_args["data_source"] = DataSourceMetadata.from_dict(
-                constructor_args["data_source"],
-            )
-
-        # Only use existing fields when constructing
-        supported_fields = [f.name for f in dc.fields(cls)]
-        args = {k: v for k, v in constructor_args.items() if k in supported_fields}
-
-        return cls(**args)
-
-    def merge(self, other: ElementMetadata):
-        for k in self.__dict__:
-            if getattr(self, k) is None:
-                setattr(self, k, getattr(other, k))
-        return self
-
-    def get_last_modified(self) -> Optional[dt.datetime]:
-        """Converts the date field to a datetime object."""
-        dt = None
-        if self.last_modified is not None:
-            dt = dt.datetime.fromisoformat(self.last_modified)
-        return dt
 
 
 class ConsolidationStrategy(enum.Enum):
