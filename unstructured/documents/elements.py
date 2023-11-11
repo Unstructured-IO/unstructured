@@ -325,6 +325,23 @@ class ElementMetadata:
             }
         )
 
+    @property
+    def known_fields(self) -> MappingProxyType[str, Any]:
+        """Populated non-ad-hoc fields in this object as a read-only dict.
+
+        Only fields declared at the top of this class are included. Ad-hoc fields added to this
+        instance by assignment are not. Note this is a *snapshot* and will not reflect changes that
+        occur after this call.
+        """
+        known_field_names = self._known_field_names
+        return MappingProxyType(
+            {
+                field_name: field_value
+                for field_name, field_value in self.__dict__.items()
+                if (field_name in known_field_names and field_name not in self.DEBUG_FIELD_NAMES)
+            }
+        )
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert this metadata to dict form, suitable for JSON serialization.
 
@@ -367,7 +384,14 @@ class ElementMetadata:
 
     @lazyproperty
     def _known_field_names(self) -> FrozenSet[str]:
-        """field-names for non-user-defined fields, available on all ElementMetadata instances."""
+        """field-names for non-user-defined fields, available on all ElementMetadata instances.
+
+        Note that the first call to this lazyproperty adds a `"_known_field_names"` item to the
+        `__dict__` of this instance, so this be called *before* iterating through `self.__dict__`
+        to avoid a mid-iteration mutation.
+        """
+        # -- self.__annotations__ is a dict and iterating it produces its keys, which are the
+        # -- field-names we want here.
         return frozenset(self.__annotations__)
 
 
