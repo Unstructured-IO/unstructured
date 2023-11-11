@@ -156,6 +156,8 @@ class ElementMetadata:
     data_source: Optional[DataSourceMetadata]
     # -- Detection Model Class Probabilities from Unstructured-Inference Hi-Res --
     detection_class_prob: Optional[float]
+    # -- DEBUG field, the detection mechanism that emitted this element --
+    detection_origin: Optional[str]
     emphasized_text_contents: Optional[List[str]]
     emphasized_text_tags: Optional[List[str]]
     file_directory: Optional[str]
