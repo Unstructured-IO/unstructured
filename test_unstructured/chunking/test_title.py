@@ -826,6 +826,38 @@ class Describe_TextSection:
             # -- A `None` value never appears, neither does a field-name with an empty list --
         }
 
+    def but_it_discards_ad_hoc_metadata_fields_during_consolidation(self):
+        metadata = ElementMetadata(
+            category_depth=0,
+            filename="foo.docx",
+            languages=["lat"],
+            parent_id="f87731e0",
+        )
+        metadata.coefficient = 0.62
+        metadata_2 = ElementMetadata(
+            category_depth=1,
+            filename="foo.docx",
+            image_path="sprite.png",
+            languages=["lat", "eng"],
+        )
+        metadata_2.quotient = 1.74
+
+        section = _TextSection(
+            [
+                Title("Lorem Ipsum", metadata=metadata),
+                Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata_2),
+            ]
+        )
+
+        # -- ad-hoc fields "coefficient" and "quotient" do not appear --
+        assert section._all_metadata_values == {
+            "category_depth": [0, 1],
+            "filename": ["foo.docx", "foo.docx"],
+            "image_path": ["sprite.png"],
+            "languages": [["lat"], ["lat", "eng"]],
+            "parent_id": ["f87731e0"],
+        }
+
     def it_consolidates_regex_metadata_in_a_field_specific_way(self):
         """regex_metadata of chunk is combined regex_metadatas of its elements.
 
