@@ -207,7 +207,7 @@ class ElementMetadata:
         emphasized_text_contents: Optional[List[str]] = None,
         emphasized_text_tags: Optional[List[str]] = None,
         file_directory: Optional[str] = None,
-        filename: Optional[str] = None,
+        filename: Optional[str | pathlib.Path] = None,
         filetype: Optional[str] = None,
         header_footer_type: Optional[str] = None,
         image_path: Optional[str] = None,
