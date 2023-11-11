@@ -336,8 +336,9 @@ def _add_element_metadata(
         image_path=image_path,
         languages=languages,
     )
-    metadata.detection_origin = detection_origin
     element.metadata.update(metadata)
+    if detection_origin is not None:
+        element.metadata.detection_origin = detection_origin
     return element
 
 
