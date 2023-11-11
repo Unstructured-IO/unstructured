@@ -257,7 +257,7 @@ class ElementMetadata:
         """
         if not isinstance(other, ElementMetadata):
             return False
-        return self.__dict__ == other.__dict__
+        return self.fields == other.fields
 
     def __getattr__(self, attr_name: str) -> None:
         """Only called when attribute doesn't exist."""

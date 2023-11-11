@@ -261,6 +261,7 @@ def test_chunk_by_title():
         Text("It is storming outside."),
         CheckBox(),
     ]
+
     chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
 
     assert chunks == [
@@ -274,7 +275,6 @@ def test_chunk_by_title():
         ),
         CheckBox(),
     ]
-
     assert chunks[0].metadata == ElementMetadata(emphasized_text_contents=["Day", "day"])
     assert chunks[3].metadata == ElementMetadata(
         regex_metadata={"a": [RegexMetadata(text="A", start=11, end=12)]},
