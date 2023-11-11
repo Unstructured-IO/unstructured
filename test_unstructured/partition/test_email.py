@@ -323,7 +323,7 @@ def test_partition_email_from_filename_has_metadata():
         ).to_dict()
     )
     expected_dt = datetime.datetime.fromisoformat("2022-12-16T17:04:16-05:00")
-    assert elements[0].metadata.get_last_modified() == expected_dt
+    assert elements[0].metadata.last_modified_datetime == expected_dt
     for element in elements:
         assert element.metadata.filename == "fake-email.eml"
 
@@ -399,7 +399,7 @@ def test_partition_email_still_works_with_no_content():
 def test_partition_email_from_filename_exclude_metadata():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-header.eml")
     elements = partition_email(filename=filename, include_metadata=False)
-    assert elements[0].metadata.get_last_modified() is None
+    assert elements[0].metadata.last_modified_datetime is None
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
@@ -413,7 +413,7 @@ def test_partition_email_from_text_file_exclude_metadata():
             content_source="text/plain",
             include_metadata=False,
         )
-    assert elements[0].metadata.get_last_modified() is None
+    assert elements[0].metadata.last_modified_datetime is None
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
@@ -423,7 +423,7 @@ def test_partition_email_from_file_exclude_metadata():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.eml")
     with open(filename) as f:
         elements = partition_email(file=f, include_metadata=False)
-    assert elements[0].metadata.get_last_modified() is None
+    assert elements[0].metadata.last_modified_datetime is None
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
