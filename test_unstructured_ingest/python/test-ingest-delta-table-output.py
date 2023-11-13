@@ -11,14 +11,14 @@ def run_check(table_uri):
     )
 
     df = delta_table.to_pandas()
-    expected_rows = 5
-    expected_columns = 18
-    print(f"Number of rows in table vs expected: {len(df)}/{expected_rows}")
-    print(f"Number of columns in table vs expected: {len(df.columns)}/{expected_columns}")
+    EXPECTED_ROWS = 5
+    EXPECTED_COLUMNS = 19
+    print(f"Number of rows in table vs expected: {len(df)}/{EXPECTED_ROWS}")
+    print(f"Number of columns in table vs expected: {len(df.columns)}/{EXPECTED_COLUMNS}")
     number_of_rows = len(df)
-    assert number_of_rows == 5, (
+    assert number_of_rows == EXPECTED_ROWS, (
         f"number of rows in generated table ({number_of_rows}) "
-        f"doesn't match expected value: {expected_rows}"
+        f"doesn't match expected value: {EXPECTED_ROWS}"
     )
 
     """
@@ -26,9 +26,9 @@ def run_check(table_uri):
     If this changes, it's most likely due to the metadata changing in the output.
     """
     number_of_columns = len(df.columns)
-    assert number_of_columns == 18, (
+    assert number_of_columns == EXPECTED_COLUMNS, (
         f"number of columns in generated table ({number_of_columns}) doesn't "
-        f"match expected value: {expected_columns}"
+        f"match expected value: {EXPECTED_COLUMNS}"
     )
     print("table check complete")
 
