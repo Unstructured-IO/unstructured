@@ -528,6 +528,9 @@ def parse_ocr_data_tesseract(ocr_data: pd.DataFrame, zoom: float = 1) -> List[Te
       data frame will result in its associated bounding box being ignored.
     """
 
+    if zoom <= 0:
+        zoom = 1
+
     text_regions = []
     for idtx in ocr_data.itertuples():
         text = idtx.text
