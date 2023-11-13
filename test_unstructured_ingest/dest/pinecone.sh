@@ -100,7 +100,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --work-dir "$WORK_DIR" \
   --chunk-elements \
   --chunk-combine-text-under-n-chars 200\
-  --chunk-new-after-n-chars 500\
+  --chunk-new-after-n-chars 2500\
   --chunk-max-characters 38000\
   --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \
@@ -131,7 +131,7 @@ while [ "$num_of_vectors_remote" -eq 0 ] && [ "$attempt" -lt 4 ]; do
   attempt=$((attempt+1))
 done
 
-EXPECTED=558
+EXPECTED=1404
 
 if [ "$num_of_vectors_remote" -ne $EXPECTED ];then
   echo "Number of vectors in Pinecone are $num_of_vectors_remote when the expected number is $EXPECTED. Test failed."

@@ -191,6 +191,7 @@ class ChunkingConfig(BaseConfig):
     multipage_sections: bool = True
     combine_text_under_n_chars: int = 500
     max_characters: int = 1500
+    new_after_n_chars: t.Optional[int] = None
 
     def chunk(self, elements: t.List[Element]) -> t.List[Element]:
         if self.chunk_elements:
@@ -199,6 +200,7 @@ class ChunkingConfig(BaseConfig):
                 multipage_sections=self.multipage_sections,
                 combine_text_under_n_chars=self.combine_text_under_n_chars,
                 max_characters=self.max_characters,
+                new_after_n_chars=self.new_after_n_chars,
             )
         else:
             return elements
