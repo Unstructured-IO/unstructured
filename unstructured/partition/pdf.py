@@ -278,16 +278,7 @@ def partition_pdf_or_image(
     )
 
     extracted_elements = []
-    if (
-        not is_image
-        and determine_pdf_or_image_strategy(
-            strategy,
-            is_image=is_image,
-            infer_table_structure=infer_table_structure,
-            extract_images_in_pdf=extract_images_in_pdf,
-        )
-        != "ocr_only"
-    ):
+    if not is_image and strategy != "ocr_only":
         extracted_elements = extractable_elements(
             filename=filename,
             file=spooled_to_bytes_io_if_needed(file),
