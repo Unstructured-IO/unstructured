@@ -11,7 +11,7 @@ from unstructured.ingest.interfaces import (
     BaseSessionHandle,
     ConfigSessionHandleMixin,
     WriteConfig,
-    WriteConfigSessionHandleMixin,
+    IngestDocSessionHandleMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
