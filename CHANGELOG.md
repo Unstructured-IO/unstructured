@@ -1,3 +1,13 @@
+## 0.10.31-dev0
+
+### Enhancements
+
+### Features
+
+**Weaviate destination connector** PostgreSQL connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a PostgreSQL database.
+
+### Fixes
+
 ## 0.10.30
 
 ### Enhancements
