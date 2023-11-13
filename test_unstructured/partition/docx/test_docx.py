@@ -15,6 +15,7 @@ from unstructured.documents.elements import (
     Address,
     CompositeElement,
     Element,
+    ElementType,
     Footer,
     Header,
     ListItem,
@@ -120,7 +121,11 @@ def test_parition_docx_from_team_chat():
         "0:0:3.270 --> 0:0:4.250\nJames Bond\nUmm.",
         "saved-by  Dennis Forsythe",
     ]
-    assert [e.category for e in elements] == ["UncategorizedText", "UncategorizedText", "Table"]
+    assert [e.category for e in elements] == [
+        ElementType.UNCATEGORIZED_TEXT,
+        ElementType.UNCATEGORIZED_TEXT,
+        ElementType.TABLE,
+    ]
 
 
 def test_partition_docx_from_filename(
@@ -227,28 +232,46 @@ def test_partition_docx_grabs_header_and_footer():
         assert element.metadata.filename == "handbook-1p.docx"
 
 
-def test_partition_docx_includes_pages_if_present():
-    elements = cast(
-        List[Text], partition_docx(example_doc_path("handbook-1p.docx"), include_page_breaks=False)
+# -- page-break behaviors ------------------------------------------------------------------------
+
+
+def test_partition_docx_includes_neither_page_breaks_nor_numbers_when_rendered_breaks_not_present():
+    """Hard page-breaks by themselves are not enough to locate page-breaks in a document.
+
+    In particular, they are redundant when rendered page-breaks are present, which they usually are
+    in a native Word document, so lead to double-counting those page-breaks. When rendered page
+    breaks are *not* present, only a small fraction will be represented by hard page-breaks so hard
+    breaks are a false-positive and will generally produce incorrect page numbers.
+    """
+    elements = partition_docx(
+        example_doc_path("handbook-1p-no-rendered-page-breaks.docx"), include_page_breaks=True
     )
 
-    assert "PageBreak" not in [elem.category for elem in elements]
+    assert "PageBreak" not in [type(e).__name__ for e in elements]
+    assert all(e.metadata.page_number is None for e in elements)
+
+
+def test_partition_docx_includes_page_numbers_when_page_break_elements_are_suppressed():
+    """Page-number metadata is not supressed when `include_page_breaks` arga is False.
+
+    Only inclusion of PageBreak elements is affected by that option.
+    """
+    elements = partition_docx(example_doc_path("handbook-1p.docx"), include_page_breaks=False)
+
+    assert "PageBreak" not in [type(e).__name__ for e in elements]
     assert elements[1].metadata.page_number == 1
     assert elements[-2].metadata.page_number == 2
-    for element in elements:
-        assert element.metadata.filename == "handbook-1p.docx"
 
 
-def test_partition_docx_includes_page_breaks():
-    elements = cast(
-        List[Text], partition_docx(example_doc_path("handbook-1p.docx"), include_page_breaks=True)
-    )
+def test_partition_docx_includes_page_break_elements_when_so_instructed():
+    elements = partition_docx(example_doc_path("handbook-1p.docx"), include_page_breaks=True)
 
-    assert "PageBreak" in [elem.category for elem in elements]
+    assert "PageBreak" in [type(e).__name__ for e in elements]
     assert elements[1].metadata.page_number == 1
     assert elements[-2].metadata.page_number == 2
-    for element in elements:
-        assert element.metadata.filename == "handbook-1p.docx"
+
+
+# ------------------------------------------------------------------------------------------------
 
 
 def test_partition_docx_detects_lists():

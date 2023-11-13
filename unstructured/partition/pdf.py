@@ -45,6 +45,7 @@ from unstructured.documents.elements import (
     CoordinatesMetadata,
     Element,
     ElementMetadata,
+    ElementType,
     Image,
     Link,
     ListItem,
@@ -280,6 +281,7 @@ def partition_pdf_or_image(
             file=file,
             is_image=is_image,
             infer_table_structure=infer_table_structure,
+            extract_images_in_pdf=extract_images_in_pdf,
         )
         != "ocr_only"
     ):
@@ -303,6 +305,7 @@ def partition_pdf_or_image(
         is_image=is_image,
         infer_table_structure=infer_table_structure,
         pdf_text_extractable=pdf_text_extractable,
+        extract_images_in_pdf=extract_images_in_pdf,
     )
 
     if strategy == "hi_res":
@@ -323,7 +326,7 @@ def partition_pdf_or_image(
             )
             layout_elements = []
             for el in _layout_elements:
-                if hasattr(el, "category") and el.category == "UncategorizedText":
+                if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
                     new_el = element_from_text(cast(Text, el).text)
                     new_el.metadata = el.metadata
                 else:
@@ -348,7 +351,7 @@ def partition_pdf_or_image(
 
             layout_elements = []
             for el in _layout_elements:
-                if hasattr(el, "category") and el.category == "UncategorizedText":
+                if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
                     new_el = element_from_text(cast(Text, el).text)
                     new_el.metadata = el.metadata
                 else:

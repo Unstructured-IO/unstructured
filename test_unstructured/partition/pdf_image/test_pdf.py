@@ -434,8 +434,8 @@ def test_partition_pdf_hi_res_ocr_mode_with_table_extraction(ocr_mode):
     assert len(table) == 2
     assert "<table><thead><th>" in table[0]
     assert "Layouts of history Japanese documents" in table[0]
-    # FIXME(yuming): comment this out since there are some table regression issue
-    # assert "Layouts of scanned modern magazines and scientific reports" in table[0]
+    assert "Layouts of scanned modern magazines and scientific report" in table[0]
+    assert "Layouts of scanned US newspapers from the 20th century" in table[0]
 
 
 def test_partition_pdf_with_copy_protection():
@@ -950,3 +950,10 @@ def test_partition_pdf_with_ocr_only_strategy(
     # check detection origin
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
         assert {element.metadata.detection_origin for element in elements} == {"ocr_tesseract"}
+
+
+def test_partition_pdf_with_all_number_table_and_ocr_only_strategy():
+    # AttributeError was previously being raised when partitioning documents that contained only
+    # numerical values with `strategy="ocr_only"`
+    filename = example_doc_path("all-number-table.pdf")
+    assert pdf.partition_pdf(filename, strategy="ocr_only")
