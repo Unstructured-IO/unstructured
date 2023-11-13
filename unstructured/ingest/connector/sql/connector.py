@@ -1,7 +1,7 @@
 import json
 import typing as t
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
@@ -29,7 +29,7 @@ COORDINATES_TABLE_NAME = "coordinates"
 class SimpleSqlConfig(BaseConnectorConfig):
     drivername: t.Optional[str]
     username: t.Optional[str]
-    password: t.Optional[str]
+    password: t.Optional[str] = field(repr=False)
     host: t.Optional[str]
     database: t.Optional[str]
     database_url: t.Optional[str] = None
