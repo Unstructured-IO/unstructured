@@ -1,4 +1,4 @@
-## 0.10.30-dev4
+## 0.10.30
 
 ### Enhancements
 
@@ -7,12 +7,17 @@
 
 ### Features
 
+* **Add functionality to do a second OCR on cropped table images.** Changes to the values for scaling ENVs affect entire page OCR output(OCR regression) so we now do a second OCR for tables.
 * **Adds ability to pass timeout for a request when partitioning via a `url`.** `partition` now accepts a new optional parameter `request_timeout` which if set will prevent any `requests.get` from hanging indefinitely and instead will raise a timeout error. This is useful when partitioning a url that may be slow to respond or may not respond at all.
 
 ### Fixes
 
+* **Fix logic that determines pdf auto strategy.** Previously, `_determine_pdf_auto_strategy` returned `hi_res` strategy only if `infer_table_structure` was true. It now returns the `hi_res` strategy if either `infer_table_structure` or `extract_images_in_pdf` is true.   
+* **Fix invalid coordinates when parsing tesseract ocr data.** Previously, when parsing tesseract ocr data, the ocr data had invalid bboxes if zoom was set to `0`. A logical check is now added to avoid such error. 
 * **Fix ingest partition parameters not being passed to the api.** When using the --partition-by-api flag via unstructured-ingest, none of the partition arguments are forwarded, meaning that these options are disregarded. With this change, we now pass through all of the relevant partition arguments to the api. This allows a user to specify all of the same partition arguments they would locally and have them respected when specifying --partition-by-api.
 * **Support tables in section-less DOCX.** Generalize solution for MS Chat Transcripts exported as DOCX by including tables in the partitioned output when present.
+* **Support tables that contain only numbers when partitioning via `ocr_only`** Tables that contain only numbers are returned as floats in a pandas.DataFrame when the image is converted from `.image_to_data()`. An AttributeError was raised downstream when trying to `.strip()` the floats.
+* **Improve DOCX page-break detection.** DOCX page breaks are reliably indicated by `w:lastRenderedPageBreak` elements present in the document XML. Page breaks are NOT reliably indicated by "hard" page-breaks inserted by the author and when present are redundant to a `w:lastRenderedPageBreak` element so cause over-counting if used. Use rendered page-breaks only.
 
 ## 0.10.29
 
