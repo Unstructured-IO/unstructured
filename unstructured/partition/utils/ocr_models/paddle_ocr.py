@@ -1,14 +1,19 @@
 import functools
+import os
 
 from unstructured.logger import logger
+from unstructured.partition.utils.constants import DEFAULT_PADDLE_LANG
 
 
 @functools.lru_cache(maxsize=None)
-def load_agent(language: str = "en"):
+def load_agent(language: str = DEFAULT_PADDLE_LANG):
     import paddle
     from unstructured_paddleocr import PaddleOCR
 
     """Loads the PaddleOCR agent as a global variable to ensure that we only load it once."""
+    # Note(yuming): Temporary fix to pass language parameter to paddle
+    # should be removed once we have the language mapping for paddle
+    language = os.getenv("PADDLE_LANG", DEFAULT_PADDLE_LANG)
 
     # Disable signal handlers at C++ level upon failing
     # ref: https://www.paddlepaddle.org.cn/documentation/docs/en/api/paddle/
