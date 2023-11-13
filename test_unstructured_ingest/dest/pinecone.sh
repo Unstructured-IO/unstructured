@@ -16,8 +16,10 @@ if [ -z "$PINECONE_API_KEY" ]; then
    exit 0
 fi
 
+RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
+
 PINECONE_ENVIRONMENT="gcp-starter"
-PINECONE_INDEX="ingest-test"
+PINECONE_INDEX="ingest-test-$RANDOM_SUFFIX"
 PINECONE_PROJECT_ID="bfa06d5"
 
 # shellcheck disable=SC1091
