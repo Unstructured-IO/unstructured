@@ -405,10 +405,9 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
 
         return wrapper
 
-    # TODO: set as @abstractmethod and pass or raise NotImplementedError
+    @abstractmethod
     def update_source_metadata(self, **kwargs) -> None:
         """Sets the SourceMetadata and the  properties for the doc"""
-        self._source_metadata = SourceMetadata()
 
     def update_permissions_data(self):
         """Sets the _permissions_data property for the doc.

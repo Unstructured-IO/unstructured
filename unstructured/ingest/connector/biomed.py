@@ -16,6 +16,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import (
@@ -125,6 +126,9 @@ class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         ):
             logger.debug(f"Cleaning up {self}")
             Path.unlink(self.filename)
+
+    def update_source_metadata(self, **kwargs) -> None:
+        self._source_metadata = SourceMetadata()
 
     @SourceConnectionError.wrap
     @BaseIngestDoc.skip_if_file_exists

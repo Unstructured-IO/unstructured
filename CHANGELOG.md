@@ -1,6 +1,8 @@
-## 0.10.31-dev1
+## 0.10.31-dev2
 
 ### Enhancements
+
+* **Sets `update_source_metadata` as an abstract method.** The `update_source_metadata` method on the interfaces file set `source_metadata` to `None` by default. As an abstract method, connectors that adhere to this contract interface should now implement this method.
 
 ### Features
 
