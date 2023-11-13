@@ -100,6 +100,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --work-dir "$WORK_DIR" \
   --chunk-elements \
   --chunk-combine-text-under-n-chars 200\
+  --chunk-new-after-n-chars 500\
   --chunk-max-characters 38000\
   --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \

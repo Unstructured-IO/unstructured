@@ -474,6 +474,12 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 show_default=True,
             ),
             click.Option(
+                ["--chunk-new-after-n-chars"],
+                type=int,
+                default=1500,
+                show_default=True,
+            ),
+            click.Option(
                 ["--chunk-max-characters"],
                 type=int,
                 default=1500,
