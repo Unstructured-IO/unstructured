@@ -3,6 +3,18 @@
     "type": "UncategorizedText",
     "element_id": "0e58869830c7b4461a4d1879223e4139",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "DatainBrief22 ( 2019 ) 451 –",
+          "url": "https://doi.org/10.1016/j.dib.2018.11.134",
+          "start_index": 0
+        }
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -10,19 +22,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "links": [
-        {
-          "text": "DatainBrief22 ( 2019 ) 451 –",
-          "url": "https://doi.org/10.1016/j.dib.2018.11.134",
-          "start_index": 0
-        }
-      ]
+      }
     },
     "text": "Data in Brief 22 (2019) 451–457"
   },
@@ -30,6 +30,18 @@
     "type": "NarrativeText",
     "element_id": "b0658ce9dccc0acba9a472c2bb992cc9",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "",
+          "url": "www.sciencedirect.com/science/journal/23523409",
+          "start_index": -1
+        }
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -37,19 +49,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "links": [
-        {
-          "text": "",
-          "url": "www.sciencedirect.com/science/journal/23523409",
-          "start_index": -1
-        }
-      ]
+      }
     },
     "text": "Contents lists available at ScienceDirect"
   },
@@ -57,6 +57,12 @@
     "type": "Title",
     "element_id": "f2fe9c33b7e8535efebf7c20ebce297c",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -64,12 +70,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Data in Brief"
   },
@@ -77,6 +78,18 @@
     "type": "Title",
     "element_id": "0ca3f075fdccf9232449ff461b63ceb9",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "www . elsevier . com / locate /",
+          "url": "www.elsevier.com/locate/dib",
+          "start_index": 18
+        }
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -84,19 +97,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "links": [
-        {
-          "text": "www . elsevier . com / locate /",
-          "url": "www.elsevier.com/locate/dib",
-          "start_index": 18
-        }
-      ]
+      }
     },
     "text": "journal homepage: www.elsevier.com/locate/dib"
   },
@@ -104,6 +105,12 @@
     "type": "Title",
     "element_id": "0ccb3a9876bbc64a1ca09fa40c4f844d",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -111,12 +118,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Data Article"
   },
@@ -124,6 +126,12 @@
     "type": "Title",
     "element_id": "9ad2f78909544aa8ddb755f6fcc7db7d",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -131,12 +139,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Data on environmental sustainable corrosion inhibitor for stainless steel in aggressive environment"
   },
@@ -144,6 +147,12 @@
     "type": "Title",
     "element_id": "43ba2d697eec5d4b647cf4579c185231",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -151,12 +160,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Omotayo Sanni n, Abimbola Patricia I. Popoola"
   },
@@ -164,6 +168,12 @@
     "type": "UncategorizedText",
     "element_id": "893c64b557e9f51e0b4dbdca3e5e4216",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -171,12 +181,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Department of Chemical, Metallurgical and Materials Engineering, Tshwane University of Technology, Pretoria, South Africa"
   },
@@ -184,6 +189,12 @@
     "type": "NarrativeText",
     "element_id": "fbd221e3c1f82c8601661213b98b0962",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -191,12 +202,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "a r t i c l e i n f o"
   },
@@ -204,6 +210,12 @@
     "type": "NarrativeText",
     "element_id": "d6923075e35e5f3296e0d24ceb70a2bb",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -211,12 +223,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "a b s t r a c t"
   },
@@ -224,6 +231,12 @@
     "type": "UncategorizedText",
     "element_id": "c382dd715a85d683f056834c4af7be85",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -231,12 +244,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Article history: Received 31 August 2018 Received in revised form 17 November 2018 Accepted 27 November 2018 Available online 30 November 2018"
   },
@@ -244,6 +252,12 @@
     "type": "Title",
     "element_id": "abe4641521caf8385f30e81099f3a8c6",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -251,12 +265,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Keywords: Corrosion Stainless steel Inhibitor Sulphuric acid"
   },
@@ -264,6 +273,12 @@
     "type": "NarrativeText",
     "element_id": "5ff19b29d56eb015cac7f80f93c4ae6b",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -271,12 +286,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "This data article contains data related to the research article entitled “enhanced corrosion resistance of stainless steel Type 316 in sulphuric acid solution using eco-friendly waste product” (Sanni et al., 2018). In this data article, a comprehensive effect of waste product and optimized process parameter of the inhibitor in 0.5 M H2SO4 solution was presented using weight loss and potentiody- the inhibitor namic polarization techniques. The presence of (egg shell powder) inﬂuenced corrosion resistance of stainless steel. Inhibition efﬁciency value of 94.74% was recorded as a result of inhibition of the steel by the ionized molecules of the inhibiting compound of the egg shell powder inﬂuencing the redox mechan- ism reactions responsible for corrosion and surface deterioration."
   },
@@ -284,6 +294,12 @@
     "type": "NarrativeText",
     "element_id": "260cf1397ece5718c2d35900917688de",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -291,12 +307,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "& 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/)."
   },
@@ -304,6 +315,12 @@
     "type": "Title",
     "element_id": "8c625bd30cfb1b77c8ba8d4e863d0bb3",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -311,12 +328,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Speciﬁcation table"
   },
@@ -324,6 +336,12 @@
     "type": "UncategorizedText",
     "element_id": "7379bc18109a0a988413877dd9950c36",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -331,12 +349,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Subject area More speciﬁc subject area Surface science and engineering Type of data"
   },
@@ -344,6 +357,12 @@
     "type": "Title",
     "element_id": "b27e559f6c00d2bde61efba5db252e31",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -351,12 +370,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Materials engineering"
   },
@@ -364,6 +378,12 @@
     "type": "Title",
     "element_id": "1064dcef42380cfdb90c668aa3a670a3",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -371,12 +391,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Table and ﬁgure"
   },
@@ -384,6 +399,12 @@
     "type": "Title",
     "element_id": "e4359c72057b318ddf5a64f9b97539c4",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -391,12 +412,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "n Corresponding author. tayo.sanni@yahoo.com; SanniO@tut.ac.za"
   },
@@ -404,6 +420,18 @@
     "type": "Title",
     "element_id": "e102dc7c1db28c29d5e4bde8062592ed",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "tayo . sanni @ yahoo . com",
+          "url": "mailto:tayo.sanni@yahoo.com",
+          "start_index": 16
+        }
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -411,19 +439,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "links": [
-        {
-          "text": "tayo . sanni @ yahoo . com",
-          "url": "mailto:tayo.sanni@yahoo.com",
-          "start_index": 16
-        }
-      ]
+      }
     },
     "text": "E-mail address: tayo.sanni@yahoo.com (O. Sanni)."
   },
@@ -431,19 +447,9 @@
     "type": "NarrativeText",
     "element_id": "511abaee4573f467ba654d2a697efb03",
     "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1,
       "links": [
         {
           "text": "https",
@@ -460,7 +466,17 @@
           "url": "https://doi.org/10.1016/j.dib.2018.11.134",
           "start_index": 0
         }
-      ]
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
     },
     "text": "https://doi.org/10.1016/j.dib.2018.11.134 2352-3409/& 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/)."
   },
@@ -468,6 +484,12 @@
     "type": "UncategorizedText",
     "element_id": "549a2fac47d713cc00f2db498ad6b557",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -475,12 +497,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "452"
   },
@@ -488,6 +505,12 @@
     "type": "NarrativeText",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -495,12 +518,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
   },
@@ -508,6 +526,12 @@
     "type": "NarrativeText",
     "element_id": "6928b78d26af54b6acb804ed319b5c05",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -515,12 +539,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "How data were acquired"
   },
@@ -528,6 +547,12 @@
     "type": "Title",
     "element_id": "41e0fa358cefcadbb2633ec45ff2d129",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -535,12 +560,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "Data format Experimental factors"
   },
@@ -548,6 +568,12 @@
     "type": "Title",
     "element_id": "9769bb23c49762a84b464e817703bc35",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -555,12 +581,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "Experimental features Data source location"
   },
@@ -568,6 +589,12 @@
     "type": "Title",
     "element_id": "aa43321cb45fb76debb7e732249d42a5",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -575,12 +602,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "Accessibility Related research article"
   },
@@ -588,6 +610,12 @@
     "type": "NarrativeText",
     "element_id": "7ce6ee1aa50d28b85acf544f1db3e25c",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -595,12 +623,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "The cleaned and weighed specimen was suspended in beakers con- taining 0.5 M H2SO4 solution of different concentrations of egg shell powder. The pre-weighed stainless steel samples were retrieved from the test solutions after every 24 h, cleaned appropriately, dried and reweighed. Raw, analyzed The difference between the weight at a given time and the initial weight of the specimen was taken as the weight loss, which was used to calculate the corrosion rate and inhibition efﬁciency. Inhibitor concentration, exposure time Department of Chemical, Metallurgical and Materials Engineering, Tshwane University of Technology, Pretoria, South Africa Data are available within this article O. Sanni, A. P. I. Popoola, and O. S. I. Fayomi, Enhanced corrosion resistance of stainless steel type 316 in sulphuric acid solution using eco-friendly waste product, Results in Physics, 9 (2018) 225–230."
   },
@@ -608,6 +631,12 @@
     "type": "Title",
     "element_id": "596eda178f8c5adefbae7cfe1bec78c3",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -615,12 +644,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "Value of the data"
   },
@@ -628,6 +652,12 @@
     "type": "NarrativeText",
     "element_id": "682e6210329b84f8b00548088196ffc9",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -635,12 +665,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "(cid:1) Data presented here provide optimum conditions of waste material as inhibitor for stainless steel Type 316 in 0.5 M H2SO4 medium. The given data describe the inhibitive performance of eco-friendly egg shell powder on austenitic stainless steel Type 316 corrosion in sulphuric acid environment."
   },
@@ -648,6 +673,12 @@
     "type": "NarrativeText",
     "element_id": "1d61e3468bc681ba1a7e647000c6828c",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -655,12 +686,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "(cid:1) The data obtained for the inhibition of waste product (egg shell powder) on stainless steel Type 316 can be used as basis in determining the inhibitive performance of the same inhibitor in other environments."
   },
@@ -668,6 +694,12 @@
     "type": "NarrativeText",
     "element_id": "39b6040280a179e1f8e4f4fb5ec4ae05",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -675,12 +707,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "(cid:1) The data can be used to examine the relationship between the process variable as it affect the"
   },
@@ -688,6 +715,12 @@
     "type": "Title",
     "element_id": "1ddde62c3188f81dfc835b6f036f1734",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -695,12 +728,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "nature of inhibition of metals."
   },
@@ -708,6 +736,12 @@
     "type": "ListItem",
     "element_id": "c2b2b778d53cc9a1cb4dc340476bc5aa",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -715,12 +749,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "1. Data"
   },
@@ -728,6 +757,12 @@
     "type": "NarrativeText",
     "element_id": "bc0cfb704c66cc864253e6ccf90a2b86",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -735,12 +770,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "The results of the experiment are presented in this session. The results obtained from weight loss method for stainless steel Type 316 immersed in 0.5 M H2SO4 solution in the absence and presence of different concentrations of egg shell powder (ES) are presented in Figs. 1–3 respectively. It can be seen clearly from these Figures that the efﬁciency of egg shell powder increase with the inhibitor con- centration, The increase in its efﬁciency could be as a result of increase in the constituent molecule"
   },
@@ -748,6 +778,12 @@
     "type": "Title",
     "element_id": "e28e0dc941accc8694040c63091b580c",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -755,12 +791,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": ") g m"
   },
@@ -768,6 +799,12 @@
     "type": "UncategorizedText",
     "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -775,12 +812,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "("
   },
@@ -788,6 +820,12 @@
     "type": "Title",
     "element_id": "b780e72bd4f737713ae202feb46b5d55",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -795,12 +833,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "s s o"
   },
@@ -808,6 +841,12 @@
     "type": "Title",
     "element_id": "acac86c0e609ca906f632b0e2dacccb2",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -815,12 +854,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "l"
   },
@@ -828,6 +862,12 @@
     "type": "Title",
     "element_id": "1bd621f0b71079e0948b0aad011a7f4b",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -835,12 +875,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "t h g e W"
   },
@@ -848,6 +883,12 @@
     "type": "Title",
     "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -855,12 +896,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "i"
   },
@@ -868,6 +904,12 @@
     "type": "UncategorizedText",
     "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -875,12 +917,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "30"
   },
@@ -888,6 +925,12 @@
     "type": "UncategorizedText",
     "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -895,12 +938,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "20"
   },
@@ -908,6 +946,12 @@
     "type": "Title",
     "element_id": "d300d49efc4cd0982dd6bc3377759ae8",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -915,12 +959,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "10g 8g 6g 4g 2g Control"
   },
@@ -928,6 +967,12 @@
     "type": "UncategorizedText",
     "element_id": "4a44dc15364204a80fe80e9039455cc1",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -935,12 +980,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "10"
   },
@@ -948,6 +988,12 @@
     "type": "UncategorizedText",
     "element_id": "98010bd9270f9b100b6214a21754fd33",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -955,12 +1001,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "48"
   },
@@ -968,6 +1009,12 @@
     "type": "UncategorizedText",
     "element_id": "7b1a278f5abe8e9da907fc9c29dfd432",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -975,12 +1022,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "96"
   },
@@ -988,6 +1030,12 @@
     "type": "UncategorizedText",
     "element_id": "5ec1a0c99d428601ce42b407ae9c675e",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -995,12 +1043,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "144"
   },
@@ -1008,6 +1051,12 @@
     "type": "UncategorizedText",
     "element_id": "eb3be230bbd2844b1f5d8f2e4fab9ffb",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1015,12 +1064,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "192"
   },
@@ -1028,6 +1072,12 @@
     "type": "Title",
     "element_id": "a955dcf1d740ce40d62415d9f16da436",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1035,12 +1085,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "Exposure Time (Hours)"
   },
@@ -1048,6 +1093,12 @@
     "type": "UncategorizedText",
     "element_id": "25db7b1d2f5780559e1034d72bcb4050",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1055,12 +1106,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "Fig. 1. Weight loss versus exposure time for stainless steel presence of ES."
   },
@@ -1068,6 +1114,12 @@
     "type": "NarrativeText",
     "element_id": "cbd563dd2fcd7d0b5a0b2173465fd328",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 2,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1075,12 +1127,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
+      }
     },
     "text": "immersed in 0.5 M H2SO4 solution in the absence and"
   },
@@ -1088,6 +1135,12 @@
     "type": "NarrativeText",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1095,12 +1148,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
   },
@@ -1108,6 +1156,12 @@
     "type": "UncategorizedText",
     "element_id": "0faf54c7569cac28ec5462f872384f7c",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1115,12 +1169,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "2.7"
   },
@@ -1128,6 +1177,12 @@
     "type": "NarrativeText",
     "element_id": "4f0139b605dfdd9eb93e920a6115e1b5",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1135,12 +1190,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": ") r a e y / m m"
   },
@@ -1148,6 +1198,12 @@
     "type": "NarrativeText",
     "element_id": "49e7364ce1027887460959b2a757b184",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1155,12 +1211,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "( e t a r n o s o r r o C"
   },
@@ -1168,6 +1219,12 @@
     "type": "Title",
     "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1175,12 +1232,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "i"
   },
@@ -1188,6 +1240,12 @@
     "type": "UncategorizedText",
     "element_id": "a97b042d7bd59d92a46e8ab17f7dff73",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1195,12 +1253,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "1.8"
   },
@@ -1208,6 +1261,12 @@
     "type": "UncategorizedText",
     "element_id": "8139b33952401b3ee0e2ca84651cb9a1",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1215,12 +1274,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "0.9"
   },
@@ -1228,6 +1282,12 @@
     "type": "Title",
     "element_id": "d300d49efc4cd0982dd6bc3377759ae8",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1235,12 +1295,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "10g 8g 6g 4g 2g Control"
   },
@@ -1248,6 +1303,12 @@
     "type": "UncategorizedText",
     "element_id": "c2356069e9d1e79ca924378153cfbbfb",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1255,12 +1316,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "24"
   },
@@ -1268,6 +1324,12 @@
     "type": "UncategorizedText",
     "element_id": "98010bd9270f9b100b6214a21754fd33",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1275,12 +1337,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "48"
   },
@@ -1288,6 +1345,12 @@
     "type": "UncategorizedText",
     "element_id": "8722616204217eddb39e7df969e0698a",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1295,12 +1358,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "72"
   },
@@ -1308,6 +1366,12 @@
     "type": "UncategorizedText",
     "element_id": "7b1a278f5abe8e9da907fc9c29dfd432",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1315,12 +1379,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "96"
   },
@@ -1328,6 +1387,12 @@
     "type": "UncategorizedText",
     "element_id": "2abaca4911e68fa9bfbf3482ee797fd5",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1335,12 +1400,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "120"
   },
@@ -1348,6 +1408,12 @@
     "type": "UncategorizedText",
     "element_id": "5ec1a0c99d428601ce42b407ae9c675e",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1355,12 +1421,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "144"
   },
@@ -1368,6 +1429,12 @@
     "type": "UncategorizedText",
     "element_id": "80c3cd40fa35f9088b8741bd8be6153d",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1375,12 +1442,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "168"
   },
@@ -1388,6 +1450,12 @@
     "type": "UncategorizedText",
     "element_id": "eb3be230bbd2844b1f5d8f2e4fab9ffb",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1395,12 +1463,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "192"
   },
@@ -1408,6 +1471,12 @@
     "type": "Title",
     "element_id": "239bb77f5ec344ce5e614979b8c49742",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1415,12 +1484,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "Exposure time"
   },
@@ -1428,6 +1492,12 @@
     "type": "NarrativeText",
     "element_id": "117d87715ea957afdc44d5f9f442a7ea",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1435,12 +1505,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "Fig. 2. Corrosion rate versus exposure time for stainless steel immersed in 0.5 M H2SO4 solution in the absence and presence of ES."
   },
@@ -1448,6 +1513,12 @@
     "type": "UncategorizedText",
     "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1455,12 +1526,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "100"
   },
@@ -1468,6 +1534,12 @@
     "type": "UncategorizedText",
     "element_id": "69f59c273b6e669ac32a6dd5e1b2cb63",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1475,12 +1547,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "90"
   },
@@ -1488,6 +1555,12 @@
     "type": "UncategorizedText",
     "element_id": "ba5ec51d07a4ac0e951608704431d59a",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1495,12 +1568,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": ")"
   },
@@ -1508,6 +1576,12 @@
     "type": "UncategorizedText",
     "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1515,12 +1589,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "%"
   },
@@ -1528,6 +1597,12 @@
     "type": "UncategorizedText",
     "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1535,12 +1610,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "("
   },
@@ -1548,6 +1618,12 @@
     "type": "NarrativeText",
     "element_id": "bbe120714b80df07396e808f98b3f354",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1555,12 +1631,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "y c n e c i f f"
   },
@@ -1568,6 +1639,12 @@
     "type": "Title",
     "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1575,12 +1652,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "i"
   },
@@ -1588,6 +1660,12 @@
     "type": "NarrativeText",
     "element_id": "74599fca46202613cccb12e97774b306",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1595,12 +1673,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "E n o i t i b h n I"
   },
@@ -1608,6 +1681,12 @@
     "type": "Title",
     "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1615,12 +1694,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "i"
   },
@@ -1628,6 +1702,12 @@
     "type": "UncategorizedText",
     "element_id": "48449a14a4ff7d79bb7a1b6f3d488eba",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1635,12 +1715,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "80"
   },
@@ -1648,6 +1723,12 @@
     "type": "UncategorizedText",
     "element_id": "ff5a1ae012afa5d4c889c50ad427aaf5",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1655,12 +1736,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "70"
   },
@@ -1668,6 +1744,12 @@
     "type": "UncategorizedText",
     "element_id": "39fa9ec190eee7b6f4dff1100d6343e1",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1675,12 +1757,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "60"
   },
@@ -1688,6 +1765,12 @@
     "type": "UncategorizedText",
     "element_id": "1a6562590ef19d1045d06c4055742d38",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1695,12 +1778,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "50"
   },
@@ -1708,6 +1786,12 @@
     "type": "UncategorizedText",
     "element_id": "d59eced1ded07f84c145592f65bdf854",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1715,12 +1799,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "40"
   },
@@ -1728,6 +1807,12 @@
     "type": "UncategorizedText",
     "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1735,12 +1820,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "30"
   },
@@ -1748,6 +1828,12 @@
     "type": "UncategorizedText",
     "element_id": "85b99d4e3d8e29e46e512f9cca7ba627",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1755,12 +1841,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "2g 4g 6g 8g 10g"
   },
@@ -1768,6 +1849,12 @@
     "type": "UncategorizedText",
     "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1775,12 +1862,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "20"
   },
@@ -1788,6 +1870,12 @@
     "type": "UncategorizedText",
     "element_id": "4a44dc15364204a80fe80e9039455cc1",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1795,12 +1883,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "10"
   },
@@ -1808,6 +1891,12 @@
     "type": "UncategorizedText",
     "element_id": "5feceb66ffc86f38d952786c6d696c79",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1815,12 +1904,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "0"
   },
@@ -1828,6 +1912,12 @@
     "type": "UncategorizedText",
     "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1835,12 +1925,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "20"
   },
@@ -1848,6 +1933,12 @@
     "type": "UncategorizedText",
     "element_id": "d59eced1ded07f84c145592f65bdf854",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1855,12 +1946,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "40"
   },
@@ -1868,6 +1954,12 @@
     "type": "UncategorizedText",
     "element_id": "39fa9ec190eee7b6f4dff1100d6343e1",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1875,12 +1967,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "60"
   },
@@ -1888,6 +1975,12 @@
     "type": "UncategorizedText",
     "element_id": "48449a14a4ff7d79bb7a1b6f3d488eba",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1895,12 +1988,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "80"
   },
@@ -1908,6 +1996,12 @@
     "type": "UncategorizedText",
     "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1915,12 +2009,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "100"
   },
@@ -1928,6 +2017,12 @@
     "type": "UncategorizedText",
     "element_id": "2abaca4911e68fa9bfbf3482ee797fd5",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1935,12 +2030,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "120"
   },
@@ -1948,6 +2038,12 @@
     "type": "UncategorizedText",
     "element_id": "dbae772db29058a88f9bd830e957c695",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1955,12 +2051,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "140"
   },
@@ -1968,6 +2059,12 @@
     "type": "UncategorizedText",
     "element_id": "a512db2741cd20693e4b16f19891e72b",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1975,12 +2072,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "160"
   },
@@ -1988,6 +2080,12 @@
     "type": "UncategorizedText",
     "element_id": "7b69759630f869f2723875f873935fed",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -1995,12 +2093,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "180"
   },
@@ -2008,6 +2101,12 @@
     "type": "Title",
     "element_id": "a955dcf1d740ce40d62415d9f16da436",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2015,12 +2114,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "Exposure Time (Hours)"
   },
@@ -2028,6 +2122,12 @@
     "type": "NarrativeText",
     "element_id": "b679a61115e69becb7bae4fdaf139a29",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2035,12 +2135,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "Fig. 3. Inhibition efﬁciency versus exposure time for stainless steel immersed in 0.5 M H2SO4 solution in the presence of ES."
   },
@@ -2048,6 +2143,12 @@
     "type": "NarrativeText",
     "element_id": "2de5af9e251e864412de9ee8c4456f3b",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2055,12 +2156,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "number of inhibitor adsorbed on the surface of stainless steel at higher concentration, in order for the active sites of the stainless steel to be protected with the inhibitor molecules. Cathodic and anodic polarized potential are measured in the presence and absence of ES. Fig. 4 shows the cathodic and anodic polarization curves for stainless steel in 0.5 M H2SO4 solution at different ES concentrations. The electrochemical variables such as polarization resistance (PR), corrosion potential (Ecorr), cor- rosion current (icorr), anodic Tafel constant (ba), cathodic Tafel constant (bc) and corrosion rate (mm/ year) values are presented in Table 1. From the polarization curves and electrochemical parameter, icorr value decreased with the addition of inhibitor in 0.5 M H2SO4. Conversely, the icorr further decrease with an increase in inhibitor concentration indicating that the inhibition effects increase with an increase in the egg shell concentration. The process of egg shell inhibition could be attributed to the formation of egg shell powder adsorbed on stainless steel surface protecting corrosion of stainless steel in H2SO4 medium. The likely mechanism is the egg shell adsorption on stainless steel surface through the heteroatoms electron pair and the conjugated systems in egg shell molecular structure as shown in Fig. 1. When the concentration of inhibitor was increased from 2 to 10 g, the corrosion rate values drastically decreased this result show that waste egg shell powder is an effective corrosion inhibitor for stainless steel in H2SO4 solution. The shift in corrosion potential of stainless steel from Tafel curves and electrochemical data indicate that the inhibitor is a mixed-type corrosion inhibitor."
   },
@@ -2068,6 +2164,12 @@
     "type": "UncategorizedText",
     "element_id": "d83c7ee736be931d85b78a4a60881ced",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 3,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2075,12 +2177,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
+      }
     },
     "text": "453"
   },
@@ -2088,6 +2185,12 @@
     "type": "UncategorizedText",
     "element_id": "48f89b630677c2cbb70e2ba05bf7a363",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2095,12 +2198,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "454"
   },
@@ -2108,6 +2206,12 @@
     "type": "NarrativeText",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2115,12 +2219,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
   },
@@ -2128,6 +2227,12 @@
     "type": "UncategorizedText",
     "element_id": "f0e5c879f7d220552d8ad5b3503bd038",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2135,12 +2240,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "Fig. 4. Anodic and cathodic polarization curve of stainless steel in 0.5 M H2SO4 solution in the presence and absence of ES."
   },
@@ -2148,6 +2248,12 @@
     "type": "UncategorizedText",
     "element_id": "c1589916b4d51307d5d804bbf911ea17",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2155,12 +2261,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "Table 1 Potentiodynamic polarization data for stainless steel in the absence and presence of ES in 0.5 M H2SO4 solution."
   },
@@ -2168,6 +2269,12 @@
     "type": "Title",
     "element_id": "362d4a20958df0c88550b9e5d1f2ef5b",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2175,12 +2282,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "Inhibitor concentration (g)"
   },
@@ -2188,6 +2290,12 @@
     "type": "Title",
     "element_id": "bcf00b4904f5661d6baef52e7e09e9b1",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2195,12 +2303,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "bc (V/dec)"
   },
@@ -2208,6 +2311,12 @@
     "type": "Title",
     "element_id": "12e486f4a9b3a1805bf7e95b5d01847b",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2215,12 +2324,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "ba (V/dec)"
   },
@@ -2228,6 +2332,12 @@
     "type": "Title",
     "element_id": "7bc31ed7ab5a625735657499f636c1f2",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2235,12 +2345,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "Ecorr (V)"
   },
@@ -2248,6 +2353,12 @@
     "type": "Title",
     "element_id": "6978574f5e6e70a2883ea5ea51aa34f7",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2255,12 +2366,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "icorr (A/cm2)"
   },
@@ -2268,6 +2374,12 @@
     "type": "Title",
     "element_id": "7507a06cf675785949d6312f1776e444",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2275,12 +2387,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "Polarization resistance (Ω)"
   },
@@ -2288,6 +2395,12 @@
     "type": "Title",
     "element_id": "6d9d421c5383a3abfc3ff6f15c0b16cc",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2295,12 +2408,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "Corrosion rate (mm/year)"
   },
@@ -2308,6 +2416,12 @@
     "type": "UncategorizedText",
     "element_id": "9492908fadeab22ca81f18f2ba4f4f35",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2315,12 +2429,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "0 2 4 6 8 10"
   },
@@ -2328,6 +2437,12 @@
     "type": "UncategorizedText",
     "element_id": "12751f842ba5664e7ad255016dbe371b",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2335,12 +2450,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "0.0335 1.9460 0.0163 0.3233 0.1240 0.0382"
   },
@@ -2348,6 +2458,12 @@
     "type": "UncategorizedText",
     "element_id": "727d4758bcfadaaf5156b8682cd39810",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2355,12 +2471,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "0.0409 0.0596 0.2369 0.0540 0.0556 0.0086"
   },
@@ -2368,6 +2479,12 @@
     "type": "UncategorizedText",
     "element_id": "2a789110c863b30156d63234c8a51477",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2375,12 +2492,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "(cid:3) 0.9393 (cid:3) 0.8276 (cid:3) 0.8825 (cid:3) 0.8027 (cid:3) 0.5896 (cid:3) 0.5356"
   },
@@ -2388,6 +2500,12 @@
     "type": "UncategorizedText",
     "element_id": "d71f426079cb8c2bb3d960ce1e23d290",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2395,12 +2513,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "0.0003 0.0002 0.0001 5.39E-05 5.46E-05 1.24E-05"
   },
@@ -2408,6 +2521,12 @@
     "type": "UncategorizedText",
     "element_id": "1695e2ad2c62a337b135afbfc79ef69d",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2415,12 +2534,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "24.0910 121.440 42.121 373.180 305.650 246.080"
   },
@@ -2428,6 +2542,12 @@
     "type": "UncategorizedText",
     "element_id": "48bbf8e8b874e0e1f32be15f6c07c11c",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2435,12 +2555,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "2.8163 1.5054 0.9476 0.4318 0.3772 0.0919"
   },
@@ -2448,6 +2563,12 @@
     "type": "NarrativeText",
     "element_id": "08a6fcd699c8c32f3d73794d26435061",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2455,12 +2576,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "The plot of inhibitor concentration over degree of surface coverage versus inhibitor concentration gives a straight line as shown in Fig. 5. The strong correlation reveals that egg shell adsorption on stainless surface in 0.5 M H2SO4 follow Langmuir adsorption isotherm. Figs. 6–8 show the SEM/EDX surface morphology analysis of stainless steel. Figs. 7 and 8 are the SEM/EDX images of the stainless steel specimens without and with inhibitor after weight loss experiment in sulphuric acid medium. The stainless steel surface corrosion product layer in the absence of inhibitor was porous and as a result gives no corrosion protection. With the presence of ES, corrosion damage was minimized, with an evidence of ES present on the metal surface as shown in Fig. 8."
   },
@@ -2468,6 +2584,12 @@
     "type": "UncategorizedText",
     "element_id": "6b51d431df5d7f141cbececcf79edf3d",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2475,12 +2597,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "12"
   },
@@ -2488,6 +2605,12 @@
     "type": "UncategorizedText",
     "element_id": "1797d9b8b07f302836186c20a19ebd0b",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2495,12 +2618,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "C/0"
   },
@@ -2508,6 +2626,12 @@
     "type": "UncategorizedText",
     "element_id": "4a44dc15364204a80fe80e9039455cc1",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2515,12 +2639,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "10"
   },
@@ -2528,6 +2647,12 @@
     "type": "UncategorizedText",
     "element_id": "2c624232cdd221771294dfbb310aca00",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2535,12 +2660,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "8"
   },
@@ -2548,6 +2668,12 @@
     "type": "UncategorizedText",
     "element_id": "4a166cad507ccd016e6ad2d8652111e5",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2555,12 +2681,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "0 / C"
   },
@@ -2568,6 +2689,12 @@
     "type": "UncategorizedText",
     "element_id": "e7f6c011776e8db7cd330b54174fd76f",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2575,12 +2702,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "6"
   },
@@ -2588,6 +2710,12 @@
     "type": "UncategorizedText",
     "element_id": "4b227777d4dd1fc61c6f884f48641d02",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2595,12 +2723,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "4"
   },
@@ -2608,6 +2731,12 @@
     "type": "UncategorizedText",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2615,12 +2744,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "2"
   },
@@ -2628,6 +2752,12 @@
     "type": "UncategorizedText",
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2635,12 +2765,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "2"
   },
@@ -2648,6 +2773,12 @@
     "type": "UncategorizedText",
     "element_id": "4b227777d4dd1fc61c6f884f48641d02",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2655,12 +2786,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "4"
   },
@@ -2668,6 +2794,12 @@
     "type": "UncategorizedText",
     "element_id": "e7f6c011776e8db7cd330b54174fd76f",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2675,12 +2807,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "6"
   },
@@ -2688,6 +2815,12 @@
     "type": "UncategorizedText",
     "element_id": "2c624232cdd221771294dfbb310aca00",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2695,12 +2828,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "8"
   },
@@ -2708,6 +2836,12 @@
     "type": "UncategorizedText",
     "element_id": "4a44dc15364204a80fe80e9039455cc1",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2715,12 +2849,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "10"
   },
@@ -2728,6 +2857,12 @@
     "type": "Title",
     "element_id": "c74caf15453477bf544f86e069d90da7",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2735,12 +2870,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "Concentration (g)"
   },
@@ -2748,6 +2878,12 @@
     "type": "Title",
     "element_id": "8a3295d93db27fa58d12326d345eaad5",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 4,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2755,12 +2891,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
+      }
     },
     "text": "Fig. 5. Langmuir adsorption isotherm of ES."
   },
@@ -2768,6 +2899,12 @@
     "type": "NarrativeText",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 5,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2775,12 +2912,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 5
+      }
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
   },
@@ -2788,6 +2920,12 @@
     "type": "Title",
     "element_id": "6cad98316bfa45c17e82a1836920ed12",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 5,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2795,12 +2933,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 5
+      }
     },
     "text": "Fig. 6. SEM/EDX image of as-received stainless steel."
   },
@@ -2808,6 +2941,12 @@
     "type": "NarrativeText",
     "element_id": "a0519775e2b55b825b45a8de351d74a1",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 5,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2815,12 +2954,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 5
+      }
     },
     "text": "Fig. 7. SEM/EDX image of stainless steel immersed in 0.5 M H2SO4 solution without inhibitor."
   },
@@ -2828,6 +2962,12 @@
     "type": "NarrativeText",
     "element_id": "407b2e640f1765793469ae92c954bb7f",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 5,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2835,12 +2975,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 5
+      }
     },
     "text": "Fig. 8. SEM/EDX image of stainless steel immersed in 0.5 M H2SO4 solution with the presence of inhibitor."
   },
@@ -2848,6 +2983,12 @@
     "type": "UncategorizedText",
     "element_id": "f626051bc94422f26f4b774a2bca105e",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 5,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2855,12 +2996,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 5
+      }
     },
     "text": "455"
   },
@@ -2868,6 +3004,12 @@
     "type": "UncategorizedText",
     "element_id": "b3a8e0e1f9ab1bfe3a36f231f676f78b",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2875,12 +3017,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "456"
   },
@@ -2888,6 +3025,12 @@
     "type": "NarrativeText",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2895,12 +3038,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
   },
@@ -2908,6 +3046,12 @@
     "type": "ListItem",
     "element_id": "a80826543c9e0d0e9f6c2108ae3c3f73",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2915,12 +3059,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "2. Experimental design, materials and methods"
   },
@@ -2928,6 +3067,12 @@
     "type": "Title",
     "element_id": "90b8c00ff7a1b170a14695aa51629f14",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2935,12 +3080,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "2.1. Material"
   },
@@ -2948,6 +3088,12 @@
     "type": "NarrativeText",
     "element_id": "7c3b7c8c2993a59e71e009d051edd727",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2955,12 +3101,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "Austenitic stainless steel Type 316 was used in this study with chemical composition reported in [1,2]. The chemicals used were of annular grade. The inhibitor concentrations are in the range of 2, 4, 6, 8 and 10 g [3–5]. The structural formula of egg shell powder is shown in Fig. 9."
   },
@@ -2968,6 +3109,12 @@
     "type": "Title",
     "element_id": "1dc2692eee9b01e9a960f80c4dabe07b",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2975,12 +3122,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "Fig. 9. Chemical structure of egg shell powder."
   },
@@ -2988,6 +3130,12 @@
     "type": "Title",
     "element_id": "b4a533760fabf85f66294a0441dacd1e",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -2995,12 +3143,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "2.2. Weight loss method"
   },
@@ -3008,6 +3151,12 @@
     "type": "NarrativeText",
     "element_id": "027d7539bf229e0a5fd99489c6ebd7fd",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3015,12 +3164,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "This physical measurement was carried out in order to provide direct result on how the corrosive environment affects the test sample. The cleaned and weighed specimen was suspended in beakers with the aid of glass hooks and rods with the test solution of ES at different concentration (2, 4, 6, 8 and 10 g). The pre-weighed specimen was retrieved from the test solution after every 24 h, cleaned, dried and reweighed. The difference between the weight at a given time and the initial weight of the specimen was taken as the weight loss which was used to calculate corrosion rate and inhibition efﬁciency."
   },
@@ -3028,6 +3172,12 @@
     "type": "NarrativeText",
     "element_id": "ae938bb6586c4ef6d0a287923ac2a9ae",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3035,12 +3185,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "The corrosion rate (CR) was calculated using Eq. (1) [1–5]"
   },
@@ -3048,6 +3193,12 @@
     "type": "UncategorizedText",
     "element_id": "825c6ae49ec498c873be5355109ca093",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3055,12 +3206,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "(cid:1) Þ ¼ 87:6W DAT"
   },
@@ -3068,6 +3214,12 @@
     "type": "UncategorizedText",
     "element_id": "33a2b57b388470db1cb13defbe73dc18",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3075,12 +3227,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "(cid:3)"
   },
@@ -3088,6 +3235,12 @@
     "type": "Title",
     "element_id": "cecb8b44c9af4b76e85155170c509729",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3095,12 +3248,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "Corrosion rate CRð"
   },
@@ -3108,6 +3256,12 @@
     "type": "NarrativeText",
     "element_id": "b05aa2b4b80cb8c20881dbd0c3af8822",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3115,12 +3269,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "where: W is weight loss in mg, A is specimen surface area, T is immersion period in hours and D is the specimen density. From the corrosion rate, the surface coverage (θ) and inhibition efﬁciencies (IE %) were determined using Eqs. (2) and (3) respectively"
   },
@@ -3128,6 +3277,12 @@
     "type": "Title",
     "element_id": "62127212535b62092159e4fe305c868d",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3135,12 +3290,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "θ ¼ CRo (cid:3) CR"
   },
@@ -3148,6 +3298,12 @@
     "type": "Title",
     "element_id": "5a6824cbd64b72c37057f7d1dbee2798",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3155,12 +3311,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "CRo"
   },
@@ -3168,6 +3319,12 @@
     "type": "Title",
     "element_id": "c31b73fca4f97bb7e95a3d8634826d32",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3175,12 +3332,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "IE ð%Þ ¼ CRo (cid:3) CR"
   },
@@ -3188,6 +3340,12 @@
     "type": "Title",
     "element_id": "5a6824cbd64b72c37057f7d1dbee2798",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3195,12 +3353,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "CRo"
   },
@@ -3208,6 +3361,12 @@
     "type": "Title",
     "element_id": "2d711642b726b04401627ca9fbac32f5",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3215,12 +3374,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "x"
   },
@@ -3228,6 +3382,12 @@
     "type": "UncategorizedText",
     "element_id": "3a81feba075b8ca26d6f86f392ff06df",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3235,12 +3395,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "100 1"
   },
@@ -3248,6 +3403,12 @@
     "type": "NarrativeText",
     "element_id": "118f0531277e022b44f152b0bf2dee7c",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3255,12 +3416,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "where: CRo and CR are the corrosion rate in absence and presence of inhibitor respectively."
   },
@@ -3268,6 +3424,12 @@
     "type": "Title",
     "element_id": "6aa7f759e077aa037614e7f42897f09a",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3275,12 +3437,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "2.3. Potentiodynamic polarization method"
   },
@@ -3288,6 +3445,12 @@
     "type": "NarrativeText",
     "element_id": "2fe7511cdc6520c26e9f8e33ac45fe03",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3295,12 +3458,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "The potentiodynamic polarization method was performed on the prepared test samples immersed in 0.5 M H2SO4 solution in the presence and absence of different ES concentrations. A three electrode system was used; stainless steel Type 316 plate as working electrode with an exposed area of 1.0 cm2, platinum rod as counter electrode and silver chloride electrode as reference electrode. The electrode was polished, degreased in acetone and thoroughly rinsed with distilled water before the experiment. Current density against applied potential was plotted. The slope of the linear part in anodic and cathodic plots gives anodic and cathodic constants according to the Stern–Geary equation, and the"
   },
@@ -3308,6 +3466,12 @@
     "type": "Title",
     "element_id": "53b531237b040202ad24f2c6e37aa792",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3315,12 +3479,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "ð1Þ"
   },
@@ -3328,6 +3487,12 @@
     "type": "Title",
     "element_id": "41ceb2965d928f62e5bf4f63da952b22",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3335,12 +3500,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "ð2Þ"
   },
@@ -3348,6 +3508,12 @@
     "type": "Title",
     "element_id": "8e8a7a21640179b38d95ff4450b84e59",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 6,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3355,12 +3521,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
+      }
     },
     "text": "ð3Þ"
   },
@@ -3368,6 +3529,12 @@
     "type": "NarrativeText",
     "element_id": "9ca201e648ed74cfc838b6661f59addf",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3375,12 +3542,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7
+      }
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457"
   },
@@ -3388,6 +3550,12 @@
     "type": "NarrativeText",
     "element_id": "24dcddab57a1cab7266a3c6b536ad2ff",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3395,12 +3563,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7
+      }
     },
     "text": "steps of the linear polarization plot are substituted to get corrosion current. Nova software was used with linear polarization resistance (LPR) and the current was set to 10 mA (maximum) and 10 nA (minimum). LSV staircase parameter start potential (cid:3) 1.5 v, step potential 0.001 m/s and stop potential of þ1.5 v set was used in this study."
   },
@@ -3408,6 +3571,12 @@
     "type": "Title",
     "element_id": "c9015d53b90846454375a2fdf2829c66",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3415,12 +3584,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7
+      }
     },
     "text": "Acknowledgements"
   },
@@ -3428,6 +3592,12 @@
     "type": "NarrativeText",
     "element_id": "63cd602e78daef9ac25a20bbab27ecbc",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3435,12 +3605,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7
+      }
     },
     "text": "This work was supported by the National Research Foundation of South Africa and the Tshwane"
   },
@@ -3448,6 +3613,12 @@
     "type": "Title",
     "element_id": "287fb148184f12ff62e9b0207567dac7",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3455,12 +3626,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7
+      }
     },
     "text": "University of Technology Pretoria South Africa."
   },
@@ -3468,6 +3634,12 @@
     "type": "NarrativeText",
     "element_id": "d202816913e482abce90d70d88f202c3",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3475,12 +3647,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7
+      }
     },
     "text": "Transparency document. Supporting information"
   },
@@ -3488,6 +3655,18 @@
     "type": "NarrativeText",
     "element_id": "d434a0e19d0d34e92936b9566e1ebb45",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": ":// doi",
+          "url": "https://doi.org/10.1016/j.dib.2018.11.134",
+          "start_index": 94
+        }
+      ],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3495,19 +3674,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7,
-      "links": [
-        {
-          "text": ":// doi",
-          "url": "https://doi.org/10.1016/j.dib.2018.11.134",
-          "start_index": 94
-        }
-      ]
+      }
     },
     "text": "Transparency document associated with this article can be found in the online version at https://doi."
   },
@@ -3515,6 +3682,18 @@
     "type": "UncategorizedText",
     "element_id": "2ca250dde10d732278a9fa586a97e40a",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "org / 10 . 1016 / j . dib . 2018 . 11 . 134",
+          "url": "https://doi.org/10.1016/j.dib.2018.11.134",
+          "start_index": 0
+        }
+      ],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3522,19 +3701,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7,
-      "links": [
-        {
-          "text": "org / 10 . 1016 / j . dib . 2018 . 11 . 134",
-          "url": "https://doi.org/10.1016/j.dib.2018.11.134",
-          "start_index": 0
-        }
-      ]
+      }
     },
     "text": "org/10.1016/j.dib.2018.11.134."
   },
@@ -3542,6 +3709,12 @@
     "type": "Title",
     "element_id": "69824d3b0e70ca6aaa0da1613b65fd91",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3549,12 +3722,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7
+      }
     },
     "text": "References"
   },
@@ -3562,6 +3730,18 @@
     "type": "NarrativeText",
     "element_id": "d844a31ead19b2e2fae786d2a5495072",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "O . Sanni , A . P . I . Popoola , O . S . I . Fayomi ,",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31527-0/sbref1",
+          "start_index": 4
+        }
+      ],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3569,19 +3749,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7,
-      "links": [
-        {
-          "text": "O . Sanni , A . P . I . Popoola , O . S . I . Fayomi ,",
-          "url": "http://refhub.elsevier.com/S2352-3409(18)31527-0/sbref1",
-          "start_index": 4
-        }
-      ]
+      }
     },
     "text": "[1] O. Sanni, A.P.I. Popoola, O.S.I. Fayomi, Enhanced corrosion resistance of stainless steel type 316 in sulphuric acid solution"
   },
@@ -3589,19 +3757,9 @@
     "type": "NarrativeText",
     "element_id": "d0be94eaaf9c0f43bc51381f031e1381",
     "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 7,
       "links": [
         {
           "text": "usingeco - friendlywasteproduct , ResultsPhys . 9 ( 2018 ) 225 –",
@@ -3613,7 +3771,17 @@
           "url": "http://refhub.elsevier.com/S2352-3409(18)31527-0/sbref1",
           "start_index": 0
         }
-      ]
+      ],
+      "page_number": 7,
+      "filetype": "application/pdf",
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
     },
     "text": "using eco-friendly waste product, Results Phys. 9 (2018) 225–230."
   },
@@ -3621,6 +3789,18 @@
     "type": "NarrativeText",
     "element_id": "7e9cfcc1c32c353e319aae7d9be537bd",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "O . Sanni , A . P . I . Popoola , A . Kolesnikov ,",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31527-0/sbref2",
+          "start_index": 4
+        }
+      ],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3628,19 +3808,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7,
-      "links": [
-        {
-          "text": "O . Sanni , A . P . I . Popoola , A . Kolesnikov ,",
-          "url": "http://refhub.elsevier.com/S2352-3409(18)31527-0/sbref2",
-          "start_index": 4
-        }
-      ]
+      }
     },
     "text": "[2] O. Sanni, A.P.I. Popoola, A. Kolesnikov, Constitutive modeling for prediction of optimal process parameters in corrosion"
   },
@@ -3648,19 +3816,9 @@
     "type": "NarrativeText",
     "element_id": "c00e8be0806aa2ded72da0ef746a4291",
     "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 7,
       "links": [
         {
           "text": "inhibitionofausteniticstainlesssteel ( Type316 )/ acidicmedium , Mater . Res . Express . 5 ( 10 )( 2018 ) 1 –",
@@ -3672,7 +3830,17 @@
           "url": "http://refhub.elsevier.com/S2352-3409(18)31527-0/sbref2",
           "start_index": 0
         }
-      ]
+      ],
+      "page_number": 7,
+      "filetype": "application/pdf",
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
     },
     "text": "inhibition of austenitic stainless steel (Type 316)/acidic medium, Mater. Res. Express. 5 (10) (2018) 1–15."
   },
@@ -3680,6 +3848,18 @@
     "type": "NarrativeText",
     "element_id": "1d76a4bb6ba7984cea4548ab574beb8f",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "O . Sanni , A . P . I . Popoola , O . S . I . Fayomi ,",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31527-0/sbref3",
+          "start_index": 4
+        }
+      ],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3687,19 +3867,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7,
-      "links": [
-        {
-          "text": "O . Sanni , A . P . I . Popoola , O . S . I . Fayomi ,",
-          "url": "http://refhub.elsevier.com/S2352-3409(18)31527-0/sbref3",
-          "start_index": 4
-        }
-      ]
+      }
     },
     "text": "[3] O. Sanni, A.P.I. Popoola, O.S.I. Fayomi, The inhibitive study of egg shell powder on UNS N08904 austenitic stainless steel"
   },
@@ -3707,19 +3875,9 @@
     "type": "NarrativeText",
     "element_id": "ffd9e4babdf76600a881851ebbf35d3f",
     "metadata": {
-      "data_source": {
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      },
-      "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 7,
       "links": [
         {
           "text": "corrosioninchloridesolution , Def . Technol . 14 ( 2018 ) 463 –",
@@ -3731,14 +3889,9 @@
           "url": "http://refhub.elsevier.com/S2352-3409(18)31527-0/sbref3",
           "start_index": 0
         }
-      ]
-    },
-    "text": "corrosion in chloride solution, Def. Technol. 14 (2018) 463–468."
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "dd7f4838500dd709556225fa3f6b7339",
-    "metadata": {
+      ],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3746,12 +3899,17 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
+      }
+    },
+    "text": "corrosion in chloride solution, Def. Technol. 14 (2018) 463–468."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "dd7f4838500dd709556225fa3f6b7339",
+    "metadata": {
       "languages": [
         "eng"
       ],
-      "page_number": 7,
       "links": [
         {
           "text": "https",
@@ -3773,7 +3931,17 @@
           "url": "https://doi.org/10.1007/s13632-018-0495-5",
           "start_index": 258
         }
-      ]
+      ],
+      "page_number": 7,
+      "filetype": "application/pdf",
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
     },
     "text": "[4] O. Sanni, A.P.I. Popoola, O.S.I. Fayomi, C.A. Loto, A comparative study of inhibitive effect of waste product on stainless steel corrosion in sodium chloride/sulfuric acid environments, Metallogr. Microstruct. Anal. (2018) 1–17. https://doi.org/10.1007/ s13632-018-0495-5."
   },
@@ -3781,6 +3949,18 @@
     "type": "NarrativeText",
     "element_id": "c81a7a9faa84a2eb68641888654caa14",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "https :// doi . org / 10 . 7449 / 2018 / MST _ 2018 _ 254 _ 261",
+          "url": "https://doi.org/10.7449/2018/MST_2018_254_261",
+          "start_index": 202
+        }
+      ],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3788,19 +3968,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7,
-      "links": [
-        {
-          "text": "https :// doi . org / 10 . 7449 / 2018 / MST _ 2018 _ 254 _ 261",
-          "url": "https://doi.org/10.7449/2018/MST_2018_254_261",
-          "start_index": 202
-        }
-      ]
+      }
     },
     "text": "[5] O. Sanni, A.P.I. Popoola, O.S.I. Fayomi, Inhibition of engineering material in sulphuric acid solution using waste product, Contributed Papers from Materials Science and Technology (MS&T18), 2018. 〈https://doi.org/10.7449/2018/MST_2018_254_261〉."
   },
@@ -3808,6 +3976,12 @@
     "type": "UncategorizedText",
     "element_id": "353767b239099863e13ca954e20a66c9",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [],
+      "page_number": 7,
+      "filetype": "application/pdf",
       "data_source": {
         "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/65/11/main.PMC6312790.pdf",
         "permissions_data": [
@@ -3815,12 +3989,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7
+      }
     },
     "text": "457"
   }

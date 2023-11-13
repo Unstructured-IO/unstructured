@@ -3,6 +3,11 @@
     "type": "NarrativeText",
     "element_id": "d0cbb64f401635d84108950595cd2a19",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "permissions-fake-text.docx",
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
         "url": "https://unstructuredio.sharepoint.com/Shared Documents/permissions-fake-text.docx?d=wa2f7dc6bbef642c2b65b088acc59efca",
         "version": "2",
@@ -12,12 +17,7 @@
         },
         "date_created": "2023-10-27T11:06:24",
         "date_modified": "2023-10-27T11:07:34"
-      },
-      "filename": "permissions-fake-text.docx",
-      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "Ingest test test document. Particularly aimed towards testing permissions."
   },
@@ -25,6 +25,11 @@
     "type": "Address",
     "element_id": "a9d4657034aa3fdb5177f1325e912362",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "permissions-fake-text.docx",
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
         "url": "https://unstructuredio.sharepoint.com/Shared Documents/permissions-fake-text.docx?d=wa2f7dc6bbef642c2b65b088acc59efca",
         "version": "2",
@@ -34,12 +39,7 @@
         },
         "date_created": "2023-10-27T11:06:24",
         "date_modified": "2023-10-27T11:07:34"
-      },
-      "filename": "permissions-fake-text.docx",
-      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "Doylestown, PA 18901"
   },
@@ -47,6 +47,11 @@
     "type": "Title",
     "element_id": "9c218520320f238595f1fde74bdd137d",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "permissions-fake-text.docx",
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
         "url": "https://unstructuredio.sharepoint.com/Shared Documents/permissions-fake-text.docx?d=wa2f7dc6bbef642c2b65b088acc59efca",
         "version": "2",
@@ -56,12 +61,7 @@
         },
         "date_created": "2023-10-27T11:06:24",
         "date_modified": "2023-10-27T11:07:34"
-      },
-      "filename": "permissions-fake-text.docx",
-      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "Important points:"
   },
@@ -69,6 +69,11 @@
     "type": "ListItem",
     "element_id": "13cb11be3e999b5fa22144d1e7334bea",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "permissions-fake-text.docx",
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
         "url": "https://unstructuredio.sharepoint.com/Shared Documents/permissions-fake-text.docx?d=wa2f7dc6bbef642c2b65b088acc59efca",
         "version": "2",
@@ -78,12 +83,7 @@
         },
         "date_created": "2023-10-27T11:06:24",
         "date_modified": "2023-10-27T11:07:34"
-      },
-      "filename": "permissions-fake-text.docx",
-      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "- Hamburgers are delicious"
   },
@@ -91,6 +91,11 @@
     "type": "ListItem",
     "element_id": "ecc0621109605092d5cb0166734d86fe",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "permissions-fake-text.docx",
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
         "url": "https://unstructuredio.sharepoint.com/Shared Documents/permissions-fake-text.docx?d=wa2f7dc6bbef642c2b65b088acc59efca",
         "version": "2",
@@ -100,12 +105,7 @@
         },
         "date_created": "2023-10-27T11:06:24",
         "date_modified": "2023-10-27T11:07:34"
-      },
-      "filename": "permissions-fake-text.docx",
-      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "- Dogs are the best"
   },
@@ -113,6 +113,11 @@
     "type": "ListItem",
     "element_id": "f57013da02d00faf64e01c67fab8058f",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "permissions-fake-text.docx",
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
         "url": "https://unstructuredio.sharepoint.com/Shared Documents/permissions-fake-text.docx?d=wa2f7dc6bbef642c2b65b088acc59efca",
         "version": "2",
@@ -122,12 +127,7 @@
         },
         "date_created": "2023-10-27T11:06:24",
         "date_modified": "2023-10-27T11:07:34"
-      },
-      "filename": "permissions-fake-text.docx",
-      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "- I love fuzzy blankets"
   }

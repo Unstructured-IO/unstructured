@@ -3,6 +3,11 @@
     "type": "Title",
     "element_id": "8a15fc1eef0a58dbead47b882dbcdd24",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -12,12 +17,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Welcome to your team space!"
   },
@@ -25,6 +25,11 @@
     "type": "ListItem",
     "element_id": "a621b19bad2c2be0cfe54534c90ab126",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -34,12 +39,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "We've added some suggestions and placeholders. Everything is customizable."
   },
@@ -47,6 +47,21 @@
     "type": "ListItem",
     "element_id": "2a2f2d2dcdde9622cd6972a774138f61",
     "metadata": {
+      "link_texts": [
+        "Template - Project plan",
+        "Template - Meeting notes",
+        "Template - Weekly status report"
+      ],
+      "link_urls": [
+        "/wiki/spaces/MFS/pages/1540126/Template+-+Project+plan",
+        "/wiki/spaces/MFS/pages/1605928/Template+-+Meeting+notes",
+        "/wiki/spaces/MFS/pages/1605942/Template+-+Weekly+status+report"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -56,22 +71,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "link_urls": [
-        "/wiki/spaces/MFS/pages/1540126/Template+-+Project+plan",
-        "/wiki/spaces/MFS/pages/1605928/Template+-+Meeting+notes",
-        "/wiki/spaces/MFS/pages/1605942/Template+-+Weekly+status+report"
-      ],
-      "link_texts": [
-        "Template - Project plan",
-        "Template - Meeting notes",
-        "Template - Weekly status report"
-      ]
+      }
     },
     "text": "Get started with page templates:Template - Project planTemplate - Meeting notesTemplate - Weekly status report"
   },
@@ -79,6 +79,17 @@
     "type": "ListItem",
     "element_id": "84b8c34eea80326420f9b3e5b939497c",
     "metadata": {
+      "link_texts": [
+        "Get the most out of your team space"
+      ],
+      "link_urls": [
+        "/wiki/spaces/MFS/pages/1605956/Get+the+most+out+of+your+team+space"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -88,18 +99,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "link_urls": [
-        "/wiki/spaces/MFS/pages/1605956/Get+the+most+out+of+your+team+space"
-      ],
-      "link_texts": [
-        "Get the most out of your team space"
-      ]
+      }
     },
     "text": "Check out Get the most out of your team space for more tips."
   },
@@ -107,6 +107,11 @@
     "type": "Title",
     "element_id": "4efca0d10c5feb8e9b35eb1d994f2905",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -116,12 +121,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "About"
   },
@@ -129,21 +129,6 @@
     "type": "NarrativeText",
     "element_id": "7c7300ac1a16ec290de2442ba09763c1",
     "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
-        "version": "1",
-        "record_locator": {
-          "url": "https://unstructured-ingest-test.atlassian.net",
-          "page_id": "229477"
-        },
-        "date_created": "2023-06-30T17:25:25.504000",
-        "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
       "emphasized_text_contents": [
         "What is your team all about?",
         "What is your team all about?"
@@ -151,7 +136,22 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
+        "version": "1",
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "229477"
+        },
+        "date_created": "2023-06-30T17:25:25.504000",
+        "date_modified": "2023-06-30T17:25:30.898000"
+      }
     },
     "text": "What is your team all about?"
   },
@@ -159,6 +159,11 @@
     "type": "Title",
     "element_id": "d416dc3ddd2f2ba48ad2bb784b808856",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -168,12 +173,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Mission and vision"
   },
@@ -181,21 +181,6 @@
     "type": "NarrativeText",
     "element_id": "0d9db833ea5d982786604025ab277aa6",
     "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
-        "version": "1",
-        "record_locator": {
-          "url": "https://unstructured-ingest-test.atlassian.net",
-          "page_id": "229477"
-        },
-        "date_created": "2023-06-30T17:25:25.504000",
-        "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
       "emphasized_text_contents": [
         "What is your team's mission? What is your vision?",
         "What is your team's mission? What is your vision?"
@@ -203,7 +188,22 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
+        "version": "1",
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "229477"
+        },
+        "date_created": "2023-06-30T17:25:25.504000",
+        "date_modified": "2023-06-30T17:25:30.898000"
+      }
     },
     "text": "What is your team's mission? What is your vision?"
   },
@@ -211,6 +211,11 @@
     "type": "Title",
     "element_id": "ecfdb98aaa881aa6cff78b56f2b1e4bc",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -220,12 +225,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Meet the team"
   },
@@ -233,21 +233,6 @@
     "type": "Title",
     "element_id": "44a4aebe327cd902d50cc9462de55db4",
     "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
-        "version": "1",
-        "record_locator": {
-          "url": "https://unstructured-ingest-test.atlassian.net",
-          "page_id": "229477"
-        },
-        "date_created": "2023-06-30T17:25:25.504000",
-        "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
       "emphasized_text_contents": [
         "Add team members to your space.",
         "Add team members to your space."
@@ -255,7 +240,22 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
+        "version": "1",
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "229477"
+        },
+        "date_created": "2023-06-30T17:25:25.504000",
+        "date_modified": "2023-06-30T17:25:30.898000"
+      }
     },
     "text": "Add team members to your space."
   },
@@ -263,6 +263,17 @@
     "type": "Title",
     "element_id": "8062dbb50d1094a8047ec09c9e013d4b",
     "metadata": {
+      "emphasized_text_contents": [
+        "Team member"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -272,18 +283,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Team member"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
+      }
     },
     "text": "Team member"
   },
@@ -291,6 +291,17 @@
     "type": "Title",
     "element_id": "14736a2eb9f4159f4b6b86f192c3c222",
     "metadata": {
+      "emphasized_text_contents": [
+        "Role"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -300,18 +311,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Role"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
+      }
     },
     "text": "Role"
   },
@@ -319,6 +319,17 @@
     "type": "Title",
     "element_id": "c91217be093ab3d9bc1ce3917ed89c8c",
     "metadata": {
+      "emphasized_text_contents": [
+        "Responsibility"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -328,18 +339,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Responsibility"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
+      }
     },
     "text": "Responsibility"
   },
@@ -347,6 +347,17 @@
     "type": "Title",
     "element_id": "8062dbb50d1094a8047ec09c9e013d4b",
     "metadata": {
+      "emphasized_text_contents": [
+        "Team member"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -356,18 +367,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Team member"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
+      }
     },
     "text": "Team member"
   },
@@ -375,6 +375,17 @@
     "type": "Title",
     "element_id": "14736a2eb9f4159f4b6b86f192c3c222",
     "metadata": {
+      "emphasized_text_contents": [
+        "Role"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -384,18 +395,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Role"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
+      }
     },
     "text": "Role"
   },
@@ -403,6 +403,17 @@
     "type": "Title",
     "element_id": "c91217be093ab3d9bc1ce3917ed89c8c",
     "metadata": {
+      "emphasized_text_contents": [
+        "Responsibility"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -412,18 +423,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Responsibility"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
+      }
     },
     "text": "Responsibility"
   },
@@ -431,6 +431,17 @@
     "type": "Title",
     "element_id": "8062dbb50d1094a8047ec09c9e013d4b",
     "metadata": {
+      "emphasized_text_contents": [
+        "Team member"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -440,18 +451,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Team member"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
+      }
     },
     "text": "Team member"
   },
@@ -459,6 +459,17 @@
     "type": "Title",
     "element_id": "14736a2eb9f4159f4b6b86f192c3c222",
     "metadata": {
+      "emphasized_text_contents": [
+        "Role"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -468,18 +479,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Role"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
+      }
     },
     "text": "Role"
   },
@@ -487,6 +487,17 @@
     "type": "Title",
     "element_id": "c91217be093ab3d9bc1ce3917ed89c8c",
     "metadata": {
+      "emphasized_text_contents": [
+        "Responsibility"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -496,18 +507,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Responsibility"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
+      }
     },
     "text": "Responsibility"
   },
@@ -515,6 +515,11 @@
     "type": "Title",
     "element_id": "47aaf31b83d6bfd705b80bcd5b6269be",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -524,12 +529,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Contact us"
   },
@@ -537,21 +537,6 @@
     "type": "NarrativeText",
     "element_id": "1c3db10eee185bd74b4a3de5e3175939",
     "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
-        "version": "1",
-        "record_locator": {
-          "url": "https://unstructured-ingest-test.atlassian.net",
-          "page_id": "229477"
-        },
-        "date_created": "2023-06-30T17:25:25.504000",
-        "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
       "emphasized_text_contents": [
         "How can someone reach out to your team?",
         "How can someone reach out to your team?"
@@ -559,7 +544,22 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
+        "version": "1",
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "229477"
+        },
+        "date_created": "2023-06-30T17:25:25.504000",
+        "date_modified": "2023-06-30T17:25:30.898000"
+      }
     },
     "text": "How can someone reach out to your team?"
   },
@@ -567,6 +567,23 @@
     "type": "ListItem",
     "element_id": "74abeee66eab3921cf03757abdb8d5e6",
     "metadata": {
+      "emphasized_text_contents": [
+        "team@email.com"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "link_texts": [
+        null
+      ],
+      "link_urls": [
+        "mailto:team@email.com"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -576,24 +593,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "link_urls": [
-        "mailto:team@email.com"
-      ],
-      "link_texts": [
-        null
-      ],
-      "emphasized_text_contents": [
-        "team@email.com"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
+      }
     },
     "text": "team@email.com"
   },
@@ -601,6 +601,17 @@
     "type": "ListItem",
     "element_id": "3d131368b43397ff5fbe0a9bf62c0f79",
     "metadata": {
+      "emphasized_text_contents": [
+        "Tickets"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -610,18 +621,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Tickets"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
+      }
     },
     "text": "Tickets"
   },
@@ -629,6 +629,17 @@
     "type": "ListItem",
     "element_id": "d54a2001284ac19f58ad73a62674244a",
     "metadata": {
+      "emphasized_text_contents": [
+        "Jira board"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -638,18 +649,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Jira board"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
+      }
     },
     "text": "Jira board"
   },
@@ -657,6 +657,17 @@
     "type": "ListItem",
     "element_id": "195a10e63a336aa995e242c92f17b756",
     "metadata": {
+      "emphasized_text_contents": [
+        "#channel"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -666,18 +677,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "#channel"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
+      }
     },
     "text": "#channel"
   },
@@ -685,6 +685,11 @@
     "type": "Title",
     "element_id": "c8b321a3bf39a57de24aac4cca6605a0",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -694,12 +699,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Important Pages"
   },
@@ -707,21 +707,6 @@
     "type": "NarrativeText",
     "element_id": "43770d73ac7c6d8d1a38dd0c13fa8607",
     "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
-        "version": "1",
-        "record_locator": {
-          "url": "https://unstructured-ingest-test.atlassian.net",
-          "page_id": "229477"
-        },
-        "date_created": "2023-06-30T17:25:25.504000",
-        "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
       "emphasized_text_contents": [
         "List them here",
         "List them here"
@@ -729,7 +714,22 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
+        "version": "1",
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "229477"
+        },
+        "date_created": "2023-06-30T17:25:25.504000",
+        "date_modified": "2023-06-30T17:25:30.898000"
+      }
     },
     "text": "List them here"
   },
@@ -737,6 +737,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -746,12 +751,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -759,6 +759,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -768,12 +773,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -781,6 +781,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -790,12 +795,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -803,6 +803,11 @@
     "type": "Title",
     "element_id": "86d353b1f4a6a63ab4577d94ba9d4fea",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -812,12 +817,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Onboarding FAQs"
   },
@@ -825,21 +825,6 @@
     "type": "Title",
     "element_id": "2dd5afc718ccdf97d484020d740d20ce",
     "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
-        "version": "1",
-        "record_locator": {
-          "url": "https://unstructured-ingest-test.atlassian.net",
-          "page_id": "229477"
-        },
-        "date_created": "2023-06-30T17:25:25.504000",
-        "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
       "emphasized_text_contents": [
         "Add resources for new hires",
         "Add resources for new hires"
@@ -847,7 +832,22 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
+        "version": "1",
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "229477"
+        },
+        "date_created": "2023-06-30T17:25:25.504000",
+        "date_modified": "2023-06-30T17:25:30.898000"
+      }
     },
     "text": "Add resources for new hires"
   },
@@ -855,6 +855,11 @@
     "type": "Title",
     "element_id": "9e6c24f51918063b7c8514b3040ef52b",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -864,12 +869,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Meeting notes"
   },
@@ -877,21 +877,6 @@
     "type": "NarrativeText",
     "element_id": "518cd477daaec831ad223c1d2e6b790f",
     "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
-        "version": "1",
-        "record_locator": {
-          "url": "https://unstructured-ingest-test.atlassian.net",
-          "page_id": "229477"
-        },
-        "date_created": "2023-06-30T17:25:25.504000",
-        "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
       "emphasized_text_contents": [
         "Add links to meeting notes",
         "Add links to meeting notes"
@@ -899,7 +884,22 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
+        "version": "1",
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "229477"
+        },
+        "date_created": "2023-06-30T17:25:25.504000",
+        "date_modified": "2023-06-30T17:25:30.898000"
+      }
     },
     "text": "Add links to meeting notes"
   },
@@ -907,6 +907,11 @@
     "type": "Title",
     "element_id": "f47e8394cbf0d8338b3dad5f95bcac3e",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -916,12 +921,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Team goals"
   },
@@ -929,21 +929,6 @@
     "type": "NarrativeText",
     "element_id": "43770d73ac7c6d8d1a38dd0c13fa8607",
     "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
-        "version": "1",
-        "record_locator": {
-          "url": "https://unstructured-ingest-test.atlassian.net",
-          "page_id": "229477"
-        },
-        "date_created": "2023-06-30T17:25:25.504000",
-        "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
       "emphasized_text_contents": [
         "List them here",
         "List them here"
@@ -951,7 +936,22 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
+        "version": "1",
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "229477"
+        },
+        "date_created": "2023-06-30T17:25:25.504000",
+        "date_modified": "2023-06-30T17:25:30.898000"
+      }
     },
     "text": "List them here"
   },
@@ -959,6 +959,11 @@
     "type": "Title",
     "element_id": "c3a1dd0877d734e8ec68983d0cf737ce",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -968,12 +973,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Team news"
   },
@@ -981,21 +981,6 @@
     "type": "NarrativeText",
     "element_id": "b2c91194db5ddc5e5b30240fbe5386d5",
     "metadata": {
-      "data_source": {
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
-        "version": "1",
-        "record_locator": {
-          "url": "https://unstructured-ingest-test.atlassian.net",
-          "page_id": "229477"
-        },
-        "date_created": "2023-06-30T17:25:25.504000",
-        "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
       "emphasized_text_contents": [
         "Create a blog post to share team news. It will automatically appear here once it's published.",
         "Create a blog post to share team news. It will automatically appear here once it's published."
@@ -1003,7 +988,22 @@
       "emphasized_text_tags": [
         "em",
         "span"
-      ]
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
+        "version": "1",
+        "record_locator": {
+          "url": "https://unstructured-ingest-test.atlassian.net",
+          "page_id": "229477"
+        },
+        "date_created": "2023-06-30T17:25:25.504000",
+        "date_modified": "2023-06-30T17:25:30.898000"
+      }
     },
     "text": "Create a blog post to share team news. It will automatically appear here once it's published."
   },
@@ -1011,6 +1011,11 @@
     "type": "Title",
     "element_id": "903f4f48016cafdf332e01f2d004487f",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -1020,12 +1025,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Blog stream"
   },
@@ -1033,6 +1033,11 @@
     "type": "NarrativeText",
     "element_id": "cfe366b5f8c8991d1e2af6e507e35a4e",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/229477",
         "version": "1",
@@ -1042,12 +1047,7 @@
         },
         "date_created": "2023-06-30T17:25:25.504000",
         "date_modified": "2023-06-30T17:25:30.898000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Create a blog post to share news and announcements with your team and company."
   }

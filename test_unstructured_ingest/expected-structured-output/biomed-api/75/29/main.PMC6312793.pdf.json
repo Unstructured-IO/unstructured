@@ -3,12 +3,12 @@
     "type": "Header",
     "element_id": "05faeab0ea2447b52f301469e8a795a5",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "Data in Brief 22 (2019) 484–487"
   },
@@ -16,12 +16,12 @@
     "type": "NarrativeText",
     "element_id": "721bbccb8e92736ad5776ad812dc8bca",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "Contents lists available at ScienceDirect"
   },
@@ -29,12 +29,12 @@
     "type": "Title",
     "element_id": "01a8470646d06d1c29b9f43915ac04e0",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "Data in Brief"
   },
@@ -42,12 +42,12 @@
     "type": "NarrativeText",
     "element_id": "aefc5298031dc9a700e66da55852c6b8",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "journal homepage: www.elsevier.com/locate/dib"
   },
@@ -55,12 +55,12 @@
     "type": "Title",
     "element_id": "8bdb2c4b6997a1bbd7b948d7aeb402e2",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "Data Article"
   },
@@ -68,12 +68,12 @@
     "type": "Title",
     "element_id": "4a134e9565b899d20e354052439c55c1",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "A benchmark dataset for the multiple depot vehicle scheduling problem"
   },
@@ -81,12 +81,12 @@
     "type": "Title",
     "element_id": "77b037daa0a8a3f7349bd57dda36499f",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "(eee"
   },
@@ -94,12 +94,12 @@
     "type": "Title",
     "element_id": "9d8efece3117b2eec928f8ee4d4888e4",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "Sarang Kulkarni a,b,c,n, Mohan Krishnamoorthy d,e, Abhiram Ranade f, Andreas T. Ernst c, Rahul Patil b"
   },
@@ -107,12 +107,12 @@
     "type": "UncategorizedText",
     "element_id": "cd24a5d2989d27bd46eede4ea54cb41e",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "a IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai 400076, India b SJM School of Management, IIT Bombay, Powai, Mumbai 400076, India c School of Mathematical Sciences, Monash University, Clayton, VIC 3800, Australia d Department of Mechanical and Aerospace Engineering, Monash University, Clayton, VIC 3800, Australia e School of Information Technology and Electrical Engineering, The University of Queensland, QLD 4072, Australia f Department of Computer Science and Engineering, IIT Bombay, Powai, Mumbai 400076, India"
   },
@@ -120,12 +120,12 @@
     "type": "NarrativeText",
     "element_id": "fbd221e3c1f82c8601661213b98b0962",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "a r t i c l e i n f o"
   },
@@ -133,12 +133,12 @@
     "type": "Title",
     "element_id": "3d71760ba4f1cc95873ee36178f97d82",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "ARTICLE INFO"
   },
@@ -146,12 +146,12 @@
     "type": "NarrativeText",
     "element_id": "d6923075e35e5f3296e0d24ceb70a2bb",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "a b s t r a c t"
   },
@@ -159,12 +159,12 @@
     "type": "NarrativeText",
     "element_id": "4691a05d0f1f6a6f5f97a655c509cead",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "Article history: Received 21 November 2018 Received in revised form 13 December 2018 Accepted 15 December 2018 Available online 18 December 2018"
   },
@@ -172,12 +172,12 @@
     "type": "NarrativeText",
     "element_id": "f1a6d69797383afd30aab391b741456b",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "This data article presents a description of a benchmark dataset for the multiple depot vehicle scheduling problem (MDVSP). The MDVSP is to assign vehicles from different depots to timetabled trips to minimize the total cost of empty travel and waiting. The dataset has been developed to evaluate the heuristics of the MDVSP that are presented in “A new formulation and a column generation-based heuristic for the multiple depot vehicle sche- duling problem” (Kulkarni et al., 2018). The dataset contains 60 problem instances of varying size. Researchers can use the dataset to evaluate the future algorithms for the MDVSP and compare the performance with the existing algorithms. The dataset includes a program that can be used to generate new problem instances of the MDVSP."
   },
@@ -185,12 +185,12 @@
     "type": "NarrativeText",
     "element_id": "260cf1397ece5718c2d35900917688de",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "& 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/)."
   },
@@ -198,12 +198,12 @@
     "type": "UncategorizedText",
     "element_id": "149d0d44f9fe5d3c234aa32aec552e99",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "DOI of original article: https://doi.org/10.1016/j.trb.2018.11.007 n Corresponding author at: IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai 400076, India."
   },
@@ -211,12 +211,12 @@
     "type": "ListItem",
     "element_id": "ab239efbc2d02a36dbbe66133ec68bf4",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "E-mail address: sarangkulkarni@iitb.ac.in (S. Kulkarni)."
   },
@@ -224,12 +224,12 @@
     "type": "NarrativeText",
     "element_id": "1623d0f690a72d1898d3308deff11caa",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "data_source": {}
     },
     "text": "https://doi.org/10.1016/j.dib.2018.12.055 2352-3409/& 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/)."
   },
@@ -237,12 +237,12 @@
     "type": "NarrativeText",
     "element_id": "f64bebb0be23116b44b4ad54968178a0",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "S. Kulkarni et al. / Data in Brief 22 (2019) 484–487"
   },
@@ -250,12 +250,12 @@
     "type": "Title",
     "element_id": "83c8f5958f7caaf2d10c1d0692b48beb",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "Speciﬁcations table"
   },
@@ -263,12 +263,12 @@
     "type": "Table",
     "element_id": "81d9754d9d3f2a891323ee25d9496ffe",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "Subject area Operations research More speciﬁc subject area Vehicle scheduling Type of data How data were acquired Tables, text ﬁles Artiﬁcially generated by a C þ þ program on Intels Xeons CPU E5– 2670 v2 with Linux operating system. Raw Sixty randomly generated instances of the MDVSP with the number of depots in (8, 12, 16) and the number of trips in (1500, 2000, 2500, 3000) Randomly generated instances IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai, India. Data can be downloaded from https://orlib.uqcloud.net/ Kulkarni, S., Krishnamoorthy, M., Ranade, A., Ernst, A.T. and Patil, R., 2018. A new formulation and a column generation-based heuristic for the multiple depot vehicle scheduling problem. Transportation Research Part B: Methodological, 118, pp. 457–487 [3]. Data format Experimental factors Experimental features Data source location Data accessibility Related research article"
   },
@@ -276,12 +276,12 @@
     "type": "Title",
     "element_id": "12edc7514919a752d95d3b8e626e45ca",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "Value of the data"
   },
@@ -289,12 +289,12 @@
     "type": "NarrativeText",
     "element_id": "f2fdefc49840022ffb3a88bd4a3512d0",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "(cid:2) The dataset contains 60 different problem instances of the MDVSP that can be used to evaluate the"
   },
@@ -302,12 +302,12 @@
     "type": "ListItem",
     "element_id": "fc52e4abc1c21ce5eefec2a08463bf06",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "performance of the algorithms for the MDVSP."
   },
@@ -315,12 +315,12 @@
     "type": "ListItem",
     "element_id": "69010f31402211bc0029986b9c2c2a27",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "(cid:2) The data provide all the information that is required to model the MDVSP by using the existing mathematical formulations."
   },
@@ -328,12 +328,12 @@
     "type": "NarrativeText",
     "element_id": "e69dab6e2bc16d11cfd2d80a804d89fb",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "(cid:2) All the problem instances are available for use without any restrictions. (cid:2) The benchmark solutions and solution time for the problem instances are presented in [3] and can"
   },
@@ -341,12 +341,12 @@
     "type": "ListItem",
     "element_id": "8d1d4a30fe1af010fb36301a2ad547b3",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "be used for the comparison."
   },
@@ -354,12 +354,12 @@
     "type": "NarrativeText",
     "element_id": "1c1d6b35ac0925a35ea3bb4d018e675f",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "(cid:2) The dataset includes a program that can generate similar problem instances of different sizes."
   },
@@ -367,12 +367,12 @@
     "type": "Title",
     "element_id": "869087d0a7770d68ff7b67de54507c6d",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "1. Data"
   },
@@ -380,12 +380,12 @@
     "type": "NarrativeText",
     "element_id": "7ebd5adce610926720d9bbc0bac01453",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "The dataset contains 60 different problem instances of the multiple depot vehicle scheduling pro- blem (MDVSP). Each problem instance is provided in a separate ﬁle. Each ﬁle is named as ‘RN-m-n-k.dat’, where ‘m’, ‘n’, and ‘k’ denote the number of depots, the number of trips, and the instance number ‘RN-8–1500-01.dat’, for is the ﬁrst problem instance with 8 depots and 1500 trips. For the number of depots, m, we used three values, 8, 12, and 16. The four values for the number of trips, n, are 1500, 2000, 2500, and 3000. For each size, ðm; nÞ, ﬁve instances are provided. The dataset can be downloaded from https://orlib.uqcloud.net."
   },
@@ -393,12 +393,12 @@
     "type": "NarrativeText",
     "element_id": "33d26eae1edf215a9677101c7147d671",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "For each problem instance, the following information is provided: The number of depots mð The number of trips ðnÞ, The number of locations ðlÞ, The number of vehicles at each depot, For each trip i A 1; 2; …; n, a start time, ts"
   },
@@ -406,12 +406,12 @@
     "type": "UncategorizedText",
     "element_id": "c6490fc185478150e7816c45ef8a48d5",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "Þ,"
   },
@@ -419,12 +419,12 @@
     "type": "NarrativeText",
     "element_id": "4e5faed345ed29d23513a466e412ec0a",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "i , a start location, ls i , and an end location, le i , i , an end time, te and"
   },
@@ -432,12 +432,12 @@
     "type": "ListItem",
     "element_id": "f2506416c6fe350d3366f89be8d932cb",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "(cid:2) The travel time, δij, between any two locations i; j A 1; …; l."
   },
@@ -445,12 +445,12 @@
     "type": "NarrativeText",
     "element_id": "6e53e12df12d0e3d2cc75a0a91fca6c1",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "All times are in minutes and integers. The planning duration is from 5 a.m. to around midnight. Each instance has two classes of trips, short trips and long trips, with 40% short trips and 60% long trips. The duration of a short trip is less than a total of 45 min and the travel time between the start"
   },
@@ -458,12 +458,12 @@
     "type": "Header",
     "element_id": "bd9192f280163aee290b5bf5794af67f",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "data_source": {}
     },
     "text": "485"
   },
@@ -471,12 +471,12 @@
     "type": "Header",
     "element_id": "906c45a5da3d7f5a24920bb99bcadb9c",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 3
+      "page_number": 3,
+      "data_source": {}
     },
     "text": "486"
   },
@@ -484,12 +484,12 @@
     "type": "Header",
     "element_id": "f64bebb0be23116b44b4ad54968178a0",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 3
+      "page_number": 3,
+      "data_source": {}
     },
     "text": "S. Kulkarni et al. / Data in Brief 22 (2019) 484–487"
   },
@@ -497,12 +497,12 @@
     "type": "NarrativeText",
     "element_id": "a34ec26cfe7e88199e3455fc4297cf2e",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 3
+      "page_number": 3,
+      "data_source": {}
     },
     "text": "and end location of the trip. A long trip is about 3–5 h in duration and has the same start and end location. For all instances, m r l and the locations 1; …; m correspond to depots, while the remaining locations only appear as trip start and end locations."
   },
@@ -510,12 +510,12 @@
     "type": "NarrativeText",
     "element_id": "5f9fb229a1da066e2639569d950c70b8",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 3
+      "page_number": 3,
+      "data_source": {}
     },
     "text": "j , the vehicle must travel empty from le j (cid:3)te i Þ. A schedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to determine the minimum number of schedules to cover all trips that minimizes total time in waiting and empty travel. The following requirements must be satisﬁed:"
   },
@@ -523,12 +523,12 @@
     "type": "ListItem",
     "element_id": "2d6b506bd58a7dd7bbf1c8599ef630c8",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 3
+      "page_number": 3,
+      "data_source": {}
     },
     "text": "1. Each schedule should start and end at the same depot. 2. Each trip should be covered by only one vehicle. 3. The number of schedules that start from a depot should not exceed the number of vehicles at"
   },
@@ -536,12 +536,12 @@
     "type": "ListItem",
     "element_id": "d6b86e26ceb3141a47f4f3f4f8ef75d3",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 3
+      "page_number": 3,
+      "data_source": {}
     },
     "text": "the depot."
   },
@@ -549,12 +549,12 @@
     "type": "NarrativeText",
     "element_id": "4e15b7ef25e73d8d7d628348abe01717",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 3
+      "page_number": 3,
+      "data_source": {}
     },
     "text": "A sufﬁcient number of vehicles are provided to maintain the feasibility of an instance. For each instance size ðm; nÞ, Table 1 provides the average of the number of locations, the number of times, the number of vehicles, and the number of possible empty travels, over ﬁve instances. The number of locations includes m distinct locations for depots and the number of locations at which various trips start or end. The number of times includes the start and the end time of the planning horizon and the start/end times for the trips. The number of vehicles is the total number of vehicles from all the depots. The number of possible empty travels is the number of possible connections between trips that require a vehicle travelling empty between two consecutive trips in a schedule."
   },
@@ -562,12 +562,12 @@
     "type": "NarrativeText",
     "element_id": "1216750872db48abd1b02374f86a64b4",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 3
+      "page_number": 3,
+      "data_source": {}
     },
     "text": "The description of the ﬁle for each problem instance is presented in Table 2. The ﬁrst line in the ﬁle provides the number of depots ðmÞ, the number of trips, ðnÞ, and the number of locations ðlÞ, in the problem instance. The next n lines present the information for n trips. Each line corresponds to a trip, i A 1; …; n g, and provides the start location, the start time, the end location, and the end time of trip i. The next l lines present the travel times between any two locations, i; jA 1; …; l"
   },
@@ -575,12 +575,12 @@
     "type": "NarrativeText",
     "element_id": "8f4fa84bc5bb3afefc329c7ee4035de8",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 3
+      "page_number": 3,
+      "data_source": {}
     },
     "text": "The dataset also includes a program ‘GenerateInstance.cpp’ that can be used to generate new instances. The program takes three inputs, the number of depots ðmÞ, the number of trips ðnÞ, and the number of instances for each size ðm; nÞ."
   },
@@ -588,12 +588,12 @@
     "type": "UncategorizedText",
     "element_id": "d8e33a2b60213fb3cebaf5c3a36b0b63",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 3
+      "page_number": 3,
+      "data_source": {}
     },
     "text": "Table 1 Average number of locations, times, vehicles and empty travels for each instance size."
   },
@@ -601,12 +601,12 @@
     "type": "Table",
     "element_id": "d8342c86b29d5479db19ae1beff8f957",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 3
+      "page_number": 3,
+      "data_source": {}
     },
     "text": "Instance size (m, n) Average number of Locations Times Vehicles (8, 1500) (8, 2000) (8, 2500) (8, 3000) (12, 1500) (12, 2000) (12, 2500) (12, 3000) (16, 1500) (16, 2000) (16, 2500) (16, 3000) 568.40 672.80 923.40 977.00 566.00 732.60 875.00 1119.60 581.80 778.00 879.00 1087.20 975.20 1048.00 1078.00 1113.20 994.00 1040.60 1081.00 1107.40 985.40 1040.60 1083.20 1101.60 652.20 857.20 1082.40 1272.80 642.00 861.20 1096.00 1286.20 667.80 872.40 1076.40 1284.60 668,279.40 1,195,844.80 1,866,175.20 2,705,617.00 674,191.00 1,199,659.80 1,878,745.20 2,711,180.40 673,585.80 1,200,560.80 1,879,387.00 2,684,983.60"
   },
@@ -614,12 +614,12 @@
     "type": "Header",
     "element_id": "f64bebb0be23116b44b4ad54968178a0",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "S. Kulkarni et al. / Data in Brief 22 (2019) 484–487"
   },
@@ -627,12 +627,12 @@
     "type": "Title",
     "element_id": "6ad378122bcd6e47bbfc3a3d2c23984a",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "Table 2 Description of ﬁle format for each problem instance."
   },
@@ -640,12 +640,12 @@
     "type": "Table",
     "element_id": "ff667ddf988229560eaac54fc38ddc66",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "Number of lines Number of columns in each line Description 1 1 n 3 m 4 The number of depots, the number of trips, and the number of locations. The number of vehicles rd at each depot d. One line for each trip, i ¼ 1; 2; …; n. Each line provides the start location ls time ts i and the end time te i for the corresponding trip. Each element, δij; where i; j A 1; 2; …; l, refers to the travel time between location i and location j. i , the start i , the end location le l l"
   },
@@ -653,12 +653,12 @@
     "type": "Title",
     "element_id": "8502cf83321433fad96e32b2c8d087d2",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "2. Experimental design, materials, and methods"
   },
@@ -666,12 +666,12 @@
     "type": "NarrativeText",
     "element_id": "6e5b170122f44d4d618cc1f3f61f03c8",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "The procedure presented by Carpaneto et al. in [1] is used to generate the problem instances. The same procedure has been used by Pepin et al. in [4] to generate the benchmark dataset of the MDVSP. A detailed description of the procedure is presented in [3]."
   },
@@ -679,12 +679,12 @@
     "type": "NarrativeText",
     "element_id": "db341e650c62640867aa97c59d460245",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "Our dataset provides start/end location and time of trips as well as the travel time between any two locations. The location and time information is required to model the MDVSP on a time-space network. The feasible connections and the cost of connections between the trips can be obtained as discussed in [3]. Thus, the dataset has all the information that is required to model the MDVSP on the time-space network (see [2]) as well as the connection-network (see [5]). The benchmark solutions for all the problem instances are presented in [3]."
   },
@@ -692,12 +692,12 @@
     "type": "Title",
     "element_id": "9478c846b097ffc916c7b084527ae320",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "Transparency document. Supporting information"
   },
@@ -705,12 +705,12 @@
     "type": "NarrativeText",
     "element_id": "5253afbe39ab88206db982fbd37c7d37",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "Transparency document associated with this article can be found in the online version at https://doi. org/10.1016/j.dib.2018.12.055."
   },
@@ -718,12 +718,12 @@
     "type": "Title",
     "element_id": "a0d7deccf89e42d02a9d66b0c1889689",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "References"
   },
@@ -731,12 +731,12 @@
     "type": "ListItem",
     "element_id": "9b36c6bf583abcc308f63e2cbd455d58",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "[1] G. Carpaneto, M. Dell'Amico, M. Fischetti, P. Toth, A branch and bound algorithm for the multiple depot vehicle scheduling problem, Networks 19 (5) (1989) 531–548."
   },
@@ -744,12 +744,12 @@
     "type": "ListItem",
     "element_id": "a8e92ff1d5b95768eb45e114f106924b",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "[2] N. Kliewer, T. Mellouli, L. Suhl, A time–space network based exact optimization model for multi-depot bus scheduling, Eur. J. Oper. Res. 175 (3) (2006) 1616–1627."
   },
@@ -757,12 +757,12 @@
     "type": "ListItem",
     "element_id": "344dbdfd5bdab54d523a6df3554cafc9",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "[3] S. Kulkarni, M. Krishnamoorthy, A. Ranade, A.T. Ernst, R. Patil, A new formulation and a column generation-based heuristic for the multiple depot vehicle scheduling problem, Transp. Res. Part B Methodol. 118 (2018) 457–487."
   },
@@ -770,12 +770,12 @@
     "type": "ListItem",
     "element_id": "bacca7917f0f2acdfb92f639034f29e6",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "[4] A.S. Pepin, G. Desaulniers, A. Hertz, D. Huisman, A comparison of ﬁve heuristics for the multiple depot vehicle scheduling problem, J. Sched. 12 (1) (2009) 17."
   },
@@ -783,12 +783,12 @@
     "type": "ListItem",
     "element_id": "4c6b282577604e5d857d3ec1825620cb",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "[5] C.C. Ribeiro, F. Soumis, A column generation approach to the multiple-depot vehicle scheduling problem, Oper. Res. 42 (1) (1994) 41–52."
   },
@@ -796,12 +796,12 @@
     "type": "Header",
     "element_id": "867ab47af6a021b50e74bbbc6f471965",
     "metadata": {
-      "data_source": {},
       "filetype": "application/pdf",
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "data_source": {}
     },
     "text": "487"
   }

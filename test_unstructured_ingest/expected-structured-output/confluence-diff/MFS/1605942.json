@@ -3,6 +3,11 @@
     "type": "Title",
     "element_id": "307afee17dac4c598e361c095338decd",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
         "version": "1",
@@ -12,12 +17,7 @@
         },
         "date_created": "2023-07-09T12:54:45.226000",
         "date_modified": "2023-07-09T12:54:45.226000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Copy and paste this section for each week."
   },
@@ -25,6 +25,17 @@
     "type": "Title",
     "element_id": "b980a145c5e8c9e233a0643366ba520a",
     "metadata": {
+      "emphasized_text_contents": [
+        "Win"
+      ],
+      "emphasized_text_tags": [
+        "strong"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
         "version": "1",
@@ -34,18 +45,7 @@
         },
         "date_created": "2023-07-09T12:54:45.226000",
         "date_modified": "2023-07-09T12:54:45.226000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Win"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      }
     },
     "text": "Win"
   },
@@ -53,6 +53,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
         "version": "1",
@@ -62,12 +67,7 @@
         },
         "date_created": "2023-07-09T12:54:45.226000",
         "date_modified": "2023-07-09T12:54:45.226000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -75,6 +75,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
         "version": "1",
@@ -84,12 +89,7 @@
         },
         "date_created": "2023-07-09T12:54:45.226000",
         "date_modified": "2023-07-09T12:54:45.226000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -97,6 +97,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
         "version": "1",
@@ -106,12 +111,7 @@
         },
         "date_created": "2023-07-09T12:54:45.226000",
         "date_modified": "2023-07-09T12:54:45.226000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -119,6 +119,17 @@
     "type": "Title",
     "element_id": "aecc044c7725a6555114285dc28fe2d1",
     "metadata": {
+      "emphasized_text_contents": [
+        "Needs input"
+      ],
+      "emphasized_text_tags": [
+        "strong"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
         "version": "1",
@@ -128,18 +139,7 @@
         },
         "date_created": "2023-07-09T12:54:45.226000",
         "date_modified": "2023-07-09T12:54:45.226000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Needs input"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      }
     },
     "text": "Needs input"
   },
@@ -147,6 +147,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
         "version": "1",
@@ -156,12 +161,7 @@
         },
         "date_created": "2023-07-09T12:54:45.226000",
         "date_modified": "2023-07-09T12:54:45.226000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -169,6 +169,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
         "version": "1",
@@ -178,12 +183,7 @@
         },
         "date_created": "2023-07-09T12:54:45.226000",
         "date_modified": "2023-07-09T12:54:45.226000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -191,6 +191,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
         "version": "1",
@@ -200,12 +205,7 @@
         },
         "date_created": "2023-07-09T12:54:45.226000",
         "date_modified": "2023-07-09T12:54:45.226000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -213,6 +213,17 @@
     "type": "Title",
     "element_id": "9d3cab2b5efed4eaef42a707dbc813da",
     "metadata": {
+      "emphasized_text_contents": [
+        "Focus"
+      ],
+      "emphasized_text_tags": [
+        "strong"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
         "version": "1",
@@ -222,18 +233,7 @@
         },
         "date_created": "2023-07-09T12:54:45.226000",
         "date_modified": "2023-07-09T12:54:45.226000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Focus"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      }
     },
     "text": "Focus"
   },
@@ -241,6 +241,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
         "version": "1",
@@ -250,12 +255,7 @@
         },
         "date_created": "2023-07-09T12:54:45.226000",
         "date_modified": "2023-07-09T12:54:45.226000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -263,6 +263,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
         "version": "1",
@@ -272,12 +277,7 @@
         },
         "date_created": "2023-07-09T12:54:45.226000",
         "date_modified": "2023-07-09T12:54:45.226000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -285,6 +285,12 @@
     "type": "Table",
     "element_id": "a240e43c0ae70731c65ae5430d2dab7f",
     "metadata": {
+      "text_as_html": "<table><br><tbody><br><tr><td>Notes          </td></tr><br><tr><td>Important Links</td></tr><br></tbody><br></table>",
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
         "version": "1",
@@ -294,13 +300,7 @@
         },
         "date_created": "2023-07-09T12:54:45.226000",
         "date_modified": "2023-07-09T12:54:45.226000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "text_as_html": "<table><br><tbody><br><tr><td>Notes          </td></tr><br><tr><td>Important Links</td></tr><br></tbody><br></table>"
+      }
     },
     "text": "Notes Important Links"
   }

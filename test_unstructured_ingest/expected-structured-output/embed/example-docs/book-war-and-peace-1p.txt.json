@@ -3,6 +3,10 @@
     "type": "Title",
     "element_id": "d0e5cb42d9924bed3d7ed4f8db06ecaf",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "example-docs/book-war-and-peace-1p.txt",
         "permissions_data": [
@@ -10,11 +14,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "CHAPTER I",
     "embeddings": [
@@ -408,6 +408,10 @@
     "type": "NarrativeText",
     "element_id": "8e7b93275c6f8e58cc1b28493efda1fc",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "example-docs/book-war-and-peace-1p.txt",
         "permissions_data": [
@@ -415,11 +419,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "\"Well, Prince, so Genoa and Lucca are now just family estates of the Buonapartes. But I warn you, if you don't tell me that this means war, if you still try to defend the infamies and horrors perpetrated by that Antichrist--I really believe he is Antichrist--I will have nothing more to do with you and you are no longer my friend, no longer my 'faithful slave,' as you call yourself! But how do you do? I see I have frightened you--sit down and tell me all the news.\"",
     "embeddings": [
@@ -813,6 +813,10 @@
     "type": "NarrativeText",
     "element_id": "69843bc15c04968cc7528bda021d7fd2",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "example-docs/book-war-and-peace-1p.txt",
         "permissions_data": [
@@ -820,11 +824,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "It was in July, 1805, and the speaker was the well-known Anna Pavlovna Scherer, maid of honor and favorite of the Empress Marya Fedorovna. With these words she greeted Prince Vasili Kuragin, a man of high rank and importance, who was the first to arrive at her reception. Anna Pavlovna had had a cough for some days. She was, as she said, suffering from la grippe; grippe being then a new word in St. Petersburg, used only by the elite.",
     "embeddings": [
@@ -1218,6 +1218,10 @@
     "type": "NarrativeText",
     "element_id": "40a11496528c0849b69a9a3691d895ac",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "example-docs/book-war-and-peace-1p.txt",
         "permissions_data": [
@@ -1225,11 +1229,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "All her invitations without exception, written in French, and delivered by a scarlet-liveried footman that morning, ran as follows:",
     "embeddings": [
@@ -1623,6 +1623,10 @@
     "type": "NarrativeText",
     "element_id": "535b8c5ae979892fa658ef113017f65f",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "example-docs/book-war-and-peace-1p.txt",
         "permissions_data": [
@@ -1630,11 +1634,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "\"If you have nothing better to do, Count (or Prince), and if the prospect of spending an evening with a poor invalid is not too terrible, I shall be very charmed to see you tonight between 7 and 10--Annette Scherer.\"",
     "embeddings": [
@@ -2028,6 +2028,10 @@
     "type": "NarrativeText",
     "element_id": "709bd60f9a74e1bae1dce2cb852fd285",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "example-docs/book-war-and-peace-1p.txt",
         "permissions_data": [
@@ -2035,11 +2039,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "\"Heavens! what a virulent attack!\" replied the prince, not in the least disconcerted by this reception. He had just entered, wearing an embroidered court uniform, knee breeches, and shoes, and had stars on his breast and a serene expression on his flat face. He spoke in that refined French in which our grandfathers not only spoke but thought, and with the gentle, patronizing intonation natural to a man of importance who had grown old in society and at court. He went up to Anna Pavlovna, kissed her hand, presenting to her his bald, scented, and shining head, and complacently seated himself on the sofa.",
     "embeddings": [
@@ -2433,6 +2433,10 @@
     "type": "NarrativeText",
     "element_id": "18f1d1fec4849ca9651f6a1d860dda63",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "example-docs/book-war-and-peace-1p.txt",
         "permissions_data": [
@@ -2440,11 +2444,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "\"First of all, dear friend, tell me how you are. Set your friend's mind at rest,\" said he without altering his tone, beneath the politeness and affected sympathy of which indifference and even irony could be discerned.",
     "embeddings": [
@@ -2838,6 +2838,10 @@
     "type": "NarrativeText",
     "element_id": "640111bd2f3cf71aadf0dbbfcd216bcc",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "example-docs/book-war-and-peace-1p.txt",
         "permissions_data": [
@@ -2845,11 +2849,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "\"Can one be well while suffering morally? Can one be calm in times like these if one has any feeling?\" said Anna Pavlovna. \"You are staying the whole evening, I hope?\"",
     "embeddings": [
@@ -3243,6 +3243,10 @@
     "type": "NarrativeText",
     "element_id": "203e55d1aedd6876a30104dcd8c51425",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "example-docs/book-war-and-peace-1p.txt",
         "permissions_data": [
@@ -3250,11 +3254,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "\"And the fete at the English ambassador's? Today is Wednesday. I must put in an appearance there,\" said the prince. \"My daughter is coming for me to take me there.\"",
     "embeddings": [
@@ -3648,6 +3648,10 @@
     "type": "NarrativeText",
     "element_id": "82b8870c8d80978043c1db4df3b7e207",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "example-docs/book-war-and-peace-1p.txt",
         "permissions_data": [
@@ -3655,11 +3659,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "\"I thought today's fete had been canceled. I confess all these festivities and fireworks are becoming wearisome.\"",
     "embeddings": [
@@ -4053,6 +4053,10 @@
     "type": "NarrativeText",
     "element_id": "e43850c5b521a136a2bf8df83224040f",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "example-docs/book-war-and-peace-1p.txt",
         "permissions_data": [
@@ -4060,11 +4064,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "\"If they had known that you wished it, the entertainment would have been put off,\" said the prince, who, like a wound-up clock, by force of habit said things he did not even wish to be believed.",
     "embeddings": [
@@ -4458,6 +4458,10 @@
     "type": "NarrativeText",
     "element_id": "8ff6545f658759f8b87daf51d36b3bc3",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "example-docs/book-war-and-peace-1p.txt",
         "permissions_data": [
@@ -4465,11 +4469,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "\"Don't tease! Well, and what has been decided about Novosiltsev's dispatch? You know everything.\"",
     "embeddings": [
@@ -4863,6 +4863,10 @@
     "type": "NarrativeText",
     "element_id": "5dc094cc3e4812145a3b72d09af9a478",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "example-docs/book-war-and-peace-1p.txt",
         "permissions_data": [
@@ -4870,11 +4874,7 @@
             "mode": 33188
           }
         ]
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "\"What can one say about it?\" replied the prince in a cold, listless tone. \"What has been decided? They have decided that Buonaparte has burnt his boats, and I believe that we are ready to burn ours.\"",
     "embeddings": [

@@ -3,6 +3,11 @@
     "type": "Title",
     "element_id": "35054d4d1455c734e83a868656b4ad16",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
         "version": "1",
@@ -12,12 +17,7 @@
         },
         "date_created": "2023-07-09T12:54:45.162000",
         "date_modified": "2023-07-09T12:54:45.162000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "\\uD83D\\uDDD3 Date"
   },
@@ -25,6 +25,11 @@
     "type": "Title",
     "element_id": "0126c1353ddd7c8dfdb29f252a64a344",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
         "version": "1",
@@ -34,12 +39,7 @@
         },
         "date_created": "2023-07-09T12:54:45.162000",
         "date_modified": "2023-07-09T12:54:45.162000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "\\uD83D\\uDC65 Participants"
   },
@@ -47,6 +47,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
         "version": "1",
@@ -56,12 +61,7 @@
         },
         "date_created": "2023-07-09T12:54:45.162000",
         "date_modified": "2023-07-09T12:54:45.162000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -69,6 +69,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
         "version": "1",
@@ -78,12 +83,7 @@
         },
         "date_created": "2023-07-09T12:54:45.162000",
         "date_modified": "2023-07-09T12:54:45.162000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -91,6 +91,11 @@
     "type": "Title",
     "element_id": "fa64ff027cbc0c6929bc75d3c78c94c3",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
         "version": "1",
@@ -100,12 +105,7 @@
         },
         "date_created": "2023-07-09T12:54:45.162000",
         "date_modified": "2023-07-09T12:54:45.162000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "\\uD83E\\uDD45 Goals"
   },
@@ -113,6 +113,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
         "version": "1",
@@ -122,12 +127,7 @@
         },
         "date_created": "2023-07-09T12:54:45.162000",
         "date_modified": "2023-07-09T12:54:45.162000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -135,6 +135,11 @@
     "type": "Title",
     "element_id": "537ea1b14dcba1742bdbd4a5fbfb488c",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
         "version": "1",
@@ -144,12 +149,7 @@
         },
         "date_created": "2023-07-09T12:54:45.162000",
         "date_modified": "2023-07-09T12:54:45.162000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "\\uD83D\\uDDE3 Discussion topics"
   },
@@ -157,6 +157,12 @@
     "type": "Table",
     "element_id": "37af06e8e75d96a448a00026754b7942",
     "metadata": {
+      "text_as_html": "<table><br><tbody><br><tr><td>Time</td><td>Item</td><td>Presenter</td><td>Notes</td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br></tbody><br></table>",
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
         "version": "1",
@@ -166,13 +172,7 @@
         },
         "date_created": "2023-07-09T12:54:45.162000",
         "date_modified": "2023-07-09T12:54:45.162000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "text_as_html": "<table><br><tbody><br><tr><td>Time</td><td>Item</td><td>Presenter</td><td>Notes</td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br></tbody><br></table>"
+      }
     },
     "text": "Time Item Presenter Notes"
   },
@@ -180,6 +180,11 @@
     "type": "Title",
     "element_id": "f158a8eaf72c7e9511d5e8ee03692652",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
         "version": "1",
@@ -189,12 +194,7 @@
         },
         "date_created": "2023-07-09T12:54:45.162000",
         "date_modified": "2023-07-09T12:54:45.162000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "✅ Action items"
   },
@@ -202,6 +202,11 @@
     "type": "ListItem",
     "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
         "version": "1",
@@ -211,12 +216,7 @@
         },
         "date_created": "2023-07-09T12:54:45.162000",
         "date_modified": "2023-07-09T12:54:45.162000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": ""
   },
@@ -224,6 +224,11 @@
     "type": "Title",
     "element_id": "addb0aa08f77b69fa754ba55c6600c8a",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605928",
         "version": "1",
@@ -233,12 +238,7 @@
         },
         "date_created": "2023-07-09T12:54:45.162000",
         "date_modified": "2023-07-09T12:54:45.162000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "⤴ Decisions"
   }

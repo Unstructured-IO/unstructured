@@ -3,6 +3,10 @@
     "type": "Title",
     "element_id": "20c53afa85e24de5d553cf8c21820ca0",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP2-7",
         "record_locator": {
@@ -11,11 +15,7 @@
         },
         "date_created": "2023-08-22T11:35:25.467000+00:00",
         "date_modified": "2023-08-22T11:35:30.285000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "IssueID_IssueKey:10009     JCTP2-7"
   },
@@ -23,6 +23,10 @@
     "type": "Title",
     "element_id": "eaf2b168055f23cffc77ea5683ffbfdc",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP2-7",
         "record_locator": {
@@ -31,11 +35,7 @@
         },
         "date_created": "2023-08-22T11:35:25.467000+00:00",
         "date_modified": "2023-08-22T11:35:30.285000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "ProjectID_Key:JCTP2     Jira Connector Test Project 2"
   },
@@ -43,6 +43,10 @@
     "type": "Title",
     "element_id": "dedb957c58285b5ffc7e10b74526266c",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP2-7",
         "record_locator": {
@@ -51,11 +55,7 @@
         },
         "date_created": "2023-08-22T11:35:25.467000+00:00",
         "date_modified": "2023-08-22T11:35:30.285000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "IssueType:Task"
   },
@@ -63,6 +63,10 @@
     "type": "Title",
     "element_id": "62758d9d83a4070009be96f7507a9e46",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP2-7",
         "record_locator": {
@@ -71,11 +75,7 @@
         },
         "date_created": "2023-08-22T11:35:25.467000+00:00",
         "date_modified": "2023-08-22T11:35:30.285000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "Status:To Do"
   },
@@ -83,6 +83,10 @@
     "type": "Title",
     "element_id": "97f6e01d1c6ee504c4feeae1ab2e7ace",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP2-7",
         "record_locator": {
@@ -91,11 +95,7 @@
         },
         "date_created": "2023-08-22T11:35:25.467000+00:00",
         "date_modified": "2023-08-22T11:35:30.285000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "Priority:{'self': 'https://unstructured-jira-connector-test.atlassian.net/rest/api/2/priority/3', 'iconUrl': 'https://unstructured-jira-connector-test.atlassian.net/images/icons/priorities/medium.svg', 'name': 'Medium', 'id': '3'}"
   },
@@ -103,6 +103,10 @@
     "type": "Title",
     "element_id": "e64b97ff7ee050d4ee93524294150fc5",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP2-7",
         "record_locator": {
@@ -111,11 +115,7 @@
         },
         "date_created": "2023-08-22T11:35:25.467000+00:00",
         "date_modified": "2023-08-22T11:35:30.285000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "AssigneeID_Name:712020:7bc7fdcb-67e7-435d-b4a2-128aee12820c     Unstructured Devops"
   },
@@ -123,6 +123,10 @@
     "type": "Title",
     "element_id": "88a9ab41dc24a388b6fb681c25a23751",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP2-7",
         "record_locator": {
@@ -131,11 +135,7 @@
         },
         "date_created": "2023-08-22T11:35:25.467000+00:00",
         "date_modified": "2023-08-22T11:35:30.285000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "ReporterAdr_Name:devops+jira-connector@unstructured.io     Unstructured Devops"
   },
@@ -143,6 +143,10 @@
     "type": "Title",
     "element_id": "2dabfb30dd19895a0735f20a728e8553",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP2-7",
         "record_locator": {
@@ -151,11 +155,7 @@
         },
         "date_created": "2023-08-22T11:35:25.467000+00:00",
         "date_modified": "2023-08-22T11:35:30.285000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "Labels:"
   },
@@ -163,6 +163,10 @@
     "type": "Title",
     "element_id": "749dd93ddca4986780a6c8170f137197",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP2-7",
         "record_locator": {
@@ -171,11 +175,7 @@
         },
         "date_created": "2023-08-22T11:35:25.467000+00:00",
         "date_modified": "2023-08-22T11:35:30.285000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "Components:"
   },
@@ -183,6 +183,10 @@
     "type": "Title",
     "element_id": "bb86df40c6558c7aeb781fe152032b80",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP2-7",
         "record_locator": {
@@ -191,11 +195,7 @@
         },
         "date_created": "2023-08-22T11:35:25.467000+00:00",
         "date_modified": "2023-08-22T11:35:30.285000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "Test Epic 1 Task 3"
   },
@@ -203,6 +203,10 @@
     "type": "UncategorizedText",
     "element_id": "44136fa355b3678a1146ad16f7e8649e",
     "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "https://unstructured-jira-connector-test.atlassian.net/browse/JCTP2-7",
         "record_locator": {
@@ -211,11 +215,7 @@
         },
         "date_created": "2023-08-22T11:35:25.467000+00:00",
         "date_modified": "2023-08-22T11:35:30.285000+00:00"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "{}"
   }

@@ -3,6 +3,11 @@
     "type": "NarrativeText",
     "element_id": "1df8eeb8be847c3a1a7411e3be3e0396",
     "metadata": {
+      "filename": "fake-text.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "",
         "version": "1",
@@ -112,12 +117,7 @@
             }
           }
         ]
-      },
-      "filename": "fake-text.txt",
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "This is a test document to use for unit tests."
   },
@@ -125,6 +125,11 @@
     "type": "Address",
     "element_id": "a9d4657034aa3fdb5177f1325e912362",
     "metadata": {
+      "filename": "fake-text.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "",
         "version": "1",
@@ -234,12 +239,7 @@
             }
           }
         ]
-      },
-      "filename": "fake-text.txt",
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "Doylestown, PA 18901"
   },
@@ -247,6 +247,11 @@
     "type": "Title",
     "element_id": "9c218520320f238595f1fde74bdd137d",
     "metadata": {
+      "filename": "fake-text.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "",
         "version": "1",
@@ -356,12 +361,7 @@
             }
           }
         ]
-      },
-      "filename": "fake-text.txt",
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "Important points:"
   },
@@ -369,6 +369,11 @@
     "type": "ListItem",
     "element_id": "39a3ae572581d0f1fe7511fd7b3aa414",
     "metadata": {
+      "filename": "fake-text.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "",
         "version": "1",
@@ -478,12 +483,7 @@
             }
           }
         ]
-      },
-      "filename": "fake-text.txt",
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "Hamburgers are delicious"
   },
@@ -491,6 +491,11 @@
     "type": "ListItem",
     "element_id": "fc1adcb8eaceac694e500a103f9f698f",
     "metadata": {
+      "filename": "fake-text.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "",
         "version": "1",
@@ -600,12 +605,7 @@
             }
           }
         ]
-      },
-      "filename": "fake-text.txt",
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "Dogs are the best"
   },
@@ -613,6 +613,11 @@
     "type": "ListItem",
     "element_id": "0b61e826b1c4ab05750184da72b89f83",
     "metadata": {
+      "filename": "fake-text.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
       "data_source": {
         "url": "",
         "version": "1",
@@ -722,12 +727,7 @@
             }
           }
         ]
-      },
-      "filename": "fake-text.txt",
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
+      }
     },
     "text": "I love fuzzy blankets"
   }

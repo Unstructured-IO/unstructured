@@ -3,6 +3,11 @@
     "type": "Title",
     "element_id": "1ecab3c4488c97247faa0edbb05f1b15",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -12,12 +17,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Create a stellar overview"
   },
@@ -25,6 +25,11 @@
     "type": "NarrativeText",
     "element_id": "faa74744751fdb969877e67e52dcd0de",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -34,12 +39,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "The overview is the first page visitors will see when they visit your space, so it helps to include some information on what the space is about and what your team is working on."
   },
@@ -47,6 +47,17 @@
     "type": "NarrativeText",
     "element_id": "437b714ee33c51c95abdbbfbabc708a7",
     "metadata": {
+      "emphasized_text_contents": [
+        "Add a header image."
+      ],
+      "emphasized_text_tags": [
+        "strong"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -56,18 +67,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Add a header image."
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      }
     },
     "text": "Add a header image. This gives your overview visual appeal and makes it welcoming for visitors."
   },
@@ -75,6 +75,17 @@
     "type": "NarrativeText",
     "element_id": "aba6251ab2ab07b3c9c814ca04acd5a1",
     "metadata": {
+      "emphasized_text_contents": [
+        "Explain what the space is for."
+      ],
+      "emphasized_text_tags": [
+        "strong"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -84,18 +95,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Explain what the space is for."
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      }
     },
     "text": "Explain what the space is for. Start by summarizing the purpose of the space. This could be your team's mission statement or a brief description of the kind of work you do."
   },
@@ -103,6 +103,27 @@
     "type": "NarrativeText",
     "element_id": "171eac4cd6690ac31242e257b3d3e81e",
     "metadata": {
+      "emphasized_text_contents": [
+        "Share team goals."
+      ],
+      "emphasized_text_tags": [
+        "strong"
+      ],
+      "link_texts": [
+        "OKRs",
+        "project plans",
+        "product roadmaps"
+      ],
+      "link_urls": [
+        "https://www.atlassian.com/software/confluence/templates/okrs",
+        "https://www.atlassian.com/software/confluence/templates/project-plan",
+        "https://www.atlassian.com/software/confluence/templates/product-roadmap"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -112,28 +133,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "link_urls": [
-        "https://www.atlassian.com/software/confluence/templates/okrs",
-        "https://www.atlassian.com/software/confluence/templates/project-plan",
-        "https://www.atlassian.com/software/confluence/templates/product-roadmap"
-      ],
-      "link_texts": [
-        "OKRs",
-        "project plans",
-        "product roadmaps"
-      ],
-      "emphasized_text_contents": [
-        "Share team goals."
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      }
     },
     "text": "Share team goals. Add links to your team's OKRs, project plans, and product roadmaps so visitors can quickly get a sense of your team's goals."
   },
@@ -141,6 +141,17 @@
     "type": "NarrativeText",
     "element_id": "802d1b4528872abe7ef1781586c44be0",
     "metadata": {
+      "emphasized_text_contents": [
+        "Tell people how to contact you."
+      ],
+      "emphasized_text_tags": [
+        "strong"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -150,18 +161,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Tell people how to contact you."
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      }
     },
     "text": "Tell people how to contact you. Share your timezone and links to Slack channels, email aliases, or other contact details your team uses so visitors can contact you with questions or feedback about your team's work."
   },
@@ -169,6 +169,11 @@
     "type": "Title",
     "element_id": "8b3c0a2333a72ae522d8ded1146b91c2",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -178,12 +183,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Use shortcuts for easy access"
   },
@@ -191,6 +191,11 @@
     "type": "NarrativeText",
     "element_id": "7e1124d93d694e9d5f3a63af957f7167",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -200,12 +205,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Shortcuts are helpful for important pages that members of a space might need to get to often. These shortcuts are added and organized by the space administrator. Space admins can link to pages in the space, other related spaces, or relevant external web content as well as reorder the shortcuts as needed."
   },
@@ -213,6 +213,11 @@
     "type": "Title",
     "element_id": "db4d16de97f8fabed809260fbc2d1bc8",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -222,12 +227,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "💭Start discussions with inline comments"
   },
@@ -235,6 +235,17 @@
     "type": "NarrativeText",
     "element_id": "9d43760c2ac5873a7a9fb595a7d919d1",
     "metadata": {
+      "link_texts": [
+        null
+      ],
+      "link_urls": [
+        "https://support.atlassian.com/confluence-cloud/docs/comment-on-pages-and-blog-posts/"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -244,18 +255,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "link_urls": [
-        "https://support.atlassian.com/confluence-cloud/docs/comment-on-pages-and-blog-posts/"
-      ],
-      "link_texts": [
-        null
-      ]
+      }
     },
     "text": "Thoughtful responses can get lost and lose context as email replies pile up. And if you neglect to copy someone or want to add them later on, it's difficult for them to get up to speed. Inline comments allow anyone (or everyone) to huddle around an idea while referencing key information on the project page."
   },
@@ -263,6 +263,11 @@
     "type": "NarrativeText",
     "element_id": "a55418d1e1ad6f5eca52502cfd31903f",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -272,12 +277,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "To leave an inline comment, highlight text on the page and the comment icon will appear."
   },
@@ -285,6 +285,11 @@
     "type": "NarrativeText",
     "element_id": "4c0fa7c962cb5fb406440cc9270c8b27",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -294,12 +299,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Team members with permission to access the page can respond to any comment. Plus, when a comment thread comes to its natural conclusion, comments can be resolved and cleared away."
   },
@@ -307,6 +307,11 @@
     "type": "Title",
     "element_id": "57451018401881933a14a90bbad19a68",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -316,12 +321,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "👋Loop in team members with @mentions"
   },
@@ -329,6 +329,17 @@
     "type": "NarrativeText",
     "element_id": "1e60bb772f35af42c7b4bbed025790bd",
     "metadata": {
+      "link_texts": [
+        null
+      ],
+      "link_urls": [
+        "https://support.atlassian.com/confluence-cloud/docs/mention-a-person-or-team/"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -338,18 +349,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "link_urls": [
-        "https://support.atlassian.com/confluence-cloud/docs/mention-a-person-or-team/"
-      ],
-      "link_texts": [
-        null
-      ]
+      }
     },
     "text": "@mentions on Confluence function like @mentions on social media platforms like Twitter, Instagram, and Slack. Type the @ symbol on a Confluence page or in a comment, begin spelling a team member's first name, and a list will appear. Select the individual to ask a question or assign a task."
   },
@@ -357,6 +357,11 @@
     "type": "Title",
     "element_id": "b14d1b1ac79dfa9d746669d9e903af63",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -366,12 +371,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "👏Endorse ideas with reactions"
   },
@@ -379,6 +379,11 @@
     "type": "NarrativeText",
     "element_id": "5a0a06565120acb8ba0feead3b47c50f",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -388,12 +393,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Use reactions when you want to support a comment or acknowledge you've seen one without clogging up the thread with another comment."
   },
@@ -401,6 +401,11 @@
     "type": "NarrativeText",
     "element_id": "22283cc79ff46fabb9111017af6f0a61",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -410,12 +415,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "You can also use reactions on a page or blog post. The author of the content will be notified, and if enough team members react or add comments to the content, it'll be surfaced on Confluence home feed"
   },
@@ -423,6 +423,11 @@
     "type": "Title",
     "element_id": "fba9640fdadd42f8fe71fa1c347b1182",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -432,12 +437,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Take your Confluence space to the next level"
   },
@@ -445,6 +445,11 @@
     "type": "NarrativeText",
     "element_id": "23128defad5dc9096e86f4fbdc25396b",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -454,12 +459,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Extend the capabilities of your Confluence pages by  adding extra functionality or including dynamic content."
   },
@@ -467,6 +467,17 @@
     "type": "NarrativeText",
     "element_id": "56b3466c8303df451cd42e976cf8f948",
     "metadata": {
+      "emphasized_text_contents": [
+        "To add functionality:"
+      ],
+      "emphasized_text_tags": [
+        "strong"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -476,18 +487,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "To add functionality:"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      }
     },
     "text": "To add functionality:"
   },
@@ -495,6 +495,11 @@
     "type": "ListItem",
     "element_id": "4f1b007ba2308a910c57cfc2d49ecac3",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -504,12 +509,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Type ' / ' to open the list of items available to use"
   },
@@ -517,6 +517,11 @@
     "type": "ListItem",
     "element_id": "0e0c10bbf84a3370dfdcc1f10feb482a",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -526,12 +531,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Find the item to be inserted and select it"
   },
@@ -539,6 +539,17 @@
     "type": "ListItem",
     "element_id": "149e9e865b0696eea528b97686d73fdd",
     "metadata": {
+      "emphasized_text_contents": [
+        "Insert"
+      ],
+      "emphasized_text_tags": [
+        "strong"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -548,18 +559,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Insert"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      }
     },
     "text": "Select Insert"
   },
@@ -567,6 +567,11 @@
     "type": "Title",
     "element_id": "e31f628353416b00ad94095adf83a41a",
     "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -576,12 +581,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
+      }
     },
     "text": "Useful elements for Team space"
   },
@@ -589,6 +589,17 @@
     "type": "Title",
     "element_id": "58909722a50f310da5c1606b63a23d5f",
     "metadata": {
+      "emphasized_text_contents": [
+        "Introduce the team"
+      ],
+      "emphasized_text_tags": [
+        "strong"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -598,18 +609,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Introduce the team"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      }
     },
     "text": "Introduce the team"
   },
@@ -617,6 +617,17 @@
     "type": "NarrativeText",
     "element_id": "87d31fcd2ab69ef4728d71a5476121aa",
     "metadata": {
+      "link_texts": [
+        "user profiles"
+      ],
+      "link_urls": [
+        "https://support.atlassian.com/confluence-cloud/docs/insert-the-user-profile-macro/"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -626,18 +637,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "link_urls": [
-        "https://support.atlassian.com/confluence-cloud/docs/insert-the-user-profile-macro/"
-      ],
-      "link_texts": [
-        "user profiles"
-      ]
+      }
     },
     "text": "Add user profiles to display a short summary of a given Confluence user's profile with their role, profile photo and contact details."
   },
@@ -645,6 +645,17 @@
     "type": "Title",
     "element_id": "cd49fa2c2756766040046a267d74711c",
     "metadata": {
+      "emphasized_text_contents": [
+        "Share news and announcements with your team"
+      ],
+      "emphasized_text_tags": [
+        "strong"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -654,18 +665,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Share news and announcements with your team"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      }
     },
     "text": "Share news and announcements with your team"
   },
@@ -673,6 +673,17 @@
     "type": "NarrativeText",
     "element_id": "16ed42f2003932ba291f8a0ef02dc4f6",
     "metadata": {
+      "link_texts": [
+        "blog posts"
+      ],
+      "link_urls": [
+        "https://support.atlassian.com/confluence-cloud/docs/insert-the-blog-posts-macro/"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -682,18 +693,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "link_urls": [
-        "https://support.atlassian.com/confluence-cloud/docs/insert-the-blog-posts-macro/"
-      ],
-      "link_texts": [
-        "blog posts"
-      ]
+      }
     },
     "text": "Display a stream of latest blog posts so your team can easily see what's been going on."
   },
@@ -701,6 +701,17 @@
     "type": "NarrativeText",
     "element_id": "27a511512b3422fb415f87254c916998",
     "metadata": {
+      "emphasized_text_contents": [
+        "Display a list of important pages"
+      ],
+      "emphasized_text_tags": [
+        "strong"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -710,18 +721,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "emphasized_text_contents": [
-        "Display a list of important pages"
-      ],
-      "emphasized_text_tags": [
-        "strong"
-      ]
+      }
     },
     "text": "Display a list of important pages"
   },
@@ -729,6 +729,17 @@
     "type": "NarrativeText",
     "element_id": "8e42428bf09e6252568c28e588dbe1ad",
     "metadata": {
+      "link_texts": [
+        "content report table"
+      ],
+      "link_urls": [
+        "https://support.atlassian.com/confluence-cloud/docs/insert-the-content-report-table-macro/"
+      ],
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
       "data_source": {
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
         "version": "1",
@@ -738,18 +749,7 @@
         },
         "date_created": "2023-07-09T12:54:45.288000",
         "date_modified": "2023-07-09T12:54:45.288000"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1,
-      "link_urls": [
-        "https://support.atlassian.com/confluence-cloud/docs/insert-the-content-report-table-macro/"
-      ],
-      "link_texts": [
-        "content report table"
-      ]
+      }
     },
     "text": "Paste in page URLs to create smart links, or use the content report table to create a list of all the pages in the space."
   }

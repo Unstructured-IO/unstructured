@@ -3,6 +3,19 @@
     "type": "Title",
     "element_id": "a0f48ad299334e5716f85d225bfe2a16",
     "metadata": {
+      "filename": "21be155fb0c95885.eml",
+      "last_modified": "2023-07-15T08:35:51-07:00",
+      "sent_from": [
+        "David Potter <potterdavidm@gmail.com>"
+      ],
+      "sent_to": [
+        "devops@unstructuredio.onmicrosoft.com"
+      ],
+      "subject": "integration test email 1",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "message/rfc822",
       "data_source": {
         "url": "https://outlook.office365.com/owa/?ItemID=AAMkAGE2MmEwNzFlLWVjYzAtNDNhZS04ZGM1LTFjYmMzZDhiMmI0MABGAAAAAADc1MfJYetSQ6QZntYrI9k4BwDZYn%2FlfnvLSqIcW%2FYsN8ebAAATaI%2BsAADZYn%2FlfnvLSqIcW%2FYsN8ebAAATaJ9PAAA%3D&exvsurl=1&viewmodel=ReadMessageItem",
         "version": "CQAAABYAAADZYn/lfnvLSqIcW/YsN8ebAAATYGBM",
@@ -12,20 +25,7 @@
         },
         "date_created": "2023-07-15T15:36:08",
         "date_modified": "2023-07-15T15:38:57"
-      },
-      "filename": "21be155fb0c95885.eml",
-      "last_modified": "2023-07-15T08:35:51-07:00",
-      "filetype": "message/rfc822",
-      "languages": [
-        "eng"
-      ],
-      "sent_from": [
-        "David Potter <potterdavidm@gmail.com>"
-      ],
-      "sent_to": [
-        "devops@unstructuredio.onmicrosoft.com"
-      ],
-      "subject": "integration test email 1"
+      }
     },
     "text": "integration test email"
   }
