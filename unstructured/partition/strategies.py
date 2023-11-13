@@ -1,5 +1,5 @@
 from tempfile import SpooledTemporaryFile
-from typing import Optional, Union, BinaryIO
+from typing import BinaryIO, Optional, Union
 
 from unstructured.logger import logger
 from unstructured.utils import dependency_exists
