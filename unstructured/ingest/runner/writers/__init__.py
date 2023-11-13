@@ -17,7 +17,7 @@ writer_map: t.Dict[str, t.Callable] = {
     "dropbox": dropbox_writer,
     "gcs": gcs_writer,
     "s3": s3_writer,
-    "sql": sql_writer
+    "sql": sql_writer,
 }
 
 __all__ = ["writer_map"]

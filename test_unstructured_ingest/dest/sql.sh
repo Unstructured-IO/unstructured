@@ -48,11 +48,11 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --anonymous \
   --work-dir "$WORK_DIR" \
   sql \
-    --db_name postgres \
-    --username postgres \
+    --drivername postgresql \
+    --username unstructured \
     --password test \
-    --host http://localhost:8080 \
+    --host localhost \
     --port 5432 \
-    --database pdf_elements
+    --database elements
 
 scripts/sql-test-helpers/test-ingest-sql-output.py

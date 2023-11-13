@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:14-alpine
+    restart: always
+    container_name: postgres_dest
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: elements
+      POSTGRES_USER: unstructured
+      POSTGRES_PASSWORD: test
+    volumes:
+       - ./create_elements_schema_postgres.sql:/docker-entrypoint-initdb.d/create_elements_schema_postgres.sql

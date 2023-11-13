@@ -16,9 +16,9 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
          --verbose \
         --strategy fast \
         sql \
-        --db_name postgres \
+        --drivername postgresql \
         --username postgres \
         --password test \
-        --host http://localhost:8080 \
+        --host localhost \
         --port 5432 \
-        --database pdf_elements
+        --database elements

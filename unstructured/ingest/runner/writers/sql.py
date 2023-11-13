@@ -1,30 +1,33 @@
 import typing as t
 
-from unstructured.utils import requires_dependencies
 
 def sql_writer(
-    db_name: str,
-    username: str,
-    password: str,
-    host: str,
-    database: str,
-    port: int = 5432,
+    drivername: t.Optional[str],
+    username: t.Optional[str],
+    password: t.Optional[str],
+    host: t.Optional[str],
+    database: t.Optional[str],
+    port: t.Optional[int],
+    table_name_mapping: t.Dict[str, str],
+    database_url: t.Optional[str],
+    mode: t.Literal["error", "append", "overwrite", "ignore"] = "error",
     **kwargs,
 ):
-    from unstructured.ingest.connector.sql import (
+    from unstructured.ingest.connector.sql.connector import (
         SimpleSqlConfig,
         SqlDestinationConnector,
         SqlWriteConfig,
     )
 
     return SqlDestinationConnector(
-        write_config=SqlWriteConfig(),
+        write_config=SqlWriteConfig(mode=mode, table_name_mapping=table_name_mapping),
         connector_config=SimpleSqlConfig(
-            db_name=db_name,
+            drivername=drivername,
             username=username,
             password=password,
             host=host,
             database=database,
-            port=port
+            port=port,
+            database_url=database_url,
         ),
     )
