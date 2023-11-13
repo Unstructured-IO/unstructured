@@ -10,8 +10,8 @@ from unstructured.ingest.interfaces import (
     BaseIngestDoc,
     BaseSessionHandle,
     ConfigSessionHandleMixin,
+    IngestDocSessionHandleMixin,
     WriteConfig,
-    WriteConfigSessionHandleMixin,
 )
 from unstructured.ingest.logger import logger
 from unstructured.staging.base import flatten_dict
@@ -23,31 +23,41 @@ class PineconeSessionHandle(BaseSessionHandle):
     service: "pinecone.Index"  # noqa: F821
 
 
+@DestinationConnectionError.wrap
+@requires_dependencies(["pinecone"], extras="pinecone")
+def create_pinecone_object(api_key, index_name, environment):
+    import pinecone
+
+    pinecone.init(api_key=api_key, environment=environment)
+    index = pinecone.Index(index_name)
+    logger.debug(f"Connected to index: {pinecone.describe_index(index_name)}")
+    return index
+
+
 @dataclass
-class PineconeWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixin, WriteConfig):
+class SimplePineconeConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     api_key: str
     index_name: str
     environment: str
-    batch_size: str
-    num_processes: int
+
+    def create_session_handle(self) -> PineconeSessionHandle:
+        print("SESSION HANDLE CREATION ---")
+        service = create_pinecone_object(self.api_key, self.index_name, self.environment)
+        return PineconeSessionHandle(service=service)
+
+
+@dataclass
+class PineconeWriteConfig(IngestDocSessionHandleMixin, WriteConfig):
+    connector_config: SimplePineconeConfig
+    batch_size: int = 50
+    num_processes: int = 1
 
     @DestinationConnectionError.wrap
     @requires_dependencies(["pinecone"], extras="pinecone")
-    def create_pinecone_object(self, api_key, index_name, environment):
-        import pinecone
-
-        pinecone.init(api_key=api_key, environment=environment)
-        index = pinecone.Index(index_name)
-        logger.debug(f"Connected to index: {pinecone.describe_index(index_name)}")
-        return index
-
-    def create_session_handle(self) -> PineconeSessionHandle:
-        service = self.create_pinecone_object(self.api_key, self.index_name, self.environment)
-        return PineconeSessionHandle(service=service)
-
-    @requires_dependencies(["pinecone"], extras="pinecone")
     def upsert_batch(self, batch):
         import pinecone.core.client.exceptions
+
+        self.global_session()
 
         index = self.session_handle.service
         try:
@@ -55,13 +65,6 @@ class PineconeWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixi
         except pinecone.core.client.exceptions.ApiException as api_error:
             raise WriteError(f"http error: {api_error}") from api_error
         logger.debug(f"results: {response}")
-
-
-@dataclass
-class SimplePineconeConfig(BaseConnectorConfig):
-    api_key: str
-    index_name: str
-    environment: str
 
 
 @dataclass

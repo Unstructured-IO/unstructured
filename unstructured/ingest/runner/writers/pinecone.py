@@ -17,16 +17,16 @@ def pinecone_writer(
         SimplePineconeConfig,
     )
 
+    connector_config = SimplePineconeConfig(
+        api_key=api_key,
+        index_name=index_name,
+        environment=environment,
+    )
+
     return PineconeDestinationConnector(
-        connector_config=SimplePineconeConfig(
-            api_key=api_key,
-            index_name=index_name,
-            environment=environment,
-        ),
+        connector_config=connector_config,
         write_config=PineconeWriteConfig(
-            api_key=api_key,
-            index_name=index_name,
-            environment=environment,
+            connector_config=connector_config,
             batch_size=batch_size,
             num_processes=num_processes,
         ),

@@ -211,9 +211,25 @@ class PermissionsConfig(BaseConfig):
     tenant: t.Optional[str]
 
 
+# module-level variable to store session handle
+global_write_session_handle: t.Optional[BaseSessionHandle] = None
+
+
 @dataclass
 class WriteConfig(BaseConfig):
-    pass
+    def global_session(self):
+        try:
+            global global_write_session_handle
+            if isinstance(self, IngestDocSessionHandleMixin):
+                if global_write_session_handle is None:
+                    # create via write_config.session_handle, which is a property that creates a
+                    # session handle if one is not already defined
+                    global_write_session_handle = self.session_handle
+                else:
+                    self._session_handle = global_write_session_handle
+        except Exception as e:
+            print("Global session handle creation error")
+            raise (e)
 
 
 class BaseConnectorConfig(ABC):
@@ -670,21 +686,6 @@ class IngestDocSessionHandleMixin:
         """If a session handle is not assigned, creates a new one and assigns it."""
         if self._session_handle is None:
             self._session_handle = self.connector_config.create_session_handle()
-        return self._session_handle
-
-    @session_handle.setter
-    def session_handle(self, session_handle: BaseSessionHandle):
-        self._session_handle = session_handle
-
-
-class WriteConfigSessionHandleMixin(ConfigSessionHandleMixin):
-    _session_handle: t.Optional[BaseSessionHandle] = None
-
-    @property
-    def session_handle(self):
-        """If a session handle is not assigned, creates a new one and assigns it."""
-        if self._session_handle is None:
-            self._session_handle = self.create_session_handle()
         return self._session_handle
 
     @session_handle.setter
