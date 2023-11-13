@@ -88,7 +88,7 @@ class Pipeline(DataClassJsonMixin):
         if self.write_node:
             logger.info(
                 f"uploading elements from {len(partitioned_jsons)} document(s) via "
-                f"{self.pipeline_context.num_processes} processes",
+                f"{self.write_node.dest_doc_connector.write_config.num_processes} processes",
             )
             self.write_node(iterable=partitioned_jsons)
 

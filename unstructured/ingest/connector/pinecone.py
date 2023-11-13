@@ -41,7 +41,6 @@ class SimplePineconeConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     environment: str
 
     def create_session_handle(self) -> PineconeSessionHandle:
-        print("SESSION HANDLE CREATION ---")
         service = create_pinecone_object(self.api_key, self.index_name, self.environment)
         return PineconeSessionHandle(service=service)
 
