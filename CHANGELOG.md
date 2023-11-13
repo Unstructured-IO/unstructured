@@ -1,5 +1,13 @@
 ## 0.10.31-dev0
 
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Include `languages` in metadata when partitioning strategy='hi_res' or 'fast'** User defined `languages` was previously used for text detection, but not included in the resulting element metadata for some strategies. `languages` will now be included in the metadata regardless of partition strategy for pdfs and images.
+
 ## 0.10.30
 
 ### Enhancements
