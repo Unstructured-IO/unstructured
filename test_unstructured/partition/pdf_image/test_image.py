@@ -9,6 +9,7 @@ from unstructured_inference.inference import layout
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
+from unstructured.documents.elements import ElementType
 from unstructured.partition import image, ocr, pdf
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.utils import only
@@ -126,7 +127,9 @@ def test_partition_image_with_auto_strategy(
     filename="example-docs/layout-parser-paper-fast.jpg",
 ):
     elements = image.partition_image(filename=filename, strategy="auto")
-    titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
+    titles = [
+        el for el in elements if el.category == ElementType.TITLE and len(el.text.split(" ")) > 10
+    ]
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
     idx = 3
     assert titles[0].text == title
@@ -512,9 +515,8 @@ def test_partition_image_uses_model_name():
 def test_partition_image_hi_res_ocr_mode(ocr_mode, idx_title_element):
     filename = "example-docs/layout-parser-paper-fast.jpg"
     elements = image.partition_image(filename=filename, ocr_mode=ocr_mode, strategy="hi_res")
-    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
     # Note(yuming): idx_title_element is different based on xy-cut and ocr mode
-    assert elements[idx_title_element].text == first_line
+    assert elements[idx_title_element].category == ElementType.TITLE
 
 
 def test_partition_image_hi_res_invalid_ocr_mode():

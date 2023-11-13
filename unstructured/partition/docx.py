@@ -27,7 +27,6 @@ from docx.document import Document
 from docx.enum.section import WD_SECTION_START
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
-from docx.oxml.xmlchemy import BaseOxmlElement
 from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
 from docx.table import _Cell, _Row
@@ -263,14 +262,23 @@ class _DocxPartitioner:
         metadata_last_modified: Optional[str] = None,
     ) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
-        return cls(
-            filename,
-            file,
-            metadata_filename,
-            include_page_breaks,
-            infer_table_structure,
-            metadata_last_modified,
-        )._iter_document_elements()
+        self = cls(
+            filename=filename,
+            file=file,
+            metadata_filename=metadata_filename,
+            include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
+            metadata_last_modified=metadata_last_modified,
+        )
+        # NOTE(scanny): It's possible for a Word document to have no sections. In particular, a
+        # Microsoft Teams chat transcript exported to DOCX contains no sections. Such a
+        # "section-less" document has to be interated differently and has no headers or footers and
+        # therefore no page-size or margins.
+        return (
+            self._iter_document_elements()
+            if self._document_contains_sections
+            else self._iter_sectionless_document_elements()
+        )
 
     def _iter_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in (docx) `document` in document order."""
@@ -285,11 +293,6 @@ class _DocxPartitioner:
         # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
         # -- functions like `._iter_paragraph_elements()` where the "just return when done"
         # -- characteristic of a generator avoids repeated code to form interim results into lists.
-
-        if not self._document.sections:
-            for paragraph in self._document.paragraphs:
-                yield from self._iter_paragraph_elements(paragraph)
-
         for section_idx, section in enumerate(self._document.sections):
             yield from self._iter_section_page_breaks(section_idx, section)
             yield from self._iter_section_headers(section)
@@ -307,6 +310,21 @@ class _DocxPartitioner:
                     yield from self._iter_table_element(block_item)
 
             yield from self._iter_section_footers(section)
+
+    def _iter_sectionless_document_elements(self) -> Iterator[Element]:
+        """Generate each document-element in a docx `document` that has no sections.
+
+        A "section-less" DOCX must be iterated differently. Also it will have no headers or footers
+        (because those live in a section).
+        """
+        for block_item in self._document.iter_inner_content():
+            if isinstance(block_item, Paragraph):
+                yield from self._iter_paragraph_elements(block_item)
+                # -- a paragraph can contain a page-break --
+                yield from self._iter_maybe_paragraph_page_breaks(block_item)
+            # -- can only be a Paragraph or Table so far but more types may come later --
+            elif isinstance(block_item, DocxTable):  # pyright: ignore[reportUnnecessaryIsInstance]
+                yield from self._iter_table_element(block_item)
 
     def _convert_table_to_html(self, table: DocxTable, is_nested: bool = False) -> str:
         """HTML string version of `table`.
@@ -392,26 +410,34 @@ class _DocxPartitioner:
 
     @lazyproperty
     def _document_contains_pagebreaks(self) -> bool:
-        """True when there is at least one page-break detected in the document."""
-        return self._element_contains_pagebreak(self._document._element)
+        """True when there is at least one page-break detected in the document.
 
-    def _element_contains_pagebreak(self, element: BaseOxmlElement) -> bool:
-        """True when `element` contains a page break.
-
-        Checks for both "hard" page breaks (page breaks explicitly inserted by the user)
-        and "soft" page breaks, which are sometimes inserted by the MS Word renderer.
-        Note that soft page breaks aren't always present. Whether or not pages are
-        tracked may depend on your Word renderer.
+        Only `w:lastRenderedPageBreak` elements reliably indicate a page-break. These are reliably
+        inserted by Microsoft Word, but probably don't appear in documents converted into .docx
+        format from for example .odt format.
         """
-        page_break_indicators = [
-            ["w:br", 'type="page"'],  # "Hard" page break inserted by user
-            ["lastRenderedPageBreak"],  # "Soft" page break inserted by renderer
-        ]
-        if hasattr(element, "xml"):
-            for indicators in page_break_indicators:
-                if all(indicator in element.xml for indicator in indicators):
-                    return True
-        return False
+        xpath = (
+            # NOTE(scanny) - w:lastRenderedPageBreak (lrpb) is run (w:r) inner content. `w:r` can
+            # appear in a paragraph (w:p). w:r can also appear in a hyperlink (w:hyperlink), which
+            # is w:p inner-content and both of these can occur inside a table-cell as well as the
+            # document body
+            "./w:body/w:p/w:r/w:lastRenderedPageBreak"
+            " | ./w:body/w:p/w:hyperlink/w:r/w:lastRenderedPageBreak"
+            " | ./w:body/w:tbl/w:tr/w:tc/w:p/w:r/w:lastRenderedPageBreak"
+            " | ./w:body/w:tbl/w:tr/w:tc/w:p/w:hyperlink/w:r/w:lastRenderedPageBreak"
+        )
+
+        return bool(self._document.element.xpath(xpath))
+
+    @lazyproperty
+    def _document_contains_sections(self) -> bool:
+        """True when there is at least one section in the document.
+
+        This is always true for a document produced by Word, but may not always be the case when the
+        document results from conversion or export. In particular, a Microsoft Teams chat-transcript
+        export will have no sections.
+        """
+        return bool(self._document.sections)
 
     def _increment_page_number(self) -> Iterator[PageBreak]:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
@@ -480,7 +506,6 @@ class _DocxPartitioner:
         def has_page_break_implementation_we_have_so_far() -> bool:
             """Needs to become more sophisticated."""
             page_break_indicators = [
-                ["w:br", 'type="page"'],  # "Hard" page break inserted by user
                 ["lastRenderedPageBreak"],  # "Soft" page break inserted by renderer
             ]
             for indicators in page_break_indicators:

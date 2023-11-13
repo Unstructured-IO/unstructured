@@ -188,7 +188,6 @@ class ElementMetadata:
     regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None
 
     # Chunking metadata fields
-    max_characters: Optional[int] = None
     is_continuation: Optional[bool] = None
 
     # Detection Model Class Probabilities from Unstructured-Inference Hi-Res
@@ -677,38 +676,76 @@ class Footer(Text):
     category = "Footer"
 
 
+class ElementType:
+    TITLE = "Title"
+    TEXT = "Text"
+    UNCATEGORIZED_TEXT = "UncategorizedText"
+    NARRATIVE_TEXT = "NarrativeText"
+    BULLETED_TEXT = "BulletedText"
+    ABSTRACT = "Abstract"
+    THREADING = "Threading"
+    FORM = "Form"
+    FIELD_NAME = "Field-Name"
+    VALUE = "Value"
+    LINK = "Link"
+    COMPOSITE_ELEMENT = "CompositeElement"
+    IMAGE = "Image"
+    PICTURE = "Picture"
+    FIGURE_CAPTION = "FigureCaption"
+    FIGURE = "Figure"
+    CAPTION = "Caption"
+    LIST = "List"
+    LIST_ITEM = "ListItem"
+    LIST_ITEM_OTHER = "List-item"
+    CHECKED = "Checked"
+    UNCHECKED = "Unchecked"
+    ADDRESS = "Address"
+    EMAIL_ADDRESS = "EmailAddress"
+    PAGE_BREAK = "PageBreak"
+    FORMULA = "Formula"
+    TABLE = "Table"
+    HEADER = "Header"
+    HEADLINE = "Headline"
+    SUB_HEADLINE = "Subheadline"
+    PAGE_HEADER = "Page-header"  # Title?
+    SECTION_HEADER = "Section-header"
+    FOOTER = "Footer"
+    FOOTNOTE = "Footnote"
+    PAGE_FOOTER = "Page-footer"
+
+
 TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
-    "UncategorizedText": Text,
-    "FigureCaption": FigureCaption,
-    "Figure": FigureCaption,
-    "Text": NarrativeText,
-    "NarrativeText": NarrativeText,
-    "ListItem": ListItem,
-    "BulletedText": ListItem,
-    "Title": Title,
-    "Address": Address,
-    "EmailAddress": EmailAddress,
-    "Image": Image,
-    "PageBreak": PageBreak,
-    "Table": Table,
-    "Header": Header,
-    "Footer": Footer,
-    "Caption": FigureCaption,
-    "Footnote": Footer,
-    "Formula": Formula,
-    "List-item": ListItem,
-    "Page-footer": Footer,
-    "Page-header": Header,  # Title?
-    "Picture": Image,
+    ElementType.UNCATEGORIZED_TEXT: Text,
+    ElementType.FIGURE_CAPTION: FigureCaption,
+    ElementType.FIGURE: FigureCaption,
+    ElementType.TEXT: NarrativeText,
+    ElementType.NARRATIVE_TEXT: NarrativeText,
+    ElementType.LIST_ITEM: ListItem,
+    ElementType.BULLETED_TEXT: ListItem,
+    ElementType.TITLE: Title,
+    ElementType.ADDRESS: Address,
+    ElementType.EMAIL_ADDRESS: EmailAddress,
+    ElementType.IMAGE: Image,
+    ElementType.PAGE_BREAK: PageBreak,
+    ElementType.TABLE: Table,
+    ElementType.HEADER: Header,
+    ElementType.FOOTER: Footer,
+    ElementType.CAPTION: FigureCaption,
+    ElementType.FOOTNOTE: Footer,
+    ElementType.FORMULA: Formula,
+    ElementType.LIST_ITEM_OTHER: ListItem,
+    ElementType.PAGE_FOOTER: Footer,
+    ElementType.PAGE_HEADER: Header,  # Title?
+    ElementType.PICTURE: Image,
     # this mapping favors ensures yolox produces backward compatible categories
-    "Section-header": Title,
-    "Headline": Title,
-    "Subheadline": Title,
-    "Abstract": NarrativeText,
-    "Threading": NarrativeText,
-    "Form": NarrativeText,
-    "Field-Name": Title,
-    "Value": NarrativeText,
-    "Link": NarrativeText,
-    "CompositeElement": Text,
+    ElementType.SECTION_HEADER: Title,
+    ElementType.HEADLINE: Title,
+    ElementType.SUB_HEADLINE: Title,
+    ElementType.ABSTRACT: NarrativeText,
+    ElementType.THREADING: NarrativeText,
+    ElementType.FORM: NarrativeText,
+    ElementType.FIELD_NAME: Title,
+    ElementType.VALUE: NarrativeText,
+    ElementType.LINK: NarrativeText,
+    ElementType.COMPOSITE_ELEMENT: Text,
 }

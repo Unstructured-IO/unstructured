@@ -1,4 +1,12 @@
-## 0.10.30-dev4
+## 0.10.31-dev0
+
+### Enhancements
+
+### Features
+
+* **Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
+
+### Fixes
 
 ### Enhancements
 
@@ -7,18 +15,24 @@
 
 ### Features
 
+* **Add functionality to do a second OCR on cropped table images.** Changes to the values for scaling ENVs affect entire page OCR output(OCR regression) so we now do a second OCR for tables.
 * **Adds ability to pass timeout for a request when partitioning via a `url`.** `partition` now accepts a new optional parameter `request_timeout` which if set will prevent any `requests.get` from hanging indefinitely and instead will raise a timeout error. This is useful when partitioning a url that may be slow to respond or may not respond at all.
 * **Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
 
 ### Fixes
 
+* **Fix logic that determines pdf auto strategy.** Previously, `_determine_pdf_auto_strategy` returned `hi_res` strategy only if `infer_table_structure` was true. It now returns the `hi_res` strategy if either `infer_table_structure` or `extract_images_in_pdf` is true.   
+* **Fix invalid coordinates when parsing tesseract ocr data.** Previously, when parsing tesseract ocr data, the ocr data had invalid bboxes if zoom was set to `0`. A logical check is now added to avoid such error. 
 * **Fix ingest partition parameters not being passed to the api.** When using the --partition-by-api flag via unstructured-ingest, none of the partition arguments are forwarded, meaning that these options are disregarded. With this change, we now pass through all of the relevant partition arguments to the api. This allows a user to specify all of the same partition arguments they would locally and have them respected when specifying --partition-by-api.
+* **Support tables in section-less DOCX.** Generalize solution for MS Chat Transcripts exported as DOCX by including tables in the partitioned output when present.
+* **Support tables that contain only numbers when partitioning via `ocr_only`** Tables that contain only numbers are returned as floats in a pandas.DataFrame when the image is converted from `.image_to_data()`. An AttributeError was raised downstream when trying to `.strip()` the floats.
+* **Improve DOCX page-break detection.** DOCX page breaks are reliably indicated by `w:lastRenderedPageBreak` elements present in the document XML. Page breaks are NOT reliably indicated by "hard" page-breaks inserted by the author and when present are redundant to a `w:lastRenderedPageBreak` element so cause over-counting if used. Use rendered page-breaks only.
 
 ## 0.10.29
 
 ### Enhancements
 
-* **Add include_header argument for partition_csv and partition_tsv** Now supports retaining header rows in CSV and TSV documents element partitioning.
+* **Adds include_header argument for partition_csv and partition_tsv** Now supports retaining header rows in CSV and TSV documents element partitioning.
 * **Add retry logic for all source connectors** All http calls being made by the ingest source connectors have been isolated and wrapped by the `SourceConnectionNetworkError` custom error, which triggers the retry logic, if enabled, in the ingest pipeline.
 * **Google Drive source connector supports credentials from memory** Originally, the connector expected a filepath to pull the credentials from when creating the client. This was expanded to support passing that information from memory as a dict if access to the file system might not be available.
 * **Add support for generic partition configs in ingest cli** Along with the explicit partition options supported by the cli, an `additional_partition_args` arg was added to allow users to pass in any other arguments that should be added when calling partition(). This helps keep any changes to the input parameters of the partition() exposed in the CLI.
