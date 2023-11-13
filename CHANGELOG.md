@@ -1,6 +1,7 @@
-## 0.10.31-dev1
+## 0.10.31-dev2
 
 ### Enhancements
+* **Temporary Support for paddle language parameter** User can specify langage code for paddle with ENV `PADDLE_LANG` before we have the language mapping for paddle.
 
 ### Features
 
