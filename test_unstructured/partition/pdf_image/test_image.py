@@ -198,6 +198,31 @@ def test_partition_image_raises_with_invalid_language(
         )
 
 
+@pytest.mark.parametrize(
+    ("strategy"),
+    [
+        ("hi_res"),
+        ("ocr_only"),
+    ],
+)
+def test_partition_image_strategies_keep_languages_metadata(strategy):
+    filename = os.path.join(
+        DIRECTORY,
+        "..",
+        "..",
+        "..",
+        "example-docs",
+        "english-and-korean.png",
+    )
+    elements = image.partition_image(
+        filename=filename,
+        languages=["eng", "kor"],
+        strategy=strategy,
+    )
+
+    assert elements[0].metadata.languages == ["eng", "kor"]
+
+
 def test_partition_image_with_ocr_detects_korean():
     filename = os.path.join(
         DIRECTORY,
