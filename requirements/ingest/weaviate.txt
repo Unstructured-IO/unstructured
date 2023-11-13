@@ -30,19 +30,15 @@ requests==2.31.0
     # via
     #   -c requirements/ingest/../base.txt
     #   weaviate-client
-tqdm==4.66.1
-    # via
-    #   -c requirements/ingest/../base.txt
-    #   weaviate-client
 urllib3==1.26.18
     # via
     #   -c requirements/constraints.in
     #   -c requirements/ingest/../base.txt
     #   -c requirements/ingest/../constraints.in
     #   requests
-validators==0.21.0
+validators==0.22.0
     # via weaviate-client
-weaviate-client==3.23.2
+weaviate-client==3.25.3
     # via
     #   -c requirements/constraints.in
     #   -c requirements/ingest/../constraints.in

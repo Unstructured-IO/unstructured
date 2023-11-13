@@ -38,6 +38,9 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
         auth = self._resolve_auth_method()
         self.client: Client = Client(url=self.connector_config.host_url, auth_client_secret=auth)
 
+    def check_connection(self):
+        pass
+
     def _resolve_auth_method(self):
         if self.connector_config.auth_keys is None:
             return None
