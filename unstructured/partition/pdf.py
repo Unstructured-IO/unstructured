@@ -20,6 +20,7 @@ from typing import (
 
 import numpy as np
 import pdf2image
+import wrapt
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import (
     LAParams,
@@ -91,7 +92,6 @@ from unstructured.partition.utils.sorting import (
     sort_page_elements,
 )
 from unstructured.utils import requires_dependencies
-import wrapt
 
 if TYPE_CHECKING:
     pass
@@ -534,7 +534,7 @@ def _extract_text(item: LTItem) -> str:
 # They throw an error when we call interpreter.process_page
 # Since we don't need color info, we can just drop it in the pdfminer code
 # See #2059
-@wrapt.patch_function_wrapper('pdfminer.pdfinterp', 'PDFPageInterpreter.init_resources')
+@wrapt.patch_function_wrapper("pdfminer.pdfinterp", "PDFPageInterpreter.init_resources")
 def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
     resources = args[0]
     if "ColorSpace" in resources:
