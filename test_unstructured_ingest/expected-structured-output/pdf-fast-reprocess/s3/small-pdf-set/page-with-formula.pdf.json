@@ -12,6 +12,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "links": [
         {
@@ -36,6 +39,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Multi-head attention allows the model to jointly attend to information from different representation subspaces at different positions. With a single attention head, averaging inhibits this."
@@ -53,6 +59,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "MultiHead(Q, K, V ) = Concat(head1, ..., headh)W O"
@@ -70,6 +79,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "where headi = Attention(QW Q"
@@ -87,6 +99,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "i , KW K i"
@@ -104,6 +119,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": ", V W V"
@@ -121,6 +139,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "i )"
@@ -138,6 +159,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "Where the projections are parameter matrices W Q and W O ∈ Rhdv×dmodel."
@@ -155,6 +179,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "i ∈ Rdmodel×dk , W K"
@@ -172,6 +199,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "i ∈ Rdmodel×dk , W V"
@@ -189,6 +219,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "i ∈ Rdmodel×dv"
@@ -206,6 +239,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "In this work we employ h = 8 parallel attention layers, or heads. For each of these we use dk = dv = dmodel/h = 64. Due to the reduced dimension of each head, the total computational cost is similar to that of single-head attention with full dimensionality."
@@ -223,6 +259,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "3.2.3 Applications of Attention in our Model"
@@ -240,6 +279,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "The Transformer uses multi-head attention in three different ways:"
@@ -257,6 +299,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "links": [
         {
@@ -291,6 +336,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "The encoder contains self-attention layers. In a self-attention layer all of the keys, values and queries come from the same place, in this case, the output of the previous layer in the encoder. Each position in the encoder can attend to all positions in the previous layer of the encoder."
@@ -308,6 +356,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "links": [
         {
@@ -332,6 +383,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "3.3 Position-wise Feed-Forward Networks"
@@ -349,6 +403,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "In addition to attention sub-layers, each of the layers in our encoder and decoder contains a fully connected feed-forward network, which is applied to each position separately and identically. This consists of two linear transformations with a ReLU activation in between."
@@ -366,6 +423,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "FFN(x) = max(0, xW1 + b1)W2 + b2"
@@ -383,6 +443,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "(2)"
@@ -400,6 +463,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "While the linear transformations are the same across different positions, they use different parameters from layer to layer. Another way of describing this is as two convolutions with kernel size 1. The dimensionality of input and output is dmodel = 512, and the inner-layer has dimensionality df f = 2048."
@@ -417,6 +483,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "3.4 Embeddings and Softmax"
@@ -434,6 +503,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1,
       "links": [
         {
@@ -458,6 +530,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "√"
@@ -475,6 +550,9 @@
         ]
       },
       "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
       "page_number": 1
     },
     "text": "5"

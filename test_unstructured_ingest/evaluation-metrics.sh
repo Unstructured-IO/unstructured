@@ -6,7 +6,8 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 
 # List all structured outputs to use in this evaluation
-OUTPUT_DIR=$SCRIPT_DIR/structured-output-eval
+OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
+OUTPUT_DIR=$OUTPUT_ROOT/structured-output-eval
 mkdir -p "$OUTPUT_DIR"
 
 EVAL_NAME="$1"
@@ -23,7 +24,7 @@ fi
 # Download cct test from s3
 BUCKET_NAME=utic-dev-tech-fixtures
 FOLDER_NAME=small-eval-"$EVAL_NAME"
-SOURCE_DIR=$SCRIPT_DIR/gold-standard/$FOLDER_NAME
+SOURCE_DIR=$OUTPUT_ROOT/gold-standard/$FOLDER_NAME
 mkdir -p "$SOURCE_DIR"
 aws s3 cp "s3://$BUCKET_NAME/$FOLDER_NAME" "$SOURCE_DIR" --recursive --no-sign-request --region us-east-2
 

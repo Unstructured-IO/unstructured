@@ -5,10 +5,11 @@ set -e
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=delta-table-dest
-OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
-WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
+OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
+OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
-DESTINATION_TABLE=$SCRIPT_DIR/delta-table-dest
+DESTINATION_TABLE=$OUTPUT_ROOT/delta-table-dest
 CI=${CI:-"false"}
 
 if [ -z "$GCP_INGEST_SERVICE_KEY" ]; then
