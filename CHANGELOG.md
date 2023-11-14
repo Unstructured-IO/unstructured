@@ -1,4 +1,4 @@
-## 0.10.31-dev2
+## 0.10.31-dev3
 
 ### Enhancements
 * **Temporary Support for paddle language parameter** User can specify default langage code for paddle with ENV `DEFAULT_PADDLE_LANG` before we have the language mapping for paddle.
@@ -8,6 +8,7 @@
 ### Fixes
 * **Remove default user ./ssh folder** The default notebook user during image build would create the known_hosts file with incorrect ownership, this is legacy and no longer needed so it was removed.
 * **Include `languages` in metadata when partitioning strategy='hi_res' or 'fast'** User defined `languages` was previously used for text detection, but not included in the resulting element metadata for some strategies. `languages` will now be included in the metadata regardless of partition strategy for pdfs and images.
+* **Handle a case where Paddle returns a list item in ocr_data as None** In partition, while parsing PaddleOCR data, it was assumed that PaddleOCR does not return None for any list item in ocr_data. Removed the assumption by skipping the text region whenever this happens.
 
 ## 0.10.30
 
