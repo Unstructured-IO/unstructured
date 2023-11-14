@@ -76,7 +76,7 @@ from unstructured.partition.ocr import (
     get_layout_elements_from_ocr,
     get_ocr_agent,
 )
-from unstructured.partition.strategies import determine_pdf_or_image_strategy
+from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.constants import (
     OCR_AGENT_TESSERACT,
@@ -163,6 +163,7 @@ def partition_pdf(
         If extract_images_in_pdf=True and strategy=hi_res, any detected images will be saved in the
         given path
     """
+
     exactly_one(filename=filename, file=file)
 
     languages = check_languages(languages, ocr_languages)
@@ -233,6 +234,8 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
+    validate_strategy(strategy, is_image)
+
     languages = check_languages(languages, ocr_languages)
 
     last_modification_date = get_the_last_modification_date_pdf_or_img(
@@ -240,18 +243,8 @@ def partition_pdf_or_image(
         filename=filename,
     )
 
-    if (
-        not is_image
-        and determine_pdf_or_image_strategy(
-            strategy,
-            filename=filename,
-            file=file,
-            is_image=is_image,
-            infer_table_structure=infer_table_structure,
-            extract_images_in_pdf=extract_images_in_pdf,
-        )
-        != "ocr_only"
-    ):
+    extracted_elements = []
+    if not is_image:
         extracted_elements = extractable_elements(
             filename=filename,
             file=spooled_to_bytes_io_if_needed(file),
@@ -268,7 +261,6 @@ def partition_pdf_or_image(
 
     strategy = determine_pdf_or_image_strategy(
         strategy,
-        filename=filename,
         file=file,
         is_image=is_image,
         infer_table_structure=infer_table_structure,
