@@ -237,7 +237,6 @@ def test_split_elements_by_title_and_table():
     # --
     section = next(sections)
     assert isinstance(section, _NonTextSection)
-    assert section.element == CheckBox()
     # --
     with pytest.raises(StopIteration):
         next(sections)
@@ -707,10 +706,16 @@ def test_it_considers_separator_length_when_sectioning():
 class Describe_NonTextSection:
     """Unit-test suite for `unstructured.chunking.title._NonTextSection objects."""
 
-    def it_provides_access_to_its_element(self):
+    def it_iterates_its_element_as_the_sole_chunk(self):
         checkbox = CheckBox()
         section = _NonTextSection(checkbox)
-        assert section.element is checkbox
+
+        chunk_iter = section.iter_chunks(maxlen=500)
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, CheckBox)
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
 
 
 class Describe_TableSection:
@@ -1232,7 +1237,6 @@ class Describe_SectionCombiner:
         # --
         section = next(section_iter)
         assert isinstance(section, _NonTextSection)
-        assert section.element == CheckBox()
         # --
         section = next(section_iter)
         assert isinstance(section, _TextSection)

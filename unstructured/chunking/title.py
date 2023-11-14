@@ -114,7 +114,7 @@ def chunk_by_title(
 
     for section in sections:
         if isinstance(section, _NonTextSection):
-            chunked_elements.append(section.element)
+            chunked_elements.extend(section.iter_chunks(max_characters))
             continue
 
         if isinstance(section, _TableSection):
@@ -297,10 +297,9 @@ class _NonTextSection:
     def __init__(self, element: Element) -> None:
         self._element = element
 
-    @property
-    def element(self) -> Element:
-        """The non-text element of this section (currently only CheckBox is non-text)."""
-        return self._element
+    def iter_chunks(self, maxlen: int) -> Iterator[Element]:
+        """Generate the non-text element of this section."""
+        yield self._element
 
 
 class _TableSection:
