@@ -17,7 +17,7 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup {
   # Index cleanup
   echo "Stopping SQL DB Docker container"
-  docker-compose -f scripts/sql-test-helpers/docker-compose.yml down --remove-orphans -v
+  docker-compose -f scripts/sql-test-helpers/postgresql/docker-compose.yaml down --remove-orphans -v
 
 
   # Local file cleanup
@@ -33,7 +33,7 @@ trap cleanup EXIT
 # Create sql instance and create `elements` class
 echo "Creating SQL DB instance"
 # shellcheck source=/dev/null
-scripts/sql-test-helpers/create-sql-instance.sh
+scripts/sql-test-helpers/postgresql/create-sql-instance.sh
 wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
@@ -53,4 +53,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --port 5432 \
     --database elements
 
-scripts/sql-test-helpers/test-ingest-sql-output.py
+scripts/sql-test-helpers/postgresql/test-ingest-sql-output.py

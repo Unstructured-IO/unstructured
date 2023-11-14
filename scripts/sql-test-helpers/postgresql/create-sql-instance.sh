@@ -6,7 +6,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 
 # Create the Postgres instance
 docker compose version
-docker compose -f "$SCRIPT_DIR"/docker-compose.yml up --wait
-docker compose -f "$SCRIPT_DIR"/docker-compose.yml ps
+docker compose -f "$SCRIPT_DIR"/docker-compose.yaml up --wait
+docker compose -f "$SCRIPT_DIR"/docker-compose.yaml ps
 
 echo "Postgres instance is live."

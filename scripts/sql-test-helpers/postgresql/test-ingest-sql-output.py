@@ -25,7 +25,7 @@ with engine.connect() as conn:
     try:
         assert count == N_ELEMENTS
     except AssertionError:
-        print(f"sql dest check failed: got {count}, expected {N_ELEMENTS}")
+        print(f"PostgreSQL dest check failed: got {count}, expected {N_ELEMENTS}")
         raise
 
-    print("sql dest check success")
+    print("PostgreSQL dest check success")
