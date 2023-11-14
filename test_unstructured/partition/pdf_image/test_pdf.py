@@ -981,5 +981,5 @@ def test_partition_pdf_with_all_number_table_and_ocr_only_strategy():
 # As of pdfminer 221105, this pdf throws an error and requires a workaround
 # See #2059
 def test_partition_pdf_with_bad_color_profile():
-    filename = example_doc_path("pdf-bad-color-profile.pdf")
+    filename = example_doc_path("pdf-bad-color-space.pdf")
     assert pdf.partition_pdf(filename, strategy="fast")
