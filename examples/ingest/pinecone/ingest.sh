@@ -13,17 +13,18 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 # however ingesting from any supported source connector is possible.
 PYTHONPATH=. ./unstructured/ingest/main.py \
         s3 \
-         --remote-url "<s3 URL to ingest from, ie: s3://utic-dev-tech-fixtures/small-pdf-set/" \
-         --anonymous \
-         --output-dir s3-small-batch-output-to-pinecone \
-         --num-processes 2 \
-         --verbose \
-         --strategy fast \
-         --chunk-elements \
-         --chunk-multipage-sections \
-         --embedding-api-key "<OpenAI API Key to embed ingested elements>" \
+        --remote-url "<s3 URL to ingest from, ie: s3://utic-dev-tech-fixtures/small-pdf-set/" \
+        --anonymous \
+        --output-dir s3-small-batch-output-to-pinecone \
+        --num-processes 2 \
+        --verbose \
+        --strategy fast \
+        --chunk-elements \
+        --chunk-multipage-sections \
+        --embedding-provider "<an unstructured embedding provider, ie. langchain-huggingface>" \
         pinecone \
         --api-key "<Pinecone API Key to write into a Pinecone index>" \
         --index-name "<Pinecone index name, ie: ingest-test>" \
-        --environment "<Pinecone environment name, ie: gcp-starter>" \
-        --batch-size "<Number of records per batch, to be uploaded>"
+        --environment "<Pinecone index name, ie: ingest-test>" \
+        --batch-size "<Number of elements to be uploaded per batch, ie. 80>" \
+        --num-processes "<Number of processes to be used to upload, ie. 2">"

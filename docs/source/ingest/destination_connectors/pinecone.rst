@@ -33,8 +33,8 @@ upstream s3 connector. This will create new files on your local.
             pinecone \
             --api-key <your pinecone api key here> \
             --index-name <your index name here, ie. ingest-test> \
-            --environment <your environment name here, ie. gcp-starter>
-            --batch-size <number of elements to be uploaded per batch, ie. 80>
+            --environment <your environment name here, ie. gcp-starter> \
+            --batch-size <number of elements to be uploaded per batch, ie. 80> \
             --num-processes <number of processes to be used to upload, ie. 2>
 
    .. tab:: Python
