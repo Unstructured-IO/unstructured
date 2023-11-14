@@ -476,6 +476,13 @@ def check(ctx, expected_records: int):
 @cli.command()
 @click.pass_context
 def check_vector(ctx):
+    """
+    Checks the functionality of the vector search index by getting a score based on the
+    exact result of one of the embeddings. Makes sure that the search index itself has finished
+    indexing before running a query, then validated that the first item in the returned sorted
+    list has a score of 1.0 given that the exact embedding is used as a match, and all others
+    have a score less than 1.0.
+    """
     client = get_client(ctx.parent.params["uri"])
     db = client[ctx.parent.params["database"]]
     collection = db[ctx.parent.params["collection"]]
