@@ -32,36 +32,6 @@ _Section: TypeAlias = "_NonTextSection | _TableSection | _TextSection"
 TEXT_SEPARATOR = "\n\n"
 
 
-def chunk_table_element(element: Table, max_characters: int = 500) -> List[Table | TableChunk]:
-    text = element.text
-    html = getattr(element, "text_as_html", None)
-
-    if len(text) <= max_characters and (  # type: ignore
-        html is None or len(html) <= max_characters  # type: ignore
-    ):
-        return [element]
-
-    chunks: List[Table | TableChunk] = []
-    metadata = copy.copy(element.metadata)
-    is_continuation = False
-
-    while text or html:
-        text_chunk, text = text[:max_characters], text[max_characters:]
-        table_chunk = TableChunk(text=text_chunk, metadata=copy.copy(metadata))
-
-        if html:
-            html_chunk, html = html[:max_characters], html[max_characters:]
-            table_chunk.metadata.text_as_html = html_chunk
-
-        if is_continuation:
-            table_chunk.metadata.is_continuation = True
-
-        chunks.append(table_chunk)
-        is_continuation = True
-
-    return chunks
-
-
 def chunk_by_title(
     elements: List[Element],
     multipage_sections: bool = True,
@@ -78,7 +48,7 @@ def chunk_by_title(
     Parameters
     ----------
     elements
-        A list of unstructured elements. Usually the output of a partition functions.
+        A list of unstructured elements. Usually the output of a partition function.
     multipage_sections
         If True, sections can span multiple pages. Defaults to True.
     combine_text_under_n_chars
@@ -148,7 +118,7 @@ def chunk_by_title(
             continue
 
         if isinstance(section, _TableSection):
-            chunked_elements.extend(chunk_table_element(section.table, max_characters))
+            chunked_elements.extend(section.iter_chunks(max_characters))
             continue
 
         # -- otherwise, it's a _TextSection object --
@@ -339,10 +309,36 @@ class _TableSection:
     def __init__(self, table: Table) -> None:
         self._table = table
 
-    @property
-    def table(self) -> Table:
-        """The `Table` element of this section."""
-        return self._table
+    def iter_chunks(self, maxlen: int) -> Iterator[Table | TableChunk]:
+        """Split this section into one or more `Table` or `TableChunk` objects maxlen or smaller."""
+        text = self._table.text
+        html = self._table.metadata.text_as_html or ""
+
+        # -- only chunk a table when it's too big to swallow whole --
+        if len(text) <= maxlen and len(html) <= maxlen:
+            yield self._table
+            return
+
+        is_continuation = False
+
+        while text or html:
+            # -- split off the next maxchars into the next TableChunk --
+            text_chunk, text = text[:maxlen], text[maxlen:]
+            table_chunk = TableChunk(text=text_chunk, metadata=copy.deepcopy(self._table.metadata))
+
+            # -- Attach maxchars of the html to the chunk. Note no attempt is made to add only the
+            # -- HTML elements that *correspond* to the TextChunk.text fragment.
+            if html:
+                html_chunk, html = html[:maxlen], html[maxlen:]
+                table_chunk.metadata.text_as_html = html_chunk
+
+            # -- mark second and later chunks as a continuation --
+            if is_continuation:
+                table_chunk.metadata.is_continuation = True
+
+            yield table_chunk
+
+            is_continuation = True
 
 
 class _TextSection:

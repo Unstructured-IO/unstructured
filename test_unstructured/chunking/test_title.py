@@ -25,6 +25,7 @@ from unstructured.documents.elements import (
     PageBreak,
     RegexMetadata,
     Table,
+    TableChunk,
     Text,
     Title,
 )
@@ -189,7 +190,7 @@ def test_split_elements_by_title_and_table():
         Title("A Great Day"),
         Text("Today is a great day."),
         Text("It is sunny outside."),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -216,7 +217,7 @@ def test_split_elements_by_title_and_table():
     # --
     section = next(sections)
     assert isinstance(section, _TableSection)
-    assert section.table == Table("<table></table>")
+    assert section._table == Table("Heading\nCell text")
     # ==
     section = next(sections)
     assert isinstance(section, _TextSection)
@@ -247,7 +248,7 @@ def test_chunk_by_title():
         Title("A Great Day", metadata=ElementMetadata(emphasized_text_contents=["Day"])),
         Text("Today is a great day.", metadata=ElementMetadata(emphasized_text_contents=["day"])),
         Text("It is sunny outside."),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -268,7 +269,7 @@ def test_chunk_by_title():
         CompositeElement(
             "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.",
         ),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
@@ -286,7 +287,7 @@ def test_chunk_by_title_respects_section_change():
         Title("A Great Day", metadata=ElementMetadata(section="first")),
         Text("Today is a great day.", metadata=ElementMetadata(section="second")),
         Text("It is sunny outside.", metadata=ElementMetadata(section="second")),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -300,6 +301,7 @@ def test_chunk_by_title_respects_section_change():
         Text("It is storming outside."),
         CheckBox(),
     ]
+
     chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
 
     assert chunks == [
@@ -309,7 +311,7 @@ def test_chunk_by_title_respects_section_change():
         CompositeElement(
             "Today is a great day.\n\nIt is sunny outside.",
         ),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
@@ -323,7 +325,7 @@ def test_chunk_by_title_separates_by_page_number():
         Title("A Great Day", metadata=ElementMetadata(page_number=1)),
         Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
         Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -346,7 +348,7 @@ def test_chunk_by_title_separates_by_page_number():
         CompositeElement(
             "Today is a great day.\n\nIt is sunny outside.",
         ),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
@@ -444,7 +446,7 @@ def test_chunk_by_title_groups_across_pages():
         Title("A Great Day", metadata=ElementMetadata(page_number=1)),
         Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
         Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -464,7 +466,7 @@ def test_chunk_by_title_groups_across_pages():
         CompositeElement(
             "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.",
         ),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
@@ -714,10 +716,115 @@ class Describe_NonTextSection:
 class Describe_TableSection:
     """Unit-test suite for `unstructured.chunking.title._TableSection objects."""
 
-    def it_provides_access_to_its_table(self):
-        table = Table("<table></table>")
-        section = _TableSection(table)
-        assert section.table is table
+    def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
+        html_table = (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>Header Col 1 </th><th>Header Col 2 </th></tr>\n"
+            "</thead>\n"
+            "<tbody>\n"
+            "<tr><td>Lorem ipsum  </td><td>adipiscing   </td></tr>\n"
+            "</tbody>\n"
+            "</table>"
+        )
+        text_table = "Header Col 1  Header Col 2\n" "Lorem ipsum   adipiscing"
+        section = _TableSection(
+            Table(text_table, metadata=ElementMetadata(text_as_html=html_table))
+        )
+
+        chunk_iter = section.iter_chunks(maxlen=175)
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, Table)
+        assert chunk.text == "Header Col 1  Header Col 2\nLorem ipsum   adipiscing"
+        assert chunk.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>Header Col 1 </th><th>Header Col 2 </th></tr>\n"
+            "</thead>\n"
+            "<tbody>\n"
+            "<tr><td>Lorem ipsum  </td><td>adipiscing   </td></tr>\n"
+            "</tbody>\n"
+            "</table>"
+        )
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
+    def but_it_splits_its_table_into_TableChunks_when_the_table_text_exceeds_the_window(self):
+        # fixed-overhead = 8+8+9+8+9+8 = 50
+        # per-row overhead = 27
+        html_table = (
+            "<table>\n"  # 8
+            "<thead>\n"  # 8
+            "<tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>\n"
+            "</thead>\n"  # 9
+            "<tbody>\n"  # 8
+            "<tr><td>Lorem ipsum    </td><td>A Link example</td></tr>\n"
+            "<tr><td>Consectetur    </td><td>adipiscing elit</td></tr>\n"
+            "<tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>\n"
+            "<tr><td>Vivamus quis   </td><td>nunc ipsum donec ac fermentum</td></tr>\n"
+            "</tbody>\n"  # 9
+            "</table>"  # 8
+        )
+        text_table = (
+            "Header Col 1   Header Col 2\n"
+            "Lorem ipsum    dolor sit amet\n"
+            "Consectetur    adipiscing elit\n"
+            "Nunc aliquam   id enim nec molestie\n"
+            "Vivamus quis   nunc ipsum donec ac fermentum"
+        )
+        section = _TableSection(
+            Table(text_table, metadata=ElementMetadata(text_as_html=html_table))
+        )
+
+        chunk_iter = section.iter_chunks(maxlen=100)
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == (
+            "Header Col 1   Header Col 2\n"
+            "Lorem ipsum    dolor sit amet\n"
+            "Consectetur    adipiscing elit\n"
+            "Nunc aliqua"
+        )
+        assert chunk.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>\n"
+            "</thead>\n"
+            "<tbody>\n"
+            "<tr><td>Lo"
+        )
+        # --
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert (
+            chunk.text == "m   id enim nec molestie\nVivamus quis   nunc ipsum donec ac fermentum"
+        )
+        assert chunk.metadata.text_as_html == (
+            "rem ipsum    </td><td>A Link example</td></tr>\n"
+            "<tr><td>Consectetur    </td><td>adipiscing elit</td><"
+        )
+        # -- note that text runs out but HTML continues because it's significantly longer. So two
+        # -- of these chunks have HTML but no text.
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == ""
+        assert chunk.metadata.text_as_html == (
+            "/tr>\n"
+            "<tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>\n"
+            "<tr><td>Vivamus quis   </td><td>"
+        )
+        # --
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == ""
+        assert chunk.metadata.text_as_html == (
+            "nunc ipsum donec ac fermentum</td></tr>\n</tbody>\n</table>"
+        )
+        # --
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
 
 
 class Describe_TextSection:
@@ -1085,7 +1192,7 @@ class Describe_SectionCombiner:
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
                 ]
             ),
-            _TableSection(Table("<table></table>")),
+            _TableSection(Table("Heading\nCell text")),
             _TextSection(
                 [
                     Title("Mauris Nec"),
@@ -1114,7 +1221,7 @@ class Describe_SectionCombiner:
         # --
         section = next(section_iter)
         assert isinstance(section, _TableSection)
-        assert section.table == Table("<table></table>")
+        assert section._table == Table("Heading\nCell text")
         # --
         section = next(section_iter)
         assert isinstance(section, _TextSection)
