@@ -65,7 +65,7 @@ create_attempt=0
 create_sleep_amount=15
 response_code=999
 
-while [ "$response_code" -ge 400 ] && [ "$create_attempt" -lt 6 ]; do
+while [ "$response_code" -ge 400 ] && [ "$create_attempt" -lt 8 ]; do
   create_attempt=$((create_attempt+1))
   echo "attempt $create_attempt for index creation"
   response_code=$(curl \
