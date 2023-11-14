@@ -61,8 +61,14 @@ trap cleanup EXIT
 
 # Create index
 echo "Creating index $PINECONE_INDEX"
+create_attempt=0
+create_sleep_amount=10
+response_code=999
 
-response_code=$(curl \
+while [ "$response_code" -ge 400 ] && [ "$create_attempt" -lt 5 ]; do
+  create_attempt=$((create_attempt+1))
+  echo "attempt $create_attempt for index creation"
+  response_code=$(curl \
      -s -o /dev/null \
      -w "%{http_code}" \
      --request POST \
@@ -81,6 +87,11 @@ response_code=$(curl \
 }
 ')
 
+  if [ "$response_code" -ge 400 ]; then
+  echo "Response code: $response_code . Sleeping $create_sleep_amount seconds to retry index creation."
+  sleep $create_sleep_amount
+  fi
+done
 
 if [ "$response_code" -lt 400 ]; then
   echo "Index creation success: $response_code"
