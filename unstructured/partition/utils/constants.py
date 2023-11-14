@@ -12,7 +12,7 @@ class OCRMode(Enum):
     FULL_PAGE = "entire_page"
 
 
-class PDFStrategy:
+class PartitionStrategy:
     AUTO = "auto"
     FAST = "fast"
     OCR_ONLY = "ocr_only"

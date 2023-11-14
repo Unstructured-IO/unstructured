@@ -9,6 +9,7 @@ from unstructured.partition.lang import (
     convert_old_ocr_languages_to_languages,
 )
 from unstructured.partition.pdf import partition_pdf_or_image
+from unstructured.partition.utils.constants import PartitionStrategy
 
 
 @process_metadata()
@@ -21,7 +22,7 @@ def partition_image(
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
     languages: Optional[List[str]] = ["eng"],
-    strategy: str = "hi_res",
+    strategy: str = PartitionStrategy.HI_RES,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
     **kwargs,

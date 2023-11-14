@@ -84,7 +84,7 @@ from unstructured.partition.utils.constants import (
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
     OCRMode,
-    PDFStrategy,
+    PartitionStrategy,
 )
 from unstructured.partition.utils.processing_elements import clean_pdfminer_inner_elements
 from unstructured.partition.utils.sorting import (
@@ -116,7 +116,7 @@ def partition_pdf(
     filename: str = "",
     file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = False,
-    strategy: str = "auto",
+    strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[List[str]] = None,
@@ -219,7 +219,7 @@ def partition_pdf_or_image(
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
     include_page_breaks: bool = False,
-    strategy: str = "auto",
+    strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
     languages: Optional[List[str]] = None,
@@ -268,7 +268,7 @@ def partition_pdf_or_image(
         extract_images_in_pdf=extract_images_in_pdf,
     )
 
-    if strategy == PDFStrategy.HI_RES:
+    if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
@@ -286,10 +286,10 @@ def partition_pdf_or_image(
             )
             out_elements = _process_uncategorized_text_elements(elements)
 
-    elif strategy == PDFStrategy.FAST:
+    elif strategy == PartitionStrategy.FAST:
         return extracted_elements
 
-    elif strategy == PDFStrategy.OCR_ONLY:
+    elif strategy == PartitionStrategy.OCR_ONLY:
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
         with warnings.catch_warnings():
             elements = _partition_pdf_or_image_with_ocr(
