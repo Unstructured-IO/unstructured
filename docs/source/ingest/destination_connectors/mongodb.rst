@@ -3,7 +3,7 @@ MongoDB
 
 Batch process all your records using ``unstructured-ingest`` to store structured outputs locally on your filesystem and upload those local files to an MongoDB collection.
 
-First you'll need to install the azure cognitive search dependencies as shown here.
+First you'll need to install the MongoDB dependencies as shown here.
 
 .. code:: shell
 
