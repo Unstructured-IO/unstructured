@@ -482,13 +482,10 @@ def test_partition_pdf_requiring_recursive_text_grab(filename=example_doc_path("
     assert elements[-1].metadata.page_number == 3
 
 
-def test_partition_pdf_with_copy_protection_fallback_to_hi_res(caplog):
-    filename = os.path.join("example-docs", "loremipsum-flat.pdf")
+def test_partition_pdf_text_not_extractable():
+    filename = example_doc_path("loremipsum-flat.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="fast")
-    elements[0] == Title(
-        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis",
-    )
-    assert "PDF text is not extractable" in caplog.text
+    assert len(elements) == 0
 
 
 def test_partition_pdf_fails_if_pdf_not_processable(
