@@ -27,4 +27,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --index-name "<Pinecone index name, ie: ingest-test>" \
         --environment "<Pinecone index name, ie: ingest-test>" \
         --batch-size "<Number of elements to be uploaded per batch, ie. 80>" \
-        --num-processes "<Number of processes to be used to upload, ie. 2">"
+        --num-processes "<Number of processes to be used to upload, ie. 2>"
