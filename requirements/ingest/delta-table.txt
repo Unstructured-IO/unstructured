@@ -15,5 +15,5 @@ numpy==1.24.4
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
     #   pyarrow
-pyarrow==14.0.0
+pyarrow==14.0.1
     # via deltalake
