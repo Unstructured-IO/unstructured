@@ -10,8 +10,7 @@ repo.
 .. toctree::
    :maxdepth: 1
 
-   examples/extractmetadata
-   examples/sourcedocs
+   examples/chroma
    examples/databricks
-   examples/labelstudio
+   examples/dict_to_elements
 
