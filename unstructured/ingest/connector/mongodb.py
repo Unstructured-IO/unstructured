@@ -31,7 +31,6 @@ class SimpleMongoDBStorageConfig(BaseConnectorConfig):
 class MongoDBWriteConfig(WriteConfig):
     database: str
     collection: str
-    upsert: bool = False
 
 
 @dataclass
@@ -77,7 +76,6 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
         _ = self.client
 
     def conform_dict(self, data: dict) -> None:
-        # data["_id"] = str(uuid.uuid4())
         pass
 
     def get_collection(self):

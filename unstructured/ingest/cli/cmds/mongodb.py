@@ -45,12 +45,6 @@ class MongoDBCliWriteConfig(MongoDBWriteConfig, CliConfig):
             click.Option(
                 ["--collection"], required=True, type=str, help="collection name to connect to"
             ),
-            click.Option(
-                ["--upsert"],
-                is_flag=True,
-                default=False,
-                help="if flag is set, will upsert when new content added to collection",
-            ),
         ]
         return options
 
