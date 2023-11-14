@@ -11,6 +11,7 @@ OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 DESTINATION_MONGO_COLLECTION="utic-test-ingest-fixtures-output-$(uuidgen)"
+DESTINATION_MONGO_COLLECTION="utic-test-ingest-fixtures-output-testing"
 CI=${CI:-"false"}
 
 if [ -z "$MONGODB_URI" ] && [ -z "$MONGODB_DATABASE_NAME" ]; then
@@ -52,6 +53,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --reprocess \
     --input-path example-docs/fake-memo.pdf \
     --work-dir "$WORK_DIR" \
+    --embedding-provider "langchain-huggingface" \
     mongodb \
     --uri "$MONGODB_URI" \
     --database "$MONGODB_DATABASE_NAME" \
@@ -62,3 +64,9 @@ python "$SCRIPT_DIR"/python/test-ingest-mongodb.py \
 --database "$MONGODB_DATABASE_NAME" \
 --collection "$DESTINATION_MONGO_COLLECTION" \
 check --expected-records 5
+
+python "$SCRIPT_DIR"/python/test-ingest-mongodb.py \
+--uri "$MONGODB_URI" \
+--database "$MONGODB_DATABASE_NAME" \
+--collection "$DESTINATION_MONGO_COLLECTION" \
+check-vector

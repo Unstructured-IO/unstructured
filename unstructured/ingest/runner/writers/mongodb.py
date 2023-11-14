@@ -22,7 +22,7 @@ def mongodb_writer(
     )
 
     return MongoDBDestinationConnector(
-        write_config=MongoDBWriteConfig(database=database, collection=collection, upsert=upsert),
+        write_config=MongoDBWriteConfig(database=database, collection=collection),
         connector_config=SimpleMongoDBStorageConfig(
             uri=uri, host=host, port=port, client_params=client_params
         ),

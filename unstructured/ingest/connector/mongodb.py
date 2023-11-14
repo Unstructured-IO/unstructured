@@ -84,17 +84,14 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
 
     @requires_dependencies(["pymongo"], extras="mongodb")
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
-        from pymongo import InsertOne
-
         logger.info(
             f"writing {len(elements_dict)} documents to destination "
             f"database {self.write_config.database}, collection at {self.write_config.collection}",
         )
 
         collection = self.get_collection()
-        bulk_write_input = [InsertOne(d) for d in elements_dict]
         try:
-            collection.bulk_write(bulk_write_input)
+            collection.insert_many(elements_dict)
         except Exception as e:
             logger.error(f"failed to write records: {e}", exc_info=True)
             raise WriteError(f"failed to write records: {e}")
