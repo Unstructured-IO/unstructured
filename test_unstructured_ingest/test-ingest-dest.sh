@@ -16,6 +16,7 @@ all_tests=(
   'dropbox.sh'
   'gcs.sh'
   's3.sh'
+  'sharepoint-embed-cog-index.sh'
 )
 
 full_python_matrix_tests=(
