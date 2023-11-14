@@ -3,9 +3,18 @@ import os
 import pytest
 
 from unstructured.partition import pdf, strategies
+from unstructured.partition.utils.constants import PartitionStrategy
 
 
-@pytest.mark.parametrize("strategy", ["auto", "fast", "ocr_only", "hi_res"])
+@pytest.mark.parametrize(
+    "strategy",
+    [
+        PartitionStrategy.AUTO,
+        PartitionStrategy.FAST,
+        PartitionStrategy.OCR_ONLY,
+        PartitionStrategy.HI_RES,
+    ],
+)
 def test_validate_strategy(strategy):
     # Nothing should raise for a valid strategy
     strategies.validate_strategy(strategy=strategy)
@@ -13,7 +22,7 @@ def test_validate_strategy(strategy):
 
 def test_validate_strategy_raises_for_fast_strategy():
     with pytest.raises(ValueError):
-        strategies.validate_strategy(strategy="fast", is_image=True)
+        strategies.validate_strategy(strategy=PartitionStrategy.FAST, is_image=True)
 
 
 def test_validate_strategy_raises_for_bad_strategy():
@@ -46,16 +55,16 @@ def test_is_pdf_text_extractable(filename, from_file, expected):
 
 def test_determine_image_auto_strategy():
     strategy = strategies._determine_image_auto_strategy()
-    assert strategy == "hi_res"
+    assert strategy == PartitionStrategy.HI_RES
 
 
 @pytest.mark.parametrize(
     ("pdf_text_extractable", "infer_table_structure", "expected"),
     [
-        (True, True, "hi_res"),
-        (False, True, "hi_res"),
-        (True, False, "fast"),
-        (False, False, "ocr_only"),
+        (True, True, PartitionStrategy.HI_RES),
+        (False, True, PartitionStrategy.HI_RES),
+        (True, False, PartitionStrategy.FAST),
+        (False, False, PartitionStrategy.OCR_ONLY),
     ],
 )
 def test_determine_pdf_auto_strategy(pdf_text_extractable, infer_table_structure, expected):
@@ -77,8 +86,8 @@ def test_determine_pdf_auto_strategy(pdf_text_extractable, infer_table_structure
 )
 def test_determine_pdf_or_image_fast_strategy(pdf_text_extractable, infer_table_structure):
     strategy = strategies.determine_pdf_or_image_strategy(
-        strategy="fast",
+        strategy=PartitionStrategy.FAST,
         pdf_text_extractable=pdf_text_extractable,
         infer_table_structure=infer_table_structure,
     )
-    assert strategy == "fast"
+    assert strategy == PartitionStrategy.FAST
