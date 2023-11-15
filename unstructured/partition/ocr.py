@@ -315,7 +315,8 @@ def init_table_agent():
 
     global table_agent
 
-    if table_agent is None:
+    if not hasattr(table_agent, "model"):
+        logger.info("Loading the Table Transformer Model...")
         table_agent = UnstructuredTableTransformerModel()
         table_agent.initialize(model="microsoft/table-transformer-structure-recognition")
 
