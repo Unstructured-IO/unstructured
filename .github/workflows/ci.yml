@@ -542,7 +542,7 @@ jobs:
   # TODO - figure out best practice for caching docker images
   # (Using the virtualenv to get pytest)
   test_dockerfile:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-m
     needs: [ setup, lint ]
     steps:
       - uses: actions/checkout@v3
