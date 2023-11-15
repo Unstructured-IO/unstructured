@@ -336,11 +336,9 @@ def _add_element_metadata(
         image_path=image_path,
         languages=languages,
     )
-    metadata.detection_origin = detection_origin
-    # NOTE(newel) - Element metadata is being merged into
-    # newly constructed metadata, not the other way around
-    # TODO? Make this more expected behavior?
-    element.metadata = metadata.merge(element.metadata)
+    element.metadata.update(metadata)
+    if detection_origin is not None:
+        element.metadata.detection_origin = detection_origin
     return element
 
 
@@ -663,7 +661,7 @@ def ocr_data_to_elements(
         )
 
         if common_metadata:
-            element.metadata = element.metadata.merge(common_metadata)
+            element.metadata.update(common_metadata)
 
         elements.append(element)
 
