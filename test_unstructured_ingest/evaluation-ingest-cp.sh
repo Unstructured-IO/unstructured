@@ -19,7 +19,10 @@ function walk_dir() {
   echo "${walkdir[@]}"
 }
 
-structured_outputs=($(walk_dir "$OUTPUT_DIR"))
+structured_outputs=()
+while IFS= read -r -d $'\0' line; do
+    structured_outputs+=("$line")
+done < <(walk_dir "$OUTPUT_DIR")
 
 OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 CP_DIR=$OUTPUT_ROOT/structured-output-eval/$OUTPUT_FOLDER_NAME
