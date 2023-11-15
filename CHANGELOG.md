@@ -1,7 +1,7 @@
 ## 0.10.31-dev3
 
 ### Enhancements
-* **Temporary Support for paddle language parameter** User can specify default langage code for paddle with ENV `DEFAULT_PADDLE_LANG` before we have the language mapping for paddle.
+* **Temporary Support for paddle language parameter.** User can specify default langage code for paddle with ENV `DEFAULT_PADDLE_LANG` before we have the language mapping for paddle.
 
 ### Features
 
