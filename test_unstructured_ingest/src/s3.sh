@@ -40,6 +40,5 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
 
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
-echo "Continue running evaluation-ingest-cp.sh"
+
 "$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"
-echo "Finish running evaluation-ingest-cp.sh"
