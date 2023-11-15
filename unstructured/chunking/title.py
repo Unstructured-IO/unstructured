@@ -99,8 +99,6 @@ def chunk_by_title(
 
     # ----------------------------------------------------------------
 
-    chunked_elements: List[Element] = []
-
     sections = _SectionCombiner(
         _split_elements_by_title_and_table(
             elements,
@@ -112,31 +110,7 @@ def chunk_by_title(
         combine_text_under_n_chars,
     ).iter_combined_sections()
 
-    for section in sections:
-        if isinstance(section, _NonTextSection):
-            chunked_elements.extend(section.iter_chunks(max_characters))
-            continue
-
-        if isinstance(section, _TableSection):
-            chunked_elements.extend(section.iter_chunks(max_characters))
-            continue
-
-        # -- otherwise, it's a _TextSection object --
-        text = section.text
-        chunk_meta = section.consolidated_metadata
-
-        # -- split chunk into CompositeElements objects maxlen or smaller --
-        text_len = len(text)
-        start = 0
-        remaining = text_len
-
-        while remaining > 0:
-            end = min(start + max_characters, text_len)
-            chunked_elements.append(CompositeElement(text=text[start:end], metadata=chunk_meta))
-            start = end
-            remaining = text_len - end
-
-    return chunked_elements
+    return [chunk for section in sections for chunk in section.iter_chunks(max_characters)]
 
 
 def _split_elements_by_title_and_table(
@@ -362,32 +336,24 @@ class _TextSection:
         """Return new `_TextSection` that combines this and `other_section`."""
         return _TextSection(self._elements + other_section._elements)
 
-    @lazyproperty
-    def consolidated_metadata(self) -> ElementMetadata:
-        """Metadata applicable to this section as a single chunk.
+    def iter_chunks(self, maxlen: int) -> Iterator[CompositeElement]:
+        """Split this section into one or more `CompositeElement` objects maxlen or smaller."""
+        text = self._text
+        text_len = len(text)
+        start = 0
+        remaining = text_len
 
-        Formed by applying consolidation rules to all metadata fields across the elements of this
-        section.
-
-        For the sake of consistency, the same rules are applied (for example, for dropping values)
-        to a single-element section too, even though metadata for such a section is already
-        "consolidated".
-        """
-        return ElementMetadata(**self._meta_kwargs)
-
-    @lazyproperty
-    def text(self) -> str:
-        """The concatenated text of all elements in this section.
-
-        Each element-text is separated from the next by a blank line ("\n\n").
-        """
-        return TEXT_SEPARATOR.join(e.text for e in self._elements if e.text)
+        while remaining > 0:
+            end = min(start + maxlen, text_len)
+            yield CompositeElement(text=text[start:end], metadata=self._consolidated_metadata)
+            start = end
+            remaining = text_len - end
 
     @lazyproperty
     def text_length(self) -> int:
         """Length of concatenated text of this section, including separators."""
         # -- used by section-combiner to identify combination candidates --
-        return len(self.text)
+        return len(self._text)
 
     @lazyproperty
     def _all_metadata_values(self) -> Dict[str, List[Any]]:
@@ -423,6 +389,19 @@ class _TextSection:
                 field_values[field_name].append(value)
 
         return dict(field_values)
+
+    @lazyproperty
+    def _consolidated_metadata(self) -> ElementMetadata:
+        """Metadata applicable to this section as a single chunk.
+
+        Formed by applying consolidation rules to all metadata fields across the elements of this
+        section.
+
+        For the sake of consistency, the same rules are applied (for example, for dropping values)
+        to a single-element section too, even though metadata for such a section is already
+        "consolidated".
+        """
+        return ElementMetadata(**self._meta_kwargs)
 
     @lazyproperty
     def _consolidated_regex_meta(self) -> Dict[str, List[RegexMetadata]]:
@@ -496,6 +475,14 @@ class _TextSection:
                     )
 
         return dict(iter_kwarg_pairs())
+
+    @lazyproperty
+    def _text(self) -> str:
+        """The concatenated text of all elements in this section.
+
+        Each element-text is separated from the next by a blank line ("\n\n").
+        """
+        return TEXT_SEPARATOR.join(e.text for e in self._elements if e.text)
 
 
 class _TextSectionBuilder:

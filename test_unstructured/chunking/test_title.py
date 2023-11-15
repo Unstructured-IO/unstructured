@@ -876,25 +876,56 @@ class Describe_TextSection:
             ]
         )
 
-    @pytest.mark.parametrize(
-        ("elements", "expected_value"),
-        [
-            ([Text("foo"), Text("bar")], "foo\n\nbar"),
-            ([Text("foo"), PageBreak(""), Text("bar")], "foo\n\nbar"),
-            ([PageBreak(""), Text("foo"), Text("bar")], "foo\n\nbar"),
-            ([Text("foo"), Text("bar"), PageBreak("")], "foo\n\nbar"),
-        ],
-    )
-    def it_provides_access_to_the_concatenated_text_of_the_section(
-        self, elements: List[Text], expected_value: str
-    ):
-        """.text is the "joined" text of the section elements.
+    def it_generates_a_single_chunk_from_its_elements_if_they_together_fit_in_window(self):
+        section = _TextSection(
+            [
+                Title("Introduction"),
+                Text(
+                    "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
+                    "lectus porta volutpat.",
+                ),
+            ]
+        )
 
-        The text-segment contributed by each element is separated from the next by a blank line
-        ("\n\n"). An element that contributes no text does not give rise to a separator.
-        """
-        section = _TextSection(elements)
-        assert section.text == expected_value
+        chunk_iter = section.iter_chunks(maxlen=200)
+
+        chunk = next(chunk_iter)
+        assert chunk == CompositeElement(
+            "Introduction\n\nLorem ipsum dolor sit amet consectetur adipiscing elit."
+            " In rhoncus ipsum sedlectus porta volutpat.",
+        )
+        assert chunk.metadata is section._consolidated_metadata
+
+    def but_it_generates_split_chunks_when_its_single_element_exceeds_window_size(self):
+        # -- Chunk-splitting only occurs when a *single* element is too big to fit in the window.
+        # -- The sectioner will isolate that element in a section of its own.
+        section = _TextSection(
+            [
+                Text(
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
+                    " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
+                    " veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea"
+                    " commodo consequat."
+                ),
+            ]
+        )
+
+        chunk_iter = section.iter_chunks(maxlen=200)
+
+        chunk = next(chunk_iter)
+        assert chunk == CompositeElement(
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
+            " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
+            " veniam, quis nostrud exercitation ullamco laboris nisi ut a"
+        )
+        assert chunk.metadata is section._consolidated_metadata
+        # --
+        chunk = next(chunk_iter)
+        assert chunk == CompositeElement("liquip ex ea commodo consequat.")
+        assert chunk.metadata is section._consolidated_metadata
+        # --
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
 
     def it_knows_the_length_of_the_combined_text_of_its_elements_which_is_the_chunk_size(self):
         """.text_length is the size of chunk this section will produce (before any splitting)."""
@@ -1071,6 +1102,26 @@ class Describe_TextSection:
                 "dolor": [RegexMetadata(text="dolor", start=25, end=30)],
             },
         }
+
+    @pytest.mark.parametrize(
+        ("elements", "expected_value"),
+        [
+            ([Text("foo"), Text("bar")], "foo\n\nbar"),
+            ([Text("foo"), PageBreak(""), Text("bar")], "foo\n\nbar"),
+            ([PageBreak(""), Text("foo"), Text("bar")], "foo\n\nbar"),
+            ([Text("foo"), Text("bar"), PageBreak("")], "foo\n\nbar"),
+        ],
+    )
+    def it_knows_the_concatenated_text_of_the_section(
+        self, elements: List[Text], expected_value: str
+    ):
+        """._text is the "joined" text of the section elements.
+
+        The text-segment contributed by each element is separated from the next by a blank line
+        ("\n\n"). An element that contributes no text does not give rise to a separator.
+        """
+        section = _TextSection(elements)
+        assert section._text == expected_value
 
 
 class Describe_TextSectionBuilder:
