@@ -1,24 +1,17 @@
 [
   {
-    "type": "Table",
     "element_id": "e83a347af95db7ba47b5351f411e00c7",
     "metadata": {
       "data_source": {
-        "url": "",
-        "version": "1",
-        "record_locator": {
-          "server_path": "/Shared Documents/ideas-page.html",
-          "site_url": "https://unstructuredio.sharepoint.com"
-        },
         "date_created": "2023-06-16T05:04:47",
         "date_modified": "2023-06-16T05:04:47",
         "permissions_data": [
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Owners",
@@ -26,19 +19,19 @@
                 "loginName": "Communication site Owners"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Owners"
-              }
-            },
-            "inheritedFrom": {}
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "inheritedFrom": {},
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "roles": [
-              "read"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Visitors",
@@ -46,19 +39,19 @@
                 "loginName": "Communication site Visitors"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Visitors"
-              }
-            },
-            "inheritedFrom": {}
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "inheritedFrom": {},
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "roles": [
-              "write"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Members",
@@ -66,19 +59,20 @@
                 "loginName": "Communication site Members"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Members"
-              }
-            },
-            "inheritedFrom": {}
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "inheritedFrom": {},
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
           },
           {
-            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
             "grantedToV2": {
               "group": {
                 "@odata.type": "#microsoft.graph.sharePointIdentity",
@@ -91,15 +85,20 @@
                 "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            },
-            "inheritedFrom": {}
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "inheritedFrom": {},
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE"
           }
-        ]
+        ],
+        "record_locator": {
+          "server_path": "/Shared Documents/ideas-page.html",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "",
+        "version": "1"
       },
       "filename": "ideas-page.html",
       "filetype": "text/html",
@@ -109,6 +108,7 @@
       "page_number": 1,
       "text_as_html": "<table><br><tbody><br><tr><td>January 2023</td><td>(</td><td>Someone</td><td>fed my essays into GPT to make something that could answer<br>questions based on them, then asked it where good ideas come from.  The<br>answer was ok, but not what I would have said. This is what I would have said.)</td><td>The way to get new ideas is to notice anomalies: what seems strange,<br>or missing, or broken? You can see anomalies in everyday life (much<br>of standup comedy is based on this), but the best place to look for<br>them is at the frontiers of knowledge.</td><td>Knowledge grows fractally.<br>From a distance its edges look smooth, but when you learn enough<br>to get close to one, you&#x27;ll notice it&#x27;s full of gaps. These gaps<br>will seem obvious; it will seem inexplicable that no one has tried<br>x or wondered about y. In the best case, exploring such gaps yields<br>whole new fractal buds.</td></tr><br></tbody><br></table>"
     },
-    "text": "January 2023 ( Someone  fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.) The way to get new ideas is to notice anomalies: what seems strange,\nor missing, or broken? You can see anomalies in everyday life (much\nof standup comedy is based on this), but the best place to look for\nthem is at the frontiers of knowledge. Knowledge grows fractally.\nFrom a distance its edges look smooth, but when you learn enough\nto get close to one, you'll notice it's full of gaps. These gaps\nwill seem obvious; it will seem inexplicable that no one has tried\nx or wondered about y. In the best case, exploring such gaps yields\nwhole new fractal buds."
+    "text": "January 2023 ( Someone  fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.) The way to get new ideas is to notice anomalies: what seems strange,\nor missing, or broken? You can see anomalies in everyday life (much\nof standup comedy is based on this), but the best place to look for\nthem is at the frontiers of knowledge. Knowledge grows fractally.\nFrom a distance its edges look smooth, but when you learn enough\nto get close to one, you'll notice it's full of gaps. These gaps\nwill seem obvious; it will seem inexplicable that no one has tried\nx or wondered about y. In the best case, exploring such gaps yields\nwhole new fractal buds.",
+    "type": "Table"
   }
 ]
