@@ -73,8 +73,8 @@ class CoordinatesMetadata:
         self.points = points
         self.system = system
 
-    def __eq__(self, other):
-        if other is None:
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, CoordinatesMetadata):
             return False
         return all(
             [
@@ -353,6 +353,13 @@ class ElementMetadata:
         # -- remove fields that should not be serialized --
         for field_name in self.DEBUG_FIELD_NAMES:
             meta_dict.pop(field_name, None)
+
+        # -- don't serialize empty lists --
+        meta_dict: Dict[str, Any] = {
+            field_name: value
+            for field_name, value in meta_dict.items()
+            if value != [] and value != {}
+        }
 
         # -- serialize sub-object types when present --
         if self.coordinates is not None:
