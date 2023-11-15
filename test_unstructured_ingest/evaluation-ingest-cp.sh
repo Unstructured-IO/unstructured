@@ -7,7 +7,6 @@ cd "$SCRIPT_DIR"/.. || exit 1
 
 OUTPUT_DIR=$1
 OUTPUT_FOLDER_NAME=$2
-# structured_outputs=("$OUTPUT_DIR"/*)
 
 function walk_dir() {
   local directory=$1
@@ -28,15 +27,9 @@ mkdir -p "$CP_DIR"
 
 selected_outputs=$(cat "$SCRIPT_DIR/metrics/metrics-json-manifest.txt")
 
-echo "$selected_outputs"
-echo "------------"
-# echo "${structured_outputs[@]}"
-# echo "------------"
-
 # If structured output file in this connector's outputs match the
 # selected outputs in the txt file, copy to the destination
 for file in "${structured_outputs[@]}"; do
-  echo "$(basename "$file")"
   if [[ "${selected_outputs[*]}" =~ $(basename "$file") ]] ; then
     echo "--- Copying $OUTPUT_DIR/$file to $CP_DIR/$file ---"
     cp -n "$OUTPUT_DIR/$file" "$CP_DIR"
