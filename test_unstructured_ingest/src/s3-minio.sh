@@ -15,7 +15,7 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 secret_key=minioadmin
 access_key=minioadmin
 
-# shellcheck disable=SC1091
+# shellcheck disable=SC1091,SC2317
 source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
