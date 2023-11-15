@@ -25,8 +25,9 @@ NOTE: Currently, the pipeline is capable of recognizing the file type and choosi
 .. toctree::
    :maxdepth: 1
 
-   apis/api_parameters
    apis/usage_methods
    apis/api_sdks
-   apis/premium_apis
+   apis/azure_marketplace
+   apis/aws_marketplace
+   apis/api_parameters
    apis/validation_errors
