@@ -1,60 +1,33 @@
 from tempfile import SpooledTemporaryFile
-from typing import BinaryIO, Dict, List, Optional, Union
+from typing import BinaryIO, Optional, Union
 
 from unstructured.logger import logger
 from unstructured.utils import dependency_exists
 
-VALID_STRATEGIES: Dict[str, List[str]] = {
-    "auto": [
-        "pdf",
-        "image",
-    ],
-    "hi_res": [
-        "pdf",
-        "image",
-    ],
-    "ocr_only": [
-        "pdf",
-        "image",
-    ],
-    "fast": [
-        "pdf",
-    ],
-}
 
-
-def validate_strategy(strategy: str, filetype: str):
+def validate_strategy(strategy: str, is_image: bool = False):
     """Determines if the strategy is valid for the specified filetype."""
-    valid_filetypes = VALID_STRATEGIES.get(strategy, None)
-    if valid_filetypes is None:
+
+    valid_strategies = ["auto", "fast", "ocr_only", "hi_res"]
+    if strategy not in valid_strategies:
         raise ValueError(f"{strategy} is not a valid strategy.")
-    if filetype not in valid_filetypes:
-        raise ValueError(f"{strategy} is not a valid strategy for filetype {filetype}.")
+
+    if strategy == "fast" and is_image:
+        raise ValueError("The fast strategy is not available for image files.")
 
 
 def determine_pdf_or_image_strategy(
     strategy: str,
-    filename: str = "",
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
+    pdf_text_extractable: bool = False,
     infer_table_structure: bool = False,
-    pdf_text_extractable: bool = True,
     extract_images_in_pdf: bool = False,
 ):
     """Determines what strategy to use for processing PDFs or images, accounting for fallback
     logic if some dependencies are not available."""
     pytesseract_installed = dependency_exists("pytesseract")
     unstructured_inference_installed = dependency_exists("unstructured_inference")
-
-    if is_image:
-        # Note(yuming): There is no fast strategy for images,
-        # use hi_res as a fallback plan since it is the auto default.
-        if strategy == "fast":
-            strategy = "hi_res"
-        validate_strategy(strategy, "image")
-        pdf_text_extractable = False
-    else:
-        validate_strategy(strategy, "pdf")
 
     if strategy == "auto":
         if is_image:
@@ -79,15 +52,7 @@ def determine_pdf_or_image_strategy(
             "or remove copy protection from the PDF.",
         )
 
-    if strategy == "fast" and not pdf_text_extractable:
-        logger.warning(
-            "PDF text is not extractable. Cannot use the fast partitioning "
-            "strategy. Falling back to partitioning with the ocr_only strategy.",
-        )
-        # NOTE(robinson) - fallback to ocr_only here because it is faster than hi_res
-        return "ocr_only"
-
-    elif strategy == "hi_res" and not unstructured_inference_installed:
+    if strategy == "hi_res" and not unstructured_inference_installed:
         logger.warning(
             "unstructured_inference is not installed. Cannot use the hi_res partitioning "
             "strategy. Falling back to partitioning with another strategy.",
@@ -124,14 +89,14 @@ def _determine_image_auto_strategy():
 
 
 def _determine_pdf_auto_strategy(
-    pdf_text_extractable: bool = True,
+    pdf_text_extractable: bool = False,
     infer_table_structure: bool = False,
     extract_images_in_pdf: bool = False,
 ):
     """If "auto" is passed in as the strategy, determines what strategy to use
     for PDFs."""
-    # NOTE(robinson) - Currrently "hi_res" is the only stategy where
-    # infer_table_structure is used.
+    # NOTE(robinson) - Currently "hi_res" is the only strategy where
+    # infer_table_structure and extract_images_in_pdf are used.
     if infer_table_structure or extract_images_in_pdf:
         return "hi_res"
 
