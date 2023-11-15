@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set +e
+set -e
 
 
 SRC_PATH=$(dirname "$(realpath "$0")")

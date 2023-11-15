@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set +e
+set -e
 
 
 SRC_PATH=$(dirname "$(realpath "$0")")
@@ -49,7 +49,9 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --endpoint-url http://localhost:9000 \
     --work-dir "$WORK_DIR"
 
-
+set +e
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+EXIT_CODE=$?
+set -e
 
 "$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"
