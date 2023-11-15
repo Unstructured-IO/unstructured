@@ -44,4 +44,9 @@ set +e
 EXIT_CODE=$?
 set -e
 
+if [ "$EXIT_CODE" -ne 0 ]; then
+    echo "The last script run exited with a non-zero exit code: $EXIT_CODE."
+    # Handle the error or exit
+fi
+
 "$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"
