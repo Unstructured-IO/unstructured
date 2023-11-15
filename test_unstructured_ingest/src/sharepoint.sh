@@ -13,8 +13,9 @@ DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 CI=${CI:-"false"}
 
-# shellcheck disable=SC1091,SC2317
+# shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
+# shellcheck disable=SC2317
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"

@@ -15,9 +15,9 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 secret_key=minioadmin
 access_key=minioadmin
 
-# shellcheck disable=SC1091,SC2317
+# shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-
+# shellcheck disable=SC2317
 function cleanup() {
   # Kill the container so the script can be repeatedly run using the same ports
   echo "Stopping Minio Docker container"
