@@ -973,3 +973,10 @@ def test_partition_pdf_with_all_number_table_and_ocr_only_strategy():
     # numerical values with `strategy="ocr_only"`
     filename = example_doc_path("all-number-table.pdf")
     assert pdf.partition_pdf(filename, strategy="ocr_only")
+
+
+# As of pdfminer 221105, this pdf throws an error and requires a workaround
+# See #2059
+def test_partition_pdf_with_bad_color_profile():
+    filename = example_doc_path("pdf-bad-color-space.pdf")
+    assert pdf.partition_pdf(filename, strategy="fast")
