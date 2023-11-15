@@ -69,14 +69,14 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.lang import (
-    convert_old_ocr_languages_to_languages,
+    check_languages,
     prepare_languages_for_tesseract,
 )
 from unstructured.partition.ocr import (
     get_layout_elements_from_ocr,
     get_ocr_agent,
 )
-from unstructured.partition.strategies import determine_pdf_or_image_strategy
+from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.constants import (
     OCR_AGENT_TESSERACT,
@@ -118,11 +118,11 @@ def partition_pdf(
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
-    languages: List[str] = ["eng"],
-    include_metadata: bool = True,
-    metadata_filename: Optional[str] = None,
+    languages: Optional[List[str]] = None,
+    include_metadata: bool = True,  # used by decorator
+    metadata_filename: Optional[str] = None,  # used by decorator
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,
+    chunking_strategy: Optional[str] = None,  # used by decorator
     links: Sequence[Link] = [],
     extract_images_in_pdf: bool = False,
     image_output_dir_path: Optional[str] = None,
@@ -162,23 +162,10 @@ def partition_pdf(
         If extract_images_in_pdf=True and strategy=hi_res, any detected images will be saved in the
         given path
     """
+
     exactly_one(filename=filename, file=file)
 
-    if ocr_languages is not None:
-        # check if languages was set to anything not the default value
-        # languages and ocr_languages were therefore both provided - raise error
-        if languages != ["eng"]:
-            raise ValueError(
-                "Only one of languages and ocr_languages should be specified. "
-                "languages is preferred. ocr_languages is marked for deprecation.",
-            )
-
-        else:
-            languages = convert_old_ocr_languages_to_languages(ocr_languages)
-            logger.warning(
-                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
-                "Please use languages instead.",
-            )
+    languages = check_languages(languages, ocr_languages)
 
     return partition_pdf_or_image(
         filename=filename,
@@ -198,6 +185,7 @@ def extractable_elements(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
     include_page_breaks: bool = False,
+    languages: Optional[List[str]] = None,
     metadata_last_modified: Optional[str] = None,
     **kwargs: Any,
 ):
@@ -207,6 +195,7 @@ def extractable_elements(
         filename=filename,
         file=file,
         include_page_breaks=include_page_breaks,
+        languages=languages,
         metadata_last_modified=metadata_last_modified,
         **kwargs,
     )
@@ -232,7 +221,7 @@ def partition_pdf_or_image(
     strategy: str = "auto",
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
-    languages: Optional[List[str]] = ["eng"],
+    languages: Optional[List[str]] = None,
     metadata_last_modified: Optional[str] = None,
     extract_images_in_pdf: bool = False,
     image_output_dir_path: Optional[str] = None,
@@ -244,50 +233,22 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
-    # The auto `partition` function uses `None` as a default because the default for
-    # `partition_pdf` and `partition_img` conflict with the other partitioners that use ["auto"]
-    if languages is None:
-        languages = ["eng"]
+    validate_strategy(strategy, is_image)
 
-    if not isinstance(languages, list):
-        raise TypeError(
-            "The language parameter must be a list of language codes as strings, ex. ['eng']",
-        )
-
-    if ocr_languages is not None:
-        if languages != ["eng"]:
-            raise ValueError(
-                "Only one of languages and ocr_languages should be specified. "
-                "languages is preferred. ocr_languages is marked for deprecation.",
-            )
-
-        else:
-            languages = convert_old_ocr_languages_to_languages(ocr_languages)
-            logger.warning(
-                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
-                "Please use languages instead.",
-            )
+    languages = check_languages(languages, ocr_languages)
 
     last_modification_date = get_the_last_modification_date_pdf_or_img(
         file=file,
         filename=filename,
     )
 
-    if (
-        not is_image
-        and determine_pdf_or_image_strategy(
-            strategy,
-            filename=filename,
-            file=file,
-            is_image=is_image,
-            infer_table_structure=infer_table_structure,
-        )
-        != "ocr_only"
-    ):
+    extracted_elements = []
+    if not is_image:
         extracted_elements = extractable_elements(
             filename=filename,
             file=spooled_to_bytes_io_if_needed(file),
             include_page_breaks=include_page_breaks,
+            languages=languages,
             metadata_last_modified=metadata_last_modified or last_modification_date,
             **kwargs,
         )
@@ -299,11 +260,11 @@ def partition_pdf_or_image(
 
     strategy = determine_pdf_or_image_strategy(
         strategy,
-        filename=filename,
         file=file,
         is_image=is_image,
         infer_table_structure=infer_table_structure,
         pdf_text_extractable=pdf_text_extractable,
+        extract_images_in_pdf=extract_images_in_pdf,
     )
 
     if strategy == "hi_res":
@@ -366,7 +327,7 @@ def _partition_pdf_or_image_local(
     is_image: bool = False,
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
-    languages: Optional[List[str]] = ["eng"],
+    languages: Optional[List[str]] = None,
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
@@ -385,6 +346,9 @@ def _partition_pdf_or_image_local(
         process_data_with_ocr,
         process_file_with_ocr,
     )
+
+    if languages is None:
+        languages = ["eng"]
 
     ocr_languages = prepare_languages_for_tesseract(languages)
 
@@ -459,6 +423,7 @@ def _partition_pdf_or_image_local(
         # block with NLP rules. Otherwise, the assumptions in
         # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
         infer_list_items=False,
+        languages=languages,
         **kwargs,
     )
 
@@ -492,10 +457,11 @@ def _partition_pdf_or_image_local(
 
 @requires_dependencies("pdfminer", "local-inference")
 def _partition_pdf_with_pdfminer(
-    filename: str = "",
-    file: Optional[IO[bytes]] = None,
-    include_page_breaks: bool = False,
-    metadata_last_modified: Optional[str] = None,
+    filename: str,
+    file: Optional[IO[bytes]],
+    include_page_breaks: bool,
+    languages: List[str],
+    metadata_last_modified: Optional[str],
     **kwargs: Any,
 ) -> List[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
@@ -506,6 +472,9 @@ def _partition_pdf_with_pdfminer(
 
     ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
     """
+    if languages is None:
+        languages = ["eng"]
+
     exactly_one(filename=filename, file=file)
     if filename:
         with open_filename(filename, "rb") as fp:
@@ -514,6 +483,7 @@ def _partition_pdf_with_pdfminer(
                 fp=fp,
                 filename=filename,
                 include_page_breaks=include_page_breaks,
+                languages=languages,
                 metadata_last_modified=metadata_last_modified,
                 **kwargs,
             )
@@ -524,6 +494,7 @@ def _partition_pdf_with_pdfminer(
             fp=fp,
             filename=filename,
             include_page_breaks=include_page_breaks,
+            languages=languages,
             metadata_last_modified=metadata_last_modified,
             **kwargs,
         )
@@ -552,9 +523,10 @@ def _extract_text(item: LTItem) -> str:
 
 def _process_pdfminer_pages(
     fp: BinaryIO,
-    filename: str = "",
-    include_page_breaks: bool = False,
-    metadata_last_modified: Optional[str] = None,
+    filename: str,
+    include_page_breaks: bool,
+    languages: List[str],
+    metadata_last_modified: Optional[str],
     sort_mode: str = SORT_MODE_XY_CUT,
     **kwargs,
 ):
@@ -631,13 +603,13 @@ def _process_pdfminer_pages(
                                     ),
                                 },
                             )
-
                     element.metadata = ElementMetadata(
                         filename=filename,
                         page_number=i + 1,
                         coordinates=coordinates_metadata,
                         last_modified=metadata_last_modified,
                         links=links,
+                        languages=languages,
                     )
                     element.metadata.detection_origin = "pdfminer"
                     page_elements.append(element)
@@ -782,7 +754,7 @@ def _partition_pdf_or_image_with_ocr(
 
 def _partition_pdf_or_image_with_ocr_from_image(
     image: PILImage,
-    languages: Optional[List[str]] = ["eng"],
+    languages: Optional[List[str]] = None,
     page_number: int = 1,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,

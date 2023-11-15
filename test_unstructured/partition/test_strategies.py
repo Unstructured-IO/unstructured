@@ -5,19 +5,20 @@ import pytest
 from unstructured.partition import pdf, strategies
 
 
-def test_validate_strategy_validates():
+@pytest.mark.parametrize("strategy", ["auto", "fast", "ocr_only", "hi_res"])
+def test_validate_strategy(strategy):
     # Nothing should raise for a valid strategy
-    strategies.validate_strategy("hi_res", "pdf")
+    strategies.validate_strategy(strategy=strategy)
 
 
-def test_validate_strategy_raises_for_bad_filetype():
+def test_validate_strategy_raises_for_fast_strategy():
     with pytest.raises(ValueError):
-        strategies.validate_strategy("fast", "image")
+        strategies.validate_strategy(strategy="fast", is_image=True)
 
 
 def test_validate_strategy_raises_for_bad_strategy():
     with pytest.raises(ValueError):
-        strategies.validate_strategy("totally_guess_the_text", "image")
+        strategies.validate_strategy("totally_guess_the_text")
 
 
 @pytest.mark.parametrize(
@@ -57,7 +58,7 @@ def test_determine_image_auto_strategy():
         (False, False, "ocr_only"),
     ],
 )
-def test_determine_image_pdf_strategy(pdf_text_extractable, infer_table_structure, expected):
+def test_determine_pdf_auto_strategy(pdf_text_extractable, infer_table_structure, expected):
     strategy = strategies._determine_pdf_auto_strategy(
         pdf_text_extractable=pdf_text_extractable,
         infer_table_structure=infer_table_structure,
@@ -65,9 +66,19 @@ def test_determine_image_pdf_strategy(pdf_text_extractable, infer_table_structur
     assert strategy is expected
 
 
-def test_determine_pdf_or_image_strategy_fallback_hi_res():
+@pytest.mark.parametrize(
+    ("pdf_text_extractable", "infer_table_structure"),
+    [
+        (True, True),
+        (False, True),
+        (True, False),
+        (False, False),
+    ],
+)
+def test_determine_pdf_or_image_fast_strategy(pdf_text_extractable, infer_table_structure):
     strategy = strategies.determine_pdf_or_image_strategy(
         strategy="fast",
-        is_image=True,
+        pdf_text_extractable=pdf_text_extractable,
+        infer_table_structure=infer_table_structure,
     )
-    assert strategy == "hi_res"
+    assert strategy == "fast"

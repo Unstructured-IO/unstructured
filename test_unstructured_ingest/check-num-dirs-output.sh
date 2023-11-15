@@ -11,7 +11,8 @@ set +e
 EXPECTED_NUM_DIRS=$1
 OUTPUT_FOLDER_NAME=$2
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
-OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
+OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
+OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 
 
 NUMBER_OF_FOUND_DIRS="$(find "$OUTPUT_DIR" -type d -exec printf '.' \; | wc -c | xargs)"

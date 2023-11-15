@@ -408,11 +408,30 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
         infer_table_structure=True,
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert elements[0].metadata.languages == ["kor"]
     assert len(table) == 2
     assert "<table><thead><th>" in table[0]
     # FIXME(yuming): didn't test full sentence here since unit test and docker test have
     # some differences on spaces between characters
     assert "업" in table[0]
+
+
+@pytest.mark.parametrize(
+    ("strategy"),
+    [
+        ("fast"),
+        ("hi_res"),
+        ("ocr_only"),
+    ],
+)
+def test_partition_pdf_strategies_keep_languages_metadata(strategy):
+    filename = example_doc_path("korean-text-with-tables.pdf")
+    elements = pdf.partition_pdf(
+        filename=filename,
+        languages=["kor"],
+        strategy=strategy,
+    )
+    assert elements[0].metadata.languages == ["kor"]
 
 
 @pytest.mark.parametrize(
@@ -463,13 +482,10 @@ def test_partition_pdf_requiring_recursive_text_grab(filename=example_doc_path("
     assert elements[-1].metadata.page_number == 3
 
 
-def test_partition_pdf_with_copy_protection_fallback_to_hi_res(caplog):
-    filename = os.path.join("example-docs", "loremipsum-flat.pdf")
+def test_partition_pdf_text_not_extractable():
+    filename = example_doc_path("loremipsum-flat.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy="fast")
-    elements[0] == Title(
-        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis",
-    )
-    assert "PDF text is not extractable" in caplog.text
+    assert len(elements) == 0
 
 
 def test_partition_pdf_fails_if_pdf_not_processable(
@@ -950,3 +966,10 @@ def test_partition_pdf_with_ocr_only_strategy(
     # check detection origin
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
         assert {element.metadata.detection_origin for element in elements} == {"ocr_tesseract"}
+
+
+def test_partition_pdf_with_all_number_table_and_ocr_only_strategy():
+    # AttributeError was previously being raised when partitioning documents that contained only
+    # numerical values with `strategy="ocr_only"`
+    filename = example_doc_path("all-number-table.pdf")
+    assert pdf.partition_pdf(filename, strategy="ocr_only")
