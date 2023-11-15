@@ -29,3 +29,4 @@ NOTE: Currently, the pipeline is capable of recognizing the file type and choosi
    apis/usage_methods
    apis/api_sdks
    apis/premium_apis
+   apis/validation_errors
