@@ -20,6 +20,7 @@ from typing import (
 
 import numpy as np
 import pdf2image
+import wrapt
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import (
     LAParams,
@@ -522,6 +523,19 @@ def _extract_text(item: LTItem) -> str:
         # https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/image.py#L90
         return "\n"
     return "\n"
+
+
+# Some pages with a ICC color space do not follow the pdf spec
+# They throw an error when we call interpreter.process_page
+# Since we don't need color info, we can just drop it in the pdfminer code
+# See #2059
+@wrapt.patch_function_wrapper("pdfminer.pdfinterp", "PDFPageInterpreter.init_resources")
+def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
+    resources = args[0]
+    if "ColorSpace" in resources:
+        del resources["ColorSpace"]
+
+    return wrapped(resources)
 
 
 def _process_pdfminer_pages(
