@@ -66,3 +66,5 @@ read -ra source_args <<< "$(generate_args "source" "$SOURCE_DIR" "${SOURCE_LIST[
 PYTHONPATH=. ./unstructured/ingest/evaluate.py \
     $METRIC_STRATEGY "${output_args[@]}" "${source_args[@]}" \
     --export_dir "$EXPORT_DIR"
+
+"$SCRIPT_DIR"/check-diff-expected-output.sh "$OUTPUT_ROOT"/metrics
