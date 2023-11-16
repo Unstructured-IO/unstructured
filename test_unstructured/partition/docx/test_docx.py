@@ -212,6 +212,7 @@ def test_partition_docx_processes_table():
     elements = partition_docx(example_doc_path("fake_table.docx"))
 
     assert isinstance(elements[0], Table)
+    assert elements[0].text == ("Header Col 1  Header Col 2\n" "Lorem ipsum   A Link example")
     assert elements[0].metadata.text_as_html == (
         "<table>\n"
         "<thead>\n"
