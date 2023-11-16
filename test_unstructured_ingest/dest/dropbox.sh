@@ -28,9 +28,6 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
-  if [ "$CI" == "true" ]; then
-    cleanup_dir "$DOWNLOAD_DIR"
-  fi
 
   echo "deleting test folder $DESTINATION_DROPBOX"
   curl -X POST https://api.dropboxapi.com/2/files/delete_v2 \

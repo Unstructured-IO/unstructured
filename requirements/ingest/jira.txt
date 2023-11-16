@@ -41,5 +41,5 @@ urllib3==1.26.18
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
     #   requests
-wrapt==1.15.0
+wrapt==1.16.0
     # via deprecated
