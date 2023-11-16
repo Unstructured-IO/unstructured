@@ -15,6 +15,7 @@ CI=${CI:-"false"}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
+# shellcheck disable=SC2317
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
@@ -49,6 +50,16 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --work-dir "$WORK_DIR"
 
 
+set +e
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+EXIT_CODE=$?
+set -e
+
+if [ "$EXIT_CODE" -ne 0 ]; then
+    echo "The last script run exited with a non-zero exit code: $EXIT_CODE."
+    # Handle the error or exit
+fi
 
 "$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"
+
+exit $EXIT_CODE
