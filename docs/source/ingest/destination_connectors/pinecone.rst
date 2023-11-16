@@ -41,38 +41,37 @@ upstream s3 connector. This will create new files on your local.
 
       .. code:: python
 
-        import subprocess
+        import os
 
-        command = [
-          "unstructured-ingest",
-          "local",
-          "--input-path", "example-docs/book-war-and-peace-1225p.txt",
-          "--output-dir", "local-to-pinecone",
-          "--strategy", "fast",
-          "--chunk-elements",
-          "--embedding-provider", "<an unstructured embedding provider, ie. langchain-huggingface>",
-          "--num-processes", "2",
-          "--verbose",
-          "--work-dir", "<directory for intermediate outputs to be saved>",
-          "pinecone",
-          "--api-key", "<your pinecone api key here>",
-          "--index-name", "<your index name here, ie. ingest-test>",
-          "--environment", "<your environment name here, ie. gcp-starter>",
-          "--batch-size", "<number of elements to be uploaded per batch, ie. 80>",
-          "--num-processes", "<number of processes to be used to upload, ie. 2>",
-        ]
-
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig, ChunkingConfig, EmbeddingConfig
+        from unstructured.ingest.runner import LocalRunner
+        if __name__ == "__main__":
+            runner = LocalRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
+                    output_dir="local-output-to-pinecone",
+                    num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+                chunking_config=ChunkingConfig(
+                  chunk_elements=True
+                ),
+                embedding_config=EmbeddingConfig(
+                  provider="langchain-huggingface",
+                ),
+                writer_type="pinecone",
+                writer_kwargs={
+                    "api_key": os.getenv("PINECONE_API_KEY"),
+                    "index_name": os.getenv("PINECONE_INDEX_NAME"),
+                    "environment": os.getenv("PINECONE_ENVIRONMENT_NAME"),
+                    "batch_size": 80,
+                    "num_processes": 2,
+                }
+            )
+            runner.run(
+                input_path="example-docs/fake-memo.pdf",
+            )
 
 
 For a full list of the options the CLI accepts check ``unstructured-ingest <upstream connector> pinecone --help``.
