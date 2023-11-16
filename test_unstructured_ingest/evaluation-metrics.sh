@@ -35,7 +35,6 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$SOURCE_DIR"
-  cleanup_dir "$EXPORT_DIR"
 }
 trap cleanup EXIT
 
