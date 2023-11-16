@@ -7,6 +7,7 @@
 
 set -e
 
+# shellcheck disable=SC2016
 USAGE_MESSAGE="Usage: $0 [options] <file>"'
 
 Options:
