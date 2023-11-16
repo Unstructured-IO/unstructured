@@ -34,7 +34,7 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
     - name: Setup virtual environment (no cache hit)
-      if: steps.ingest-cache-exists.outputs.cache-hit != 'true'
+      if: steps.ingest-virtualenv-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         python${{ inputs.python-version }} -m venv .venv
