@@ -416,7 +416,7 @@ class _TextSection:
             """(field_name, value) pair for each non-None field in single `ElementMetadata`."""
             return (
                 (field_name, value)
-                for field_name, value in vars(metadata).items()
+                for field_name, value in metadata.known_fields.items()
                 if value is not None
             )
 
