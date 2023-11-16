@@ -109,7 +109,7 @@ def partition_multiple_via_api(
     metadata_filenames: Optional[List[str]] = None,
     **request_kwargs,
 ) -> List[List[Element]]:
-    """Partitions multiple document using the Unstructured REST API by batching
+    """Partitions multiple documents using the Unstructured REST API by batching
     the documents into a single HTTP request.
 
     See https://api.unstructured.io/general/docs for the hosted API documentation or
