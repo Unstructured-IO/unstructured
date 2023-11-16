@@ -8,7 +8,7 @@
 # Environment Variables:
 #   - OVERWRITE_FIXTURES: Controls whether to overwrite fixtures or not. default: "false"
 
-set +e
+set -e
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
