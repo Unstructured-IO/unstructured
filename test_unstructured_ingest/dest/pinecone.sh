@@ -8,7 +8,6 @@ cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=s3-pinecone-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
-DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 if [ -z "$PINECONE_API_KEY" ]; then
@@ -51,22 +50,12 @@ function cleanup {
   # Local file cleanup
   cleanup_dir "$WORK_DIR"
   cleanup_dir "$OUTPUT_DIR"
-  if [ "$CI" == "true" ]; then
-    cleanup_dir "$DOWNLOAD_DIR"
-  fi
 }
 
 trap cleanup EXIT
 
 echo "Creating index $PINECONE_INDEX"
-create_attempt=0
-create_sleep_amount=10
-response_code=999
-
-while [ "$response_code" -ge 400 ] && [ "$create_attempt" -lt 3 ]; do
-  create_attempt=$((create_attempt+1))
-  echo "attempt $create_attempt for index creation"
-  response_code=$(curl \
+response_code=$(curl \
      -s -o /dev/null \
      -w "%{http_code}" \
      --request POST \
@@ -84,12 +73,6 @@ while [ "$response_code" -ge 400 ] && [ "$create_attempt" -lt 3 ]; do
   "pod_type": "p1.x1"
 }
 ')
-
-  if [ "$response_code" -ge 400 ]; then
-  echo "Response code: $response_code . Sleeping $create_sleep_amount seconds to retry index creation."
-  sleep $create_sleep_amount
-  fi
-done
 
 if [ "$response_code" -lt 400 ]; then
   echo "Index creation success: $response_code"
