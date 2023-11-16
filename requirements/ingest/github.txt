@@ -53,5 +53,5 @@ urllib3==1.26.18
     #   -c ingest/../constraints.in
     #   pygithub
     #   requests
-wrapt==1.15.0
+wrapt==1.16.0
     # via deprecated
