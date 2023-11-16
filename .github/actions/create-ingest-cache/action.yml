@@ -14,7 +14,7 @@ runs:
         path: |
           nltk_data
           .venv-base
-        key: unstructured-${{ runner.os }}-${{ inputs.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}-base
+        key: unstructured-${{ runner.os }}-${{ inputs.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       uses: ./.github/actions/create-cache
