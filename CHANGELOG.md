@@ -1,6 +1,8 @@
-## 0.11.0-dev1
+## 0.11.0-dev2
 
 ### Enhancements
+
+* **Add a class for the strategy constants.** Add a class `PartitionStrategy` for the strategy constants and use the constants to replace strategy strings.
 * **Temporary Support for paddle language parameter.** User can specify default langage code for paddle with ENV `DEFAULT_PADDLE_LANG` before we have the language mapping for paddle.
 
 ### Features
