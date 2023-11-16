@@ -21,15 +21,15 @@ upstream s3 connector. This will create new files on your local.
       .. code:: shell
 
         unstructured-ingest \
-            s3 \
-            --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
-            --anonymous \
-            --output-dir s3-small-batch-output-to-pinecone \
-            --num-processes 2 \
-            --verbose \
+            local \
+            --input-path example-docs/book-war-and-peace-1225p.txt \
+            --output-dir local-to-pinecone \
             --strategy fast \
             --chunk-elements \
             --embedding-provider <an unstructured embedding provider, ie. langchain-huggingface> \
+            --num-processes 2 \
+            --verbose \
+            --work-dir "<directory for intermediate outputs to be saved>" \
             pinecone \
             --api-key <your pinecone api key here> \
             --index-name <your index name here, ie. ingest-test> \
@@ -45,15 +45,15 @@ upstream s3 connector. This will create new files on your local.
 
         command = [
           "unstructured-ingest",
-          "s3",
-          "--remote-url", "s3://utic-dev-tech-fixtures/small-pdf-set/",
-          "--anonymous",
-          "--output-dir", "s3-small-batch-output-to-pinecone",
-          "--num-processes", "2",
-          "--verbose",
+          "local",
+          "--input-path", "example-docs/book-war-and-peace-1225p.txt",
+          "--output-dir", "local-to-pinecone",
           "--strategy", "fast",
           "--chunk-elements",
           "--embedding-provider", "<an unstructured embedding provider, ie. langchain-huggingface>",
+          "--num-processes", "2",
+          "--verbose",
+          "--work-dir", "<directory for intermediate outputs to be saved>",
           "pinecone",
           "--api-key", "<your pinecone api key here>",
           "--index-name", "<your index name here, ie. ingest-test>",
