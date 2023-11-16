@@ -12,16 +12,15 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 # As an example we're using the s3 source connector,
 # however ingesting from any supported source connector is possible.
 PYTHONPATH=. ./unstructured/ingest/main.py \
-        s3 \
-        --remote-url "<s3 URL to ingest from, ie: s3://utic-dev-tech-fixtures/small-pdf-set/" \
-        --anonymous \
-        --output-dir s3-small-batch-output-to-pinecone \
-        --num-processes 2 \
-        --verbose \
+        local \
+        --input-path example-docs/book-war-and-peace-1225p.txt \
+        --output-dir local-to-pinecone \
         --strategy fast \
         --chunk-elements \
-        --chunk-multipage-sections \
-        --embedding-provider "<an unstructured embedding provider, ie. langchain-huggingface>" \
+        --embedding-provider <an unstructured embedding provider, ie. langchain-huggingface> \
+        --num-processes 2 \
+        --verbose \
+        --work-dir "<directory for intermediate outputs to be saved>" \
         pinecone \
         --api-key "<Pinecone API Key to write into a Pinecone index>" \
         --index-name "<Pinecone index name, ie: ingest-test>" \
