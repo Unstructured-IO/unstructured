@@ -24,7 +24,8 @@ jobs:
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     steps:
-    - uses: ./.github/actions/create-cache.yml
+    - uses: actions/checkout@v3
+    - uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -63,7 +64,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      uses: ./.github/actions/create-cache.yml
+      uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Lint
@@ -101,7 +102,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      uses: ./.github/actions/create-cache.yml
+      uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Test
@@ -144,7 +145,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      uses: ./.github/actions/create-cache.yml
+      uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Test
@@ -183,7 +184,7 @@ jobs:
         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}-base
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      uses: ./.github/actions/create-cache.yml
+      uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Test
@@ -246,7 +247,7 @@ jobs:
     needs: [setup]
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/create-ingest-cache.yml
+      - uses: ./.github/actions/create-ingest-cache
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -280,7 +281,7 @@ jobs:
         fail-on-cache-miss: true
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      uses: ./.github/actions/create-ingest-cache.yml
+      uses: ./.github/actions/create-ingest-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup docker-compose
@@ -372,7 +373,7 @@ jobs:
         fail-on-cache-miss: true
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      uses: ./.github/actions/create-ingest-cache.yml
+      uses: ./.github/actions/create-ingest-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup docker-compose
@@ -431,7 +432,7 @@ jobs:
         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      uses: ./.github/actions/create-cache.yml
+      uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Set up flag for running Unstructured API unit tests
@@ -501,7 +502,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Setup virtual environment (no cache hit)
         if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-        uses: ./.github/actions/create-ingest-cache.yml
+        uses: ./.github/actions/create-ingest-cache
         with:
           python-version: ${{ matrix.python-version }}
       - name: Test Dockerfile
