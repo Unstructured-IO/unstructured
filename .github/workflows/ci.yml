@@ -25,6 +25,8 @@ jobs:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     steps:
     - uses: ./.github/actions/create-cache.yml
+      with:
+        python-version: ${{ matrix.python-version }}
 
   check-deps:
     strategy:
@@ -62,6 +64,8 @@ jobs:
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       uses: ./.github/actions/create-cache.yml
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Lint
       run: |
         source .venv/bin/activate
@@ -98,6 +102,8 @@ jobs:
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       uses: ./.github/actions/create-cache.yml
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
@@ -139,6 +145,8 @@ jobs:
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       uses: ./.github/actions/create-cache.yml
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
@@ -176,6 +184,8 @@ jobs:
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       uses: ./.github/actions/create-cache.yml
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
@@ -237,6 +247,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/create-ingest-cache.yml
+        with:
+          python-version: ${{ matrix.python-version }}
 
 
   test_ingest_src:
@@ -269,6 +281,8 @@ jobs:
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       uses: ./.github/actions/create-ingest-cache.yml
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Setup docker-compose
       uses: KengoTODA/actions-setup-docker-compose@v1
       with:
@@ -359,6 +373,8 @@ jobs:
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       uses: ./.github/actions/create-ingest-cache.yml
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Setup docker-compose
       uses: KengoTODA/actions-setup-docker-compose@v1
       with:
@@ -416,6 +432,8 @@ jobs:
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       uses: ./.github/actions/create-cache.yml
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Set up flag for running Unstructured API unit tests
       run: |
         # NOTE: Change env `SKIP_API_UNIT_FOR_BREAKING_CHANGE` to true if there is a breaking change in Unstructured repo that will break unstructured api unit tests
@@ -484,6 +502,8 @@ jobs:
       - name: Setup virtual environment (no cache hit)
         if: steps.virtualenv-cache.outputs.cache-hit != 'true'
         uses: ./.github/actions/create-ingest-cache.yml
+        with:
+          python-version: ${{ matrix.python-version }}
       - name: Test Dockerfile
         run: |
           source .venv/bin/activate
