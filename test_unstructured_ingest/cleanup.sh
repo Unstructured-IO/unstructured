@@ -3,7 +3,7 @@
 
 function cleanup_dir() {
   # NOTE(crag): for developers that want to always clean up .json outputs, etc., set
-  # UNSTRUCTURED_CLEANUP_DEV_FIXTURES=1
+  # export UNSTRUCTURED_CLEANUP_DEV_FIXTURES=1
     if [ "$CI" != "true" ] && \
        [ -n "$UNSTRUCTURED_CLEANUP_DEV_FIXTURES" ] && \
        [ "$UNSTRUCTURED_CLEANUP_DEV_FIXTURES" != "0" ] ; then
