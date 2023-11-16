@@ -4,7 +4,9 @@
 function cleanup_dir() {
   # NOTE(crag): for developers that want to always clean up .json outputs, etc., set
   # UNSTRUCTURED_CLEANUP_DEV_FIXTURES=1
-  if [ "$CI" != "true" ] && [ -z "$UNSTRUCTURED_CLEANUP_DEV_FIXTURES" ] ; then
+    if [ "$CI" != "true" ] && \
+       [ -n "$UNSTRUCTURED_CLEANUP_DEV_FIXTURES" ] && \
+       [ "$UNSTRUCTURED_CLEANUP_DEV_FIXTURES" != "0" ] ; then
     return 0
   fi
   local dir_to_cleanup="${1}"
