@@ -49,6 +49,9 @@ HEADER_OR_FOOTER_TAGS: Final[List[str]] = ["header", "footer"]
 SECTION_TAGS: Final[List[str]] = ["div", "pre"]
 
 
+# -- HTML-specific document-elements and methods -------------------------------------------------
+
+
 class TagsMixin:
     """Mixin that allows a class to retain tag information."""
 
@@ -99,6 +102,27 @@ class HTMLListItem(TagsMixin, ListItem):
 
 class HTMLTable(TagsMixin, Table):
     """NarrativeText with tag information"""
+
+
+def has_table_ancestor(element: TagsMixin) -> bool:
+    """Checks to see if an element has ancestors that are table elements. If so, we consider
+    it to be a table element rather than a section of narrative text."""
+    return any(ancestor in TABLE_TAGS for ancestor in element.ancestortags)
+
+
+def in_header_or_footer(element: TagsMixin) -> bool:
+    """Checks to see if an element is contained within a header or a footer tag."""
+    if any(ancestor in HEADER_OR_FOOTER_TAGS for ancestor in element.ancestortags):
+        return True
+    return False
+
+
+def is_table(element: TagsMixin) -> bool:
+    """Checks to see if an element is a table"""
+    return element.tag in TABLE_TAGS
+
+
+# -- HTML element-tree processing ----------------------------------------------------------------
 
 
 class HTMLDocument(XMLDocument):
@@ -615,24 +639,6 @@ def _has_adjacent_bulleted_spans(
         )
         if all_spans and _is_bulleted:
             return True
-    return False
-
-
-def has_table_ancestor(element: TagsMixin) -> bool:
-    """Checks to see if an element has ancestors that are table elements. If so, we consider
-    it to be a table element rather than a section of narrative text."""
-    return any(ancestor in TABLE_TAGS for ancestor in element.ancestortags)
-
-
-def is_table(element: TagsMixin) -> bool:
-    """Checks to see if an element is a table"""
-    return element.tag in TABLE_TAGS
-
-
-def in_header_or_footer(element: TagsMixin) -> bool:
-    """Checks to see if an element is contained within a header or a footer tag."""
-    if any(ancestor in HEADER_OR_FOOTER_TAGS for ancestor in element.ancestortags):
-        return True
     return False
 
 
