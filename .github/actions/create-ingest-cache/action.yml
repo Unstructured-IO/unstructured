@@ -16,7 +16,7 @@ runs:
       with:
         path: |
           nltk_data
-          .venv-base
+          .venv
         key: unstructured-${{ runner.os }}-${{ inputs.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
