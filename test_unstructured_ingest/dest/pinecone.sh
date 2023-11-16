@@ -18,9 +18,9 @@ fi
 
 RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
 
-PINECONE_ENVIRONMENT="gcp-starter"
+PINECONE_ENVIRONMENT="us-east1-gcp"
 PINECONE_INDEX="ingest-test-$RANDOM_SUFFIX"
-PINECONE_PROJECT_ID="bfa06d5"
+PINECONE_PROJECT_ID="art8iaj"
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -58,14 +58,12 @@ function cleanup {
 
 trap cleanup EXIT
 
-
-# Create index
 echo "Creating index $PINECONE_INDEX"
 create_attempt=0
-create_sleep_amount=15
+create_sleep_amount=10
 response_code=999
 
-while [ "$response_code" -ge 400 ] && [ "$create_attempt" -lt 8 ]; do
+while [ "$response_code" -ge 400 ] && [ "$create_attempt" -lt 3 ]; do
   create_attempt=$((create_attempt+1))
   echo "attempt $create_attempt for index creation"
   response_code=$(curl \
