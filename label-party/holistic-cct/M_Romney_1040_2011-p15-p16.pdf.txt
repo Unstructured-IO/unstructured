@@ -1,0 +1,94 @@
+SCHEDULE SE (Form 1040)
+Department of the Treasury Internal Revenue Service (99)
+Self-Employment Tax
+Attach to Form 1040 or Form 1040NR. See separate instructions.
+OMB No. 1545-0074
+2011
+Attachment Sequence No. 17
+Name of person with self-employment income (as shown on Form 1040) WILLARD M ROMNEY
+Social security number of person with selfemployment income
+Before you begin: To determine if you must file Schedule SE, see the instructions.
+May I Use Short Schedule SE or Must I Use Long Schedule SE?
+Note. Use this flowchart only if you must file Schedule SE. If unsure, see Who Must File Schedule SE in the instructions.
+Did you receive wages or tips in 2011?
+No
+Are you a minister, member of a religious order, or Christian Science practitioner who received IRS approval not to be taxed on earnings from these sources, but you owe self-employment tax on other earnings?
+No
+Are you using one of the optional methods to figure your net earnings (see instructions)?
+No
+Did you receive church employee income (see instructions) reported on Form W-2 of $108.28 or more?
+No
+You may use Short Schedule SE below
+Yes
+Yes
+Yes
+No
+Yes
+Was the total of your wages and tips subject to social security or railroad retirement (tier 1) tax plus your net earnings from self-employment more than $106,800?
+No
+Did you receive tips subject to social security or Medicare tax that you did not report to your employer?
+No
+Did you report any wages on Form 8919, Uncoilected Social Security and Medicare Tax on Wages?
+You must use Long Schedule SE on page 2
+Yes
+Yes
+Yes
+Section A - Short Schedule SE. Caution. Read above to see if you can use Short Schedule SE.
+1a Net farm profit or (loss) from Schedule F, line 34, and farm partnerships, Schedule K-1 (Form 1065), box 14,code A 1a
+b If you received social security retirement or disability benefits, enter the amount of Conservation Reserve Program payments included on Schedule F, line 4b, or listed on Schedule K-1 (Form 1065), box 20, code Y 1b ( )
+2 Net profit or (loss) from Schedule C, line 31; Schedule C-EZ, line 3; Schedule K-1 (Form 1065), box 14, code A (other than farming); and Schedule K-1 (Form 1065-B), box 9, code J1. Ministers and members of religious orders, see instructions for types of income to report on this line. See instructions for other income to report SEE STATEMENT 19 2 450,740.
+3 Combine lines 1a, 1b, and 2 3 450,740.
+4 Multiply line 3 by 92.35% (.9235). If less than $400, you do not owe self-employment tax; do not file this schedule unless you have an amount on line 1b 4 416,258.
+Note. If line 4 is less than $400 due to Conservation Reserve Program payments on line 1b, see instructions.
+5 Self-employment tax. If the amount on line 4 is: $106,800 or less, multiply line 4 by 13.3% (.133). Enter the result here and on Form 1040, line 56, or Form 1040NR, line 54 More than $106,800, multiply line 4 by 2.9% (.029). Then, add $11,107.20 to the result. Enter the total here and on Form 1040, line 56, or Form 1040NR, line 54 5 23,179.
+6 Deduction for employer-equivalent portion of self-employment tax. If the amount on line 5 is: $14,204.40 or less, multiply line 5 by 57.51% (.5751) More than $14,204.40 multiply line 5 by 50% (.50) and add $1,067 to the result. Enter the result here and on Form 1040, line 27, or Form 1O40NR, line 27 6 12,657.
+For Paperwork Reduction Act Notice, see your tax return instructions.
+Schedule SE (Form 1040) 2011
+JSA 1A3000 2.000
+Form 1116
+Department of the Treasury Internal Revenue Service (99)
+Foreign Tax Credit (Individual, Estate, or Trust)
+Attach to Form 1040, 4O40NR, 1041, or 990-T.
+See separate instructions.
+OMB No. 1845-0121
+2011
+Attachment Sequence No. 19
+Name WILLARD M ROMNEY  ANN D ROMNEY
+Identifying number as shown on page 1 of your tax return
+Use a separate Form 1116 for each category of income listed below. See Categories of Income in the instructions. Check only one box on each Form 1116. Report all amounts in U.S. dollars except where specified in Part II below.
+a x Passive category income c Section 901(j) income e Lump-sum distributions b General category income d Certain income re-sourced by treaty
+f Resident of (name of country) UNITED STATES
+Note: If you paid taxes to only one foreign country or U.S. possession, use column A in Part I and line A in Part II. If you paid taxes to more than one foreign country or U.S. possession, use a separate column and line for each country or possession.
+Part I Taxable Income or Loss From Sources Outside the United States (for Category Checked Above)
+Foreign Country or U.S. Possession Total (Add cols. A, B, and C.) 
+A B C
+g Enter the name of the foreign country or U.S. possession VARIOUS COUNTRIES
+1a Gross income from sources within country shown above and of the type checked above (see instructions) 3,505,188. 1a 3,505,188.
+b Check if line 1a is compensation for personal services as an employee, your total compensation from all sources is $250,000 or more, and you used an alternative basis to determine its source (see instructions). SEER SOURCING STATEMENT
+Deductions and losses (Caution: See instructions):
+2 Expenses definitely related to the income on line 1a (attach statement) 1,074,011.
+3 Pro rata share of other deductions not definitely related: a Certain itemized deductions or standard deduction (see instructions) 1,541,905.
+b Other deductions (attach statement) 12,657.
+c Add lines 3a and 3b 1,554,562.
+d Gross foreign source income (see instructions) 3,505,188.
+e Gross income from all sources (see instructions) 18,215,457.
+f Divide line 3d by line 3e (see instructions) 0.19242932
+g Multiply line 3c by line 3f 299,143.
+4 Pro rata share of interest expense (see instructions): a Home mortgage interest (use worksheet on page 14 of the instructions)
+b Other interest expense
+5 Losses from foreign sources
+6 Add lines 2, 3g, 4a, 4b, and 5 1,373,154. 6 1,373,154.
+7 Subtract line 6 from line 1a. Enter the result here and on line 15, page 2 7 2,132,034.
+Part II Foreign Taxes Paid or Accrued (see instructions)
+Country Credit is claimed for taxes (you must check one) (h) x Paid (i) Accrued 
+Foreign taxes paid or accrued
+In foreign currency In U.S. dollars
+Taxes withheld at source on: (n) Other foreign taxes paid or accrued Taxes withheld at source on: (r) Other foreign taxes paid or accrued (s) Total foreign taxes paid or accrued (add cols. (o) through (r))
+(j) Date paid or accrued (k) Dividends (l) Rents and royalties (m) Interest (o) Dividends (p) Rents and royalties (q) Interest
+A 12/31/2011 83,853. 83,853.
+B
+C
+8 Add lines A through C, column (s). Enter the total here and on line 9, page 2 8 83,853.
+For Paperwork Reduction Act Notice, see instructions.
+Form 1116 (2011)
+JSA 1X1410 2.000

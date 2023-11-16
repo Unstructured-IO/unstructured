@@ -1,0 +1,46 @@
+Standalone Consolidated
+Audited Audited
+Particulars As at 31.03.2018 As at 31.03.2017 As at 31.03.2018 As at 31.03.2017
+A. EQUITY AND LIABILITIES
+1. Shareholders' funds 
+(a) Share capital 15,640 15,634 15,640 15,634
+(b) Reserves and surplus 4,99,382 4,12,840 5,00,811 4,14,139 
+(c) Money received against share warrants - - - -
+Sub-total - Shareholders' funds 5,15,022 4,28,474 5,16,451 4,29,773
+2. Share application money pending allotment - 18 - 18
+3. Minority interest - - 38 200
+4. Non-current liabilities
+(a) Long-term borrowings 20,54,516 15,10,457 20,54,516 15,10,457
+(b) Deferred tax labilities (net) - - - -
+(c) Other long-term liabilities 12,972 19,619 12,972 19,619
+(d) Long-term provisions 65,558 58,621 65,554 58,621
+Sub-total - Non-current liabilities 21,33,046 15,88,697 21,33,042 15,88,697
+5. Current liabilities
+(a) Short-term borrowings 3,68,237 3,26,896 3,68,237 323,046
+(b) Trade payables 36,062 27,513 40,386 29,869
+(c) Current maturities of Long-term borrowings 7,67,474 5,73,556 7,67,474 5,73,556
+(d) Other current liabilities 1,19,740 1,05,682 1,20,280 1,05,964
+(e) Short-term provisions 10,876 8,644 10,929 8,700
+Sub-total - Current liabilities 13,02,389 10,42,291 13,07,306 10,41,135
+TOTAL - EQUITY AND LIABILITIES 39,50,457 30,59,480 139,56,837 30,59,823
+B. ASSETS
+1. Non-current assets
+(a) Fixed assets 16,076 14,004 16,344 14,272
+(b) Goodwill on consolidation - - 701 701
+(c) Non-current investments 23,827 19,248 17,516 13,436
+(d) Deferred tax assets (net) 33,955 31,516 33,986 31,538
+(e) Receivable under Financing Activity 25,98,947 19,93,544 25,98,019 19,93,544
+(f) Long-term foans and advances 18,232 11,724 19,054 12,390
+(g) Trade Receivables - - 1 1
+(h) Other non-current assets 52,405 52,997 53,218 52,997
+Sub-total - Non-current assets 27,43,442 21,23,033 27,38,839 21,18,879
+2. Current assets
+(a) Current investments 8,072 4,610 8,168 4,775
+(b) Inventories - - - -
+(c) Trade receivables - - 3,062 2,184
+(d) Cash and cash equivalents 39,251 47,064 44,821 49,376
+(e) Receivable under Financing Activity 11,21,168 8,47,904 11,21,168 8,47,637
+(f) Short-term loans and advances 2,973 5,110 5,153 4,995
+(g) Other current assets 35,551 31,759 35,626 31,977
+Sub-total - Current assets 12,07,015 9,36,447 12,17,998 9,40,944
+TOTAL - ASSETS 39,50,457 30,59,480 39,56,837 30,59,823

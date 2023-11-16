@@ -1,0 +1,62 @@
+EGLE
+MICHIGAN DEPARTMENT OF ENVIRONMENT, GREAT LAKES, AND ENERGY
+Liquid Industrial B-Products Example Shipping Document
+STRAIGHT BILL OF LADING
+ORIGINAL - NOT NEGOTIABLE
+Bill of Lading Number:
+FROM:
+1. Shipper / Generator Location
+A Top Generator 567 Oak Drive Carterville, MI 48222 Emergency Response Phone: 
+2. Shipper / Generator Mailing Address (if different) Phone No.: Generator ID (if applicable):
+TO:
+3. Consignee / Facility Name and Address Best Disposal 123 Main Street Smithtown, MI 48333
+4. Consignee / Facility ID# MIK23321456 Phone No.:
+9. Notes:
+DELIVERED BY:
+5. Carrier/Transporter Name and Address A Great Transporter 123 Elm Jonesville, MI 48222 Phone No.:
+6. Carrier Transporter ID#: MIK987789987
+7a. HM 7b. BASIC DESCRIPTION UN or NA number, Proer Shipping Name, Hazard Class, Packing Group (if any) 8. Containers 9. Total Quantity 10. Unit Wt./Vol. 11. other
+No. Type
+1. Antifreeze 40 DM 2200 g Gallon
+2.
+3.
+4.
+18. Special Handling Instructions and Additional Information:
+By signing below, Shipper hereby declares that the contents of this consignment are fully and accurately described above by the proper shipping name and are classified, packaged, marked and labelled/placarded, and are in all respects in proper condition for transport according to applicable governmental regulations. As shipper, I hereby certify that the liquid industrial by-product(s) are fully and accurately described on this shipping document, in proper condition for transport, and that the information contained on the shipping document is factual.
+SHIPPER (Print Employee Name)
+Sam Redding
+Signature
+Sam Redding
+Month
+5
+Day
+16
+Year
+16
+Page 1 of 1
+EGLE
+MICHIGAN DEPARTMENT OF ENVIRONMENT, GREAT LAKES, AND ENERGY
+Liquid Industrial B-Products Example Shipping Document
+X
+Carrier / Transporter (Print Driver Name)
+John James Doe
+Signature
+John James Doe
+Month
+5
+Day
+16
+Year
+16
+Consignee / Facility Acknowledgement of Receipt (Print Name)
+Jane Smith
+Signature
+Jane Smith
+Month
+5
+Day
+26
+Year
+16
+White Copy: Consignee/Facility Original ● Yellow Copy: Consignee to Shipper ● Pink Copy: Carrier/Transporter ● Green Copy: Shipper Initial Copy
+Page 1 of 1

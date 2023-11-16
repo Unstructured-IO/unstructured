@@ -1,0 +1,6045 @@
+0000013156 false --12-31 FY 2021 true true P5Y P3Y P5Y P3Y P5Y P5Y 0.6112 0.7098 0.6874 0.7697 0.0048 0.0027 0.0098 0.0139 P2Y4M6D P1Y10M13D P1Y4M6D P3Y9M29D P3Y5M12D 0000013156 2021-01-01 2021-12-31 iso4217:USD 0000013156 2021-06-30 xbrli:shares 0000013156 2022-03-28 0000013156 2021-12-31 0000013156 2020-12-31 iso4217:USD xbrli:shares 0000013156 glxz:LicensingFeesMember 2021-01-01 2021-12-31 0000013156 glxz:LicensingFeesMember 2020-01-01 2020-12-31 0000013156 2020-01-01 2020-12-31 0000013156 us-gaap:CommonStockMember 2019-12-31 0000013156 us-gaap:AdditionalPaidInCapitalMember 2019-12-31 0000013156 us-gaap:RetainedEarningsMember 2019-12-31 0000013156 2019-12-31 0000013156 us-gaap:CommonStockMember 2020-01-01 2020-12-31 0000013156 us-gaap:AdditionalPaidInCapitalMember 2020-01-01 2020-12-31 0000013156 us-gaap:RetainedEarningsMember 2020-01-01 2020-12-31 0000013156 us-gaap:AccumulatedOtherComprehensiveIncomeMember 2020-01-01 2020-12-31 0000013156 us-gaap:CommonStockMember 2020-12-31 0000013156 us-gaap:AdditionalPaidInCapitalMember 2020-12-31 0000013156 us-gaap:RetainedEarningsMember 2020-12-31 0000013156 us-gaap:AccumulatedOtherComprehensiveIncomeMember 2020-12-31 0000013156 us-gaap:AdditionalPaidInCapitalMember 2021-01-01 2021-12-31 0000013156 us-gaap:RetainedEarningsMember 2021-01-01 2021-12-31 0000013156 us-gaap:AccumulatedOtherComprehensiveIncomeMember 2021-01-01 2021-12-31 0000013156 us-gaap:CommonStockMember 2021-01-01 2021-12-31 0000013156 us-gaap:CommonStockMember 2021-12-31 0000013156 us-gaap:AdditionalPaidInCapitalMember 2021-12-31 0000013156 us-gaap:RetainedEarningsMember 2021-12-31 0000013156 us-gaap:AccumulatedOtherComprehensiveIncomeMember 2021-12-31 0000013156 2019-05-06 2019-05-06 0000013156 glxz:TriangulumPartnersLimitedLiabilityCompanyMember 2019-05-06 2019-05-06 0000013156 glxz:TriangulumShareRedemptionConsiderationObligationMember 2019-05-06 0000013156 glxz:TriangulumShareRedemptionConsiderationObligationMember glxz:SettlementAgreementMember 2021-11-15 2021-11-15 0000013156 us-gaap:OtherIntangibleAssetsMember glxz:ProgressiveGamesPartnersLLCMember 2020-08-21 2020-08-21 0000013156 us-gaap:OtherIntangibleAssetsMember glxz:ProgressiveGamesPartnersLLCMember 2020-08-21 xbrli:pure 0000013156 glxz:ProgressiveGamesPartnersLLCMember 2020-08-21 0000013156 us-gaap:CustomerRelationshipsMember glxz:ProgressiveGamesPartnersLLCMember 2020-08-21 2020-08-21 0000013156 glxz:ProgressiveGamesPartnersLLCMember 2021-12-31 0000013156 glxz:ProgressiveGamesPartnersLLCMember 2020-12-31 0000013156 glxz:ProgressiveGamesPartnersLLCMember 2021-05-07 2021-05-07 0000013156 2020-03-12 2020-03-12 0000013156 glxz:NevadaStateBankMember glxz:PaycheckProtectionProgramMember 2020-11-21 0000013156 glxz:NevadaStateBankMember glxz:MainStreetPriorityLoanFacilityMember 2020-10-26 0000013156 srt:MaximumMember 2021-12-31 0000013156 srt:MinimumMember 2021-01-01 2021-12-31 0000013156 srt:MaximumMember 2021-01-01 2021-12-31 0000013156 us-gaap:PatentsMember srt:MinimumMember 2021-01-01 2021-12-31 0000013156 us-gaap:PatentsMember srt:MaximumMember 2021-01-01 2021-12-31 0000013156 us-gaap:CustomerRelationshipsMember srt:MinimumMember 2021-01-01 2021-12-31 0000013156 us-gaap:CustomerRelationshipsMember srt:MaximumMember 2021-01-01 2021-12-31 0000013156 us-gaap:TrademarksMember srt:MinimumMember 2021-01-01 2021-12-31 0000013156 us-gaap:TrademarksMember srt:MaximumMember 2021-01-01 2021-12-31 0000013156 us-gaap:NoncompeteAgreementsMember 2021-01-01 2021-12-31 0000013156 us-gaap:SoftwareDevelopmentMember 2021-01-01 2021-12-31 glxz:Segment 0000013156 glxz:NorthAmericaAndCaribbeanMember 2021-01-01 2021-12-31 0000013156 glxz:NorthAmericaAndCaribbeanMember 2020-01-01 2020-12-31 0000013156 us-gaap:EMEAMember 2021-01-01 2021-12-31 0000013156 us-gaap:EMEAMember 2020-01-01 2020-12-31 0000013156 us-gaap:AccountsReceivableMember 2021-12-31 0000013156 us-gaap:AccountsReceivableMember 2020-12-31 0000013156 us-gaap:FurnitureAndFixturesMember 2021-12-31 0000013156 us-gaap:FurnitureAndFixturesMember 2020-12-31 0000013156 us-gaap:VehiclesMember 2021-12-31 0000013156 us-gaap:VehiclesMember 2020-12-31 0000013156 glxz:OfficeAndComputerEquipmentMember 2021-12-31 0000013156 glxz:OfficeAndComputerEquipmentMember 2020-12-31 0000013156 us-gaap:LeaseholdImprovementsMember 2021-12-31 0000013156 us-gaap:LeaseholdImprovementsMember 2020-12-31 0000013156 glxz:PropertyPlantAndEquipmentExcludingAssetsLeasedToOthersMember 2021-01-01 2021-12-31 0000013156 glxz:PropertyPlantAndEquipmentExcludingAssetsLeasedToOthersMember 2020-01-01 2020-12-31 0000013156 2011-10-01 2011-10-31 0000013156 us-gaap:PatentsMember 2021-12-31 0000013156 us-gaap:PatentsMember 2020-12-31 0000013156 us-gaap:CustomerRelationshipsMember 2021-12-31 0000013156 us-gaap:CustomerRelationshipsMember 2020-12-31 0000013156 us-gaap:TrademarksMember 2021-12-31 0000013156 us-gaap:TrademarksMember 2020-12-31 0000013156 us-gaap:NoncompeteAgreementsMember 2021-12-31 0000013156 us-gaap:NoncompeteAgreementsMember 2020-12-31 0000013156 us-gaap:SoftwareDevelopmentMember 2021-12-31 0000013156 us-gaap:SoftwareDevelopmentMember 2020-12-31 glxz:Satellite 0000013156 stpr:WA 2021-12-31 0000013156 2021-09-20 2021-09-20 0000013156 2021-09-21 2021-09-21 0000013156 srt:ScenarioForecastMember 2022-01-01 2023-12-31 0000013156 us-gaap:SellingGeneralAndAdministrativeExpensesMember 2021-01-01 2021-12-31 0000013156 glxz:NetIncomeMember 2021-01-01 2021-12-31 0000013156 glxz:SupplementalCashFlowInformationMember 2021-01-01 2021-12-31 0000013156 glxz:FortressCreditCorporationMember 2021-12-31 0000013156 glxz:ZBNADbaNevadaStateBankAndCreditAgreementMember 2020-12-31 0000013156 glxz:MainStreetPriorityLoanFacilityMember 2020-12-31 0000013156 glxz:TriangulumShareRedemptionConsiderationObligationMember 2020-12-31 0000013156 glxz:VehicleNotesPayableMember 2020-12-31 0000013156 glxz:InsuranceNotesPayableMember 2021-12-31 0000013156 glxz:InsuranceNotesPayableMember 2020-12-31 0000013156 glxz:TriangulumShareRedemptionConsiderationObligationMember 2019-05-06 2019-05-06 0000013156 glxz:TriangulumShareRedemptionConsiderationObligationMember 2020-05-05 2020-05-05 0000013156 glxz:TriangulumShareRedemptionConsiderationObligationMember 2021-05-06 2021-05-06 0000013156 glxz:TriangulumShareRedemptionConsiderationObligationMember glxz:SettlementAgreementMember 2021-10-07 2021-10-07 0000013156 glxz:TriangulumShareRedemptionConsiderationObligationMember glxz:SettlementAgreementMember 2021-10-07 0000013156 glxz:ZionsBancorporationNADbaNevadaStateBankAndCreditAgreementMember glxz:TermLoanMember 2021-12-31 0000013156 glxz:ZionsBancorporationNADbaNevadaStateBankAndCreditAgreementMember us-gaap:RevolvingCreditFacilityMember 2021-12-31 0000013156 glxz:TermLoanMember us-gaap:RevolvingCreditFacilityMember glxz:ZBNADbaNevadaStateBankAndCreditAgreementMember 2021-11-15 2021-11-15 0000013156 glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember glxz:TermLoanMember glxz:NevadaStateBankMember 2021-03-29 0000013156 glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember us-gaap:RevolvingCreditFacilityMember glxz:NevadaStateBankMember 2021-03-29 0000013156 glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember us-gaap:RevolvingCreditFacilityMember glxz:NevadaStateBankMember 2021-03-29 2021-03-29 0000013156 glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember glxz:TermLoanMember glxz:NevadaStateBankMember 2021-03-29 2021-03-29 0000013156 glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember glxz:NevadaStateBankMember 2021-01-01 2021-12-31 0000013156 glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember glxz:LeverageRatioLessThanTwoHundredPercentageMember us-gaap:LondonInterbankOfferedRateLIBORMember glxz:NevadaStateBankMember 2021-01-01 2021-12-31 0000013156 glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember glxz:LeverageRatioTwoHundredPercentageOrMoreMember us-gaap:LondonInterbankOfferedRateLIBORMember glxz:NevadaStateBankMember 2021-01-01 2021-12-31 0000013156 glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember 2021-01-01 2021-12-31 0000013156 srt:MinimumMember glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember 2021-01-01 2021-12-31 0000013156 srt:MaximumMember glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember 2021-01-01 2021-03-31 0000013156 srt:MaximumMember glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember 2021-04-01 2021-06-30 0000013156 srt:MaximumMember glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember 2021-07-01 2021-09-30 0000013156 srt:MaximumMember glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember 2021-01-01 2021-12-31 0000013156 glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember 2021-01-01 2021-03-31 0000013156 glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember 2021-04-01 2021-06-30 0000013156 glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember 2021-07-01 2021-09-30 0000013156 glxz:AmendedAndRestatedCreditAgreementWithZionsBancorporationNADbaNevadaStateBankMember 2021-12-31 0000013156 glxz:MainStreetPriorityLoanFacilityMember glxz:NevadaStateBankMember 2021-11-15 2021-11-15 0000013156 glxz:MainStreetPriorityLoanFacilityMember glxz:NevadaStateBankMember 2021-01-01 2021-12-31 0000013156 glxz:MainStreetPriorityLoanFacilityMember glxz:NevadaStateBankMember us-gaap:LondonInterbankOfferedRateLIBORMember 2021-01-01 2021-12-31 0000013156 glxz:MainStreetPriorityLoanFacilityMember glxz:NevadaStateBankMember 2021-12-31 0000013156 glxz:SeniorSecuredTermLoanMember glxz:FortressCreditCorporationMember 2021-11-15 0000013156 glxz:SeniorSecuredTermLoanMember glxz:FortressCreditCorporationMember glxz:TriangulumPartnersLimitedLiabilityCompanyMember 2021-11-15 2021-11-15 0000013156 glxz:SeniorSecuredTermLoanMember glxz:NevadaStateBankMember 2021-11-15 2021-11-15 0000013156 glxz:SeniorSecuredTermLoanMember glxz:FortressCreditCorporationMember 2021-11-15 2021-11-15 0000013156 us-gaap:LondonInterbankOfferedRateLIBORMember glxz:FortressCreditCorporationMember glxz:SeniorSecuredTermLoanMember 2021-11-15 2021-11-15 0000013156 glxz:AchievementOfNetLeverageTargetMember us-gaap:LondonInterbankOfferedRateLIBORMember glxz:FortressCreditCorporationMember glxz:SeniorSecuredTermLoanMember 2021-11-15 2021-11-15 0000013156 us-gaap:FederalFundsEffectiveSwapRateMember glxz:FortressCreditCorporationMember glxz:SeniorSecuredTermLoanMember 2021-11-15 2021-11-15 0000013156 glxz:OneMonthAdjustedLondonInterBankOfferedRateLIBORMember glxz:FortressCreditCorporationMember glxz:SeniorSecuredTermLoanMember srt:MinimumMember 2021-11-15 2021-11-15 0000013156 glxz:OneMonthAdjustedLondonInterBankOfferedRateLIBORMember glxz:FortressCreditCorporationMember glxz:SeniorSecuredTermLoanMember srt:MaximumMember 2021-11-15 2021-11-15 0000013156 glxz:AchievementOfNetLeverageTargetMember glxz:OneMonthAdjustedLondonInterBankOfferedRateLIBORMember glxz:FortressCreditCorporationMember glxz:SeniorSecuredTermLoanMember srt:MaximumMember 2021-11-15 2021-11-15 0000013156 glxz:FortressCreditCorporationMember glxz:SeniorSecuredTermLoanMember 2021-10-01 2021-12-31 0000013156 glxz:FortressCreditCorporationMember srt:MaximumMember 2021-11-30 2021-11-30 0000013156 glxz:FortressCreditCorporationMember srt:MaximumMember country:IM 2021-11-30 2021-11-30 0000013156 glxz:FortressCreditCorporationMember srt:MaximumMember country:IM 2021-01-01 2021-12-31 0000013156 glxz:FortressCreditCorporationMember srt:MaximumMember country:IM us-gaap:SubsequentEventMember 2022-01-31 2022-01-31 0000013156 glxz:FortressCreditCorporationMember srt:MaximumMember country:IM us-gaap:SubsequentEventMember 2022-02-28 2022-02-28 0000013156 srt:ScenarioForecastMember glxz:FortressCreditCorporationMember srt:MinimumMember 2022-03-31 2022-03-31 0000013156 us-gaap:WarrantMember glxz:FortressCreditCorporationMember glxz:SeniorSecuredTermLoanMember 2021-11-15 0000013156 glxz:PromissoryNoteMember 2021-12-31 0000013156 us-gaap:CustomerConcentrationRiskMember srt:EuropeMember glxz:CustomerOneMember us-gaap:SalesRevenueNetMember 2021-01-01 2021-12-31 0000013156 us-gaap:CustomerConcentrationRiskMember srt:EuropeMember glxz:CustomerOneMember us-gaap:SalesRevenueNetMember 2020-01-01 2020-12-31 0000013156 us-gaap:CustomerConcentrationRiskMember srt:EuropeMember glxz:CustomerOneMember us-gaap:SalesRevenueNetMember 2020-12-31 0000013156 us-gaap:PendingLitigationMember 2021-01-01 2021-12-31 0000013156 us-gaap:StateAndLocalJurisdictionMember 2021-12-31 0000013156 us-gaap:StateAndLocalJurisdictionMember 2021-01-01 2021-12-31 0000013156 us-gaap:InternalRevenueServiceIRSMember srt:MinimumMember 2021-01-01 2021-12-31 0000013156 us-gaap:StateAndLocalJurisdictionMember srt:MinimumMember 2021-01-01 2021-12-31 0000013156 glxz:TwoThousandFourteenEquityIncentivePlanMember us-gaap:CommonStockMember 2021-12-31 0000013156 us-gaap:StockOptionMember 2021-01-01 2021-12-31 0000013156 us-gaap:StockOptionMember 2020-01-01 2020-12-31 0000013156 us-gaap:CommonStockMember 2020-12-31 0000013156 us-gaap:CommonStockMember 2021-01-01 2021-12-31 0000013156 us-gaap:CommonStockMember 2021-12-31 0000013156 us-gaap:CommonStockMember 2020-01-01 2020-12-31 0000013156 us-gaap:RestrictedStockMember srt:DirectorMember 2021-01-01 2021-12-31 0000013156 us-gaap:RestrictedStockMember glxz:EmployeeAndContractorMember 2021-02-17 2021-02-17 0000013156 us-gaap:RestrictedStockMember 2021-12-31 0000013156 us-gaap:SubsequentEventMember 2022-03-16 2022-03-16 0000013156 us-gaap:SubsequentEventMember 2022-03-16
+ 
+UNITED STATES
+SECURITIES AND EXCHANGE COMMISSION
+Washington, D.C. 20549
+ 
+FORM 10-K
+ 
+
+
+ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934
+
+For the fiscal year ended December 31, 2021
+
+TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934
+
+For the transition period from       to
+Commission file number: 000-30653
+ 
+
+Galaxy Gaming, Inc.
+(Exact name of small business issuer as specified in its charter)
+ 
+ 
+Nevada
+ 
+20-8143439
+(State or other jurisdiction of incorporation or organization)
+ 
+(IRS Employer Identification No.)
+ 
+6480 Cameron Street Ste. 305  Las Vegas, NV 89118
+(Address of principal executive offices)
+ 
+(702) 939-3254
+(Registrants telephone number)
+
+ 
+Securities registered under Section 12(b) of the Act:
+Title of each class
+ 
+Trading symbol
+ 
+Name of exchange on which registered
+Common stock
+ 
+GLXZ
+ 
+OTCQB marketplace
+
+ 
+Indicate by check mark if the registrant is a well-known seasoned issuer, as defined in Rule 405 of the Securities Act.    Yes      No  
+Indicate by check mark if the registrant is not required to file reports pursuant to Section 13 or Section 15(d) of the Act.     Yes      No  
+Indicate by checkmark whether the registrant (1) has filed all reports required to be filed by Section 13 or 15(d) of the Securities Exchange Act of 1934 during the preceding 12 months (or for such shorter period that the registrant was required to file such reports), and (2) has been subject to such filing requirements for the past 90 days.    Yes      No  
+Indicate by check mark whether the issuer has submitted electronically every Interactive Data File required to be submitted pursuant to Rule 405 of Regulation S-T (232.405 of this chapter) during the preceding 12 months (or for such shorter period that the registrant was required to submit such files).     Yes      No  
+Indicate by check mark whether the registrant is a large accelerated filer, an accelerated filer, a non-accelerated filer, a smaller reporting company, or an emerging growth company. See the definitions of large accelerated filer, accelerated filer, smaller reporting company, and emerging growth company in Rule 12b-2 of the Exchange Act.
+Large accelerated filer  Accelerated filer  Non-accelerated filer  Smaller reporting company  Emerging growth Company 
+If an emerging growth company, indicate by check mark if the registrant has elected not to use the extended transition period for complying with any new or revised financial accounting standard provided pursuant to Section 13(a) of the Exchange Act.  
+Indicate by check mark whether the registrant has filed a report on and attestation to its managements assessment of the effectiveness of its internal control over financial reporting under Section 404(b) of the Sarbanes-Oxley Act (15 U.S.C. 7262(b)) by the registered public accounting firm that prepared or issued its audit report.  
+Indicate by check mark whether the registrant is a shell company (as defined in Rule 12b-2 of the Exchange Act).    Yes      No  
+State the aggregate market value of the voting and non-voting common equity held by non-affiliates computed by reference to the price at which the common equity was last sold, or the average bid and asked price of such common equity, as of the last business day of the registrants second fiscal quarter. $70,923,698.
+Indicate the number of shares outstanding of each of the registrants classes of common stock, as of the latest practicable date: 23,718,968 common shares as of March 28, 2022. 
+ 
+ 
+ 
+ 
+GALAXY GAMING, INC.
+ANNUAL REPORT ON FORM 10-K FOR THE YEAR ENDED DECEMBER 31, 2021
+TABLE OF CONTENTS 
+ 
+ 
+ 
+  
+ 
+ 
+PART I
+ 
+Item 1.
+ 
+ 
+Business
+  
+4
+Item 1A.
+ 
+Risk Factors
+  
+9
+Item 1B.
+ 
+Unresolved Staff Comments
+  
+9
+Item 2.
+ 
+Properties
+  
+9
+Item 3.
+ 
+Legal Proceedings
+  
+9
+Item 4.
+ 
+Mine Safety Disclosures
+  
+9
+ 
+PART II
+ 
+Item 5.
+ 
+ 
+Market for Registrants Common Equity and Related Stockholder Matters
+  
+10
+Item 7.
+ 
+Managements Discussion and Analysis of Financial Condition and Results of Operations
+  
+12
+Item 7A.
+ 
+Quantitative and Qualitative Disclosures about Market Risk
+  
+14
+Item 8.
+ 
+Financial Statements and Supplementary Financial Information
+  
+15
+Item 9.
+ 
+Changes in and Disagreements with Accountants on Accounting and Financial Disclosure
+  
+35
+Item 9A.
+ 
+Controls and Procedures
+  
+35
+Item 9B.
+ 
+Other Information
+  
+35
+ 
+PART III
+ 
+Item 10.
+ 
+ 
+Directors, Executive Officers and Corporate Governance
+  
+36
+Item 11.
+ 
+Executive Compensation
+  
+39
+Item 12.
+ 
+Security Ownership of Certain Beneficial Owners and Management, and Related Stockholder Matters
+  
+41
+Item 13.
+ 
+Certain Relationships and Related Transactions, and Director Independence
+  
+41
+Item 14.
+ 
+Principal Accounting Fees and Services
+  
+41
+ 
+PART IV
+ 
+Item 15.
+ 
+ 
+Exhibits and Financial Statement Schedules
+  
+42
+
+ 
+ 
+ 
+2
+ 
+SPECIAL NOTE REGARDING FORWARD-LOOKING STATEMENTS
+This report contains statements that do not relate to historical or current facts but are forward-looking statements. These statements relate to analyses and other information based on forecasts of future results and estimates of amounts not yet determinable. These statements may also relate to future events or trends, our future prospects and proposed new products, services, developments or business strategies, among other things. These statements can generally (although not always) be identified by their use of terms and phrases such as anticipate, appear, believe, could, would, estimate, expect, indicate, intent, may, plan, predict, project, pursue, will continue and other similar terms and phrases, as well as the use of the future tense.
+Actual results could differ materially from those expressed or implied in our forward-looking statements. Our future financial condition and results of operations, as well as any forward-looking statements, are subject to change and to inherent known and unknown risks and uncertainties. You should not assume at any point in the future that the forward-looking statements in this report are still valid. We do not intend, and undertake no obligation, to update our forward-looking statements to reflect future events or circumstances.
+ 
+3
+ 
+PART I
+ 
+ITEM 1. BUSINESS
+BUSINESS
+Unless the context indicates otherwise, references to Galaxy Gaming, Inc., we, us, our, or the Company, refer to Galaxy Gaming, Inc., a Nevada corporation (Galaxy Gaming).
+We are an established global gaming company specializing in the design, development, acquisition, assembly, marketing and licensing of proprietary casino table games and associated technology, platforms and systems for the casino gaming industry. Casinos use our proprietary products and services to enhance their gaming operations and improve their profitability, productivity and security, as well as to offer popular cutting-edge gaming entertainment content and technology to their players. We market our products and services to online casinos worldwide and to land-based casino gaming companies in North America, the Caribbean, Central America, the United Kingdom, Europe and Africa and to cruise ship companies. We license our products and services for use solely in legalized gaming markets. We also license our content and distribute content from other companies to iGaming operators throughout the world.
+Products and Services
+Proprietary Table Games. Casinos use Proprietary Table Games together with or in lieu of other games in the public domain (e.g. Blackjack, Craps, Roulette, etc.) because of their popularity with players and to increase profitability. Typically, Proprietary Table Games are grouped into two product types referred to as Side Bets and Premium Games. Side Bets are proprietary features and wagering options typically added to public domain games such as baccarat, pai gow poker, craps and blackjack table games. Examples of our Side Bets include 21+3, Lucky Ladies and Bonus Craps. Premium Games are unique stand-alone games with their own set of rules and strategies. Examples of our Premium Games include Heads Up Hold em, High Card Flush, Cajun Stud and Three Card Poker. Generally, Premium Games generate higher revenue per table placement than the Side Bet games.
+Enhanced Table Systems. Enhanced Table Systems are electronic enhancements used on casino table games to add to player appeal and to enhance game security. An example in this category is our Bonus Jackpot System (BJS), an advanced electronic system installed on gaming tables designed to collect data by detecting player wagers and other game activities. This information is processed and used to improve casino operations by evaluating game play, to improve dealer efficiency and to reward players through the offering of jackpots and other bonusing mechanisms. Typically, the BJS system includes an electronic video display, known as TableVision, which shows game information designed to generate player interest and to promote various aspects of the game. The BJS system can also be used to network numerous gaming tables together into a common system either within a casino or through the interconnection of multiple casinos, which we refer to as our Inter-Casino Link System. In 2022, we plan to introduce a new table system called Triton. Triton is designed to be a platform on which we can build a suite of enhanced table game features and services, the first of which will be the progressive jackpot wagers currently provided by BJS. Triton is built using off-the-shelf electronic components and software in order to minimize field service issues.
+iGaming. On August 21, 2020, we completed the acquisition of 100% of the member interests in Progressive Games Partners, LLC (PGP). PGP holds the exclusive worldwide rights to a number of games titles (including ours) for relicensing to operators of online gaming systems principally in Europe, the United Kingdom, and, more recently, the United States. Prior to the acquisition, PGP had been the exclusive distributor of our games to the online gaming sector; by making the acquisition of PGP, we effectively eliminated the distributor fee that PGP charged us, and we now also receive the revenue PGP earns on the content of other licensors (to whom we pay a royalty fee). In many cases, these online operators provide white label gaming infrastructure for many separate online casino brands with the result that the content that PGP licenses can appear on hundreds of online gaming sites. PGPs contracts with online operators prohibit those operators from deploying the content in markets where it is not legal to do so.
+Product Strategy. In the physical casino market, we have a three-dimensional growth strategy. First, we seek to increase the number of casinos we serve with our games. Second, within a casino, we seek to increase the number of tables on which we have placements. Our current product placements are concentrated around blackjack, and we have developed side bets and other game content to address other table game categories such as baccarat, roulette and craps. Finally, by adding our enhanced systems to tables that already have our content, we can increase the billable units per table. For example, on a blackjack table that has one of our side bets we can add a second side bet and a progressive jackpot for each side bet thereby increasing the billable units for that table from one to four. As of December 31, 2021, we served 515 casinos worldwide, had content on 4,500 tables in those casinos and had a total of 6,709 billable units in those casinos.
+Our strategy in iGaming is similar in that it seeks to have our content on as many online tables as possible. However, the structure of the iGaming business is different in that many of our customers are iGaming platform providers that offer a turnkey online gaming solution to online operators who deploy those online offerings directly to the gaming player. To a lesser extent, we license our content to online operators who have their own platform and serve gaming customers directly. The online analog to a casino is called a skin
+4
+where a skin is a separately branded and marketed URL. Online operators often offer multiple skins targeting different markets and using different themes. Our strategy is 1) to have our content on as many skins as possible and 2) to have as many of our games as possible on each skin. As of December 31, 2021, we had content on over 1,000 skins worldwide and approximately four to six game placements on each of those skins. Finally, we expect that additional states in the U.S. will legalize online gaming, allowing our online clients to offer games to a significantly bigger audience.
+Recurring Revenue and Gross Profit
+A majority of our clients contract with us to use our products and services on a month-to-month basis with typically a 3045 day termination notice requirement. We invoice our clients monthly, either in advance for unlimited use or in arrears for actual use, depending on the product or contract terms. Such recurring revenues accounted for substantially all of our total revenues in 2021 and 2020. Our license revenues have few direct costs thereby generating high gross profit margins. We do not report gross profit in our statements of operations included in this report. Instead, gross profit would be comparable to revenues minus cost of ancillary products and assembled components, both of which are presented in our statements of operations.
+For more information about our revenues, operating income and assets, see Item 7. Managements Discussion and Analysis of Financial Condition and Results of Operations and Item 8. Financial Statements and Supplementary Financial Information included in this report.
+STRATEGY
+Our long-term business strategy focuses on increasing our value to casino clients by offering them enhanced services and support, and by producing innovative products and game play methodologies that their players enjoy. We believe that by increasing the value of our products and services to clients, we can continue to build our recurring revenues in both existing and new markets. To achieve this objective, we employ the following strategies:
+ 
+
+Expand our portfolio of services, products and technologies;
+
+
+ 
+
+Increase our per unit revenues by leveraging our Enhanced Table Systems;
+
+
+ 
+
+Expand the number of markets we serve;
+
+
+ 
+
+Grow our iGaming content and partner base; and
+
+
+ 
+
+Promote the use of our game content in adjacent gaming markets.
+
+Expand our portfolio of services, products and technologies. Our strategy is to be an important vendor to casino operators by offering a complete and comprehensive portfolio of services, games, products, systems, technologies and methodologies for casino table games. We continuously develop and/or seek to acquire new proprietary table games to complement our existing offerings and to extend our penetration of proprietary table games on the casino floor. We believe we have a significant opportunity to replicate the success we have had with blackjack side bets by developing content for the other significant public domain casino games of baccarat, roulette and craps.
+Increase our revenue per unit by leveraging our Enhanced Table Systems. Our Enhanced Table Systems are placed on tables where we already have our side bet or premium game content deployed. By adding our Enhanced Table Systems, we significantly increase the revenue we earn from that table. Gaming operators deploy the Enhanced Table Systems because they generally increase the win for the casino by an amount that significantly exceeds the cost to license the system from us. Our product strategy includes making Electronic Table Systems that support a multitude of side bets and premium games across several casino game segments (e.g., blackjack, craps, roulette, baccarat, etc.).
+Expand the number of markets we serve. In the past, there were table games markets in North America that we could not serve or in which we could not offer our full suite of products and services. In general, this was because we were not licensed to serve casinos in that market or the license we have limits the products and services we can provide. We believe that the redemption transaction we undertook in 2019 (discussed below in the Significant Business Developments section) has helped us with our licensing activities in existing and new markets, and will continue to help us, including table games markets outside of the United States. Since the redemption transaction, we have received new or expanded licenses in 21 jurisdictions in North America.
+ 
+Grow our iGaming content and partner base. We have licensed our content to the iGaming segment for several years through our distributor, PGP. In 2020, we acquired PGP in order to improve our financial results from the iGaming segment by eliminating the distribution fee to PGP and by adding the revenue that PGP earns from licensing the content owned by itself and others. The COVID pandemic has resulted in a significant increase in jurisdictions considering legalizing iGaming, in many cases in concert with legalizing sports wagering. We intend to increase our revenues from iGaming in several ways. First, we expect that our existing licensees will see growth in their current markets while adding new markets in the U.S. and elsewhere. Second, we intend to add new licensees in the iGaming segment. And finally, we intend to add to the number of games that we license to both existing and new licensees.
+ 
+Promote the use of our game content in adjacent gaming markets. We have game content that is well-known and popular in physical casinos and online casinos. One example is the Electronic Table Games (ETG) market, which offers table game content on touch-
+5
+screen video devices. As casinos face rising labor costs, table games can become unprofitable at low bet minimums, and we believe casinos may seek to expand the use of ETGs to address this shortfall. Another example is lotteries (both ticket lotteries and iLotteries), where our well-known game content may attract patrons to lotteries as another way to enjoy it. There may be regulatory restrictions on the use of casino gaming content in certain lottery markets, but the addressable market is large even excluding these markets.
+COMPETITION
+We compete with several companies that develop and provide proprietary table games, electronic gaming platforms, game enhancements and related services. We believe that the principal competitive factors in our market include products and services that appeal to casinos and players, jurisdictional approvals and a well-developed sales and distribution network.
+We believe that our success will depend upon our ability to remain competitive in our field. Competition can be based on price, brand recognition, player appeal and the strength of underlying intellectual property and superior customer service. Larger competitors may have longer operating histories, greater brand recognition, more firmly established supply relationships, superior capital resources, distribution and product inventory than we do. Smaller competitors may be more able to participate in developing and marketing table games, compared to other gaming products, because of the lower cost and complexity associated with the development of these products and a generally less stringent regulatory environment. We compete with others in efforts to obtain or create innovative products, obtain financing, acquire other gaming companies, and license and distribute products. We compete on these bases, as well as on the strength of our sales, service and distribution channels.
+Our competitors include, but are not limited to, Scientific Games Corporation; Play AGS, Inc.; TCS/John Huxley; and Masque Publishing. Most of these competitors are larger than we are, have more financial resources than we do, and have more business segments than we do. In addition, we expect additional competitors to emerge in the future. There can be no assurances that we will be able to compete effectively in the future and failure to compete successfully in the market could have a material adverse effect on our business.
+SUPPLIERS
+We own outright the content for most of our Side Bets and Premium Games and therefore do not depend on suppliers for the majority of our revenues from these games. However, there are some games that we have licensed from others and to whom we pay royalty fees when we license those games to others (including in the online gaming sector). We generally have multi-year licensing agreements for this content. With respect to our Enhanced Table Systems, we obtain most of the parts for our products from third-party suppliers, including both off-the-shelf items as well as components manufactured to our specifications. We also assemble a small number of parts in-house that are used both for product assembly and for servicing existing products. We generally perform warehousing, quality control, final assembly and shipping functions from our facilities in Las Vegas, Nevada, although small inventories are maintained, and repairs are performed by our field service employees. We believe that our sources of supply for components and raw materials are adequate and that alternative sources of materials are available.
+In our iGaming business, we license some of our game content from other providers for re-licensing to online operators along with the content we own outright. We pay royalties to the owners of the content that we license from them.
+RESEARCH AND DEVELOPMENT
+We seek to develop and maintain a robust pipeline of new products and services to bring to market. We employ a staff of hardware and software engineers, graphic artists and game developers at our corporate offices to support, improve and upgrade our products and to develop and explore other potential table game products, technologies, methodologies and services. We also will use outside services for research and development from time to time.
+INTELLECTUAL PROPERTY
+Our products and the intellectual property associated with them are typically protected by patents, trademarks, copyrights and non-compete agreements. However, there can be no assurance that the steps we have taken to protect our intellectual property will be sufficient. Further, in the United States certain court rulings may make it difficult to enforce patents around the math relating to casino games, which makes us more dependent on copyrights and trademarks for protection. In addition, the laws of some foreign countries do not protect intellectual property to the same extent as the laws of the United States, which could increase the likelihood of infringement. Furthermore, other companies could develop similar or superior products without violating our intellectual property rights. If we resort to legal proceedings to enforce our intellectual property rights, the proceedings could be burdensome, disruptive and expensive, and distract the attention of management, and there can be no assurance that we would prevail.
+We have been subject to litigation claiming that we have infringed the rights of others and/or that certain of our patents and other intellectual property are invalid or unenforceable. We have also brought actions against others to protect our rights.  
+6
+GOVERNMENT REGULATION
+We are subject to regulation by governmental authorities in most jurisdictions in which we offer our products. The development and distribution of casino games, gaming equipment, systems technology and related services, as well as the operation of casinos, are all subject to regulation by a variety of federal, state, international, tribal, and local agencies with the majority of oversight provided by individual state gaming control boards. While the regulatory requirements vary by jurisdiction, most require:
+ 
+
+Findings of suitability for the Company, individual officers, directors, key employees and major shareholders;
+
+
+ 
+
+Documentation of qualification, including evidence of financial stability;
+
+
+ 
+
+Specific product approvals for games and gaming equipment; and
+
+
+ 
+
+Licenses, registrations and/or permits.
+
+Gaming regulatory requirements vary from jurisdiction to jurisdiction, and obtaining licenses, registrations, findings of suitability for our officers, directors, and principal stockholders and other required approvals with respect to us, our personnel and our products are time consuming and expensive. Generally, gaming regulatory authorities have broad discretionary powers and may deny applications for or revoke approvals on any basis they deem reasonable. We have approvals that enable us to conduct our business in numerous jurisdictions, subject in each case to the conditions of the particular approvals. These conditions may include limitations as to the type of game or product we may sell or lease, as well as limitations on the type of facility, such as riverboats, and the territory within which we may operate, such as tribal nations. Gaming laws and regulations serve to protect the public interest and ensure gambling related activity is conducted honestly, competitively and free of corruption. Regulatory oversight additionally ensures that the local authorities receive the appropriate amount of gaming tax revenues. As such, our financial systems and reporting functions must demonstrate high levels of detail and integrity.
+We also have authorizations with certain Native American tribes throughout the United States that have compacts with the states in which their tribal dominions are located or operate or propose to operate casinos. These tribes generally require suppliers of gaming and gaming-related equipment to obtain authorizations. Gaming on Native American lands within the United States is governed by the Federal Indian Gaming Regulatory Act of 1988 (IGRA) and specific tribal ordinances and regulations. Class III gaming (table games and slot machines, for example), as defined under IGRA, also requires a Tribal-State Compact, which is a written agreement between a specific tribe and the respective state. This compact authorizes the type of Class III gaming activity and the standards, procedures and controls under which the Class III gaming activity must be conducted. The National Indian Gaming Commission (NIGC) has oversight authority over gaming on Native American lands and generally monitors tribal gaming, including the establishment and enforcement of required minimum internal control standards. Each tribe is sovereign and must have a tribal gaming commission or office established to regulate tribal gaming activity to ensure compliance with IGRA, NIGC, and its Tribal-State Compact. We have complied with each of the numerous vendor licensing, specific product approvals and shipping notification requirements imposed by Tribal-State Compacts and enforced by tribal and/or state gaming agencies under IGRA in the Native American lands in which we do business.
+The nature of the industry and our worldwide operations make the license application process very time consuming and require extensive resources. We engage legal resources familiar with local customs in certain jurisdictions to assist in keeping us compliant with applicable regulations worldwide. Through this process, we seek to assure both regulators and investors that all our operations maintain the highest levels of integrity and avoid any appearance of impropriety.
+We have obtained or applied for all required government licenses, permits, registrations, findings of suitability and approvals necessary to develop and distribute gaming products in all jurisdictions where we directly operate. Although many regulations at each level are similar or overlapping, we must satisfy all conditions individually for each jurisdiction. Additionally, in certain jurisdictions we license our products through distributors authorized to do business in those jurisdictions.
+In addition to what may be required of our officers, board members, key employees and substantial interest holders, any of our stakeholders, including but not limited to investors, may be subject to regulatory requests and suitability findings. Failure to comply with regulatory requirements or obtaining a finding of unsuitability by a regulatory body could result in a substantial or total loss of investment.
+In the future, we intend to seek the necessary registrations, licenses, approvals, and findings of suitability for us, our products, and our personnel in other jurisdictions throughout the world. However, we may be unable to obtain such necessary items, or if such items are obtained, may be revoked, suspended, or conditioned. In addition, we may be unable to obtain on a timely basis, or to obtain at all, the necessary approvals of our future products as they are developed, even in those jurisdictions in which we already have existing products licensed or approved. If the necessary registrations are not sought after or the required approvals not received, we may be prohibited from selling our products in that jurisdiction or may be required to sell our products through other licensed entities at a reduced profit.
+7
+EMPLOYEES
+We have 36 full-time employees, including executive officers, management personnel, accounting personnel, office staff, sales staff, service technicians and research and development personnel. As needed, we also employ part-time and temporary employees and pay for the services of independent contractors.
+Significant 2020 and 2021 Business Developments
+Share Redemption. On May 6, 2019, we redeemed all 23,271,667 shares of our common stock held by Triangulum Partners, LLC (Triangulum), an entity controlled by Robert B. Saucier (Saucier), Galaxy Gaming's founder, and, prior to the redemption, the holder of a majority of our outstanding common stock. Our Articles of Incorporation (the Articles) provide that if certain events occur in relation to a stockholder that is required to undergo a gaming suitability review or similar investigative process, we have the option to purchase all or any part of such stockholders shares at a price per share that is equal to the average closing share price over the thirty calendar days preceding the purchase. The average closing share price over the thirty calendar days preceding the redemption was $1.68 per share.
+The consideration owed to Triangulum for the redemption is $39,096,401 (the Redemption Consideration Obligation). The litigation between the Company and Triangulum related to the redemption and other matters was settled pursuant to a settlement agreement by a payment from the Company of $39,507,717 to Triangulum on November 15, 2021. See Note 10 and Note 11 to our audited consolidated financial statements included in Item 8 Financial Statements and Supplementary Financial Information for further details.
+ 
+Credit Agreement Amendments. See Note 10 to our audited consolidated financial statements included in Item 8 Financial Statements and Supplementary Financial Information for further details of amendments made to the Companys credit agreement.
+ 
+Fortress Credit Agreement. See Note 10 to our audited consolidated financial statements included in Item 8 Financial Statements and Supplementary Financial Information for further details of the entry into the Fortress Credit Agreement.
+Membership Interest Purchase Agreement. On February 25, 2020, Galaxy Gaming entered into a Membership Interest Purchase Agreement, dated February 25, 2020 (the Purchase Agreement), between the Company and the membership interest holders of PGP.
+On August 21, 2020, the Company entered into a First Amendment to the Purchase Agreement between the Company and the membership interest holders of PGP. The First Amendment, among other things, fixed the cash portion of the purchase price at $6.425 million and established that the stock portion would be satisfied through the issuance of 3,141,361 shares of the Companys common stock with a value of $1.27 per share on the date of the acquisition.
+ 
+On August 21, 2020, the Company completed the acquisition of 100% of the member interests in PGP. The entirety of the purchase price ($10,414,528) has been allocated to customer relationships and is included in Other intangible assets, net, on the Companys balance sheet. See Note 7 to our audited financial statements included in Item 8 Financial Statements and Supplementary Financial Information for further details. The Company also acquired certain receivables and payables in the net amount of $581,885, which was to be remitted to the sellers of PGP as the receivables and payables were settled. The remaining balance owed to the sellers at December 31, 2020 was paid on May 7, 2021.
+ 
+COVID-19. On March 11, 2020, the World Health Organization declared a pandemic related to the COVID-19 outbreak, which led to a global health emergency. The public-health impact of the outbreak continues to remain largely unknown and still evolving. The related health crisis could continue to adversely affect the global economy, resulting in continued economic downturn that could impact demand for our products.
+ 
+On March 17, 2020, the Company announced that it suspended billing to customers who had closed their doors due to the COVID-19 outbreak. As a result, we did not earn revenue for the use of our games by our physical casino customers during the time that they were closed. In general, the online gaming customers who license our games through our distributor remained and continue to remain in operation in spite of the COVID-19 crisis. We earned revenue from them during the crisis and expect to continue to do so, but potentially at levels that may be lower than we previously received.
+ 
+As of the date of this filing, virtually all land-based casinos have re-opened, although operations have not returned to pre-COVID-19 levels.
+ 
+We also rely on third-party suppliers and manufacturers in China, many of whom were shut down or severely cut back production during the initial COVID-19 shutdown. Although this did not have a material effect on our supply chain, any future disruption of our suppliers and their contract manufacturers may impact our sales and operating results going forward.
+ 
+8
+ 
+Because of the uncertainties of COVID-19, the Company drew on its Revolving Loan in the amount of $1,000,000 on March 12, 2020. Also, on April 17, 2020, the Company obtained an unsecured loan of $835,300 through Zions Bancorporation, N.A. dba Nevada State Bank under the Paycheck Protection Program (the PPP Loan) pursuant to the Coronavirus Aid, Relief, and Economic Security Act (the CARES Act) and the Paycheck Protection Program Flexibility Act (the Flexibility Act). On July 16, 2020, the Company filed an application and supporting documentation for forgiveness in full of the PPP Loan. On November 21, 2020, the Company received notification the PPP Loan had been forgiven in full. Pursuant to the CARES Act, the Federal Reserve created the Main Street Priority Loan Program (MSPLP) to provide financing for small and medium-sized businesses. On October 26, 2020, the Company borrowed $4 million from Zions Bancorporation N.A., dba Nevada State Bank under this program. See Note 10 to our audited consolidated financial statements included in Item 8 Financial Statements and Supplementary Financial Information for further details.
+ 
+The COVID-19 crisis may change the behavior of gaming patrons. Most of our clients operate places of public accommodation, and their patrons may reduce visitation and play as a precaution. Further, governmental authorities may continue to impose reduced hours of operation or limit the capacity of such places of public accommodation. A long-term reduction in play could have a material adverse impact on our results of operations. Depending on the length and severity of any such adverse impact, we may fail to comply with our obligations, including covenants in our credit agreement, and we may need to reassess the carrying value of our assets.
+ 
+ITEM 1A. RISK FACTORS
+A smaller reporting company is not required to provide the information required by this Item.
+ITEM 1B. UNRESOLVED STAFF COMMENTS
+A smaller reporting company is not required to provide the information required by this Item.
+ITEM 2. PROPERTIES
+We do not own any real property used in the operation of our current business. We maintain our corporate office at 6480 Cameron Street, Suite 305, Las Vegas, Nevada, where we currently occupy approximately 14,000 square feet of combined office and warehouse space. We also maintain a small warehouse and service facility in Kent, Washington and a small office in Richland, Washington. See Note 9 to our audited financial statements included in Item 8 Financial Statements and Supplementary Financial Information for further details.
+ 
+ITEM 3. LEGAL PROCEEDINGS
+We have been named in and have brought lawsuits in the normal course of business. See Note 11 to our audited financial statements included in Item 8 Financial Statements and Supplementary Financial Information for further details.
+ 
+ITEM 4. MINE SAFETY DISCLOSURES
+A smaller reporting company is not required to provide the information required by this Item.
+ 
+ 
+ 
+9
+ 
+PART II
+ 
+ 
+ITEM 5. MARKET FOR REGISTRANTS COMMON EQUITY AND RELATED STOCKHOLDER MATTERS
+Our common stock is quoted on the OTCQB marketplace (OTCQB) under the ticker symbol GLXZ.
+The following table sets forth the range of high and low closing sale prices for our common stock for each of the periods indicated as reported by the OTCQB.
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+Quarter Ended
+ 
+High ($)
+ 
+ 
+Low ($)
+ 
+ 
+High ($)
+ 
+ 
+Low ($)
+ 
+March 31,
+ 
+ 
+3.02
+ 
+ 
+ 
+1.72
+ 
+ 
+ 
+1.95
+ 
+ 
+ 
+0.70
+ 
+June 30,
+ 
+ 
+3.70
+ 
+ 
+ 
+2.70
+ 
+ 
+ 
+1.36
+ 
+ 
+ 
+0.73
+ 
+September 30,
+ 
+ 
+4.64
+ 
+ 
+ 
+3.68
+ 
+ 
+ 
+1.36
+ 
+ 
+ 
+1.08
+ 
+December 31,
+ 
+ 
+4.45
+ 
+ 
+ 
+3.67
+ 
+ 
+ 
+1.95
+ 
+ 
+ 
+0.95
+ 
+
+ 
+The Securities and Exchange Commission (the SEC) has adopted rules that regulate broker-dealer practices in connection with transactions in penny stocks. Penny stocks are generally equity securities with a market price of less than $5.00, other than securities registered on certain national securities exchanges or quoted on the NASDAQ system, provided that current price and volume information with respect to transactions in such securities is provided by the exchange or system. The penny stock rules require a broker-dealer, prior to a transaction in a penny stock, to deliver a standardized risk disclosure document prepared by the SEC, that: (a) contains a description of the nature and level of risk in the market for penny stocks in both public offerings and secondary trading; (b) contains a description of the brokers or dealers duties to the customer and of the rights and remedies available to the customer with respect to a violation of such duties or other requirements of the securities laws; (c) contains a brief, clear, narrative description of a dealer market, including bid and ask prices for penny stocks and the significance of the spread between the bid and ask price; (d) contains a toll-free telephone number for inquiries on disciplinary actions; (e) defines significant terms in the disclosure document or in the conduct of trading in penny stocks; and (f) contains such other information and is in such form, including language, type size and format, as the SEC shall require by rule or regulation.
+The broker-dealer also must provide, prior to effecting any transaction in a penny stock, the customer with (a) bid and offer quotations for the penny stock; (b) the compensation of the broker-dealer and its salesperson in the transaction; (c) the number of shares to which such bid and ask prices apply, or other comparable information relating to the depth and liquidity of the market for such stock; and (d) a monthly account statement showing the market value of each penny stock held in the customers account.
+In addition, the penny stock rules require that prior to a transaction in a penny stock not otherwise exempt from those rules, the broker-dealer must make a special written determination that the penny stock is a suitable investment for the purchaser and receive the purchasers written acknowledgment of the receipt of a risk disclosure statement, a written agreement as to transactions involving penny stocks, and a signed and dated copy of a written suitability statement.
+These disclosure requirements may have the effect of reducing the trading activity for our common stock. Therefore, stockholders may have difficulty buying or selling our securities.
+HOLDERS OF OUR COMMON STOCK
+As of March 28, 2022, we had 23,718,968 shares of our common stock issued and outstanding and 40 shareholders of record.
+DIVIDEND POLICY
+There are no restrictions in our articles of incorporation or bylaws that prevent us from declaring dividends. The Nevada Revised Statutes, however, do prohibit us from declaring dividends where after giving effect to the distribution of the dividend:
+ 
+
+We would not be able to pay our debts as they become due in the usual course of business; or
+
+
+ 
+
+Our total assets would be less than the sum of our total liabilities plus the amount that would be needed to satisfy the rights of shareholders who have preferential rights superior to those receiving the distribution.
+
+We have not declared any dividends, and we do not plan to declare any dividends in the foreseeable future. Even though we repaid in full the borrowings we made in 2020 from the MSPLP, we are prohibited from paying dividends or making share repurchases for one year after the repayment (until November 15, 2022). We are prohibited from paying dividends while our MSPLP is outstanding and for one year thereafter. In addition, the Fortress Credit Agreement imposes significant restrictions on our ability to pay dividends. See Note 10 to our audited consolidated financial statements included in Item 8 Financial Statements and Supplementary Financial Information for further details.
+10
+TRANSFER AGENT
+Our stock transfer agent and registrar is Philadelphia Stock Transfer, Inc. located at 2320 Haverford Street, Ardmore, PA 19003. Their telephone number is (484) 416-3124.
+ 
+11
+ 
+ITEM 7. MANAGEMENTS DISCUSSION AND ANALYSIS OF FINANCIAL CONDITION AND RESULTS OF OPERATIONS
+The following is a discussion and analysis of our financial condition, results of operations and liquidity and capital resources as of and for the years ended December 31, 2021 and 2020. This discussion should be read together with our audited consolidated financial statements and related notes included in Item 8. Financial Statements and Supplementary Financial Information. Some of the information contained in this discussion includes forward-looking statements that involve risks and uncertainties; therefore our Special Note Regarding Forward-Looking Statements should be reviewed for a discussion of important factors that could cause actual results to differ materially from the results described in, or implied by, such forward-looking statements.
+OVERVIEW
+We develop, acquire, assemble and market technology and entertainment-based products and services for the gaming industry for placement on casino floors and on legal internet gaming sites. Our products and services primarily relate to licensed casino operators table games activities and focus on either increasing their profitability, productivity and security or expanding their gaming entertainment offerings in the form of proprietary table games, electronically enhanced table game platforms, fully-automated electronic tables and other ancillary equipment. In addition, we license intellectual property to legal internet gaming operators. Our products and services are offered in highly regulated markets throughout the world. Our products are assembled at our headquarters in Las Vegas, Nevada, as well as outsourced for certain sub-assemblies in the United States.
+Results of operations for the years ended December 31, 2021 and 2020. For the year ended December 31, 2021, we generated gross revenues of $19,984,378 compared to $10,230,316 in 2020, representing an increase of $9,754,062, or 95.3%. This increase was directly attributable to the re-opening of a significant portion of our land-based customers after the restrictions due to the COVID-19 crisis were lifted. Also, our online gaming revenues increased significantly due primarily to the acquisition of PGP in August of 2020 as well as to the opening of new markets in the U.S.
+Selling, general and administrative expenses were $10,646,524 in 2021 compared to $8,964,930 in 2020, representing an increase of $1,681,594, or 18.8%. This increase was due to the 2021 employee bonus accrual being included in the current year as compared to no bonus accrual being included in the comparable prior-year period. Also, higher expenses were incurred in the current period directly related to the opening of jurisdictions throughout 2021 as COVID-19 restrictions were lifted (sales commissions, royalty expenses and repairs and maintenance of BJS units). Lastly, higher insurance payments were incurred in the current period as compared to the comparable prior-year period related to the financed Directors & Officers (D&O) policy. These increased expenses incurred were offset by a decrease in legal fees related to the Triangulum Lawsuit and a decrease in distributor fees related to the acquisition of PGP in August 2020.
+Research and development expenses were $520,449 in 2021 compared to $487,679 in 2020, representing an increase of $32,770, or 6.7%. This increase was primarily due to the 2021 employee bonus accrual. Prior year did not include an employee bonus accrual.
+Share-based compensation expenses were $1,532,455 in 2021 compared to $737,991 in 2020, representing an increase of $794,464, or 107.7%. This increase was due to the quarterly restricted shares granted to our Board members being issued at a higher stock price than the comparable prior-year period. The increase was also due to increased amortization related to more shares being granted in the current period than the comparable prior-year period (two employees, a contractor and an additional Board member).
+As a result of the changes described above, income from operations was $4,345,126 in 2021 compared to a loss from operations of $(2,255,010) in 2020, an increase of $6,600,136, or 292.7%.
+ 
+Total interest expense was $1,505,386 in 2021 compared to $683,357 in 2020, an increase of $822,029, or 120.3%. The increase was attributable to the Fortress Credit Agreement entered into on November 15, 2021. Loan fees related to the MSPLP, the NSB Term Loan and the Revolving Loan were written off in November 2021. Also, the Fortress Credit Agreement bears a higher interest rate than the NSB Term Loan, the Revolving Loan, the MSPLP and the Triangulum promissory note, along with higher amortization on loan fees and warrants issued. See Note 10 to our audited consolidated financial statements included in Item 8 Financial Statements and Supplementary Financial Information for further details.
+Share redemption consideration was $682,469 in 2021 compared to $781,928 in 2020, a decrease of $99,459, or 12.7%. The decrease was attributable to the settlement of the Triangulum litigation on November 15, 2021. A total of $411,316 in accrued interest through November 15, 2021 was paid in connection with the settlement. See Note 11 to our audited consolidated financial statements included in Item 8 Financial Statements and Supplementary Financial Information for further details.
+The income tax expense was $48,637 in 2021 based on an effective rate of 2.25 percent compared to the benefit of ($605,936) in 2020 based on an effective rate of 17.42 percent. The 2.25 percent effective tax rate for 2021 differed from the statutory federal income tax rate of 21.0 percent and was primarily attributable to (i) increased tax benefit from the exercise of stock options; (ii) the increased foreign rate differential and (iii) the Company maintaining a valuation allowance against its deferred tax assets.
+12
+Adjusted Earnings Before Interest, Taxes, Depreciation and Amortization (EBITDA). Adjusted EBITDA includes adjustments to net income (loss) to exclude interest, income taxes, depreciation, amortization, share based compensation, foreign currency exchange loss, change in fair value of interest rate swap liability and severance and other expenses related to litigation. Adjusted EBITDA is not a measure of performance defined in accordance with U.S. Generally Accepted Accounting Principles (GAAP). However, Adjusted EBITDA is used by management to evaluate our operating performance. Management believes that disclosure of the Adjusted EBITDA metric offers investors, regulators and other stakeholders a view of our operations in the same manner management evaluates our performance. When combined with U.S. GAAP results, management believes Adjusted EBITDA provides a comprehensive understanding of our financial results. Adjusted EBITDA should not be considered as an alternative to net income or (loss) to net cash provided by operating activities as a measure of operating results or of liquidity. It may not be comparable to similarly titled measures used by other companies, and it excludes financial information that some may consider important in evaluating our performance. A reconciliation of U.S. GAAP net income to Adjusted EBITDA is as follows:
+ 
+ 
+ 
+Years ended December 31,
+ 
+Adjusted EBITDA Reconciliation:
+ 
+2021
+ 
+ 
+2020
+ 
+Net income (loss)
+ 
+$
+2,111,812
+ 
+ 
+$
+(2,208,887
+)
+Interest expense
+ 
+ 
+1,505,386
+ 
+ 
+ 
+683,357
+ 
+Share redemption consideration
+ 
+ 
+682,469
+ 
+ 
+ 
+781,928
+ 
+Interest income
+ 
+ 
+(2,048
+)
+ 
+ 
+(25,702
+)
+Depreciation and amortization
+ 
+ 
+2,858,991
+ 
+ 
+ 
+2,222,042
+ 
+Share-based compensation
+ 
+ 
+1,532,455
+ 
+ 
+ 
+737,991
+ 
+Foreign currency exchange loss
+ 
+ 
+64,879
+ 
+ 
+ 
+34,961
+ 
+Change in fair value of interest rate swap liability
+ 
+ 
+(66,009
+)
+ 
+ 
+(74,487
+)
+Provision (benefit) for income taxes
+ 
+ 
+48,637
+ 
+ 
+ 
+(605,937
+)
+Paycheck Protection Program Loan forgiveness
+ 
+ 
+
+ 
+ 
+ 
+(840,243
+)
+Severance expense
+ 
+ 
+12,596
+ 
+ 
+ 
+20,058
+ 
+Special project expense(1)
+ 
+ 
+(15,338
+)
+ 
+ 
+652,198
+ 
+Adjusted EBITDA
+ 
+$
+8,733,830
+ 
+ 
+$
+1,377,279
+ 
+
+ 
+ 
+(1)
+Includes expenses associated with the Triangulum Lawsuit in both 2021 and 2020. There is a credit balance in 2021 due to $720,000 in D&O insurance claim payments received in 2021.
+
+ 
+Liquidity and capital resources. We have generally been able to fund our continuing operations, our investments, and the obligations under our existing borrowings through cash flow from operations. In 2020, as a result of the COVID-19 crisis, we were required to raise funds from financing sources in order to maintain operations. In addition to our normal operations, we may make acquisitions of products, technologies or entire businesses. Our ability to access capital for operations or for acquisitions will depend on conditions in the capital markets and investors perceptions of our business prospects and such conditions and perceptions may not always favor us.
+ 
+As of December 31, 2021, we had total current assets of $23,890,122 and total assets of $40,452,705. This compares to $11,562,833 and $30,574,594, respectively, as of December 31, 2020. The increase in total current assets as of December 31, 2021 was primarily due to an increase in the accounts receivable balance, resulting from higher billings and lower collections directly related to the COVID-19 crisis. Also, the Company entered into the Fortress Credit Agreement on November 15, 2021, which provided $5,273,464 in cash to the Company, after settlement of the NSB Term Loan, the Revolving Loan, the MSPLP and the Triangulum promissory note. See Note 10 to our audited consolidated financial statements included in Item 8 Financial Statements and Supplementary Financial Information for further details. The increase in total assets as of December 31, 2021 was offset by amortization on the Companys long-term other intangible assets.
+ 
+Our total current liabilities as of December 31, 2021 increased to $4,401,071 from $4,247,794 as of December 31, 2020, primarily due to the Company accruing for 2021 employee bonuses and an increase in accrued royalties in our online gaming business. These increases were offset by a decrease in current portion of long-term debt which was repaid in connection with the Fortress Credit agreement. See Note 10 to our audited consolidated financial statements included in Item 8 Financial Statements and Supplementary Financial Information for further details.
+Despite the continuing effects of the COVID-19 crisis, our business was profitable and cash-flow positive in 2021. Based on our current forecast of operations, we believe we will have sufficient liquidity to fund our operations and to meet the obligations under our financing arrangements as they come due over at least the next 12 months.
+We continue to file applications for new or enhanced licenses in several jurisdictions, which may result in significant future legal and regulatory expenses. A significant increase in such expenses may require us to postpone growth initiatives or investments in personnel, inventory and research and development of our products. It is our intention to continue such initiatives and investments. However, to the extent we are not able to achieve our growth objectives or raise additional capital, we will need to evaluate the reduction of operating expenses.
+13
+Our operating activities provided $6,003,576 in cash for the year ended December 31, 2021, compared to cash used of $1,633,132 for the year ended December 31, 2020. The increase in operating cash flow was primarily due to higher net income for the period as a result of the re-opening of a significant portion of our land-based customers after the restrictions due to the COVID-19 crisis were lifted. Also, higher depreciation and amortization and share-based compensation contributed to the higher operating cash flow. These increases were partially offset by changes in operating assets and liabilities such as accounts receivable and accrued expenses.
+Investing activities used cash of $233,734 for the year December 31, 2021, compared to cash used of $6,456,714 for the year ended December 31, 2020. This decrease was primarily due to closing of the acquisition of PGP in August 2020.
+Cash provided by financing activities for the year ended December 31, 2021 was $4,362,293. This compares to $4,389,234 cash provided by financing activities for the comparable prior-year period. The cash inflow in the current year was due to the Fortress Credit Agreement, offset by the pay-off of the Nevada State Bank (NSB) Term Loan, the Revolving Loan, the MSPLP and the Triangulum promissory note.
+ 
+Critical Accounting Policies. Our consolidated financial statements have been prepared in accordance with U.S. GAAP. We consider the following accounting policies to be the most important to understanding and evaluating our financial results:
+Revenue recognition. We account for our revenue in accordance with Accounting Standards Codification Topic 606, Revenue from Contracts with Customers. We generate revenue primarily from the licensing of our intellectual property. We recognize revenue under recurring fee license contracts monthly as we satisfy our performance obligation, which consists of granting the customer the right to use our intellectual property. Amounts billed are determined based on flat rates or usage rates stipulated in the customer contract.
+Goodwill and other intangible assets. Goodwill and other intangible assets are assessed for impairment at least annually or at other times during the year if events or circumstances indicate that it is more-likely-than-not that the fair value of a reporting asset is below the carrying amount. If found to be impaired, the carrying amounts will be reduced, and an impairment loss will be recognized.
+Recently issued accounting pronouncements. We do not expect the adoption of recently issued accounting pronouncements to have a significant impact on our results of operations, financial position or cash flow.
+ 
+ITEM 7A. QUANTITATIVE AND QUALITATIVE DISCLOSURES ABOUT MARKET RISK
+A smaller reporting company is not required to provide the information required by this Item.
+ 
+ 
+14
+ 
+ 
+ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY FINANCIAL INFORMATION
+INDEX TO FINANCIAL STATEMENTS
+ 
+Report of Independent Registered Public Accounting Firm, (Moss Adams LLP, San Diego, CA, PCAOB ID: 659)
+ 
+16
+Consolidated Balance Sheets as of December 31, 2021 and 2020
+ 
+17
+Consolidated Statements of Operations and Comprehensive Income for the years ended December 31, 2021 and 2020
+ 
+18
+Consolidated Statements of Changes in Stockholders Deficit for the years ended December 31, 2021 and 2020
+ 
+19
+Consolidated Statements of Cash Flows for the years ended December 31, 2021 and 2020
+ 
+20
+Notes to Consolidated Financial Statements
+ 
+21
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+15
+ 
+ 
+ 
+REPORT OF INDEPENDENT REGISTERED PUBLIC ACCOUNTING FIRM
+ 
+ 
+ 
+To the Shareholders and the Board of Directors
+Galaxy Gaming, Inc.
+ 
+Opinion on the Financial Statements
+We have audited the accompanying consolidated balance sheets of Galaxy Gaming, Inc. (the Company) as of December 31, 2021 and 2020, the related consolidated statements of operations and comprehensive income, stockholders deficit, and cash flows for the years then ended, and the related notes (collectively referred to as the consolidated financial statements). In our opinion, the consolidated financial statements present fairly, in all material respects, the consolidated financial position of the Company as of December 31, 2021 and 2020, and the consolidated results of its operations and its cash flows for the years then ended, in conformity with accounting principles generally accepted in the United States of America.
+ 
+Basis for Opinion
+These consolidated financial statements are the responsibility of the Companys management. Our responsibility is to express an opinion on the Companys consolidated financial statements based on our audits. We are a public accounting firm registered with the Public Company Accounting Oversight Board (United States) (PCAOB) and are required to be independent with respect to the Company in accordance with the U.S. federal securities laws and the applicable rules and regulations of the Securities and Exchange Commission and the PCAOB.
+ 
+We conducted our audits in accordance with the standards of the PCAOB. Those standards require that we plan and perform the audit to obtain reasonable assurance about whether the consolidated financial statements are free of material misstatement, whether due to error or fraud. The Company is not required to have, nor were we engaged to perform, an audit of its internal control over financial reporting. As part of our audits we are required to obtain an understanding of internal control over financial reporting but not for the purpose of expressing an opinion on the effectiveness of the Companys internal control over financial reporting. Accordingly, we express no such opinion.
+ 
+Our audits included performing procedures to assess the risks of material misstatement of the consolidated financial statements, whether due to error or fraud, and performing procedures to respond to those risks. Such procedures included examining, on a test basis, evidence regarding the amounts and disclosures in the consolidated financial statements. Our audits also included evaluating the accounting principles used and significant estimates made by management, as well as evaluating the overall presentation of the consolidated financial statements. We believe that our audits provide a reasonable basis for our opinion.
+ 
+Critical Audit Matters
+Critical audit matters are matters arising from the current period audit of the consolidated financial statements that were communicated or required to be communicated to the audit committee and that (1) relate to accounts or disclosures that are material to the financial statements and (2) involved our especially challenging, subjective, or complex judgments. We determined that there are no critical audit matters.
+ 
+/s/ Moss Adams LLP
+ 
+San Diego, California
+March 30, 2022
+ 
+We have served as the Companys auditor since 2020
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+16
+ 
+GALAXY GAMING, INC.
+CONSOLIDATED BALANCE SHEETS
+DECEMBER 31, 2021 AND 2020
+ 
+ASSETS
+ 
+2021
+ 
+ 
+2020
+ 
+Current assets:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Cash and cash equivalents
+ 
+$
+16,058,714
+ 
+ 
+$
+5,993,388
+ 
+Accounts receivable, net of allowance of $348,695 and $145,000, respectively
+ 
+ 
+4,377,165
+ 
+ 
+ 
+2,493,254
+ 
+Inventory
+ 
+ 
+770,248
+ 
+ 
+ 
+668,525
+ 
+Income tax receivable
+ 
+ 
+1,536,682
+ 
+ 
+ 
+1,229,795
+ 
+Prepaid expenses
+ 
+ 
+1,125,777
+ 
+ 
+ 
+1,167,068
+ 
+Other current assets
+ 
+ 
+21,536
+ 
+ 
+ 
+10,803
+ 
+Total current assets
+ 
+ 
+23,890,122
+ 
+ 
+ 
+11,562,833
+ 
+Property and equipment, net
+ 
+ 
+98,594
+ 
+ 
+ 
+116,724
+ 
+Operating lease right-of-use assets
+ 
+ 
+1,167,903
+ 
+ 
+ 
+1,367,821
+ 
+Assets deployed at client locations, net
+ 
+ 
+360,735
+ 
+ 
+ 
+232,156
+ 
+Goodwill
+ 
+ 
+1,091,000
+ 
+ 
+ 
+1,091,000
+ 
+Other intangible assets, net
+ 
+ 
+13,677,264
+ 
+ 
+ 
+16,086,896
+ 
+Other assets, net
+ 
+ 
+167,087
+ 
+ 
+ 
+117,164
+ 
+Total assets
+ 
+$
+40,452,705
+ 
+ 
+$
+30,574,594
+ 
+LIABILITIES AND STOCKHOLDERS DEFICIT
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Current liabilities:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Accounts payable
+ 
+$
+374,323
+ 
+ 
+$
+467,792
+ 
+Accrued expenses
+ 
+ 
+2,666,073
+ 
+ 
+ 
+1,333,032
+ 
+Revenue contract liability
+ 
+ 
+37,500
+ 
+ 
+ 
+29,167
+ 
+Current portion of long-term debt
+ 
+ 
+1,100,369
+ 
+ 
+ 
+2,222,392
+ 
+Current portion of operating lease liabilities
+ 
+ 
+222,806
+ 
+ 
+ 
+195,411
+ 
+Total current liabilities
+ 
+ 
+4,401,071
+ 
+ 
+ 
+4,247,794
+ 
+Long-term operating lease liabilities
+ 
+ 
+1,019,029
+ 
+ 
+ 
+1,215,680
+ 
+Long-term debt and liabilities, net
+ 
+ 
+52,143,810
+ 
+ 
+ 
+49,691,184
+ 
+Interest rate swap liability
+ 
+ 
+
+ 
+ 
+ 
+66,009
+ 
+Deferred tax liabilities, net
+ 
+ 
+175,218
+ 
+ 
+ 
+150,892
+ 
+Total liabilities
+ 
+ 
+57,739,128
+ 
+ 
+ 
+55,371,559
+ 
+Commitments and Contingencies (See Note 11)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Stockholders deficit
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Preferred stock, 10,000,000 shares authorized, $0.001 par value;
+   0 shares issued and outstanding, respectively
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+Common stock, 65,000,000 shares authorized; $0.001 par value;
+   23,523,969 and 21,970,638 shares issued and outstanding, respectively
+ 
+ 
+23,524
+ 
+ 
+ 
+21,971
+ 
+Additional paid-in capital
+ 
+ 
+16,380,597
+ 
+ 
+ 
+10,798,536
+ 
+Accumulated deficit
+ 
+ 
+(33,543,351
+)
+ 
+ 
+(35,655,163
+)
+Accumulated other comprehensive (loss) income
+ 
+ 
+(147,193
+)
+ 
+ 
+37,691
+ 
+Total stockholders deficit
+ 
+ 
+(17,286,423
+)
+ 
+ 
+(24,796,965
+)
+Total liabilities and stockholders deficit
+ 
+$
+40,452,705
+ 
+ 
+$
+30,574,594
+ 
+
+ 
+The accompanying notes are an integral part of the consolidated financial statements.
+17
+GALAXY GAMING, INC.
+CONSOLIDATED STATEMENTS OF OPERATIONS AND COMPREHENSIVE INCOME (LOSS)
+YEARS ENDED DECEMBER 31, 2021 AND 2020
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+Revenue:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Licensing fees
+ 
+$
+19,984,378
+ 
+ 
+$
+10,230,316
+ 
+Total revenue
+ 
+ 
+19,984,378
+ 
+ 
+ 
+10,230,316
+ 
+Costs and expenses:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Cost of ancillary products and assembled components
+ 
+ 
+80,833
+ 
+ 
+ 
+72,684
+ 
+Selling, general and administrative
+ 
+ 
+10,646,524
+ 
+ 
+ 
+8,964,930
+ 
+Research and development
+ 
+ 
+520,449
+ 
+ 
+ 
+487,679
+ 
+Depreciation and amortization
+ 
+ 
+2,858,991
+ 
+ 
+ 
+2,222,042
+ 
+Share-based compensation
+ 
+ 
+1,532,455
+ 
+ 
+ 
+737,991
+ 
+Total costs and expenses
+ 
+ 
+15,639,252
+ 
+ 
+ 
+12,485,326
+ 
+Income (loss) from operations
+ 
+ 
+4,345,126
+ 
+ 
+ 
+(2,255,010
+)
+Other income (expense):
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Interest income
+ 
+ 
+2,048
+ 
+ 
+ 
+25,702
+ 
+Interest expense
+ 
+ 
+(1,505,386
+)
+ 
+ 
+(683,357
+)
+Share redemption consideration
+ 
+ 
+(682,469
+)
+ 
+ 
+(781,928
+)
+Foreign currency exchange (loss)
+ 
+ 
+(64,879
+)
+ 
+ 
+(34,961
+)
+Change in estimated fair value of interest rate swap liability
+ 
+ 
+66,009
+ 
+ 
+ 
+74,487
+ 
+Paycheck Protection Program Loan forgiveness
+ 
+ 
+
+ 
+ 
+ 
+840,243
+ 
+Total other expense
+ 
+ 
+(2,184,677
+)
+ 
+ 
+(559,814
+)
+Income (loss) before (provision) benefit for income taxes
+ 
+ 
+2,160,449
+ 
+ 
+ 
+(2,814,824
+)
+(Provision) benefit for income taxes
+ 
+ 
+(48,637
+)
+ 
+ 
+605,937
+ 
+Net income (loss)
+ 
+ 
+2,111,812
+ 
+ 
+ 
+(2,208,887
+)
+Foreign currency translation adjustment
+ 
+ 
+(184,884
+)
+ 
+ 
+37,691
+ 
+Comprehensive income (loss)
+ 
+$
+1,926,928
+ 
+ 
+$
+(2,171,196
+)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Net income (loss) per share:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Basic
+ 
+$
+0.10
+ 
+ 
+$
+(0.12
+)
+Diluted
+ 
+$
+0.10
+ 
+ 
+$
+(0.12
+)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Weighted-average shares outstanding:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Basic
+ 
+ 
+20,328,110
+ 
+ 
+ 
+18,282,262
+ 
+Diluted
+ 
+ 
+21,840,609
+ 
+ 
+ 
+18,282,262
+ 
+
+ 
+The accompanying notes are an integral part of the consolidated financial statements.
+ 
+18
+ 
+GALAXY GAMING, INC.
+CONSOLIDATED STATEMENTS OF CHANGES IN STOCKHOLDERS DEFICIT
+YEARS ENDED DECEMBER 31, 2021 AND 2020
+ 
+ 
+ 
+Common Stock
+ 
+ 
+Additional Paid in
+ 
+ 
+Accumulated (Deficit)
+ 
+ 
+Accumulated Other
+ 
+ 
+Total Shareholders'
+ 
+ 
+ 
+Shares
+ 
+ 
+Amount
+ 
+ 
+Capital
+ 
+ 
+Earnings
+ 
+ 
+Comprehensive Income (Loss)
+ 
+ 
+Deficit
+ 
+Beginning balance, January 1, 2020
+ 
+ 
+18,017,944
+ 
+ 
+$
+18,018
+ 
+ 
+$
+5,795,636
+ 
+ 
+$
+(33,446,276
+)
+ 
+$
+
+ 
+ 
+$
+(27,632,622
+)
+Shares issued in connection with PGP asset acquisition
+ 
+ 
+3,141,361
+ 
+ 
+ 
+3,141
+ 
+ 
+ 
+3,986,387
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+3,989,528
+ 
+Net loss
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+(2,208,887
+)
+ 
+ 
+ 
+ 
+ 
+ 
+(2,208,887
+)
+Foreign currency translation
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+37,691
+ 
+ 
+ 
+37,691
+ 
+Stock options exercised
+ 
+ 
+558,000
+ 
+ 
+ 
+559
+ 
+ 
+ 
+278,775
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+279,334
+ 
+Share-based compensation
+ 
+ 
+253,333
+ 
+ 
+ 
+253
+ 
+ 
+ 
+737,738
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+737,991
+ 
+Balance, December 31, 2020
+ 
+ 
+21,970,638
+ 
+ 
+ 
+21,971
+ 
+ 
+ 
+10,798,536
+ 
+ 
+ 
+(35,655,163
+)
+ 
+$
+37,691
+ 
+ 
+ 
+(24,796,965
+)
+Warrants issued in connection with Fortress credit agreement
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+3,149,002
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+3,149,002
+ 
+Net income
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+2,111,812
+ 
+ 
+ 
+
+ 
+ 
+ 
+2,111,812
+ 
+Foreign currency translation
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+(184,884
+)
+ 
+ 
+(184,884
+)
+Stock options exercised
+ 
+ 
+1,094,998
+ 
+ 
+ 
+1,095
+ 
+ 
+ 
+901,062
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+902,157
+ 
+Share-based compensation
+ 
+ 
+458,333
+ 
+ 
+ 
+458
+ 
+ 
+ 
+1,531,997
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+1,532,455
+ 
+Balance, December 31, 2021
+ 
+ 
+23,523,969
+ 
+ 
+$
+23,524
+ 
+ 
+$
+16,380,597
+ 
+ 
+$
+(33,543,351
+)
+ 
+$
+(147,193
+)
+ 
+$
+(17,286,423
+)
+
+ 
+The accompanying notes are an integral part of the consolidated financial statements.
+ 
+19
+ 
+GALAXY GAMING, INC.
+CONSOLIDATED STATEMENTS OF CASH FLOWS
+YEARS ENDED December 31, 2021 AND 2020
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+Cash flows from operating activities:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Net income (loss)
+ 
+$
+2,111,812
+ 
+ 
+$
+(2,208,887
+)
+Adjustments to reconcile net income (loss) to net cash provided by (used in) operating activities:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Depreciation and amortization
+ 
+ 
+2,858,991
+ 
+ 
+ 
+2,222,042
+ 
+Amortization of right-of-use assets
+ 
+ 
+228,522
+ 
+ 
+ 
+329,040
+ 
+Amortization of debt issuance costs and debt discount
+ 
+ 
+369,093
+ 
+ 
+ 
+38,195
+ 
+Bad debt expense
+ 
+ 
+358,160
+ 
+ 
+ 
+226,691
+ 
+Change in estimated fair value of interest rate swap liability
+ 
+ 
+(66,009
+)
+ 
+ 
+(74,487
+)
+Gain on forgiveness of Paycheck Protection Program Loan
+ 
+ 
+
+ 
+ 
+ 
+(835,300
+)
+Deferred income tax
+ 
+ 
+24,326
+ 
+ 
+ 
+596,874
+ 
+Share-based compensation
+ 
+ 
+1,532,455
+ 
+ 
+ 
+737,991
+ 
+Changes in operating assets and liabilities:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Accounts receivable
+ 
+ 
+(2,367,258
+)
+ 
+ 
+(236,890
+)
+Inventory
+ 
+ 
+(427,795
+)
+ 
+ 
+(51,709
+)
+Income tax receivable/payable
+ 
+ 
+(306,887
+)
+ 
+ 
+(893,930
+)
+Prepaid expense and other current assets
+ 
+ 
+680,663
+ 
+ 
+ 
+259,616
+ 
+Other assets
+ 
+ 
+(49,923
+)
+ 
+ 
+
+ 
+Accounts payable
+ 
+ 
+(91,242
+)
+ 
+ 
+(1,081,836
+)
+Accrued expenses
+ 
+ 
+1,338,195
+ 
+ 
+ 
+(257,179
+)
+Revenue contract liability
+ 
+ 
+8,333
+ 
+ 
+ 
+
+ 
+Operating lease liabilities
+ 
+ 
+(197,860
+)
+ 
+ 
+(403,363
+)
+Net cash provided by (used in) operating activities
+ 
+ 
+6,003,576
+ 
+ 
+ 
+(1,633,132
+)
+Cash flows from investing activities:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Investment in intangible assets
+ 
+ 
+(198,667
+)
+ 
+ 
+
+ 
+Proceeds from sale of property and equipment
+ 
+ 
+25,000
+ 
+ 
+ 
+
+ 
+Acquisition of PGP assets, net of cash acquired
+ 
+ 
+
+ 
+ 
+ 
+(6,393,920
+)
+Acquisition of property and equipment
+ 
+ 
+(60,067
+)
+ 
+ 
+(62,794
+)
+Net cash used in investing activities
+ 
+ 
+(233,734
+)
+ 
+ 
+(6,456,714
+)
+Cash flows from financing activities:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Proceeds from draw on revolving loan
+ 
+ 
+
+ 
+ 
+ 
+1,000,000
+ 
+Proceeds from Paycheck Protection Program
+ 
+ 
+
+ 
+ 
+ 
+835,300
+ 
+Proceeds from Mainstreet Priority Loan Program
+ 
+ 
+
+ 
+ 
+ 
+3,920,000
+ 
+Proceeds from stock option exercises
+ 
+ 
+902,157
+ 
+ 
+ 
+279,334
+ 
+Principal payments on long-term debt
+ 
+ 
+(13,104,942
+)
+ 
+ 
+(1,645,400
+)
+Proceeds from Fortress Credit Agreement, net
+ 
+ 
+58,800,000
+ 
+ 
+ 
+
+ 
+Payments of debt issuance costs
+ 
+ 
+(3,138,521
+)
+ 
+ 
+
+ 
+Settlement of Redemption Consideration Obligation
+ 
+ 
+(39,096,401
+)
+ 
+ 
+
+ 
+Net cash provided by financing activities
+ 
+ 
+4,362,293
+ 
+ 
+ 
+4,389,234
+ 
+Effect of exchange rate changes on cash
+ 
+ 
+(66,809
+)
+ 
+ 
+7,302
+ 
+Net increase (decrease) in cash and cash equivalents
+ 
+ 
+10,065,326
+ 
+ 
+ 
+(3,693,310
+)
+Cash and cash equivalents  beginning of period
+ 
+ 
+5,993,388
+ 
+ 
+ 
+9,686,698
+ 
+Cash and cash equivalents  end of period
+ 
+$
+16,058,714
+ 
+ 
+$
+5,993,388
+ 
+Supplemental cash flow information:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Cash paid for interest
+ 
+$
+940,097
+ 
+ 
+$
+612,840
+ 
+Cash paid for income taxes
+ 
+$
+319,967
+ 
+ 
+$
+75,786
+ 
+Supplemental schedule of non-cash activities:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Shares issued in connection with PGP asset acquisition
+ 
+$
+
+ 
+ 
+$
+3,989,528
+ 
+Gain on forgiveness of Paycheck Protection Program Loan
+ 
+$
+
+ 
+ 
+$
+835,300
+ 
+Fortress warrants issued
+ 
+$
+3,149,002
+ 
+ 
+$
+
+ 
+Insurance acquired under note payable
+ 
+$
+653,521
+ 
+ 
+$
+678,108
+ 
+Right-of-use assets obtained in exchange for lease liabilities
+ 
+$
+28,604
+ 
+ 
+$
+1,390,002
+ 
+Inventory transferred to assets deployed at client locations
+ 
+$
+326,072
+ 
+ 
+$
+48,838
+ 
+
+ 
+The accompanying notes are an integral part of the consolidated financial statements.
+20
+ 
+GALAXY GAMING, INC.
+NOTES TO CONSOLIDATED FINANCIAL STATEMENTS
+YEARS ENDED DECEMBER 31, 2021 AND 2020
+ 
+ 
+NOTE 1. NATURE OF OPERATIONS
+Unless the context indicates otherwise, references to Galaxy Gaming, Inc., we, us, our, or the Company, refer to Galaxy Gaming, Inc., a Nevada corporation (Galaxy Gaming).
+We are an established global gaming company specializing in the design, development, acquisition, assembly, marketing and licensing of proprietary casino table games and associated technology, platforms and systems for the casino gaming industry. Casinos use our proprietary products and services to enhance their gaming operations and improve their profitability, productivity and security, as well as to offer popular cutting-edge gaming entertainment content and technology to their players. We market our products and services to online casinos worldwide and to land-based casino gaming companies in North America, the Caribbean, Central America, the United Kingdom, Europe and Africa and to cruise ship companies. We license our products and services for use solely in legalized gaming markets. We also license our content and distribute content from other companies to iGaming operators throughout the world.
+Share Redemption. On May 6, 2019, we redeemed all 23,271,667 shares of our common stock held by Triangulum Partners, LLC (Triangulum), an entity controlled by Robert B. Saucier, Galaxy Gaming's founder, and, prior to the redemption, the holder of a majority of our outstanding common stock. Our Articles of Incorporation (the Articles) provide that if certain events occur in relation to a stockholder that is required to undergo a gaming suitability review or similar investigative process, we have the option to purchase all or any part of such stockholders shares at a price per share that is equal to the average closing share price over the thirty calendar days preceding the purchase. The average closing share price over the thirty calendar days preceding the redemption was $1.68 per share.
+The consideration owed to Triangulum for the redemption was $39,096,401 (the Redemption Consideration Obligation). See Note 10. All of the litigation related to the Redemption Consideration Obligation and other matters between the Company and Triangulum was resolved on November 15, 2021, when Galaxy made a settlement payment in the amount of $39,507,717 to Triangulum. See Note 10 and Note 11.
+Membership Interest Purchase Agreement. On February 25, 2020, Galaxy Gaming entered into a Membership Interest Purchase Agreement, dated February 25, 2020 (the Purchase Agreement), between the Company and the membership interest holders of Progressive Games Partners, LLC (PGP).
+On August 21, 2020, the Company entered into a First Amendment to the Purchase Agreement between the Company and the membership interest holders of PGP. The First Amendment, among other things, fixed the cash portion of the purchase price at $6.425 million and established that the stock portion would be satisfied through the issuance of 3,141,361 shares of the Companys common stock with a value of $1.27 per share on the date of the acquisition. The shares issued are being held in escrow with Philadelphia Stock Transfer, Inc., the Companys stock transfer agent. The shares were released to the sellers in August 2021.
+ 
+On August 21, 2020, the Company completed the acquisition of 100% of the member interests in PGP. The entirety of the purchase price ($10,414,528) has been allocated to customer relationships and is included in Other intangible assets, net, on the Companys balance sheet. See Note 7. The Company also acquired certain receivables and payables in the net amount of $581,885, which was to be remitted to the sellers of PGP as the receivables and payables were settled. The remaining balance of $76,053 at December 31, 2020 was paid to the sellers on May 7, 2021.
+Management has determined that, for accounting purposes, the PGP transaction does not meet the definition of a business combination and, therefore, has been accounted for as an asset acquisition.
+ 
+COVID-19. On March 11, 2020, the World Health Organization declared a pandemic related to the COVID-19 outbreak, which led to a global health emergency. The public-health impact of the outbreak continues to remain largely unknown and still evolving as new strains of COVID-19 continue to evolve. The related health crisis could continue to adversely affect the global economy, resulting in continued economic downturn that could impact demand for our products. Virtually all of our land-based clients have reopened, although casino revenues have not returned to pre-COVID-19 levels.  
+ 
+We rely on third-party suppliers and manufacturers in China, many of whom were shut down or severely cut back production during some portion of 2020, with supply shortages continuing into 2021. Although we have been able to maintain inventories adequate to our needs, any future disruption of our suppliers and their contract manufacturers may impact our sales and operating results going forward.
+21
+Because of the uncertainties of COVID-19, the Company drew on its Revolving Loan in the amount of $1,000,000 on March 12, 2020. Also, on April 17, 2020, the Company obtained the Paycheck Protection Program (the PPP Loan) pursuant to the Coronavirus Aid, Relief, and Economic Security Act (the CARES Act) and the Paycheck Protection Program Flexibility Act (the Flexibility Act). On July 16, 2020, the Company filed an application and supporting documentation for forgiveness in full of the PPP Loan. On November 21, 2020, the Company received notification the PPP Loan had been forgiven in full, including $4,943 in accrued interest. Pursuant to the CARES Act, the Federal Reserve created the Main Street Priority Loan Program (MSPLP) to provide financing for small and medium-sized businesses. On October 26, 2020, the Company borrowed $4 million from Zions Bancorporation N.A., dba Nevada State Bank under this program. All of the Companys obligations under the Nevada State Bank credit agreement were repaid on November 15, 2021. See Note 10.
+Credit Agreement Amendments and Fortress Credit Agreement. See Note 10 for discussion of amendments made to the Companys credit agreement and the entry into the Fortress Credit Agreement.
+NOTE 2. SIGNIFICANT ACCOUNTING POLICIES
+Basis of presentation. The accompanying consolidated financial statements have been prepared in accordance with generally accepted accounting principles in the United States of America (U.S. GAAP) and the rules of the Securities and Exchange Commission (SEC). In the opinion of management, the accompanying consolidated financial statements contain all necessary adjustments (including all those of a recurring nature and those necessary in order for the financial statements to be not misleading) and all disclosures to present fairly our financial position and the results of our operations and cash flows for the periods presented.
+Basis of accounting. The consolidated financial statements have been prepared on the accrual basis of accounting in conformity with U.S. GAAP.
+Use of estimates and assumptions. We are required to make estimates, judgments and assumptions that we believe are reasonable based on our historical experience, contract terms, observance of known trends in our Company and the industry as a whole, and information available from other outside sources. Our estimates affect reported amounts for assets, liabilities, revenues, expenses and related disclosures. Actual results may differ from initial estimates.
+Consolidation. The financial statements are presented on a consolidated basis and include the results of the Company and its wholly owned subsidiary, PGP. All intercompany transactions and balances have been eliminated in consolidation.
+Reclassifications. Certain accounts and financial statement captions in the prior period have been reclassified to conform to the current period financial statement presentations and had no effect on net income (loss).
+Cash and cash equivalents. We consider cash on hand and cash in banks as cash. We consider certificates of deposit and other short-term securities with maturities of three months or less when purchased as cash equivalents. Our cash in bank balances are deposited in insured banking institutions, which are insured up to $250,000  per account. To date, we have not experienced uninsured losses, and we believe the risk of future loss is negligible.
+Accounts receivable and allowance for doubtful accounts. Accounts receivable are stated at face value less an allowance for doubtful accounts. Accounts receivable are non-interest bearing. The Company reviews the accounts receivable on a monthly basis to determine if any receivables will potentially be uncollectible. The allowance for doubtful accounts is estimated based on specific customer reviews, historical collection trends and current economic and business conditions.
+Inventory. Inventory consists of ancillary products such as signs, layouts and bases for the various games and electronic devices and components to support all our electronic enhancements used on casino table games (Enhanced Table Systems), and we maintain inventory levels based on historical and industry trends. We regularly assess inventory quantities for excess and obsolescence primarily based on forecasted product demand. Inventory is valued at the lower of net realizable value or cost, which is determined by the average cost method.
+Assets deployed at client locations, net. Our Enhanced Table Systems are assembled by us and accounted for as inventory until deployed at our casino clients premises (Note 6). Once deployed and placed into service at client locations, the assets are transferred from inventory and reported as assets deployed at client locations. These assets are stated at cost, net of accumulated depreciation. Depreciation on assets deployed at client locations is calculated using the straight-line method over a three-year period.
+Property and equipment, net. Property and equipment are being depreciated over their estimated useful lives (three to five years) using the straight-line method of depreciation (Note 5). Property and equipment are analyzed for potential impairment whenever events or changes in circumstances indicate the carrying value may not be recoverable and exceeds their fair value.
+Goodwill. Goodwill (Note 7) is assessed for impairment at least annually or at other times during the year if events or circumstances indicate that it is more-likely-than-not that the fair value of a reporting asset is below the carrying amount. If found to be impaired, the carrying amount will be reduced, and an impairment loss will be recognized.
+22
+Other intangible assets, net. The following intangible assets have finite lives and are being amortized using the straight-line method over their estimated economic lives as follows:
+ 
+Patents
+ 
+4 - 20 years
+Client relationships
+ 
+9 - 22 years
+Trademarks
+ 
+12 - 30 years
+Non-compete agreements
+ 
+9 years
+Software
+ 
+3 years
+
+ 
+Other intangible assets (Note 7) are analyzed for potential impairment at least annually or whenever events or changes in circumstances indicate the carrying value may not be recoverable and exceeds the fair value, which is the sum of the undiscounted cash flows expected to result from the use and eventual disposition of the intangible assets. No impairment was recorded for the years ended December 31, 2021 or 2020.
+ 
+Interest rates swap agreement. In May 2018, the Company entered into an interest rate swap agreement to reduce the impact of changes in interest rates on its floating rate long-term debt. The interest rate swap has not been designated a hedging instrument and is adjusted to fair value through earnings in the Companys statements of operations. The interest rate swap agreement matured on May 1, 2021.
+Fair value of financial instruments. We estimate fair value for financial assets and liabilities in accordance with Financial Accounting Standards Board (FASB) Accounting Standards Codification (ASC) Topic 820, Fair Value Measurement (ASC 820). ASC 820 defines fair value, provides guidance for measuring fair value, requires certain disclosures and discusses valuation techniques, such as the market approach (comparable market prices), the income approach (present value of future income or cash flow) and the cost approach (cost to replace the service capacity of an asset or replacement cost). ASC 820 utilizes a fair value hierarchy that prioritizes the inputs to valuation techniques used to measure fair value into three broad levels:
+ 
+
+Level 1: Observable inputs such as quoted prices (unadjusted) in active markets for identical assets or liabilities.
+
+
+ 
+
+Level 2: Inputs other than quoted prices that are observable for the asset or liability, either directly or indirectly. These include quoted prices for similar assets or liabilities in active markets and quoted prices for identical or similar assets or liabilities in markets that are not active.
+
+
+ 
+
+Level 3: Unobservable inputs that reflect the reporting entitys own assumptions.
+
+The estimated fair values of cash equivalents, accounts receivable and accounts payable approximate their carrying amounts due to their short-term nature. The estimated fair value of our long-term debt approximates its carrying value based upon our expected borrowing rate for debt with similar remaining maturities and comparable risk. The Company currently has no financial instruments measured at estimated fair value on a recurring basis based on valuation reports provided by counterparties.
+Leases. We account for lease components (such as rent payments) separately from non-lease components (such as common-area maintenance costs, real estate and sales taxes and insurance costs). Operating and finance leases with terms greater than 12 months are recorded on the consolidated balance sheets as right-of-use assets with corresponding lease liabilities. Lease expense is recognized on a straight-line basis using the discount rate implicit in each lease or our incremental borrowing rate at lease commencement date (Note 9).
+Revenue recognition. We account for our revenue in accordance with ASC Topic 606, Revenue from Contracts with Customers. See Note 3.
+Costs of ancillary products and assembled components. Ancillary products include pay tables (display of payouts), bases, layouts, signage and other items as they relate to support of specific proprietary games in connection with the licensing of our games. Assembled components represent the cost of the equipment, devices and incorporated software used to support our Enhanced Table Systems.
+Research and development. We incur research and development (R&D) costs to develop our new and next-generation products. Our products reach commercial feasibility shortly before the products are released, and therefore R&D costs are expensed as incurred. Employee related costs associated with product development are included in R&D costs.
+Foreign currency translation. The functional currency for PGP is the Euro. Gains and losses from settlement of transactions involving foreign currency amounts are included in other income or expense in the consolidated statements of operations. Gains and losses resulting from translating assets and liabilities from the functional currency to U.S. dollars are included in accumulated other comprehensive income or (loss) in the consolidated statements of changes in stockholders deficit.
+Net income per share. Basic net income per share is calculated by dividing net income by the weighted-average number of common shares issued and outstanding during the year. Diluted net income per share is similar to basic, except that the weighted-average number of shares outstanding is increased by the potentially dilutive effect of outstanding stock options and restricted stock, if applicable, during the year.
+23
+Segmented information. We define operating segments as components of our enterprise for which separate financial information is reviewed regularly by the chief operating decision-makers to evaluate performance and to make operating decisions. We currently have two operating segments (land-based gaming and online gaming) which are aggregated into one reporting segment.
+Share-based compensation. We recognize compensation expense for all restricted stock and stock option awards made to employees, directors and independent contractors. The fair value of restricted stock is measured using the grant date trading price of our stock. The fair value of stock option awards (Note 13) is estimated at the grant date using the Black-Scholes option-pricing model, and the portion that is ultimately expected to vest is recognized as compensation cost over the requisite service period. We have elected to recognize compensation expense for all options with graded vesting on a straight-line basis over the vesting period of the entire option. The determination of fair value using the Black-Scholes pricing model is affected by our stock price as well as assumptions regarding a number of complex and subjective variables, including expected stock price volatility, risk-free interest rate, expected dividends and projected employee stock option exercise behaviors. We estimate volatility based on historical volatility of our common stock, and estimate the expected term based on several criteria, including the vesting period of the grant and the term of the award. We estimate employee stock option exercise behavior based on actual historical exercise activity and assumptions regarding future exercise activity of unexercised, outstanding options.
+Income taxes. We are subject to income taxes in both the United States and in certain non-U.S. jurisdictions. We account for income taxes in accordance with ASC 740, Income Taxes (ASC 740) using the asset and liability method. Under the asset and liability method, deferred tax assets and liabilities are recognized for the future tax consequences attributable to temporary differences between the financial statement carrying amounts of existing assets and liabilities and their respective tax bases, and operating loss and tax credit carryforwards. These temporary differences will result in deductible or taxable amounts in future years when the reported amounts of the assets or liabilities are recovered or settled. Deferred tax assets and liabilities are measured using enacted tax rates expected to apply to taxable income in the years in which those temporary differences are expected to be recovered or settled. The effect on deferred tax assets and liabilities of a change in tax rates is recognized in income in the period that includes the enactment date. A valuation allowance is provided when it is more-likely-than-not that some or all of the deferred tax assets may not be realized. Adjustments to the valuation allowance increase or decrease our income tax provision or benefit. To the extent we believe that recovery is more likely than not, we establish a valuation allowance against these deferred tax assets. Significant judgment is required in determining our provision for income taxes, our deferred tax assets and liabilities, and any valuation allowance recorded against our deferred tax assets. As of December 31, 2021 and 2020, we recorded a full valuation allowance against certain deferred assets.
+In the ordinary course of business, there are transactions and calculations where the ultimate tax outcome is uncertain. Additionally, our tax returns are subject to audit by various tax authorities. Although we believe that our estimates are reasonable, actual results could differ from these estimates. We recognize the tax benefit from an uncertain tax position if it is more-likely-than-not that the tax position will be sustained on examination by the taxing authorities, based on an evaluation of the technical merits of the position, which requires a significant degree of judgment (Note 13).
+Recently adopted accounting standards. Simplifying the Accounting for Income Taxes. In December 2019, the FASB issued Accounting Standard Update (ASU) No. 2019-12, Income Taxes (Topic 740): Simplifying the Accounting for Income Taxes (ASU 2019-12), which simplifies the accounting for income taxes. This guidance is effective for the first quarter of 2021 on a prospective basis. We adopted the new standard effective January 1, 2021, and its adoption did not have a material impact on our consolidated financial statements.
+New accounting standards not yet adopted. Financial Instruments  Credit Losses. In February 2020, the FASB issued ASU No. 2020-02, Financial Instruments  Credit Losses (Topic 326). ASU 2020-02 provides updated guidance on how an entity should measure credit losses on financial instruments and delayed the effective date of Topic 326 for smaller reporting companies until fiscal years beginning after December 15, 2022. Early adoption is permitted. We do not believe the adoption of this guidance will have a material impact on our financial statements or related disclosures.
+ 
+ 
+NOTE 3. REVENUE RECOGNITION
+ 
+Revenue recognition. We generate revenue primarily from the licensing of our intellectual property. We recognize revenue under recurring fee license contracts monthly as we satisfy our performance obligation, which consists of granting the customer the right to use our intellectual property. Amounts billed are determined based on flat rates or usage rates stipulated in the customer contract.
+ 
+Disaggregation of revenue
+ 
+The following table disaggregates our revenue by geographic location for the years ended December 31, 2021 and 2020:
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+North America and Caribbean
+ 
+$
+10,024,537
+ 
+ 
+$
+5,757,143
+ 
+Europe, Middle East and Africa
+ 
+ 
+9,959,841
+ 
+ 
+ 
+4,473,173
+ 
+Total revenue
+ 
+$
+19,984,378
+ 
+ 
+$
+10,230,316
+ 
+
+ 
+Contract liabilities. Amounts billed and cash received in advance of performance obligations fulfilled are recorded as contract liabilities and recognized as performance obligations are fulfilled.
+24
+ 
+Contract assets. The Companys contract assets consist solely of unbilled receivables which are recorded when the Company recognizes revenue in advance of billings. Unbilled receivables totaled $771,293 and $502,860 for the years ended December 31, 2021 and 2020 and are included in the accounts receivable balance in the accompanying balance sheets.
+ 
+Royalty agreements. From time to time, the Company licenses intellectual property from third-party owners and the Company, in turn, re-licenses that intellectual property to its casino clients. In these arrangements, the Company usually agrees to pay the owner of the intellectual property a royalty based on the revenues the Company receives from licensing the intellectual property to its casino clients. For the years ended December 31, 2021 and 2020, license royalty payments of $1,670,210 and $438,837, respectively, are recorded net in revenue.
+ 
+NOTE 4. INVENTORY
+Inventory consisted of the following as of December 31, 2021 and 2020:
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+Raw materials and component parts
+ 
+$
+413,320
+ 
+ 
+$
+300,244
+ 
+Finished goods
+ 
+ 
+356,928
+ 
+ 
+ 
+368,281
+ 
+Inventory
+ 
+$
+770,248
+ 
+ 
+$
+668,525
+ 
+
+ 
+ 
+NOTE 5. PROPERTY AND EQUIPMENT
+Property and equipment consisted of the following at December 31, 2021 and 2020:
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+Furniture and fixtures
+ 
+$
+312,639
+ 
+ 
+$
+312,639
+ 
+Automotive vehicles
+ 
+ 
+171,671
+ 
+ 
+ 
+215,127
+ 
+Office and computer equipment
+ 
+ 
+389,628
+ 
+ 
+ 
+332,544
+ 
+Leasehold improvements
+ 
+ 
+35,531
+ 
+ 
+ 
+32,547
+ 
+Property and equipment, gross
+ 
+ 
+909,469
+ 
+ 
+ 
+892,857
+ 
+Less: accumulated depreciation
+ 
+ 
+(810,875
+)
+ 
+ 
+(776,133
+)
+Property and equipment, net
+ 
+$
+98,594
+ 
+ 
+$
+116,724
+ 
+
+ 
+For the years ended December 31, 2021 and 2020, depreciation expense related to property and equipment was $78,199 and $90,979, respectively.
+ 
+ 
+NOTE 6. Assets deployed at client locations
+Assets deployed at client locations, net consisted of the following at December 31, 2021 and 2020:
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+Enhanced table systems
+ 
+$
+1,139,827
+ 
+ 
+$
+890,560
+ 
+Less: accumulated depreciation
+ 
+ 
+(779,092
+)
+ 
+ 
+(658,404
+)
+Assets deployed at client location, net
+ 
+$
+360,735
+ 
+ 
+$
+232,156
+ 
+
+ 
+For the years ended December 31, 2021 and 2020, depreciation expense related to assets deployed at client locations was $197,493 and $222,204, respectively.
+ 
+25
+ 
+NOTE 7. GOODWILL AND OTHER INTANGIBLE ASSETS
+Goodwill. A goodwill balance of $1,091,000 was created as a result of a transaction completed in October 2011 with Prime Table Games, LLC (PTG).
+Other intangible assets, net. Other intangible assets, net consisted of the following at December 31, 2021 and 2020:
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+Patents
+ 
+$
+13,507,997
+ 
+ 
+$
+13,507,997
+ 
+Customer relationships
+ 
+ 
+14,040,856
+ 
+ 
+ 
+13,942,115
+ 
+Trademarks
+ 
+ 
+2,880,967
+ 
+ 
+ 
+2,880,967
+ 
+Non-compete agreements
+ 
+ 
+660,000
+ 
+ 
+ 
+660,000
+ 
+Software
+ 
+ 
+283,340
+ 
+ 
+ 
+183,415
+ 
+Other intangible assets, gross
+ 
+ 
+31,373,160
+ 
+ 
+ 
+31,174,494
+ 
+Less: accumulated amortization
+ 
+ 
+(17,695,896
+)
+ 
+ 
+(15,087,598
+)
+Other intangible assets, net
+ 
+$
+13,677,264
+ 
+ 
+$
+16,086,896
+ 
+
+ 
+For the years ended December 31, 2021 and 2020, amortization expense related to the finite-lived intangible assets was $2,608,299 and $1,908,858 respectively.
+ 
+Estimated future amortization expense is as follows:
+ 
+Year Ended December 31,
+ 
+Total
+ 
+2022
+ 
+$
+2,325,888
+ 
+2023
+ 
+ 
+1,459,601
+ 
+2024
+ 
+ 
+1,444,126
+ 
+2025
+ 
+ 
+1,436,968
+ 
+2026
+ 
+ 
+1,436,968
+ 
+Thereafter
+ 
+ 
+5,523,691
+ 
+Total amortization
+ 
+$
+13,627,242
+ 
+
+ 
+NOTE 8. ACCRUED EXPENSES
+Accrued expenses consisted of the following at December 31, 2021 and 2020:
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+Share redemption consideration
+ 
+$
+
+ 
+ 
+$
+510,776
+ 
+Commissions and royalties
+ 
+ 
+1,165,744
+ 
+ 
+ 
+398,096
+ 
+Payroll and related
+ 
+ 
+1,156,291
+ 
+ 
+ 
+173,487
+ 
+Interest
+ 
+ 
+233,333
+ 
+ 
+ 
+95,879
+ 
+Income tax (receivable) payable
+ 
+ 
+(3,111
+)
+ 
+ 
+42,218
+ 
+Other
+ 
+ 
+113,816
+ 
+ 
+ 
+112,576
+ 
+Total accrued expenses
+ 
+$
+2,666,073
+ 
+ 
+$
+1,333,032
+ 
+
+ 
+ 
+ 
+NOTE 9. LEASES
+We have operating leases for our corporate office, two satellite facilities in the state of Washington and for certain equipment. We account for lease components (such as rent payments) separately from the non-lease components (such as common-area maintenance costs, real estate and sales taxes and insurance costs). The discount rate represents the interest rate implicit in each lease or our incremental borrowing rate at lease commencement date.
+On September 21, 2021, we executed a third amendment to one of our satellite facilities to amend the lease expiration date from December 31, 2021 to December 31, 2023, with monthly base rents of $1,025 from January 1, 2022 to December 31, 2023. As a result of the amendment, we recorded a $23,293 increase to operating lease right-of-use assets and operating lease liabilities.
+ 
+As of December 31, 2021, our leases have remaining lease terms ranging from 6 months to 60 months.
+26
+Supplemental balance sheet information related to leases is as follows:
+
+
+ 
+As of December 31, 2021
+ 
+ 
+Amount
+ 
+ 
+Classification
+Operating leases:
+ 
+ 
+ 
+ 
+ 
+ 
+Operating lease right-of-use lease assets
+ 
+$
+1,167,903
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Operating lease current liabilities
+ 
+$
+222,806
+ 
+ 
+Current portion of operating lease liabilities
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Operating lease long-term liabilities
+ 
+ 
+1,019,029
+ 
+ 
+Long-term operating lease liabilities
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Total operating lease liabilities
+ 
+$
+1,241,835
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Weighted-average remaining lease term:
+ 
+ 
+ 
+ 
+ 
+ 
+Operating leases
+ 
+4.5 years
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Weighted-average discount rate:
+ 
+ 
+ 
+ 
+ 
+ 
+Operating leases
+ 
+ 
+4.2
+%
+ 
+ 
+
+ 
+The components of lease expense are as follows:
+ 
+ 
+ 
+Year Ended December 31, 2021
+ 
+ 
+Amount
+ 
+ 
+Classification
+Operating lease cost
+ 
+$
+282,121
+ 
+ 
+Selling, general and administrative expense
+
+ 
+ 
+Supplemental cash flow information related to leases is as follows:
+ 
+ 
+ 
+Year Ended December 31, 2021
+ 
+ 
+Amount
+ 
+ 
+Classification
+Cash paid for amounts included in the
+   measure of lease liabilities:
+ 
+ 
+ 
+ 
+ 
+ 
+Operating cash flows from operating leases
+ 
+$
+197,388
+ 
+ 
+Net income
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Right-of-use assets obtained in exchange
+   for lease liabilities:
+ 
+ 
+ 
+ 
+ 
+ 
+Operating leases
+ 
+$
+28,604
+ 
+ 
+Supplemental cash flow information
+
+ 
+As of December 31, 2021, future maturities of our operating lease liabilities are as follows:
+ 
+Year Ended December 31,
+ 
+Amount
+ 
+2023
+ 
+$
+222,806
+ 
+2024
+ 
+ 
+234,253
+ 
+2025
+ 
+ 
+240,034
+ 
+2026
+ 
+ 
+261,148
+ 
+2027
+ 
+ 
+283,594
+ 
+Thereafter
+ 
+ 
+
+ 
+Total lease liabilities
+ 
+$
+1,241,835
+ 
+
+ 
+27
+ 
+NOTE 10. LONG-TERM DEBT AND LIABILITIES
+Long-term debt and liabilities consisted of the following at December 31, 2021 and 2020:
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+Fortress credit agreement
+ 
+$
+60,000,000
+ 
+ 
+$
+
+ 
+Nevada State Bank credit agreement
+ 
+ 
+
+ 
+ 
+ 
+8,413,184
+ 
+Main Street Priority Loan
+ 
+ 
+
+ 
+ 
+ 
+4,000,000
+ 
+Redemption Consideration Obligation
+ 
+ 
+
+ 
+ 
+ 
+39,096,401
+ 
+Vehicle notes payable
+ 
+ 
+
+ 
+ 
+ 
+22,614
+ 
+Insurance notes payable
+ 
+ 
+500,369
+ 
+ 
+ 
+519,194
+ 
+Long-term debt, gross
+ 
+ 
+60,500,369
+ 
+ 
+ 
+52,051,393
+ 
+Less: Unamortized debt issuance costs
+ 
+ 
+(7,256,190
+)
+ 
+ 
+(137,817
+)
+Long-term liabilities, net of debt issuance costs
+ 
+ 
+53,244,179
+ 
+ 
+ 
+51,913,576
+ 
+Less: Current portion
+ 
+ 
+(1,100,369
+)
+ 
+ 
+(2,222,392
+)
+Long-term debt, net
+ 
+$
+52,143,810
+ 
+ 
+$
+49,691,184
+ 
+
+ 
+Share Redemption Consideration Obligation. On May 6, 2019, we issued a promissory note in the face amount of $39,096,401 to Triangulum in connection with the share redemption disclosed in Note 1. In the litigation that followed the share redemption (Note 11), Triangulum is disputing, among other things, the validity of the note and has not accepted its terms. Because Triangulum disputes the promissory note issued by the Company and its terms, the promissory note has not been given accounting effect in the Companys financial statements. The Company has instead recorded a long-term obligation payable to Triangulum, based on the redemption value specified in our Articles of Incorporation. The obligation is classified as long-term because we do not expect that a final agreement with respect to the litigation will be reached between the parties in the next twelve months. We may repay the Redemption Consideration Obligation at any time but no later than May 6, 2029; however, there can be no assurance that Triangulum will accept such payments. Additional share redemption consideration is being accrued at 2% on the Redemption Consideration Obligation. We paid the first and second annual payments in the amounts of $781,928 on May 5, 2020 and May 6, 2021. Both payments were accepted by Triangulum. The Redemption Consideration Obligation is unsecured and is subordinated to our existing and future indebtedness. On October 7, 2021, Galaxy announced that it had entered into a Settlement Agreement with Triangulum and Robert Saucier. The Settlement Agreement, among other things, resolves the previously disclosed pending litigation between the parties related to the redemption of the Company equity securities owned by Triangulum and Saucier in 2019; provides broad mutual releases to the Company, the Companys officers and directors, Triangulum and Saucier related to all claims against each other; and includes an agreement by Saucier and Triangulum not to compete with the Company for a period of five years from the date of payment of settlement consideration. Consummation of the settlement was conditioned upon the Company paying Triangulum and Saucier $39.1 million, plus interest accrued at 2% per annum from May 6, 2021, through the date of actual payment. On November 15, 2021, Galaxy made a payment in the amount of $39,507,717 to Triangulum as settlement of the previously disclosed litigation. The Company considers all Triangulum and Saucier related matters to be now closed.
+ 
+Nevada State Bank (NSB) Credit Agreement. The Company was party to a Credit Agreement with Zions Bancorporation, N.A. dba Nevada State Bank (as amended, the Credit Agreement). The Credit Agreement provided for a Term Loan in the initial amount of $11,000,000 and a Revolving Loan in the amount of $1,000,000.
+On March 29, 2021, the Company entered into an amended and restated credit agreement with Zions Bancorporation, N.A. dba Nevada State Bank (the A&R Credit Agreement). The A&R Credit Agreement replaced the original Credit Agreement entered into by the Company with Zions Bancorporation, N.A. dba Nevada State Bank on April 24, 2018 and last modified on November 16, 2020. The A&R Credit Agreement provided for a Term Loan in the amount of $7,022,300 and a Revolving Loan in the amount of $1,000,000. If not paid earlier, amounts outstanding under the Revolving Loan would mature on April 24, 2022, and amounts outstanding under the Term Loan would mature on April 24, 2023.
+Under the A&R Credit Agreement, outstanding balances accrued interest based on one-month U.S. dollar London interbank offered rate (LIBOR) plus an applicable margin of 3.50% or 4.00%, depending on our Total Leverage Ratio (as defined in the A&R Credit Agreement). Effective December 31, 2021, LIBOR will no longer serve as a reference rate for bank loans, among other investment classes. The A&R Credit Agreement stipulates that a substitute index rate will be selected and used in lieu of LIBOR.
+The A&R Credit Agreement contained affirmative and negative financial covenants (as defined in the A&R Credit Agreement) and other restrictions customary for borrowings of this nature. In particular, we were required to maintain (i) a quarterly minimum Fixed Charge Coverage ratio of 1.25x; (ii) a quarterly maximum Total Leverage ratio of 22.50x for the quarter ending March 31, 2021, 10.00x for quarter ending June 30, 2021, 6.50x for the quarter ending September 30, 2021 with semi-annual step-downs of 0.25x commencing December 31, 2021 and quarterly thereafter; (iii) a quarterly maximum Senior Leverage ratio of 5.25x for the quarter ending March 31, 2021, 2.50x for the quarter ending June 30, 2021 and 2.00x quarterly thereafter; (iv) a quarterly Minimum EBITDA covenant of $2.4 million for each of the quarters ending March 31, 2021, June 30, 2021 and September 30, 2021 and $8.0 million quarterly thereafter; (v) a quarterly Minimum Liquidity covenant requiring the Company to have cash and cash equivalents of no less than $1.5 million at quarter ends through and including June 30, 2021 and $2.5 million quarterly thereafter; and (vi) a yearly maximum Maintenance Capital Expenditure covenant of 5% of total revenues for the prior year. The Company was in compliance with its Fixed Charge Coverage ratio, Senior Leverage ratio, Total Leverage ratio and Minimum Liquidity covenants as of June 30, 2021. However, the Company was not in compliance with its Minimum EBITDA covenant as of June 30, 2021. On May 13, 2021, the Company and NSB entered into a Forbearance to the A&R Credit Agreement, in which NSB agreed to forbear from exercising any of its rights or remedies that would result from the potential breaches of the Minimum EBITDA and Total Leverage ratio covenant for the quarters ending June 30, 2021 and September 30, 2021. The Company was in compliance with its Fixed Charge Coverage ratio, Senior Leverage ratio, Minimum EBITDA and Minimum Liquidity covenants as of September 30, 2021. However, the Company was not in compliance with its Total Leverage ratio as of September 30, 2021. On May 13, 2021, the Company and NSB entered into a Forbearance to the A&R Credit Agreement, in which NSB agreed to forbear from exercising any of its rights or remedies that would result from the potential breaches of the Minimum EBITDA and Total Leverage ratio covenant for the quarters ending June 30, 2021 and September 30, 2021.
+28
+ 
+The obligations under the A&R Credit Agreement were secured by substantially all of the assets of the Company. The Companys wholly owned subsidiary, PGP, was also a guarantor of the A&R Credit Agreement and related agreements.
+ 
+On November 15, 2021, Galaxy made a payment in the amount of $7,012,265 to NSB as payment in full for both the Term Loan and the Revolving Loan.
+ 
+Main Street Priority Loan Borrowings. On October 26, 2020, the Company obtained an unsecured loan of $4,000,000 through Zions Bancorporation, N.A. dba Nevada State Bank under section 13(3) of the Federal Reserve Act. On November 15, 2021, Galaxy made a payment in the amount of $4,126,755 to NSB as payment in full for the MSPLP.
+ 
+The MSPLP bore interest at a rate of three-month U.S. dollar LIBOR plus 300 basis points (initially 3.215%), and interest payments during the first year were deferred and added to the loan balance. The MSPLP had a five-year final maturity, with 15% of principal amortizing in each of years three and four. The MSPLP, plus accrued and unpaid interest, was allowed to be prepaid at any time at par. While the MSPLP was outstanding, and for one year after it is repaid in full, the Company may not 1) repurchase stock, pay dividends or make other distributions, or 2) pay compensation to executive officers that exceeds the total compensation they received in 2019. The entire outstanding principal balance of the MSPLP, together with all accrued and unpaid interest, was due and payable in full on October 26, 2025. The terms of the MSPLP provided for customary events of default, including, among others, those relating to a failure to make payment, bankruptcy, breaches of representations and covenants, and the occurrence of certain events. The MSPLP was secured by a security interest in the assets of the Company, which security interest is pari passu with the security interest granted under the Credit Agreement.
+ 
+Fortress Credit Agreement. On November 15, 2021, the Company entered into a senior secured term loan agreement with Fortress Credit Corp. (Fortress Credit Agreement) in the amount of $60 million. The proceeds of the loan were used to (i) pay approximately $39.5 million to Triangulum as full payment of the settlement amount due under the previously filed settlement agreement between the Galaxy and Triangulum, as set forth above; (ii) repay approximately $11.1 million due and owing to NSB under the MSPLP and under the Amended and Restated Credit Agreement, dated as of May 13, 2021, made between Galaxy and Zions Bancorporation, N.A. dba Nevada State Bank, a Nevada state banking corporation, and (iii) approximately $4.1 million was used to pay fees and expenses. The remaining approximately $5.3 million was added to the Companys cash on hand and will be used for corporate and operating purposes.
+ 
+The Fortress Credit Agreement bears interest at a rate equal to, at the Companys option, either (a) LIBOR (or a successor rate, determined in accordance with the Fortress Credit Agreement) plus 7.75%, subject to a reduction to 7.50% upon the achievement of a net leverage target or (b) a base rate determined by reference to the greatest of (i) the federal funds rate plus 0.50%, (ii) the prime rate as determined by reference to The Wall Street Journals Prime Rate and (iii) the one-month adjusted LIBOR rate plus 1.00%, plus 6.75%, subject to a reduction to 6.50% upon the achievement of a net leverage target. The Fortress Credit Agreement has a final maturity of November 13, 2026. The obligations under the Fortress Credit Agreement are guaranteed by the Companys subsidiaries and are secured by substantially all of the assets of the Company and its subsidiaries. The Fortress Credit agreement requires, among other things, principal payments of $150,000 per quarter and includes an annual sweep of 50% of excess cash flow. The Fortress Credit Agreement contains affirmative and negative financial covenants (as defined in the Fortress Credit Agreement) and other restrictions customary for borrowings of this nature. The Company was required to maintain a Total Net Leverage Ratio of 8.00x for the quarter ending December 31, 2021. The Company was in compliance with its Total Net Leverage Ratio as of December 31, 2021. Also, The Fortress Credit Agreement requires that the Company not allow balances in bank accounts that are not covered by an account control agreement to exceed $1 million at any month-end. The bank accounts held by PGP in the Isle of Man are not covered by account control agreements and the balances in those accounts exceeded $1 million at the end of November and December 2021 and January and February 2022. In March 2022, the balances in those accounts were reduced to less than $1 million. The Company informed Fortress of the covenant breach, and a Consent and Waiver Agreement (the Consent and Waiver Agreement) was executed among the Company, Fortress, as Agent (the Agent), and the Lenders party to the Fortress Credit Agreement on March 16, 2022.
+ 
+29
+ 
+In connection with entering into the Fortress Credit Agreement, the Company also issued warrants to purchase a total of up to 778,320 shares of the Companys common stock to certain affiliates of Fortress at a price per share of $0.01 (the Warrants). The Warrants are exercisable at any time, subject to certain restrictions.
+As of December 31, 2021, future maturities of our long-term obligations are as follows:
+ 
+December 31,
+ 
+Total
+ 
+2022
+ 
+$
+1,100,369
+ 
+2023
+ 
+ 
+600,000
+ 
+2024
+ 
+ 
+600,000
+ 
+2025
+ 
+ 
+600,000
+ 
+2026
+ 
+ 
+57,600,000
+ 
+Thereafter
+ 
+ 
+
+ 
+Total long-term debt, gross
+ 
+$
+60,500,369
+ 
+
+ 
+NOTE 11. COMMITMENTS AND CONTINGENCIES
+Concentration of risk. We are exposed to risks associated with clients who represent a significant portion of total revenues.
+For the years ended December 31, 2021 and 2020, respectively, we had the following client revenue concentrations:
+ 
+ 
+ 
+Location
+ 
+2021
+Revenue
+ 
+ 
+2020
+Revenue
+ 
+ 
+Accounts Receivable
+December 31, 2021
+ 
+ 
+Accounts Receivable
+December 31, 2020
+ 
+Client A
+ 
+Europe
+ 
+26.1%
+ 
+ 
+21.5%
+ 
+ 
+$
+
+ 
+ 
+$
+348,781
+ 
+
+ 
+Legal proceedings. In the ordinary course of conducting our business, we are, from time to time, involved in various legal proceedings, administrative proceedings, regulatory government investigations and other matters, including those in which we are a plaintiff or defendant, that are complex in nature and have outcomes that are difficult to predict.
+ 
+As discussed in Note 1, we redeemed the shares of our common stock held by Triangulum, an entity controlled by Robert B. Saucier, the Companys founder, and, prior to the redemption, the holder of a majority of our outstanding common stock.
+ 
+On May 6, 2019, the Company redeemed the shares of our common stock held by Triangulum. Also on May 6, 2019, the Company filed a lawsuit seeking: (i) a declaratory judgment that it acted lawfully and in full compliance with the Articles when it redeemed the Triangulum shares and (ii) certain remedies for breach of fiduciary duty and breach of contract by Triangulum and its Managing Member, Mr. Saucier (the Triangulum Lawsuit). The suit alleges that the redemption and the other relief sought by the Company are appropriate and in accordance with the Articles.
+ 
+On October 18, 2019, Saucier filed counterclaims against the Company and its Chairman of the Board, Mark Lipparelli, including a breach of contract claim alleging that the Company was obligated to pay Saucier his year-end bonus despite his resignation. The Company and Chairman Lipparelli filed an answer to the counterclaims.
+ 
+Subsequent to its original counterclaims, Triangulum filed amended counterclaims, which the Company and its Directors moved to dismiss on a number of legal grounds (the Motion to Dismiss). The Court denied the Motion to Dismiss. The Company and its Directors filed a writ petition challenging the ruling, which the Nevada Supreme Court denied on January 23, 2020.
+ 
+On May 6, 2020, Saucier made a demand of the Company under our Bylaws and an Indemnification Agreement between Saucier and the Company, for indemnity and advancement of funds seeking repayment of his attorneys fees and expenses he allegedly incurred in connection with the Companys claims against him in the Triangulum Lawsuit. An independent counsel, selected per the terms of the Indemnification Agreement, concluded that Saucier was entitled to a small amount of indemnity funds related to the time he was employed by the Company, but denied an entitlement to indemnification thereafter.
+ 
+On May 19, 2020, Saucier commenced a separate action in Nevada district court by filing a complaint he verified as true, seeking advancement of indemnification fees to which he claims an entitlement under the Bylaws and an Indemnification Agreement (the Advancement Lawsuit). The Company filed its opposition on June 4, 2020. Sauciers Motion was denied in a hearing that occurred on June 24, 2020. Saucier filed a notice of his appeal of the Nevada district courts decision in the Advancement Lawsuit to the Nevada Supreme Court on August 10, 2020. Saucier subsequently moved for attorneys' fees related to the filing of the Advancement Lawsuit, which the Nevada district court granted, and the Company filed a notice of appeal to the Nevada Supreme Court. When Saucier filed a supplemental motion for attorneys fees, the Nevada district court denied his motion, finding the fees incurred to be unreasonable, among other things. Saucier also appealed this ruling of the Nevada district court.
+ 
+Various other but related matters and appeals remained pending between the parties.
+ 
+30
+ 
+On October 7, 2021, Galaxy announced that it had entered into a Settlement Agreement with Triangulum and Robert Saucier. The Settlement Agreement, among other things, resolves the previously disclosed pending litigation between the parties related to the redemption of the Company equity securities owned by Triangulum and Saucier in 2019; provides broad mutual releases to the Company, the Companys officers and directors, Triangulum and Saucier related to all claims against each other; and includes an agreement by Saucier and Triangulum not to compete with the Company for a period of five years from the date of payment of settlement consideration. Consummation of the settlement was conditioned upon the Company paying Triangulum and Saucier $39.1 million, plus interest accrued at 2% per annum from May 6, 2021, through the date of actual payment. On November 15, 2021, Galaxy made a payment in the amount of $39,507,717 to Triangulum as settlement of previously disclosed litigation. The Company considers all Triangulum and Saucier related matters to be now closed.
+ 
+In September 2018, we were served with a complaint by TableMax Corporation (TMAX) regarding the TMAX Agreement. We filed an answer denying the allegations and filed a partial motion for summary judgment seeking dismissal of the plaintiffs claims. The suit was dismissed, subject to the right of the plaintiff to file an amended complaint on or before March 20, 2019. The plaintiff did not file an amended complaint within the time period set by the Judge. After that time, the Company considered the matter closed. TMAX filed a Motion for Leave to Amend their Complaint, which was granted by the Judge on May 11, 2020. On May 26, 2020 TMAX filed an Amended Complaint against the Company and other Co-Defendants. The Company filed a Motion To Enforce Settlement Or, In The Alternative, Motion To Dismiss And/Or For Summary Judgement and Request For Sanctions, on April 30, 2021. On June 22, 2021, the Companys s Motion to Dismiss was granted, with prejudice to the right of TMAX to file an amended complaint. The Company considers the matter closed.
+ 
+An unexpected adverse judgment in any pending litigation could cause a material impact on our business operations, intellectual property, results of operations or financial position. Unless otherwise expressly stated, we believe costs associated with litigation will not have a material impact on our financial position or liquidity but may be material to the results of operations in any given period and accordingly, no provision for loss has been reflected in the accompanying financial statements related to these matters.
+ 
+Intellectual property agreements. From time to time, the Company purchases intellectual property from third-parties and the Company, in turn, utilizes that intellectual property in certain games sold to clients. In these purchase agreements, the Company may agree to pay the seller of the intellectual property a fee, if and when, the Company receives revenue from games containing the intellectual property. 
+NOTE 12. INCOME TAXES
+The components of the provision consist of the following for the years ended December 31, 2021 and 2020:
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+U.S.(loss)
+ 
+$
+(770,771
+)
+ 
+$
+(3,477,895
+)
+Non-U.S. income
+ 
+ 
+2,931,220
+ 
+ 
+ 
+663,071
+ 
+Income (loss) before income taxes
+ 
+$
+2,160,449
+ 
+ 
+$
+(2,814,824
+)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+Current:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Federal
+ 
+$
+(62,074
+)
+ 
+$
+(1,204,556
+)
+State
+ 
+ 
+11,500
+ 
+ 
+ 
+1,745
+ 
+Foreign
+ 
+ 
+74,885
+ 
+ 
+ 
+
+ 
+Total current
+ 
+ 
+24,311
+ 
+ 
+ 
+(1,202,811
+)
+Deferred:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Federal
+ 
+ 
+(97,965
+)
+ 
+ 
+674,138
+ 
+State
+ 
+ 
+122,291
+ 
+ 
+ 
+(77,264
+)
+Total deferred
+ 
+ 
+24,326
+ 
+ 
+ 
+596,874
+ 
+Provision (benefit) for income taxes
+ 
+$
+48,637
+ 
+ 
+$
+(605,937
+)
+
+ 
+31
+ 
+The income tax provision differs from that computed at the federal statutory corporate income tax rate as follows for the years ended December 31, 2021 and 2020:
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+Tax provision computed at the federal statutory rate
+ 
+$
+453,694
+ 
+ 
+$
+(591,113
+)
+Foreign rate differential
+ 
+ 
+(540,670
+)
+ 
+ 
+(139,246
+)
+State income tax, net of federal benefit
+ 
+ 
+22,226
+ 
+ 
+ 
+(55,558
+)
+162(m) compensation limit
+ 
+ 
+228,069
+ 
+ 
+ 
+
+ 
+Share based compensation
+ 
+ 
+(615,062
+)
+ 
+ 
+(4,568
+)
+Subpart F income
+ 
+ 
+717,218
+ 
+ 
+ 
+204,326
+ 
+Non-taxable PPP loan forgiveness
+ 
+ 
+
+ 
+ 
+ 
+(176,451
+)
+Other permanent items
+ 
+ 
+1,138
+ 
+ 
+ 
+29,511
+ 
+Credits
+ 
+ 
+(94,223
+)
+ 
+ 
+(24,801
+)
+Impact of CARES Act
+ 
+ 
+(71,168
+)
+ 
+ 
+(466,642
+)
+State tax true ups
+ 
+ 
+(79,997
+)
+ 
+ 
+10,153
+ 
+Change in federal statutory rate, net of benefit
+ 
+ 
+(15,698
+)
+ 
+ 
+1,364
+ 
+Uncertain tax positions
+ 
+ 
+1,933
+ 
+ 
+ 
+46,699
+ 
+Valuation allowance
+ 
+ 
+41,177
+ 
+ 
+ 
+560,389
+ 
+Provision (benefit) for income taxes
+ 
+$
+48,637
+ 
+ 
+$
+(605,937
+)
+
+ 
+The tax effects of significant temporary differences representing net deferred tax assets and liabilities consisted of the following at December 31, 2021 and 2020:
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+Deferred Tax Assets:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Right-of-use asset
+ 
+$
+268,137
+ 
+ 
+$
+320,787
+ 
+Share based compensation
+ 
+ 
+228,574
+ 
+ 
+ 
+313,910
+ 
+Intangible assets
+ 
+ 
+176,457
+ 
+ 
+ 
+182,511
+ 
+Accruals and reserves
+ 
+ 
+127,332
+ 
+ 
+ 
+67,259
+ 
+Debt issuance costs
+ 
+ 
+50,246
+ 
+ 
+ 
+
+ 
+Other
+ 
+ 
+96,111
+ 
+ 
+ 
+86,231
+ 
+Total deferred tax assets
+ 
+ 
+946,857
+ 
+ 
+ 
+970,698
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Total valuation allowance
+ 
+ 
+(601,566
+)
+ 
+ 
+(560,389
+)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Deferred Tax Liabilities:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Right-of-use liability
+ 
+ 
+(285,111
+)
+ 
+ 
+(316,481
+)
+Prepaid assets
+ 
+ 
+(171,411
+)
+ 
+ 
+(207,005
+)
+Basis difference in fixed assets
+ 
+ 
+(62,968
+)
+ 
+ 
+(37,715
+)
+Other
+ 
+ 
+(1,019
+)
+ 
+ 
+
+ 
+Total deferred tax liabilities
+ 
+ 
+(520,509
+)
+ 
+ 
+(561,201
+)
+Net deferred tax liabilities
+ 
+$
+(175,218
+)
+ 
+$
+(150,892
+)
+
+ 
+On August 21, 2020, the Company completed the acquisition of 100% of the member interests in PGP. As of December 31, 2020, the Company has evaluated its deferred tax attributes related to the acquisition within the foreign jurisdiction of Isle of Man and recorded a tax-effected deferred tax asset of $0 as of December 31, 2020. The Company has assessed the foreign subsidiary income and Subpart F requires us to include the income of PGP in the U.S. tax base on an annual basis.
+ 
+In addition, as of December 31, 2021, the Company recognized state net operating loss carryforwards of $1.0 million. The majority of the state carryforward amounts will begin to expire in 2040, while some state net operating losses have an indefinite carryforward period.
+ 
+In accordance with U.S. GAAP, the need to establish a valuation allowance against deferred tax assets is assessed periodically based on a more-likely-than-not realization threshold. Appropriate consideration is given to all positive and negative evidence related to that realization. This assessment considers, among other matters, the nature, frequency and severity of recent losses; forecasts of future profitability; the duration of statutory carryforward periods; experience with tax attributes expiring unused; and tax planning alternatives. The weight given to these considerations depends upon the degree to which they can be objectively verified.
+ 
+32
+ 
+A significant piece of objective negative evidence evaluated was the three-year cumulative loss position the company is in as of the period ended December 31, 2021. Such objective negative evidence limits the ability to consider other more subjective evidence such as projections of future income. The amount of the deferred tax asset considered realizable could be adjusted in future periods if the objective negative evidence of a cumulative loss is no longer present, and more weight is given to subjective evidence such as future income and growth.
+ 
+Upon assessing all of the relevant evidence, the Company determined it has not met the more-likely-than-not threshold to support the realization of all or part of its deferred tax assets. The Company has recorded a valuation allowance against certain of its deferreds in the amount of $601,566. The current-year change resulted in additional tax expense of $41,177, which impacted the Companys effective tax rate by 1.91%.
+ 
+The aggregate changes in the balance of gross unrecognized tax benefits (included as part of deferred tax liabilities, net in the accompanying financial statements), which excludes interest and penalties, are as follows as of and for the years ended December 31, 2021 and 2020:
+ 
+ 
+ 
+2021
+ 
+ 
+2020
+ 
+Beginning balance
+ 
+$
+46,699
+ 
+ 
+$
+
+ 
+Increases related to tax positions taken during the prior year
+ 
+ 
+
+ 
+ 
+ 
+45,207
+ 
+Increases related to tax positions taken during the current year
+ 
+ 
+1,933
+ 
+ 
+ 
+1,492
+ 
+Other adjustments
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+Ending balance
+ 
+$
+48,632
+ 
+ 
+$
+46,699
+ 
+
+ 
+Our total liability for unrecognized gross tax benefits was $48,632 as of December 31, 2021, which, if ultimately recognized, would impact the annual estimated effective tax rate in future periods. We are subject to examination by the Internal Revenue Service for fiscal years 2018 and thereafter. For states within the U.S. in which we conduct significant business, we generally remain subject to examination for fiscal years 2018 and thereafter, unless extended for longer periods under state laws. We have no accrual for interest or penalties related to uncertain tax positions at December 31, 2021 and 2020, and did not recognize interest or penalties in the statements of operations during the years ended December 31, 2021 and 2020, as such amounts would be immaterial, if any.
+ 
+NOTE 13. SHARE-BASED COMPENSATION
+ 
+Stock Options
+ 
+On May 10, 2018, the Board ratified and confirmed the 2014 Equity Incentive Plan (the 2014 Plan). The 2014 Plan is a broad-based plan under which shares of our common stock are authorized for issuance for awards, including stock options, stock appreciation rights, restricted stock, and cash incentive awards to members of our Board, executive officers, employees and independent contractors. As of December 31, 2021, a total of 7,550,750 shares of our common stock were authorized for issuance. As of December 31, 2021, 745,368 shares remained available for issuance as new awards under the 2014 Plan.
+During the years ended December 31, 2021 and 2020, we issued 90,000 and 465,000 options to purchase our common stock, respectively, to executive officers, employees and independent contractors. The fair value of all stock options granted for the years ended December 31, 2021 and 2020 was determined to be $162,252 and $435,639, respectively, using the Black-Scholes option pricing model with the following assumptions:
+ 
+ 
+ 
+Options Issued For the Twelve Months Ended December 31, 2021
+ 
+ 
+Options Issued For the Twelve Months Ended December 31, 2020
+ 
+Dividend yield
+ 
+0%
+ 
+ 
+0%
+ 
+Expected volatility
+ 
+61.12% - 68.74%
+ 
+ 
+70.98% - 76.97%
+ 
+Risk free interest rate
+ 
+0.48% - 0.98%
+ 
+ 
+0.27% - 1.39%
+ 
+Expected life (years)
+ 
+ 
+5.00
+ 
+ 
+ 
+5.00
+ 
+
+ 
+33
+ 
+A summary of stock option activity is as follows:
+ 
+ 
+ 
+Common
+Stock
+Options
+ 
+ 
+Weighted-
+Average
+Exercise
+Price
+ 
+ 
+Aggregate
+Intrinsic
+Value
+ 
+ 
+Weighted-
+Average
+Remaining
+Contractual
+Term (Years)
+ 
+Outstanding  December 31, 2020
+ 
+ 
+2,982,000
+ 
+ 
+$
+1.08
+ 
+ 
+$
+2,101,780
+ 
+ 
+ 
+2.35
+ 
+Issued
+ 
+ 
+90,000
+ 
+ 
+$
+3.38
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+Exercised
+ 
+ 
+(1,094,998
+)
+ 
+$
+0.82
+ 
+ 
+$
+(3,166,433
+)
+ 
+ 
+
+ 
+Forfeited or expired
+ 
+ 
+(42,000
+)
+ 
+$
+1.04
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+Outstanding  December 31, 2021
+ 
+ 
+1,935,002
+ 
+ 
+$
+1.33
+ 
+ 
+$
+4,788,314
+ 
+ 
+ 
+1.87
+ 
+Exercisable  December 31, 2021
+ 
+ 
+1,458,001
+ 
+ 
+$
+1.12
+ 
+ 
+$
+3,914,356
+ 
+ 
+ 
+1.35
+ 
+
+ 
+A summary of unvested stock option activity is as follows:
+ 
+ 
+ 
+Common
+Stock
+Options
+ 
+ 
+Weighted-
+Average
+Exercise
+Price
+ 
+ 
+Aggregate
+Intrinsic
+Value
+ 
+ 
+Weighted-
+Average
+Remaining
+Contractual
+Term (Years)
+ 
+Unvested  December 31, 2020
+ 
+ 
+845,000
+ 
+ 
+$
+1.55
+ 
+ 
+$
+197,608
+ 
+ 
+ 
+3.83
+ 
+Granted
+ 
+ 
+90,000
+ 
+ 
+$
+3.38
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+Vested
+ 
+ 
+(416,333
+)
+ 
+$
+1.51
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+Forfeited
+ 
+ 
+(41,666
+)
+ 
+$
+1.04
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+Unvested  December 31, 2021
+ 
+ 
+477,001
+ 
+ 
+$
+1.97
+ 
+ 
+$
+873,958
+ 
+ 
+ 
+3.45
+ 
+
+ 
+As of December 31, 2021, our unrecognized share-based compensation expense associated with the stock options issued was $382,021, which is expected to be amortized over a weighted-average of 1.75 years.
+ 
+Restricted Awards
+During the year ended December 31, 2021, we issued an aggregate of 298,333 restricted shares of our common stock valued at $1,112,882 to our board members in consideration of their service on the Board. These shares vested immediately on the grant date. An additional 80,000 restricted shares of our common stock valued at $181,600 were issued to an employee of the Company on February 17, 2021. These shares were granted in consideration of the individuals service to the Company. These shares vested on November 11, 2021. As of December 31, 2021, there were 2,379,466 restricted shares outstanding. Of the restricted shares outstanding, 100,000 restricted shares were unvested.
+ 
+NOTE 14. SUBSEQUENT EVENTS
+On March 16 2022, we, the lenders from time to time party (the Loan Parties) and Fortress Credit Corp., as the Agent entered into the Consent and Waiver to Fortress Credit Agreement.
+Pursuant to the Consent and Waiver Agreement, the Company  acknowledged that it was  in default under the Fortress Credit Agreement as a result of its failure to comply with a requirement of the Fortress Credit Agreement not to permit, on the last Business Day of each calendar month, more than the Dollar Equivalent of $1,000,000 (or such greater amount determined by the Agent in its sole discretion) in the aggregate to be on deposit in Isle of Man deposit or securities accounts which are not subject to Control Agreements (as such term is defined in the Guaranty and Security Agreement) or other security arrangements acceptable to the Agent (the Existing Default) for the months of November 2021, December 2021, January 2022 and February 2022 (the Specified Compliance Periods). The Company cured the default. Pursuant to the Consent and Waiver Agreement, the Company has requested that the Agent and Required Lenders waive, and the Agent and the Lenders signatory hereto constituting the Required Lenders agree to waive, the Existing Default for the Specified Compliance Periods indicated above.
+Other than as specifically referenced in the Consent and Waiver Agreement, the Credit Agreement remains in full force and effect.
+34
+ 
+ITEM 9. CHANGES IN AND DISAGREEMENTS WITH ACCOUNTANTS ON ACCOUNTING AND FINANCIAL DISCLOSURE
+ 
+None.
+ 
+ 
+ 
+ITEM 9A. CONTROLS AND PROCEDURES
+Disclosure Controls and Procedures
+Disclosure controls and procedures are controls and other procedures that are designed to ensure that information required to be disclosed in our reports filed or submitted under the Exchange Act are recorded, processed, summarized and reported within the time periods specified in the Securities and Exchange Commissions rules and forms. Disclosure controls and procedures include, without limitation, controls and procedures designed to ensure that information required to be disclosed in our reports submitted under the Exchange Act is accumulated and communicated to management including our Chief Executive Officer and Chief Financial Officer, to allow timely decisions regarding required disclosure.
+We carried out an evaluation of the effectiveness of the design and operation of our disclosure controls and procedures (as defined in Exchange Act Rules 13a-15(e) and 15d-15(e)) as of the end of the period covered by this Quarterly Report. This evaluation was carried out under the supervision and with the participation of our Chief Executive Officer and our Chief Financial Officer. Based upon that evaluation, our Chief Executive Officer and Chief Financial Officer concluded that, as of December 31, 2021, our disclosure controls and procedures were effective.
+No change in our internal control over financial reporting occurred during our last fiscal quarter that has materially affected, or is reasonably likely to materially affect, our internal control over financial reporting.
+Management's Annual Report on Internal Control Over Financial Reporting
+Our internal control over financial reporting is a process designed by, or under the supervision of, our Chief Executive Officer and Chief Financial Officer and effected by our Board, management and other personnel, to provide reasonable assurance regarding the reliability of our financial reporting and the preparation of our financial statements for external purposes in accordance with generally accepted accounting principles. Internal control over financial reporting includes policies and procedures that pertain to the maintenance of records that in reasonable detail accurately and fairly reflect the transactions and dispositions of our assets; provide reasonable assurance that transactions are recorded as necessary to permit preparation of our financial statements in accordance with generally accepted accounting principles, and that our receipts and expenditures are being made only in accordance with the authorization of our Board and management; and provide reasonable assurance regarding prevention or timely detection of unauthorized acquisition, use or disposition of our assets that could have a material effect on our financial statements.
+Under the supervision and with the participation of our management, including our Chief Executive Officer, we evaluated the effectiveness of our internal control over financial reporting based on the framework set forth in Internal Control - Integrated Framework issued in 2013 by the Committee of Sponsoring Organizations of the Treadway Commission (COSO). Based on this evaluation under the criteria established in Internal Control  Integrated Framework, our management concluded that our internal control over financial reporting was effective as of December 31, 2021.
+This annual report is not required and does not include an attestation report of our registered public accounting firm regarding internal control over financial reporting.
+ 
+ITEM 9B. OTHER INFORMATION
+None.
+ 
+ 
+35
+ 
+PART III
+ 
+ 
+ITEM 10. DIRECTORS, EXECUTIVE OFFICERS AND CORPORATE GOVERNANCE
+Directors and executive officers. The following information sets forth the names of our directors and executive officers, their ages and their appointment date/years in position as of December 31, 2021.
+Name
+ 
+Age
+ 
+ 
+Office(s) Held
+ 
+Years in Position/Date of Appointment or Commencement
+Todd P. Cravens
+ 
+ 
+49
+ 
+ 
+President and Chief Executive Officer
+ 
+4 years/July 24, 2017
+Harry C. Hagerty
+ 
+ 
+61
+ 
+ 
+Chief Financial Officer, Secretary and Treasurer
+ 
+4 years/May 1, 2017
+Mark A. Lipparelli
+ 
+ 
+56
+ 
+ 
+Chairman of the Board
+ 
+4 years/July 26, 2017
+Michael Gavin Isaacs
+ 
+ 
+57
+ 
+ 
+Director
+ 
+2 year/June 3, 2019
+Cheryl A. Kondra
+ 
+ 
+49
+ 
+ 
+Director
+ 
+December 2, 2021
+William A. Zender
+ 
+ 
+66
+ 
+ 
+Director
+ 
+7 years/May 1, 2014
+Bryan W. Waters
+ 
+ 
+59
+ 
+ 
+Director
+ 
+6 years/April 1, 2015
+
+Todd Cravens was appointed as our President and Chief Executive Officer on July 24, 2017. Mr. Cravens previously served as our Vice President of Business Development, a position he had held between January 2017 and July 2017. Prior to joining Galaxy Gaming, Mr. Cravens served as the Chief Executive Officer of Americas for TCS/John Huxley (a leader in table games products for casinos around the world) from 2013 to 2016; as President of AGS Illinois LLP and Vice President and General Manager of the Illinois Operations of AGS (a leading designer and supplier of electronic gaming machines and other products and services for the gaming industry) from 2010 to 2011; as Director of New Business of Betson Enterprises (a global full-line distributor of amusement and vending equipment) from 2002 to 2010; Vice President of Operations of uWink from 1999 to 2001; and as the Vice President of Sales of Bulldog Amusements (specializing in sales and marketing functions for the coin operated amusement industry) from 1995 to 2000. In addition, Mr. Cravens has been the principal of Cravens Consulting, LLC (specializing in developing gaming markets) since 2011.
+Harry C. Hagerty was appointed as our Chief Financial Officer, Secretary and Treasurer on May 1, 2017. Mr. Hagerty served as President and Chief Financial Officer of Sightline Payments LLC, a privately-held provider of payments solutions to the gaming industry, from November 2011 to August 2017. Mr. Hagerty served as a member of the Board of Directors of Trump Entertainment Resorts, Inc. from June 2008 to July 2010; as Chief Financial Officer of Global Cash Access Holdings, Inc., a publicly-traded provider of payments solutions to the gaming industry, from July 2004 to July 2007; and as Executive Vice President and Chief Financial Officer of Caesars Entertainment, Inc., an operator of casino resorts around the world, from March 2002 to May 2004. Prior to joining Caesars, Mr. Hagerty had a twenty-year career as an investment banker.
+ 
+Mark A. Lipparelli was appointed to our Board and as our Chairman on July 26, 2017. Mr. Lipparelli currently serves as the Managing Member and Chief Executive Officer of GVII, LLC, a Nevada gaming licensee that manages the Westgate Resort Las Vegas; Managing Member and CAMS, LLC, a technology services company to the online gaming industry; Managing Member of SBOpco, LLC, a sportsbook company operating as SuperBook. Additionally, Mr. Lipparelli serves as an advisor to limited number of operating and investment entities through GVIII, LLC where he is the Managing Member. Mr. Lipparelli has served as a member of the Board of Directors of Golden Entertainment, Inc. since 2015. Mr. Lipparelli also formerly represented State Senate District 6 in the Nevada Legislature, having been appointed to the post in December 2014, and served on a number of Senate committees. Mr. Lipparelli has also been an appointee to the Nevada Gaming Policy Committee. Between 2009 and 2012, Mr. Lipparelli served as a Board Member and Chairman of the Nevada Gaming Control Board. Between 2002 and 2007, Mr. Lipparelli served in various executive management positions at Bally Technologies, Inc., a gaming technology supply company listed on the NYSE, including as Executive Vice President of Operations. Prior to joining Bally, Mr. Lipparelli served as Executive Vice President and then President of Shuffle Master, Inc., a publicly traded gaming supply company, from 2001 to 2003; as Chief Financial Officer of Camco, Inc., a retail chain holding company, from 2000 to 2001; as Senior Vice President of Entertainment Systems for Bally Gaming, Inc. (a subsidiary of publicly traded Alliance Gaming Corporation), from 1998 to 2000; and various management positions including Vice President of Finance for publicly traded Casino Data Systems from 1993 to 1998. Mr. Lipparelli is a Board Trustee Emeritus of the University of Nevada Foundation, Board Member of the International Center for Responsible Gaming, member of the International Association of Gaming Advisors and a member of the International Masters of Gaming Law. Mr. Lipparelli holds a bachelors degree in finance and a masters degree in economics from the University of Nevada, Reno. Among other qualifications, Mr. Lipparelli brings over 25 years of experience in the gaming industry, including his service as Chief Executive Officer of a strategic advisory and product development firm, various executive management positions at companies serving the gaming industry, his legislative experience with the State Senate and past roles with the Nevada Gaming Control Board.
+ 
+William A. Zender is a Director. A graduate of the University of Nevada at Las Vegas, Mr. Zender earned a bachelors degree in Hotel Administration in 1976 and a Masters Degree in Business from the University of Phoenix in 2004. For the period of 1979 to 1981, Mr. Zender became an Enforcement Agent with the Nevada Gaming Control Board. In 1982, Mr. Zender performed various
+36
+consulting services and continued such consulting through various times during his career. In 1988, Mr. Zender became the Asian Games Manager at the famous Desert Inn Casino in Las Vegas until 1989 when he became the Casino Manager for the Maxim Hotel and Casino, also in Las Vegas. In 1991, Mr. Zender was the Games Manager at Artichoke Joes Casino in San Bruno, California and served as General Manager of Artichoke Joes Casino in 2018 and 2019. Mr. Zender was the Vice President and Owner of the Aladdin Hotel and Casino from 1992 to 1997. In 2005, Mr. Zender became Consultant and Owner of Last Resort Consulting until 2007 at which time he began performing consulting services full time through Bill Zender and Associates, LLC. His credentials include authoring seven books on gambling and gaming management and is currently an adjunct professor at the University of Nevada in the Extended Studies Program (Casino). Mr. Zender was awarded the Lifetime Achievement Award at the 2014 World Game Protection Conference for his invaluable contributions and generous dedication to the casino industry. Mr. Zender has testified as an expert witness in several major civil and criminal court gaming cases in the US, Australia, and Asia. Mr. Zender brings to the Board extensive table game industry experience.
+ 
+Bryan W. Waters is a Director. Mr. Waters is a senior executive skilled at building and leading teams to achieve outstanding results using a combination of judgment, experience and enthusiasm. He has a reputation as the "go-to" person to deal with high stakes, high profile challenges, whether that involves financial turnaround, restructure, mergers and acquisitions and/or charting of a new strategic direction. Mr. Waters is experienced at running, successfully growing and exiting Private Equity sponsored companies. A graduate of University of California, Los Angeles, Mr. Waters started his career with Wells Fargo Bank in 1988 where he held numerous executive positions throughout his 12 years with the bank, including President of the Southern Nevada region. In 2001, Mr. Waters became Chief Financial Officer of Camco, Inc., a specialty finance lender. Shortly after his appointment, Mr. Waters also absorbed the roles of President and Chief Operating Officer until the successful sale of the company December 2005 to Cash America International, Inc. a NYSE listed company. Mr. Waters joined Pacific National Bank in 2006 as President and Chief Executive Officer and was responsible for P & L growth of the privately held $2.3 billion 17 branch bank until its sale to U.S. Bank in October 2009. In 2010, Mr. Waters became Chief Executive Officer of B-Line, LLC, the largest purchaser and servicer of unsecured consumer bankruptcy claims in the country. At the time of its successful sale in late 2011, B-Line owned and serviced in excess of $300 million in assets. In 2012, Mr. Waters founded Magnolia Lane Partners, LLC, which is comprised of former executives of B-Line (an advisory and asset management firm focused primarily in the accounts receivable management industry with a specific focus on purchasing consumer receivables in bankruptcy). Also in 2012, Mr. Waters joined the Board of CBV Collection Services, LTD (CBV), a private equity and management owned company and one of the largest independent outsourcing, collection services and debt buying organizations in Canada. In September of 2013, Mr. Waters assumed the role of Chief Executive Officer of CBV and served in that role until its successful sale in June 2015. Mr. Waters served as CEO of North America for Dollar Financial Group leading over 3000 employees throughout 850 finance centers from June 2015 through June 2016. Mr. Waters served as President and Chief Operating Officer of Genesis Financial Solutions, the largest second look private label credit card issuer in the United States, from June 2016 to January 2018. Mr. Waters most recently served as CEO of Microf, LLC, a fin-tech platform and lease to own provider for the home improvement industry from June 2019 through September 2021. Mr. Waters is currently semi-retired and overseeing Magnolia Lane Partners, LLC and active in advising several specialty finance entities.
+ 
+Michael Gavin Isaacs is a Director. Mr. Isaacs is a former Non-Executive Director of Draftkings Inc. (NASDAQ:DKNG) and former Chairman of SBTech. Mr. Isaacs is also Chairman of the Board of Directors of Altitude Acquisition Corp. (Nasdaq: ALTUU), a blank-check company formed for the purpose of effecting a merger, capital stock exchange, asset acquisition, stock purchase, reorganization or similar business combination with one or more businesses in the travel, travel technology and/or travel-related industries. Mr. Isaacs served as Vice Chairman of the Board Scientific Games Corporation between August 2016 and December 2018, and prior to that was President and Chief Executive Officer of Scientific Games from June 2014 until August 2016. He was also a member of the board of directors of Scientific Games from June 2014 through 2018. Prior to 2014 Mr. Isaacs served as Chief Executive Officer of SHFL Entertainment, Inc. and served as Executive Vice President and Chief Operating Officer of Bally from 2006 through 2011. Prior to joining Bally, he held senior roles at Aristocrat Leisure Limited, including Head of Global Marketing and Business Development, Managing Director of Aristocrats London-based European subsidiary and President of Aristocrat Technologies, Inc., Aristocrats Las Vegas-based subsidiary. Mr. Isaacs previously served as a Trustee 5 and the President of the International Association of Gaming Advisors, and as Vice Chairman of the board of directors of the American Gaming Association. Mr. Isaacs qualifications to serve on the Board include more than 20 years experience in the gaming and technology industries, including in executive and leadership positions. Mr. Isaacs has a Masters of Laws degree and an undergraduate degree in Accounting and Financial Systems. Mr. Isaacs also brings public company board experience.
+ 
+Cheryl Kondra is a Director and was named the Audit Committee Chairman as of March 2022. Ms. Kondra currently serves as Vice President of Internal Audit at Tractor Supply Company (NASDAQ:TSCO), the largest rural lifestyle retailer in the United States. As a global audit and compliance leader, Ms. Kondra has earned a reputation for agile, ethical leadership among external auditors, colleagues, and clients for handling domestic and international audit and compliance requirements in publicly traded, startup, and PE-owned companies. A board presenter, team builder, industry speaker, and influential executive often sought to build and strengthen internal audit, she has achieved notable cost savings, with concurrent advances in risk identification, audit integrity, budget reductions, staff empowerment, and standards at Caesars Entertainment, Pinnacle Entertainment, Genting Americas, and Tractor Supply Company. Prior to Tractor Supply Company, she had an extensive career in gaming, having served as the VP of Internal Audit for Genting Americas
+37
+from 2019-2020. Prior to that she was VP of Internal Audit and Chief Compliance Officer at Pinnacle Entertainment from October 2014  September 2018. Ms. Kondra was the Chief Audit Executive at Caesars Entertainment from October 2007-August 2014 and held various other positions with Harrahs and Caesars Entertainment since 1997 within the Internal Audit and Compliance functions. Ms. Kondras qualifications to serve on the Board include more than 25 years experience in the gaming industry and audit/compliance field, including in executive and leadership positions. She built strong teams to address the many audit, Sarbanes Oxley compliance, regulatory and legal issues impacting companies in the gaming sector. Ms. Kondra has a Master of Accountancy degree and an undergraduate degree in Accounting. Ms. Kondra is a Certified Internal Auditor.
+Our bylaws authorize no fewer than one and no more than thirteen directors. We currently have five directors.
+Family relationships. There are no family relationships between or among the directors, executive officers or persons nominated or chosen by us to become directors or executive officers.
+Director or officer involvement in certain legal proceedings. To the best of our knowledge, during the past ten years, none of the following occurred with respect to any of our present or former directors or executive officers: (1) any bankruptcy petition filed by or against any business of which such person was a general partner or executive officer either at the time of the bankruptcy or within two years prior to that time; (2) any conviction in a criminal proceeding or being subject to a pending criminal proceeding (excluding traffic violations and other minor offenses); (3) being subject to any order, judgment or decree, not subsequently reversed, suspended or vacated, of any court of any competent jurisdiction, permanently or temporarily enjoining, barring, suspending or otherwise limiting his involvement in any type of business, securities or banking activities; and (4) being found by a court of competent jurisdiction (in a civil action), the Securities and Exchange Commission or the Commodities Futures Trading Commission to have violated a federal or state securities or commodities law, and the judgment has not been reversed, suspended or vacated.
+Committees of the Board. We do not currently have an executive committee or stock plan committee of our Board of Directors.
+Compensation Committee. At a meeting of the Board of Directors on July 8, 2014, the Board approved the creation of a Compensation Committee, and on October 13, 2014, adopted the Compensation Committee Charter (the Charter).
+Pursuant to the Charter, the Compensation Committee is to be comprised of no fewer than two non-employee members of the Board, and the members shall be free from any relationships or conflicts of interest with respect to the Company that would impair the members ability to make independent judgments. The members of the Compensation Committee will be appointed by the Board and can be removed by the Board at any time, with or without cause.
+The authority and duties of the Compensation Committee include but are not limited to: approving the corporate goals and objectives relating to compensation and bonus incentive structure of the Chief Executive Officer and other executive officers and key employees and any company-wide bonus plans; approving any material grants of equity compensation of more than 100,000 shares of our common stock; retaining and terminating any compensation consultant; and reviewing and assessing the adequacy of the Charter.
+For the year ended December 31, 2021, the members of the Compensation Committee were Mr. Isaacs (Chairman), Mr. Waters and Mr. Zender.
+Audit Committee. At a meeting of the Board of Directors on February 21, 2022, the Board approved the creation of an Audit Committee. Members of the Audit Committee are Cheryl Kondra (Chair), Mr. Isaacs and Mr. Waters.
+The duties of the Audit Committee include but are not limited to: approving the selection of our independent accountants and meeting and interacting with the independent accountants to discuss issues related to financial reporting. In addition, the Audit Committee reviews the scope and results of the audit with the independent accountants, reviews with management and the independent accountants our annual operating results, considers the adequacy of our internal accounting procedures and considers other auditing and accounting matters including fees to be paid to the independent auditor and the performance of the independent auditor.
+Nominating Committee. Our Board does not maintain a nominating committee. As a result, no written charter governs the director nomination process. The size of our Board, at this time, does not require a separate nominating committee. There were no changes during the year ended December 31, 2021, or as of the date of this report, to the process for recommending nominees to our Board.
+When evaluating director nominees, our Board consider the following factors:
+ 
+(1)
+The appropriate size of our Board;
+
+
+ 
+(2)
+Our needs with respect to the particular talents and experience of our directors;
+
+
+ 
+(3)
+The knowledge, skills and experience of nominees, including experience in finance, administration or public service, in light of prevailing business conditions and the knowledge, skills and experience already possessed by other members of the Board;
+
+
+ 
+(4)
+Experience in political affairs;
+
+
+ 
+(5)
+Experience with accounting rules and practices; and
+
+
+ 
+(6)
+The desire to balance the benefit of continuity with the periodic injection of the fresh perspective provided by new Board members.
+
+38
+ 
+Our goal is to assemble a Board that brings together a variety of perspectives and skills derived from high quality business and professional experience. In doing so, the Board will also consider candidates with appropriate non-business backgrounds. Other than the foregoing, there are no stated minimum criteria for director nominees, although the Board may also consider such other factors as it may deem are in our best interests as well as our stockholders. In addition, the Board identifies nominees by first evaluating the current members of the Board willing to continue in service. Current members of the Board with skills and experience that are relevant to our business and who are willing to continue in service are considered for re-nomination. If any member of the Board does not wish to continue in service or if the Board decides not to re-nominate a member for re-election, the Board then identifies the desired skills and experience of a new nominee in light of the criteria above. Current members of the Board are polled for suggestions as to individuals meeting the criteria described above. The Board may also engage in research to identify qualified individuals. To date, we have not engaged third parties to identify or evaluate or assist in identifying potential nominees, although we reserve the right in the future to retain a third-party search firm, if necessary. The Board does not typically consider shareholder nominees because it believes that our current nomination process is sufficient to identify directors who serve our best interests.
+Code of Ethics. As of December 31, 2021, we had not adopted a separate Code of Ethics for our financial executives, which would include our principal executive officer, principal financial officer, principal accounting officer or controller, or persons performing similar functions. The Company does have in place a new code of conduct which is included in its employee handbook, amongst other polices. The code of conduct and all other policies within the employee handbook are to be followed by all employees.
+Section 16(a) beneficial ownership reporting compliance. Section 16(a) of the Exchange Act requires our directors and executive officers and persons who beneficially own more than ten percent of a registered class of our equity securities to file with the SEC initial reports of ownership and reports of changes in ownership of common stock and other equity securities. Officers, directors and greater than ten percent beneficial shareholders are required by SEC regulations to furnish us with copies of all Section 16(a) forms they file. To the best of our knowledge based solely on a review of Forms 3, 4, and 5 (and any amendments thereof) received by us during or with respect to the year ended December 31, 2021, there were no reports that were not filed on a timely basis.
+ITEM 11. EXECUTIVE COMPENSATION
+Compensation discussion and analysis. Our current executive compensation plan consists of cash, stock and/or stock options compensation to the executive officers, who are primarily responsible for the day-to-day management and continuing development of our business.
+Summary compensation table. The table below summarizes all compensation awarded to or earned by each named executive officer for each of the last two completed fiscal years. 
+ 
+SUMMARY COMPENSATION TABLE
+Name and Principal Position
+ 
+Year
+ 
+Salary
+ 
+Bonus
+ 
+Stock
+Awards
+ 
+Option
+Awards
+ 
+Non-equity
+Incentive Plan
+ 
+Non-qualified
+Deferred
+Earnings
+ 
+All Other
+Compensation(1)
+ 
+Total
+Todd P. Cravens (1) (2)
+   Chief Executive
+   Officer
+ 
+2021
+2020
+ 
+$275,000
+$274,327
+ 
+
+$139,500
+ 
+$181,600
+
+ 
+
+$255,017
+ 
+
+
+ 
+
+
+ 
+$18,731
+$17,260
+ 
+$475,331
+$686,104
+Harry C. Hagerty (1)
+   Chief Financial
+   Officer
+ 
+2021
+2020
+ 
+$200,000
+$200,000
+ 
+
+$111,500
+ 
+
+$107,720
+ 
+
+
+ 
+
+
+ 
+
+
+ 
+$19,991
+$19,072
+ 
+$219,991
+$438,292
+
+ 
+ 
+(1)
+For our executives, all other compensation includes standard benefits such as health insurance premiums and contributions to a deferred contribution plan (401k).
+
+
+ 
+(2)
+During the year ended December 31, 2021, Mr. Cravens received 80,000 shares of our restricted common stock valued at $181,600, using the grant date trading price of our stock. The shares vested in full on November 11, 2021. During the year ended December 31, 2020, Mr. Cravens was granted options to purchase 225,000 shares of our common stock. The value of Mr. Cravens option awards was based on their grant date fair value, using the Black-Scholes option pricing model.
+
+Outstanding equity awards at fiscal year-end table. The following table summarizes all unexercised options, stock that has not vested, and equity incentive plan awards outstanding for each named executive officer as of the end of the last completed fiscal year.
+39
+
+ 
+OUTSTANDING EQUITY AWARDS AT FISCAL YEAR-END
+ 
+OPTION AWARDS
+ 
+STOCK AWARDS
+ 
+Name
+ 
+Number of
+Securities Underlying
+Unexercised
+Options (#)
+Exercisable
+ 
+ 
+Number of
+Securities Underlying
+Unexercised
+Options (#)
+Unexercisable
+ 
+ 
+Equity Incentive Plan Awards: Number of Securities Underlying Unexercised Unearned Options
+(#)
+ 
+ 
+Option Exercise Price
+($)
+ 
+ 
+Option Expiration Date
+ 
+Number of
+Shares or
+Units of Stock That Have Not
+Vested
+(#)
+ 
+ 
+Market Value of Shares or Units of Stock That Have Not Vested
+($)
+ 
+ 
+Equity Incentive Plan Awards: Number of Unearned Shares, Units or Other Rights That Have Not Vested
+(#)
+ 
+ 
+Equity Incentive Plan Awards: Market or Payout Value of Unearned Shares, Units or Other Rights That Have Not Vested
+(#)
+ 
+Todd P. Cravens, CEO
+ 
+ 
+938,000
+ 
+ 
+ 
+137,000
+ 
+ 
+ 
+
+ 
+ 
+$0.76 - $1.93
+ 
+ 
+7/26/22, 10/12/23, 2/21/24, 2/17/25
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+Harry C. Hagerty, CFO
+ 
+ 
+
+ 
+ 
+ 
+66,668
+ 
+ 
+ 
+
+ 
+ 
+$
+1.97
+ 
+ 
+10/22/24
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+Compensation of directors table. The table below summarizes all compensation paid to each named director for the last completed fiscal year.
+DIRECTOR COMPENSATION TABLE
+ 
+Name
+ 
+Fees Earned or Paid in Cash
+ 
+ 
+Stock Awards
+ 
+ 
+Option Awards
+ 
+ 
+Non-equity Incentive Plan Compensation
+ 
+ 
+Non-qualified Deferred
+Compensation
+Earnings
+ 
+ 
+All Other
+Compensation
+ 
+ 
+Total
+ 
+Mark A. Lipparelli(1)
+ 
+$
+90,000
+ 
+ 
+$
+368,000
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+458,000
+ 
+Michael Gavin Isaacs(2)
+ 
+$
+42,000
+ 
+ 
+$
+232,200
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+274,200
+ 
+Cheryl A. Kondra(3)
+ 
+$
+3,500
+ 
+ 
+$
+13,032
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+16,532
+ 
+William A. Zender(4)
+ 
+$
+42,000
+ 
+ 
+$
+147,200
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+189,200
+ 
+Bryan W. Waters(5)
+ 
+$
+42,000
+ 
+ 
+$
+147,200
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+
+ 
+ 
+$
+189,200
+ 
+
+
+ 
+(1)
+Mr. Lipparelli was appointed as the Chairman of the Board effective July 26, 2017. During the year ended December 31, 2021, Mr. Lipparelli received 100,000 shares of our restricted common stock in quarterly installments valued at $368,000, using the grant date trading price of our stock. The shares vested immediately on the grant date. We also provided Mr. Lipparelli annual cash compensation of $90,000 paid in monthly installments.
+
+
+ 
+(2)
+Mr. Isaacs was appointed to the Board effective June 3, 2019, and the Board authorized the issuance of 75,000 restricted shares of our common stock, which vest yearly over a three-year period beginning June 3, 2020. 50,000 shares have vested as of December 31, 2021, with a value of $85,000, using the trading price of our stock on that day. During the year ended December 31, 2021, Mr. Isaacs received 40,000 shares of our restricted common stock in quarterly installments valued at $147,200, using the grant date trading price of our stock. The shares vested immediately on the grant date. We also provided Mr. Isaacs cash compensation of $42,000 paid in monthly installments.
+
+
+ 
+(3)
+Ms. Kondra was appointed to the Board effective December 2, 2021, and the Board authorized the issuance of 75,000 restricted shares of our common stock, which vest yearly over a three-year period beginning December 2, 2022. During the year ended December 31, 2021, Ms. Kondra received 3,333 shares of our restricted common stock valued at $13,032, using the grant date trading price of our stock. The shares vested immediately on the grant date. We also provided Ms. Kondra cash compensation of $3,500 paid in monthly installments.
+
+
+ 
+(4)
+Mr. Zender was appointed to the Board effective May 1, 2014. During the year ended December 31, 2021, Mr. Zender received 40,000 shares of our restricted common stock in quarterly installments valued at $147,200, using the grant date trading price of our stock. The shares vested immediately on the grant date. During the year ended December 31, 2021, Mr. Zender exercised 100,000 options valued at $330,250, using the exercise date price of our stock. We also provided Mr. Zender annual cash compensation of $42,000 paid in monthly installments.
+
+
+ 
+(5)
+Mr. Waters was appointed to the Board, effective April 1, 2015. During the year ended December 31, 2021, Mr. Waters received 40,000 shares of our restricted common stock in quarterly installments valued at $147,200, using the grant date trading price of our stock. The shares vested immediately on the grant date. During the year ended December 31, 2021, Mr. Waters exercised 100,000 options valued at $322,625, using the exercise date price of our stock. We also provided Mr. Waters annual cash compensation of $42,000 paid in monthly installments.
+
+ 
+40
+ 
+ITEM 12. SECURITY OWNERSHIP OF CERTAIN BENEFICIAL OWNERS AND MANAGEMENT, AND RELATED STOCKHOLDER MATTERS
+The following table sets forth, as of March 28, 2022, the beneficial ownership of our common stock by each executive officer and director, by each person known by us to beneficially own more than 5% of our common stock and by the executive officers and directors as a group. Unless otherwise indicated, the named persons possess sole voting and investment power with respect to the shares listed (except to the extent such authority is shared with spouses under applicable law). The percentages are based upon a total of 23,785,636 shares as of March 28, 2022, consisting of 23,718,968 shares outstanding and 66,668 stock options and restricted stock which are exercisable at March 28, 2022 or within 60 days.
+Name of Beneficial Owner
+ 
+Amount of
+Beneficial
+Ownership
+ 
+ 
+Percent of Class
+ 
+Mark A. Lipparelli, Director(1)
+ 
+ 
+1,918,250
+ 
+ 
+ 
+8.13
+%
+Michael Gavin Isaacs, Director(2)
+ 
+ 
+225,871
+ 
+ 
+ 
+0.96
+%
+William A. Zender, Director(3)
+ 
+ 
+623,267
+ 
+ 
+ 
+2.65
+%
+Bryan W. Waters, Director(4)
+ 
+ 
+531,600
+ 
+ 
+ 
+2.26
+%
+Cheryl A. Kondra(5)
+ 
+ 
+3,333
+ 
+ 
+ 
+0.01
+%
+Todd P. Cravens, President and Chief Executive Officer(6)
+ 
+ 
+1,140,000
+ 
+ 
+ 
+4.85
+%
+Harry C. Hagerty, Chief Financial Officer(7)
+ 
+ 
+873,500
+ 
+ 
+ 
+3.71
+%
+Total Directors, Executive Officers & Beneficial Owners > 5%
+ 
+ 
+5,315,821
+ 
+ 
+ 
+22.57
+%
+
+ 
+ 
+(1)
+Mr. Lipparelli holds options to purchase 75,000 shares of our common stock which are either exercisable at March 28, 2022, or within 60 days. In addition, Mr. Lipparelli holds 1,718,250 shares of common stock under his name and 125,000 shares under Mark Allan Lipparelli TTEE.
+
+ 
+ 
+(2)
+Mr. Isaacs holds 225,871 shares of common stock.
+
+
+ 
+(3)
+Mr. Zender holds options to purchase 100,000 shares of our common stock which are either exercisable at March 28, 2022, or exercisable within 60 days and 523,267 shares of common stock.
+
+
+ 
+(4)
+Mr. Waters holds options to purchase 100,000 shares of our common stock which are either exercisable at March 28, 2022 or exercisable within 60 days and 431,600 shares of common stock.
+
+
+ 
+(5)
+Ms. Kondra holds 3,333 shares of common stock.
+
+
+ 
+(6)
+Mr. Cravens holds options to purchase 938,000 shares of our common stock which are either exercisable at March 28, 2022, or exercisable within 60 days and 202,000 shares of common stock.
+
+
+ 
+(7)
+Mr. Hagerty holds options to purchase 66,668 shares of our common stock which are either exercisable at March 28, 2022, or exercisable within 60 days and 805,832 shares of common stock.
+
+ITEM 13. CERTAIN RELATIONSHIPS AND RELATED TRANSACTIONS, AND DIRECTOR INDEPENDENCE
+None of our directors or executive officers, nor any proposed nominee for election as a director, nor any person who beneficially owns, directly or indirectly, shares carrying more than 5% of the voting rights attached to all of our outstanding shares, nor any members of the immediate family (including spouse, parents, children, siblings, and in-laws) of any of the foregoing persons has any material interest, direct or indirect, in any transaction over the last two years or in any presently proposed transaction which, in either case, has or will materially affect us.
+We are not a listed issuer within the meaning of Item 407 of Regulation S-K. Applying the definition of independence set forth in Rule 4200(a)(15) of The Nasdaq Stock Market, Inc., we have determined all of our directors are independent directors.
+ITEM 14. PRINCIPAL ACCOUNTING FEES AND SERVICES
+Below is the table of audit fees billed by our auditor in connection with the audit of our annual financial statements for the years ended December 31:
+Fee Type
+ 
+2021
+ 
+ 
+2020
+ 
+Audit fees
+ 
+$
+265,088
+ 
+ 
+$
+318,285
+ 
+Total fees
+ 
+$
+265,088
+ 
+ 
+$
+318,285
+ 
+
+41
+ 
+PART IV
+ 
+ITEM 15. EXHIBITS AND FINANCIAL STATEMENT SCHEDULES
+ 
+Exhibit 
+Number
+ 
+Description
+Form
+File No.
+Exhibit
+Filing Date
+Filed
+Herewith
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  3.1
+ 
+Amended and Restated Articles of Incorporation
+8-K
+000-30653
+3.1
+February 13, 2009
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  3.2
+ 
+Amended and Restated Bylaws
+8-K
+000-30653
+3.2
+February 13, 2009
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  3.3
+ 
+Second Amended and Restated Bylaws
+8-K
+000-30653
+3.2
+February 14, 2020
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.1
+ 
+Lease agreement with Abyss Group, LLC for 6980 OBannon Drive (related party)
+10-K
+000-30653
+10.2
+April 1, 2013
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.2
+ 
+Amendment to lease agreement with Abyss Group, LLC for 6980 OBannon Drive (related party)
+10-K
+000-30653
+10.3
+April 1, 2013
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.3
+ 
+Exclusive Operating and License Agreement with TableMAX Gaming, Inc.
+8-K
+000-30653
+99.2
+February 24, 2011
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.4
+ 
+Asset Purchase Agreement with Prime Table Games, LLC
+8-K
+000-30653
+10.1
+October 11, 2011
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.5
+ 
+Prime Table Games Promissory Note and Security Agreement - US
+8-K
+000-30653
+10.2
+October 11, 2011
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.6
+ 
+Prime Table Games Promissory Note and Security Agreement - UK
+8-K
+000-30653
+10.3
+October 11, 2011
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.7
+ 
+Employment agreement with Gary A. Vecchiarelli, Chief Financial Officer
+8-K
+000-30653
+10.1
+July 9, 2012
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.8
+ 
+Board of Directors Service Agreement with Norm DesRosiers, Director
+8-K
+000-30653
+99.2
+February 3, 2014
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.9
+ 
+Lease agreement with SRC Spencer, LLC for 6767 Spencer Drive
+8-K
+000-30653
+10.1
+February 27, 2014
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.10
+ 
+Board of Directors Service Agreement with William A. Zender, Director
+8-K
+000-30653
+1.1
+April 2, 2014
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.11
+ 
+Board of Directors Service Agreement with Bryan W. Waters, Director
+10-K
+000-30653
+10.11
+March 31, 2015
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.12
+ 
+Promissory Note with Robert Saucier, Chief Executive Officer
+8-K
+000-30653
+10.1
+October 29, 2015
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.13
+ 
+2015 Employment Agreement with Gary A. Vecchiarelli, Chief Financial Officer
+10-Q
+000-30653
+99.2
+November 16, 2015
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.14
+ 
+Employment agreement with Harry C. Hagerty, Chief Financial Officer, dated May 1, 2017
+10-Q
+000-30653
+10.1
+May 15, 2017
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.15
+ 
+Employment agreement of Todd Cravens, dated July 27, 2017
+10-Q
+000-30653
+10.1
+August 14, 2017
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.16
+ 
+Form of Indemnification Agreement for Norman DesRosiers
+10-Q
+000-30653
+99.1
+May 16, 2016
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.17
+ 
+Form of Indemnification Agreement for Robert Saucier
+10-Q
+000-30653
+99.2
+May 16, 2016
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.18
+ 
+Form of Indemnification Agreement for William Zender
+10-Q
+000-30653
+99.3
+May 16, 2016
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.19
+ 
+Form of Indemnification Agreement for Bryan Waters
+10-Q
+000-30653
+99.4
+May 16, 2016
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.20
+ 
+Settlement Agreement with Red Card Gaming, Inc. and AGS, LLC
+8-K
+000-30653
+99.1
+July 13, 2016
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.21
+ 
+Loan Agreement dated August 29, 2016 with Breakaway Capital Management, LLC, as administrative agent for the lenders
+8-K/A
+000-30653
+99.1
+August 30, 2016
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.22
+ 
+Warrant Agreement dated August 29, 2016, with the lenders
+8-K/A
+000-30653
+99.2
+August 30, 2016
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+42
+
+Exhibit 
+Number
+ 
+Description
+Form
+File No.
+Exhibit
+Filing Date
+Filed
+Herewith
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.23
+ 
+Guaranty and Security agreement dated August 29, 2016, with Breakaway Capital Management, LLC, as administrative agent for the lenders
+8-K/A
+000-30653
+99.3
+August 30, 2016
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.24
+ 
+Promissory Note Restructuring Agreement dated August 10, 2015, between Carpathia Associates, LLC and Galaxy Gaming, Inc.
+10-Q
+000-30653
+99.1
+November 16, 2015
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.25
+ 
+Gary Vecchiarelli Indemnification Agreement dated November 14, 2015
+10-Q
+000-30653
+99.3
+November 16, 2015
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.26
+ 
+Amendment No. 1 to Harry C. Hagerty Employment Agreement
+10-K
+000-30653
+10.5
+April 2, 2018
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.27
+ 
+Board of Directors Service Agreement with Mark A. Lipparelli
+8-K
+000-30653
+99.1
+September 7, 2017
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.28
+ 
+Form of Voting and Control Agreement (Triangulum Partners, LLC shares)
+8-K
+000-30653
+99.1
+September 27, 2017
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.29
+ 
+Credit Agreement, dated April 24, 2018, between Galaxy Gaming, Inc., a Nevada corporation, and ZB, N.A. DBA Nevada State Bank, a Nevada state banking corporation
+8-K
+000-30653
+10.1
+April 27, 2018
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.30
+ 
+Amendment #1 to the Employment Agreement dated July 27, 2017, between the Company and Todd P. Cravens
+8-K
+000-30653
+10.1
+February 22, 2019
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.31
+ 
+Amendment #2 to the Employment Agreement dated May 1, 2017, between the Company and Harry C. Hagerty
+8-K
+000-30653
+10.2
+February 22, 2019
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.32
+ 
+First Amendment to Credit Agreement dated April 22, 2019, with Zions Bancorporation, N.A. dba Nevada State Bank
+8-K
+000-30653
+10.1
+April 24, 2019
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.33
+ 
+Second Amendment to Credit Agreement dated May 6, 2019, with Zions Bancorporation, N.A. dba Nevada State Bank
+8-K
+000-30653
+10.1
+May 6, 2019
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.34
+ 
+Board of Director Service Agreement dated June 3, 2019, with Michael Gavin Isaacs
+8-K
+000-30653
+10.1
+June 6, 2019
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.35
+ 
+Third Amendment to Credit Agreement dated August 16, 2019, with Zions Bancorporation, N.A. dba Nevada State Bank
+8-K
+000-30653
+10.1
+August 28, 2019
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.36
+ 
+Amendment #2 to the Employment Agreement dated July 27, 2017, between the Company and Todd P. Cravens
+8-K
+000-30653
+10.1
+February 19, 2020
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.37
+ 
+Fourth Amendment to Credit Agreement dated October 14, 2019, between Galaxy Gaming, Inc., a Nevada Corporation and Zions Bancorporation, N.A. dba Nevada State Bank
+8-K
+000-30653
+10.3
+October 15, 2019
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.38
+ 
+Membership Interest Purchase Agreement dated February 25, 2020, between the Company and the Membership Interest Holders of PGP
+8-K
+000-30653
+10.2
+February 26, 2020
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.39
+ 
+Paycheck Protection Program Loan Agreement pursuant to the Coronavirus Aid, Relief and Economic Security Act
+8-K
+000-30653
+ 
+April 21, 2020
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.40
+ 
+Forbearance and Fifth Amendment to Credit Agreement dated August 14, 2020, between Galaxy Gaming, Inc., a Nevada Corporation and Zions Bancorporation, N.A. dba Nevada State Bank
+8-K
+000-30653
+10.1
+August 14, 2020
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.41
+ 
+First Amendment dated August 21, 2020, to Membership Interest Purchase Agreement dated February 25, 2020 between the Company and the Membership Interest Holders of PGP
+8-K
+000-30653
+10.1
+August 24, 2020
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+43
+
+Exhibit 
+Number
+ 
+Description
+Form
+File No.
+Exhibit
+Filing Date
+Filed
+Herewith
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.42
+ 
+Sixth Amendment to Credit Agreement dated October 26, 2020, between Galaxy Gaming, Inc., a Nevada Corporation and Zions Bancorporation, N.A. dba Nevada State Bank
+8-K
+000-30653
+10.3
+November 4, 2020
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.43
+ 
+$4,000,000 Promissory Note of Galaxy Gaming, Inc. in favor of Zions Bancorporation, N.A. dba Nevada State Bank
+8-K
+000-30653
+10.2
+November 4, 2020
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.44
+ 
+Seventh Amendment to Credit Agreement dated November 16, 2020, between Galaxy Gaming, Inc., a Nevada Corporation and Zions Bancorporation, N.A. dba Nevada State Bank
+8-K
+000-30653
+10.1
+November 17, 2020
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.45
+ 
+Amended and Restated Credit Agreement dated March 29, 2021, with Zions Bancorporation, N.A. dba Nevada State Bank
+8-K
+000-30653
+10.1
+March 31, 2021
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.46
+ 
+Forbearance to Amended and Restated Credit Agreement dated March 29, 2021, with Zions Bancorporation, N.A. dba Nevada State Bank
+8-K
+000-30653
+10.1
+May 17, 2021
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.47
+ 
+Settlement Agreement with former Chairman and Chief Executive Officer, Robert Saucier and Triangulum Partners LLC dated October 7, 2021
+8-K
+000-30653
+10.1
+October 7, 2021
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.48
+ 
+Credit Agreement dated November 15, 2021, with Fortress Credit Corp.
+8-K
+000-30653
+10.1
+November 17, 2021
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.49
+ 
+Board of Directors Service Agreement with Cheryl Kondra, Director
+8-K
+000-30653
+10.1
+December 7, 2021
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.50
+ 
+Form of Indemnification Agreement for Cheryl Kondra, Director
+8-K
+000-30653
+10.2
+December 7, 2021
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.51
+ 
+Consent and Waiver to Term Loan Credit Agreement, dated November 15, 2021, by among Galaxy Gaming, Inc., a Nevada corporation, the lenders from time to time party and Fortress Credit Corp., as administrative agent and Collateral agent
+8-K
+000-30653
+10.1
+March 16, 2022
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+23.2
+ 
+Consent of Moss Adams LLP, Independent Registered Public Accounting Firm
+ 
+ 
+ 
+ 
+X
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+31.1
+ 
+Certification of Chief Executive Officer pursuant to Securities Exchange Act Rule 13a-14(a)/15d-14(a), as adopted pursuant to Section 302 of the Sarbanes-Oxley Act of 2002
+ 
+ 
+ 
+ 
+X
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+31.2
+ 
+Certification of Chief Financial Officer pursuant to Securities Exchange Act Rule 13a-14(a)/15d-14(a), as adopted pursuant to Section 302 of the Sarbanes-Oxley Act of 2002
+ 
+ 
+ 
+ 
+X
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+32.1
+ 
+Certification of Chief Executive Officer and Chief Financial Officer pursuant to 18 U.S.C. Section 1350, as adopted pursuant to Section 906 of the Sarbanes-Oxley Act of 2002
+ 
+ 
+ 
+ 
+X
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+101.INS
+ 
+Inline XBRL Instance Document  the instance does not appear in the Interactive Data File because XBRL tags are embedded within the Inline XBRL document
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+101.SCH
+ 
+Inline XBRL Taxonomy Extension Schema Document
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+101.CAL
+ 
+Inline XBRL Taxonomy Extension Calculation Linkbase Document
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+101.DEF
+ 
+Inline XBRL Taxonomy Extension Definition Linkbase Document
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+44
+
+Exhibit 
+Number
+ 
+Description
+Form
+File No.
+Exhibit
+Filing Date
+Filed
+Herewith
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+101.LAB
+ 
+Inline XBRL Taxonomy Extension Label Linkbase Document
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+101.PRE
+ 
+Inline XBRL Taxonomy Extension Presentation Linkbase Document
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+104
+ 
+Cover Page Interactive Data File (embedded within the Inline XBRL document
+ 
+ 
+ 
+ 
+ 
+
+
+45
+ 
+SIGNATURES
+Pursuant to the requirements of the Securities Exchange Act of 1934, the registrant has duly caused this report to be signed on its behalf by the undersigned thereunto duly authorized.
+GALAXY GAMING, INC.
+ 
+Date:
+ 
+March 30, 2022
+ 
+ 
+ 
+ 
+ 
+By:
+ 
+ /s/ TODD P. CRAVENS
+ 
+ 
+ 
+ 
+Todd P. Cravens
+ 
+ 
+ 
+ 
+President and Chief Executive Officer
+ 
+ 
+ 
+ 
+(Principal Executive Officer)
+
+ 
+Date:
+ 
+March 30, 2022
+ 
+ 
+ 
+ 
+ 
+By:
+ 
+/s/ HARRY C. HAGERTY
+ 
+ 
+ 
+ 
+Harry C. Hagerty
+ 
+ 
+ 
+ 
+Chief Financial Officer
+ 
+ 
+ 
+ 
+(Principal Financial Officer)
+
+ 
+Pursuant to the requirements of the Securities Exchange Act of 1934, this report has been signed below by the following persons on behalf of the registrant and in the capacities and on the dates indicated:
+ 
+Signature
+ 
+Title
+ 
+Date
+/s/ TODD P. CRAVENS
+  
+President and Chief Executive Officer
+ 
+March 30, 2022
+Todd P. Cravens
+ 
+(Principal Executive Officer)
+ 
+ 
+ 
+ 
+ 
+ 
+/s/ HARRY C. HAGERTY
+  
+Chief Financial Officer
+ 
+March 30, 2022
+Harry C. Hagerty
+ 
+(Principal Financial Officer)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+/s/ MARK A. LIPPARELLI
+  
+Chairman of the Board of Directors
+ 
+March 30, 2022
+Mark A. Lipparelli
+ 
+/s/ MICHAEL GAVIN ISAACS                          
+ 
+Director
+ 
+March 30, 2022
+Michael Gavin Isaacs
+ 
+ 
+ 
+ 
+ 
+/s/ WILLIAM A. ZENDER
+ 
+Director
+ 
+March 30, 2022
+William A. Zender
+ 
+/s/ BRYAN W. WATERS
+ 
+Director
+ 
+March 30, 2022
+Bryan W. Waters
+ 
+ 
+ 
+ 
+
+ 
+/s/ CHERYL A. KONDRA
+  
+Director
+ 
+March 30, 2022
+Cheryl A. Kondra
+ 
+ 
+ 
+
+ 
+46

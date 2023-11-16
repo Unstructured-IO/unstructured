@@ -1,0 +1,1262 @@
+[
+  {
+    "type": "NarrativeText",
+    "element_id": "57806282be0aebd168f1abdf04c8000e",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Open-source software (OSS) is computer software that is released under a license in which the copyright holder grants users the rights to use, study, change, and distribute the software and its source code to anyone and for any purpose. Open-source software may be developed in a collaborative, public manner. Open-source software is a prominent example of open collaboration, meaning any capable user is able to participate online in development, making the number of possible contributors indefinite. The ability to examine the code facilitates public trust in the software.Open-source software development can bring in diverse perspectives beyond those of a single company. A 2008 report by the Standish Group stated that adoption of open-source software models has resulted in savings of about $60 billion per year for consumers.Open-source code can be used for studying and allows capable end users to adapt software to their personal needs in a similar way user scripts and custom style sheets allow for web sites, and eventually publish the modification as a fork for users with similar preferences, and directly submit possible improvements as pull requests."
+  },
+  {
+    "type": "Title",
+    "element_id": "b2e8673b1d014f5dbc4ac8e715fe53c5",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "== History =="
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ddf2283e3b6c3b163f9612a7ea4efacf",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "In the early days of computing, such as the 1950s and into the 1960s, programmers and developers shared software to learn from each other and evolve the field of computing. For example, Unix included the operating system source code for users. Eventually, the open-source notion moved to the wayside of commercialization of software in the years 1970–1980. However, academics still often developed software collaboratively. Examples are Donald Knuth in 1979 with the TeX typesetting system and Richard Stallman in 1983 with the GNU operating system. In 1997, Eric Raymond published The Cathedral and the Bazaar, a reflective analysis of the hacker community and free-software principles. The paper received significant attention in early 1998, and was one factor in motivating Netscape Communications Corporation to release their popular Netscape Communicator Internet suite as free software. This source code subsequently became the basis behind SeaMonkey, Mozilla Firefox, Thunderbird and KompoZer. Netscape's act prompted Raymond and others to look into how to bring the Free Software Foundation's free software ideas and perceived benefits to the commercial software industry. They concluded that FSF's social activism was not appealing to companies like Netscape, and looked for a way to rebrand the free software movement to emphasize the business potential of sharing and collaborating on software source code."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "269319019feb316e768f1e30a08a58c6",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "The new term they chose was \"open source\", which was soon adopted by Bruce Perens, publisher Tim O'Reilly, Linus Torvalds, and others. The Open Source Initiative was founded in February 1998 to encourage the use of the new term and evangelize open-source principles.While the Open Source Initiative sought to encourage the use of the new term and evangelize the principles it adhered to, commercial software vendors found themselves increasingly threatened by the concept of freely distributed software and universal access to an application's source code. Microsoft executive Jim Allchin publicly stated in 2001 that \"open source is an intellectual property destroyer. I can't imagine something that could be worse than this for the software business and the intellectual-property business.\" However, while free and open-source software has historically played a role outside of the mainstream of private software development, companies as large as Microsoft have begun to develop official open-source presences on the Internet. IBM, Oracle, Google, and State Farm are just a few of the companies with a serious public stake in today's competitive open-source market. There has been a significant shift in the corporate philosophy concerning the development of FOSS.The free-software movement was launched in 1983."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "b2426ed1fc353cb1c0561b889e3720d4",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "In 1998, a group of individuals advocated that the term free software should be replaced by open-source software (OSS) as an expression which is less ambiguous and more comfortable for the corporate world. Software developers may want to publish their software under an open-source license, so that anybody may also develop the same software or understand its internal functioning. With open-source software, generally, anyone is allowed to create modifications of it, port it to new operating systems and instruction set architectures, share it with others or, in some cases, market it. Scholars Casson and Ryan have pointed out several policy-based reasons for adoption of open source – in particular, the heightened value proposition of open source (when compared to most proprietary formats) in the following categories:"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "55aea4b5a00f11f2d6d797455ce8e112",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Security Affordability Transparency Perpetuity Interoperability Flexibility Localization – particularly in the context of local governments (who make software decisions). Casson and Ryan argue that \"governments have an inherent responsibility and fiduciary duty to taxpayers\" which includes the careful analysis of these factors when deciding to purchase proprietary software or implement an open-source option.The Open Source Definition presents an open-source philosophy and further defines the terms of use, modification and redistribution of open-source software. Software licenses grant rights to users which would otherwise be reserved by copyright law to the copyright holder. Several open-source software licenses have qualified within the boundaries of the Open Source Definition. The most prominent and popular example is the GNU General Public License (GPL), which \"allows free distribution under the condition that further developments and applications are put under the same licence\", thus also free.The open source label came out of a strategy session held on April 7, 1998, in Palo Alto in reaction to Netscape's January 1998 announcement of a source code release for Navigator (as Mozilla). A group of individuals at the session included Tim O'Reilly, Linus Torvalds, Tom Paquin, Jamie Zawinski, Larry Wall, Brian Behlendorf, Sameer Parekh, Eric Allman, Greg Olson, Paul Vixie, John Ousterhout, Guido van Rossum, Philip Zimmermann, John Gilmore and Eric S. Raymond."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "035ca22cc652ca6fa28e9a4f19933a90",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "They used the opportunity before the release of Navigator's source code to clarify a potential confusion caused by the ambiguity of the word \"free\" in English. Many people claimed that the birth of the Internet, since 1969, started the open-source movement, while others do not distinguish between open-source and free software movements.The Free Software Foundation (FSF), started in 1985, intended the word \"free\" to mean freedom to distribute (or \"free as in free speech\") and not freedom from cost (or \"free as in free beer\"). Since a great deal of free software already was (and still is) free of charge, such free software became associated with zero cost, which seemed anti-commercial.The Open Source Initiative (OSI) was formed in February 1998 by Eric Raymond and Bruce Perens. With at least 20 years of evidence from case histories of closed software development versus open development already provided by the Internet developer community, the OSI presented the \"open source\" case to commercial businesses, like Netscape. The OSI hoped that the use of the label \"open source\", a term suggested by Christine Peterson of the Foresight Institute at the strategy session, would eliminate ambiguity, particularly for individuals who perceive \"free software\" as anti-commercial. They sought to bring a higher profile to the practical benefits of freely available source code, and they wanted to bring major software businesses and other high-tech industries into open source."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "fe23d6e76e3dfda16bed01be0235c640",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Perens attempted to register \"open source\" as a service mark for the OSI, but that attempt was impractical by trademark standards. Meanwhile, due to the presentation of Raymond's paper to the upper management at Netscape—Raymond only discovered when he read the press release, and was called by Netscape CEO Jim Barksdale's PA later in the day—Netscape released its Navigator source code as open source, with favorable results."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "7f63c8fb06737aa683464efa65a729c5",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "== Definitions == The Open Source Initiative's (OSI) definition is recognized by several governments internationally as the standard or de facto definition. OSI uses The Open Source Definition to determine whether it considers a software license open source. The definition was based on the Debian Free Software Guidelines, written and adapted primarily by Perens. Perens did not base his writing on the \"four freedoms\" from the Free Software Foundation (FSF), which were only widely available later.Under Perens' definition, open source is a broad software license that makes source code available to the general public with relaxed or non-existent restrictions on the use and modification of the code. It is an explicit \"feature\" of open source that it puts very few restrictions on the use or distribution by any organization or user, in order to enable the rapid evolution of the software.According to Feller et al. (2005), the terms \"free software\" and \"open source software\" should be applied to any \"software products distributed under terms that allow users\" to use, modify, and redistribute the software \"in any manner they see fit, without requiring that they pay the author(s) of the software a royalty or fee for engaging in the listed activities. \"Despite initially accepting it, Richard Stallman of the FSF now flatly opposes the term \"Open Source\" being applied to what they refer to as \"free software\"."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "bb1e45eaec7d1d6497f14d45a9e36ac5",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Although he agrees that the two terms describe \"almost the same category of software\", Stallman considers equating the terms incorrect and misleading. Stallman also opposes the professed pragmatism of the Open Source Initiative, as he fears that the free software ideals of freedom and community are threatened by compromising on the FSF's idealistic standards for software freedom. The FSF considers free software to be a subset of open-source software, and Richard Stallman explained that DRM software, for example, can be developed as open source, despite that it does not give its users freedom (it restricts them), and thus does not qualify as free software."
+  },
+  {
+    "type": "Title",
+    "element_id": "e7c512a859d2128792c8f190cffe7ef6",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "=== Open"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": ""
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "8ebef936e9e5db67e63127a3304c8d2c",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "source software licensing ==="
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ecf072447a2087be1e3200b8be377701",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "When an author contributes code to an open-source project (e.g., Apache.org) they do so under an explicit license (e.g., the Apache Contributor License Agreement) or an implicit license (e.g. the open-source license under which the project is already licensing code). Some open-source projects do not take contributed code under a license, but actually require joint assignment of the author's copyright in order to accept code contributions into the project.Examples of free software license / open-source licenses include Apache License, BSD license, GNU General Public License, GNU Lesser General Public License, MIT License, Eclipse Public License and Mozilla Public License. The proliferation of open-source licenses is a negative aspect of the open-source movement because it is often difficult to understand the legal implications of the differences between licenses. With more than 180,000 open-source projects available and more than 1400 unique licenses, the complexity of deciding how to manage open-source use within \"closed-source\" commercial enterprises has dramatically increased. Some are home-grown, while others are modeled after mainstream FOSS licenses such as Berkeley Software Distribution (\"BSD\"), Apache, MIT-style (Massachusetts Institute of Technology), or GNU General Public License (\"GPL\")."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "d99a5c28d0bc3ebaa7c297a8c45207d4",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "In view of this, open-source practitioners are starting to use classification schemes in which FOSS licenses are grouped (typically based on the existence and obligations imposed by the copyleft provision; the strength of the copyleft provision).An important legal milestone for the open source / free software movement was passed in 2008, when the US federal appeals court ruled that free software licenses definitely do set legally binding conditions on the use of copyrighted work, and they are therefore enforceable under existing copyright law. As a result, if end-users violate the licensing conditions, their license disappears, meaning they are infringing copyright. Despite this licensing risk, most commercial software vendors are using open-source software in commercial products while fulfilling the license terms, e.g. leveraging the Apache license."
+  },
+  {
+    "type": "Title",
+    "element_id": "e42bb8f42abc1b17c531213b94bb0eab",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "== Open"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": ""
+  },
+  {
+    "type": "Title",
+    "element_id": "de2554993fef54961b0109423f3b7112",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "source software development =="
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "fefacedc669dd40fb60fa3b62bd63ac1",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "=== Development model === In his 1997 essay The Cathedral and the Bazaar, open-source evangelist Eric S. Raymond suggests a model for developing OSS known as the bazaar model. Raymond likens the development of software by traditional methodologies to building a cathedral, \"carefully crafted by individual wizards or small bands of mages working in splendid isolation\". He suggests that all software should be developed using the bazaar style, which he described as \"a great babbling bazaar of differing agendas and approaches. \"In the traditional model of development, which he called the cathedral model, development takes place in a centralized way. Roles are clearly defined. Roles include people dedicated to designing (the architects), people responsible for managing the project, and people responsible for implementation. Traditional software engineering follows the cathedral model. The bazaar model, however, is different. In this model, roles are not clearly defined. Gregorio Robles suggests that software developed using the bazaar model should exhibit the following patterns:"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "61c84c652c1ae1f5a35cc306d9f93c08",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Users should be treated as co-developers The users are treated like co-developers and so they should have access to the source code of the software. Furthermore, users are encouraged to submit additions to the software, code fixes for the software, bug reports, documentation, etc. Having more co-developers increases the rate at which the software evolves. Linus's law states, \"Given enough eyeballs all bugs are shallow.\" This means that if many users view the source code, they will eventually find all bugs and suggest how to fix them. Note that some users have advanced programming skills, and furthermore, each user's machine provides an additional testing environment. This new testing environment offers the ability to find and fix a new bug. Early releases The first version of the software should be released as early as possible so as to increase one's chances of finding co-developers early. Frequent integration Code changes should be integrated (merged into a shared code base) as often as possible so as to avoid the overhead of fixing a large number of bugs at the end of the project life cycle. Some open-source projects have nightly builds where integration is done automatically on a daily basis. Several versions There should be at least two versions of the software. There should be a buggier version with more features and a more stable version with fewer features."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e205c21b45059f70a1dad9af0dcedd6e",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "The buggy version (also called the development version) is for users who want the immediate use of the latest features, and are willing to accept the risk of using code that is not yet thoroughly tested. The users can then act as co-developers, reporting bugs and providing bug fixes. High modularization The general structure of the software should be modular allowing for parallel development on independent components. Dynamic decision-making structure There is a need for a decision-making structure, whether formal or informal, that makes strategic decisions depending on changing user requirements and other factors. Compare with extreme programming.Data suggests, however, that OSS is not quite as democratic as the bazaar model suggests. An analysis of five billion bytes of free/open-source code by 31,999 developers shows that 74% of the code was written by the most active 10% of authors. The average number of authors involved in a project was 5.1, with the median at 2."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "785bf0dd73950f457e2f3dd2ca4dba39",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "=== Advantages === Open-source software is usually easier to obtain than proprietary software, often resulting in increased use. Additionally, the availability of an open-source implementation of a standard can increase adoption of that standard. It has also helped to build developer loyalty as developers feel empowered and have a sense of ownership of the end product.Moreover, lower costs of marketing and logistical services are needed for OSS. It is a good tool to promote a company's image, including its commercial products. The OSS development approach has helped produce reliable, high quality software quickly and inexpensively.Open-source development offers the potential to quicken innovation and the creation of innovation and social value. In France for instance, a policy that incentivized government to favor free open-source software increased to nearly 600,000 OSS contributions per year, generating social value by increasing the quantity and quality of open-source software. This policy also led to an estimated increase of up to 18% of tech startups and a 14% increase in the number of people employed in the IT sector.It is said to be more reliable since it typically has thousands of independent programmers testing and fixing bugs of the software. Open source is not dependent on the company or author that originally created it. Even if the company fails, the code continues to exist and be developed by its users."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f5ac3bdd443d8632c0ecd489c159fe30",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Also, it uses open standards accessible to everyone; thus, it does not have the problem of incompatible formats that may exist in proprietary software. It is flexible because modular systems allow programmers to build custom interfaces, or add new abilities to it and it is innovative since open-source programs are the product of collaboration among a large number of different programmers. The mix of divergent perspectives, corporate objectives, and personal goals speeds up innovation.Moreover, free software can be developed in accordance with purely technical requirements. It does not require thinking about commercial pressure that often degrades the quality of the software. Commercial pressures make traditional software developers pay more attention to customers' requirements than to security requirements, since such features are somewhat invisible to the customer."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "5ae9f03db05a5a918a88c1d3cefbb355",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "=== Development tools === In OSS development, tools are used to support the development of the product and the development process itself.Revision control systems such as Concurrent Versions System (CVS) and later Subversion (SVN) and Git are examples of tools, often themselves open source, help manage the source code files and the changes to those files for a software project. The projects are frequently stored in \"repositories\" that are hosted and published on source-code-hosting facilities such as Launchpad, GitHub, GitLab, and SourceForge.Open-source projects are often loosely organized with \"little formalised process modelling or support\", but utilities such as issue trackers are often used to organize open-source software development. Commonly used bugtrackers include Bugzilla and Redmine.Tools such as mailing lists and IRC provide means of coordination among developers. Centralized code hosting sites also have social features that allow developers to communicate."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "3f4eef49ce830965e36d6d015b23f607",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "=== Organizations === Some of the \"more prominent organizations\" involved in OSS development include the Apache Software Foundation, creators of the Apache web server; the Linux Foundation, a nonprofit which as of 2012 employed Linus Torvalds, the creator of the Linux operating system kernel; the Eclipse Foundation, home of the Eclipse software development platform; the Debian Project, creators of the influential Debian GNU/Linux distribution; the Mozilla Foundation, home of the Firefox web browser; and OW2, European-born community developing open-source middleware. New organizations tend to have a more sophisticated governance model and their membership is often formed by legal entity members.Open Source Software Institute is a membership-based, non-profit (501 (c)(6)) organization established in 2001 that promotes the development and implementation of open source software solutions within US Federal, state and local government agencies. OSSI's efforts have focused on promoting adoption of open-source software programs and policies within Federal Government and Defense and Homeland Security communities.Open Source for America is a group created to raise awareness in the United States Federal Government about the benefits of open-source software."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "18188479c91fcd540f8822c5d8ec9074",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Their stated goals are to encourage the government's use of open source software, participation in open-source software projects, and incorporation of open-source community dynamics to increase government transparency.Mil-OSS is a group dedicated to the advancement of OSS use and creation in the military."
+  },
+  {
+    "type": "Title",
+    "element_id": "9a19f9d859e3c83cbc3cb7f6f81b6c18",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "=== Funding ==="
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "80e9afed57ded9676f9872123b5d9c37",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Companies whose business centers on the development of open-source software employ a variety of business models to solve the challenge of how to make money providing software that is by definition licensed free of charge. Each of these business strategies rests on the premise that users of open-source technologies are willing to purchase additional software features under proprietary licenses, or purchase other services or elements of value that complement the open-source software that is core to the business. This additional value can be, but not limited to, enterprise-grade features and up-time guarantees (often via a service-level agreement) to satisfy business or compliance requirements, performance and efficiency gains by features not yet available in the open source version, legal protection (e.g., indemnification from copyright or patent infringement), or professional support/training/consulting that are typical of proprietary software applications."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "10f481f1592191e03d2f0134f0f5d329",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "== Sociological and demographic questions =="
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "46f1094b5772773db4c38a92fa30e084",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "=== Motivations === A question of frequent interest among researchers is what motivates writers of open-source software, a behavior that may be “seemingly irrational.\" While some sociologists theorized that external motivations—such as “better jobs” and “career advancement”—were the primary drivers for open-source software developers, Lakhani and Wolf found that “enjoyment-based intrinsic motivation”—“how creative a person feels when working on the project” was the most important driver."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "82c422d9408d6bec03ee6330f9b9290a",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "=== Demographics === In a 2005 study, Ghosh posited that the vast majority of open-source software developers identified as male, finding it “unlikely” that the proportion of female developers in the committee was “much higher than 5-7 percent.” Additionally, Ghosh found that more than 60% of developers were between the ages of 16 and 25."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "37cf2e0c6910201bb7608a2bcfdca05c",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "== Comparisons with other software licensing/development models =="
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ec4d1243703c08dfb4e1dbf9df32dde2",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "=== Closed source / proprietary software ==="
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "130aaad65bba69bfc19574993f30b5c5",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "The debate over open source vs. closed source (alternatively called proprietary software) is sometimes heated. The top four reasons (as provided by Open Source Business Conference survey) individuals or organizations choose open-source software are:"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "306548750fc52a1db4f4169a51127ea8",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "lower cost security no vendor 'lock in' better qualitySince innovative companies no longer rely heavily on software sales, proprietary software has become less of a necessity. As such, things like open-source content management system—or CMS—deployments are becoming more commonplace. In 2009, the US White House switched its CMS system from a proprietary system to Drupal, an open source CMS. Furthermore, companies like Novell (who traditionally sold software the old-fashioned way) continually debate the benefits of switching to open-source availability, having already switched part of the product offering to open source code. In this way, open-source software provides solutions to unique or specific problems. As such, it is reported that 98% of enterprise-level companies use open-source software offerings in some capacity. With this market shift, more critical systems are beginning to rely on open-source offerings, allowing greater funding (such as US Department of Homeland Security grants) to help \"hunt for security bugs.\""
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c7a75343b990c73aec152635eb8c608f",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "According to a pilot study of organizations adopting (or not adopting) OSS, the following factors of statistical significance were observed in the manager's beliefs: (a) attitudes toward outcomes, (b) the influences and behaviors of others, and (c) their ability to act.Proprietary source distributors have started to develop and contribute to the open-source community due to the market share shift, doing so by the need to reinvent their models in order to remain competitive.Many advocates argue that open-source software is inherently safer because any person can view, edit, and change code. A study of the Linux source code has 0.17 bugs per 1000 lines of code while proprietary software generally scores 20–30 bugs per 1000 lines."
+  },
+  {
+    "type": "Title",
+    "element_id": "1b13f0cc00ceca5fcd51fc35cb2fb176",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "=== Free software ==="
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9bdf18795fb68a7bcaa5ad85b3d50f89",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "According to the free software movement's leader, Richard Stallman, the main difference is that by choosing one term over the other (i.e. either \"open source\" or \"free software\") one lets others know about what one's goals are: \"Open source is a development methodology; free software is a social movement.\" Nevertheless, there is significant overlap between open source software and free software.The FSF said that the term \"open source\" fosters an ambiguity of a different kind such that it confuses the mere availability of the source with the freedom to use, modify, and redistribute it. On the other hand, the \"free software\" term was criticized for the ambiguity of the word \"free\" as \"available at no cost\", which was seen as discouraging for business adoption, and for the historical ambiguous usage of the term.Developers have used the alternative terms Free and Open Source Software (FOSS), or Free/Libre and Open Source Software (FLOSS), consequently, to describe open-source software that is also free software. While the definition of open source software is very similar to the FSF's Free Software Definition it was based on the Debian Free Software Guidelines, written and adapted primarily by Bruce Perens with input from Eric S. Raymond and others.The term \"open source\" was originally intended to be trademarkable; however, the term was deemed too descriptive, so no trademark exists."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "8c3ffc19443e10e0115b13a27cbab756",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "The OSI would prefer that people treat open source as if it were a trademark, and use it only to describe software licensed under an OSI approved license.OSI Certified is a trademark licensed only to people who are distributing software licensed under a license listed on the Open Source Initiative's list."
+  },
+  {
+    "type": "Title",
+    "element_id": "e7c512a859d2128792c8f190cffe7ef6",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "=== Open"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": ""
+  },
+  {
+    "type": "Title",
+    "element_id": "a470aaf1fb563d34302cad1702cafbf6",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "source versus source"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": ""
+  },
+  {
+    "type": "Title",
+    "element_id": "3a85a0d57273fc1d6a4cffff5b524c71",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "available ==="
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "7d11fed81dc64a6649ff2c653dd054a2",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Although the OSI definition of \"open-source software\" is widely accepted, a small number of people and organizations use the term to refer to software where the source is available for viewing, but which may not legally be modified or redistributed. Such software is more often referred to as source-available, or as shared source, a term coined by Microsoft in 2001. While in 2007 two of Microsoft's Shared Source Initiative licenses were certified by the OSI, most licenses from the SSI program are still source-available only."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "b677716cabcf064e2e9a40804de624a8",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "=== Open-sourcing === Open-sourcing is the act of propagating the open source movement, most often referring to releasing previously proprietary software under an open source/free software license, but it may also refer programming Open Source software or installing Open Source software. Notable software packages, previously proprietary, which have been open sourced include:"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "1a5fe4c89da54e78c1b1f7e691aad2ab",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Netscape Navigator, the code of which became the basis of the Mozilla and Mozilla Firefox web browsers StarOffice, which became the base of the LibreOffice and Collabora Online office suites Global File System, was originally GPL'd, then made proprietary in 2001(? ), but in 2004 was re-GPL'd. SAP DB, which has become MaxDB, and is now distributed (and owned) by MySQL AB InterBase database, which was open sourced by Borland in 2000 and presently exists as a commercial product and an open-source fork (Firebird)Before changing the license of software, distributors usually audit the source code for third party licensed code which they would have to remove or obtain permission for its relicense. Backdoors and other malware should also be removed as they may easily be discovered after release of the code."
+  },
+  {
+    "type": "Title",
+    "element_id": "8eb9a74eab682258bbef3bd1dee6c6e2",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "== Current applications and adoption =="
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "0792f7695cc80702d2f9cea9d2eee7b4",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "=== Widely used open"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": ""
+  },
+  {
+    "type": "Title",
+    "element_id": "1113cf4fb34a4166410123da50d2dd13",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "source software ==="
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ec3d721041e4b41598d05dadaaae9f9e",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Open-source software projects are built and maintained by a network of programmers, who may often be volunteers, and are widely used in free as well as commercial products. Prime examples of open-source products are the Apache HTTP Server, the e-commerce platform osCommerce, internet browsers Mozilla Firefox and Chromium (the project where the vast majority of development of the freeware Google Chrome is done) and the full office suite LibreOffice. One of the most successful open-source products is the Linux operating system, an open-source Unix-like operating system, and its derivative Android, an operating system for mobile devices. In some industries, open-source software is common.Several widely-used Python libraries are free and open-source software. These include TensorFlow, PyTorch, scikit-learn, NLTK, OpenCV."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c9e6a02e426e5a85349e1ada8a69913f",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "=== Practical uses === Because open-source software generally allows for technology to be more affordable, digital solutions become accessible even in unanticipated fields such as precision agriculture."
+  },
+  {
+    "type": "Title",
+    "element_id": "fffc80faa8b12bc7bff36d695134d7c2",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "== Extensions for non"
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": ""
+  },
+  {
+    "type": "Title",
+    "element_id": "56fd42c94776a9785f5011bb2bf37b9f",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "software use =="
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "569f9f421bf85b1301536255c95397ff",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "While the term \"open source\" applied originally only to the source code of software, it is now being applied to many other areas such as Open source ecology, a movement to decentralize technologies so that any human can use them. However, it is often misapplied to other areas that have different and competing principles, which overlap only partially. The same principles that underlie open-source software can be found in many other ventures, such as open-source hardware, Wikipedia, and open-access publishing. Collectively, these principles are known as open source, open content, and open collaboration: \"any system of innovation or production that relies on goal-oriented yet loosely coordinated participants, who interact to create a product (or service) of economic value, which they make available to contributors and non-contributors alike. \"This \"culture\" or ideology takes the view that the principles apply more generally to facilitate concurrent input of different agendas, approaches, and priorities, in contrast with more centralized models of development such as those typically used in commercial companies."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "40ec0ecce29acf4746fc8038ca3708d6",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "== See also =="
+  },
+  {
+    "type": "Title",
+    "element_id": "bdea2ac00c1a1ee6f8b850b4a962fe5b",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "== References =="
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f3e353a9cad33dc3e44cf015c794975f",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "== Further reading == Androutsellis-Theotokis, Stephanos; Spinellis, Diomidis; Kechagia, Maria; Gousios, Georgios (2010). Open source software: A survey from 10,000 feet (PDF). pp. 187–347. doi:10.1561/0200000026. ISBN 978-1-60198-484-5. {{cite book}}: |journal= ignored (help) Coleman, E. Gabriella. Coding Freedom: The Ethics and Aesthetics of Hacking (Princeton UP, 2012) Fadi P. Deek; James A. M. McHugh (2008). Open Source: Technology and Policy. Cambridge: Cambridge University Press. ISBN 978-0-511-36775-5. Chris DiBona and Sam Ockman and Mark Stone, ed. (1999). Open Sources: Voices from the Open Source Revolution. O'Reilly. ISBN 978-1-56592-582-3. Joshua Gay, ed. (2002). Free Software, Free Society: Selected Essays of Richard M. Stallman. Boston: GNU Press, Free Software Foundation. ISBN 978-1-882114-98-6. Understanding FOSS | editor  = Sampathkumar Coimbatore India Benkler, Yochai (2002), \"Coase's Penguin, or, Linux and The Nature of the Firm.\" Yale Law Journal 112.3 (Dec 2002): p367(78) (in Adobe pdf format) v. Engelhardt, Sebastian (2008). \"\"The Economic Properties of Software\", Jena Economic Research Papers, Volume 2 (2008), Number 2008-045\" (PDF). Jena Economics Research Papers. Lerner, J. & Tirole, J. (2002): 'Some simple economics on open source', Journal of Industrial Economics 50(2), p 197–234 Välimäki, Mikko (2005). The Rise of Open Source Licensing: A Challenge to the Use of Intellectual Property in the Software Industry (PDF). Turre Publishing."
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "d7f6a92de880300ec906c1785e5c87b1",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Archived from the original (PDF) on 4 March 2009. Polley, Barry (11 December 2007). \"Open Source Discussion Paper – version 1.0\" (PDF). New Zealand Open Source Society. New Zealand Ministry of Justice. Archived from the original (PDF) on 23 February 2018. Retrieved 12 December 2007. Rossi, M. A. (2006): Decoding the free/open-source software puzzle: A survey of theoretical and empirical contributions, in J. Bitzer P. Schröder, eds, 'The Economics of Open Source Software Development', p 15–55. Open Sources: Voices from the Open Source Revolution — an online book containing essays from prominent members of the open-source community Berry, D M (2004). The Contestation of Code: A Preliminary Investigation into the Discourse of the Free Software and Open Software Movement, Critical Discourse Studies, Volume 1(1). Schrape, Jan-Felix (2017). \"Open Source Projects as Incubators of Innovation. From Niche Phenomenon to Integral Part of the Software Industry\" (PDF). Stuttgart: Research Contributions to Organizational Sociology and Innovation Studies 2017-03. Sustainable Open Source, a Confluence article providing guidelines for fair participation in the open source ecosystem, by Radovan Semancik"
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "b4f8fe58779b0dce3eb6ea59b541fbcb",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "== External links =="
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "122382a019fc55e33ad6af883c418bc5",
+    "metadata": {
+      "data_source": {
+        "url": "https://en.wikipedia.org/wiki/Open-source_software",
+        "version": 1178668562,
+        "record_locator": {
+          "page_title": "Open Source Software",
+          "page_url": "https://en.wikipedia.org/wiki/Open-source_software"
+        },
+        "date_processed": "2023-10-14T00:46:44.201576"
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "The Open Source Initiative's definition of open source Free / Open Source Research Community — Many online research papers about Open Source Open-source software at Curlie"
+  }
+]

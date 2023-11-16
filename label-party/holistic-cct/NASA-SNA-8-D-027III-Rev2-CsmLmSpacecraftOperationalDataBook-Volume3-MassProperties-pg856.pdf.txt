@@ -1,0 +1,49 @@
+TABLE 4.3-5
+SERVICE MODULE RCS LOADING PARAMETERS AND CALCULATIONS - QUAD C
+Fuel
+Secondary Fuel 
+A. Loading Temperature (°F) 
+B. Tank Volume (in 3) @ 0.0 PSIG
+B1. Liquid Line Volume (in 3)
+C. Tank Stretch Factor (in 3/PST) 0.034
+D. Initial Weight of Bleed Unit Prior to Loading (lb)
+E. Final Weight of Bleed Unit After Loading (lb)
+*F. Resulting Load (lb) (Item D less Item E)
+G. Specification Nominal Load at 70 \u00B15° F (lb)
+H. Volume of GHE-GSE Line (in 3)
+I. Volume of S/C GHE Line (in 3)
+J. GSE Line Pressure (PSIG)
+K. Bladder Pressure (PSIG)
+L. Stabilized Equilibrium Pressure (PSIG)
+M. Primary Liquid Close-Out Pressure (PSIG)
+N. Specification Ullage @ A Above Maximum Minimum
+O. Ullage Volume (in 3). Solve the following equation by substituting the values contained in the indicated steps. Ullage Volume = H (J - L / L - K) - (C + S)(L + K + 14.7) + S(M)- I
+Primary Fuel
+P. Loading Temperature (°F)
+Q. Tank Volume (in 3) @ 0.0 PSIG
+R. Liquid Line Volume (in 3)
+S. Tank Stretch Factor (in 3/PSI) 0.0652
+Oxidizer
+Secondary Oxidizer
+A. Tank Volume (in 3) @ 0.0 PSIG
+A1. Liquid Line Volume (in 3)
+B. Tank Stretch Factor (in 3/PST) 0.045
+C. Tank Volume (in 3) @ 0.0 PSIG
+C1. Liquid Line Volume (in 3)
+D. Tank Stretch Factor (in 3/PST) 0.088
+PV Parameters for Combined Primary and Secondary Oxidizer Tanks
+E. Volume of GHE-GSE Line (in 3)
+F. Volume of S/C GHE Line (in 3)
+G. GSE Line Pressure (PSIG)
+H. Bladder Pressure (PSIG)
+I. Stabilized Equilibrium Pressure (PSIG)
+J. Loading Temperature (°F)
+K. Oxidizer Density (lb /in 3); solve equation (4) below where T = Temperature @ J above
+L. Specification Value @ Temperature J above (lb) Maximum Minimum
+M. PV Calculated Oxidizer Load (lb); solve equation (5) and (6) below by substituting the values contained in the above indicated steps where U = Volume of tank gas (in 3) in both tanks and He system, and F O, = PV calculated oxidizer load for both tanks \U00B12.3
+N. Specification Nominal Value @ Temperature J above (lb)
+(4) Oxidizer Density = 0.451591(10 -4) (11.8 - T) + 0.05475906
+(5) U = E (G - I / I - H) - (B+D)(I+H+14.7)
+(6) F O = K(A + C + Al + Cl - U + F)
+4.3-8
+SNA-8-D-027(III)REV 2

@@ -1,0 +1,107 @@
+Table 1. Interpretation of Sequoia-Kings Canyon National Parks cluster analysis.
+Cluster Characteristics Code Site Cluster
+Low Elevation & High Richness Xeric High Forb Richness CPO2117 Potwisha Campground 1
+DHO2697 Hospital Rock Picnic Area
+Moderate Forb Richness CBU2822 Buckeye Campground 2
+DMF2112 Middle Fork Flume
+DPB1398 Ash Mountain Park Boundary
+DNF1773 North Fork Parking Lot
+UCO2307 Colony Mill Dirt Road
+Low and Upper Elevation Spp. PCE4701 Cedar Grove Pack Station 3
+Irrigated – High Richness DAS1605 Ash Mountain Headquarters 4
+Riparian RMF1545 Middle Fork of Kaweah River 5
+RNF1726 North Fork of Kaweah River
+RYU1829 Yucca Creek
+RSY1880 Sycamore Creek
+Mid to High Elevation Species Grass Dominated & Low Forb Richness Predominantly Annual Grasses Low Elevation Spp. Moderate Richness CSF3728 South Fork Campground 6
+DCS4897 Crystal Cave Parking Lot
+TOL2189 Old Hidden Springs Trail
+Mid Elevation spp. /Low Richness Bromus tectorum & Vulpia myuros CSH4564 Sheep Creek Campground 7
+GBE7620 Bearpaw Meadow
+TBE7164 Giant Forest to Bearpaw Meadow Trail
+TKA7621 Bearpaw Meadow to Kaweah Gap Trail
+THI7779 High Sierra Trail
+TLE5702 Lewis Creek Trail
+CMO4764 Moraine Campground
+TRA7314 Rae Lakes Trail (7000 ft)
+DBI6323 Big Stump Picnic Area
+DSE6350 Giant Forest Sewage Treatment Facility
+PGR6417 Grant Grove Pack Station
+DOR5356 Oriole Lake Air Strip
+DMI6211 Milk Ranch Lookout
+Riparian RTR4573 Trauger's Creek 8
+T. offiicianale or Low Frequency Forbs Low Frequency Forbs CSW6223 Swale Campground 9
+TSE6072 Sequoia Lake Trail
+CAT6415 Atwell Mill Campground
+GKE6400 Kern Canyon Ranger Station Pasture
+GHO8511 Hockett Meadow
+TGI6344 Giant Forest Trail
+DGF6440 Giant Forest Developed Area
+Forb Primarily Taraxicum officianale GGR7720 Grasshopper Meadow 10
+GWI8003 Williams Meadow
+GAU8015 Austin Meadow
+TKE8800 Kern Canyon Trail (8000 ft)
+TRA9373 Rae Lakes Trail (9000 ft)
+TMA7151 Marvin Pass Trail
+TTA7891 Tar Gap Trail
+TTU8560 Tuohy Meadow Trail
+TKE6600 Kern Canyon Trail (6000 ft)
+TKA7800 Bearpaw Meadow to Kaweah Gap Trail
+THO7347 Atwell Mill Cg. to Hockett Meadow Trail
+Presence of Rumex acetosella & Spergularia rubra CCR6631 Crystal Springs Campground 11
+TRA6513 Rae Lakes Trail (6000 ft)
+DWO7200 Wolverton Snow Park
+GSU7340 Sugarloaf Meadow
+GJR7380 J. R. Meadow
+GSC7456 Scaffold Meadow
+GJU8115 Junction Meadow
+THA5506 Hart Loop Trail
+TCM6700 Crescent Meadow
+TRE6060 Redwood Canyon Trail
+Forbs Miscellaneous Forbs CAZ6454 Azalea Campground 12
+DCO6533 Columbine Picnic Area
+DGR6593 Grant Grove Developed Area
+DRE7121 Red Fir Maintenance Yard
+UCA6754 Kings River
+TRA5143 Rae Lakes Trail (5000 ft)
+12
+Table 1. Interpretation of Sequoia-Kings Canyon National Parks cluster analysis--Continued
+Cluster Characteristics Code Site Cluster
+Mid to High Elevation Spp. Forbs Miscellaneous Forbs UCA6754 Camp Conifer Dirt Road 12
+DCE4671 Cedar Grove Market and Lodge
+ICE4890 Cedar Grove Paved Road
+CDO6721 Dorst Campground
+CCO7477 Cold Springs Campground
+ISH2118 Shepard Saddle Paved Road
+PWO7037 Wolverton Pack Station
+PMI7878 Mineral King Pack Station
+Bromus tectorum, Poa pratensis Verbascum thapsus & Miscellaneous Forbs UOR5340 Oriole Lake Dirt Road 13
+GOR5353 Oriole Lake Meadow
+UMI5718 Mineral King Dirt Road
+No Alien Species TBL5763 Old Black Oak Trail None
+TEV8511 Evelyn Lakes Trail
+TMI8100 Mitchell Pass Trail
+TNE8840 New Army Pass Trail
+TSI10800 Siberian Outpost Trails
+TSU8511 Sunset Lakes Trail
+Code: First letter: C = Campground, D = Development, G = Pasture/Meadow, I = Paved Road, P = Pack Station, R = Riparian, T = Trail, U = Dirt Road. Second and third letters: Unique site ID. Numerals: #### = Elevation (ft).
+Sites in cluster 6 are uniquely rich in low elevation annual grasses and also possess species that are common at mid-elevations. Old Hidden Springs Trail at an elevation of 670 m (2,190 ft) is rich in low elevation annual grasses as expected and there are also mid elevation forb species at seeps and at stream crossings. The small corral at South Fork Campground (1,135 m; 3,730 ft) may be responsible for the large number of annual grasses found at the site. There is also a large number of annual grass species along the edges of Crystal Cave Parking Lot (1,490 m; 4,895 ft).
+Cluster 7 is composed of sites that range from 1,370 m to 2,285 m (4,500 ft to 7,500 ft) in elevation and are relatively poor in mid-elevation species and rich in annual grass species. Bromus tectorum and Vulpia myuros are constant annual grass species. The inclusion of Grant Grove Pack Station (1,955 m; 6,415 ft) in the low-species-richness cluster is an artifact of sampling difficulties. The survey of that site was conducted after stock animals were placed in the corrals and many of the plants were either eaten or trampled beyond recognition. Cluster 8, Trauger's Creek (1,395 m; 4,575 ft), is relatively rich in low-elevation species. However, neither Bromus tectorum nor Vulpia myuros are found at that site. That factor, in addition to the presence of mid-elevation species in seeps and at stream crossings, and the presence of Malus sylvestris, accounts for the site’s distinct cluster.
+Clusters 9, 10 and 11 are notable for the presence of Poa pratensis. Sites in cluster 9, which range in elevation from 1,830 m to 2,590 m (6,000 ft to 8,500 ft), are relatively low in forb richness, while Taraxicum is characteristic of the sites in cluster 10, which range in elevation from 2,135 m to 2,745 m (7,000 ft to 9,000 ft). Rumex acetosella and Spergularia rubra are characteristic of sites in cluster 11, which range in elevation from 1,980 m to 2,285 m (6,500 ft to 7,500 ft). Hart Loop Trail (1,680m; 5,505 ft), a lower-elevation site, is included in this cluster because of the mid- and high-elevation species present at stream crossings and moist areas.
+Clusters 12 and 13 are relatively rich in mid- and high-elevation forb species. The sites in cluster 12 ranges in elevation from 1,370 m to 2,440 m (4,500 ft to 8,000 ft). The low elevation Shepherd Saddle Road site is the only exception, and it appears to be rich in mid- and upper-elevation forb species due to its proximity to Ash Mountain Corrals, Ash Mountain Shooting Range and Sycamore Creek. The sites in cluster 13 are at an elevation of 1,675 m (5,500 ft) and include the adjacent Oriole Lake Dirt Road and Oriole Lake Meadow sites in addition to Mineral King Dirt Road. The forb species at these sites are species that are typically dispersed in the dung of stock animals. Trespassing cattle from a nearby inholding graze the sites near Oriole Lake, and the Mineral King Dirt Road site is adjacent to the Mineral King Pack Station.
+13
+Nearly all of the sites where no alien species were found are above 2,440 m (8,000 ft). The exception is Old Black Oak Trail at 1,755 m (5,765 ft), a trail that has not been maintained for years. It is not clear why there are no alien species present at the other five sites as Poa pratensis and Taraxicum officinale are present along the Rae Lakes Loop Trail to elevations of 2,865 m (9,400 ft) and 2,990 m (9,800 ft) respectively.
+Yosemite National Park
+Survey and Quadrat Data Collection
+1998 Field Methods - During the summer of 1998, field crews began sampling three patch types (campgrounds, developments, and corrals) and two corridor types (trails and roads). Alien species presence and cover estimates of alien and native species were obtained from all patch types. While presence/absence data were recorded for each corridor type, cover along trails and roads were not estimated because the distribution of nonnative plants along these linear landscape features was very patchy.
+To conduct a survey, field crews compiled a complete list of plants in the study site. After making the list, the field crew placed each species into distribution classes and estimated the abundance of species on a log scale (0-10, 11-100, 101-1000, 1001-10,000, >10,000). Additionally, the distribution of each alien species was scattered characterized individuals, scattered clumps of individuals, large clumps of many individuals, or widespread throughout the area. Trail and road surveys sometimes continued for several kilometers and species presence data were recorded in 1 km segments along the length of each survey.
+A baseline transect was established along one edge of each patch and a random number table was used to randomly place sampling transects perpendicularly along the length of the baseline transect. Quadrats (1-m2) were placed randomly along the sampling transects until thirty quadrats had been sampled. When thirty quadrats were sampled before the end of a sampling transect, the remainder of the sampling transect was also sampled to avoid biasing the data toward the
+14
+beginning of the transect. In each quadrat, the cover of nonnative and native plant species was estimated to the nearest one percent. The cover of a particular species could not exceed 100 percent, but the total of all species in the quadrat frequently exceeded 100 percent. Additionally, a natural vegetation control site was established in undisturbed vegetation 50 m from five of the campground sites.
+As was the case in Sequoia-Kings Canyon National Parks, the sample sites frequently contained areas such as parking lots or tent pads that were inappropriate for sampling, so quadrats had to pass rejection criteria before field crews sampled them. Randomly placed quadrats were rejected if more than 50 percent of the cover was incapable of supporting plant life (pavement, dirt roads, large boulders and trampled areas within 1 m of a structure). Areas where alien species are deliberately cultivated (lawns, flower pots, gardens) also were rejected. If the crews rejected several quadrats, they added additional transects until 30 quadrats were sampled. In areas that were sampled for cover, the canopy cover of shrubs and trees was also recorded. Shrub cover along the length of transects was measured using the line intercept method. Tree canopy cover was estimated using GRS brand densiometers at 100 regularly distributed points along the same transect. The quadrat sampling data were analyzed for exotic species richness and are included in the richness by elevation figures below.
+1999 Field Methods - The survey crews measured the distribution of alien species in (campgrounds, three patches developments, corrals) and types of two corridors (trails and roads). Ten 50 by 2 m transects were randomly placed in each patch by establishing a baseline transect along one border known as a patch length (fig. 3a). The width of line target area was measured as a the perpendicular to the length, and a second baseline transect was established along the width transects were placed border. Sampling two baseline axes. randomly along Whenever a sampling transect reached the boundary of a disturbed area or structure, the remainder of its sampling length was continued at the same position on the first axis and from
+the 0 position of the second axis (fig. 3a). At 10 m intervals beginning at meter 0, 2 m x 1 m quadrats were placed with the 2 m axis perpendicular to the sampling transect (fig. 3b). The cover of individual alien species and the total cover of all native species were estimated in each quadrat. The total numbers of alien and native species present in each sampling transect were also recorded. Canopy cover was measured every 5 m along each sampling transect using the point-intercept method with a GRS brand densiometer. Because some alien species did not fall within the sampling transects, the entire sampling area was surveyed to compile a complete list of all alien species present. Areas with high densities of buildings or very few plants were not sampled, but surveyed only. The abundance of species in each patch was estimated on a log scale after the patch was surveyed.
+Trails in Yosemite were sampled based on levels of use by hikers and recreational stock. The Yosemite National Park Wilderness Office supplied data on the number of backpacking wilderness permits issued on each trail, and the trails were grouped into three categories: low use (0-50 people/year), moderate use (51-1100 (1101-6900 high people/year) people/year). Seven randomly selected for sampling from each use category. The Wilderness Office also supplied data on the number of stock using the trails in categories of low (3-10/day), medium (11-25/day), and high (26+/day). The concession stables provided route in Yosemite Valley. Stock are only allowed on certain trails, and all trails open to stock use were sampled. The high use backpacking permit category contained the fewest number of trails, and most of these popular trails also received medium-high stock use. By comparison, low use backpacking permit trails had no stock use. No records were available for day-use by private stock parties on trails, so Mirror Lake Pack Trail and Yosemite Falls Trail had higher stock-use levels than indicated by the Wilderness Office data. Therefore, those trails were placed in the next higher stock-use category. At each trailhead the survey crews placed the first of ten 50 m by 2 m transects on the right side of and parallel to the trail, one meter from the tread of the trail.
+Subsequent transects were placed on alternating sides of the trail and were begun across from the end of the previous transect. Transects were sampled using the same methods as were used to sample patches. After sampling within the transects, the field crews walked 3 km from the trailhead, that occurred within 2 m of the trail in each kilometer. Abundances of alien species were
+Figure 3. (a) Arrangement of 1999 transects in Yosemite National Park in campgrounds, developments and corrals that were sampled for alien species. Two dimensions of the sample site were measured, and the transects were arranged randomly along the two axes. When a transect ran outside of the sample area, as in Transect 10, it was continued at the same position on the first axis and from the 0 position of the second axis. (b) Sampling along 50 m transects. 1 by 2 m quadrats (rectangles) were placed every 10 m, and canopy cover was sampled every 5m (black points).
+15

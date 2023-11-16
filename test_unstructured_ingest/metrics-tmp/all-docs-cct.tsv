@@ -1,0 +1,7 @@
+filename	doctype	connector	cct-accuracy	cct-%missing
+2023-Jan-economic-outlook.pdf	pdf	s3	0.842	0.041
+recalibrating-risk-report.pdf	pdf	s3	0.973	0.007
+2023-Jan-economic-outlook.pdf	pdf	s3	0.809	0.035
+recalibrating-risk-report.pdf	pdf	s3	0.977	0.005
+IRS-form-1987.pdf	pdf	azure	0.783	0.135
+example-10k.html	html	local	0.686	0.037

@@ -1,0 +1,59 @@
+PART I ITEM
+1A RISK FACTORS
+Our failure to address these risks or other problems encountered in connection with our past or future acquisitions and other strategic transactions could cause us to fail to realize their anticipated benefits, incur unanticipated liabilities, and harm our business generally.
+Our acquisitions and other strategic transactions could also result in dilutive issuances of our equity securities, the incurrence of debt, contingent liabilities, or amortization expenses, or impairment of goodwill and/or purchased long-lived assets, and restructuring charges, any of which could harm our financial condition and operating results. Also, the anticipated benefits or value of our acquisitions and other strategic transactions may not materialize. In connection with our divestitures, we have agreed, and may in the future agree, to provide indemnification for certain potential liabilities, which could harm our financial condition and operating results.
+If we were to lose the services of key personnel, we may not be able to execute our business strategy.
+Our future success depends in large part upon the continued service of key members of our senior management team. For instance, Sundar Pichai is critical to the overall management of Alphabet and its subsidiaries and plays an important role in the development of our technology, maintaining our culture, and setting our strategic direction. All of our executive officers and key employees are at-will employees, and we do not maintain any key-person life insurance policies. The loss of key personnel could harm our business.
+We rely on highly skilled personnel and, if we are unable to retain or motivate key personnel, hire qualified personnel, or maintain and continue to adapt our corporate culture, we may not be able to grow or operate effectively.
+Our performance largely depends on the talents and efforts of highly skilled individuals. Our ability to compete effectively and our future success depends on our continuing to identify, hire, develop, motivate, and retain highly skilled personnel for all areas of our organization. Competition in our industry for qualified employees is intense, and certain of our competitors have directly targeted, and may continue to target, our employees. In addition, our compensation arrangements, such as our equity award programs, may not always be successful in attracting new employees and retaining and motivating our existing employees. Restrictive immigration policy and regulatory changes may also affect our ability to hire, mobilize, or retain some of our global talent.
+In addition, we believe that our corporate culture fosters innovation, creativity, and teamwork. As our organization grows and evolves, we may need to implement more complex organizational management structures or adapt our corporate culture and work environments to ever-changing circumstances, such as during times of a natural disaster or pandemic, and these changes could affect our ability to compete effectively or have an adverse effect on our corporate culture. As we experiment with hybrid work models, we may experience increased costs and/or disruption, in addition to potential effects on our ability to operate effectively and maintain our corporate culture.
+18
+ALPHABET INC. ● ANNUAL REPORT
+PART I ITEM
+4 MINE SAFETY DISCLOSURES
+ITEM 1B. UNRESOLVED STAFF COMMENTS
+Not applicable.
+ITEM 2. PROPERTIES
+Our headquarters are located in Mountain View, California. We own and lease office facilities and data centers around the world, primarily in North America, Europe, and Asia. We believe our existing facilities are in good condition and suitable for the conduct of our business.
+ITEM 3. LEGAL PROCEEDINGS
+For a description of our material pending legal proceedings, see Legal Matters in Note 10 of the Notes to Consolidated Financial Statements included in Part II, Item 8 of this Annual Report on Form 10-K, which is incorporated herein by reference.
+ITEM 4. MINE SAFETY DISCLOSURES
+Not applicable.
+ALPHABET INC. ● ANNUAL REPORT
+19
+z PART II
+ITEM 5. MARKET FOR REGISTRANT’S COMMON EQUITY,
+RELATED STOCKHOLDER MATTERS, AND ISSUER PURCHASES OF EQUITY SECURITIES
+As of October 2, 2015, Alphabet Inc. became the successor issuer of Google Inc. pursuant to Rule 12g-3(a) under the Exchange Act. Our Class A stock has been listed on the Nasdaq Global Select Market under the symbol “GOOG” since August 19, 2004 and under the symbol “GOOGL” since April 3, 2014. Prior to August 19, 2004, there was no public market for our stock. Our Class B stock is neither listed nor traded. Our Class C stock has been listed on the Nasdaq Global Select Market under the symbol “GOOG” since April 3, 2014.
+Holders of Record
+As of December 31, 2022, there were approximately 6,670 and 1,657 stockholders of record of our Class A stock and Class C stock, respectively. Because many of our shares of Class A stock and Class C stock are held by brokers and other institutions on behalf of stockholders, we are unable to estimate the total number of stockholders represented by these record holders. As of December 31, 2022, there were approximately 64 stockholders of record of our Class B stock.
+Dividend Policy
+We have never declared or paid any cash dividend on our common or capital stock. The primary use of capital continues to be to invest for the long-term growth of the business. We regularly evaluate our cash and capital structure, including the size, pace, and form of capital return to stockholders.
+Issuer Purchases of Equity Securities
+The following table presents information with respect to Alphabet’s repurchases of Class A and Class C stock during the quarter ended December 31, 2022:
+Period Total Number of Class A Shares Purchased (in thousands) (1) Total Number of Class C Shares Purchased (in thousands) (1) Average Price Paid per Class A Share (2) Average Price Paid per Class C Share (2) Total Number of Shares Purchased as Part of Publicly Announced Programs (in thousands) (1) Approximate Dollar Value of Shares that May Yet Be Purchased Under the Program (in millions)
+October 1 - 31 8,585 46,059 $ 98.92 $ 99.16 54,644 $ 38,069
+November 1 - 30 1,968 55,374 $ 95.89 $ 93.51 57,342 $ 32,703
+December 1 - 31 4,687 44,649 $ 91.93 $ 93.93 49,336 $ 28,079
+Total 15,240 146,082 161,322
+(1) The repurchases are being executed from time to time, subject to general business and market conditions and other investment opportunities, through open market purchases or privately negotiated transactions, including through Rule 10b5-1 plans. The repurchase program does not have an expiration date. See Note 11 of the Notes to Consolidated Financial Statements included in Item 8 of this Annual Report on Form 10-K for additional information related to share repurchases.
+(2) Average price paid per share includes costs associated with the repurchases.
+20
+ALPHABET INC. ● ANNUAL REPORT
+PART II
+ITEM 5 MARKET FOR REGISTRANT’S COMMON EQUITY, RELATED STOCKHOLDER MATTERS, AND ISSUER PURCHASES OF EQUITY SECURITIES
+Stock Performance Graphs
+The graph below matches Alphabet Inc. Class A’s cumulative 5-year total stockholder return on common stock with the cumulative total returns of the S&P 500 index, the NASDAQ Composite index, and the RDG Internet Composite index. The graph tracks the performance of a $100 investment in our common stock and in each index (with the reinvestment of all dividends) from December 31, 2017 to December 31, 2022. The returns shown are based on historical results and are not intended to suggest future performance.
+COMPARISON OF 5 YEAR CUMULATIVE TOTAL RETURN*
+ALPHABET INC. CLASS A COMMON STOCK
+Among Alphabet Inc., the S&P 500 Index, the NASDAQ Composite Index and the RDG Internet Composite Index
+$100 invested on December 31, 2017 in stock or index, including reinvestment of dividends.
+Copyright© 2023 S&P, a division of The McGraw-Hill Companies Inc. All rights reserved.
+The graph below matches Alphabet Inc. Class C’s cumulative 5-year total stockholder return on capital stock with the cumulative total returns of the S&P 500 index, the NASDAQ Composite index, and the RDG Internet Composite index. The graph tracks the performance of a $100 investment in our Class C capital stock and in each index (with the reinvestment of all dividends) from December 31, 2017 to December 31, 2022. The returns shown are based on historical results and are not intended to suggest future performance.
+COMPARISON OF 5 YEAR CUMULATIVE TOTAL RETURN*
+ALPHABET INC. CLASS C CAPITAL STOCK
+Among Alphabet Inc., the S&P 500 Index, the NASDAQ Composite Index and the RDG Internet Composite Index
+$100 invested on December 31, 2017 in stock or in index, including reinvestment of dividends.
+Copyright© 2023 S&P, a division of The McGraw-Hill Companies Inc. All rights reserved.
+ALPHABET INC. ● ANNUAL REPORT
+21
