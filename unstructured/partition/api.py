@@ -6,6 +6,8 @@ from typing import (
 )
 
 import requests
+from unstructured_client import UnstructuredClient
+from unstructured_client.models import shared
 
 from unstructured.documents.elements import Element
 from unstructured.logger import logger
@@ -63,40 +65,34 @@ def partition_via_api(
             "Please use metadata_filename instead.",
         )
 
-    headers = {
-        "ACCEPT": "application/json",
-        "UNSTRUCTURED-API-KEY": api_key,
-    }
+    s = UnstructuredClient(api_key_auth=api_key)
 
     if filename is not None:
         with open(filename, "rb") as f:
-            files = [
-                ("files", (filename, f, content_type)),
-            ]
-            response = requests.post(
-                api_url,
-                headers=headers,
-                data=request_kwargs,
-                files=files,  # type: ignore
+            files = shared.Files(
+                content=f.read(),
+                file_name=filename,
             )
+
     elif file is not None:
         if metadata_filename is None:
             raise ValueError(
                 "If file is specified in partition_via_api, "
                 "metadata_filename must be specified as well.",
             )
-        files = [
-            ("files", (metadata_filename, file, content_type)),  # type: ignore
-        ]
-        response = requests.post(
-            api_url,
-            headers=headers,
-            data=request_kwargs,
-            files=files,  # type: ignore
+        files = shared.Files(
+            content=file,
+            file_name=metadata_filename,
         )
 
+    req = shared.PartitionParameters(
+        files=files,
+        **request_kwargs,
+    )
+    response = s.general.partition(req)
+
     if response.status_code == 200:
-        return elements_from_json(text=response.text)
+        return elements_from_json(text=response.raw_response.text)
     else:
         raise ValueError(
             f"Receive unexpected status code {response.status_code} from the API.",
