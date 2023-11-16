@@ -7,10 +7,8 @@
 
 set -e
 
-if [ "$#" -eq 0 ]; then
-  echo "Usage: $0 [options] <file>"
-  # shellcheck disable=SC2016
-  echo '
+USAGE_MESSAGE="Usage: $0 [options] <file>"'
+
 Options:
   --api-key KEY   Specify the API key for authentication. Set the env var $UNST_API_KEY to skip providing this option.
   --hi-res        hi_res strategy: Enable high-resolution processing, with layout segmentation and OCR
@@ -29,6 +27,9 @@ Arguments:
 The script requires a <file>, the document to post to the Unstructured API.
 The .json result is written to ~/tmp/unst-outputs/ -- this path is echoed and copied to your clipboard.
 '
+
+if [ "$#" -eq 0 ]; then
+  echo "$USAGE_MESSAGE"
   exit 1
 fi
 
@@ -107,7 +108,7 @@ while [[ "$#" -gt 0 ]]; do
       fi
       ;;
     --help)
-      echo "$0 [--verbose] [--s3] [--hi-res] <file to send to api>"
+      echo "$USAGE_MESSAGE"
       exit 0
       ;;
     *)
@@ -172,7 +173,7 @@ curl -q -X 'POST' \
   -o "${JSON_OUTPUT_FILEPATH}"
 
 
-JSON_FILE_SIZE=$(stat -c%s "${JSON_OUTPUT_FILEPATH}")
+JSON_FILE_SIZE=$(wc -c < "${JSON_OUTPUT_FILEPATH}")
 if [ "$JSON_FILE_SIZE" -lt 10 ]; then
     echo "Error: JSON file ${JSON_OUTPUT_FILEPATH} has no elements."
     cat "$JSON_OUTPUT_FILEPATH"
