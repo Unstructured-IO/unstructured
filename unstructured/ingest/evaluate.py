@@ -52,6 +52,7 @@ def measure_text_edit_distance_command(
     export_dir: str,
     weights: Tuple[int, int, int],
 ):
+    click.echo(export_dir)
     return measure_text_edit_distance(
         output_dir, source_dir, output_list, source_list, export_dir, weights
     )

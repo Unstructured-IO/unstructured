@@ -26,10 +26,14 @@ function cleanup() {
 
 trap cleanup EXIT
 
+echo "running check diff"
+echo "$TMP_METRICS_LATEST_RUN_DIR"
+echo "$METRICS_DIR"
+
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [ "$OVERWRITE_FIXTURES" != "false" ]; then
     # force copy (overwrite) files from metrics-tmp (new eval metrics) to metrics (old eval metrics)
-    cp -rf "$TMP_METRICS_LATEST_RUN_DIR" "$METRICS_DIR"
+    cp -f "$TMP_METRICS_LATEST_RUN_DIR"/* "$METRICS_DIR"
 # elif ! diff -ru "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR" ; then
 #     "$SCRIPT_DIR"/clean-permissions-files.sh "$TMP_METRICS_LATEST_RUN_DIR"
 #     diff -r "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR"> outputdiff.txt
