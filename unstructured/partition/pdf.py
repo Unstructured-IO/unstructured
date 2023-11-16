@@ -259,7 +259,7 @@ def partition_pdf_or_image(
             pdf_text_extractable = any(
                 isinstance(el, Text) and el.text.strip() for el in extracted_elements
             )
-        except TypeError as e:
+        except Exception as e:
             logger.error(e, exc_info=True)
             logger.warning("PDF text extraction failed, skip text extraction...")
 
