@@ -36,6 +36,6 @@ USER ${NB_USER}
 COPY example-docs example-docs
 COPY unstructured unstructured
 
-RUN python3.10 -c "from unstructured.partition.utils.hi_res_model_initialize import initialize; initialize()"
+RUN python3.10 -c "from unstructured.partition.utils.initialize_hi_res_model import initialize; initialize()"
 
 CMD ["/bin/bash"]
