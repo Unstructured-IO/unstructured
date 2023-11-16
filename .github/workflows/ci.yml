@@ -105,6 +105,7 @@ jobs:
       uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
+        force-recreate: 'true'
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
@@ -148,6 +149,7 @@ jobs:
       uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
+        force-recreate: 'true'
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
@@ -187,6 +189,7 @@ jobs:
       uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
+        force-recreate: 'true'
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
@@ -284,6 +287,7 @@ jobs:
       uses: ./.github/actions/create-ingest-cache
       with:
         python-version: ${{ matrix.python-version }}
+        force-recreate: 'true'
     - name: Setup docker-compose
       uses: KengoTODA/actions-setup-docker-compose@v1
       with:
@@ -376,6 +380,7 @@ jobs:
       uses: ./.github/actions/create-ingest-cache
       with:
         python-version: ${{ matrix.python-version }}
+        force-recreate: 'true'
     - name: Setup docker-compose
       uses: KengoTODA/actions-setup-docker-compose@v1
       with:
@@ -435,6 +440,7 @@ jobs:
       uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
+        force-recreate: 'true'
     - name: Set up flag for running Unstructured API unit tests
       run: |
         # NOTE: Change env `SKIP_API_UNIT_FOR_BREAKING_CHANGE` to true if there is a breaking change in Unstructured repo that will break unstructured api unit tests
@@ -508,6 +514,7 @@ jobs:
         uses: ./.github/actions/create-ingest-cache
         with:
           python-version: ${{ matrix.python-version }}
+          force-recreate: 'true'
       - name: Test Dockerfile
         run: |
           source .venv/bin/activate

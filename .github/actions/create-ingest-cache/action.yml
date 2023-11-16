@@ -5,6 +5,9 @@ inputs:
   python-version:
     description: 'which python version to user'
     required: true
+  force-recreate:
+    description: 'regardless of cache existing, recreate it'
+    default: "false"
 runs:
   using: "composite"
   steps:
@@ -20,6 +23,7 @@ runs:
       uses: ./.github/actions/create-cache
       with:
         python-version: ${{ inputs.python-version }}
+        force-recreate: 'true'
     - uses: actions/cache@v3
       id: ingest-virtualenv-cache
       with:
@@ -29,12 +33,12 @@ runs:
         key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
         lookup-only: true
     - name: Set up Python ${{ inputs.python-version }}
-      if: steps.ingest-virtualenv-cache.outputs.cache-hit != 'true'
+      if: steps.ingest-virtualenv-cache.outputs.cache-hit != 'true' || inputs.force-recreate == 'true'
       uses: actions/setup-python@v4
       with:
         python-version: ${{ inputs.python-version }}
     - name: Setup virtual environment (no cache hit)
-      if: steps.ingest-virtualenv-cache.outputs.cache-hit != 'true'
+      if: steps.ingest-virtualenv-cache.outputs.cache-hit != 'true' || inputs.force-recreate == 'true'
       shell: bash
       run: |
         python${{ inputs.python-version }} -m venv .venv
