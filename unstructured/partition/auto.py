@@ -20,6 +20,7 @@ from unstructured.partition.lang import (
     convert_old_ocr_languages_to_languages,
 )
 from unstructured.partition.text import partition_text
+from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.partition.xml import partition_xml
 from unstructured.utils import dependency_exists
 
@@ -125,7 +126,7 @@ def partition(
     file_filename: Optional[str] = None,
     url: Optional[str] = None,
     include_page_breaks: bool = False,
-    strategy: str = "auto",
+    strategy: str = PartitionStrategy.AUTO,
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},

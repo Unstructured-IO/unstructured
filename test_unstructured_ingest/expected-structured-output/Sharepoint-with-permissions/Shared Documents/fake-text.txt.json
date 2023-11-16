@@ -1,40 +1,33 @@
 [
   {
-    "type": "NarrativeText",
     "element_id": "1df8eeb8be847c3a1a7411e3be3e0396",
     "metadata": {
       "data_source": {
-        "url": "",
-        "version": "1",
-        "record_locator": {
-          "server_path": "/Shared Documents/fake-text.txt",
-          "site_url": "https://unstructuredio.sharepoint.com"
-        },
         "date_created": "2023-06-16T05:04:55",
         "date_modified": "2023-06-16T05:04:55",
         "permissions_data": [
           {
+            "grantedToIdentities": [],
+            "grantedToIdentitiesV2": [],
+            "hasPassword": false,
             "id": "5896ac32-9e81-4c8b-ba83-0e25d1fa6db9",
+            "link": {
+              "preventsDownload": false,
+              "scope": "anonymous",
+              "type": "edit",
+              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg"
+            },
             "roles": [
               "write"
             ],
-            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n",
-            "hasPassword": false,
-            "grantedToIdentitiesV2": [],
-            "grantedToIdentities": [],
-            "link": {
-              "scope": "anonymous",
-              "type": "edit",
-              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg",
-              "preventsDownload": false
-            }
+            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Owners",
@@ -42,18 +35,18 @@
                 "loginName": "Communication site Owners"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Owners"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "roles": [
-              "read"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Visitors",
@@ -61,18 +54,18 @@
                 "loginName": "Communication site Visitors"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Visitors"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "roles": [
-              "write"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Members",
@@ -80,18 +73,19 @@
                 "loginName": "Communication site Members"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Members"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
           },
           {
-            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
             "grantedToV2": {
               "group": {
                 "@odata.type": "#microsoft.graph.sharePointIdentity",
@@ -104,14 +98,19 @@
                 "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            }
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE"
           }
-        ]
+        ],
+        "record_locator": {
+          "server_path": "/Shared Documents/fake-text.txt",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "",
+        "version": "1"
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -119,44 +118,38 @@
         "eng"
       ]
     },
-    "text": "This is a test document to use for unit tests."
+    "text": "This is a test document to use for unit tests.",
+    "type": "NarrativeText"
   },
   {
-    "type": "Address",
     "element_id": "a9d4657034aa3fdb5177f1325e912362",
     "metadata": {
       "data_source": {
-        "url": "",
-        "version": "1",
-        "record_locator": {
-          "server_path": "/Shared Documents/fake-text.txt",
-          "site_url": "https://unstructuredio.sharepoint.com"
-        },
         "date_created": "2023-06-16T05:04:55",
         "date_modified": "2023-06-16T05:04:55",
         "permissions_data": [
           {
+            "grantedToIdentities": [],
+            "grantedToIdentitiesV2": [],
+            "hasPassword": false,
             "id": "5896ac32-9e81-4c8b-ba83-0e25d1fa6db9",
+            "link": {
+              "preventsDownload": false,
+              "scope": "anonymous",
+              "type": "edit",
+              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg"
+            },
             "roles": [
               "write"
             ],
-            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n",
-            "hasPassword": false,
-            "grantedToIdentitiesV2": [],
-            "grantedToIdentities": [],
-            "link": {
-              "scope": "anonymous",
-              "type": "edit",
-              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg",
-              "preventsDownload": false
-            }
+            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Owners",
@@ -164,18 +157,18 @@
                 "loginName": "Communication site Owners"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Owners"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "roles": [
-              "read"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Visitors",
@@ -183,18 +176,18 @@
                 "loginName": "Communication site Visitors"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Visitors"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "roles": [
-              "write"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Members",
@@ -202,18 +195,19 @@
                 "loginName": "Communication site Members"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Members"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
           },
           {
-            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
             "grantedToV2": {
               "group": {
                 "@odata.type": "#microsoft.graph.sharePointIdentity",
@@ -226,14 +220,19 @@
                 "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            }
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE"
           }
-        ]
+        ],
+        "record_locator": {
+          "server_path": "/Shared Documents/fake-text.txt",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "",
+        "version": "1"
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -241,44 +240,38 @@
         "eng"
       ]
     },
-    "text": "Doylestown, PA 18901"
+    "text": "Doylestown, PA 18901",
+    "type": "Address"
   },
   {
-    "type": "Title",
     "element_id": "9c218520320f238595f1fde74bdd137d",
     "metadata": {
       "data_source": {
-        "url": "",
-        "version": "1",
-        "record_locator": {
-          "server_path": "/Shared Documents/fake-text.txt",
-          "site_url": "https://unstructuredio.sharepoint.com"
-        },
         "date_created": "2023-06-16T05:04:55",
         "date_modified": "2023-06-16T05:04:55",
         "permissions_data": [
           {
+            "grantedToIdentities": [],
+            "grantedToIdentitiesV2": [],
+            "hasPassword": false,
             "id": "5896ac32-9e81-4c8b-ba83-0e25d1fa6db9",
+            "link": {
+              "preventsDownload": false,
+              "scope": "anonymous",
+              "type": "edit",
+              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg"
+            },
             "roles": [
               "write"
             ],
-            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n",
-            "hasPassword": false,
-            "grantedToIdentitiesV2": [],
-            "grantedToIdentities": [],
-            "link": {
-              "scope": "anonymous",
-              "type": "edit",
-              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg",
-              "preventsDownload": false
-            }
+            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Owners",
@@ -286,18 +279,18 @@
                 "loginName": "Communication site Owners"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Owners"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "roles": [
-              "read"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Visitors",
@@ -305,18 +298,18 @@
                 "loginName": "Communication site Visitors"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Visitors"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "roles": [
-              "write"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Members",
@@ -324,18 +317,19 @@
                 "loginName": "Communication site Members"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Members"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
           },
           {
-            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
             "grantedToV2": {
               "group": {
                 "@odata.type": "#microsoft.graph.sharePointIdentity",
@@ -348,14 +342,19 @@
                 "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            }
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE"
           }
-        ]
+        ],
+        "record_locator": {
+          "server_path": "/Shared Documents/fake-text.txt",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "",
+        "version": "1"
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -363,44 +362,38 @@
         "eng"
       ]
     },
-    "text": "Important points:"
+    "text": "Important points:",
+    "type": "Title"
   },
   {
-    "type": "ListItem",
     "element_id": "39a3ae572581d0f1fe7511fd7b3aa414",
     "metadata": {
       "data_source": {
-        "url": "",
-        "version": "1",
-        "record_locator": {
-          "server_path": "/Shared Documents/fake-text.txt",
-          "site_url": "https://unstructuredio.sharepoint.com"
-        },
         "date_created": "2023-06-16T05:04:55",
         "date_modified": "2023-06-16T05:04:55",
         "permissions_data": [
           {
+            "grantedToIdentities": [],
+            "grantedToIdentitiesV2": [],
+            "hasPassword": false,
             "id": "5896ac32-9e81-4c8b-ba83-0e25d1fa6db9",
+            "link": {
+              "preventsDownload": false,
+              "scope": "anonymous",
+              "type": "edit",
+              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg"
+            },
             "roles": [
               "write"
             ],
-            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n",
-            "hasPassword": false,
-            "grantedToIdentitiesV2": [],
-            "grantedToIdentities": [],
-            "link": {
-              "scope": "anonymous",
-              "type": "edit",
-              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg",
-              "preventsDownload": false
-            }
+            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Owners",
@@ -408,18 +401,18 @@
                 "loginName": "Communication site Owners"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Owners"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "roles": [
-              "read"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Visitors",
@@ -427,18 +420,18 @@
                 "loginName": "Communication site Visitors"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Visitors"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "roles": [
-              "write"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Members",
@@ -446,18 +439,19 @@
                 "loginName": "Communication site Members"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Members"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
           },
           {
-            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
             "grantedToV2": {
               "group": {
                 "@odata.type": "#microsoft.graph.sharePointIdentity",
@@ -470,14 +464,19 @@
                 "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            }
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE"
           }
-        ]
+        ],
+        "record_locator": {
+          "server_path": "/Shared Documents/fake-text.txt",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "",
+        "version": "1"
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -485,44 +484,38 @@
         "eng"
       ]
     },
-    "text": "Hamburgers are delicious"
+    "text": "Hamburgers are delicious",
+    "type": "ListItem"
   },
   {
-    "type": "ListItem",
     "element_id": "fc1adcb8eaceac694e500a103f9f698f",
     "metadata": {
       "data_source": {
-        "url": "",
-        "version": "1",
-        "record_locator": {
-          "server_path": "/Shared Documents/fake-text.txt",
-          "site_url": "https://unstructuredio.sharepoint.com"
-        },
         "date_created": "2023-06-16T05:04:55",
         "date_modified": "2023-06-16T05:04:55",
         "permissions_data": [
           {
+            "grantedToIdentities": [],
+            "grantedToIdentitiesV2": [],
+            "hasPassword": false,
             "id": "5896ac32-9e81-4c8b-ba83-0e25d1fa6db9",
+            "link": {
+              "preventsDownload": false,
+              "scope": "anonymous",
+              "type": "edit",
+              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg"
+            },
             "roles": [
               "write"
             ],
-            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n",
-            "hasPassword": false,
-            "grantedToIdentitiesV2": [],
-            "grantedToIdentities": [],
-            "link": {
-              "scope": "anonymous",
-              "type": "edit",
-              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg",
-              "preventsDownload": false
-            }
+            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Owners",
@@ -530,18 +523,18 @@
                 "loginName": "Communication site Owners"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Owners"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "roles": [
-              "read"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Visitors",
@@ -549,18 +542,18 @@
                 "loginName": "Communication site Visitors"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Visitors"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "roles": [
-              "write"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Members",
@@ -568,18 +561,19 @@
                 "loginName": "Communication site Members"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Members"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
           },
           {
-            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
             "grantedToV2": {
               "group": {
                 "@odata.type": "#microsoft.graph.sharePointIdentity",
@@ -592,14 +586,19 @@
                 "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            }
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE"
           }
-        ]
+        ],
+        "record_locator": {
+          "server_path": "/Shared Documents/fake-text.txt",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "",
+        "version": "1"
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -607,44 +606,38 @@
         "eng"
       ]
     },
-    "text": "Dogs are the best"
+    "text": "Dogs are the best",
+    "type": "ListItem"
   },
   {
-    "type": "ListItem",
     "element_id": "0b61e826b1c4ab05750184da72b89f83",
     "metadata": {
       "data_source": {
-        "url": "",
-        "version": "1",
-        "record_locator": {
-          "server_path": "/Shared Documents/fake-text.txt",
-          "site_url": "https://unstructuredio.sharepoint.com"
-        },
         "date_created": "2023-06-16T05:04:55",
         "date_modified": "2023-06-16T05:04:55",
         "permissions_data": [
           {
+            "grantedToIdentities": [],
+            "grantedToIdentitiesV2": [],
+            "hasPassword": false,
             "id": "5896ac32-9e81-4c8b-ba83-0e25d1fa6db9",
+            "link": {
+              "preventsDownload": false,
+              "scope": "anonymous",
+              "type": "edit",
+              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg"
+            },
             "roles": [
               "write"
             ],
-            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n",
-            "hasPassword": false,
-            "grantedToIdentitiesV2": [],
-            "grantedToIdentities": [],
-            "link": {
-              "scope": "anonymous",
-              "type": "edit",
-              "webUrl": "https://unstructuredio.sharepoint.com/:t:/g/EcqAD4i_ztBItjmutnGzxDEBvTqVInhkhZ6z1DpdCi5xOg",
-              "preventsDownload": false
-            }
+            "shareId": "u!aHR0cHM6Ly91bnN0cnVjdHVyZWRpby5zaGFyZXBvaW50LmNvbS86dDovZy9FY3FBRDRpX3p0Qkl0am11dG5HenhERUJ2VHFWSW5oa2haNnoxRHBkQ2k1eE9n"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Owners",
@@ -652,18 +645,18 @@
                 "loginName": "Communication site Owners"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Owners"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "roles": [
-              "read"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Visitors",
@@ -671,18 +664,18 @@
                 "loginName": "Communication site Visitors"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Visitors"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
           },
           {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "roles": [
-              "write"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
             "grantedToV2": {
               "siteGroup": {
                 "displayName": "Communication site Members",
@@ -690,18 +683,19 @@
                 "loginName": "Communication site Members"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Members"
-              }
-            }
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
           },
           {
-            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
             "grantedToV2": {
               "group": {
                 "@odata.type": "#microsoft.graph.sharePointIdentity",
@@ -714,14 +708,19 @@
                 "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               }
             },
-            "grantedTo": {
-              "user": {
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            }
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE"
           }
-        ]
+        ],
+        "record_locator": {
+          "server_path": "/Shared Documents/fake-text.txt",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "",
+        "version": "1"
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -729,6 +728,7 @@
         "eng"
       ]
     },
-    "text": "I love fuzzy blankets"
+    "text": "I love fuzzy blankets",
+    "type": "ListItem"
   }
 ]
