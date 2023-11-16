@@ -17,24 +17,10 @@ jobs:
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - uses: actions/cache@v3
-        id: virtualenv-cache
-        with:
-          path: |
-            .venv
-            nltk_data
-          key: unstructured-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-      - name: Setup virtual environment (no cache hit)
-        run: |
-          python${{ env.PYTHON_VERSION }} -m venv .venv
-          source .venv/bin/activate
-          [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
-          make install-ci
+    - uses: actions/checkout@v3
+    - uses: ./.github/actions/create-cache
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
 
   setup_ingest:
     runs-on: ubuntu-latest
@@ -43,36 +29,9 @@ jobs:
     needs: [setup]
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache/restore@v3
-        id: base-virtualenv-cache
+      - uses: ./.github/actions/create-ingest-cache
         with:
-          path: |
-            .venv
-            nltk_data
-          key: unstructured-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-      # Due to the dependency on setup, the cache should exist before this is ran. Set failed if it wasn't found.
-      - name: Setup base virtual environment (no cache hit)
-        if: steps.base-virtualenv-cache.outputs.cache-hit != 'true'
-        uses: actions/github-script@v3
-        with:
-          script: |
-            core.setFailed("base cached environment couldn't be found")
-      - uses: actions/cache@v3
-        id: virtualenv-cache
-        with:
-          path: |
-            .venv
-            nltk_data
-          key: unstructured-ingest-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
-      - name: Set up Python ${{ env.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.python-version }}
-      - name: Setup virtual environment (no cache hit)
-        run: |
-          python${{ env.python-version }} -m venv .venv
-          source .venv/bin/activate
-          make install-all-ingest
+          python-version: ${{ env.PYTHON_VERSION }}
 
   update-fixtures-and-pr:
     runs-on: ubuntu-latest-m
@@ -82,7 +41,7 @@ jobs:
     steps:
       # actions/checkout MUST come before auth
       - uses: 'actions/checkout@v4'
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
@@ -96,13 +55,12 @@ jobs:
             .venv
             nltk_data
           key: unstructured-ingest-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
-      # Due to the dependency on setup_ingest, the cache should exist before this is ran. Set failed if it wasn't found.
-      - name: Setup base virtual environment (no cache hit)
+      - name: Setup virtual environment (no cache hit)
         if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-        uses: actions/github-script@v3
+        uses: ./.github/actions/create-ingest-cache
         with:
-          script: |
-            core.setFailed("cached environment couldn't be found")
+          python-version: ${{ env.PYTHON_VERSION }}
+          force-recreate: 'true'
       - name: Setup docker-compose
         uses: KengoTODA/actions-setup-docker-compose@v1
         with:

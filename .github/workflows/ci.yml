@@ -67,6 +67,7 @@ jobs:
       uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
+        force-recreate: 'true'
     - name: Lint
       run: |
         source .venv/bin/activate
