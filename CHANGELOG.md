@@ -1,9 +1,10 @@
-## 0.11.0-dev3
+## 0.11.0-dev4
 
 ### Enhancements
 
 * **Add a class for the strategy constants.** Add a class `PartitionStrategy` for the strategy constants and use the constants to replace strategy strings.
 * **Temporary Support for paddle language parameter.** User can specify default langage code for paddle with ENV `DEFAULT_PADDLE_LANG` before we have the language mapping for paddle.
+* **Import tables_agent from inference** so that we don't have to initialize a global table agent in unstructured OCR again
 
 ### Features
 
