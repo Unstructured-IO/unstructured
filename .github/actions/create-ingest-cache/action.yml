@@ -18,6 +18,8 @@ runs:
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       uses: ./.github/actions/create-cache
+      with:
+        python-version: ${{ inputs.python-version }}
     - uses: actions/cache@v3
       id: ingest-virtualenv-cache
       with:
