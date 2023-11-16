@@ -36,16 +36,14 @@ scripts/weaviate-test-helpers/create-weaviate-instance.sh
 wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-  s3 \
-  --download-dir "$DOWNLOAD_DIR" \
-  --strategy fast \
-  --preserve-downloads \
-  --reprocess \
-  --output-dir "$OUTPUT_DIR" \
-  --verbose \
-  --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
-  --anonymous \
-  --work-dir "$WORK_DIR" \
+  local \
+    --num-processes "$max_processes" \
+    --output-dir "$OUTPUT_DIR" \
+    --strategy fast \
+    --verbose \
+    --reprocess \
+    --input-path example-docs/fake-memo.pdf \
+    --work-dir "$WORK_DIR" \
   weaviate \
   --host-url http://localhost:8080 \
   --class-name elements \
