@@ -1,6 +1,7 @@
 # pyright: reportPrivateUsage=false
 
 import pathlib
+import re
 from tempfile import SpooledTemporaryFile
 from typing import Dict, List, cast
 
@@ -63,27 +64,28 @@ class Describe_DocxPartitioner:
         """
         table = docx.Document(example_doc_path("docx-tables.docx")).tables[1]
 
-        html = _DocxPartitioner()._convert_table_to_html(table)
+        # -- re.sub() strips out the extra padding inserted by tabulate --
+        html = re.sub(r" +<", "<", _DocxPartitioner()._convert_table_to_html(table))
 
         expected_lines = [
             "<table>",
             "<thead>",
-            f"<tr><th>a  </th><th>&gt;b&lt;{' ' * 96}</th><th>c  </th></tr>",
+            "<tr><th>a</th><th>&gt;b&lt;</th><th>c</th></tr>",
             "</thead>",
             "<tbody>",
-            "<tr><td>d  </td><td><table>",
+            "<tr><td>d</td><td><table>",
             "<tbody>",
-            "<tr><td>e      </td><td>f</td></tr>",
+            "<tr><td>e</td><td>f</td></tr>",
             "<tr><td>g&amp;t</td><td>h</td></tr>",
             "</tbody>",
-            "</table></td><td>i  </td></tr>",
-            f"<tr><td>j  </td><td>k{' ' * 104}</td><td>l  </td></tr>",
+            "</table></td><td>i</td></tr>",
+            "<tr><td>j</td><td>k</td><td>l</td></tr>",
             "</tbody>",
             "</table>",
         ]
         actual_lines = html.splitlines()
         for expected, actual in zip(expected_lines, actual_lines):
-            assert actual == expected
+            assert actual == expected, f"\nexpected: {repr(expected)}\nactual:   {repr(actual)}"
 
     def it_can_convert_a_table_to_plain_text(self):
         table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
@@ -210,6 +212,7 @@ def test_partition_docx_processes_table():
     elements = partition_docx(example_doc_path("fake_table.docx"))
 
     assert isinstance(elements[0], Table)
+    assert elements[0].text == ("Header Col 1  Header Col 2\n" "Lorem ipsum   A Link example")
     assert elements[0].metadata.text_as_html == (
         "<table>\n"
         "<thead>\n"

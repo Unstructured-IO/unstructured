@@ -580,6 +580,9 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
     text_regions = []
     for idx in range(len(ocr_data)):
         res = ocr_data[idx]
+        if not res:
+            continue
+
         for line in res:
             x1 = min([i[0] for i in line[0]])
             y1 = min([i[1] for i in line[0]])
