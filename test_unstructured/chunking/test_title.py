@@ -261,6 +261,7 @@ def test_chunk_by_title():
         Text("It is storming outside."),
         CheckBox(),
     ]
+
     chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
 
     assert chunks == [
@@ -274,7 +275,6 @@ def test_chunk_by_title():
         ),
         CheckBox(),
     ]
-
     assert chunks[0].metadata == ElementMetadata(emphasized_text_contents=["Day", "day"])
     assert chunks[3].metadata == ElementMetadata(
         regex_metadata={"a": [RegexMetadata(text="A", start=11, end=12)]},
@@ -824,6 +824,38 @@ class Describe_TextSection:
             "image_path": ["sprite.png"],
             "parent_id": ["f87731e0"],
             # -- A `None` value never appears, neither does a field-name with an empty list --
+        }
+
+    def but_it_discards_ad_hoc_metadata_fields_during_consolidation(self):
+        metadata = ElementMetadata(
+            category_depth=0,
+            filename="foo.docx",
+            languages=["lat"],
+            parent_id="f87731e0",
+        )
+        metadata.coefficient = 0.62
+        metadata_2 = ElementMetadata(
+            category_depth=1,
+            filename="foo.docx",
+            image_path="sprite.png",
+            languages=["lat", "eng"],
+        )
+        metadata_2.quotient = 1.74
+
+        section = _TextSection(
+            [
+                Title("Lorem Ipsum", metadata=metadata),
+                Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata_2),
+            ]
+        )
+
+        # -- ad-hoc fields "coefficient" and "quotient" do not appear --
+        assert section._all_metadata_values == {
+            "category_depth": [0, 1],
+            "filename": ["foo.docx", "foo.docx"],
+            "image_path": ["sprite.png"],
+            "languages": [["lat"], ["lat", "eng"]],
+            "parent_id": ["f87731e0"],
         }
 
     def it_consolidates_regex_metadata_in_a_field_specific_way(self):
