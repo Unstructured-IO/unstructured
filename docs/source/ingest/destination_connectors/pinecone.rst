@@ -24,7 +24,7 @@ upstream s3 connector. This will create new files on your local.
             s3 \
             --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
             --anonymous \
-            --output-dir s3-small-batch-output \
+            --output-dir s3-small-batch-output-to-pinecone \
             --num-processes 2 \
             --verbose \
             --strategy fast \
@@ -48,15 +48,18 @@ upstream s3 connector. This will create new files on your local.
           "s3",
           "--remote-url", "s3://utic-dev-tech-fixtures/small-pdf-set/",
           "--anonymous",
-          "--output-dir", "s3-small-batch-output \",
+          "--output-dir", "s3-small-batch-output-to-pinecone",
           "--num-processes", "2",
           "--verbose",
           "--strategy", "fast",
-          "--embedding-api-key", "<your openai api key here>",
-          "pinecone"
-          "--api-key", "<your pinecone api key here>"
-          "--index-name", "<your index name here, ie. ingest-test>"
-          "--environment", "your environment name here, ie. gcp-starter"
+          "--chunk-elements",
+          "--embedding-provider", "<an unstructured embedding provider, ie. langchain-huggingface>",
+          "pinecone",
+          "--api-key", "<your pinecone api key here>",
+          "--index-name", "<your index name here, ie. ingest-test>",
+          "--environment", "<your environment name here, ie. gcp-starter>",
+          "--batch-size", "<number of elements to be uploaded per batch, ie. 80>",
+          "--num-processes", "<number of processes to be used to upload, ie. 2>",
         ]
 
         # Run the command
