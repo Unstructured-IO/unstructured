@@ -20,6 +20,7 @@ from typing import (
 
 import numpy as np
 import pdf2image
+import wrapt
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import (
     LAParams,
@@ -76,7 +77,7 @@ from unstructured.partition.ocr import (
     get_layout_elements_from_ocr,
     get_ocr_agent,
 )
-from unstructured.partition.strategies import determine_pdf_or_image_strategy
+from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.constants import (
     OCR_AGENT_TESSERACT,
@@ -84,6 +85,7 @@ from unstructured.partition.utils.constants import (
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
     OCRMode,
+    PartitionStrategy,
 )
 from unstructured.partition.utils.processing_elements import clean_pdfminer_inner_elements
 from unstructured.partition.utils.sorting import (
@@ -115,7 +117,7 @@ def partition_pdf(
     filename: str = "",
     file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = False,
-    strategy: str = "auto",
+    strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[List[str]] = None,
@@ -162,6 +164,7 @@ def partition_pdf(
         If extract_images_in_pdf=True and strategy=hi_res, any detected images will be saved in the
         given path
     """
+
     exactly_one(filename=filename, file=file)
 
     languages = check_languages(languages, ocr_languages)
@@ -217,7 +220,7 @@ def partition_pdf_or_image(
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
     include_page_breaks: bool = False,
-    strategy: str = "auto",
+    strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
     languages: Optional[List[str]] = None,
@@ -232,6 +235,8 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
+    validate_strategy(strategy, is_image)
+
     languages = check_languages(languages, ocr_languages)
 
     last_modification_date = get_the_last_modification_date_pdf_or_img(
@@ -239,18 +244,8 @@ def partition_pdf_or_image(
         filename=filename,
     )
 
-    if (
-        not is_image
-        and determine_pdf_or_image_strategy(
-            strategy,
-            filename=filename,
-            file=file,
-            is_image=is_image,
-            infer_table_structure=infer_table_structure,
-            extract_images_in_pdf=extract_images_in_pdf,
-        )
-        != "ocr_only"
-    ):
+    extracted_elements = []
+    if not is_image:
         extracted_elements = extractable_elements(
             filename=filename,
             file=spooled_to_bytes_io_if_needed(file),
@@ -267,7 +262,6 @@ def partition_pdf_or_image(
 
     strategy = determine_pdf_or_image_strategy(
         strategy,
-        filename=filename,
         file=file,
         is_image=is_image,
         infer_table_structure=infer_table_structure,
@@ -275,11 +269,11 @@ def partition_pdf_or_image(
         extract_images_in_pdf=extract_images_in_pdf,
     )
 
-    if strategy == "hi_res":
+    if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            _layout_elements = _partition_pdf_or_image_local(
+            elements = _partition_pdf_or_image_local(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
                 is_image=is_image,
@@ -291,22 +285,15 @@ def partition_pdf_or_image(
                 image_output_dir_path=image_output_dir_path,
                 **kwargs,
             )
-            layout_elements = []
-            for el in _layout_elements:
-                if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
-                    new_el = element_from_text(cast(Text, el).text)
-                    new_el.metadata = el.metadata
-                else:
-                    new_el = el
-                layout_elements.append(new_el)
+            out_elements = _process_uncategorized_text_elements(elements)
 
-    elif strategy == "fast":
+    elif strategy == PartitionStrategy.FAST:
         return extracted_elements
 
-    elif strategy == "ocr_only":
+    elif strategy == PartitionStrategy.OCR_ONLY:
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
         with warnings.catch_warnings():
-            _layout_elements = _partition_pdf_or_image_with_ocr(
+            elements = _partition_pdf_or_image_with_ocr(
                 filename=filename,
                 file=file,
                 include_page_breaks=include_page_breaks,
@@ -315,17 +302,26 @@ def partition_pdf_or_image(
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 **kwargs,
             )
+            out_elements = _process_uncategorized_text_elements(elements)
 
-            layout_elements = []
-            for el in _layout_elements:
-                if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
-                    new_el = element_from_text(cast(Text, el).text)
-                    new_el.metadata = el.metadata
-                else:
-                    new_el = el
-                layout_elements.append(new_el)
+    return out_elements
 
-    return layout_elements
+
+def _process_uncategorized_text_elements(elements: List[Element]):
+    """Processes a list of elements, creating a new list where elements with the
+    category `UncategorizedText` are replaced with corresponding
+    elements created from their text content."""
+
+    out_elements = []
+    for el in elements:
+        if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
+            new_el = element_from_text(cast(Text, el).text)
+            new_el.metadata = el.metadata
+        else:
+            new_el = el
+        out_elements.append(new_el)
+
+    return out_elements
 
 
 @requires_dependencies("unstructured_inference")
@@ -527,6 +523,19 @@ def _extract_text(item: LTItem) -> str:
         # https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/image.py#L90
         return "\n"
     return "\n"
+
+
+# Some pages with a ICC color space do not follow the pdf spec
+# They throw an error when we call interpreter.process_page
+# Since we don't need color info, we can just drop it in the pdfminer code
+# See #2059
+@wrapt.patch_function_wrapper("pdfminer.pdfinterp", "PDFPageInterpreter.init_resources")
+def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
+    resources = args[0]
+    if "ColorSpace" in resources:
+        del resources["ColorSpace"]
+
+    return wrapped(resources)
 
 
 def _process_pdfminer_pages(

@@ -1,13 +1,14 @@
 import pytest
 
 from unstructured.partition import pdf
+from unstructured.partition.utils.constants import PartitionStrategy
 
 
 @pytest.fixture(scope="session")
 def chipper_results():
     elements = pdf.partition_pdf(
         "example-docs/layout-parser-paper-fast.pdf",
-        strategy="hi_res",
+        strategy=PartitionStrategy.HI_RES,
         model_name="chipper",
     )
     return elements

@@ -1,6 +1,5 @@
 [
   {
-    "type": "NarrativeText",
     "element_id": "a4f2bf04a36fb5c2b02a946fa94076d9",
     "metadata": {
       "data_source": {
@@ -13,10 +12,10 @@
         "eng"
       ]
     },
-    "text": "testing <reply> testing <reply> threads are cool"
+    "text": "testing <reply> testing <reply> threads are cool",
+    "type": "NarrativeText"
   },
   {
-    "type": "NarrativeText",
     "element_id": "d91e2d32f4816b7c0f23c2e760aaf166",
     "metadata": {
       "data_source": {
@@ -29,10 +28,10 @@
         "eng"
       ]
     },
-    "text": "<@U051UBRR946> has joined the channel <reply> <@U051UBRR946> has joined the channel"
+    "text": "<@U051UBRR946> has joined the channel <reply> <@U051UBRR946> has joined the channel",
+    "type": "NarrativeText"
   },
   {
-    "type": "NarrativeText",
     "element_id": "f452aa470d0eab626eddf33b5a60386c",
     "metadata": {
       "data_source": {
@@ -45,6 +44,7 @@
         "eng"
       ]
     },
-    "text": "<@U04ST78RXU3> has joined the channel <reply> <@U04ST78RXU3> has joined the channel"
+    "text": "<@U04ST78RXU3> has joined the channel <reply> <@U04ST78RXU3> has joined the channel",
+    "type": "NarrativeText"
   }
 ]

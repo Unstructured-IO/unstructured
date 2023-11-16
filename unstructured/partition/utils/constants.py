@@ -12,6 +12,13 @@ class OCRMode(Enum):
     FULL_PAGE = "entire_page"
 
 
+class PartitionStrategy:
+    AUTO = "auto"
+    FAST = "fast"
+    OCR_ONLY = "ocr_only"
+    HI_RES = "hi_res"
+
+
 SORT_MODE_XY_CUT = "xy-cut"
 SORT_MODE_BASIC = "basic"
 SORT_MODE_DONT = "dont"
