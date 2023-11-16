@@ -410,20 +410,6 @@ jobs:
     steps:
     # actions/checkout MUST come before auth
     - uses: 'actions/checkout@v4'
-    - name: 'Google Cloud Auth'
-      uses: 'google-github-actions/auth@v1'
-      with:
-        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-        create_credentials_file: true
-    - name: 'Set up Cloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v1'
-    - name: 'Az CLI login'
-      uses: azure/login@v1
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -542,7 +528,7 @@ jobs:
   # TODO - figure out best practice for caching docker images
   # (Using the virtualenv to get pytest)
   test_dockerfile:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-m
     needs: [ setup, lint ]
     steps:
       - uses: actions/checkout@v3
