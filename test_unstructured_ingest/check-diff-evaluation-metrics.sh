@@ -29,7 +29,7 @@ trap cleanup EXIT
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [ "$OVERWRITE_FIXTURES" != "false" ]; then
     # force copy (overwrite) files from metrics-tmp (new eval metrics) to metrics (old eval metrics)
-    cp -rf "$EXPECTED_OUTPUT_DIR" "$EXPECTED_OUTPUT"
+    cp -rf "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR"
 elif ! diff -ru "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR" ; then
     "$SCRIPT_DIR"/clean-permissions-files.sh "$OUTPUT_DIR"
     diff -r "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR"> outputdiff.txt
