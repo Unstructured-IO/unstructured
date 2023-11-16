@@ -1,5 +1,5 @@
 import typing as t
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import click
 
@@ -7,17 +7,18 @@ from unstructured.ingest.cli.interfaces import CliConfig, Dict
 from unstructured.ingest.connector.sql.connector import SqlWriteConfig
 
 CMD_NAME = "sql"
-SQL_DRIVERS = {"postgresql"}
+SQL_DRIVERS = {"postgresql", "sqlite"}
 
 
 @dataclass
 class SqlCliConfig(CliConfig):
-    drivername: str
-    username: str
-    password: str
-    host: str
-    database: str
-    port: int = 5432
+    drivername: t.Optional[str]
+    username: t.Optional[str]
+    password: t.Optional[str] = field(repr=False)
+    host: t.Optional[str]
+    database: t.Optional[str]
+    database_url: t.Optional[str] = None
+    port: t.Optional[int] = 5432
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:

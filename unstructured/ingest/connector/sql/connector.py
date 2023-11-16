@@ -13,16 +13,15 @@ from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 from .tables import (
-    make_coordinates_table,
-    make_data_source_table,
-    make_elements_table,
-    make_metadata_table,
+    COORDINATES_TABLE_NAME,
+    DATA_SOURCE_TABLE_NAME,
+    ELEMENTS_TABLE_NAME,
+    METADATA_TABLE_NAME,
+    check_schema_exists,
+    create_schema,
+    drop_schema,
+    make_schema,
 )
-
-ELEMENTS_TABLE_NAME = "elements"
-METADATA_TABLE_NAME = "metadata"
-DATA_SOURCE_TABLE_NAME = "data_source"
-COORDINATES_TABLE_NAME = "coordinates"
 
 
 @dataclass
@@ -69,12 +68,17 @@ class SqlDestinationConnector(BaseDestinationConnector):
 
         self.engine = create_engine(self.connector_config.db_url)
         if self.write_config.table_name_mapping is None:
-            self.write_config.table_name_mapping = {}
+            self.write_config.table_name_mapping = {
+                ELEMENTS_TABLE_NAME: ELEMENTS_TABLE_NAME,
+                METADATA_TABLE_NAME: METADATA_TABLE_NAME,
+                DATA_SOURCE_TABLE_NAME: DATA_SOURCE_TABLE_NAME,
+                COORDINATES_TABLE_NAME: COORDINATES_TABLE_NAME,
+            }
 
     def check_connection(self):
         pass
 
-    def conform_dict(self, data: dict) -> None:
+    def conform_dict(self, data: dict) -> tuple:
         """
         Updates the element dictionary to conform to the sql schema
         """
@@ -105,6 +109,9 @@ class SqlDestinationConnector(BaseDestinationConnector):
             data["metadata"]["data_source"]["record_locator"] = str(json.dumps(record_locator))
 
         # Array of items as string formatting
+        if embeddings := data.get("embeddings"):
+            data["embeddings"] = str(json.dumps(embeddings))
+
         if points := data.get("metadata", {}).get("coordinates", {}).get("points"):
             data["metadata"]["coordinates"]["points"] = str(json.dumps(points))
 
@@ -115,6 +122,18 @@ class SqlDestinationConnector(BaseDestinationConnector):
             data.get("metadata", {}).get("data_source", {}).get("permissions_data")
         ):
             data["metadata"]["data_source"]["permissions_data"] = json.dumps(permissions_data)
+
+        if link_texts := data.get("metadata", {}).get("link_texts", {}):
+            data["metadata"]["link_texts"] = str(json.dumps(link_texts))
+
+        if sent_from := data.get("metadata", {}).get("sent_from", {}):
+            data["metadata"]["sent_from"] = str(json.dumps(sent_from))
+
+        if sent_to := data.get("metadata", {}).get("sent_to", {}):
+            data["metadata"]["sent_to"] = str(json.dumps(sent_to))
+
+        if emphasized_text_contents := data.get("metadata", {}).get("emphasized_text_contents", {}):
+            data["metadata"]["emphasized_text_contents"] = str(json.dumps(emphasized_text_contents))
 
         # Datetime formatting
         if date_created := data.get("metadata", {}).get("data_source", {}).get("date_created"):
@@ -147,6 +166,24 @@ class SqlDestinationConnector(BaseDestinationConnector):
 
         return data, metadata, data_source, coordinates
 
+    def _resolve_schema(self) -> t.Optional[dict]:
+        schema_exists = check_schema_exists(self.engine, self.write_config.table_name_mapping)
+        if not schema_exists:
+            return create_schema(self.engine, self.write_config.table_name_mapping)
+
+        if self.write_config.mode == "error":
+            raise ValueError(
+                f"There's already an elements schema ({str(self.write_config.table_name_mapping)}) "
+                f"at {self.connector_config.db_url}"
+            )
+        elif self.write_config.mode == "overwrite":
+            drop_schema(self.engine, self.write_config.table_name_mapping)
+            return create_schema(self.engine, self.write_config.table_name_mapping)
+        elif self.write_config.mode == "append":
+            return make_schema(self.write_config.table_name_mapping, self.engine.dialect.__str__)
+
+        return None
+
     # @DestinationConnectionError.wrap
     def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         from sqlalchemy import insert
@@ -155,35 +192,22 @@ class SqlDestinationConnector(BaseDestinationConnector):
             f"writing {len(json_list)} objects to database url " f"{self.connector_config.db_url} "
         )
 
-        elements = make_elements_table(
-            self.write_config.table_name_mapping.get(ELEMENTS_TABLE_NAME, ELEMENTS_TABLE_NAME)
-        )
-
-        metadata = make_metadata_table(
-            self.write_config.table_name_mapping.get(METADATA_TABLE_NAME, METADATA_TABLE_NAME)
-        )
-
-        data_source = make_data_source_table(
-            self.write_config.table_name_mapping.get(DATA_SOURCE_TABLE_NAME, DATA_SOURCE_TABLE_NAME)
-        )
-
-        coordinates = make_coordinates_table(
-            self.write_config.table_name_mapping.get(COORDINATES_TABLE_NAME, COORDINATES_TABLE_NAME)
-        )
+        schema = self._resolve_schema()
+        if schema is None:
+            return
 
         with self.engine.connect() as conn:
             for e in json_list:
                 elem, mdata, dsource, coords = self.conform_dict(e)
                 if coords is not None:
-                    conn.execute(insert(coordinates), [coords])
+                    conn.execute(insert(schema[COORDINATES_TABLE_NAME]), [coords])
 
                 if dsource is not None:
-                    conn.execute(insert(data_source), [dsource])
+                    conn.execute(insert(schema[DATA_SOURCE_TABLE_NAME]), [dsource])
 
                 if mdata is not None:
-                    conn.execute(insert(metadata), [mdata])
-
-                conn.execute(insert(elements), [elem])
+                    conn.execute(insert(schema[METADATA_TABLE_NAME]), [mdata])
+                conn.execute(insert(schema[ELEMENTS_TABLE_NAME]), [elem])
                 conn.commit()
 
     @requires_dependencies(["sqlalchemy"], extras="sql")
