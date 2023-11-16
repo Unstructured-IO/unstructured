@@ -10,6 +10,7 @@ OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 CI=${CI:-"false"}
+max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -37,13 +38,19 @@ wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
-    --num-processes "$max_processes" \
-    --output-dir "$OUTPUT_DIR" \
-    --strategy fast \
-    --verbose \
-    --reprocess \
-    --input-path example-docs/fake-memo.pdf \
-    --work-dir "$WORK_DIR" \
+  --num-processes "$max_processes" \
+  --output-dir "$OUTPUT_DIR" \
+  --strategy fast \
+  --verbose \
+  --reprocess \
+  --input-path example-docs/book-war-and-peace-1225p.txt \
+  --work-dir "$WORK_DIR" \
+  --chunk-elements \
+  --chunk-combine-text-under-n-chars 200\
+  --chunk-new-after-n-chars 2500\
+  --chunk-max-characters 38000\
+  --chunk-multipage-sections \
+  --embedding-provider "langchain-huggingface" \
   weaviate \
   --host-url http://localhost:8080 \
   --class-name elements \

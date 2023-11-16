@@ -41,13 +41,13 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
     @requires_dependencies(["weaviate"], extras="weaviate")
     def check_connection(self):
         from weaviate import Client
+
         try:
             auth = self._resolve_auth_method()
             _ = Client(url=self.connector_config.host_url, auth_client_secret=auth)
         except Exception as e:
             logger.error(f"Failed to validate connection {e}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {e}")
-
 
     def _resolve_auth_method(self):
         if self.connector_config.auth_keys is None:
