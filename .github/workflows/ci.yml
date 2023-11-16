@@ -182,7 +182,7 @@ jobs:
       with:
         path: |
           nltk_data
-          .venv-base
+          .venv
         key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
@@ -194,7 +194,7 @@ jobs:
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
-        source .venv-base/bin/activate
+        source .venv/bin/activate
         make test-no-extras CI=true
 
   test_unit_dependency_extras:
