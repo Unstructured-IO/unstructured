@@ -1,6 +1,6 @@
 
 name: 'Base Cache Build'
-description: 'Build the base python cache for CI to use'
+description: 'Restore the base python cache for CI to use, recreate if not found'
 inputs:
   python-version:
     description: 'python version associated with the cache'

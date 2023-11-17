@@ -22,7 +22,7 @@ jobs:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     steps:
     - uses: actions/checkout@v3
-    - uses: ./.github/actions/create-cache
+    - uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
         check-only: 'true'
@@ -54,7 +54,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment
-      uses: ./.github/actions/create-cache
+      uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
         force-recreate: 'true'
@@ -85,7 +85,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment
-      uses: ./.github/actions/create-cache
+      uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Test
@@ -120,7 +120,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment
-      uses: ./.github/actions/create-cache
+      uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Test
@@ -151,7 +151,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup virtual environment
-      uses: ./.github/actions/create-cache
+      uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Test
@@ -214,7 +214,7 @@ jobs:
     needs: [setup]
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/create-ingest-cache
+      - uses: ./.github/actions/base-ingest-cache
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -238,7 +238,7 @@ jobs:
       id: full-python-version
       run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
     - name: Setup virtual environment
-      uses: ./.github/actions/create-ingest-cache
+      uses: ./.github/actions/base-ingest-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup docker-compose
@@ -320,7 +320,7 @@ jobs:
       id: full-python-version
       run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
     - name: Setup virtual environment
-      uses: ./.github/actions/create-ingest-cache
+      uses: ./.github/actions/base-ingest-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup docker-compose
@@ -371,7 +371,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Setup virtual environment
-      uses: ./.github/actions/create-cache
+      uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Set up flag for running Unstructured API unit tests
@@ -436,7 +436,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Setup virtual environment
-        uses: ./.github/actions/create-ingest-cache
+        uses: ./.github/actions/base-ingest-cache
         with:
           python-version: ${{ matrix.python-version }}
       - name: Test Dockerfile

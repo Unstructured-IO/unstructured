@@ -1,6 +1,6 @@
 
 name: 'Ingest Cache Build'
-description: 'Build ingest specific cache on top of base cache'
+description: 'Restore ingest specific cache on top of base cache, recreate if not found'
 inputs:
   python-version:
     description: 'python version associated with the cache'
@@ -22,7 +22,7 @@ runs:
         lookup-only: ${{ inputs.check-only }}
     - name: Restore base virtual environment
       if: steps.ingest-virtualenv-cache.outputs.cache-hit != 'true'
-      uses: ./.github/actions/create-cache
+      uses: ./.github/actions/base-cache
       with:
         python-version: ${{ inputs.python-version }}
     - name: Set up Python ${{ inputs.python-version }}

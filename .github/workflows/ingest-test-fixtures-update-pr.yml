@@ -17,7 +17,7 @@ jobs:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     steps:
     - uses: actions/checkout@v3
-    - uses: ./.github/actions/create-cache
+    - uses: ./.github/actions/base-cache
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
@@ -28,9 +28,10 @@ jobs:
     needs: [setup]
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/create-ingest-cache
+      - uses: ./.github/actions/base-ingest-cache
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          check-only: 'true'
 
   update-fixtures-and-pr:
     runs-on: ubuntu-latest-m
@@ -47,19 +48,10 @@ jobs:
       - name: Get full Python version
         id: full-python-version
         run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
-      - uses: actions/cache/restore@v3
-        id: virtualenv-cache
-        with:
-          path: |
-            .venv
-            nltk_data
-          key: unstructured-ingest-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
-      - name: Setup virtual environment (no cache hit)
-        if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-        uses: ./.github/actions/create-ingest-cache
+      - name: Setup virtual environment
+        uses: ./.github/actions/base-ingest-cache
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          force-recreate: 'true'
       - name: Setup docker-compose
         uses: KengoTODA/actions-setup-docker-compose@v1
         with:
