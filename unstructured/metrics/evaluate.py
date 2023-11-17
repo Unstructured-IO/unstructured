@@ -8,6 +8,7 @@ import sys
 from typing import Any, List, Optional, Tuple
 
 import click
+import pandas as pd
 
 from unstructured.metrics.element_type import (
     calculate_element_type_percent_match,
@@ -38,6 +39,7 @@ def measure_text_edit_distance(
     output_list: Optional[List[str]] = None,
     source_list: Optional[List[str]] = None,
     export_dir: str = "metrics",
+    grouping: Optional[str] = None,
     weights: Tuple[int, int, int] = (2, 1, 1),
 ) -> None:
     """
@@ -63,22 +65,39 @@ def measure_text_edit_distance(
 
     # assumption: output file name convention is name-of-file.doc.json
     for doc in output_list:  # type: ignore
-        fn = (doc.split("/")[-1]).split(".json")[0]
-        doctype = fn.rsplit(".", 1)[-1]
-        fn_txt = fn + ".txt"
+
+        filename = (doc.split("/")[-1]).split(".json")[0]
+        doctype = filename.rsplit(".", 1)[-1]
+        fn_txt = filename + ".txt"
         connector = doc.split("/")[0]
+
+        # not all odetta cct files follow the same naming convention; 
+        # some exclude the original filetype from the name
+        if fn_txt not in source_list:
+            fn = filename.rsplit(".", 1)[0]
+            fn_txt = fn + ".txt"
 
         if fn_txt in source_list:  # type: ignore
             output_cct = elements_to_text(elements_from_json(os.path.join(output_dir, doc)))
             source_cct = _read_text(os.path.join(source_dir, fn_txt))
+            print(f"Processing document: {fn_txt}\n")
             accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
 
-            rows.append([fn, doctype, connector, accuracy, percent_missing])
+            rows.append([filename, doctype, connector, accuracy, percent_missing])
             accuracy_scores.append(accuracy)
             percent_missing_scores.append(percent_missing)
-
+    
     headers = ["filename", "doctype", "connector", "cct-accuracy", "cct-%missing"]
+    df = pd.DataFrame(rows, columns=headers)
+
+    if grouping:
+        if grouping in ["doctype", "connector"]:
+            grouped_acc = df.groupby("doctype", as_index=False).agg({"cct-accuracy": [_mean, _stdev, "count"]})
+            grouped_miss = df.groupby("doctype", as_index=False).agg({"cct-%missing": [_mean, _stdev, "count"]})
+        else:
+            print("No field to group by. Returning a non-group evaluation.")
+
     _write_to_file(export_dir, "all-docs-cct.tsv", rows, headers)
 
     agg_rows = []
