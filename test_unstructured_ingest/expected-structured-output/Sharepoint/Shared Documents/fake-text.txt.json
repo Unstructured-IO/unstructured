@@ -1,105 +1,16 @@
 [
   {
-    "type": "NarrativeText",
     "element_id": "1df8eeb8be847c3a1a7411e3be3e0396",
     "metadata": {
       "data_source": {
-        "url": "",
-        "version": "1",
+        "date_created": "2023-06-16T05:04:55",
+        "date_modified": "2023-06-16T05:04:55",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
         },
-        "date_created": "2023-06-16T05:04:55",
-        "date_modified": "2023-06-16T05:04:55",
-        "permissions_data": [
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Owners",
-                "id": "3",
-                "loginName": "Communication site Owners"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Owners"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "roles": [
-              "read"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Visitors",
-                "id": "4",
-                "loginName": "Communication site Visitors"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Visitors"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "roles": [
-              "write"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Members",
-                "id": "5",
-                "loginName": "Communication site Members"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Members"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "grantedToV2": {
-              "group": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              },
-              "siteUser": {
-                "displayName": "Global Administrator",
-                "id": "7",
-                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            },
-            "inheritedFrom": {}
-          }
-        ]
+        "url": "",
+        "version": "1"
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -107,109 +18,21 @@
         "eng"
       ]
     },
-    "text": "This is a test document to use for unit tests."
+    "text": "This is a test document to use for unit tests.",
+    "type": "NarrativeText"
   },
   {
-    "type": "Address",
     "element_id": "a9d4657034aa3fdb5177f1325e912362",
     "metadata": {
       "data_source": {
-        "url": "",
-        "version": "1",
+        "date_created": "2023-06-16T05:04:55",
+        "date_modified": "2023-06-16T05:04:55",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
         },
-        "date_created": "2023-06-16T05:04:55",
-        "date_modified": "2023-06-16T05:04:55",
-        "permissions_data": [
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Owners",
-                "id": "3",
-                "loginName": "Communication site Owners"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Owners"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "roles": [
-              "read"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Visitors",
-                "id": "4",
-                "loginName": "Communication site Visitors"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Visitors"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "roles": [
-              "write"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Members",
-                "id": "5",
-                "loginName": "Communication site Members"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Members"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "grantedToV2": {
-              "group": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              },
-              "siteUser": {
-                "displayName": "Global Administrator",
-                "id": "7",
-                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            },
-            "inheritedFrom": {}
-          }
-        ]
+        "url": "",
+        "version": "1"
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -217,109 +40,21 @@
         "eng"
       ]
     },
-    "text": "Doylestown, PA 18901"
+    "text": "Doylestown, PA 18901",
+    "type": "Address"
   },
   {
-    "type": "Title",
     "element_id": "9c218520320f238595f1fde74bdd137d",
     "metadata": {
       "data_source": {
-        "url": "",
-        "version": "1",
+        "date_created": "2023-06-16T05:04:55",
+        "date_modified": "2023-06-16T05:04:55",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
         },
-        "date_created": "2023-06-16T05:04:55",
-        "date_modified": "2023-06-16T05:04:55",
-        "permissions_data": [
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Owners",
-                "id": "3",
-                "loginName": "Communication site Owners"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Owners"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "roles": [
-              "read"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Visitors",
-                "id": "4",
-                "loginName": "Communication site Visitors"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Visitors"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "roles": [
-              "write"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Members",
-                "id": "5",
-                "loginName": "Communication site Members"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Members"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "grantedToV2": {
-              "group": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              },
-              "siteUser": {
-                "displayName": "Global Administrator",
-                "id": "7",
-                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            },
-            "inheritedFrom": {}
-          }
-        ]
+        "url": "",
+        "version": "1"
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -327,109 +62,21 @@
         "eng"
       ]
     },
-    "text": "Important points:"
+    "text": "Important points:",
+    "type": "Title"
   },
   {
-    "type": "ListItem",
     "element_id": "39a3ae572581d0f1fe7511fd7b3aa414",
     "metadata": {
       "data_source": {
-        "url": "",
-        "version": "1",
+        "date_created": "2023-06-16T05:04:55",
+        "date_modified": "2023-06-16T05:04:55",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
         },
-        "date_created": "2023-06-16T05:04:55",
-        "date_modified": "2023-06-16T05:04:55",
-        "permissions_data": [
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Owners",
-                "id": "3",
-                "loginName": "Communication site Owners"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Owners"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "roles": [
-              "read"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Visitors",
-                "id": "4",
-                "loginName": "Communication site Visitors"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Visitors"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "roles": [
-              "write"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Members",
-                "id": "5",
-                "loginName": "Communication site Members"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Members"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "grantedToV2": {
-              "group": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              },
-              "siteUser": {
-                "displayName": "Global Administrator",
-                "id": "7",
-                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            },
-            "inheritedFrom": {}
-          }
-        ]
+        "url": "",
+        "version": "1"
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -437,109 +84,21 @@
         "eng"
       ]
     },
-    "text": "Hamburgers are delicious"
+    "text": "Hamburgers are delicious",
+    "type": "ListItem"
   },
   {
-    "type": "ListItem",
     "element_id": "fc1adcb8eaceac694e500a103f9f698f",
     "metadata": {
       "data_source": {
-        "url": "",
-        "version": "1",
+        "date_created": "2023-06-16T05:04:55",
+        "date_modified": "2023-06-16T05:04:55",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
         },
-        "date_created": "2023-06-16T05:04:55",
-        "date_modified": "2023-06-16T05:04:55",
-        "permissions_data": [
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Owners",
-                "id": "3",
-                "loginName": "Communication site Owners"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Owners"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "roles": [
-              "read"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Visitors",
-                "id": "4",
-                "loginName": "Communication site Visitors"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Visitors"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "roles": [
-              "write"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Members",
-                "id": "5",
-                "loginName": "Communication site Members"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Members"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "grantedToV2": {
-              "group": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              },
-              "siteUser": {
-                "displayName": "Global Administrator",
-                "id": "7",
-                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            },
-            "inheritedFrom": {}
-          }
-        ]
+        "url": "",
+        "version": "1"
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -547,109 +106,21 @@
         "eng"
       ]
     },
-    "text": "Dogs are the best"
+    "text": "Dogs are the best",
+    "type": "ListItem"
   },
   {
-    "type": "ListItem",
     "element_id": "0b61e826b1c4ab05750184da72b89f83",
     "metadata": {
       "data_source": {
-        "url": "",
-        "version": "1",
+        "date_created": "2023-06-16T05:04:55",
+        "date_modified": "2023-06-16T05:04:55",
         "record_locator": {
           "server_path": "/Shared Documents/fake-text.txt",
           "site_url": "https://unstructuredio.sharepoint.com"
         },
-        "date_created": "2023-06-16T05:04:55",
-        "date_modified": "2023-06-16T05:04:55",
-        "permissions_data": [
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Owners",
-                "id": "3",
-                "loginName": "Communication site Owners"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Owners"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "roles": [
-              "read"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Visitors",
-                "id": "4",
-                "loginName": "Communication site Visitors"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Visitors"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "roles": [
-              "write"
-            ],
-            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
-            "grantedToV2": {
-              "siteGroup": {
-                "displayName": "Communication site Members",
-                "id": "5",
-                "loginName": "Communication site Members"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Communication site Members"
-              }
-            },
-            "inheritedFrom": {}
-          },
-          {
-            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "roles": [
-              "owner"
-            ],
-            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
-            "grantedToV2": {
-              "group": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              },
-              "siteUser": {
-                "displayName": "Global Administrator",
-                "id": "7",
-                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            },
-            "grantedTo": {
-              "user": {
-                "displayName": "Global Administrator",
-                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
-              }
-            },
-            "inheritedFrom": {}
-          }
-        ]
+        "url": "",
+        "version": "1"
       },
       "filename": "fake-text.txt",
       "filetype": "text/plain",
@@ -657,6 +128,7 @@
         "eng"
       ]
     },
-    "text": "I love fuzzy blankets"
+    "text": "I love fuzzy blankets",
+    "type": "ListItem"
   }
 ]

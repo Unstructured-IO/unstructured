@@ -7,7 +7,7 @@ import requests
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
-from unstructured.documents.elements import Title
+from unstructured.documents.elements import ElementType, Title
 from unstructured.partition.md import partition_md
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
@@ -289,3 +289,10 @@ def test_partition_md_respects_detect_language_per_element():
     elements = partition_md(filename=filename, detect_language_per_element=True)
     langs = [element.metadata.languages for element in elements]
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+def test_partition_md_parse_table():
+    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "simple-table.md")
+    elements = partition_md(filename=filename)
+    assert len(elements) > 0
+    assert elements[0].category == ElementType.TABLE

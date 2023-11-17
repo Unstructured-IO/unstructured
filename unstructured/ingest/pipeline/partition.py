@@ -37,18 +37,21 @@ class Partitioner(PartitionNode):
                 "encoding": self.partition_config.encoding,
                 "pdf_infer_table_structure": self.partition_config.pdf_infer_table_structure,
                 "languages": self.partition_config.ocr_languages,
+                "hi_res_model_name": self.partition_config.hi_res_model_name,
             }
             if self.partition_config.skip_infer_table_types:
                 partition_kwargs[
                     "skip_infer_table_types"
                 ] = self.partition_config.skip_infer_table_types
+            if self.partition_config.additional_partition_args:
+                partition_kwargs.update(self.partition_config.additional_partition_args)
             elements = doc.process_file(
                 partition_config=self.partition_config,
                 **partition_kwargs,
             )
             with open(json_path, "w", encoding="utf8") as output_f:
                 logger.info(f"writing partitioned content to {json_path}")
-                json.dump(elements, output_f, ensure_ascii=False, indent=2)
+                json.dump(elements, output_f, ensure_ascii=False, indent=2, sort_keys=True)
             return str(json_path)
         except Exception as e:
             if self.pipeline_context.raise_on_error:

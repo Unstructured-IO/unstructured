@@ -1,19 +1,19 @@
 name: Ingest Test Fixtures Update PR
 
 on:
-  push:
   workflow_dispatch:
 
 env:
   GHA_CACHE_KEY_VERSION: "v1"
   PYTHON_VERSION: "3.10"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   setup:
     runs-on: ubuntu-latest-m
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'push' && contains(github.event.head_commit.message, 'ingest-test-fixtures-update'))
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     steps:
@@ -80,7 +80,15 @@ jobs:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup_ingest]
     steps:
-      - uses: actions/checkout@v3
+      # actions/checkout MUST come before auth
+      - uses: 'actions/checkout@v4'
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Get full Python version
+        id: full-python-version
+        run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
       - uses: actions/cache/restore@v3
         id: virtualenv-cache
         with:
@@ -147,7 +155,7 @@ jobs:
           sudo apt-get install -y tesseract-ocr
           sudo apt-get install -y tesseract-ocr-kor
           tesseract --version
-          ./test_unstructured_ingest/test-ingest.sh
+          ./test_unstructured_ingest/test-ingest-src.sh
 
       - name: Save branch name to environment file
         id: branch

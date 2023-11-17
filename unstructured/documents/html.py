@@ -495,7 +495,7 @@ def _process_leaf_table_item(
             rows = tag_elem.findall("tr")
             if not rows:
                 body = tag_elem.find("tbody")
-                rows = body.findall("tr") if body else []
+                rows = body.findall("tr") if body is not None else []
             if len(rows) > 0:
                 table_data = [list(row.itertext()) for row in rows]
                 html_table = tabulate(table_data, tablefmt="html")

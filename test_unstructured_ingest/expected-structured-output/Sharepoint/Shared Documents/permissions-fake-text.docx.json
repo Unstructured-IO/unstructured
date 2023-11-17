@@ -1,0 +1,134 @@
+[
+  {
+    "element_id": "d0cbb64f401635d84108950595cd2a19",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-27T11:06:24",
+        "date_modified": "2023-10-27T11:07:34",
+        "record_locator": {
+          "server_path": "/Shared Documents/permissions-fake-text.docx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/Shared Documents/permissions-fake-text.docx?d=wa2f7dc6bbef642c2b65b088acc59efca",
+        "version": "2"
+      },
+      "filename": "permissions-fake-text.docx",
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Ingest test test document. Particularly aimed towards testing permissions.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "a9d4657034aa3fdb5177f1325e912362",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-27T11:06:24",
+        "date_modified": "2023-10-27T11:07:34",
+        "record_locator": {
+          "server_path": "/Shared Documents/permissions-fake-text.docx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/Shared Documents/permissions-fake-text.docx?d=wa2f7dc6bbef642c2b65b088acc59efca",
+        "version": "2"
+      },
+      "filename": "permissions-fake-text.docx",
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Doylestown, PA 18901",
+    "type": "Address"
+  },
+  {
+    "element_id": "9c218520320f238595f1fde74bdd137d",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-27T11:06:24",
+        "date_modified": "2023-10-27T11:07:34",
+        "record_locator": {
+          "server_path": "/Shared Documents/permissions-fake-text.docx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/Shared Documents/permissions-fake-text.docx?d=wa2f7dc6bbef642c2b65b088acc59efca",
+        "version": "2"
+      },
+      "filename": "permissions-fake-text.docx",
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Important points:",
+    "type": "Title"
+  },
+  {
+    "element_id": "13cb11be3e999b5fa22144d1e7334bea",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-27T11:06:24",
+        "date_modified": "2023-10-27T11:07:34",
+        "record_locator": {
+          "server_path": "/Shared Documents/permissions-fake-text.docx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/Shared Documents/permissions-fake-text.docx?d=wa2f7dc6bbef642c2b65b088acc59efca",
+        "version": "2"
+      },
+      "filename": "permissions-fake-text.docx",
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "- Hamburgers are delicious",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "ecc0621109605092d5cb0166734d86fe",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-27T11:06:24",
+        "date_modified": "2023-10-27T11:07:34",
+        "record_locator": {
+          "server_path": "/Shared Documents/permissions-fake-text.docx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/Shared Documents/permissions-fake-text.docx?d=wa2f7dc6bbef642c2b65b088acc59efca",
+        "version": "2"
+      },
+      "filename": "permissions-fake-text.docx",
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "- Dogs are the best",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "f57013da02d00faf64e01c67fab8058f",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-27T11:06:24",
+        "date_modified": "2023-10-27T11:07:34",
+        "record_locator": {
+          "server_path": "/Shared Documents/permissions-fake-text.docx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/Shared Documents/permissions-fake-text.docx?d=wa2f7dc6bbef642c2b65b088acc59efca",
+        "version": "2"
+      },
+      "filename": "permissions-fake-text.docx",
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "- I love fuzzy blankets",
+    "type": "ListItem"
+  }
+]

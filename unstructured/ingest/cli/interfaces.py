@@ -1,7 +1,9 @@
+import json
+import os.path
 import typing as t
 from abc import abstractmethod
 from dataclasses import fields
-from gettext import ngettext
+from gettext import gettext, ngettext
 from pathlib import Path
 
 import click
@@ -18,6 +20,54 @@ from unstructured.ingest.interfaces import (
     ReadConfig,
     RetryStrategyConfig,
 )
+
+
+class Dict(click.ParamType):
+    name = "dict"
+
+    def convert(
+        self,
+        value: t.Any,
+        param: t.Optional[click.Parameter],
+        ctx: t.Optional[click.Context],
+    ) -> t.Any:
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            self.fail(
+                gettext(
+                    "{value} is not a valid json value.",
+                ).format(value=value),
+                param,
+                ctx,
+            )
+
+
+class FileOrJson(click.ParamType):
+    name = "file-or-json"
+
+    def convert(
+        self,
+        value: t.Any,
+        param: t.Optional[click.Parameter],
+        ctx: t.Optional[click.Context],
+    ) -> t.Any:
+        # check if valid file
+        full_path = os.path.abspath(os.path.expanduser(value))
+        if os.path.isfile(full_path):
+            return str(Path(full_path).resolve())
+        if isinstance(value, str):
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError:
+                pass
+        self.fail(
+            gettext(
+                "{value} is not a valid json string nor an existing filepath.",
+            ).format(value=value),
+            param,
+            ctx,
+        )
 
 
 class DelimitedString(click.ParamType):
@@ -77,6 +127,10 @@ class CliMixin:
                     raise ValueError(f"{opt} is already defined on the command {cmd.name}")
                 existing_opts.append(opt)
                 cmd.params.append(param)
+
+
+class CliConfig(BaseConfig, CliMixin):
+    pass
 
 
 class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
@@ -207,16 +261,10 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--skip-infer-table-types"],
-                type=DelimitedString(),
-                default=None,
-                help="Optional list of document types to skip table extraction on",
-            ),
-            click.Option(
                 ["--pdf-infer-table-structure"],
+                is_flag=True,
                 default=False,
-                help="If set to True, partition will include the table's text "
-                "content in the response.",
+                help="Partition will include the table's text_as_html " "in the response metadata.",
             ),
             click.Option(
                 ["--strategy"],
@@ -238,6 +286,17 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 default=None,
                 help="Text encoding to use when reading documents. By default the encoding is "
                 "detected automatically.",
+            ),
+            click.Option(
+                ["--skip-infer-table-types"],
+                type=DelimitedString(),
+                default=None,
+                help="Optional list of document types to skip table extraction on",
+            ),
+            click.Option(
+                ["--additional-partition-args"],
+                type=Dict(),
+                help="A json string representation of values to pass through to partition()",
             ),
             click.Option(
                 ["--fields-include"],
@@ -286,11 +345,16 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 default=None,
                 help="API Key for partition endpoint.",
             ),
+            click.Option(
+                ["--hi-res-model-name"],
+                default=None,
+                help="Model name for hi-res strategy.",
+            ),
         ]
         return options
 
 
-class CliRecursiveConfig(BaseConfig, CliMixin):
+class CliRecursiveConfig(CliConfig):
     recursive: bool
 
     @staticmethod
@@ -338,13 +402,25 @@ class CliFilesStorageConfig(FileStorageConfig, CliMixin):
 class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
+        from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
+
         options = [
             click.Option(
+                ["--embedding-provider"],
+                help="Type of the embedding class to be used. Can be one of: "
+                f"{list(EMBEDDING_PROVIDER_TO_CLASS_MAP)}",
+                type=click.Choice(list(EMBEDDING_PROVIDER_TO_CLASS_MAP)),
+            ),
+            click.Option(
                 ["--embedding-api-key"],
-                help="openai api key",
+                help="API key for the embedding model, for the case an API key is needed.",
+                type=str,
+                default=None,
             ),
             click.Option(
                 ["--embedding-model-name"],
+                help="Embedding model name, if needed. "
+                "Chooses a particular LLM between different options, to embed with it.",
                 type=str,
                 default=None,
             ),
@@ -371,7 +447,7 @@ class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
             }
             if len(new_kvs.keys()) == 0:
                 return None
-            if not new_kvs.get("api_key", None):
+            if not new_kvs.get("provider", None):
                 return None
             return _decode_dataclass(cls, new_kvs, infer_missing)
         return _decode_dataclass(cls, kvs, infer_missing)
@@ -474,31 +550,23 @@ class CliPermissionsConfig(PermissionsConfig, CliMixin):
         CLI params are provided as intended.
         """
 
-        if (
-            isinstance(kvs, dict)
-            and any(
-                [
-                    kvs["permissions_application_id"]
-                    or kvs["permissions_client_cred"]
-                    or kvs["permissions_tenant"],
-                ],
-            )
-            and not all(
-                [
-                    kvs["permissions_application_id"]
-                    and kvs["permissions_client_cred"]
-                    and kvs["permissions_tenant"],
-                ],
-            )
-        ):
-            raise ValueError(
-                "Please provide either none or all of the following optional values:\n"
-                "--permissions-application-id\n"
-                "--permissions-client-cred\n"
-                "--permissions-tenant",
-            )
-
         if isinstance(kvs, dict):
+            permissions_application_id = kvs.get("permissions_application_id")
+            permissions_client_cred = kvs.get("permissions_client_cred")
+            permissions_tenant = kvs.get("permissions_tenant")
+            permission_values = [
+                permissions_application_id,
+                permissions_client_cred,
+                permissions_tenant,
+            ]
+            if any(permission_values) and not all(permission_values):
+                raise ValueError(
+                    "Please provide either none or all of the following optional values:\n"
+                    "--permissions-application-id\n"
+                    "--permissions-client-cred\n"
+                    "--permissions-tenant",
+                )
+
             new_kvs = {
                 k[len("permissions_") :]: v  # noqa: E203
                 for k, v in kvs.items()

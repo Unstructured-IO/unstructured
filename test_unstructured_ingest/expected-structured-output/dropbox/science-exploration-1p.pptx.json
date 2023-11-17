@@ -1,0 +1,262 @@
+[
+  {
+    "element_id": "1f2a5d80586cf70bc264150f6d3f4c7c",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "protocol": "dropbox",
+          "remote_file_path": "/test-input/science-exploration-1p.pptx"
+        },
+        "url": "dropbox:///test-input/science-exploration-1p.pptx",
+        "version": "23819616053480539262630762470581852076"
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "GSFC: Sciences and Exploration Directorate",
+    "type": "Title"
+  },
+  {
+    "element_id": "7cf7093dc3fec7fa3f7045666578e75a",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "protocol": "dropbox",
+          "remote_file_path": "/test-input/science-exploration-1p.pptx"
+        },
+        "url": "dropbox:///test-input/science-exploration-1p.pptx",
+        "version": "23819616053480539262630762470581852076"
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "Virtual Machine Environment Scorecard",
+    "type": "Title"
+  },
+  {
+    "element_id": "b4dac8600214b4829bac302326593c47",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "protocol": "dropbox",
+          "remote_file_path": "/test-input/science-exploration-1p.pptx"
+        },
+        "url": "dropbox:///test-input/science-exploration-1p.pptx",
+        "version": "23819616053480539262630762470581852076"
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "Code 600: Sciences and Exploration Directorate (SED)",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "de72c858257919ced58456afa3d4412e",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "protocol": "dropbox",
+          "remote_file_path": "/test-input/science-exploration-1p.pptx"
+        },
+        "url": "dropbox:///test-input/science-exploration-1p.pptx",
+        "version": "23819616053480539262630762470581852076"
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "Code 610: Earth Sciences Division",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "7de2e4c70a5120577d71e2eabeac36ad",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "protocol": "dropbox",
+          "remote_file_path": "/test-input/science-exploration-1p.pptx"
+        },
+        "url": "dropbox:///test-input/science-exploration-1p.pptx",
+        "version": "23819616053480539262630762470581852076"
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "Code 660: Astrophysics Science Division",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "8a5c7edcf0545e74e86e9f33bbc254fd",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "protocol": "dropbox",
+          "remote_file_path": "/test-input/science-exploration-1p.pptx"
+        },
+        "url": "dropbox:///test-input/science-exploration-1p.pptx",
+        "version": "23819616053480539262630762470581852076"
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "Code 670: Heliophysics Science Division",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "5eb8e42b719e3e8ade72dc706bed5b9f",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "protocol": "dropbox",
+          "remote_file_path": "/test-input/science-exploration-1p.pptx"
+        },
+        "url": "dropbox:///test-input/science-exploration-1p.pptx",
+        "version": "23819616053480539262630762470581852076"
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "Code 690: Solar System Exploration Division",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "4875cf409fe04ada73cef724f8ed3840",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "protocol": "dropbox",
+          "remote_file_path": "/test-input/science-exploration-1p.pptx"
+        },
+        "url": "dropbox:///test-input/science-exploration-1p.pptx",
+        "version": "23819616053480539262630762470581852076"
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "Support offices",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "046e9117c748370b9b920c893fa52ecc",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "protocol": "dropbox",
+          "remote_file_path": "/test-input/science-exploration-1p.pptx"
+        },
+        "url": "dropbox:///test-input/science-exploration-1p.pptx",
+        "version": "23819616053480539262630762470581852076"
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "Code 603: Administration and Resources Management Office",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "bd3a820c31b89c5d4e1cc60c1ada41bc",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "protocol": "dropbox",
+          "remote_file_path": "/test-input/science-exploration-1p.pptx"
+        },
+        "url": "dropbox:///test-input/science-exploration-1p.pptx",
+        "version": "23819616053480539262630762470581852076"
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "Code 605: Science Proposal Support Office",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "e01f8f787617a1ab334f52a0bc5b4a9c",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "protocol": "dropbox",
+          "remote_file_path": "/test-input/science-exploration-1p.pptx"
+        },
+        "url": "dropbox:///test-input/science-exploration-1p.pptx",
+        "version": "23819616053480539262630762470581852076"
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "Code 606: Computational and Information Sciences and Technology Office  ( The SEDVME project is managed out of 606).",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "3dbd91c87d3e2850a7cb31251c4a1b21",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "protocol": "dropbox",
+          "remote_file_path": "/test-input/science-exploration-1p.pptx"
+        },
+        "url": "dropbox:///test-input/science-exploration-1p.pptx",
+        "version": "23819616053480539262630762470581852076"
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "Code 700: Information Technology and Communication Directorate",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "36cd7086df7ce77d623ffdc1ba6a8513",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "protocol": "dropbox",
+          "remote_file_path": "/test-input/science-exploration-1p.pptx"
+        },
+        "url": "dropbox:///test-input/science-exploration-1p.pptx",
+        "version": "23819616053480539262630762470581852076"
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "Project management help, CNE, Zoned Architecture, IT Security,  Production SEDVME Service Manager",
+    "type": "ListItem"
+  }
+]

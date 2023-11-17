@@ -1,6 +1,0 @@
--c constraints.in
--c base.txt
-
-huggingface
-langchain
-sentence_transformers

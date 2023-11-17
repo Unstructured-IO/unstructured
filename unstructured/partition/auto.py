@@ -20,6 +20,7 @@ from unstructured.partition.lang import (
     convert_old_ocr_languages_to_languages,
 )
 from unstructured.partition.text import partition_text
+from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.partition.xml import partition_xml
 from unstructured.utils import dependency_exists
 
@@ -125,7 +126,7 @@ def partition(
     file_filename: Optional[str] = None,
     url: Optional[str] = None,
     include_page_breaks: bool = False,
-    strategy: str = "auto",
+    strategy: str = PartitionStrategy.AUTO,
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},
@@ -140,6 +141,7 @@ def partition(
     xml_keep_tags: bool = False,
     data_source_metadata: Optional[DataSourceMetadata] = None,
     metadata_filename: Optional[str] = None,
+    request_timeout: Optional[int] = None,
     **kwargs,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
@@ -197,6 +199,9 @@ def partition(
     xml_keep_tags
         If True, will retain the XML tags in the output. Otherwise it will simply extract
         the text from within the tags. Only applies to partition_xml.
+    request_timeout
+        The timeout for the HTTP request if URL is set. Defaults to None meaning no timeout and
+        requests will block indefinitely.
     """
     exactly_one(file=file, filename=filename, url=url)
 
@@ -214,6 +219,9 @@ def partition(
         )
     kwargs.setdefault("metadata_filename", metadata_filename)
 
+    if ocr_languages == "":
+        ocr_languages = None
+
     if ocr_languages is not None:
         # check if languages was set to anything not the default value
         # languages and ocr_languages were therefore both provided - raise error
@@ -222,7 +230,6 @@ def partition(
                 "Only one of languages and ocr_languages should be specified. "
                 "languages is preferred. ocr_languages is marked for deprecation.",
             )
-
         else:
             languages = convert_old_ocr_languages_to_languages(ocr_languages)
             logger.warning(
@@ -236,6 +243,7 @@ def partition(
             content_type=content_type,
             headers=headers,
             ssl_verify=ssl_verify,
+            request_timeout=request_timeout,
         )
     else:
         if headers != {}:
@@ -500,8 +508,9 @@ def file_and_type_from_url(
     content_type: Optional[str] = None,
     headers: Dict[str, str] = {},
     ssl_verify: bool = True,
+    request_timeout: Optional[int] = None,
 ) -> Tuple[io.BytesIO, Optional[FileType]]:
-    response = requests.get(url, headers=headers, verify=ssl_verify)
+    response = requests.get(url, headers=headers, verify=ssl_verify, timeout=request_timeout)
     file = io.BytesIO(response.content)
 
     content_type = content_type or response.headers.get("Content-Type")
@@ -525,6 +534,6 @@ def decide_table_extraction(
                 f"and pdf_infer_table_structure: {pdf_infer_table_structure}, "
                 "please reset skip_infer_table_types to turn on table extraction for PDFs.",
             )
-        return not (doc_type in skip_infer_table_types) or pdf_infer_table_structure
+        return doc_type not in skip_infer_table_types or pdf_infer_table_structure
 
-    return not (doc_type in skip_infer_table_types)
+    return doc_type not in skip_infer_table_types

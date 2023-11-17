@@ -1,0 +1,194 @@
+{
+  "@odata.context": "https://utic-test-ingest-fixtures.search.windows.net/$metadata#indexes/$entity",
+  "@odata.etag": "\"0x8DBB93E09C8F4BD\"",
+  "name": "your-index-here",
+  "fields": [
+    {
+      "name": "id",
+      "type": "Edm.String",
+      "key": true
+    },
+    {
+      "name": "element_id",
+      "type": "Edm.String"
+    },
+    {
+      "name": "text",
+      "type": "Edm.String"
+    },
+    {
+      "name": "embeddings",
+      "type": "Collection(Edm.Single)",
+      "dimensions": 400,
+      "vectorSearchConfiguration": "embeddings-config"
+    },
+    {
+      "name": "type",
+      "type": "Edm.String"
+    },
+    {
+      "name": "metadata",
+      "type": "Edm.ComplexType",
+      "fields": [
+        {
+          "name": "category_depth",
+          "type": "Edm.Int32"
+        },
+        {
+          "name": "parent_id",
+          "type": "Edm.String"
+        },
+        {
+          "name": "attached_to_filename",
+          "type": "Edm.String"
+        },
+        {
+          "name": "filetype",
+          "type": "Edm.String"
+        },
+        {
+          "name": "last_modified",
+          "type": "Edm.DateTimeOffset"
+        },
+        {
+          "name": "file_directory",
+          "type": "Edm.String"
+        },
+        {
+          "name": "filename",
+          "type": "Edm.String"
+        },
+        {
+          "name": "data_source",
+          "type": "Edm.ComplexType",
+          "fields": [
+            {
+              "name": "url",
+              "type": "Edm.String"
+            },
+            {
+              "name": "version",
+              "type": "Edm.String"
+            },
+            {
+              "name": "date_created",
+              "type": "Edm.DateTimeOffset"
+            },
+            {
+              "name": "date_modified",
+              "type": "Edm.DateTimeOffset"
+            },
+            {
+              "name": "date_processed",
+              "type": "Edm.DateTimeOffset"
+            },
+            {
+              "name": "permissions_data",
+              "type": "Edm.String"
+            },
+            {
+              "name": "record_locator",
+              "type": "Edm.String"
+            }
+          ]
+        },
+        {
+          "name": "coordinates",
+          "type": "Edm.ComplexType",
+          "fields": [
+            {
+              "name": "system",
+              "type": "Edm.String"
+            },
+            {
+              "name": "layout_width",
+              "type": "Edm.Double"
+            },
+            {
+              "name": "layout_height",
+              "type": "Edm.Double"
+            },
+            {
+              "name": "points",
+              "type": "Edm.String"
+            }
+          ]
+        },
+        {
+          "name": "page_number",
+          "type": "Edm.String"
+        },
+        {
+          "name": "links",
+          "type": "Collection(Edm.String)"
+        },
+        {
+          "name": "url",
+          "type": "Edm.String"
+        },
+        {
+          "name": "link_urls",
+          "type": "Collection(Edm.String)"
+        },
+        {
+          "name": "link_texts",
+          "type": "Collection(Edm.String)"
+        },
+        {
+          "name": "sent_from",
+          "type": "Collection(Edm.String)"
+        },
+        {
+          "name": "sent_to",
+          "type": "Collection(Edm.String)"
+        },
+        {
+          "name": "subject",
+          "type": "Edm.String"
+        },
+        {
+          "name": "section",
+          "type": "Edm.String"
+        },
+        {
+          "name": "header_footer_type",
+          "type": "Edm.String"
+        },
+        {
+          "name": "emphasized_text_contents",
+          "type": "Collection(Edm.String)"
+        },
+        {
+          "name": "emphasized_text_tags",
+          "type": "Collection(Edm.String)"
+        },
+        {
+          "name": "text_as_html",
+          "type": "Edm.String"
+        },
+        {
+          "name": "regex_metadata",
+          "type": "Edm.String"
+        },
+        {
+          "name": "detection_class_prob",
+          "type": "Edm.Double"
+        }
+      ]
+    }
+  ],
+  "vectorSearch": {
+    "algorithmConfigurations": [
+      {
+        "name": "embeddings-config",
+        "kind": "hnsw",
+        "hnswParameters": {
+          "metric": "cosine",
+          "m": 4,
+          "efConstruction": 400,
+          "efSearch": 500
+        }
+      }
+    ]
+  }
+}

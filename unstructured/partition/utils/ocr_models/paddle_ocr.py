@@ -1,10 +1,11 @@
 import functools
 
-from unstructured_inference.logger import logger
+from unstructured.logger import logger
+from unstructured.partition.utils.constants import DEFAULT_PADDLE_LANG
 
 
 @functools.lru_cache(maxsize=None)
-def load_agent(language: str = "en"):
+def load_agent(language: str = DEFAULT_PADDLE_LANG):
     import paddle
     from unstructured_paddleocr import PaddleOCR
 

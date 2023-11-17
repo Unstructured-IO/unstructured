@@ -2,10 +2,10 @@ import hashlib
 import json
 import os
 import typing as t
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseIngestDoc,
@@ -16,6 +16,9 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
+
+if t.TYPE_CHECKING:
+    from elasticsearch import Elasticsearch
 
 
 @dataclass
@@ -30,7 +33,7 @@ class SimpleElasticsearchConfig(BaseConnectorConfig):
 
     url: str
     index_name: str
-    jq_query: t.Optional[str]
+    jq_query: t.Optional[str] = None
 
 
 @dataclass
@@ -105,6 +108,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         concatenated_values = seperator.join(values)
         return concatenated_values
 
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def _get_document(self):
         from elasticsearch import Elasticsearch, NotFoundError
@@ -184,12 +188,25 @@ class ElasticsearchSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnec
     """Fetches particular fields from all documents in a given elasticsearch cluster and index"""
 
     connector_config: SimpleElasticsearchConfig
+    _es: t.Optional["Elasticsearch"] = field(init=False, default=None)
+
+    @property
+    def es(self):
+        from elasticsearch import Elasticsearch
+
+        if self._es is None:
+            self._es = Elasticsearch(self.connector_config.url)
+        return self._es
+
+    def check_connection(self):
+        try:
+            self.es.perform_request("HEAD", "/", headers={"accept": "application/json"})
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
 
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def initialize(self):
-        from elasticsearch import Elasticsearch
-
-        self.es = Elasticsearch(self.connector_config.url)
         self.scan_query: dict = {"query": {"match_all": {}}}
         self.search_query: dict = {"match_all": {}}
         self.es.search(index=self.connector_config.index_name, query=self.search_query, size=1)

@@ -20,6 +20,7 @@ from unstructured.ingest.connector.fsspec import (
     SimpleFsspecConfig,
 )
 from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 
@@ -90,12 +91,16 @@ class DropboxSourceConnector(FsspecSourceConnector):
     def initialize(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
-        self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_kwargs(),
-        )
-        # Dropbox requires a forward slash at the front of the folder path. This
-        # creates some complications in path joining so a custom path is created here.
-        ls_output = self.fs.ls(f"/{self.connector_config.path_without_protocol}")
+        try:
+            self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
+                **self.connector_config.get_access_kwargs(),
+            )
+            # Dropbox requires a forward slash at the front of the folder path. This
+            # creates some complications in path joining so a custom path is created here.
+            ls_output = self.fs.ls(f"/{self.connector_config.path_without_protocol}")
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
         if ls_output and len(ls_output) >= 1:
             return
         elif ls_output:
@@ -135,6 +140,7 @@ class DropboxSourceConnector(FsspecSourceConnector):
             ]
 
 
+@requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
 @dataclass
 class DropboxDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleFsspecConfig

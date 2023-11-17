@@ -8,6 +8,8 @@ in bytes). Constants should go into `./constants.py`
 import os
 from dataclasses import dataclass
 
+from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT
+
 
 @dataclass
 class ENVConfig:
@@ -32,6 +34,15 @@ class ENVConfig:
     def IMAGE_CROP_PAD(self) -> int:
         """extra image content to add around an identified element region; measured in pixels"""
         return self._get_int("IMAGE_CROP_PAD", 0)
+
+    @property
+    def TABLE_IMAGE_CROP_PAD(self) -> int:
+        """extra image content to add around an identified table region; measured in pixels
+
+        The padding adds image data around an identified table bounding box for downstream table
+        structure detection model use as input
+        """
+        return self._get_int("TABLE_IMAGE_CROP_PAD", 0)
 
     @property
     def TESSERACT_TEXT_HEIGHT_QUANTILE(self) -> float:
@@ -62,11 +73,11 @@ class ENVConfig:
         return self._get_int("TESSERACT_OPTIMUM_TEXT_HEIGHT", 20)
 
     @property
-    def TABLE_TOKEN_ERROR_MARGIN(self) -> float:
-        """error margin when comparing if a ocr region is within the table element when perparing
+    def OCR_AGENT(self) -> str:
+        """error margin when comparing if a ocr region is within the table element when preparing
         table tokens
         """
-        return self._get_float("TABLE_TOKEN_ERROR_MARGIN", 0.0)
+        return self._get_string("OCR_AGENT", OCR_AGENT_TESSERACT)
 
 
 env_config = ENVConfig()

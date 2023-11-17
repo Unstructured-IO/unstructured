@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html
 import io
 import itertools
 import os
@@ -14,7 +15,6 @@ from typing import (
     Iterator,
     List,
     Optional,
-    Sequence,
     Tuple,
     Type,
     Union,
@@ -25,18 +25,16 @@ from typing import (
 import docx
 from docx.document import Document
 from docx.enum.section import WD_SECTION_START
-from docx.oxml.ns import nsmap, qn
-from docx.oxml.section import CT_SectPr
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
-from docx.oxml.text.run import CT_R
-from docx.oxml.xmlchemy import BaseOxmlElement
 from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
+from docx.table import _Cell, _Row
 from docx.text.hyperlink import Hyperlink
+from docx.text.pagebreak import RenderedPageBreak
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
-from lxml import etree
+from tabulate import tabulate
 from typing_extensions import TypeAlias
 
 from unstructured.chunking.title import add_chunking_strategy
@@ -59,7 +57,6 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
-    convert_ms_office_table_to_text,
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
@@ -234,36 +231,18 @@ def partition_docx(
 class _DocxPartitioner:
     """Provides `.partition()` for MS-Word 2007+ (.docx) files."""
 
-    # TODO: I think we can do better on metadata.filename. Should that only be populated when a
-    #       `metadata_filename` argument was provided to `partition_docx()`? What about when not but
-    #       we do get a `filename` arg or a `file` arg that has a `.name` attribute?
-    # TODO: get last-modified date from document-properties (stored in docx package) rather than
-    #       relying on last filesystem-write date; maybe fall-back to filesystem-date.
-    # TODO: improve `._element_contains_pagebreak()`. It uses substring matching on the rendered
-    #       XML text which is error-prone and not performant. Use XPath instead with the specific
-    #       locations a page-break can be located. Also, there can be more than one, so return a
-    #       count instead of a boolean.
-    # TODO: Improve document-contains-pagebreaks algorithm to use XPath and to search for
-    #       `w:lastRenderedPageBreak` alone. Make it independent and don't rely on anything like
-    #        the "_element_contains_pagebreak()" function.
-    # TODO: Improve ._is_list_item() to include list-styles such that telling whether a paragraph is
-    #       a list-item is encapsulated in a single place rather than distributed around the code.
-    # TODO: Improve ._is_list_item() method of detecting a numbered-list-item to use XPath instead
-    #       of a substring match on the rendered XML. Include all permutations of how a numbered
-    #       list can be manually applied (as opposed to by using a style).
-    # TODO: Move _SectBlockIterator upstream into `python-docx`. It requires too much
-    #       domain-specific knowledge to comfortable here and is of general use so welcome in the
-    #       library.
-    # TODO: Move Paragraph._get_paragraph_runs() monkey-patch upstream to `python-docx`.
-
     def __init__(
         self,
-        filename: Optional[str],
-        file: Optional[IO[bytes]],
-        metadata_filename: Optional[str],
-        include_page_breaks: bool,
-        infer_table_structure: bool,
-        metadata_last_modified: Optional[str],
+        # -- NOTE(scanny): default values here are unnecessary for production use because
+        # -- `.iter_document_elements()` is the only interface method and always calls with all
+        # -- args. However, providing defaults eases unit-testing and decouples unit-tests from
+        # -- future changes to args.
+        filename: Optional[str] = None,
+        file: Optional[IO[bytes]] = None,
+        metadata_filename: Optional[str] = None,
+        include_page_breaks: bool = True,
+        infer_table_structure: bool = True,
+        metadata_last_modified: Optional[str] = None,
     ) -> None:
         self._filename = filename
         self._file = file
@@ -284,14 +263,23 @@ class _DocxPartitioner:
         metadata_last_modified: Optional[str] = None,
     ) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
-        return cls(
-            filename,
-            file,
-            metadata_filename,
-            include_page_breaks,
-            infer_table_structure,
-            metadata_last_modified,
-        )._iter_document_elements()
+        self = cls(
+            filename=filename,
+            file=file,
+            metadata_filename=metadata_filename,
+            include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
+            metadata_last_modified=metadata_last_modified,
+        )
+        # NOTE(scanny): It's possible for a Word document to have no sections. In particular, a
+        # Microsoft Teams chat transcript exported to DOCX contains no sections. Such a
+        # "section-less" document has to be interated differently and has no headers or footers and
+        # therefore no page-size or margins.
+        return (
+            self._iter_document_elements()
+            if self._document_contains_sections
+            else self._iter_sectionless_document_elements()
+        )
 
     def _iter_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in (docx) `document` in document order."""
@@ -306,26 +294,145 @@ class _DocxPartitioner:
         # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
         # -- functions like `._iter_paragraph_elements()` where the "just return when done"
         # -- characteristic of a generator avoids repeated code to form interim results into lists.
-
-        if not self._document.sections:
-            for paragraph in self._document.paragraphs:
-                yield from self._iter_paragraph_elements(paragraph)
-
         for section_idx, section in enumerate(self._document.sections):
             yield from self._iter_section_page_breaks(section_idx, section)
             yield from self._iter_section_headers(section)
 
-            for block_item in _SectBlockItemIterator.iter_sect_block_items(section, self._document):
-                # -- a block-item can only be a Paragraph ... --
+            for block_item in section.iter_inner_content():
+                # -- a block-item can be a Paragraph or a Table, maybe others later so elif here.
+                # -- Paragraph is more common so check that first.
                 if isinstance(block_item, Paragraph):
                     yield from self._iter_paragraph_elements(block_item)
-                    # -- a paragraph can contain a page-break --
-                    yield from self._iter_maybe_paragraph_page_breaks(block_item)
-                # -- ... or a Table --
-                else:
+                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                    block_item, DocxTable
+                ):
                     yield from self._iter_table_element(block_item)
 
             yield from self._iter_section_footers(section)
+
+    def _iter_sectionless_document_elements(self) -> Iterator[Element]:
+        """Generate each document-element in a docx `document` that has no sections.
+
+        A "section-less" DOCX must be iterated differently. Also it will have no headers or footers
+        (because those live in a section).
+        """
+        for block_item in self._document.iter_inner_content():
+            if isinstance(block_item, Paragraph):
+                yield from self._iter_paragraph_elements(block_item)
+            # -- can only be a Paragraph or Table so far but more types may come later --
+            elif isinstance(block_item, DocxTable):  # pyright: ignore[reportUnnecessaryIsInstance]
+                yield from self._iter_table_element(block_item)
+
+    def _classify_paragraph_to_element(self, paragraph: Paragraph) -> Iterator[Element]:
+        """Generate zero-or-one document element for `paragraph`.
+
+        In Word, an empty paragraph is commonly used for inter-paragraph spacing. An empty paragraph
+        does not contribute to the document-element stream and will not cause an element to be
+        emitted.
+        """
+        text = paragraph.text
+
+        # NOTE(scanny) - blank paragraphs are commonly used for spacing between paragraphs and
+        # do not contribute to the document-element stream.
+        if not text.strip():
+            return
+
+        metadata = self._paragraph_metadata(paragraph)
+
+        # NOTE(scanny) - a list-item gets some special treatment, mutating the text to remove a
+        # bullet-character if present.
+        if self._is_list_item(paragraph):
+            clean_text = clean_bullets(text).strip()
+            if clean_text:
+                yield ListItem(
+                    text=clean_text,
+                    metadata=metadata,
+                    detection_origin=DETECTION_ORIGIN,
+                )
+            return
+
+        # NOTE(scanny) - determine element-type from an explicit Word paragraph-style if possible
+        TextSubCls = self._style_based_element_type(paragraph)
+        if TextSubCls:
+            yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
+            return
+
+        # NOTE(scanny) - try to recognize the element type by parsing its text
+        TextSubCls = self._parse_paragraph_text_for_element_type(paragraph)
+        if TextSubCls:
+            yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
+            return
+
+        # NOTE(scanny) - if all that fails we give it the default `Text` element-type
+        yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
+
+    def _convert_table_to_html(self, table: DocxTable, is_nested: bool = False) -> str:
+        """HTML string version of `table`.
+
+        Example:
+
+            <table>
+            <tbody>
+            <tr><th>item  </th><th style="text-align: right;">  qty</th></tr>
+            <tr><td>spam  </td><td style="text-align: right;">   42</td></tr>
+            <tr><td>eggs  </td><td style="text-align: right;">  451</td></tr>
+            <tr><td>bacon </td><td style="text-align: right;">    0</td></tr>
+            </tbody>
+            </table>
+
+        `is_nested` is used for recursive calls when a nested table is encountered. Certain
+        behaviors are different in that case, but the caller can safely ignore that parameter and
+        allow it to take its default value.
+        """
+
+        def iter_cell_block_items(cell: _Cell) -> Iterator[str]:
+            for block_item in cell.iter_inner_content():
+                if isinstance(block_item, Paragraph):
+                    # -- all docx content is ultimately in a paragraph; a nested table contributes
+                    # -- structure only
+                    yield f"{html.escape(block_item.text)}"
+                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                    block_item, DocxTable
+                ):
+                    yield self._convert_table_to_html(block_item, is_nested=True)
+
+        def iter_cells(row: _Row) -> Iterator[str]:
+            return ("\n".join(iter_cell_block_items(cell)) for cell in row.cells)
+
+        return tabulate(
+            [list(iter_cells(row)) for row in table.rows],
+            headers=[] if is_nested else "firstrow",
+            # -- tabulate isn't really designed for recursive tables so we have to do any
+            # -- HTML-escaping for ourselves. `unsafehtml` disables tabulate html-escaping of cell
+            # -- contents.
+            tablefmt="unsafehtml",
+        )
+
+    def _convert_table_to_plain_text(self, table: DocxTable) -> str:
+        """Plain-text version of `table`.
+
+        Each row appears on its own line. Cells in a column are aligned using spaces as padding:
+
+            item      qty
+            spam       42
+            eggs      451
+            bacon       0
+
+        """
+
+        def iter_cell_block_items(cell: _Cell) -> Iterator[str]:
+            for block_item in cell.iter_inner_content():
+                if isinstance(block_item, Paragraph):
+                    yield block_item.text
+                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                    block_item, DocxTable
+                ):
+                    yield self._convert_table_to_plain_text(block_item)
+
+        def iter_cells(row: _Row) -> Iterator[str]:
+            return ("\n".join(iter_cell_block_items(cell)) for cell in row.cells)
+
+        return tabulate([list(iter_cells(row)) for row in table.rows], tablefmt="plain")
 
     @lazyproperty
     def _document(self) -> Document:
@@ -343,26 +450,34 @@ class _DocxPartitioner:
 
     @lazyproperty
     def _document_contains_pagebreaks(self) -> bool:
-        """True when there is at least one page-break detected in the document."""
-        return self._element_contains_pagebreak(self._document._element)
+        """True when there is at least one page-break detected in the document.
 
-    def _element_contains_pagebreak(self, element: BaseOxmlElement) -> bool:
-        """True when `element` contains a page break.
-
-        Checks for both "hard" page breaks (page breaks explicitly inserted by the user)
-        and "soft" page breaks, which are sometimes inserted by the MS Word renderer.
-        Note that soft page breaks aren't always present. Whether or not pages are
-        tracked may depend on your Word renderer.
+        Only `w:lastRenderedPageBreak` elements reliably indicate a page-break. These are reliably
+        inserted by Microsoft Word, but probably don't appear in documents converted into .docx
+        format from for example .odt format.
         """
-        page_break_indicators = [
-            ["w:br", 'type="page"'],  # "Hard" page break inserted by user
-            ["lastRenderedPageBreak"],  # "Soft" page break inserted by renderer
-        ]
-        if hasattr(element, "xml"):
-            for indicators in page_break_indicators:
-                if all(indicator in element.xml for indicator in indicators):
-                    return True
-        return False
+        xpath = (
+            # NOTE(scanny) - w:lastRenderedPageBreak (lrpb) is run (w:r) inner content. `w:r` can
+            # appear in a paragraph (w:p). w:r can also appear in a hyperlink (w:hyperlink), which
+            # is w:p inner-content and both of these can occur inside a table-cell as well as the
+            # document body
+            "./w:body/w:p/w:r/w:lastRenderedPageBreak"
+            " | ./w:body/w:p/w:hyperlink/w:r/w:lastRenderedPageBreak"
+            " | ./w:body/w:tbl/w:tr/w:tc/w:p/w:r/w:lastRenderedPageBreak"
+            " | ./w:body/w:tbl/w:tr/w:tc/w:p/w:hyperlink/w:r/w:lastRenderedPageBreak"
+        )
+
+        return bool(self._document.element.xpath(xpath))
+
+    @lazyproperty
+    def _document_contains_sections(self) -> bool:
+        """True when there is at least one section in the document.
+
+        This is always true for a document produced by Word, but may not always be the case when the
+        document results from conversion or export. In particular, a Microsoft Teams chat-transcript
+        export will have no sections.
+        """
+        return bool(self._document.sections)
 
     def _increment_page_number(self) -> Iterator[PageBreak]:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
@@ -378,71 +493,50 @@ class _DocxPartitioner:
         return "<w:numPr>" in paragraph._p.xml
 
     def _iter_paragraph_elements(self, paragraph: Paragraph) -> Iterator[Element]:
-        """Generate zero-or-one document element for `paragraph`.
+        """Generate zero-or-more document elements for `paragraph`.
 
-        In Word, an empty paragraph is commonly used for inter-paragraph spacing. An empty paragraph
-        does not contribute to the document-element stream and will not cause an element to be
-        emitted.
-        """
-        text = paragraph.text
-
-        # -- blank paragraphs are commonly used for spacing between paragraphs and
-        # -- do not contribute to the document-element stream.
-        if not text.strip():
-            return
-
-        metadata = self._paragraph_metadata(paragraph)
-
-        # -- a list gets some special treatment --
-        if self._is_list_item(paragraph):
-            clean_text = clean_bullets(text).strip()
-            if clean_text:
-                yield ListItem(
-                    text=clean_text,
-                    metadata=metadata,
-                    detection_origin=DETECTION_ORIGIN,
-                )
-            return
-
-        # -- determine element-type from an explicit Word paragraph-style if possible --
-        TextSubCls = self._style_based_element_type(paragraph)
-        if TextSubCls:
-            yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
-            return
-
-        # -- try to recognize the element type by parsing its text --
-        TextSubCls = self._parse_paragraph_text_for_element_type(paragraph)
-        if TextSubCls:
-            yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
-            return
-
-        # -- if all that fails we give it the default `Text` element-type --
-        yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
-
-    def _iter_maybe_paragraph_page_breaks(self, paragraph: Paragraph) -> Iterator[PageBreak]:
-        """Generate a `PageBreak` document element for each page-break in `paragraph`.
-
-        Checks for both "hard" page breaks (page breaks explicitly inserted by the user)
-        and "soft" page breaks, which are sometimes inserted by the MS Word renderer.
-        Note that soft page breaks aren't always present. Whether or not pages are
-        tracked may depend on your Word renderer.
+        The generated elements can be both textual elements and PageBreak elements. An empty
+        paragraph produces no elements.
         """
 
-        def has_page_break_implementation_we_have_so_far() -> bool:
-            """Needs to become more sophisticated."""
-            page_break_indicators = [
-                ["w:br", 'type="page"'],  # "Hard" page break inserted by user
-                ["lastRenderedPageBreak"],  # "Soft" page break inserted by renderer
-            ]
-            for indicators in page_break_indicators:
-                if all(indicator in paragraph._p.xml for indicator in indicators):
-                    return True
-            return False
+        def iter_paragraph_items(paragraph: Paragraph) -> Iterator[Paragraph | RenderedPageBreak]:
+            """Generate Paragraph and RenderedPageBreak items from `paragraph`.
 
-        if not has_page_break_implementation_we_have_so_far():
-            return
+            Each generated paragraph is the portion of the paragraph on the same page. When the
+            paragraph contains no page-breaks, it is iterated unchanged and iteration stops. When
+            there is a page-break, in general there one paragraph "fragment" before the page break,
+            the page break, and then the fragment after the page break. However many combinations
+            are possible. The first item can be either a page-break or a paragraph, but the type
+            always alternates throughout the sequence.
+            """
+            if not paragraph.contains_page_break:
+                yield paragraph
+                return
 
-        yield from self._increment_page_number()
+            page_break = paragraph.rendered_page_breaks[0]
+
+            # NOTE(scanny)- preceding-fragment is None when first paragraph content is a page-break
+            preceding_paragraph_fragment = page_break.preceding_paragraph_fragment
+            if preceding_paragraph_fragment:
+                yield preceding_paragraph_fragment
+
+            yield page_break
+
+            # NOTE(scanny) - following-fragment is None when page-break is last paragraph content.
+            # This is probably quite rare (Word moves these to the start of the next paragraph) but
+            # easier to check for it than prove it can't happen.
+            following_paragraph_fragment = page_break.following_paragraph_fragment
+            # NOTE(scanny) - the paragraph fragment following a page-break can itself contain
+            # another page-break. This would also be quite rare, but it can happen so we just
+            # recurse into the second fragment the same way we handled the original paragraph.
+            if following_paragraph_fragment:
+                yield from iter_paragraph_items(following_paragraph_fragment)
+
+        for item in iter_paragraph_items(paragraph):
+            if isinstance(item, Paragraph):
+                yield from self._classify_paragraph_to_element(item)
+            else:
+                yield from self._increment_page_number()
 
     def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[Dict[str, str]]:
         """Generate e.g. {"text": "MUST", "tag": "b"} for each emphasis in `paragraph`."""
@@ -559,11 +653,9 @@ class _DocxPartitioner:
     def _iter_table_element(self, table: DocxTable) -> Iterator[Table]:
         """Generate zero-or-one Table element for a DOCX `w:tbl` XML element."""
         # -- at present, we always generate exactly one Table element, but we might want
-        # -- to skip, for example, an empty table, or accommodate nested tables.
-        html_table = None
-        if self._infer_table_structure:
-            html_table = convert_ms_office_table_to_text(table, as_html=True)
-        text_table = convert_ms_office_table_to_text(table, as_html=False)
+        # -- to skip, for example, an empty table.
+        html_table = self._convert_table_to_html(table) if self._infer_table_structure else None
+        text_table = self._convert_table_to_plain_text(table)
         emphasized_text_contents, emphasized_text_tags = self._table_emphasis(table)
 
         yield Table(
@@ -683,6 +775,52 @@ class _DocxPartitioner:
         element_metadata.detection_origin = "docx"
         return element_metadata
 
+    def _parse_category_depth_by_style(self, paragraph: Paragraph) -> int:
+        """Determine category depth from paragraph metadata"""
+
+        # Determine category depth from paragraph ilvl xpath
+        xpath = paragraph._element.xpath("./w:pPr/w:numPr/w:ilvl/@w:val")
+        if xpath:
+            return int(xpath[0])
+
+        # Determine category depth from style name
+        style_name = (paragraph.style and paragraph.style.name) or "Normal"
+        depth = self._parse_category_depth_by_style_name(style_name)
+
+        if depth > 0:
+            return depth
+        else:
+            # Check if category depth can be determined from style ilvl
+            return self._parse_category_depth_by_style_ilvl()
+
+    def _parse_category_depth_by_style_ilvl(self) -> int:
+        # TODO(newelh) Parsing category depth by style ilvl is not yet implemented
+        return 0
+
+    def _parse_category_depth_by_style_name(self, style_name: str) -> int:
+        """Parse category-depth from the style-name of `paragraph`.
+
+        Category depth is 0-indexed and relative to the other element types in the document.
+        """
+
+        def _extract_number(suffix: str) -> int:
+            return int(suffix.split()[-1]) - 1 if suffix.split()[-1].isdigit() else 0
+
+        # Heading styles
+        if style_name.startswith("Heading"):
+            return _extract_number(style_name)
+
+        if style_name == "Subtitle":
+            return 1
+
+        # List styles
+        list_prefixes = ["List", "List Bullet", "List Continue", "List Number"]
+        if any(style_name.startswith(prefix) for prefix in list_prefixes):
+            return _extract_number(style_name)
+
+        # Other styles
+        return 0
+
     def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
         """Attempt to differentiate the element-type by inspecting the raw text."""
         text = paragraph.text.strip()
@@ -754,207 +892,3 @@ class _DocxPartitioner:
         """[contents, tags] pair describing emphasized text in `table`."""
         iter_tbl_emph, iter_tbl_emph_2 = itertools.tee(self._iter_table_emphasis(table))
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])
-
-    def _parse_category_depth_by_style(self, paragraph: Paragraph) -> int:
-        """Determine category depth from paragraph metadata"""
-
-        # Determine category depth from paragraph ilvl xpath
-        xpath = paragraph._element.xpath("./w:pPr/w:numPr/w:ilvl/@w:val")
-        if xpath:
-            return int(xpath[0])
-
-        # Determine category depth from style name
-        style_name = (paragraph.style and paragraph.style.name) or "Normal"
-        depth = self._parse_category_depth_by_style_name(style_name)
-
-        if depth > 0:
-            return depth
-        else:
-            # Check if category depth can be determined from style ilvl
-            return self._parse_category_depth_by_style_ilvl()
-
-    def _parse_category_depth_by_style_name(self, style_name: str) -> int:
-        """Parse category-depth from the style-name of `paragraph`.
-
-        Category depth is 0-indexed and relative to the other element types in the document.
-        """
-
-        def _extract_number(suffix: str) -> int:
-            return int(suffix.split()[-1]) - 1 if suffix.split()[-1].isdigit() else 0
-
-        # Heading styles
-        if style_name.startswith("Heading"):
-            return _extract_number(style_name)
-
-        if style_name == "Subtitle":
-            return 1
-
-        # List styles
-        list_prefixes = ["List", "List Bullet", "List Continue", "List Number"]
-        if any(style_name.startswith(prefix) for prefix in list_prefixes):
-            return _extract_number(style_name)
-
-        # Other styles
-        return 0
-
-    def _parse_category_depth_by_style_ilvl(self) -> int:
-        # TODO(newelh) Parsing category depth by style ilvl is not yet implemented
-        return 0
-
-
-class _SectBlockItemIterator:
-    """Generates the block-items in a section.
-
-    A block item is a docx Paragraph or Table. This small class is separated from
-    `_SectBlockElementIterator` because these two aspects will live in different places upstream.
-    This makes them easier to transplant, which we expect to do soon.
-    """
-
-    @classmethod
-    def iter_sect_block_items(cls, section: Section, document: Document) -> Iterator[BlockItem]:
-        """Generate each Paragraph or Table object in `section`."""
-        for element in _SectBlockElementIterator.iter_sect_block_elements(section._sectPr):
-            yield (
-                Paragraph(element, document)
-                if isinstance(element, CT_P)
-                else DocxTable(element, document)
-            )
-
-
-class _SectBlockElementIterator:
-    """Generates the block-item XML elements in a section.
-
-    A block-item element is a `CT_P` (paragraph) or a `CT_Tbl` (table).
-    """
-
-    _compiled_blocks_xpath: Optional[etree.XPath] = None
-    _compiled_count_xpath: Optional[etree.XPath] = None
-
-    def __init__(self, sectPr: CT_SectPr):
-        self._sectPr = sectPr
-
-    @classmethod
-    def iter_sect_block_elements(cls, sectPr: CT_SectPr) -> Iterator[BlockElement]:
-        """Generate each CT_P or CT_Tbl element within the extents governed by `sectPr`."""
-        return cls(sectPr)._iter_sect_block_elements()
-
-    def _iter_sect_block_elements(self) -> Iterator[BlockElement]:
-        """Generate each CT_P or CT_Tbl element in section."""
-        # -- General strategy is to get all block (<w;p> and <w:tbl>) elements from start of doc
-        # -- to and including this section, then compute the count of those elements that came
-        # -- from prior sections and skip that many to leave only the ones in this section. It's
-        # -- possible to express this "between here and there" (end of prior section and end of
-        # -- this one) concept in XPath, but it would be harder to follow because there are
-        # -- special cases (e.g. no prior section) and the boundary expressions are fairly hairy.
-        # -- I also believe it would be computationally more expensive than doing it this
-        # -- straighforward albeit (theoretically) slightly wasteful way.
-
-        sectPr, sectPrs = self._sectPr, self._sectPrs
-        sectPr_idx = sectPrs.index(sectPr)
-
-        # -- count block items belonging to prior sections --
-        n_blks_to_skip = (
-            0
-            if sectPr_idx == 0
-            else self._count_of_blocks_in_and_above_section(sectPrs[sectPr_idx - 1])
-        )
-
-        # -- and skip those in set of all blks from doc start to end of this section --
-        for element in self._blocks_in_and_above_section(sectPr)[n_blks_to_skip:]:
-            yield element
-
-    def _blocks_in_and_above_section(self, sectPr: CT_SectPr) -> Sequence[BlockElement]:
-        """All ps and tbls in section defined by `sectPr` and all prior sections."""
-        if self._compiled_blocks_xpath is None:
-            self._compiled_blocks_xpath = etree.XPath(
-                self._blocks_in_and_above_section_xpath,
-                namespaces=nsmap,
-                regexp=False,
-            )
-        xpath = self._compiled_blocks_xpath
-        # -- XPath callable results are Any (basically), so need a cast --
-        return cast(Sequence[BlockElement], xpath(sectPr))
-
-    @lazyproperty
-    def _blocks_in_and_above_section_xpath(self) -> str:
-        """XPath expr for ps and tbls in context of a sectPr and all prior sectPrs."""
-        # -- "p_sect" is a section with sectPr located at w:p/w:pPr/w:sectPr. "body_sect" is a
-        # -- section with sectPr located at w:body/w:sectPr. The last section in the document is a
-        # -- "body_sect". All others are of the "p_sect" variety. "term" means "terminal", like
-        # -- the last p or tbl in the section. "pred" means "predecessor", like a preceding p or
-        # -- tbl in the section.
-
-        # -- the terminal block in a p-based sect is the p the sectPr appears in --
-        p_sect_term_block = "./parent::w:pPr/parent::w:p"
-        # -- the terminus of a body-based sect is the sectPr itself (not a block) --
-        body_sect_term = "self::w:sectPr[parent::w:body]"
-        # -- all the ps and tbls preceding (but not including) the context node --
-        pred_ps_and_tbls = "preceding-sibling::*[self::w:p | self::w:tbl]"
-
-        # -- p_sect_term_block and body_sect_term(inus) are mutually exclusive. So the result is
-        # -- either the union of nodes found by the first two selectors or the nodes found by the
-        # -- last selector, never both.
-        return (
-            # -- include the p containing a sectPr --
-            f"{p_sect_term_block}"
-            # -- along with all the blocks that precede it --
-            f" | {p_sect_term_block}/{pred_ps_and_tbls}"
-            # -- or all the preceding blocks if sectPr is body-based (last sectPr) --
-            f" | {body_sect_term}/{pred_ps_and_tbls}"
-        )
-
-    def _count_of_blocks_in_and_above_section(self, sectPr: CT_SectPr) -> int:
-        """All ps and tbls in section defined by `sectPr` and all prior sections."""
-        if self._compiled_count_xpath is None:
-            self._compiled_count_xpath = etree.XPath(
-                f"count({self._blocks_in_and_above_section_xpath})",
-                namespaces=nsmap,
-                regexp=False,
-            )
-        xpath = self._compiled_count_xpath
-        # -- numeric XPath results are always float, so need an int() conversion --
-        return int(cast(float, xpath(sectPr)))
-
-    @lazyproperty
-    def _sectPrs(self) -> Sequence[CT_SectPr]:
-        """All w:sectPr elements in document, in document-order."""
-        return self._sectPr.xpath(
-            "/w:document/w:body/w:p/w:pPr/w:sectPr | /w:document/w:body/w:sectPr",
-        )
-
-
-# == monkey-patch docx.text.Paragraph.runs ===========================================
-
-
-def _get_paragraph_runs(paragraph: Paragraph) -> Sequence[Run]:
-    """Gets all runs in paragraph, including hyperlinks python-docx skips.
-
-    Without this, the default runs function skips over hyperlinks.
-
-    Args:
-        paragraph (Paragraph): A Paragraph object.
-
-    Returns:
-        list: A list of Run objects.
-    """
-
-    def _get_runs(node: BaseOxmlElement, parent: Paragraph) -> Iterator[Run]:
-        """Recursively get runs."""
-        for child in node:
-            # -- the Paragraph has runs as direct children --
-            if child.tag == qn("w:r"):
-                yield Run(cast(CT_R, child), parent)
-                continue
-            # -- but it also has hyperlink children that themselves contain runs, so
-            # -- recurse into those
-            if child.tag == qn("w:hyperlink"):
-                yield from _get_runs(child, parent)
-
-    return list(_get_runs(paragraph._element, paragraph))
-
-
-Paragraph.runs = property(  # pyright: ignore[reportGeneralTypeIssues]
-    lambda self: _get_paragraph_runs(self),
-)
-
-# ====================================================================================

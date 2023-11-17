@@ -10,7 +10,7 @@ from unstructured.ingest.connector.git import (
     GitSourceConnector,
     SimpleGitConfig,
 )
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import SourceMetadata
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -70,6 +70,7 @@ class GitHubIngestDoc(GitIngestDoc):
 
         return content_file
 
+    @SourceConnectionNetworkError.wrap
     def _fetch_content(self, content_file):
         contents = b""
         if (
@@ -125,6 +126,33 @@ class GitHubIngestDoc(GitIngestDoc):
 @dataclass
 class GitHubSourceConnector(GitSourceConnector):
     connector_config: SimpleGitHubConfig
+
+    @requires_dependencies(["github"], extras="github")
+    def check_connection(self):
+        from github import Consts
+        from github.GithubRetry import GithubRetry
+        from github.Requester import Requester
+
+        try:
+            requester = Requester(
+                auth=self.connector_config.access_token,
+                base_url=Consts.DEFAULT_BASE_URL,
+                timeout=Consts.DEFAULT_TIMEOUT,
+                user_agent=Consts.DEFAULT_USER_AGENT,
+                per_page=Consts.DEFAULT_PER_PAGE,
+                verify=True,
+                retry=GithubRetry(),
+                pool_size=None,
+            )
+            url_base = (
+                "/repositories/" if isinstance(self.connector_config.repo_path, int) else "/repos/"
+            )
+            url = f"{url_base}{self.connector_config.repo_path}"
+            headers, _ = requester.requestJsonAndCheck("HEAD", url)
+            logger.debug(f"headers from HEAD request: {headers}")
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
 
     def get_ingest_docs(self):
         repo = self.connector_config.get_repo()
