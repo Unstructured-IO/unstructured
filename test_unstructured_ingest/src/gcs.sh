@@ -50,4 +50,3 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
-
