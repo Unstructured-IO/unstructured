@@ -126,7 +126,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "d4bc3ed8378d4b74968fb6aa5ffd6c48",
+    "element_id": "69c0abb4a05d8b3650ac06c6c07c3b88",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-14T07:31:28",
@@ -143,7 +143,7 @@
       ],
       "page_number": 2
     },
-    "text": "WEO. On the upside, a stronger boost from pent-up demand in numerous economies or a faster fall in inflation are plausible. On the downside, severe health outcomes in China could hold back the recovery, Russia’s war in Ukraine could escalate, and tighter global financing conditions could worsen debt distress. Financial markets could also suddenly reprice in response to adverse inflation news, while further geopolitical fragmentation could hamper economic progress.",
+    "text": "The balance of risks remains tilted to the downside, but adverse risks have moderated since the October 2022 WEO. On the upside, a stronger boost from pent-up demand in numerous economies or a faster fall in inflation are plausible. On the downside, severe health outcomes in China could hold back the recovery, Russia’s war in Ukraine could escalate, and tighter global financing conditions could worsen debt distress. Financial markets could also suddenly reprice in response to adverse inflation news, while further geopolitical fragmentation could hamper economic progress.",
     "type": "ListItem"
   },
   {
@@ -462,153 +462,6 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "c7c72889cb49cf43d9bd1f892db1be2c",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "Jan. 2019",
-    "type": "UncategorizedText"
-  },
-  {
-    "element_id": "646612b0a62b59fd13be769b4590a9ac",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "Jul. 19",
-    "type": "Title"
-  },
-  {
-    "element_id": "7a4f82ed474f82c26a8b867becaf89ba",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "Jan. 20",
-    "type": "Title"
-  },
-  {
-    "element_id": "6d2f5e3c057e12c92023d5501c3fd075",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "Jul. 20",
-    "type": "Title"
-  },
-  {
-    "element_id": "f4a93992a1b09b3fa6200542fd6fde5a",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "Jan. 21",
-    "type": "Title"
-  },
-  {
-    "element_id": "81db94f58819ee2fd6c05ddef2082ccc",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "Jul. 21",
-    "type": "Title"
-  },
-  {
-    "element_id": "babfe67b3ecc6b32db9adb9da08274bf",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "Jan. 22",
-    "type": "Title"
-  },
-  {
     "element_id": "2c469f8fa0f3c1c771330dde1be1b28c",
     "metadata": {
       "data_source": {
@@ -649,27 +502,6 @@
     },
     "text": "2 International Monetary Fund | January 2023",
     "type": "ListItem"
-  },
-  {
-    "element_id": "82debf5a182b9b394ad3a9d584a870ef",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "Jul. 22",
-    "type": "Title"
   },
   {
     "element_id": "cc874418b59b7ecb37a2c938783fb5ce",
@@ -2394,7 +2226,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "c78d5a22c9065ddd7f6da9efa8353eac",
+    "element_id": "cbb9553ae9412cc864f9f254b47c3efc",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-14T07:31:28",
@@ -2411,7 +2243,7 @@
       ],
       "page_number": 10
     },
-    "text": "International Monetary Fund | January 2023. 9",
+    "text": "International Monetary Fund | January 2023 9",
     "type": "ListItem"
   },
   {
@@ -2646,7 +2478,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "db4302b8b58895480ce07bfcba6a1644",
+    "element_id": "bab943d841e99d44807adb96ef9ef925",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-14T07:31:28",
@@ -2663,7 +2495,7 @@
       ],
       "page_number": 11
     },
-    "text": "10 International Monetary Fund | January 2023",
+    "text": "10 — International Monetary Fund | January 2023",
     "type": "ListItem"
   },
   {
