@@ -62,7 +62,7 @@ urllib3==1.26.18
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
     #   botocore
-wrapt==1.15.0
+wrapt==1.16.0
     # via aiobotocore
 yarl==1.9.2
     # via aiohttp

@@ -11,7 +11,6 @@ WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 OUTPUT_FOLDER_NAME=azure-cog-search-dest
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
-DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 DESTINATION_INDEX="utic-test-ingest-fixtures-output-$(uuidgen)"
 # The vector configs on the schema currently only exist on versions:
 # 2023-07-01-Preview, 2021-04-30-Preview, 2020-06-30-Preview
@@ -42,9 +41,6 @@ function cleanup {
   # Local file cleanup
   cleanup_dir "$WORK_DIR"
   cleanup_dir "$OUTPUT_DIR"
-  if [ "$CI" == "true" ]; then
-    cleanup_dir "$DOWNLOAD_DIR"
-  fi
 }
 
 trap cleanup EXIT

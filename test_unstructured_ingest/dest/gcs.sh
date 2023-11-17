@@ -12,7 +12,6 @@ WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 BUCKET="utic-test-ingest-fixtures-output"
 DIRECTORY=$(uuidgen)
-DIRECTORY="test"
 DESTINATION_GCS="gs://$BUCKET/$DIRECTORY"
 CI=${CI:-"false"}
 
@@ -30,9 +29,6 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
-  if [ "$CI" == "true" ]; then
-    cleanup_dir "$DOWNLOAD_DIR"
-  fi
 
   python "$SCRIPT_DIR"/python/test-gcs-output.py down \
   --service-account-file "$GCP_INGEST_SERVICE_KEY_FILE" \

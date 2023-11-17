@@ -7,16 +7,13 @@
 azure-common==1.1.28
     # via azure-search-documents
 azure-core==1.29.5
-    # via
-    #   azure-search-documents
-    #   msrest
-azure-search-documents==11.3.0
+    # via azure-search-documents
+azure-search-documents==11.4.0
     # via -r ingest/azure-cognitive-search.in
 certifi==2023.7.22
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
-    #   msrest
     #   requests
 charset-normalizer==3.3.2
     # via
@@ -27,19 +24,11 @@ idna==3.4
     #   -c ingest/../base.txt
     #   requests
 isodate==0.6.1
-    # via msrest
-msrest==0.7.1
     # via azure-search-documents
-oauthlib==3.2.2
-    # via requests-oauthlib
 requests==2.31.0
     # via
     #   -c ingest/../base.txt
     #   azure-core
-    #   msrest
-    #   requests-oauthlib
-requests-oauthlib==1.3.1
-    # via msrest
 six==1.16.0
     # via
     #   -c ingest/../base.txt
@@ -49,7 +38,6 @@ typing-extensions==4.8.0
     # via
     #   -c ingest/../base.txt
     #   azure-core
-    #   azure-search-documents
 urllib3==1.26.18
     # via
     #   -c ingest/../base.txt
