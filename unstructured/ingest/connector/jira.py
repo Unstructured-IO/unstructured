@@ -10,8 +10,8 @@ from pathlib import Path
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
     BaseSessionHandle,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     ConfigSessionHandleMixin,
     IngestDocCleanupMixin,
@@ -241,7 +241,7 @@ def scroll_wrapper(func, results_key="results"):
 
 
 @dataclass
-class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
+class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing).
 
@@ -324,7 +324,7 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseInge
 
     @SourceConnectionError.wrap
     @requires_dependencies(["atlassian"], extras="jira")
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 

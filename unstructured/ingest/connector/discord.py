@@ -7,7 +7,7 @@ from pathlib import Path
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -39,7 +39,7 @@ class SimpleDiscordConfig(BaseConnectorConfig):
 
 
 @dataclass
-class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class DiscordIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
     Also includes a cleanup method. When things go wrong and the cleanup
@@ -117,7 +117,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         self._create_full_tmp_dir_path()
         if self.processor_config.verbose:
