@@ -51,20 +51,6 @@ class PineconeWriteConfig(IngestDocSessionHandleMixin, WriteConfig):
     batch_size: int = 50
     num_processes: int = 1
 
-    @DestinationConnectionError.wrap
-    @requires_dependencies(["pinecone"], extras="pinecone")
-    def upsert_batch(self, batch):
-        import pinecone.core.client.exceptions
-
-        self.global_session()
-
-        index = self.session_handle.service
-        try:
-            response = index.upsert(batch)
-        except pinecone.core.client.exceptions.ApiException as api_error:
-            raise WriteError(f"http error: {api_error}") from api_error
-        logger.debug(f"results: {response}")
-
 
 @dataclass
 class PineconeDestinationConnector(BaseDestinationConnector):
@@ -77,6 +63,20 @@ class PineconeDestinationConnector(BaseDestinationConnector):
     def check_connection(self):
         pass
 
+    @DestinationConnectionError.wrap
+    @requires_dependencies(["pinecone"], extras="pinecone")
+    def upsert_batch(self, batch):
+        import pinecone.core.client.exceptions
+
+        self.write_config.global_session()
+
+        index = self.write_config.session_handle.service
+        try:
+            response = index.upsert(batch)
+        except pinecone.core.client.exceptions.ApiException as api_error:
+            raise WriteError(f"http error: {api_error}") from api_error
+        logger.debug(f"results: {response}")
+
     def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
             f"Upserting {len(dict_list)} elements to destination "
@@ -87,14 +87,14 @@ class PineconeDestinationConnector(BaseDestinationConnector):
 
         if self.write_config.num_processes == 1:
             for i in range(0, len(dict_list), pinecone_batch_size):
-                self.write_config.upsert_batch(dict_list[i : i + pinecone_batch_size])  # noqa: E203
+                self.upsert_batch(dict_list[i : i + pinecone_batch_size])  # noqa: E203
 
         else:
             with mp.Pool(
                 processes=self.write_config.num_processes,
             ) as pool:
                 pool.map(
-                    self.write_config.upsert_batch,
+                    self.upsert_batch,
                     [
                         dict_list[i : i + pinecone_batch_size]  # noqa: E203
                         for i in range(0, len(dict_list), pinecone_batch_size)
