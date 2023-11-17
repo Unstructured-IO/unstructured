@@ -31,6 +31,7 @@ from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
 from docx.table import _Cell, _Row
 from docx.text.hyperlink import Hyperlink
+from docx.text.pagebreak import RenderedPageBreak
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 from tabulate import tabulate
@@ -302,8 +303,6 @@ class _DocxPartitioner:
                 # -- Paragraph is more common so check that first.
                 if isinstance(block_item, Paragraph):
                     yield from self._iter_paragraph_elements(block_item)
-                    # -- a paragraph can contain a page-break --
-                    yield from self._iter_maybe_paragraph_page_breaks(block_item)
                 elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
                     block_item, DocxTable
                 ):
@@ -320,11 +319,52 @@ class _DocxPartitioner:
         for block_item in self._document.iter_inner_content():
             if isinstance(block_item, Paragraph):
                 yield from self._iter_paragraph_elements(block_item)
-                # -- a paragraph can contain a page-break --
-                yield from self._iter_maybe_paragraph_page_breaks(block_item)
             # -- can only be a Paragraph or Table so far but more types may come later --
             elif isinstance(block_item, DocxTable):  # pyright: ignore[reportUnnecessaryIsInstance]
                 yield from self._iter_table_element(block_item)
+
+    def _classify_paragraph_to_element(self, paragraph: Paragraph) -> Iterator[Element]:
+        """Generate zero-or-one document element for `paragraph`.
+
+        In Word, an empty paragraph is commonly used for inter-paragraph spacing. An empty paragraph
+        does not contribute to the document-element stream and will not cause an element to be
+        emitted.
+        """
+        text = paragraph.text
+
+        # NOTE(scanny) - blank paragraphs are commonly used for spacing between paragraphs and
+        # do not contribute to the document-element stream.
+        if not text.strip():
+            return
+
+        metadata = self._paragraph_metadata(paragraph)
+
+        # NOTE(scanny) - a list-item gets some special treatment, mutating the text to remove a
+        # bullet-character if present.
+        if self._is_list_item(paragraph):
+            clean_text = clean_bullets(text).strip()
+            if clean_text:
+                yield ListItem(
+                    text=clean_text,
+                    metadata=metadata,
+                    detection_origin=DETECTION_ORIGIN,
+                )
+            return
+
+        # NOTE(scanny) - determine element-type from an explicit Word paragraph-style if possible
+        TextSubCls = self._style_based_element_type(paragraph)
+        if TextSubCls:
+            yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
+            return
+
+        # NOTE(scanny) - try to recognize the element type by parsing its text
+        TextSubCls = self._parse_paragraph_text_for_element_type(paragraph)
+        if TextSubCls:
+            yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
+            return
+
+        # NOTE(scanny) - if all that fails we give it the default `Text` element-type
+        yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
 
     def _convert_table_to_html(self, table: DocxTable, is_nested: bool = False) -> str:
         """HTML string version of `table`.
@@ -453,70 +493,50 @@ class _DocxPartitioner:
         return "<w:numPr>" in paragraph._p.xml
 
     def _iter_paragraph_elements(self, paragraph: Paragraph) -> Iterator[Element]:
-        """Generate zero-or-one document element for `paragraph`.
+        """Generate zero-or-more document elements for `paragraph`.
 
-        In Word, an empty paragraph is commonly used for inter-paragraph spacing. An empty paragraph
-        does not contribute to the document-element stream and will not cause an element to be
-        emitted.
-        """
-        text = paragraph.text
-
-        # -- blank paragraphs are commonly used for spacing between paragraphs and
-        # -- do not contribute to the document-element stream.
-        if not text.strip():
-            return
-
-        metadata = self._paragraph_metadata(paragraph)
-
-        # -- a list gets some special treatment --
-        if self._is_list_item(paragraph):
-            clean_text = clean_bullets(text).strip()
-            if clean_text:
-                yield ListItem(
-                    text=clean_text,
-                    metadata=metadata,
-                    detection_origin=DETECTION_ORIGIN,
-                )
-            return
-
-        # -- determine element-type from an explicit Word paragraph-style if possible --
-        TextSubCls = self._style_based_element_type(paragraph)
-        if TextSubCls:
-            yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
-            return
-
-        # -- try to recognize the element type by parsing its text --
-        TextSubCls = self._parse_paragraph_text_for_element_type(paragraph)
-        if TextSubCls:
-            yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
-            return
-
-        # -- if all that fails we give it the default `Text` element-type --
-        yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
-
-    def _iter_maybe_paragraph_page_breaks(self, paragraph: Paragraph) -> Iterator[PageBreak]:
-        """Generate a `PageBreak` document element for each page-break in `paragraph`.
-
-        Checks for both "hard" page breaks (page breaks explicitly inserted by the user)
-        and "soft" page breaks, which are sometimes inserted by the MS Word renderer.
-        Note that soft page breaks aren't always present. Whether or not pages are
-        tracked may depend on your Word renderer.
+        The generated elements can be both textual elements and PageBreak elements. An empty
+        paragraph produces no elements.
         """
 
-        def has_page_break_implementation_we_have_so_far() -> bool:
-            """Needs to become more sophisticated."""
-            page_break_indicators = [
-                ["lastRenderedPageBreak"],  # "Soft" page break inserted by renderer
-            ]
-            for indicators in page_break_indicators:
-                if all(indicator in paragraph._p.xml for indicator in indicators):
-                    return True
-            return False
+        def iter_paragraph_items(paragraph: Paragraph) -> Iterator[Paragraph | RenderedPageBreak]:
+            """Generate Paragraph and RenderedPageBreak items from `paragraph`.
 
-        if not has_page_break_implementation_we_have_so_far():
-            return
+            Each generated paragraph is the portion of the paragraph on the same page. When the
+            paragraph contains no page-breaks, it is iterated unchanged and iteration stops. When
+            there is a page-break, in general there one paragraph "fragment" before the page break,
+            the page break, and then the fragment after the page break. However many combinations
+            are possible. The first item can be either a page-break or a paragraph, but the type
+            always alternates throughout the sequence.
+            """
+            if not paragraph.contains_page_break:
+                yield paragraph
+                return
 
-        yield from self._increment_page_number()
+            page_break = paragraph.rendered_page_breaks[0]
+
+            # NOTE(scanny)- preceding-fragment is None when first paragraph content is a page-break
+            preceding_paragraph_fragment = page_break.preceding_paragraph_fragment
+            if preceding_paragraph_fragment:
+                yield preceding_paragraph_fragment
+
+            yield page_break
+
+            # NOTE(scanny) - following-fragment is None when page-break is last paragraph content.
+            # This is probably quite rare (Word moves these to the start of the next paragraph) but
+            # easier to check for it than prove it can't happen.
+            following_paragraph_fragment = page_break.following_paragraph_fragment
+            # NOTE(scanny) - the paragraph fragment following a page-break can itself contain
+            # another page-break. This would also be quite rare, but it can happen so we just
+            # recurse into the second fragment the same way we handled the original paragraph.
+            if following_paragraph_fragment:
+                yield from iter_paragraph_items(following_paragraph_fragment)
+
+        for item in iter_paragraph_items(paragraph):
+            if isinstance(item, Paragraph):
+                yield from self._classify_paragraph_to_element(item)
+            else:
+                yield from self._increment_page_number()
 
     def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[Dict[str, str]]:
         """Generate e.g. {"text": "MUST", "tag": "b"} for each emphasis in `paragraph`."""
@@ -755,6 +775,52 @@ class _DocxPartitioner:
         element_metadata.detection_origin = "docx"
         return element_metadata
 
+    def _parse_category_depth_by_style(self, paragraph: Paragraph) -> int:
+        """Determine category depth from paragraph metadata"""
+
+        # Determine category depth from paragraph ilvl xpath
+        xpath = paragraph._element.xpath("./w:pPr/w:numPr/w:ilvl/@w:val")
+        if xpath:
+            return int(xpath[0])
+
+        # Determine category depth from style name
+        style_name = (paragraph.style and paragraph.style.name) or "Normal"
+        depth = self._parse_category_depth_by_style_name(style_name)
+
+        if depth > 0:
+            return depth
+        else:
+            # Check if category depth can be determined from style ilvl
+            return self._parse_category_depth_by_style_ilvl()
+
+    def _parse_category_depth_by_style_ilvl(self) -> int:
+        # TODO(newelh) Parsing category depth by style ilvl is not yet implemented
+        return 0
+
+    def _parse_category_depth_by_style_name(self, style_name: str) -> int:
+        """Parse category-depth from the style-name of `paragraph`.
+
+        Category depth is 0-indexed and relative to the other element types in the document.
+        """
+
+        def _extract_number(suffix: str) -> int:
+            return int(suffix.split()[-1]) - 1 if suffix.split()[-1].isdigit() else 0
+
+        # Heading styles
+        if style_name.startswith("Heading"):
+            return _extract_number(style_name)
+
+        if style_name == "Subtitle":
+            return 1
+
+        # List styles
+        list_prefixes = ["List", "List Bullet", "List Continue", "List Number"]
+        if any(style_name.startswith(prefix) for prefix in list_prefixes):
+            return _extract_number(style_name)
+
+        # Other styles
+        return 0
+
     def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
         """Attempt to differentiate the element-type by inspecting the raw text."""
         text = paragraph.text.strip()
@@ -826,49 +892,3 @@ class _DocxPartitioner:
         """[contents, tags] pair describing emphasized text in `table`."""
         iter_tbl_emph, iter_tbl_emph_2 = itertools.tee(self._iter_table_emphasis(table))
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])
-
-    def _parse_category_depth_by_style(self, paragraph: Paragraph) -> int:
-        """Determine category depth from paragraph metadata"""
-
-        # Determine category depth from paragraph ilvl xpath
-        xpath = paragraph._element.xpath("./w:pPr/w:numPr/w:ilvl/@w:val")
-        if xpath:
-            return int(xpath[0])
-
-        # Determine category depth from style name
-        style_name = (paragraph.style and paragraph.style.name) or "Normal"
-        depth = self._parse_category_depth_by_style_name(style_name)
-
-        if depth > 0:
-            return depth
-        else:
-            # Check if category depth can be determined from style ilvl
-            return self._parse_category_depth_by_style_ilvl()
-
-    def _parse_category_depth_by_style_name(self, style_name: str) -> int:
-        """Parse category-depth from the style-name of `paragraph`.
-
-        Category depth is 0-indexed and relative to the other element types in the document.
-        """
-
-        def _extract_number(suffix: str) -> int:
-            return int(suffix.split()[-1]) - 1 if suffix.split()[-1].isdigit() else 0
-
-        # Heading styles
-        if style_name.startswith("Heading"):
-            return _extract_number(style_name)
-
-        if style_name == "Subtitle":
-            return 1
-
-        # List styles
-        list_prefixes = ["List", "List Bullet", "List Continue", "List Number"]
-        if any(style_name.startswith(prefix) for prefix in list_prefixes):
-            return _extract_number(style_name)
-
-        # Other styles
-        return 0
-
-    def _parse_category_depth_by_style_ilvl(self) -> int:
-        # TODO(newelh) Parsing category depth by style ilvl is not yet implemented
-        return 0
