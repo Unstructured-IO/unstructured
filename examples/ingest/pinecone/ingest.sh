@@ -11,6 +11,7 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 
 # As an example we're using the s3 source connector,
 # however ingesting from any supported source connector is possible.
+# shellcheck disable=2094
 PYTHONPATH=. ./unstructured/ingest/main.py \
         local \
         --input-path example-docs/book-war-and-peace-1225p.txt \
