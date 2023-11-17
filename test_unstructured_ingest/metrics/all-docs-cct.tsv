@@ -12,8 +12,5 @@ fake-html-cp1252.html	html	local	0.659	0.0
 fake-html-cp1252.html	html	local-single-file-with-encoding	0.659	0.0
 layout-parser-paper.pdf	pdf	local-single-file-with-pdf-infer-table-structure	0.945	0.029
 layout-parser-paper-with-table.jpg	jpg	local-single-file-with-pdf-infer-table-structure	0.716	0.032
-fake-text.txt	txt	gcs	1.0	0.0
-stanley-cups.xlsx	xlsx	gcs	0.778	0.0
-ideas-page.html	html	gcs	0.929	0.033
 2023-Jan-economic-outlook.pdf	pdf	s3	0.846	0.039
 recalibrating-risk-report.pdf	pdf	s3	0.973	0.007
