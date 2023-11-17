@@ -8,31 +8,35 @@
 # Environment Variables:
 #   - OVERWRITE_FIXTURES: Controls whether to overwrite fixtures or not. default: "false"
 
-set +e
+set -e
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 TMP_DIRECTORY_CLEANUP=${TMP_DIRECTORY_CLEANUP:-true}
 OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
-OUTPUT_DIR=$OUTPUT_ROOT/metrics-tmp
-EXPECTED_OUTPUT_DIR=$OUTPUT_ROOT/metrics
+TMP_METRICS_LATEST_RUN_DIR=$OUTPUT_ROOT/metrics-tmp
+METRICS_DIR=$OUTPUT_ROOT/metrics
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
-    cleanup_dir "$OUTPUT_DIR"
+    cleanup_dir "$TMP_METRICS_LATEST_RUN_DIR"
 }
 
 trap cleanup EXIT
 
+echo "running check diff"
+echo "$TMP_METRICS_LATEST_RUN_DIR"
+echo "$METRICS_DIR"
+
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [ "$OVERWRITE_FIXTURES" != "false" ]; then
     # force copy (overwrite) files from metrics-tmp (new eval metrics) to metrics (old eval metrics)
-    cp -rf "$OUTPUT_DIR" "$EXPECTED_OUTPUT_DIR"
-elif ! diff -ru "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR" ; then
-    "$SCRIPT_DIR"/clean-permissions-files.sh "$OUTPUT_DIR"
-    diff -r "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR"> outputdiff.txt
+    cp -f "$TMP_METRICS_LATEST_RUN_DIR"/* "$METRICS_DIR"
+elif ! diff -ru "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR" ; then
+    "$SCRIPT_DIR"/clean-permissions-files.sh "$TMP_METRICS_LATEST_RUN_DIR"
+    diff -r "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR"> outputdiff.txt
     cat outputdiff.txt
     diffstat -c outputdiff.txt
     echo

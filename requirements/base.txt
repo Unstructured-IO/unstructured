@@ -18,7 +18,7 @@ charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via nltk
-dataclasses-json==0.6.1
+dataclasses-json==0.6.2
     # via -r base.in
 emoji==2.8.0
     # via -r base.in

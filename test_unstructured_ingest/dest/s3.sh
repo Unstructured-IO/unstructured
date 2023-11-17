@@ -18,9 +18,6 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
-  if [ "$CI" == "true" ]; then
-    cleanup_dir "$DOWNLOAD_DIR"
-  fi
 
   if aws s3 ls "$DESTINATION_S3" --region us-east-2; then
     echo "deleting destination s3 location: $DESTINATION_S3"
