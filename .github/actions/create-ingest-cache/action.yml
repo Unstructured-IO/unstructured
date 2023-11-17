@@ -3,7 +3,7 @@ name: 'Ingest Cache Build'
 description: 'Build ingest specific cache on top of base cache'
 inputs:
   python-version:
-    description: 'which python version to user'
+    description: 'python version associated with the cache'
     required: true
   force-recreate:
     description: 'regardless of cache existing, recreate it'
@@ -11,26 +11,28 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/cache/restore@v3
+    - name: restore base cache
+      uses: actions/cache/restore@v3
       id: virtualenv-cache
       with:
         path: |
           nltk_data
           .venv
-        key: unstructured-${{ runner.os }}-${{ inputs.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Setup virtual environment (no cache hit)
+        key: unstructured-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/*.txt') }}
+    - name: Setup virtual environment (no base cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       uses: ./.github/actions/create-cache
       with:
         python-version: ${{ inputs.python-version }}
         force-recreate: 'true'
-    - uses: actions/cache@v3
+    - name: Check for ingest cache
+      uses: actions/cache@v3
       id: ingest-virtualenv-cache
       with:
         path: |
           .venv
           nltk_data
-        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
+        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}
         lookup-only: true
     - name: Set up Python ${{ inputs.python-version }}
       if: steps.ingest-virtualenv-cache.outputs.cache-hit != 'true' || inputs.force-recreate == 'true'

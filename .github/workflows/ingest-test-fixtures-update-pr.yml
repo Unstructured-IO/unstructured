@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
 
 env:
-  GHA_CACHE_KEY_VERSION: "v1"
   PYTHON_VERSION: "3.10"
 
 permissions:
@@ -54,7 +53,7 @@ jobs:
           path: |
             .venv
             nltk_data
-          key: unstructured-ingest-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
+          key: unstructured-ingest-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
       - name: Setup virtual environment (no cache hit)
         if: steps.virtualenv-cache.outputs.cache-hit != 'true'
         uses: ./.github/actions/create-ingest-cache

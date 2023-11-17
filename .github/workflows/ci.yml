@@ -8,9 +8,6 @@ on:
   merge_group:
     branches: [ main ]
 
-env:
-  GHA_CACHE_KEY_VERSION: "v1"
-
 permissions:
   id-token: write
   contents: read
@@ -57,7 +54,7 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -96,7 +93,7 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -140,7 +137,7 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -184,7 +181,7 @@ jobs:
         path: |
           nltk_data
           .venv
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       uses: ./.github/actions/create-cache
@@ -219,7 +216,7 @@ jobs:
       with:
         path: |
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
     - name: Setup virtual environment
       run: |
         python${{ matrix.python-version}} -m venv .venv-${{ matrix.extra }}
@@ -280,7 +277,7 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: unstructured-ingest-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
+        key: unstructured-ingest-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}
         # Due to the dependency on setup_ingest, the cache should exist before this is ran. Set failed if it wasn't found.
         fail-on-cache-miss: true
     - name: Setup virtual environment (no cache hit)
@@ -373,7 +370,7 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: unstructured-ingest-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/ingest/*.txt') }}
+        key: unstructured-ingest-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}
         # Due to the dependency on setup_ingest, the cache should exist before this is ran. Set failed if it wasn't found.
         fail-on-cache-miss: true
     - name: Setup virtual environment (no cache hit)
@@ -435,7 +432,7 @@ jobs:
         path: |
           .venv
           nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       uses: ./.github/actions/create-cache
@@ -505,7 +502,7 @@ jobs:
           path: |
             .venv
             nltk_data
-          key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ env.GHA_CACHE_KEY_VERSION }}-${{ hashFiles('requirements/*.txt') }}
+          key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
