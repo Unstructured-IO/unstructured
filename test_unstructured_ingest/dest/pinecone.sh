@@ -44,7 +44,7 @@ function cleanup {
     --header 'content-type: application/json'
 
   else
-    echo "Index $PINECONE_INDEX does not exist, nothing to delete"
+    echo "There was an error during index deletion for index $PINECONE_INDEX, with response code: $response_code. It might be that index $PINECONE_INDEX does not exist, so there is nothing to delete."
   fi
 
   # Local file cleanup
