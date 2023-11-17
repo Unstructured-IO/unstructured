@@ -154,7 +154,7 @@ pyparsing==3.0.9
     # via
     #   -c constraints.in
     #   matplotlib
-pypdfium2==4.23.1
+pypdfium2==4.24.0
     # via pdfplumber
 pytesseract==0.3.10
     # via layoutparser
