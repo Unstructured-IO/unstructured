@@ -8,6 +8,7 @@
 ### Features
 
 * **Add ad-hoc fields to ElementMetadata instance.** End-users can now add their own metadata fields simply by assigning to an element-metadata attribute-name of their choice, like `element.metadata.coefficient = 0.58`. These fields will round-trip through JSON and can be accessed with dotted notation.
+* **MongoDB Destination Connector** New destination connector added to all CLI ingest commands to support writing partitioned json output to mongodb.
 * **Add Pinecone destination connector.** Problem: After ingesting data from a source, users might want to produce embeddings for their data and write these into a vector DB. Pinecone is an option among these vector databases. Feature: Added Pinecone destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into Pinecone.
 
 ### Fixes

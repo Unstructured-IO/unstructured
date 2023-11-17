@@ -180,7 +180,7 @@ jupyterlab==4.0.8
     # via notebook
 jupyterlab-pygments==0.2.2
     # via nbconvert
-jupyterlab-server==2.25.0
+jupyterlab-server==2.25.1
     # via
     #   jupyterlab
     #   notebook
@@ -253,7 +253,7 @@ pre-commit==3.5.0
     # via -r dev.in
 prometheus-client==0.18.0
     # via jupyter-server
-prompt-toolkit==3.0.39
+prompt-toolkit==3.0.40
     # via
     #   ipython
     #   jupyter-console
@@ -340,7 +340,7 @@ soupsieve==2.5
     #   beautifulsoup4
 stack-data==0.6.3
     # via ipython
-terminado==0.17.1
+terminado==0.18.0
     # via
     #   jupyter-server
     #   jupyter-server-terminals
