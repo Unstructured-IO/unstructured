@@ -54,4 +54,6 @@ urllib3==1.26.18
     #   pygithub
     #   requests
 wrapt==1.16.0
-    # via deprecated
+    # via
+    #   -c ingest/../base.txt
+    #   deprecated

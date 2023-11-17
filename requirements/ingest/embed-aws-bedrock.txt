@@ -61,9 +61,9 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.335
+langchain==0.0.336
     # via -r ingest/embed-aws-bedrock.in
-langsmith==0.0.63
+langsmith==0.0.64
     # via langchain
 marshmallow==3.20.1
     # via

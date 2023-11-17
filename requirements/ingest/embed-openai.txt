@@ -61,9 +61,9 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.335
+langchain==0.0.336
     # via -r ingest/embed-openai.in
-langsmith==0.0.63
+langsmith==0.0.64
     # via langchain
 marshmallow==3.20.1
     # via
@@ -82,7 +82,7 @@ numpy==1.24.4
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
     #   langchain
-openai==1.2.3
+openai==1.3.2
     # via -r ingest/embed-openai.in
 packaging==23.2
     # via

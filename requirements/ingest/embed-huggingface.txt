@@ -54,7 +54,7 @@ fsspec==2023.9.1
     #   torch
 huggingface==0.0.1
     # via -r ingest/embed-huggingface.in
-huggingface-hub==0.17.3
+huggingface-hub==0.19.4
     # via
     #   sentence-transformers
     #   tokenizers
@@ -76,9 +76,9 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.335
+langchain==0.0.336
     # via -r ingest/embed-huggingface.in
-langsmith==0.0.63
+langsmith==0.0.64
     # via langchain
 markupsafe==2.1.3
     # via jinja2
@@ -170,14 +170,14 @@ tenacity==8.2.3
     # via langchain
 threadpoolctl==3.2.0
     # via scikit-learn
-tokenizers==0.14.1
+tokenizers==0.15.0
     # via transformers
-torch==2.1.0
+torch==2.1.1
     # via
     #   -c ingest/../constraints.in
     #   sentence-transformers
     #   torchvision
-torchvision==0.16.0
+torchvision==0.16.1
     # via sentence-transformers
 tqdm==4.66.1
     # via
@@ -186,7 +186,7 @@ tqdm==4.66.1
     #   nltk
     #   sentence-transformers
     #   transformers
-transformers==4.35.0
+transformers==4.35.2
     # via sentence-transformers
 typing-extensions==4.8.0
     # via
