@@ -8,7 +8,7 @@ import httpx
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     RetryStrategyConfig,
@@ -35,7 +35,7 @@ class SimpleNotionConfig(BaseConnectorConfig):
 
 
 @dataclass
-class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class NotionPageIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -74,7 +74,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             retry_strategy_config=self.retry_strategy_config,
         )
 
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["notion_client"], extras="notion")
     def get_file(self):
         from notion_client import APIErrorCode, APIResponseError
@@ -158,7 +158,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
 
 @dataclass
-class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -197,7 +197,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             retry_strategy_config=self.retry_strategy_config,
         )
 
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["notion_client"], extras="notion")
     def get_file(self):
         from notion_client import APIErrorCode, APIResponseError
@@ -372,7 +372,7 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         return child_content
 
     def get_ingest_docs(self):
-        docs: t.List[BaseIngestDoc] = []
+        docs: t.List[BaseSingleIngestDoc] = []
         if self.connector_config.page_ids:
             docs += [
                 NotionPageIngestDoc(
