@@ -40,11 +40,9 @@ class Reader(SourceNode):
             self.retry_strategy(doc_batch.get_files)
         else:
             doc_batch.get_files()
-        docs = doc_batch.ingest_docs
-        for doc in docs:
-            for k, v in doc.to_dict().items():
-                ingest_doc_dict[k] = v
-        return [doc.filename for doc in docs]
+        for k, v in doc_batch.to_dict().items():
+            ingest_doc_dict[k] = v
+        return [doc.filename for doc in doc_batch.ingest_docs]
 
     def run(self, ingest_doc_dict: dict) -> t.Optional[t.Union[str, t.List[str]]]:
         try:

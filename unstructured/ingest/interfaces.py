@@ -307,10 +307,6 @@ class BatchIngestDocJsonMixin(DataClassJsonMixin):
     @classmethod
     def from_dict(cls: t.Type[A], kvs: Json, *, infer_missing=False) -> A:
         doc = _decode_dataclass(cls, kvs, infer_missing)
-        if meta := kvs.get("_source_metadata"):
-            setattr(doc, "_source_metadata", SourceMetadata.from_dict(meta))
-        if date_processed := kvs.get("_date_processed"):
-            setattr(doc, "_date_processed", date_processed)
         return doc
 
 
@@ -567,7 +563,7 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
 
 @dataclass
 class BaseIngestDocBatch(BaseIngestDoc, BatchIngestDocJsonMixin, ABC):
-    ingest_docs: t.List[BaseSingleIngestDoc] = field(init=False, default_factory=list)
+    ingest_docs: t.List[BaseSingleIngestDoc] = field(default_factory=list)
 
     @abstractmethod
     @SourceConnectionError.wrap
