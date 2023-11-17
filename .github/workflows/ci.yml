@@ -25,6 +25,7 @@ jobs:
     - uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
+        check-only: 'true'
 
   check-deps:
     strategy:
@@ -48,19 +49,11 @@ jobs:
     needs: setup
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+    - name: Setup virtual environment
       uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
@@ -87,23 +80,14 @@ jobs:
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+    - name: Setup virtual environment
       uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
-        force-recreate: 'true'
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
@@ -131,23 +115,14 @@ jobs:
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+    - name: Setup virtual environment
       uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
-        force-recreate: 'true'
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
@@ -175,19 +150,10 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    - uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          nltk_data
-          .venv
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+    - name: Setup virtual environment
       uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
-        force-recreate: 'true'
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
@@ -271,21 +237,10 @@ jobs:
     - name: Get full Python version
       id: full-python-version
       run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
-    - uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-ingest-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}
-        # Due to the dependency on setup_ingest, the cache should exist before this is ran. Set failed if it wasn't found.
-        fail-on-cache-miss: true
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+    - name: Setup virtual environment
       uses: ./.github/actions/create-ingest-cache
       with:
         python-version: ${{ matrix.python-version }}
-        force-recreate: 'true'
     - name: Setup docker-compose
       uses: KengoTODA/actions-setup-docker-compose@v1
       with:
@@ -364,21 +319,10 @@ jobs:
     - name: Get full Python version
       id: full-python-version
       run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
-    - uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-ingest-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}
-        # Due to the dependency on setup_ingest, the cache should exist before this is ran. Set failed if it wasn't found.
-        fail-on-cache-miss: true
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+    - name: Setup virtual environment
       uses: ./.github/actions/create-ingest-cache
       with:
         python-version: ${{ matrix.python-version }}
-        force-recreate: 'true'
     - name: Setup docker-compose
       uses: KengoTODA/actions-setup-docker-compose@v1
       with:
@@ -426,19 +370,10 @@ jobs:
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+    - name: Setup virtual environment
       uses: ./.github/actions/create-cache
       with:
         python-version: ${{ matrix.python-version }}
-        force-recreate: 'true'
     - name: Set up flag for running Unstructured API unit tests
       run: |
         # NOTE: Change env `SKIP_API_UNIT_FOR_BREAKING_CHANGE` to true if there is a breaking change in Unstructured repo that will break unstructured api unit tests
@@ -496,23 +431,14 @@ jobs:
         python-version: [ "3.8","3.9","3.10","3.11" ]
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache/restore@v3
-        id: virtualenv-cache
-        with:
-          path: |
-            .venv
-            nltk_data
-          key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Setup virtual environment (no cache hit)
-        if: steps.virtualenv-cache.outputs.cache-hit != 'true'
+      - name: Setup virtual environment
         uses: ./.github/actions/create-ingest-cache
         with:
           python-version: ${{ matrix.python-version }}
-          force-recreate: 'true'
       - name: Test Dockerfile
         run: |
           source .venv/bin/activate

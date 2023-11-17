@@ -5,42 +5,33 @@ inputs:
   python-version:
     description: 'python version associated with the cache'
     required: true
-  force-recreate:
-    description: 'regardless of cache existing, recreate it'
+  check-only:
+    description: 'if set, will not restore the cache if it exists'
     default: "false"
 runs:
   using: "composite"
   steps:
-    - name: restore base cache
+    - name: Check for/restore ingest cache
       uses: actions/cache/restore@v3
-      id: virtualenv-cache
-      with:
-        path: |
-          nltk_data
-          .venv
-        key: unstructured-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Setup virtual environment (no base cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true'
-      uses: ./.github/actions/create-cache
-      with:
-        python-version: ${{ inputs.python-version }}
-        force-recreate: 'true'
-    - name: Check for ingest cache
-      uses: actions/cache@v3
       id: ingest-virtualenv-cache
       with:
         path: |
           .venv
           nltk_data
         key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}
-        lookup-only: true
+        lookup-only: ${{ inputs.check-only }}
+    - name: Restore base virtual environment
+      if: steps.ingest-virtualenv-cache.outputs.cache-hit != 'true'
+      uses: ./.github/actions/create-cache
+      with:
+        python-version: ${{ inputs.python-version }}
     - name: Set up Python ${{ inputs.python-version }}
-      if: steps.ingest-virtualenv-cache.outputs.cache-hit != 'true' || inputs.force-recreate == 'true'
+      if: steps.ingest-virtualenv-cache.outputs.cache-hit != 'true'
       uses: actions/setup-python@v4
       with:
         python-version: ${{ inputs.python-version }}
     - name: Setup virtual environment (no cache hit)
-      if: steps.ingest-virtualenv-cache.outputs.cache-hit != 'true' || inputs.force-recreate == 'true'
+      if: steps.ingest-virtualenv-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         python${{ inputs.python-version }} -m venv .venv
