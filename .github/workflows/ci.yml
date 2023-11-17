@@ -446,6 +446,8 @@ jobs:
         DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
         GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "tesseract"
         CI: "true"

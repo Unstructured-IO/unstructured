@@ -23,7 +23,7 @@ azure-datalake-store==0.0.53
     # via adlfs
 azure-identity==1.15.0
     # via adlfs
-azure-storage-blob==12.18.3
+azure-storage-blob==12.19.0
     # via adlfs
 certifi==2023.7.22
     # via

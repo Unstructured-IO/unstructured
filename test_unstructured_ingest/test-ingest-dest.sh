@@ -15,6 +15,7 @@ all_tests=(
   'delta-table.sh'
   'dropbox.sh'
   'gcs.sh'
+  'mongodb.sh'
   's3.sh'
 )
 
