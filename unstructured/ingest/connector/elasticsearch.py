@@ -118,6 +118,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 @dataclass
 class ElasticsearchIngestDocBatch(BaseIngestDocBatch):
     connector_config: SimpleElasticsearchConfig
+    ingest_docs: t.List[ElasticsearchIngestDoc] = field(default_factory=list)
     list_of_ids: t.List[str] = field(default_factory=list)
     registry_name: str = "elasticsearch_batch"
 
