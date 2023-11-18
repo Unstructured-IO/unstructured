@@ -88,11 +88,9 @@ def test_it_can_parse_a_bare_bones_table_to_an_HTMLTable_element():
     # -- An HTML representation is also available that is longer but represents table structure.
     # -- Note this is padded with undesired spaces for human-readability that doesn't matter to us.
     assert element.text_as_html == (
-        "<table>\n"
-        "<tbody>\n"
-        "<tr><td>Lorem      </td><td>Ipsum               </td></tr>\n"
-        "<tr><td>Ut enim non</td><td>ad minim\nveniam quis</td></tr>\n"
-        "</tbody>\n"
+        "<table>"
+        "<tr><td>Lorem</td><td>Ipsum</td></tr>"
+        "<tr><td>Ut enim non</td><td>ad minim<br/>veniam quis</td></tr>"
         "</table>"
     )
 
@@ -127,13 +125,11 @@ def test_it_accommodates_column_heading_cells_enclosed_in_thead_tbody_and_tfoot_
     (element,) = html_document.elements
     assert isinstance(element, HTMLTable)
     assert element.text_as_html == (
-        "<table>\n"
-        "<tbody>\n"
-        "<tr><td>Lorem      </td><td>Ipsum               </td></tr>\n"
-        "<tr><td>Lorem ipsum</td><td>dolor sit amet nulla</td></tr>\n"
-        "<tr><td>Ut enim non</td><td>ad minim\nveniam quis</td></tr>\n"
-        "<tr><td>Dolor      </td><td>Equis               </td></tr>\n"
-        "</tbody>\n"
+        "<table>"
+        "<tr><td>Lorem</td><td>Ipsum</td></tr>"
+        "<tr><td>Lorem ipsum</td><td>dolor sit amet nulla</td></tr>"
+        "<tr><td>Ut enim non</td><td>ad minim<br/>veniam quis</td></tr>"
+        "<tr><td>Dolor</td><td>Equis</td></tr>"
         "</table>"
     )
 

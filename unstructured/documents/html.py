@@ -11,7 +11,6 @@ else:
     from typing import Final
 
 from lxml import etree
-from tabulate import tabulate
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.base import Page
@@ -36,6 +35,7 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
+from unstructured.utils import htmlify_matrix_of_cell_texts
 
 TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]
@@ -344,7 +344,7 @@ def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Ele
         return None
 
     table_data = [[str(text) for text in tr.itertext()] for tr in trs]
-    html_table = tabulate(table_data, tablefmt="html")
+    html_table = htmlify_matrix_of_cell_texts(table_data)
     table_text = " ".join(" ".join(row) for row in table_data).strip()
 
     if table_text == "":
