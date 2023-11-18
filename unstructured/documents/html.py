@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import sys
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, cast
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -327,24 +327,23 @@ def _is_bulleted_table(table_elem: etree._Element) -> bool:
     return True
 
 
-def _parse_HTMLTable_from_table_elem(tbl_elem: etree._Element) -> Optional[Element]:
+def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Element]:
     """Form `HTMLTable` element from `tbl_elem`."""
-    if tbl_elem.tag != "table":
+    if table_elem.tag != "table":
         return None
 
-    # -- NOTE that this algorithm handles a nested-table by parse all of its text into the text
+    # -- NOTE that this algorithm handles a nested-table by parsing all of its text into the text
     # -- for the _cell_ containing the table (and this is recursive, so a table nested within a
     # -- cell within the table within the cell too.)
 
-    rows = tbl_elem.findall("tr")
-    if not rows:
-        body = tbl_elem.find("tbody")
-        rows = body.findall("tr") if body is not None else []
+    trs = cast(
+        List[etree._Element], table_elem.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr")
+    )
 
-    if not rows:
+    if not trs:
         return None
 
-    table_data = [[str(text) for text in row.itertext()] for row in rows]
+    table_data = [[str(text) for text in tr.itertext()] for tr in trs]
     html_table = tabulate(table_data, tablefmt="html")
     table_text = " ".join(" ".join(row) for row in table_data).strip()
 
@@ -354,8 +353,8 @@ def _parse_HTMLTable_from_table_elem(tbl_elem: etree._Element) -> Optional[Eleme
     return HTMLTable(
         text=table_text,
         text_as_html=html_table,
-        tag=tbl_elem.tag,
-        ancestortags=tuple(el.tag for el in tbl_elem.iterancestors())[::-1],
+        tag=table_elem.tag,
+        ancestortags=tuple(el.tag for el in table_elem.iterancestors())[::-1],
     )
 
 

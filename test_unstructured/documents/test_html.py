@@ -97,6 +97,47 @@ def test_it_can_parse_a_bare_bones_table_to_an_HTMLTable_element():
     )
 
 
+def test_it_accommodates_column_heading_cells_enclosed_in_thead_tbody_and_tfoot_elements():
+    """Cells within a `table/thead` element are included in the text and html.
+
+    The presence of a `<thead>` element in the original also determines whether a `<thead>` element
+    appears in `.text_as_html` or whether the first row of cells is simply in the body.
+    """
+    html_str = (
+        "<html>\n"
+        "<body>\n"
+        "  <table>\n"
+        "    <thead>\n"
+        "      <tr><th>Lorem</th><th>Ipsum</th></tr>\n"
+        "    </thead>\n"
+        "    <tbody>\n"
+        "      <tr><th>Lorem ipsum</th><td>dolor sit amet nulla</td></tr>\n"
+        "      <tr><th>Ut enim non</th><td>ad minim\nveniam quis</td></tr>\n"
+        "    </tbody>\n"
+        "    <tfoot>\n"
+        "      <tr><th>Dolor</th><td>Equis</td></tr>\n"
+        "    </tfoot>\n"
+        "  </table>\n"
+        "</body>\n"
+        "</html>"
+    )
+
+    html_document = HTMLDocument.from_string(html_str)
+
+    (element,) = html_document.elements
+    assert isinstance(element, HTMLTable)
+    assert element.text_as_html == (
+        "<table>\n"
+        "<tbody>\n"
+        "<tr><td>Lorem      </td><td>Ipsum               </td></tr>\n"
+        "<tr><td>Lorem ipsum</td><td>dolor sit amet nulla</td></tr>\n"
+        "<tr><td>Ut enim non</td><td>ad minim\nveniam quis</td></tr>\n"
+        "<tr><td>Dolor      </td><td>Equis               </td></tr>\n"
+        "</tbody>\n"
+        "</table>"
+    )
+
+
 def test_it_does_not_emit_an_HTMLTable_element_for_a_table_with_no_text():
     html_str = (
         "<html>\n"
