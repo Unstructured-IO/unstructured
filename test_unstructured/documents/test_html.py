@@ -64,6 +64,23 @@ EXCLUDED_TAGS = [
 # -- table-extraction behaviors ------------------------------------------------------------------
 
 
+def test_it_does_not_emit_an_HTMLTable_element_for_a_table_with_no_text():
+    html_str = (
+        "<html>\n"
+        "<body>\n"
+        "  <table>\n"
+        "    <tr><td> </td><td> </td></tr>\n"
+        "    <tr><td> </td><td> </td></tr>\n"
+        "  </table>\n"
+        "</body>\n"
+        "</html>"
+    )
+
+    html_document = HTMLDocument.from_string(html_str)
+
+    assert html_document.elements == []
+
+
 def test_it_does_not_consider_an_empty_table_a_bulleted_text_table():
     html_str = (
         "<html>\n"

@@ -209,9 +209,10 @@ class HTMLDocument(XMLDocument):
                         )
 
                 elif tag_elem.tag in TABLE_TAGS:
-                    element = _process_leaf_table_item(tag_elem)
+                    element = _parse_HTMLTable_from_table_elem(tag_elem)
                     if element is not None:
                         page.elements.append(element)
+                    if element or tag_elem.tag == "table":
                         descendanttag_elems = tuple(tag_elem.iterdescendants())
 
                 elif tag_elem.tag in PAGEBREAK_TAGS and len(page.elements) > 0:
@@ -324,6 +325,41 @@ def _is_bulleted_table(table_elem: etree._Element) -> bool:
         return False
 
     return True
+
+
+def _parse_HTMLTable_from_table_elem(tbl_elem: etree._Element) -> Optional[Element]:
+    """Form `HTMLTable` element from `tbl_elem`."""
+    if tbl_elem.tag != "table":
+        return None
+
+    # -- NOTE that this algorithm handles a nested-table by parse all of its text into the text
+    # -- for the _cell_ containing the table (and this is recursive, so a table nested within a
+    # -- cell within the table within the cell too.)
+
+    rows = tbl_elem.findall("tr")
+    if not rows:
+        body = tbl_elem.find("tbody")
+        rows = body.findall("tr") if body is not None else []
+
+    if not rows:
+        return None
+
+    table_data = [[str(text) for text in row.itertext()] for row in rows]
+    html_table = tabulate(table_data, tablefmt="html")
+    table_text = " ".join(" ".join(row) for row in table_data).strip()
+
+    # TODO: this branch is the one responsible for returning empty (and therefore unparseable) table
+    # document elements. This should return `None` instead. Better, make this a zero-or-one
+    # generator function.
+    if table_text == "":
+        return None
+
+    return HTMLTable(
+        text=table_text,
+        text_as_html=html_table.replace("\n", "<br>"),
+        tag=tbl_elem.tag,
+        ancestortags=tuple(el.tag for el in tbl_elem.iterancestors())[::-1],
+    )
 
 
 def _get_emphasized_texts_from_tag(tag_elem: etree._Element) -> List[Dict[str, str]]:
@@ -545,54 +581,6 @@ def _is_text_tag(tag_elem: etree._Element, max_predecessor_len: int = 5) -> bool
         return True
 
     return False
-
-
-def _process_leaf_table_item(tbl_elem: etree._Element) -> Optional[Element]:
-    """Form `HTMLTable` element from `tbl_elem`."""
-    # -- Note this function theoretically _can_ be called with any element in TABLE_TAGS, but never
-    # -- actually _will_ get called with anything but a `<table>` element. Logic of that is:
-    #    - gets called for each top-level `table` element
-    #    - will never find a nested table, even if there is one
-    #    - therefore will not return None
-    #    - therefore all its descendents will be marked visited and loop will not descend further
-    #      into the table element.
-    if tbl_elem.tag not in TABLE_TAGS:
-        return None
-
-    # -- ALSO NOTE that this algorithm will parse all the text within a nested table into the text
-    # -- for the _cell_ the table is nested in (and this is recursive, so a table nested within a
-    # -- cell within the table within the cell too.)
-
-    # TODO: this is not going to find nested tables, it will only find a `<table>` element that is
-    # a (direct) child of the current element. and a nested table is only ever a child of a `<td>`
-    # element. FURTHER, we have no good reason to detect and/or skip nested tables because they are
-    # already being parsed.
-    nested_table = tbl_elem.findall("table")
-    if nested_table:
-        return None
-
-    rows = tbl_elem.findall("tr")
-    if not rows:
-        body = tbl_elem.find("tbody")
-        rows = body.findall("tr") if body is not None else []
-    if len(rows) > 0:
-        table_data = [[str(text) for text in row.itertext()] for row in rows]
-        html_table = tabulate(table_data, tablefmt="html")
-        table_text = " ".join(" ".join(row) for row in table_data).strip()
-
-    # TODO: this branch is the one responsible for returning empty (and therefore unparseable) table
-    # document elements. This should return `None` instead. Better, make this a zero-or-one
-    # generator function.
-    else:
-        table_text = ""
-        html_table = ""
-
-    return HTMLTable(
-        text=table_text,
-        text_as_html=html_table.replace("\n", "<br>"),
-        tag=tbl_elem.tag,
-        ancestortags=tuple(el.tag for el in tbl_elem.iterancestors())[::-1],
-    )
 
 
 def _process_list_item(
