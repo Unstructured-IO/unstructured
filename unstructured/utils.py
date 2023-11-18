@@ -40,7 +40,7 @@ _P = ParamSpec("_P")
 
 
 def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
-    """Form an HTML table from `M`.
+    """Form an HTML table from "rows" and "columns" of `matrix`.
 
     Character overhead is minimized:
     - No whitespace padding is added for human readability

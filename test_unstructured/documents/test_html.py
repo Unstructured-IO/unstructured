@@ -171,6 +171,47 @@ def test_it_does_not_consider_an_empty_table_a_bulleted_text_table():
     assert html._is_bulleted_table(table) is False
 
 
+def test_it_provides_parseable_HTML_in_text_as_html():
+    html_str = (
+        "<html>\n"
+        "<body>\n"
+        "  <table>\n"
+        "    <thead>\n"
+        "      <tr><th>Lorem</th><th>Ipsum</th></tr>\n"
+        "    </thead>\n"
+        "    <tbody>\n"
+        "      <tr><th>Lorem ipsum</th><td>dolor sit amet nulla</td></tr>\n"
+        "      <tr><th>Ut enim non</th><td>ad minim\nveniam quis</td></tr>\n"
+        "    </tbody>\n"
+        "    <tfoot>\n"
+        "      <tr><th>Dolor</th><td>Equis</td></tr>\n"
+        "    </tfoot>\n"
+        "  </table>\n"
+        "</body>\n"
+        "</html>"
+    )
+    html_document = HTMLDocument.from_string(html_str)
+    (element,) = html_document.elements
+    assert isinstance(element, HTMLTable)
+    text_as_html = element.text_as_html
+    assert text_as_html is not None
+
+    html = etree.fromstring(text_as_html, etree.HTMLParser())
+
+    assert html is not None
+    # -- lxml adds the <html><body> container, that's not present in `.text_as_html` --
+    assert etree.tostring(html, encoding=str) == (
+        "<html><body>"
+        "<table>"
+        "<tr><td>Lorem</td><td>Ipsum</td></tr>"
+        "<tr><td>Lorem ipsum</td><td>dolor sit amet nulla</td></tr>"
+        "<tr><td>Ut enim non</td><td>ad minim<br/>veniam quis</td></tr>"
+        "<tr><td>Dolor</td><td>Equis</td></tr>"
+        "</table>"
+        "</body></html>"
+    )
+
+
 # ------------------------------------------------------------------------------------------------
 
 
