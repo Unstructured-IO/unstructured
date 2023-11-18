@@ -1,4 +1,4 @@
-## 0.11.0-dev4
+## 0.11.0-dev6
 
 ### Enhancements
 
@@ -13,10 +13,11 @@
 
 ### Fixes
 
+* **Fix `TYPE_TO_TEXT_ELEMENT_MAP`** Updated `Figure` mapping from `FigureCaption` to `Image`.
 * **Handle errors when extracting PDF text** Certain pdfs throw unexpected errors when being opened by `pdfminer`, causing `partition_pdf()` to fail. We expect to be able to partition smoothly using an alternative strategy if text extraction doesn't work.  Added exception handling to handle unexpected errors when extracting pdf text and to help determine pdf strategy.
 * **Fix `fast` strategy fall back to `ocr_only`** The `fast` strategy should not fall back to a more expensive strategy.
 * **Remove default user ./ssh folder** The default notebook user during image build would create the known_hosts file with incorrect ownership, this is legacy and no longer needed so it was removed.
-* **Include `languages` in metadata when partitioning strategy='hi_res' or 'fast'** User defined `languages` was previously used for text detection, but not included in the resulting element metadata for some strategies. `languages` will now be included in the metadata regardless of partition strategy for pdfs and images.
+* **Include `languages` in metadata when partitioning `strategy=hi_res` or `fast`** User defined `languages` was previously used for text detection, but not included in the resulting element metadata for some strategies. `languages` will now be included in the metadata regardless of partition strategy for pdfs and images.
 * **Handle a case where Paddle returns a list item in ocr_data as None** In partition, while parsing PaddleOCR data, it was assumed that PaddleOCR does not return None for any list item in ocr_data. Removed the assumption by skipping the text region whenever this happens.
 * **Fix some pdfs returning `KeyError: 'N'`** Certain pdfs were throwing this error when being opened by pdfminer. Added a wrapper function for pdfminer that allows these documents to be partitioned.
 * **Fix mis-splits on `Table` chunks.** Remedies repeated appearance of full `.text_as_html` on metadata of each `TableChunk` split from a `Table` element too large to fit in the chunking window.
