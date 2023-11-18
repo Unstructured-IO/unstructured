@@ -27,8 +27,7 @@ function cleanup() {
 trap cleanup EXIT
 
 echo "running check diff"
-echo "$TMP_METRICS_LATEST_RUN_DIR"
-echo "$METRICS_DIR"
+echo "$OVERWRITE_FIXTURES"
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [ "$OVERWRITE_FIXTURES" != "false" ]; then
