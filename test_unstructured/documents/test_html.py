@@ -32,21 +32,26 @@ from unstructured.documents.html import (
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
 TAGS = (
-    "<a><abbr><acronym><address><applet><area><article><aside><audio><b><base><basefont><bdi>"
-    "<bdo><big><blockquote><body><br><button><canvas><caption><center><cite><code><col>"
-    "<colgroup><data><datalist><dd><del><details><dfn><dialog><dir><div><dl><dt><em><embed>"
-    "<fieldset><figcaption><figure><font><footer><form><frame><frameset><h1><h2><h3><h4><h5><h6>"
-    "<head><header><hr><html><i><iframe><img><input><ins><kbd><label><legend><li><link><main>"
-    "<map><mark><meta><meter><nav><noframes><noscript><object><ol><optgroup><option><output><p>"
-    "<param><picture><pre><progress><q><rp><rt><ruby><s><samp><script><section><select><small>"
-    "<source><span><strike><strong><style><sub><summary><sup><table><tbody><td><template>"
-    "<textarea><tfoot><th><thead><time><title><tr><track><tt><u><ul><var><video><wbr>"
+    (
+        "<a><abbr><acronym><address><applet><area><article><aside><audio><b><base><basefont><bdi>"
+        "<bdo><big><blockquote><body><br><button><canvas><caption><center><cite><code><col>"
+        "<colgroup><data><datalist><dd><del><details><dfn><dialog><dir><div><dl><dt><em><embed>"
+        "<fieldset><figcaption><figure><font><footer><form><frame><frameset><h1><h2><h3><h4><h5>"
+        "<h6><head><header><hr><html><i><iframe><img><input><ins><kbd><label><legend><li><link>"
+        "<main><map><mark><meta><meter><nav><noframes><noscript><object><ol><optgroup><option>"
+        "<output><p><param><picture><pre><progress><q><rp><rt><ruby><s><samp><script><section>"
+        "<select><small><source><span><strike><strong><style><sub><summary><sup><table><tbody><td>"
+        "<template><textarea><tfoot><th><thead><time><title><tr><track><tt><u><ul><var><video><wbr>"
+    )
+    .replace(">", "")
+    .split("<")[1:]
 )
 
-TAGS = TAGS.replace(">", "").split("<")[1:]
-
-VOID_TAGS = "<area><base><br><col><embed><hr><img><input><link><meta><param><source><track><wbr>"
-VOID_TAGS = VOID_TAGS.replace(">", "").split("<")[1:]
+VOID_TAGS = (
+    ("<area><base><br><col><embed><hr><img><input><link><meta><param><source><track><wbr>")
+    .replace(">", "")
+    .split("<")[1:]
+)
 
 INCLUDED_TAGS = TEXT_TAGS + HEADING_TAGS + LIST_ITEM_TAGS + SECTION_TAGS
 EXCLUDED_TAGS = [
@@ -56,23 +61,10 @@ EXCLUDED_TAGS = [
 ]
 
 
-@pytest.fixture()
-def sample_doc():
-    table_element = HTMLTitle(
-        "I'm a title in a table.",
-        tag="p",
-        ancestortags=("table", "tbody", "tr", "td"),
-    )
-    narrative = HTMLNarrativeText("I'm some narrative text", tag="p", ancestortags=())
-    page1 = Page(0)
-    page1.elements = [table_element, narrative]
-    header = HTMLTitle("I'm a header", tag="header", ancestortags=())
-    body = HTMLNarrativeText("Body text", tag="p", ancestortags=())
-    footer = HTMLTitle("I'm a footer", tag="footer", ancestortags=())
-    page2 = Page(1)
-    page2.elements = [header, body, footer]
-    doc = HTMLDocument.from_pages([page1, page2])
-    return doc
+# -- table-extraction behaviors ------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------------------------
 
 
 def test_parses_tags_correctly():
@@ -196,7 +188,6 @@ def test_parse_nothing():
 def test_read_with_existing_pages():
     page = Page(number=0)
     html_document = HTMLDocument.from_pages([page])
-    html_document._read()
     assert html_document.pages == [page]
 
 
@@ -547,7 +538,6 @@ def test_containers_with_text_are_processed():
    </div>
 </div>"""
     html_document = HTMLDocument.from_string(html_str)
-    html_document._read()
 
     assert html_document.elements == [
         Text(text="Hi All,"),
@@ -570,7 +560,6 @@ def test_html_grabs_bulleted_text_in_tags():
     </body>
 </html>"""
     html_document = HTMLDocument.from_string(html_str)
-    html_document._read()
 
     assert html_document.elements == [
         ListItem(text="Happy Groundhog's day!"),
@@ -590,7 +579,6 @@ def test_html_grabs_bulleted_text_in_paras():
     </body>
 </html>"""
     html_document = HTMLDocument.from_string(html_str)
-    html_document._read()
 
     assert html_document.elements == [
         ListItem(text="Happy Groundhog's day!"),
@@ -642,7 +630,6 @@ def test_html_grabs_bulleted_text_in_tables():
     </body>
 </html>"""
     html_document = HTMLDocument.from_string(html_str)
-    html_document._read()
 
     assert html_document.elements == [
         ListItem(text="Happy Groundhog's day!"),
@@ -727,3 +714,25 @@ def test_line_break_in_text_tag(tag):
     doc = HTMLDocument.from_string(raw_html)
     assert doc.elements[0].text == "Hello"
     assert doc.elements[1].text == "World"
+
+
+# -- module-level fixtures -----------------------------------------------------------------------
+
+
+@pytest.fixture()
+def sample_doc():
+    table_element = HTMLTitle(
+        "I'm a title in a table.",
+        tag="p",
+        ancestortags=("table", "tbody", "tr", "td"),
+    )
+    narrative = HTMLNarrativeText("I'm some narrative text", tag="p", ancestortags=())
+    page1 = Page(0)
+    page1.elements = [table_element, narrative]
+    header = HTMLTitle("I'm a header", tag="header", ancestortags=())
+    body = HTMLNarrativeText("Body text", tag="p", ancestortags=())
+    footer = HTMLTitle("I'm a footer", tag="footer", ancestortags=())
+    page2 = Page(1)
+    page2.elements = [header, body, footer]
+    doc = HTMLDocument.from_pages([page1, page2])
+    return doc

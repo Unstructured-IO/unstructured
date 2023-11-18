@@ -138,7 +138,7 @@ class HTMLDocument(XMLDocument):
         self.assembled_articles = assemble_articles
         super().__init__(stylesheet=stylesheet, parser=parser)
 
-    def _read(self) -> List[Page]:
+    def _parse_pages_from_element_tree(self) -> List[Page]:
         """Parse HTML elements into pages.
 
         A *page* is a subsequence of the document-elements parsed from the HTML document
