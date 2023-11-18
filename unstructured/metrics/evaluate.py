@@ -4,7 +4,7 @@ import logging
 import os
 import statistics
 import sys
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import click
 import pandas as pd
@@ -59,8 +59,6 @@ def measure_text_edit_distance(
         sys.exit(0)
 
     rows = []
-    accuracy_scores: List[float] = []
-    percent_missing_scores: List[float] = []
 
     # assumption: output file name convention is name-of-file.doc.json
     for doc in output_list:  # type: ignore
@@ -83,22 +81,24 @@ def measure_text_edit_distance(
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
 
             rows.append([filename, doctype, connector, accuracy, percent_missing])
-            accuracy_scores.append(accuracy)
-            percent_missing_scores.append(percent_missing)
 
     headers = ["filename", "doctype", "connector", "cct-accuracy", "cct-%missing"]
     df = pd.DataFrame(rows, columns=headers)
     export_filename = "all-docs-cct"
 
+    acc = df[["cct-accuracy"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
+    miss = df[["cct-%missing"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
+    agg_df = pd.concat((acc, miss)).reset_index()
+    agg_df.columns = agg_headers
+
     if grouping:
         if grouping in ["doctype", "connector"]:
             grouped_acc = (
-                df.groupby("doctype")
-                .agg({"cct-accuracy": [_mean, _stdev, "count"]})
-                .rename(columns={"_mean": "mean", "_stdev": "stdev"})
+                df.groupby(grouping).agg({"cct-accuracy": [_mean, _stdev, "count"]})
+                # .rename(columns={"_mean": "mean", "_stdev": "stdev"})
             )
             grouped_miss = (
-                df.groupby("doctype")
+                df.groupby(grouping)
                 .agg({"cct-%missing": [_mean, _stdev, "count"]})
                 .rename(columns={"_mean": "mean", "_stdev": "stdev"})
             )
@@ -108,13 +108,8 @@ def measure_text_edit_distance(
             print("No field to group by. Returning a non-group evaluation.")
 
     _write_to_file(export_dir, f"{export_filename}.tsv", df)
-
-    acc = df[["cct-accuracy"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
-    miss = df[["cct-%missing"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
-    agg_df = pd.concat(acc, miss)
-    agg_df.columns = agg_headers
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
-    _display(agg_df, agg_headers)
+    _display(agg_df)
 
 
 def measure_element_type_accuracy(
@@ -153,12 +148,12 @@ def measure_element_type_accuracy(
 
     headers = ["filename", "doctype", "connector", "element-type-accuracy"]
     df = pd.DataFrame(rows, columns=headers)
-    _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
-
     agg_df = df[["element-type-accuracy"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
     agg_df.columns = agg_headers
+
+    _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
-    _display(agg_df, agg_headers)
+    _display(agg_df)
 
 
 def _listdir_recursive(dir: str):
@@ -175,7 +170,7 @@ def _listdir_recursive(dir: str):
 
 
 def _format_grouping_output(*df):
-    return pd.concat((df), axis=1).reset_index()
+    return pd.concat(df, axis=1).reset_index()
 
 
 def _display(df):
@@ -205,19 +200,19 @@ def _write_to_file(dir: str, filename: str, df: pd.DataFrame, mode: str = "w"):
     df.to_csv(os.path.join(dir, filename), sep="\t", mode=mode, index=False, header=(mode == "w"))
 
 
-def _mean(scores: List[float], rounding: Optional[int] = 3):
-    if len(scores) < 1:
+def _mean(scores: Union[pd.Series, List[float]], rounding: Optional[int] = 3):
+    if len(scores) == 0:
         return None
-    elif len(scores) == 1:
-        mean = scores[0]
-    else:
-        mean = statistics.mean(scores)
+    mean = statistics.mean(scores)
     if not rounding:
         return mean
     return round(mean, rounding)
 
 
-def _stdev(scores: List[float], rounding: Optional[int] = 3):
+def _stdev(scores: List[Optional[float]], rounding: Optional[int] = 3):
+    # Filter out None values
+    scores = [score for score in scores if score is not None]
+    # Proceed only if there are more than one value
     if len(scores) <= 1:
         return None
     if not rounding:
@@ -225,7 +220,8 @@ def _stdev(scores: List[float], rounding: Optional[int] = 3):
     return round(statistics.stdev(scores), rounding)
 
 
-def _pstdev(scores: List[float], rounding: Optional[int] = 3):
+def _pstdev(scores: List[Optional[float]], rounding: Optional[int] = 3):
+    scores = [score for score in scores if score is not None]
     if len(scores) <= 1:
         return None
     if not rounding:
