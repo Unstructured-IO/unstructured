@@ -95,7 +95,9 @@ def measure_text_edit_distance(
     if grouping:
         if grouping in ["doctype", "connector"]:
             grouped_acc = (
-                df.groupby(grouping).agg({"cct-accuracy": [_mean, _stdev, "count"]}).rename(columns={"_mean": "mean", "_stdev": "stdev"})
+                df.groupby(grouping)
+                .agg({"cct-accuracy": [_mean, _stdev, "count"]})
+                .rename(columns={"_mean": "mean", "_stdev": "stdev"})
             )
             grouped_miss = (
                 df.groupby(grouping)
@@ -152,7 +154,7 @@ def measure_element_type_accuracy(
     agg_df.columns = agg_df.columns.droplevel()
     agg_df.insert(loc=0, column="metric", value=agg_df.columns.get_level_values(0)[0])
     agg_df.columns = agg_headers
-    
+
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
     _display(agg_df)
