@@ -59,6 +59,7 @@ def measure_text_edit_distance(
         sys.exit(0)
 
     rows = []
+    breakpoint()
 
     # assumption: output file name convention is name-of-file.doc.json
     for doc in output_list:  # type: ignore
@@ -94,8 +95,7 @@ def measure_text_edit_distance(
     if grouping:
         if grouping in ["doctype", "connector"]:
             grouped_acc = (
-                df.groupby(grouping).agg({"cct-accuracy": [_mean, _stdev, "count"]})
-                # .rename(columns={"_mean": "mean", "_stdev": "stdev"})
+                df.groupby(grouping).agg({"cct-accuracy": [_mean, _stdev, "count"]}).rename(columns={"_mean": "mean", "_stdev": "stdev"})
             )
             grouped_miss = (
                 df.groupby(grouping)
@@ -133,24 +133,26 @@ def measure_element_type_accuracy(
         source_list = _listdir_recursive(source_dir)
 
     rows = []
-    accuracy_scores: List[float] = []
 
     for doc in output_list:  # type: ignore
-        fn = (doc.split("/")[-1]).split(".json")[0]
-        doctype = fn.rsplit(".", 1)[-1]
+        filename = (doc.split("/")[-1]).split(".json")[0]
+        doctype = filename.rsplit(".", 1)[-1]
+        fn_json = filename + ".json"
         connector = doc.split("/")[0]
-        if doc in source_list:  # type: ignore
+        if fn_json in source_list:  # type: ignore
             output = get_element_type_frequency(_read_text(os.path.join(output_dir, doc)))
             source = get_element_type_frequency(_read_text(os.path.join(source_dir, doc)))
             accuracy = round(calculate_element_type_percent_match(output, source), 3)
-            rows.append([fn, doctype, connector, accuracy])
-            accuracy_scores.append(accuracy)
+            rows.append([filename, doctype, connector, accuracy])
 
     headers = ["filename", "doctype", "connector", "element-type-accuracy"]
     df = pd.DataFrame(rows, columns=headers)
-    agg_df = df[["element-type-accuracy"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
+    df["dummy"] = 1
+    agg_df = df.groupby("dummy").agg({"element-type-accuracy": [_mean, _stdev, _pstdev, "count"]})
+    agg_df.columns = agg_df.columns.droplevel()
+    agg_df.insert(loc=0, column="metric", value=agg_df.columns.get_level_values(0)[0])
     agg_df.columns = agg_headers
-
+    
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
     _display(agg_df)
@@ -174,6 +176,8 @@ def _format_grouping_output(*df):
 
 
 def _display(df):
+    if len(df) == 0:
+        return
     headers = df.columns.tolist()
     col_widths = [
         max(len(header), max(len(str(item)) for item in df[header])) for header in headers

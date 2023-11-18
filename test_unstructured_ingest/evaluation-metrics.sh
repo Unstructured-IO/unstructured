@@ -8,7 +8,7 @@ cd "$SCRIPT_DIR"/.. || exit 1
 # List all structured outputs to use in this evaluation
 OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output-eval
-mkdir -p "$OUTPUT_DIR"
+# mkdir -p "$OUTPUT_DIR"
 
 EVAL_NAME="$1"
 
