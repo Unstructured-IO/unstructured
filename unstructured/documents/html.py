@@ -303,6 +303,29 @@ def _get_links_from_tag(tag_elem: etree._Element) -> List[Link]:
     return links
 
 
+def _is_bulleted_table(table_elem: etree._Element) -> bool:
+    """True when all text in `table_elem` is bulleted text.
+
+    A table-row containing no text is not considered, but at least one bulleted-text item must be
+    present. A table with no text in any row is not a bulleted table.
+    """
+    if table_elem.tag != "table":
+        return False
+
+    trs = table_elem.findall(".//tr")
+    tr_texts = [_construct_text(tr) for tr in trs]
+
+    # -- a table with no text is not a bulleted table --
+    if all(not text for text in tr_texts):
+        return False
+
+    # -- all non-empty rows must contain bulleted text --
+    if any(text and not is_bulleted_text(text) for text in tr_texts):
+        return False
+
+    return True
+
+
 def _get_emphasized_texts_from_tag(tag_elem: etree._Element) -> List[Dict[str, str]]:
     """Emphasized text within and below `tag_element`.
 
@@ -648,20 +671,6 @@ def _bulleted_text_from_table(table: etree._Element) -> List[Element]:
         if is_bulleted_text(text):
             bulleted_text.append(HTMLListItem(text=clean_bullets(text), tag=row.tag))
     return bulleted_text
-
-
-def _is_bulleted_table(table_elem: etree._Element) -> bool:
-    """True when `<table>` element `tag_elem` contains bulleted text."""
-    if table_elem.tag != "table":
-        return False
-
-    rows = table_elem.findall(".//tr")
-    for row in rows:
-        text = _construct_text(row)
-        if text and not is_bulleted_text(text):
-            return False
-
-    return True
 
 
 def _has_adjacent_bulleted_spans(tag_elem: etree._Element, children: List[etree._Element]) -> bool:
