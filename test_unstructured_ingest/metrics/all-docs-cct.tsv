@@ -14,4 +14,3 @@ layout-parser-paper.pdf	pdf	local-single-file-with-pdf-infer-table-structure	0.9
 layout-parser-paper-with-table.jpg	jpg	local-single-file-with-pdf-infer-table-structure	0.716	0.032
 2023-Jan-economic-outlook.pdf	pdf	s3	0.846	0.039
 recalibrating-risk-report.pdf	pdf	s3	0.973	0.007
-Silent-Giant-(1).pdf	pdf	s3	0.936	0.013
