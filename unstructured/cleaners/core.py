@@ -258,7 +258,7 @@ def auto_paragraph_grouper(
 # TODO(robinson) - There's likely a cleaner was to accomplish this and get all of the
 # unicode characters instead of just the quotes. Doing this for now since quotes are
 # an issue that are popping up in the SEC filings tests
-def replace_unicode_quotes(text) -> str:
+def replace_unicode_quotes(text: str) -> str:
     """Replaces unicode bullets in text with the expected character
 
     Example

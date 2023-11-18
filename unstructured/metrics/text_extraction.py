@@ -33,7 +33,7 @@ def calculate_edit_distance(
             for insertion, deletion, and substitution operations in the edit
             distance calculation. Default is (2, 1, 1).
         return_as (str, optional): The type of result to return, one of
-            ["score",, "distance"].
+            ["score", "distance"].
             Default is "distance".
 
     Returns:

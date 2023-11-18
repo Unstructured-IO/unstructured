@@ -1,5 +1,8 @@
+# pyright: reportPrivateUsage=false
+
 import os
 import pathlib
+from typing import Dict, List
 
 import pytest
 from lxml import etree
@@ -169,13 +172,16 @@ def test_construct_text(doc, expected):
             [{"text": "A lone strong text!", "tag": "strong"}],
         ),
         ("<span>I have a</span> tail", "span", [{"text": "I have a", "tag": "span"}]),
-        ("<span>Empty result</span> ", "p", []),
+        ("<p>Text with no emphasized runs</p> ", "p", []),
     ],
 )
-def test_get_emphasized_texts_from_tag(doc, expected, root):
+def test_get_emphasized_texts_from_tag(doc: str, root: str, expected: List[Dict[str, str]]):
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(f".//{root}")
+    assert el is not None
+
     emphasized_texts = html._get_emphasized_texts_from_tag(el)
+
     assert emphasized_texts == expected
 
 
