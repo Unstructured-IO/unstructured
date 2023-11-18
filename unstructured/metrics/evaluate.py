@@ -1,11 +1,10 @@
 #! /usr/bin/env python3
 
-import csv
 import logging
 import os
 import statistics
 import sys
-from typing import Any, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 import click
 import pandas as pd
@@ -30,7 +29,7 @@ if "ingest_log_handler" not in [h.name for h in logger.handlers]:
 logger.setLevel(logging.DEBUG)
 
 
-agg_headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
+agg_headers = ["metric", "average", "sample_sd", "population_sd", "count"]
 
 
 def measure_text_edit_distance(
@@ -65,13 +64,12 @@ def measure_text_edit_distance(
 
     # assumption: output file name convention is name-of-file.doc.json
     for doc in output_list:  # type: ignore
-
         filename = (doc.split("/")[-1]).split(".json")[0]
         doctype = filename.rsplit(".", 1)[-1]
         fn_txt = filename + ".txt"
         connector = doc.split("/")[0]
 
-        # not all odetta cct files follow the same naming convention; 
+        # not all odetta cct files follow the same naming convention;
         # some exclude the original filetype from the name
         if fn_txt not in source_list:
             fn = filename.rsplit(".", 1)[0]
@@ -87,40 +85,36 @@ def measure_text_edit_distance(
             rows.append([filename, doctype, connector, accuracy, percent_missing])
             accuracy_scores.append(accuracy)
             percent_missing_scores.append(percent_missing)
-    
+
     headers = ["filename", "doctype", "connector", "cct-accuracy", "cct-%missing"]
     df = pd.DataFrame(rows, columns=headers)
+    export_filename = "all-docs-cct"
 
     if grouping:
         if grouping in ["doctype", "connector"]:
-            grouped_acc = df.groupby("doctype", as_index=False).agg({"cct-accuracy": [_mean, _stdev, "count"]})
-            grouped_miss = df.groupby("doctype", as_index=False).agg({"cct-%missing": [_mean, _stdev, "count"]})
+            grouped_acc = (
+                df.groupby("doctype")
+                .agg({"cct-accuracy": [_mean, _stdev, "count"]})
+                .rename(columns={"_mean": "mean", "_stdev": "stdev"})
+            )
+            grouped_miss = (
+                df.groupby("doctype")
+                .agg({"cct-%missing": [_mean, _stdev, "count"]})
+                .rename(columns={"_mean": "mean", "_stdev": "stdev"})
+            )
+            df = _format_grouping_output(grouped_acc, grouped_miss)
+            export_filename = f"all-{grouping}-agg-cct"
         else:
             print("No field to group by. Returning a non-group evaluation.")
 
-    _write_to_file(export_dir, "all-docs-cct.tsv", rows, headers)
+    _write_to_file(export_dir, f"{export_filename}.tsv", df)
 
-    agg_rows = []
-    agg_rows.append(
-        [
-            "cct-accuracy",
-            _mean(accuracy_scores),
-            _stdev(accuracy_scores),
-            _pstdev(accuracy_scores),
-            len(accuracy_scores),
-        ],
-    )
-    agg_rows.append(
-        [
-            "cct-%missing",
-            _mean(percent_missing_scores),
-            _stdev(percent_missing_scores),
-            _pstdev(percent_missing_scores),
-            len(percent_missing_scores),
-        ],
-    )
-    _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_rows, agg_headers)
-    _display(agg_rows, agg_headers)
+    acc = df[["cct-accuracy"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
+    miss = df[["cct-%missing"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
+    agg_df = pd.concat(acc, miss)
+    agg_df.columns = agg_headers
+    _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
+    _display(agg_df, agg_headers)
 
 
 def measure_element_type_accuracy(
@@ -158,20 +152,13 @@ def measure_element_type_accuracy(
             accuracy_scores.append(accuracy)
 
     headers = ["filename", "doctype", "connector", "element-type-accuracy"]
-    _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", rows, headers)
+    df = pd.DataFrame(rows, columns=headers)
+    _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
 
-    agg_rows = []
-    agg_rows.append(
-        [
-            "element-type-accuracy",
-            _mean(accuracy_scores),
-            _stdev(accuracy_scores),
-            _pstdev(accuracy_scores),
-            len(accuracy_scores),
-        ],
-    )
-    _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_rows, agg_headers)
-    _display(agg_rows, agg_headers)
+    agg_df = df[["element-type-accuracy"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
+    agg_df.columns = agg_headers
+    _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
+    _display(agg_df, agg_headers)
 
 
 def _listdir_recursive(dir: str):
@@ -187,13 +174,18 @@ def _listdir_recursive(dir: str):
     return listdir
 
 
-def _display(rows, headers):
+def _format_grouping_output(*df):
+    return pd.concat((df), axis=1).reset_index()
+
+
+def _display(df):
+    headers = df.columns.tolist()
     col_widths = [
-        max(len(headers[i]), max(len(str(row[i])) for row in rows)) for i in range(len(headers))
+        max(len(header), max(len(str(item)) for item in df[header])) for header in headers
     ]
-    click.echo(" ".join(headers[i].ljust(col_widths[i]) for i in range(len(headers))))
+    click.echo(" ".join(header.ljust(col_widths[i]) for i, header in enumerate(headers)))
     click.echo("-" * sum(col_widths) + "-" * (len(headers) - 1))
-    for row in rows:
+    for _, row in df.iterrows():
         formatted_row = []
         for item in row:
             if isinstance(item, float):
@@ -205,16 +197,12 @@ def _display(rows, headers):
         )
 
 
-def _write_to_file(dir: str, filename: str, rows: List[Any], headers: List[Any], mode: str = "w"):
+def _write_to_file(dir: str, filename: str, df: pd.DataFrame, mode: str = "w"):
     if mode not in ["w", "a"]:
         raise ValueError("Mode not supported. Mode must be one of [w, a].")
     if dir and not os.path.exists(dir):
         os.makedirs(dir)
-    with open(os.path.join(os.path.join(dir, filename)), mode, newline="") as tsv:
-        writer = csv.writer(tsv, delimiter="\t")
-        if mode == "w":
-            writer.writerow(headers)
-        writer.writerows(rows)
+    df.to_csv(os.path.join(dir, filename), sep="\t", mode=mode, index=False, header=(mode == "w"))
 
 
 def _mean(scores: List[float], rounding: Optional[int] = 3):
