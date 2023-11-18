@@ -171,7 +171,7 @@
         "eng"
       ],
       "page_number": 1,
-      "text_as_html": "<table><br><tbody><br><tr><td>Time</td><td>Item</td><td>Presenter</td><td>Notes</td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br><tr><td>    </td><td>    </td><td>         </td><td>     </td></tr><br></tbody><br></table>"
+      "text_as_html": "<table><tr><td>Time</td><td>Item</td><td>Presenter</td><td>Notes</td></tr><tr></tr><tr></tr></table>"
     },
     "text": "Time Item Presenter Notes",
     "type": "Table"
