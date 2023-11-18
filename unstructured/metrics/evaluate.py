@@ -59,7 +59,6 @@ def measure_text_edit_distance(
         sys.exit(0)
 
     rows = []
-    breakpoint()
 
     # assumption: output file name convention is name-of-file.doc.json
     for doc in output_list:  # type: ignore
