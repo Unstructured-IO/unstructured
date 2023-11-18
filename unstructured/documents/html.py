@@ -348,15 +348,12 @@ def _parse_HTMLTable_from_table_elem(tbl_elem: etree._Element) -> Optional[Eleme
     html_table = tabulate(table_data, tablefmt="html")
     table_text = " ".join(" ".join(row) for row in table_data).strip()
 
-    # TODO: this branch is the one responsible for returning empty (and therefore unparseable) table
-    # document elements. This should return `None` instead. Better, make this a zero-or-one
-    # generator function.
     if table_text == "":
         return None
 
     return HTMLTable(
         text=table_text,
-        text_as_html=html_table.replace("\n", "<br>"),
+        text_as_html=html_table,
         tag=tbl_elem.tag,
         ancestortags=tuple(el.tag for el in tbl_elem.iterancestors())[::-1],
     )

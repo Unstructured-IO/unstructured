@@ -25,6 +25,7 @@ from unstructured.documents.html import (
     TEXT_TAGS,
     HTMLDocument,
     HTMLNarrativeText,
+    HTMLTable,
     HTMLTitle,
     TagsMixin,
 )
@@ -62,6 +63,38 @@ EXCLUDED_TAGS = [
 
 
 # -- table-extraction behaviors ------------------------------------------------------------------
+
+
+def test_it_can_parse_a_bare_bones_table_to_an_HTMLTable_element():
+    """Bare-bones means no `<thead>`, `<tbody>`, or `<tfoot>` elements."""
+    html_str = (
+        "<html>\n"
+        "<body>\n"
+        "  <table>\n"
+        "    <tr><td>Lorem</td><td>Ipsum</td></tr>\n"
+        "    <tr><td>Ut enim non</td><td>ad minim\nveniam quis</td></tr>\n"
+        "  </table>\n"
+        "</body>\n"
+        "</html>"
+    )
+
+    html_document = HTMLDocument.from_string(html_str)
+
+    # -- there is exactly one element and it's an HTMLTable instance --
+    (element,) = html_document.elements
+    assert isinstance(element, HTMLTable)
+    # -- table text is joined into a single string; no row or cell boundaries are represented --
+    assert element.text == "Lorem Ipsum Ut enim non ad minim\nveniam quis"
+    # -- An HTML representation is also available that is longer but represents table structure.
+    # -- Note this is padded with undesired spaces for human-readability that doesn't matter to us.
+    assert element.text_as_html == (
+        "<table>\n"
+        "<tbody>\n"
+        "<tr><td>Lorem      </td><td>Ipsum               </td></tr>\n"
+        "<tr><td>Ut enim non</td><td>ad minim\nveniam quis</td></tr>\n"
+        "</tbody>\n"
+        "</table>"
+    )
 
 
 def test_it_does_not_emit_an_HTMLTable_element_for_a_table_with_no_text():
