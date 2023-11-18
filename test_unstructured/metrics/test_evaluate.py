@@ -37,6 +37,7 @@ def test_text_extraction_takes_list():
     assert len(lines) == len(output_list) + 1  # includes header
 
 
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_text_extraction_grouping():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
