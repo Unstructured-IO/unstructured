@@ -49,6 +49,7 @@ all_tests=(
 
 full_python_matrix_tests=(
   'sharepoint.sh'
+  'chunking.sh'
   'local.sh'
   'local-single-file.sh'
   'local-single-file-with-encoding.sh'
