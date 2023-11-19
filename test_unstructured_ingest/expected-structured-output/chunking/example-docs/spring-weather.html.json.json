@@ -52,7 +52,7 @@
   },
   {
     "type": "CompositeElement",
-    "element_id": "b4a523a3230f3ba50b4f18f2b3d9fae3",
+    "element_id": "315ea302b371cbd955e810efd7e6483c",
     "metadata": {
       "data_source": {
         "url": "example-docs/spring-weather.html.json",
@@ -65,11 +65,11 @@
       "filetype": "application/json",
       "page_number": 1
     },
-    "text": "Weather Safety                                                                                                        Air Quality                                                                            Beach Hazards                                                                            Cold                                                                            Cold Water                                                                            Drought                                                                            Floods                                                                            Fog                                                                            Heat                                                                             Hurricanes                                                                             Lightning Safety                                                                            Rip Currents                                                                            Safe Boating                                                                            Space Weather                                                                            Sun (Ultraviolet Radiation)                                                                             Thunderstorms & Tornadoes                                                                            Tornado                                                           "
+    "text": "Weather Safety                                                                                      "
   },
   {
     "type": "CompositeElement",
-    "element_id": "a79f3e1bfe43afc617248084f9b36a04",
+    "element_id": "a1a0ff4a123282cb8fc30cd094d9f260",
     "metadata": {
       "data_source": {
         "url": "example-docs/spring-weather.html.json",
@@ -82,11 +82,11 @@
       "filetype": "application/json",
       "page_number": 1
     },
-    "text": "                 Tsunami                                                                            Wildfire                                                                            Wind                                                                            Winter"
+    "text": "                  Air Quality                                                                       "
   },
   {
     "type": "CompositeElement",
-    "element_id": "45c26cf3457e6d18985a435e2c0fcc65",
+    "element_id": "d8db9ffa627a64c09bc034d11142eb40",
     "metadata": {
       "data_source": {
         "url": "example-docs/spring-weather.html.json",
@@ -99,11 +99,11 @@
       "filetype": "application/json",
       "page_number": 1
     },
-    "text": "Safety Campaigns                                                                                                        Seasonal Safety Campaigns                                                                            #SafePlaceSelfie                                                                            Deaf & Hard of Hearing                                                                            Intellectual Disabilities                                                                            Spanish-language Content                                                                            The Great Outdoors"
+    "text": "     Beach Hazards                                                                            Cold  "
   },
   {
     "type": "CompositeElement",
-    "element_id": "77f5acc603de9a165ed87a5c3fbaf14a",
+    "element_id": "cbc363bb7ab238048c0526b195263b44",
     "metadata": {
       "data_source": {
         "url": "example-docs/spring-weather.html.json",
@@ -116,11 +116,11 @@
       "filetype": "application/json",
       "page_number": 1
     },
-    "text": "Ambassador                                                                                                        About WRN Ambassadors                                                                            Become an Ambassador                                                                            Ambassadors of Excellence                                                                            People of WRN                                                                             FAQS                                                                            Tell Your Success Story                                                                             Success Stories                                                                            Tri-fold                                                                            Aviation                                                                             Current Ambassadors                                                                            Brochure                                                                            En Español"
+    "text": "                                                                          Cold Water                "
   },
   {
     "type": "CompositeElement",
-    "element_id": "8f19bcaabbd1bafa5e9826ac69766c8b",
+    "element_id": "88d348636a72f2e98afc9e9e34b89726",
     "metadata": {
       "data_source": {
         "url": "example-docs/spring-weather.html.json",
@@ -133,11 +133,11 @@
       "filetype": "application/json",
       "page_number": 1
     },
-    "text": "Education                                                                                                        NWS Education Home                                                                            Be A Force Of Nature                                                                            WRN Kids Flyer                                                                            Wireless Emergency Alerts                                                                            NOAA Weather Radio                                                                            Mobile Weather                                                                            Brochures                                                                            Hourly Weather Forecast                                                                            Citizen Science                                                                            Intellectual Disabilities"
+    "text": "                                                            Drought                                 "
   },
   {
     "type": "CompositeElement",
-    "element_id": "1245f9cf9e019713391e4ee3bac54a63",
+    "element_id": "3f7bb46693effe99cf1e660366756f0d",
     "metadata": {
       "data_source": {
         "url": "example-docs/spring-weather.html.json",
@@ -150,11 +150,11 @@
       "filetype": "application/json",
       "page_number": 1
     },
-    "text": "Collaboration                                                                                                        Get Involved                                                                             Social Media                                                                            WRN Ambassadors ​                                                                            Enterprise Resources                                                                            StormReady                                                                            TsunamiReady                                                                            NWSChat (core partners only)                                                                            InteractiveNWS (iNWS) (core partners only)​                                                                            SKYWARN"
+    "text": "                                           Floods                                                   "
   },
   {
     "type": "CompositeElement",
-    "element_id": "23dfa7f98424dbf86e00b3d500096dfa",
+    "element_id": "a03608617372baaddd393d53d8d7ae67",
     "metadata": {
       "data_source": {
         "url": "example-docs/spring-weather.html.json",
@@ -167,11 +167,11 @@
       "filetype": "application/json",
       "page_number": 1
     },
-    "text": "News & Events                                                                                                        Latest News                                                                            Calendar                                                                            Meetings & Workshops                                                                            NWS Aware Newsletter"
+    "text": "                         Fog                                                                        "
   },
   {
     "type": "CompositeElement",
-    "element_id": "a2245214c0f91bb434496e9c71c62ebe",
+    "element_id": "70ae8bff208ad9dea9cec7e5279379ef",
     "metadata": {
       "data_source": {
         "url": "example-docs/spring-weather.html.json",
@@ -184,11 +184,11 @@
       "filetype": "application/json",
       "page_number": 1
     },
-    "text": "International\n\nAbout                                                                                                        Contact Us                                                                             What is WRN?                                                                             WRN FAQ                                                                            WRN Brochure                                                                            Hazard Simplification                                                                            IDSS Brochure                                                                            Roadmap                                                                            Strategic Plan                                                                            WRN International                                                                            Social Science"
+    "text": "    Heat                                                                             Hurricanes     "
   },
   {
     "type": "CompositeElement",
-    "element_id": "6cbcf8c11f8c0781bd9ecc7f67169ff0",
+    "element_id": "15772aa66a874cd5cbf7aa10abf795bc",
     "metadata": {
       "data_source": {
         "url": "example-docs/spring-weather.html.json",
@@ -201,11 +201,11 @@
       "filetype": "application/json",
       "page_number": 1
     },
-    "text": "The spring season is all about change – a rebirth both literally and figuratively. Even though the spring season doesn’t officially (astronomically, that is) begin until March 20 this year, climatologically, it starts March 1."
+    "text": "                                                                        Lightning Safety            "
   },
   {
     "type": "CompositeElement",
-    "element_id": "7184168da442c6ef28553b274bf2be8f",
+    "element_id": "c0f45ad9e62db9d2a1b4a849976479a4",
     "metadata": {
       "data_source": {
         "url": "example-docs/spring-weather.html.json",
@@ -218,11 +218,11 @@
       "filetype": "application/json",
       "page_number": 1
     },
-    "text": "As cold winter nights are replaced by the warmth of longer daylight hours, the National Weather Service invites you to do two important things that may save your life or the life of a loved one."
+    "text": "                                                                Rip Currents                        "
   },
   {
     "type": "CompositeElement",
-    "element_id": "f3be9748ecd68b20d706548129baa22d",
+    "element_id": "a41c5c16144b8c4c5492879ade9a49af",
     "metadata": {
       "data_source": {
         "url": "example-docs/spring-weather.html.json",
@@ -235,11 +235,11 @@
       "filetype": "application/json",
       "page_number": 1
     },
-    "text": "First, take steps to better prepare for the seasonal hazards weather can throw at you.\nThis could include a spring cleaning of your storm shelter or ensuring your emergency kit is fully stocked. Take a look at our infographics and social media posts to help you become “weather-ready.”"
+    "text": "                                                    Safe Boating                                    "
   },
   {
     "type": "CompositeElement",
-    "element_id": "126c3cd201fb259cfeabc6bffc0b5473",
+    "element_id": "8b28e376de5f652a65333f6f3238cae9",
     "metadata": {
       "data_source": {
         "url": "example-docs/spring-weather.html.json",
@@ -252,11 +252,11 @@
       "filetype": "application/json",
       "page_number": 1
     },
-    "text": "Second, encourage others to become Weather-Ready as well. Share the message by taking advantage of our vast array of weather safety content – everything posted on our Spring Safety website is freely available, and we encourage sharing on social media networks. Also remember those who are most vulnerable, like an elderly family member or neighbor who might have limited mobility or is isolated. Reach out to those who are at higher risk of being impacted by extreme weather, and help them get prepared. This simple act of caring could become heroic."
+    "text": "                                        Space Weather                                               "
   },
   {
     "type": "CompositeElement",
-    "element_id": "c1944fb037f3e1cb14969bc59a7dd9c2",
+    "element_id": "21e60f100f936440c868f1043c2c9255",
     "metadata": {
       "data_source": {
         "url": "example-docs/spring-weather.html.json",
@@ -269,7 +269,1316 @@
       "filetype": "application/json",
       "page_number": 1
     },
-    "text": "This spring, the campaign is focused on heat dangers. Heat illness and death can occur even in spring’s moderately warm weather. The majority of all heat-related deaths occur outside of heat waves and roughly a third of child hot car deaths occur outside of the summer months. Learn more by viewing the infographics that are now available."
+    "text": "                             Sun (Ultraviolet Radiation)                                            "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "ba8b8a9a9444373087a44aefda98cf2c",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                 Thunderstorms & Tornadoes                                          "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "41eebfecab272cd9b0a26a082c028108",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                  Tornado                                                           "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "b324a71bd81e410a4ae80c86832697f4",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                 Tsunami                                                                            "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "873b1181efe45319e118a360fe23d12d",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "Wildfire                                                                            Wind            "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "a816574d092dfa84616789c85eef9340",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                                                Winter"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "38fd7e2aa3f7f5a21b6dc0a7a76f1a76",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "Safety Campaigns                                                                                    "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "aa4a4d47a716e43e094ebaafcc83f9b2",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                    Seasonal Safety Campaigns                                                       "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "8cee26a97c22d379ec6b5837ae7e1056",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                     #SafePlaceSelfie                                                               "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "dbfb36b584c45827f08b888581b3e2e2",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "             Deaf & Hard of Hearing                                                                 "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "3f081d8fdf5923bae3752057331532cc",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "           Intellectual Disabilities                                                                "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "58337988b7765b54568bc5937d38a408",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "            Spanish-language Content                                                                "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "5db440198419b00537e8abf6b3791e1d",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "            The Great Outdoors"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "2459bc5078e94b4ae18381f1c97fe1c3",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "Ambassador                                                                                          "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "1b17576029fc09fbd382a9a27411e401",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "              About WRN Ambassadors                                                                 "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "cc990d5aba408751ece97a78d7f5564a",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "           Become an Ambassador                                                                     "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "9c794eb9b246cccb85e327b45e9dd0c9",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "       Ambassadors of Excellence                                                                    "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "5c87de39b04afa5a9557f1341c62e7e7",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "        People of WRN                                                                             FA"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "66b7badb3d6b26e27b08416554277539",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "QS                                                                            Tell Your Success Stor"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "8a3490f23fa921a5020c4f80fdc6792e",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "y                                                                             Success Stories       "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "b2d669ea272f0bea43e0c066f59385e5",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                                                     Tri-fold                       "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "716dedc10704a6bd3c6b2640451d3c47",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                                     Aviation                                       "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "cc6282b612c08a5ab74ca2c083a1a6b4",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                      Current Ambassadors                                           "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "e37cf874841fed8594ec58eb3a3b3872",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                 Brochure                                                           "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "5c402c322437c256b3e965fb85ad795e",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                 En Español"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "83ab27d8a6667c48612c333b1c12afa8",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "Education                                                                                           "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "ade2b186a7f95b15c97bed0cef01accd",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "             NWS Education Home                                                                     "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "7ce801544929749bdd84c686910302a0",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "       Be A Force Of Nature                                                                         "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "fa64c7104731549a8865fcf30d5cbe4b",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "   WRN Kids Flyer                                                                            Wireles"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "ff9fb4de0e2e7d59cbe316b762e75e7d",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "s Emergency Alerts                                                                            NOAA W"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "30019fe7a3d1f3295e5eca5e20534f1d",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "eather Radio                                                                            Mobile Weath"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "06792c6f1530d56658943eb2180df747",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "er                                                                            Brochures             "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "987b1f600840f44f7f519e8520c03e30",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                                               Hourly Weather Forecast              "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "879c723eb9fd5987103b79c6dce3a6e0",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                                              Citizen Science                       "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "e9e89c7ac47338d77147e66f5097a4b0",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                                     Intellectual Disabilities"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "058c5b01932d3b1e4e614a9ed623d879",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "Collaboration                                                                                       "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "1407d4338cfe64f8d17fc2d7d06d241e",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                 Get Involved                                                                       "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "e79cea02d8ade122d229f21c4ada1da8",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "      Social Media                                                                            WRN Am"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "b6ee8848c7929d44e8de7982f7a8766d",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "bassadors ​                                                                            Enterprise Re"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "e5ceac0460e795a4ad40e2a56e560aad",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "sources                                                                            StormReady       "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "407be258a0d1f8d503719144f04d2bd4",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                                                     TsunamiReady                   "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "116bf94e61c017f29013f468b49026e1",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                                         NWSChat (core partners only)               "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "ef1cb8e836851f003ac1dce147d318bb",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                                             InteractiveNWS (iNWS) (core partners on"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "80393691990de397aae9dd43a352b6ee",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "ly)​                                                                            SKYWARN"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "6223b76e99ab9732709ab18832cc9c15",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "News & Events                                                                                       "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "7e1205cde2136aeadfe10e4da666fdad",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                 Latest News                                                                        "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "cb5ff462ca802d53c32f1449803aec2a",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "    Calendar                                                                            Meetings & W"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "2380304309e7627bab96ab913c6f1957",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "orkshops                                                                            NWS Aware Newsle"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "86f9eedabbb5febd20ea1abfca383586",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "tter"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "93202df2ec7081b28b47901b5c287a5a",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "International"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "c84bfe724fd95a5e63c9b37278fc4717",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "About                                                                                               "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "2eadb6404a961aa178fff7d8dc27b75b",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "         Contact Us                                                                             What"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "9b38f0dd45f5fd2018482a4f8da0a3e7",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": " is WRN?                                                                             WRN FAQ        "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "a5332808d22d5cf1cbc59cb3e417b6f7",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                                                    WRN Brochure                    "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "65592303cb6a1ccc60fc67c25eb5f8c0",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                                        Hazard Simplification                       "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "56a2d660dc92bf1609092fd7bf5cbd36",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                                     IDSS Brochure                                  "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "42e26f8b052525395545aa9b8e4e2ff5",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                                          Roadmap                                                   "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "f48709dabd56d3254e30e64f5ffe1132",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                         Strategic Plan                                                             "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "08b7eacf44d771b6c2dc30eb9ae5dff4",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "               WRN International                                                                    "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "89d1a7d7b2302ed86fbb452965e2f894",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "        Social Science"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "ab85f40b8cd41e51161da2b13a6d9b4e",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "The spring season is all about change – a rebirth both literally and figuratively. Even though the s"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "4021f1b1fecfd68c8fd95764a2317a8d",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "pring season doesn’t officially (astronomically, that is) begin until March 20 this year, climatolog"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "69db01fc11ab04eaeda4424790ddcaee",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "ically, it starts March 1."
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "8bbd1b5dcf39fdfdc17e0cf86147d886",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "As cold winter nights are replaced by the warmth of longer daylight hours, the National Weather Serv"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "3c8a0949d4152ba18b879d6e8ed2edac",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "ice invites you to do two important things that may save your life or the life of a loved one."
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "0ec47bdf9207f98b04166522481764d4",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "First, take steps to better prepare for the seasonal hazards weather can throw at you.\nThis could in"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "a305c83f034d51c1ebff8540bef32abc",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "clude a spring cleaning of your storm shelter or ensuring your emergency kit is fully stocked. Take "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "0be483930e82bc6709834bf19f806935",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "a look at our infographics and social media posts to help you become “weather-ready.”"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "b7c7d8ca79788b0635257a104f1495ac",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "Second, encourage others to become Weather-Ready as well. Share the message by taking advantage of o"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "786cd4ef75660e86aad0a2c00022b454",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "ur vast array of weather safety content – everything posted on our Spring Safety website is freely a"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "d3525cff3b0b70fd4ec0e0e42800e749",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "vailable, and we encourage sharing on social media networks. Also remember those who are most vulner"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "37cf90418e8bea0ed8eabe3386a98f26",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "able, like an elderly family member or neighbor who might have limited mobility or is isolated. Reac"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "82b5a8ab6921ff70e0c38de2eea58793",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "h out to those who are at higher risk of being impacted by extreme weather, and help them get prepar"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "f76ff8f29abf1d8dcccd5d9ab79ee25a",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "ed. This simple act of caring could become heroic."
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "6a3b21bfa54345406ad3411b67b92fd3",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "This spring, the campaign is focused on heat dangers. Heat illness and death can occur even in sprin"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "176f3904ce894f6048c98e4164e7c2e0",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "g’s moderately warm weather. The majority of all heat-related deaths occur outside of heat waves and"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "fae645e48ab196d1f0588d312779c628",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": " roughly a third of child hot car deaths occur outside of the summer months. Learn more by viewing t"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "87e823350e7dad4ce46b817fdd70c403",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "he infographics that are now available."
   },
   {
     "type": "CompositeElement",
@@ -290,7 +1599,7 @@
   },
   {
     "type": "CompositeElement",
-    "element_id": "47d5d0d27a35a36d7467dfc8b6e089b3",
+    "element_id": "13cdeca7c45fd5ba0cc333d7630e2c95",
     "metadata": {
       "data_source": {
         "url": "example-docs/spring-weather.html.json",
@@ -303,7 +1612,41 @@
       "filetype": "application/json",
       "page_number": 1
     },
-    "text": "US Dept of Commerce\n                        National Oceanic and Atmospheric Administration\n                        National Weather Service\n                        News Around NOAA1325 East West HighwaySilver Spring, MD 20910Comments? Questions? Please Contact Us."
+    "text": "US Dept of Commerce\n                        National Oceanic and Atmospheric Administration\n        "
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "813fe4301152304554c47fad77cd423b",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "                National Weather Service\n                        News Around NOAA1325 East West High"
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "6b4d064ac4b37d3bf124ea8515403916",
+    "metadata": {
+      "data_source": {
+        "url": "example-docs/spring-weather.html.json",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/json",
+      "page_number": 1
+    },
+    "text": "waySilver Spring, MD 20910Comments? Questions? Please Contact Us."
   },
   {
     "type": "CompositeElement",
