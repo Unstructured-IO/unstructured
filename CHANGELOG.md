@@ -1,4 +1,4 @@
-## 0.11.0-dev6
+## 0.11.0-dev7
 
 ### Enhancements
 
@@ -10,6 +10,7 @@
 
 * **Add ad-hoc fields to ElementMetadata instance.** End-users can now add their own metadata fields simply by assigning to an element-metadata attribute-name of their choice, like `element.metadata.coefficient = 0.58`. These fields will round-trip through JSON and can be accessed with dotted notation.
 * **MongoDB Destination Connector** New destination connector added to all CLI ingest commands to support writing partitioned json output to mongodb.
+* **Add missing chunking parameters to unstructured-cli** Updates unstructured-ingest cli to accept an argument for combine-text-under-n-chars and adds logic to support passing through the new-after-n-chars argument to the chunk_by_title function. This allows users to fully take advantage of all chunking options through unstructured-ingest. 
 
 ### Fixes
 
