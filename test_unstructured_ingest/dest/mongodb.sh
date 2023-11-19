@@ -66,4 +66,4 @@ python "$SCRIPT_DIR"/python/test-ingest-mongodb.py \
 --database "$MONGODB_DATABASE_NAME" \
 --collection "$DESTINATION_MONGO_COLLECTION" \
 check-vector \
---output-json "$OUTPUT_ROOT"/structured-output/$OUTPUT_FOLDER_NAME/example-docs/fake-memo.pdf.json
+--output-json "$OUTPUT_ROOT"/structured-output/$OUTPUT_FOLDER_NAME/fake-memo.pdf.json

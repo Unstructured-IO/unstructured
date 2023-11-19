@@ -6,9 +6,9 @@ SRC_PATH=$(dirname "$(realpath "$0")")
 SCRIPT_DIR=$(dirname "$SRC_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
+OUTPUT_FOLDER_NAME=azure-cog-search-dest
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
-OUTPUT_FOLDER_NAME=azure-cog-search-dest
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 DESTINATION_INDEX="utic-test-ingest-fixtures-output-$(uuidgen)"
@@ -90,19 +90,19 @@ while [ "$docs_count_remote" -eq 0 ] && [ "$attempt" -lt 6 ]; do
     --header "api-key: $AZURE_SEARCH_API_KEY" \
     --header 'content-type: application/json' | jq)
 
-  echo "docs count pulled from Azure: $docs_count_remote"
+  echo "docs count pulled from Azure Cognitive Search: $docs_count_remote"
 
   attempt=$((attempt+1))
 done
 
 
 docs_count_local=0
-for i in $(jq length "$OUTPUT_DIR"/**/*.json); do
+for i in $(jq length "$OUTPUT_DIR"/*.json); do
   docs_count_local=$((docs_count_local+i));
 done
 
 
 if [ "$docs_count_remote" -ne "$docs_count_local" ];then
-  echo "Number of docs in Azure $docs_count_remote doesn't match the expected docs: $docs_count_local"
+  echo "Number of docs in Azure Cognitive Search $docs_count_remote doesn't match the expected docs: $docs_count_local"
   exit 1
 fi
