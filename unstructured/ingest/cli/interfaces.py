@@ -468,13 +468,19 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 default=False,
             ),
             click.Option(
-                ["--chunk-combine-under-n-chars"],
+                ["--chunk-combine-text-under-n-chars"],
                 type=int,
                 default=500,
                 show_default=True,
             ),
             click.Option(
                 ["--chunk-new-after-n-chars"],
+                type=int,
+                default=1500,
+                show_default=True,
+            ),
+            click.Option(
+                ["--chunk-max-characters"],
                 type=int,
                 default=1500,
                 show_default=True,
@@ -503,9 +509,9 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 new_kvs["chunk_elements"] = chunk_elements
             new_kvs.update(
                 {
-                    k[len("chunking_") :]: v  # noqa: E203
+                    k[len("chunk_") :]: v  # noqa: E203
                     for k, v in kvs.items()
-                    if k.startswith("chunking_")
+                    if k.startswith("chunk_")
                 },
             )
             if len(new_kvs.keys()) == 0:
