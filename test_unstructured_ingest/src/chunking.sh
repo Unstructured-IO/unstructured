@@ -52,9 +52,3 @@ fi
 "$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"
 
 exit $EXIT_CODE
-
-
-    # --chunk-elements \
-    # --chunk-combine-text-under-n-chars 200\
-    # --chunk-new-after-n-chars 2500\
-    # --chunk-max-characters 38000\

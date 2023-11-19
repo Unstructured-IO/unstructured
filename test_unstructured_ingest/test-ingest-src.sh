@@ -14,6 +14,7 @@ all_tests=(
 'azure.sh'
 'biomed-api.sh'
 'biomed-path.sh'
+'chunking.sh'
 # NOTE(yuming): The pdf-fast-reprocess test should be put after any tests that save downloaded files
 'pdf-fast-reprocess.sh'
 'salesforce.sh'
