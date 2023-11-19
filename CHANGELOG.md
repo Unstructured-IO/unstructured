@@ -1,4 +1,4 @@
-## 0.11.0-dev6
+## 0.11.0-dev7
 
 ### Enhancements
 
@@ -22,6 +22,7 @@
 * **Fix some pdfs returning `KeyError: 'N'`** Certain pdfs were throwing this error when being opened by pdfminer. Added a wrapper function for pdfminer that allows these documents to be partitioned.
 * **Fix mis-splits on `Table` chunks.** Remedies repeated appearance of full `.text_as_html` on metadata of each `TableChunk` split from a `Table` element too large to fit in the chunking window.
 * **Import tables_agent from inference** so that we don't have to initialize a global table agent in unstructured OCR again
+* **Fix local connector with absolute input path** When passed an absolute filepath for the input document path, the local connector incorrectly writes the output file to the input file directory. This fixes such that the output in this case is written to `output-dir/input-filename.json`
 
 ## 0.10.30
 
