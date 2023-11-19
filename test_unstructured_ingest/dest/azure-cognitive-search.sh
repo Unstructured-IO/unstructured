@@ -97,7 +97,7 @@ done
 
 
 docs_count_local=0
-for i in $(jq length "$OUTPUT_DIR"/**/*.json); do
+for i in $(jq length "$OUTPUT_DIR"/*.json); do
   docs_count_local=$((docs_count_local+i));
 done
 
