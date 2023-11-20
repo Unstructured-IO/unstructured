@@ -2,7 +2,7 @@
 
 import os
 import pathlib
-from typing import Dict, List
+from typing import Dict, List, cast
 
 import pytest
 from lxml import etree
@@ -210,6 +210,31 @@ def test_it_provides_parseable_HTML_in_text_as_html():
         "</table>"
         "</body></html>"
     )
+
+
+# -- element-suppression behaviors ---------------------------------------------------------------
+
+
+def test_it_does_not_extract_text_in_script_tags():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-with-scripts.html")
+    doc = HTMLDocument.from_file(filename=filename)
+    assert all("function (" not in element.text for element in cast(List[Text], doc.elements))
+
+
+def test_it_does_not_extract_text_in_style_tags():
+    html_str = (
+        "<html>\n"
+        "<body>\n"
+        "  <p><style> p { margin:0; padding:0; } </style>Lorem ipsum dolor</p>\n"
+        "</body>\n"
+        "</html>"
+    )
+
+    html_document = HTMLDocument.from_string(html_str)
+
+    (element,) = html_document.elements
+    assert isinstance(element, Text)
+    assert element.text == "Lorem ipsum dolor"
 
 
 # ------------------------------------------------------------------------------------------------
@@ -816,12 +841,6 @@ def test_joins_tag_text_correctly():
     doc = HTMLDocument.from_string(raw_html)
     el = doc.elements[0]
     assert el.text == "Hello again peet magical"
-
-
-def test_sample_doc_with_scripts():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-with-scripts.html")
-    doc = HTMLDocument.from_file(filename=filename)
-    assert all("function (" not in element.text for element in doc.elements)
 
 
 def test_sample_doc_with_emoji():
