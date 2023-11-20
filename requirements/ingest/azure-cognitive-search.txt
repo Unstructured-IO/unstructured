@@ -10,7 +10,7 @@ azure-core==1.29.5
     # via azure-search-documents
 azure-search-documents==11.4.0
     # via -r ingest/azure-cognitive-search.in
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
