@@ -56,6 +56,7 @@ full_python_matrix_tests=(
   's3.sh'
   'google-drive.sh'
   'gcs.sh'
+  'azure.sh'
 )
 
 CURRENT_TEST="none"
