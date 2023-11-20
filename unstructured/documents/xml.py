@@ -1,6 +1,7 @@
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from lxml import etree
+from typing_extensions import Self
 
 from unstructured.documents.base import Document, Page
 from unstructured.file_utils.encoding import read_txt_file
@@ -43,17 +44,17 @@ class XMLDocument(Document):
         self.document_tree = None
         super().__init__()
 
-    def _read(self):
+    def _parse_pages_from_element_tree(self) -> List[Page]:
         raise NotImplementedError
 
     @property
     def pages(self) -> List[Page]:
         """Gets all elements from pages in sequential order."""
         if self._pages is None:
-            self._pages = self._read()
+            self._pages = self._parse_pages_from_element_tree()
         return super().pages
 
-    def _read_xml(self, content):
+    def _read_xml(self, content: str):
         """Reads in an XML file and converts it to an lxml element tree object."""
         # NOTE(robinson) - without the carriage return at the beginning, you get
         # output that looks like the following when you run partition_pdf
@@ -98,8 +99,8 @@ class XMLDocument(Document):
         text: str,
         parser: VALID_PARSERS = None,
         stylesheet: Optional[str] = None,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> Self:
         """Supports reading in an XML file as a raw string rather than as a file."""
         logger.info("Reading document from string ...")
         doc = cls(parser=parser, stylesheet=stylesheet, **kwargs)
@@ -109,12 +110,12 @@ class XMLDocument(Document):
     @classmethod
     def from_file(
         cls,
-        filename,
+        filename: str,
         parser: VALID_PARSERS = None,
         stylesheet: Optional[str] = None,
         encoding: Optional[str] = None,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> Self:
         _, content = read_txt_file(filename=filename, encoding=encoding)
 
         return cls.from_string(content, parser=parser, stylesheet=stylesheet, **kwargs)
