@@ -426,19 +426,8 @@ jobs:
   test_dockerfile:
     runs-on: ubuntu-latest-m
     needs: [ setup, lint ]
-    strategy:
-      matrix:
-        python-version: [ "3.8","3.9","3.10","3.11" ]
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Setup virtual environment
-        uses: ./.github/actions/base-ingest-cache
-        with:
-          python-version: ${{ matrix.python-version }}
       - name: Test Dockerfile
         run: |
           source .venv/bin/activate
