@@ -35,7 +35,8 @@ trap cleanup EXIT
 if [ "$OVERWRITE_FIXTURES" != "false" ]; then
     # remove folder if it exists
     if [ -d "$METRICS_DIR" ]; then
-        find "$METRICS_DIR" -maxdepth 1 -type f ! -name "metrics-json-manifest.txt" -exec rm -rf {} +
+        rm -rf "$METRICS_DIR"
+        # find "$METRICS_DIR" -maxdepth 1 -type f ! -name "metrics-json-manifest.txt" -exec rm -rf {} +
     fi
     # force copy (overwrite) files from metrics-tmp (new eval metrics) to metrics (old eval metrics)
     mkdir -p "$METRICS_DIR"
