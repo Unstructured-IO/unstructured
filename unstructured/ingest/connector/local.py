@@ -41,10 +41,12 @@ class LocalIngestDoc(BaseIngestDoc):
 
     @property
     def base_filename(self) -> t.Optional[str]:
-        download_path = str(Path(self.connector_config.input_path).resolve())
-        full_path = str(self.filename)
-        base_path = full_path.replace(download_path, "")
-        return base_path
+        download_path = Path(self.connector_config.input_path).resolve()
+        full_path = Path(self.filename).resolve()
+        if download_path.is_file():
+            download_path = download_path.parent
+        relative_path = full_path.relative_to(download_path)
+        return str(relative_path)
 
     @property
     def filename(self):
