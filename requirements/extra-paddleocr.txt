@@ -14,7 +14,7 @@ blinker==1.7.0
     # via flask
 cachetools==5.3.2
     # via premailer
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c base.txt
     #   -c constraints.in
@@ -45,7 +45,7 @@ flask==3.0.0
     #   visualdl
 flask-babel==4.0.0
     # via visualdl
-fonttools==4.44.3
+fonttools==4.45.0
     # via matplotlib
 future==0.18.3
     # via bce-python-sdk
@@ -53,7 +53,7 @@ idna==3.4
     # via
     #   -c base.txt
     #   requests
-imageio==2.32.0
+imageio==2.33.0
     # via
     #   imgaug
     #   scikit-image

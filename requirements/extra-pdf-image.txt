@@ -6,7 +6,7 @@
 #
 antlr4-python3-runtime==4.9.3
     # via omegaconf
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c base.txt
     #   -c constraints.in
@@ -35,7 +35,7 @@ filelock==3.13.1
     #   transformers
 flatbuffers==23.5.26
     # via onnxruntime
-fonttools==4.44.3
+fonttools==4.45.0
     # via matplotlib
 fsspec==2023.9.1
     # via
@@ -236,7 +236,7 @@ typing-extensions==4.8.0
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.7.14
+unstructured-inference==0.7.15
     # via -r extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via

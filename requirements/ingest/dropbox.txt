@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/dropbox.txt ingest/dropbox.in
 #
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in

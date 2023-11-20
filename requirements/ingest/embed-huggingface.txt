@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/embed-huggingface.txt ingest/embed-huggingface.in
 #
-aiohttp==3.8.6
+aiohttp==3.9.0
     # via langchain
 aiosignal==1.3.1
     # via aiohttp
@@ -18,7 +18,7 @@ async-timeout==4.0.3
     #   langchain
 attrs==23.1.0
     # via aiohttp
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
@@ -26,7 +26,6 @@ certifi==2023.7.22
 charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
-    #   aiohttp
     #   requests
 click==8.1.7
     # via
@@ -76,9 +75,9 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.336
+langchain==0.0.338
     # via -r ingest/embed-huggingface.in
-langsmith==0.0.64
+langsmith==0.0.65
     # via langchain
 markupsafe==2.1.3
     # via jinja2

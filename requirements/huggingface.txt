@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=huggingface.txt huggingface.in
 #
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c base.txt
     #   -c constraints.in

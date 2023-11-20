@@ -10,7 +10,7 @@ autoflake==2.2.1
     # via -r test.in
 black==23.11.0
     # via -r test.in
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c base.txt
     #   -c constraints.in

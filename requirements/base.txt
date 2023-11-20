@@ -8,7 +8,7 @@ backoff==2.2.1
     # via -r base.in
 beautifulsoup4==4.12.2
     # via -r base.in
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c constraints.in
     #   requests

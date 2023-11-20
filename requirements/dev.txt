@@ -38,7 +38,7 @@ bleach==6.1.0
     # via nbconvert
 build==1.0.3
     # via pip-tools
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c base.txt
     #   -c constraints.in
@@ -82,7 +82,7 @@ filelock==3.13.1
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
-identify==2.5.31
+identify==2.5.32
     # via pre-commit
 idna==3.4
     # via
@@ -176,11 +176,11 @@ jupyter-server==2.10.1
     #   notebook-shim
 jupyter-server-terminals==0.4.4
     # via jupyter-server
-jupyterlab==4.0.8
+jupyterlab==4.0.9
     # via notebook
 jupyterlab-pygments==0.2.2
     # via nbconvert
-jupyterlab-server==2.25.1
+jupyterlab-server==2.25.2
     # via
     #   jupyterlab
     #   notebook
@@ -267,7 +267,7 @@ pure-eval==0.2.2
     # via stack-data
 pycparser==2.21
     # via cffi
-pygments==2.16.1
+pygments==2.17.1
     # via
     #   ipython
     #   jupyter-console
@@ -318,7 +318,7 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
-rpds-py==0.13.0
+rpds-py==0.13.1
     # via
     #   jsonschema
     #   referencing
