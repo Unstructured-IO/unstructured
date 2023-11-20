@@ -26,14 +26,11 @@ function cleanup() {
 
 trap cleanup EXIT
 
-echo "running check diff"
-echo "$OVERWRITE_FIXTURES"
-
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [ "$OVERWRITE_FIXTURES" != "false" ]; then
     # remove folder if it exists
     if [ -d "$METRICS_DIR" ]; then
-        rm -rf "$METRICS_DIR"
+        find "$METRICS_DIR" -maxdepth 1 -type f ! -name "metrics-json-manifest.txt" -exec rm -rf {} +
     fi
     # force copy (overwrite) files from metrics-tmp (new eval metrics) to metrics (old eval metrics)
     mkdir -p "$METRICS_DIR"
