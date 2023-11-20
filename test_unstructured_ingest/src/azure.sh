@@ -46,6 +46,6 @@ if [ "$EXIT_CODE" -ne 0 ]; then
     # Handle the error or exit
 fi
 
-# "$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"
+"$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"
 
 exit $EXIT_CODE
