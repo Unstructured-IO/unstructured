@@ -42,9 +42,9 @@ if [ "$OVERWRITE_FIXTURES" != "false" ]; then
     cp -rf "$TMP_METRICS_LATEST_RUN_DIR" "$OUTPUT_ROOT/metrics"
 elif ! diff -ru "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR" ; then
     "$SCRIPT_DIR"/clean-permissions-files.sh "$TMP_METRICS_LATEST_RUN_DIR"
-    diff -r "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR"> outputdiff.txt
-    cat outputdiff.txt
-    diffstat -c outputdiff.txt
+    diff -r "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR"> metricsdiff.txt
+    cat metricsdiff.txt
+    diffstat -c metricsdiff.txt
     echo
     echo "There are differences from the previously checked-in structured outputs."
     echo
