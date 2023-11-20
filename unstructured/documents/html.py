@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import sys
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, cast
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -11,7 +11,6 @@ else:
     from typing import Final
 
 from lxml import etree
-from tabulate import tabulate
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.base import Page
@@ -36,6 +35,7 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
+from unstructured.utils import htmlify_matrix_of_cell_texts
 
 TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]
@@ -138,7 +138,7 @@ class HTMLDocument(XMLDocument):
         self.assembled_articles = assemble_articles
         super().__init__(stylesheet=stylesheet, parser=parser)
 
-    def _read(self) -> List[Page]:
+    def _parse_pages_from_element_tree(self) -> List[Page]:
         """Parse HTML elements into pages.
 
         A *page* is a subsequence of the document-elements parsed from the HTML document
@@ -209,9 +209,10 @@ class HTMLDocument(XMLDocument):
                         )
 
                 elif tag_elem.tag in TABLE_TAGS:
-                    element = _process_leaf_table_item(tag_elem)
+                    element = _parse_HTMLTable_from_table_elem(tag_elem)
                     if element is not None:
                         page.elements.append(element)
+                    if element or tag_elem.tag == "table":
                         descendanttag_elems = tuple(tag_elem.iterdescendants())
 
                 elif tag_elem.tag in PAGEBREAK_TAGS and len(page.elements) > 0:
@@ -301,6 +302,60 @@ def _get_links_from_tag(tag_elem: etree._Element) -> List[Link]:
         if href:
             links.append({"text": tag.text, "url": href, "start_index": -1})
     return links
+
+
+def _is_bulleted_table(table_elem: etree._Element) -> bool:
+    """True when all text in `table_elem` is bulleted text.
+
+    A table-row containing no text is not considered, but at least one bulleted-text item must be
+    present. A table with no text in any row is not a bulleted table.
+    """
+    if table_elem.tag != "table":
+        return False
+
+    trs = table_elem.findall(".//tr")
+    tr_texts = [_construct_text(tr) for tr in trs]
+
+    # -- a table with no text is not a bulleted table --
+    if all(not text for text in tr_texts):
+        return False
+
+    # -- all non-empty rows must contain bulleted text --
+    if any(text and not is_bulleted_text(text) for text in tr_texts):
+        return False
+
+    return True
+
+
+def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Element]:
+    """Form `HTMLTable` element from `tbl_elem`."""
+    if table_elem.tag != "table":
+        return None
+
+    # -- NOTE that this algorithm handles a nested-table by parsing all of its text into the text
+    # -- for the _cell_ containing the table (and this is recursive, so a table nested within a
+    # -- cell within the table within the cell too.)
+
+    trs = cast(
+        List[etree._Element], table_elem.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr")
+    )
+
+    if not trs:
+        return None
+
+    table_data = [[str(text) for text in tr.itertext()] for tr in trs]
+    html_table = htmlify_matrix_of_cell_texts(table_data)
+    table_text = " ".join(" ".join(row) for row in table_data).strip()
+
+    if table_text == "":
+        return None
+
+    return HTMLTable(
+        text=table_text,
+        text_as_html=html_table,
+        tag=table_elem.tag,
+        ancestortags=tuple(el.tag for el in table_elem.iterancestors())[::-1],
+    )
 
 
 def _get_emphasized_texts_from_tag(tag_elem: etree._Element) -> List[Dict[str, str]]:
@@ -524,54 +579,6 @@ def _is_text_tag(tag_elem: etree._Element, max_predecessor_len: int = 5) -> bool
     return False
 
 
-def _process_leaf_table_item(tbl_elem: etree._Element) -> Optional[Element]:
-    """Form `HTMLTable` element from `tbl_elem`."""
-    # -- Note this function theoretically _can_ be called with any element in TABLE_TAGS, but never
-    # -- actually _will_ get called with anything but a `<table>` element. Logic of that is:
-    #    - gets called for each top-level `table` element
-    #    - will never find a nested table, even if there is one
-    #    - therefore will not return None
-    #    - therefore all its descendents will be marked visited and loop will not descend further
-    #      into the table element.
-    if tbl_elem.tag not in TABLE_TAGS:
-        return None
-
-    # -- ALSO NOTE that this algorithm will parse all the text within a nested table into the text
-    # -- for the _cell_ the table is nested in (and this is recursive, so a table nested within a
-    # -- cell within the table within the cell too.)
-
-    # TODO: this is not going to find nested tables, it will only find a `<table>` element that is
-    # a (direct) child of the current element. and a nested table is only ever a child of a `<td>`
-    # element. FURTHER, we have no good reason to detect and/or skip nested tables because they are
-    # already being parsed.
-    nested_table = tbl_elem.findall("table")
-    if nested_table:
-        return None
-
-    rows = tbl_elem.findall("tr")
-    if not rows:
-        body = tbl_elem.find("tbody")
-        rows = body.findall("tr") if body is not None else []
-    if len(rows) > 0:
-        table_data = [[str(text) for text in row.itertext()] for row in rows]
-        html_table = tabulate(table_data, tablefmt="html")
-        table_text = " ".join(" ".join(row) for row in table_data).strip()
-
-    # TODO: this branch is the one responsible for returning empty (and therefore unparseable) table
-    # document elements. This should return `None` instead. Better, make this a zero-or-one
-    # generator function.
-    else:
-        table_text = ""
-        html_table = ""
-
-    return HTMLTable(
-        text=table_text,
-        text_as_html=html_table.replace("\n", "<br>"),
-        tag=tbl_elem.tag,
-        ancestortags=tuple(el.tag for el in tbl_elem.iterancestors())[::-1],
-    )
-
-
 def _process_list_item(
     tag_elem: etree._Element,
     max_predecessor_len: int = 5,
@@ -648,20 +655,6 @@ def _bulleted_text_from_table(table: etree._Element) -> List[Element]:
         if is_bulleted_text(text):
             bulleted_text.append(HTMLListItem(text=clean_bullets(text), tag=row.tag))
     return bulleted_text
-
-
-def _is_bulleted_table(table_elem: etree._Element) -> bool:
-    """True when `<table>` element `tag_elem` contains bulleted text."""
-    if table_elem.tag != "table":
-        return False
-
-    rows = table_elem.findall(".//tr")
-    for row in rows:
-        text = _construct_text(row)
-        if text and not is_bulleted_text(text):
-            return False
-
-    return True
 
 
 def _has_adjacent_bulleted_spans(tag_elem: etree._Element, children: List[etree._Element]) -> bool:

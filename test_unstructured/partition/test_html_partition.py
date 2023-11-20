@@ -677,17 +677,17 @@ def test_partition_html_respects_detect_language_per_element():
 @pytest.mark.parametrize(
     ("tag", "expected"),
     [
-        ("thead", ""),
-        ("foo", ""),
+        ("thead", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
+        ("tfoot", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
     ],
 )
-def test_partition_html_with_table_without_tbody(tag, expected):
-    table_html = f"""
-    <table>
-      <{tag}>
-        <tr><th>Header 1</th><th>Header 2</th></tr>
-        </{tag}>
-    </table>
-    """
+def test_partition_html_with_table_without_tbody(tag: str, expected: str):
+    table_html = (
+        f"<table>\n"
+        f"  <{tag}>\n"
+        f"    <tr><th>Header 1</th><th>Header 2</th></tr>\n"
+        f"  </{tag}>\n"
+        f"</table>"
+    )
     partitions = partition_html(text=table_html)
     assert partitions[0].metadata.text_as_html == expected
