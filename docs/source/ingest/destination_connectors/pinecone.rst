@@ -12,7 +12,7 @@ First you'll need to install the Pinecone dependencies as shown here.
 Run Locally
 -----------
 The upstream connector can be any of the ones supported, but for convenience here, showing a sample command using the
-upstream s3 connector. This will create new files on your local.
+upstream local connector. This will create new files on your local.
 
 .. tabs::
 
