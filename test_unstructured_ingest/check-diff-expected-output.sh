@@ -43,7 +43,7 @@ if [ "$OVERWRITE_FIXTURES" != "false" ]; then
         rm -rf "$EXPECTED_OUTPUT_DIR"
     fi
     mkdir -p "$EXPECTED_OUTPUT_DIR"
-    cp -rf "$OUTPUT_DIR"/* "$OUTPUT_ROOT/expected-structured-output"
+    cp -rf "$OUTPUT_DIR" "$OUTPUT_ROOT/expected-structured-output"
 elif ! diff -ru "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR" ; then
     "$SCRIPT_DIR"/json-to-clean-text-folder.sh "$EXPECTED_OUTPUT_DIR" "$EXPECTED_OUTPUT_DIR_TEXT"
     "$SCRIPT_DIR"/json-to-clean-text-folder.sh "$OUTPUT_DIR" "$OUTPUT_DIR_TEXT"
