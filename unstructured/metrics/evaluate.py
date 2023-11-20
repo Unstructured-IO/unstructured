@@ -134,7 +134,7 @@ def measure_element_type_accuracy(
         connector = doc.split("/")[0]
         if fn_json in source_list:  # type: ignore
             output = get_element_type_frequency(_read_text(os.path.join(output_dir, doc)))
-            source = get_element_type_frequency(_read_text(os.path.join(source_dir, doc)))
+            source = get_element_type_frequency(_read_text(os.path.join(source_dir, fn_json)))
             accuracy = round(calculate_element_type_percent_match(output, source), 3)
             rows.append([fn, doctype, connector, accuracy])
             accuracy_scores.append(accuracy)
