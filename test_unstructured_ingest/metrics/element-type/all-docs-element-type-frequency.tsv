@@ -1,2 +1,3 @@
 filename	doctype	connector	element-type-accuracy
+IRS-form-1987.pdf	pdf	azure	0.89
 page-with-formula.pdf	pdf	s3	0.737
