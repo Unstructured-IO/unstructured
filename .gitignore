@@ -200,3 +200,4 @@ example-docs/*_images
 examples/**/output/
 
 outputdiff.txt
+metricsdiff.txt
